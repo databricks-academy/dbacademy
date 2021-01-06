@@ -30,8 +30,6 @@ def init_locals():
     return sc, spark, dbutils
 
 
-sc: SparkContext
-spark: SparkSession
 sc, spark, dbutils = init_locals()
 
 
