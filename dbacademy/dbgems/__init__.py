@@ -27,6 +27,9 @@ def init_locals():
     return sc, spark, dbutils
 
 
+sc, spark, dbutils = init_locals()
+
+
 def get_tags() -> dict:
     # noinspection PyProtectedMember
     return sc._jvm.scala.collection.JavaConversions.mapAsJavaMap(

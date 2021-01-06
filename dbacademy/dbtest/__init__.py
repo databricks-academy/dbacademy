@@ -1,7 +1,6 @@
 from dbacademy import dbgems
 from dbacademy.dbrest import *
 
-sc, spark, dbutils = dbgems.init_locals()
 username = dbgems.get_username()
 
 
