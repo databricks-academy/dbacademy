@@ -1,99 +1,163 @@
-from dbacademy import dbgems
 from dbacademy.dbrest import *
 
-username = dbgems.get_username()
+
+class TestConfig:
+    def __init__(self, sku, spark_version, workers, instance_pool, libraries, results_table):
+        import uuid
+
+        # The instance of this test run
+        self.suite_id = str(uuid.uuid1()),
+
+        # The name of the table results will be logged to
+        self.results_table = "test_results.apache_spark_programming_capstone",
+
+        # Course Name
+        self.sku = sku
+
+        # The runtime you wish to test against
+        self.spark_version = spark_version
+
+        # We can use local-mode clusters here
+        self.workers = workers
+
+        # The instance pool from which to obtain VMs
+        self.instance_pool = instance_pool
+
+        # The libraries to be attached to the cluster
+        self.libraries = libraries
+
+        # The spark table to which results will be appended
+        self.results_table = results_table
 
 
-def get_leading_comments(command) -> []:
-    leading_comments = []
-    lines = command.split("\n")
+def create_test_job(test_config, job_name, notebook_path):
+    spark_version = test_config.spark_version
+    workers = test_config.workers
+    instance_pool = test_config.instance_pool
+    libraries = test_config.libraries
 
-    for line in lines:
-        if line.strip().startswith("%"):
-            pass  # skip magic commands
-        elif line.strip().startswith("#"):
-            # append to our list
-            leading_comments.append(line)
+    spark_conf = {"spark.master": "local[*]"} if workers == 0 else dict()
+
+    params = {
+        "notebook_task": {
+            "notebook_path": f"{notebook_path}",
+        },
+        "name": f"{job_name}",
+        "timeout_seconds": 7200,
+        "max_concurrent_runs": 1,
+        "email_notifications": {},
+        "libraries": libraries,
+        "new_cluster": {
+            "num_workers": workers,
+            "instance_pool_id": f"{instance_pool}",
+            "spark_version": f"{spark_version}",
+            "spark_conf": spark_conf
+        }
+    }
+    client = DBAcademyRestClient()
+    json_response = client.jobs().create(params)
+    return json_response["job_id"]
+
+
+def wait_for_run(run_id):
+    import time
+
+    wait = 60
+    response = DBAcademyRestClient().runs().get(run_id)
+    state = response["state"]["life_cycle_state"]
+
+    if state != "TERMINATED" and state != "INTERNAL_ERROR":
+        if state == "PENDING" or state == "RUNNING":
+            print(f" - Run #{run_id} is {state}, checking again in {wait} seconds")
+            time.sleep(wait)
         else:
-            # All done, this is a non-comment
-            return leading_comments
+            print(f" - Run #{run_id} is {state}, checking again in 5 seconds")
+            time.sleep(5)
 
-    return leading_comments
+        return wait_for_run(run_id)
 
-
-def is_answer_cell(comments) -> bool:
-    for tag in ["#answer", "# answer"]:
-        for comment in comments:
-            if comment.strip().lower().startswith(tag):
-                return True
-    return False
+    return response
 
 
-def is_source_only_cell(comments) -> bool:
-    for tag in ["#source-only", "# source-only"]:
-        for comment in comments:
-            if comment.strip().lower().startswith(tag):
-                return True
-    return False
+def wait_for_notebooks(test_config, jobs, fail_fast):
+    for job_name in jobs:
+        notebook_path, job_id, run_id = jobs[job_name]
+        print(f"Waiting for {notebook_path}")
+
+        response = wait_for_run(run_id)
+        conclude_test(test_config, response, job_name, fail_fast)
 
 
-def publish(source_project, target_project, notebook_name) -> None:
+def test_notebook(test_config, job_name, notebook_path, fail_fast):
+    job_id = create_test_job(test_config, job_name, notebook_path)
+    run_id = DBAcademyRestClient().jobs().run_now(job_id)["run_id"]
+
+    response = wait_for_run(run_id)
+    conclude_test(test_config, response, job_name, fail_fast)
+
+
+def test_all_notebooks(jobs, test_config):
+    for job_name in jobs:
+        notebook_path, job_id, run_id = jobs[job_name]
+        print(f"Starting job for {notebook_path}")
+
+        job_id = create_test_job(test_config, job_name, notebook_path)
+        run_id = DBAcademyRestClient().jobs().run_now(job_id)["run_id"]
+
+        jobs[job_name] = (notebook_path, job_id, run_id)
+
+
+def conclude_test(test_config, response, job_name, fail_fast):
+    import json
+    log_run(test_config, response, job_name)
+
+    if response['state']['life_cycle_state'] == 'INTERNAL_ERROR':
+        print()  # Usually a notebook-not-found
+        print(json.dumps(response, indent=1))
+        raise RuntimeError(response['state']['state_message'])
+
+    result_state = response['state']['result_state']
+    run_id = response["run_id"] if "run_id" in response else 0
+
+    print("-" * 80)
+    print(f"Run #{run_id} is {response['state']['life_cycle_state']} - {result_state}")
     print("-" * 80)
 
-    source_notebook_path = f"{source_project}/{notebook_name}"
-    print(source_notebook_path)
+    if fail_fast and result_state == 'FAILED':
+        raise RuntimeError(f"{response['task']['notebook_task']['notebook_path']} failed.")
 
-    cmd_delim = "\n# COMMAND ----------\n"
-    target_notebook_path = f"{target_project}/{notebook_name}"
-    print(target_notebook_path)
 
-    raw_source = get_notebook(source_notebook_path)
+def log_run(test_config, response, job_name):
+    import traceback
+    from pyspark.sql.functions import current_timestamp
 
-    # source_blocks = map(lambda b: b.strip(), raw_source.split(cmd_delim))
-    # source_blocks = list(source_blocks)
+    suite_id = test_config["suite_id"]
+    sku = test_config["sku"]
+    spark_version = test_config["spark_version"]
 
-    skipped = 0
-    command_blocks = []
-    commands = raw_source.split(cmd_delim)
+    # noinspection PyBroadException
+    try:
+        job_id = response["job_id"] if "job_id" in response else 0
+        run_id = response["run_id"] if "run_id" in response else 0
+        result_state = response["state"]["result_state"] if "state" in response and "result_state" in response["state"] else "UNKNOWN"
+        execution_duration = response["execution_duration"] if "execution_duration" in response else 0
+        notebook_path = response["task"]["notebook_task"]["notebook_path"] if "task" in response and "notebook_task" in response["task"] and "notebook_path" in response["task"][
+            "notebook_task"] else "UNKNOWN"
 
-    found_setup = False
-    setup_prefix = "# magic %run ./_includes/setup-"
+        test_results = [(suite_id, sku, result_state, execution_duration, job_name, job_id, run_id, notebook_path, spark_version)]
+        results_table = test_config["results_table"]
 
-    for i in range(len(commands)):
-        command = commands[i].strip()
-        leading_comments = get_leading_comments(command)
+        sc, spark, dbutils = dbgems.init_locals()
 
-        if is_source_only_cell(leading_comments):
-            skipped += 1
-            print(f"Skipping Cmd #{i + 1} - Source-Only")
+        (spark.createDataFrame(test_results)
+         .toDF("suite_id", "sku", "status", "execution_duration", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
+         .withColumn("executed_at", current_timestamp())
+         .write
+         .format("delta")
+         .mode("append")
+         .saveAsTable(results_table))
+        print(f"Logged results to {results_table}")
 
-        elif is_answer_cell(leading_comments):
-            skipped += 1
-            print(f"Skipping Cmd #{i + 1} - Answer Cell")
-
-        elif command.strip() == "":
-            skipped += 1
-            print(f"Skipping Cmd #{i + 1} - Empty Cell")
-
-        elif command.strip().lower().startswith(setup_prefix):
-            if found_setup:
-                raise Exception(f"Duplicate call to setup in command #{i + 1}")
-            else:
-                found_setup = True
-                command_blocks.append(command)
-        else:
-            command_blocks.append(command)
-
-    final_source = ""
-
-    for command in command_blocks[:-1]:
-        final_source += command
-        final_source += "\n"
-        final_source += cmd_delim
-        final_source += "\n"
-
-    final_source += command_blocks[-1]
-
-    import_notebook("PYTHON", target_notebook_path, final_source)
-
-    # print(final_source)
+    except Exception:
+        print(f"Unable to log test results.")
+        traceback.print_exc()

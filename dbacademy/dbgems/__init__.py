@@ -1,5 +1,8 @@
+from pyspark import SparkContext
+from pyspark.sql import SparkSession
+
+
 def init_locals():
-    from pyspark.sql import SparkSession
 
     # noinspection PyGlobalUndefined
     global spark, sc, dbutils
@@ -27,7 +30,15 @@ def init_locals():
     return sc, spark, dbutils
 
 
+sc: SparkContext
+spark: SparkSession
 sc, spark, dbutils = init_locals()
+
+
+def get_cloud():
+    import requests
+    response = requests.get("http://169.254.169.254/latest/dynamic/instance-identity/document")
+    return "AWS" if response.status_code == 200 else "MSA"
 
 
 def get_tags() -> dict:
