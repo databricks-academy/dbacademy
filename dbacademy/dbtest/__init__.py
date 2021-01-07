@@ -55,32 +55,12 @@ def create_test_job(test_config, job_name, notebook_path):
     return json_response["job_id"]
 
 
-def wait_for_run(run_id):
-    import time
-
-    wait = 60
-    response = DBAcademyRestClient().runs().get(run_id)
-    state = response["state"]["life_cycle_state"]
-
-    if state != "TERMINATED" and state != "INTERNAL_ERROR":
-        if state == "PENDING" or state == "RUNNING":
-            print(f" - Run #{run_id} is {state}, checking again in {wait} seconds")
-            time.sleep(wait)
-        else:
-            print(f" - Run #{run_id} is {state}, checking again in 5 seconds")
-            time.sleep(5)
-
-        return wait_for_run(run_id)
-
-    return response
-
-
 def wait_for_notebooks(test_config, jobs, fail_fast):
     for job_name in jobs:
         notebook_path, job_id, run_id = jobs[job_name]
         print(f"Waiting for {notebook_path}")
 
-        response = wait_for_run(run_id)
+        response = DBAcademyRestClient().runs().wait_for(run_id)
         conclude_test(test_config, response, job_name, fail_fast)
 
 
@@ -88,7 +68,7 @@ def test_notebook(test_config, job_name, notebook_path, fail_fast):
     job_id = create_test_job(test_config, job_name, notebook_path)
     run_id = DBAcademyRestClient().jobs().run_now(job_id)["run_id"]
 
-    response = wait_for_run(run_id)
+    response = DBAcademyRestClient().runs().wait_for(run_id)
     conclude_test(test_config, response, job_name, fail_fast)
 
 
