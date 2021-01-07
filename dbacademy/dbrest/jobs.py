@@ -17,7 +17,7 @@ class JobsClient:
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         return response.json()
 
-    def run_job_now(self, job_id):
+    def run_now(self, job_id):
         response = requests.post(
             f"{self.endpoint}/api/2.0/jobs/run-now",
             headers={"Authorization": "Bearer " + self.token},
