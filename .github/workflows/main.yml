@@ -23,5 +23,5 @@ jobs:
         # This key comes from jacob.parr@databricks.com @ https://curriculum.cloud.databricks.com
         run: |
           echo "Executing rest call to update workspace project."
-          curl --verbose -H 'Authorization: Bearer dapi1d11a1067e31b1ff79d6589ac030c2ec -H 'Content-Type: application/json' -X POST "https://curriculum.cloud.databricks.com/api/2.0/projects/fetch-and-checkout" -d '{ "path": "/Projects/Published/dbacademy", "branch": "published"}'
+          curl -vv -H 'Authorization: Bearer dapi1d11a1067e31b1ff79d6589ac030c2ec' -H 'Content-Type: application/json' -X POST 'https://curriculum.cloud.databricks.com/api/2.0/projects/fetch-and-checkout' -d '{ "path": "/Projects/Published/dbacademy", "branch": "published"}'
           exit $?
