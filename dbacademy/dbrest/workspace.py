@@ -1,10 +1,12 @@
 import json
 import requests
+from dbacademy.dbtest import DBAcademyRestClient
 
 
 class WorkspaceClient:
 
-    def __init__(self, token, endpoint):
+    def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
+        self.client = client
         self.token = token
         self.endpoint = endpoint
 

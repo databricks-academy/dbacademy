@@ -1,10 +1,12 @@
 import json
 import requests
+from dbacademy.dbtest import DBAcademyRestClient
 
 
 class JobsClient:
 
-    def __init__(self, token, endpoint):
+    def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
+        self.client = client
         self.token = token
         self.endpoint = endpoint
 
@@ -20,11 +22,19 @@ class JobsClient:
     def run_now(self, job_id):
         response = requests.post(
             f"{self.endpoint}/api/2.0/jobs/run-now",
-            headers={"Authorization": "Bearer " + self.token},
+            headers={"Authorization": f"Bearer {self.token}"},
             data=json.dumps({"job_id": job_id})
         )
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         return response.json()["run_id"]
+
+    def delete_by_job_id(self, job_id):
+        response = requests.post(
+            f"{self.endpoint}/api/2.0/jobs/delete",
+            headers={"Authorization": f"Bearer {self.token}"},
+            data=json.dumps({"job_id": job_id})
+        )
+        assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
     def delete_by_name(self, jobs, success_only):
         if type(jobs) == dict:
@@ -38,7 +48,7 @@ class JobsClient:
 
         response = requests.get(
             f"{self.endpoint}/api/2.0/jobs/list",
-            headers={"Authorization": "Bearer " + self.token}
+            headers={"Authorization": f"Bearer {self.token}"}
         )
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
@@ -51,12 +61,7 @@ class JobsClient:
                 if job_name == job["settings"]["name"]:
                     job_id = job["job_id"]
 
-                    response = requests.get(
-                        f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}",
-                        headers={"Authorization": "Bearer " + self.token}
-                    )
-                    assert response.status_code == 200, f"({response.status_code}): {response.text}"
-                    runs = response.json()["runs"]
+                    runs = self.client.runs().list_by_job_id(job_id)
                     delete_job = True
 
                     for run in runs:
@@ -69,13 +74,7 @@ class JobsClient:
                             print(f"""The job "{job_name}" was not "SUCCESS" but "{state["result_state"]}", this job must be deleted manually""")
 
                     if delete_job:
-                        print(f"Deleting job #{job_id}")
-                        response = requests.post(
-                            f"{self.endpoint}/api/2.0/jobs/delete",
-                            headers={"Authorization": "Bearer " + self.token},
-                            data=json.dumps({"job_id": job_id})
-                        )
-                        assert response.status_code == 200, f"({response.status_code}): {response.text}"
+                        self.delete_by_job_id(job_id)
                         deleted += 1
 
         print(f"Deleted {deleted} jobs")
