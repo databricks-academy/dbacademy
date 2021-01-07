@@ -26,7 +26,7 @@ class JobsClient:
             data=json.dumps({"job_id": job_id})
         )
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
-        return response.json()["run_id"]
+        return response.json()
 
     def delete_by_job_id(self, job_id):
         response = requests.post(
