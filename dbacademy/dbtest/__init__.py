@@ -29,6 +29,15 @@ class TestConfig:
         # The spark table to which results will be appended
         self.results_table = results_table
 
+    def print(self):
+        print(f"suite_id:      {self.suite_id}")
+        print(f"results_table: {self.results_table}")
+        print(f"sku:           {self.sku}")
+        print(f"spark_version: {self.spark_version}")
+        print(f"workers:       {self.workers}")
+        print(f"instance_pool: {self.instance_pool}")
+        print(f"libraries:     {self.libraries}")
+        print(f"results_table: {self.results_table}")
 
 def create_test_job(test_config, job_name, notebook_path):
 
