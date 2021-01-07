@@ -6,10 +6,10 @@ class TestConfig:
         import uuid
 
         # The instance of this test run
-        self.suite_id = str(uuid.uuid1()),
+        self.suite_id = str(uuid.uuid1())
 
         # The name of the table results will be logged to
-        self.results_table = "test_results.apache_spark_programming_capstone",
+        self.results_table = "test_results.apache_spark_programming_capstone"
 
         # Course Name
         self.sku = sku
