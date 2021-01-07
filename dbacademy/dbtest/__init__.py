@@ -31,12 +31,8 @@ class TestConfig:
 
 
 def create_test_job(test_config, job_name, notebook_path):
-    spark_version = test_config.spark_version
-    workers = test_config.workers
-    instance_pool = test_config.instance_pool
-    libraries = test_config.libraries
 
-    spark_conf = {"spark.master": "local[*]"} if workers == 0 else dict()
+    spark_conf = {"spark.master": "local[*]"} if test_config.workers == 0 else dict()
 
     params = {
         "notebook_task": {
@@ -46,11 +42,11 @@ def create_test_job(test_config, job_name, notebook_path):
         "timeout_seconds": 7200,
         "max_concurrent_runs": 1,
         "email_notifications": {},
-        "libraries": libraries,
+        "libraries": test_config.libraries,
         "new_cluster": {
-            "num_workers": workers,
-            "instance_pool_id": f"{instance_pool}",
-            "spark_version": f"{spark_version}",
+            "num_workers": test_config.workers,
+            "instance_pool_id": f"{test_config.instance_pool}",
+            "spark_version": f"{test_config.spark_version}",
             "spark_conf": spark_conf
         }
     }
@@ -131,10 +127,6 @@ def log_run(test_config, response, job_name):
     import traceback
     from pyspark.sql.functions import current_timestamp
 
-    suite_id = test_config["suite_id"]
-    sku = test_config["sku"]
-    spark_version = test_config["spark_version"]
-
     # noinspection PyBroadException
     try:
         job_id = response["job_id"] if "job_id" in response else 0
@@ -144,8 +136,7 @@ def log_run(test_config, response, job_name):
         notebook_path = response["task"]["notebook_task"]["notebook_path"] if "task" in response and "notebook_task" in response["task"] and "notebook_path" in response["task"][
             "notebook_task"] else "UNKNOWN"
 
-        test_results = [(suite_id, sku, result_state, execution_duration, job_name, job_id, run_id, notebook_path, spark_version)]
-        results_table = test_config["results_table"]
+        test_results = [(test_config.suite_id, test_config.sku, result_state, execution_duration, job_name, job_id, run_id, notebook_path, test_config.spark_version)]
 
         sc, spark, dbutils = dbgems.init_locals()
 
@@ -155,8 +146,8 @@ def log_run(test_config, response, job_name):
          .write
          .format("delta")
          .mode("append")
-         .saveAsTable(results_table))
-        print(f"Logged results to {results_table}")
+         .saveAsTable(test_config.results_table))
+        print(f"Logged results to {test_config.results_table}")
 
     except Exception:
         print(f"Unable to log test results.")
