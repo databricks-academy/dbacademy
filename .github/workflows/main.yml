@@ -1,0 +1,27 @@
+# This workflow aims to respond to a push on the published branch by making
+# a REST call back to the workspace and force an update so that the "Published"
+# projects are always in the most current state.
+
+# See https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+
+name: Update Databricks Projects
+
+on:
+  push:
+    branches: [ published ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  update_databricks_projects:
+    runs-on: ubuntu-latest
+    steps:
+      # Runs a curl command using the runners shell
+      - name: Run a multi-line script
+        # This key comes from jacob.parr@databricks.com @ https://curriculum.cloud.databricks.com
+        run: |
+          echo "Executing rest call to update workspace project."
+          curl -vv -H 'Authorization: Bearer dapi1d11a1067e31b1ff79d6589ac030c2ec' -H 'Content-Type: application/json' -X POST 'https://curriculum.cloud.databricks.com/api/2.0/projects/fetch-and-checkout' -d '{ "path": "/Projects/Published/dbacademy", "branch": "published"}'
+          exit $?
