@@ -23,4 +23,5 @@ class RunsClient:
             headers={"Authorization": f"Bearer {self.token}"}
         )
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
-        runs = response.json()["runs"]
+        json_response = response.json()
+        return json_response["runs"] if "runs" in json_response else []
