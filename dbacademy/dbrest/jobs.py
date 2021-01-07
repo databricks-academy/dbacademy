@@ -20,7 +20,7 @@ class JobsClient:
     def run_job_now(self, job_id):
         response = requests.post(
             f"{self.endpoint}/api/2.0/jobs/run-now",
-            headers={"Authorization": "Bearer " + self.token()},
+            headers={"Authorization": "Bearer " + self.token},
             data=json.dumps({"job_id": job_id})
         )
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
@@ -38,7 +38,7 @@ class JobsClient:
 
         response = requests.get(
             f"{self.endpoint}/api/2.0/jobs/list",
-            headers={"Authorization": "Bearer " + self.token()}
+            headers={"Authorization": "Bearer " + self.token}
         )
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
@@ -52,8 +52,8 @@ class JobsClient:
                     job_id = job["job_id"]
 
                     response = requests.get(
-                        f"{self.endpoint()}/api/2.0/jobs/runs/list?job_id={job_id}",
-                        headers={"Authorization": "Bearer " + self.token()}
+                        f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}",
+                        headers={"Authorization": "Bearer " + self.token}
                     )
                     assert response.status_code == 200, f"({response.status_code}): {response.text}"
                     runs = response.json()["runs"]
@@ -71,8 +71,8 @@ class JobsClient:
                     if delete_job:
                         print(f"Deleting job #{job_id}")
                         response = requests.post(
-                            f"{self.endpoint()}/api/2.0/jobs/delete",
-                            headers={"Authorization": "Bearer " + self.token()},
+                            f"{self.endpoint}/api/2.0/jobs/delete",
+                            headers={"Authorization": "Bearer " + self.token},
                             data=json.dumps({"job_id": job_id})
                         )
                         assert response.status_code == 200, f"({response.status_code}): {response.text}"
