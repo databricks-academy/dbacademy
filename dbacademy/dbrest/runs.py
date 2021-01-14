@@ -1,5 +1,5 @@
 import requests
-from dbacademy.dbtest import DBAcademyRestClient
+from dbacademy.dbrest import DBAcademyRestClient
 
 
 class RunsClient:

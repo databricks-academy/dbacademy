@@ -1,7 +1,6 @@
 import json
 import requests
-from dbacademy.dbtest import DBAcademyRestClient
-import pandas as pd
+from dbacademy.dbrest import DBAcademyRestClient
 
 
 class WorkspaceClient:
@@ -18,8 +17,13 @@ class WorkspaceClient:
         return response.json()["objects"]
 
     def ls_pd(self, path):
+        # I don't have Pandas and I don't want to have to add Pandas.
+        # Use local import so as to not require project dependencies
+        # noinspection PyPackageRequirements
+        import pandas as pd
+
         objects = pd.DataFrame(self.ls(path))
-        objects["object"] = objects["path"].apply(lambda path: path.split("/")[-1])
+        objects["object"] = objects["path"].apply(lambda p: p.split("/")[-1])
         return_cols = ["object", "object_type", "object_id", "language", "path"]
         return objects[return_cols].sort_values("object")
 
