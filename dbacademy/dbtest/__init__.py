@@ -1,6 +1,3 @@
-from dbacademy.dbrest import *
-
-
 class TestConfig:
     def __init__(self, sku, spark_version, workers, instance_pool, libraries, results_table):
         import uuid
@@ -39,7 +36,9 @@ class TestConfig:
         print(f"libraries:     {self.libraries}")
         print(f"results_table: {self.results_table}")
 
+
 def create_test_job(test_config, job_name, notebook_path):
+    from dbacademy.dbrest import DBAcademyRestClient
 
     spark_conf = {"spark.master": "local[*]"} if test_config.workers == 0 else dict()
 
@@ -65,6 +64,8 @@ def create_test_job(test_config, job_name, notebook_path):
 
 
 def wait_for_notebooks(test_config, jobs, fail_fast):
+    from dbacademy.dbrest import DBAcademyRestClient
+
     for job_name in jobs:
         notebook_path, job_id, run_id = jobs[job_name]
         print(f"Waiting for {notebook_path}")
@@ -74,6 +75,8 @@ def wait_for_notebooks(test_config, jobs, fail_fast):
 
 
 def test_notebook(test_config, job_name, notebook_path, fail_fast):
+    from dbacademy.dbrest import DBAcademyRestClient
+
     job_id = create_test_job(test_config, job_name, notebook_path)
     run_id = DBAcademyRestClient().jobs().run_now(job_id)["run_id"]
 
@@ -82,6 +85,8 @@ def test_notebook(test_config, job_name, notebook_path, fail_fast):
 
 
 def test_all_notebooks(jobs, test_config):
+    from dbacademy.dbrest import DBAcademyRestClient
+
     for job_name in jobs:
         notebook_path, job_id, run_id = jobs[job_name]
         print(f"Starting job for {notebook_path}")
@@ -114,6 +119,7 @@ def conclude_test(test_config, response, job_name, fail_fast):
 
 def log_run(test_config, response, job_name):
     import traceback
+    from dbacademy import dbgems
     from pyspark.sql.functions import current_timestamp
 
     # noinspection PyBroadException
