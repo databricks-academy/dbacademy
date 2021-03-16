@@ -1,3 +1,4 @@
+# Databricks notebook source
 from dbacademy.dbrest import DBAcademyRestClient
 
 
