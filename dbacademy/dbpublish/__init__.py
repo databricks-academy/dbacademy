@@ -2,7 +2,7 @@
 from dbacademy.dbrest import DBAcademyRestClient
 
 
-def publish(source_project, target_project, notebook_name) -> None:
+def publish(source_project:str, target_project:str, notebook_name:str, replacements:dict = {}) -> None:
     print("-" * 80)
 
     source_notebook_path = f"{source_project}/{notebook_name}"
@@ -59,11 +59,19 @@ def publish(source_project, target_project, notebook_name) -> None:
         final_source += "\n"
 
     final_source += command_blocks[-1]
+    final_source = replace_contents(final_source, replacements)
 
     client = DBAcademyRestClient()
     client.workspace().import_notebook("PYTHON", target_notebook_path, final_source)
 
-
+def replace_contents(contents:str, replacements:dict):
+  for old_value in replacements:
+    new_value = replacements[old_value]
+    contents = contents.replace(old_value, new_value)
+  
+  return contents
+  
+    
 def get_leading_comments(command) -> []:
     leading_comments = []
     lines = command.split("\n")
