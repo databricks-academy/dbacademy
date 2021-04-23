@@ -62,6 +62,8 @@ def parse_directives(comments):
 
 from dbacademy.dbrest import DBAcademyRestClient
 
+cmd_delim = "\n# COMMAND ----------\n"
+
 def assert_only_one_setup_cell(command, index):
     global found_setup
     setup_prefix = "# magic %run ./_includes/setup-"
@@ -96,8 +98,6 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
     source_notebook_path = f"{source_project}/{notebook_name}"
     print(source_notebook_path)
-
-    cmd_delim = "\n# COMMAND ----------\n"
 
     client = DBAcademyRestClient()
     raw_source = client.workspace().export_notebook(source_notebook_path)
