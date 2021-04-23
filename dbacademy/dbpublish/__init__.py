@@ -62,6 +62,7 @@ def parse_directives(comments):
 
 from dbacademy.dbrest import DBAcademyRestClient
 
+found_setup = False
 cmd_delim = "\n# COMMAND ----------\n"
 
 def assert_only_one_setup_cell(command, index):
@@ -94,6 +95,7 @@ def publish_notebook(commands:list, target_path:str, replacements:dict = {}) -> 
     
     
 def publish(source_project:str, target_project:str, notebook_name:str, replacements:dict = {}, solutions_folder_name=None) -> None:
+    global found_setup
     print("-" * 80)
 
     source_notebook_path = f"{source_project}/{notebook_name}"
