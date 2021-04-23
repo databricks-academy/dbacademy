@@ -65,6 +65,7 @@ from dbacademy.dbrest import DBAcademyRestClient
 found_setup = False
 cmd_delim = "\n# COMMAND ----------\n"
 
+
 def assert_only_one_setup_cell(command, index):
     global found_setup
     setup_prefix = "# magic %run ./_includes/setup-"
@@ -94,7 +95,7 @@ def publish_notebook(commands:list, target_path:str, replacements:dict = {}) -> 
     client.workspace().import_notebook("PYTHON", target_path, final_source)
     
     
-def publish(source_project:str, target_project:str, notebook_name:str, replacements:dict = {}, solutions_folder_name=None) -> None:
+def publish(source_project:str, target_project:str, notebook_name:str, replacements:dict = {}, include_solution=False) -> None:
     global found_setup
     print("-" * 80)
 
@@ -154,59 +155,8 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     publish_notebook(students_commands, students_notebook_path, replacements)
     
     # Create the solutions notebooks
-    if solutions_folder_name:
-        solutions_notebook_path = f"{target_project}/{solutions_folder_name}/{notebook_name}"
+    if include_solution:
+        solutions_notebook_path = f"{target_project}/Solutions/{notebook_name}"
         print(solutions_notebook_path)
         print(f"...publishing {len(solutions_commands)} commands")
         publish_notebook(solutions_commands, solutions_notebook_path, replacements)
-
-# COMMAND ----------
-
-# content = """%md #    SOURCE-ONLY
-# # TODO
-# # This is a test
-#  # of the emergency
-# #broadcast system
-#      #   This is only a test       """
-
-# lines = content.split("\n")
-# for line in lines:  print(line)
-
-# print("-"*80)
-  
-# comments = get_leading_comments(content)
-# for comment in comments:  print(comment)
-  
-# print("-"*80)
-
-# directives = parse_directives(comments)
-# for directive in directives:
-#   print(directive)
-  
-# print("-"*80)
-
-# COMMAND ----------
-
-# content = """# MAGIC %md #    SOURCE-ONLY
-# # MAGIC # TODO
-# # MAGIC # This is a test
-# # MAGIC  # of the emergency
-# # MAGIC #broadcast system
-# # MAGIC      #   This is only a test       """
-
-
-# lines = content.split("\n")
-# for line in lines:  print(line)
-
-# print("-"*80)
-  
-# comments = get_leading_comments(content)
-# for comment in comments:  print(comment)
-  
-# print("-"*80)
-
-# directives = parse_directives(comments)
-# for directive in directives:
-#   print(directive)
-  
-# print("-"*80)
