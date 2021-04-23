@@ -64,6 +64,7 @@ from dbacademy.dbrest import DBAcademyRestClient
 
 def assert_only_one_setup_cell(command, index):
     global found_setup
+    setup_prefix = "# magic %run ./_includes/setup-"
     
     if command.strip().lower().startswith(setup_prefix):
         # This is a setup cell - just want to make sure we don't have duplicates, 
@@ -107,7 +108,6 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     commands = raw_source.split(cmd_delim)
 
     found_setup = False
-    setup_prefix = "# magic %run ./_includes/setup-"
 
     for i in range(len(commands)):
         command = commands[i].strip()
