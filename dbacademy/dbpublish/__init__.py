@@ -62,22 +62,48 @@ def parse_directives(comments):
 
 from dbacademy.dbrest import DBAcademyRestClient
 
+def assert_only_one_setup_cell(command, index):
+    global found_setup
+    
+    if command.strip().lower().startswith(setup_prefix):
+        # This is a setup cell - just want to make sure we don't have duplicates, 
+        # a problem Jacob creates when he is testing the setup notebooks
+        if found_setup:
+            raise Exception(f"Duplicate call to setup in command #{index + 1}")
+        else:
+            found_setup = True
+            
+            
+def publish_notebook(commands:list, target_path:str, replacements:dict = {}) -> None:
+    final_source = ""
+    
+    for command in commands[:-1]:
+        final_source += command
+        final_source += "\n"
+        final_source += cmd_delim
+        final_source += "\n"
 
-def publish(source_project:str, target_project:str, notebook_name:str, replacements:dict = {}) -> None:
+    final_source += commands[-1]
+    final_source = replace_contents(final_source, replacements)
+
+    client = DBAcademyRestClient()
+    client.workspace().import_notebook("PYTHON", target_path, final_source)
+    
+    
+def publish(source_project:str, target_project:str, notebook_name:str, replacements:dict = {}, solutions_folder_name=None) -> None:
     print("-" * 80)
 
     source_notebook_path = f"{source_project}/{notebook_name}"
     print(source_notebook_path)
 
     cmd_delim = "\n# COMMAND ----------\n"
-    target_notebook_path = f"{target_project}/{notebook_name}"
-    print(target_notebook_path)
 
     client = DBAcademyRestClient()
     raw_source = client.workspace().export_notebook(source_notebook_path)
 
     skipped = 0
-    command_blocks = []
+    students_commands = []
+    solutions_commands = []
     commands = raw_source.split(cmd_delim)
 
     found_setup = False
@@ -92,36 +118,36 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             skipped += 1
             print(f"Skipping Cmd #{i + 1} - Source-Only")
 
-        elif DIRECTIVE_ANSWER in directives:
-            skipped += 1
-            print(f"Skipping Cmd #{i + 1} - Answer Cell")
-
         elif command.strip() == "":
             skipped += 1
             print(f"Skipping Cmd #{i + 1} - Empty Cell")
 
-        elif command.strip().lower().startswith(setup_prefix):
-            if found_setup:
-                raise Exception(f"Duplicate call to setup in command #{i + 1}")
-            else:
-                found_setup = True
-                command_blocks.append(command)
+        elif DIRECTIVE_TODO in directives:
+            # This is a TODO cell, exclude from solution notebooks
+            assert_only_one_setup_cell(command, i)
+            students_commands.append(command)
+
+        elif DIRECTIVE_ANSWER in directives:
+            # This is an ANSWER cell, exclude from lab notebooks
+            assert_only_one_setup_cell(command, i)
+            solutions_commands.append(command)
+
         else:
-            command_blocks.append(command)
+            # Not a TODO or ANSWEr, just append to both
+            assert_only_one_setup_cell(command, i)
+            students_commands.append(command)
+            solutions_commands.append(command)
 
-    final_source = ""
-
-    for command in command_blocks[:-1]:
-        final_source += command
-        final_source += "\n"
-        final_source += cmd_delim
-        final_source += "\n"
-
-    final_source += command_blocks[-1]
-    final_source = replace_contents(final_source, replacements)
-
-    client = DBAcademyRestClient()
-    client.workspace().import_notebook("PYTHON", target_notebook_path, final_source)
+    # Create the student's notebooks
+    students_notebook_path = f"{target_project}/{notebook_name}"
+    print(students_notebook_path)
+    publish_notebook(students_commands, students_notebook_path, replacements)
+    
+    # Create the solutions notebooks
+    if solutions_folder_name:
+        solutions_notebook_path = f"{target_project}/{solutions_folder_name}/{notebook_name}"
+        print(solutions_notebook_path)
+        publish_notebook(solutions_commands, solutions_notebook_path, replacements)
 
 # COMMAND ----------
 
