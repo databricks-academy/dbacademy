@@ -1,4 +1,58 @@
 # Databricks notebook source
+DIRECTIVE_TODO = "TODO"
+DIRECTIVE_ANSWER = "ANSWER"
+DIRECTIVE_SOURCE_ONLY = "SOURCE-ONLY"
+SUPPORTED_DIRECTIVES = [DIRECTIVE_SOURCE_ONLY, DIRECTIVE_ANSWER, DIRECTIVE_TODO]
+
+
+def replace_contents(contents:str, replacements:dict):
+  for old_value in replacements:
+    new_value = replacements[old_value]
+    contents = contents.replace(old_value, new_value)
+  
+  return contents
+  
+    
+def get_leading_comments(command) -> []:
+    leading_comments = []
+    lines = command.split("\n")
+
+    for line in lines:
+        if line.strip().startswith("%"):
+            # Remove the magic command from this line
+            pos = line.find(" ")
+            if pos != -1 and line[pos:].strip().startswith("#"):
+              # append to our list
+              comment = line[pos:].strip()[1:].strip()
+              leading_comments.append(comment)
+              
+        elif line.strip().startswith("#"):
+            # append to our list
+            comment = line.strip()[1:].strip()
+            leading_comments.append(comment)
+            
+        else:
+            # All done, this is a non-comment
+            return leading_comments
+
+    return leading_comments
+  
+def parse_directives(comments):
+  directives = list()
+  for line in comments:
+    if line == line.upper():
+      # The comment is in all upper case, must be one or more directives
+      if " " in line: raise ValueError(f"Whitespace found in directive: {line}")
+      if "_" in line: raise ValueError(f"Underscore found in directive: {line}")
+      
+      directive = line.strip()
+      if directive not in SUPPORTED_DIRECTIVES: raise ValueError(f"Unspported directive {directive}: {SUPPORTED_DIRECTIVES}")
+      directives.append(line)
+      
+  return directives
+
+# COMMAND ----------
+
 from dbacademy.dbrest import DBAcademyRestClient
 
 
@@ -15,9 +69,6 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     client = DBAcademyRestClient()
     raw_source = client.workspace().export_notebook(source_notebook_path)
 
-    # source_blocks = map(lambda b: b.strip(), raw_source.split(cmd_delim))
-    # source_blocks = list(source_blocks)
-
     skipped = 0
     command_blocks = []
     commands = raw_source.split(cmd_delim)
@@ -28,12 +79,13 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     for i in range(len(commands)):
         command = commands[i].strip()
         leading_comments = get_leading_comments(command)
+        directives = parse_directives(leading_comments)
 
-        if is_source_only_cell(leading_comments):
+        if DIRECTIVE_SOURCE_ONLY in directives:
             skipped += 1
             print(f"Skipping Cmd #{i + 1} - Source-Only")
 
-        elif is_answer_cell(leading_comments):
+        elif DIRECTIVE_ANSWER in directives:
             skipped += 1
             print(f"Skipping Cmd #{i + 1} - Answer Cell")
 
@@ -63,43 +115,3 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
     client = DBAcademyRestClient()
     client.workspace().import_notebook("PYTHON", target_notebook_path, final_source)
-
-def replace_contents(contents:str, replacements:dict):
-  for old_value in replacements:
-    new_value = replacements[old_value]
-    contents = contents.replace(old_value, new_value)
-  
-  return contents
-  
-    
-def get_leading_comments(command) -> []:
-    leading_comments = []
-    lines = command.split("\n")
-
-    for line in lines:
-        if line.strip().startswith("%"):
-            pass  # skip magic commands
-        elif line.strip().startswith("#"):
-            # append to our list
-            leading_comments.append(line)
-        else:
-            # All done, this is a non-comment
-            return leading_comments
-
-    return leading_comments
-
-
-def is_answer_cell(comments) -> bool:
-    for tag in ["#answer", "# answer"]:
-        for comment in comments:
-            if comment.strip().lower().startswith(tag):
-                return True
-    return False
-
-
-def is_source_only_cell(comments) -> bool:
-    for tag in ["#source-only", "# source-only"]:
-        for comment in comments:
-            if comment.strip().lower().startswith(tag):
-                return True
-    return False
