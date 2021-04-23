@@ -143,12 +143,14 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     # Create the student's notebooks
     students_notebook_path = f"{target_project}/{notebook_name}"
     print(students_notebook_path)
+    print(f"...publishing {len(students_commands)} student commands")
     publish_notebook(students_commands, students_notebook_path, replacements)
     
     # Create the solutions notebooks
     if solutions_folder_name:
         solutions_notebook_path = f"{target_project}/{solutions_folder_name}/{notebook_name}"
         print(solutions_notebook_path)
+        print(f"...publishing {len(solutions_commands)} solutions commands")
         publish_notebook(solutions_commands, solutions_notebook_path, replacements)
 
 # COMMAND ----------
