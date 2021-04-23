@@ -110,6 +110,8 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     commands = raw_source.split(cmd_delim)
 
     found_setup = False
+    todo_count = 0
+    answ_count = 0
 
     for i in range(len(commands)):
         command = commands[i].strip()
@@ -126,11 +128,13 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
         elif DIRECTIVE_TODO in directives:
             # This is a TODO cell, exclude from solution notebooks
+            todo_count += 1
             assert_only_one_setup_cell(command, i)
             students_commands.append(command)
 
         elif DIRECTIVE_ANSWER in directives:
             # This is an ANSWER cell, exclude from lab notebooks
+            answ_count += 1
             assert_only_one_setup_cell(command, i)
             solutions_commands.append(command)
 
@@ -140,17 +144,20 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             students_commands.append(command)
             solutions_commands.append(command)
 
+    if todo_count > answ_count:
+        raise Exception(f"Found more {DIRECTIVE_TODO} commands ({todo_count}) than {DIRECTIVE_ANSWER} commands ({answ_count})")
+            
     # Create the student's notebooks
     students_notebook_path = f"{target_project}/{notebook_name}"
     print(students_notebook_path)
-    print(f"...publishing {len(students_commands)} student commands")
+    print(f"...publishing {len(students_commands)} commands")
     publish_notebook(students_commands, students_notebook_path, replacements)
     
     # Create the solutions notebooks
     if solutions_folder_name:
         solutions_notebook_path = f"{target_project}/{solutions_folder_name}/{notebook_name}"
         print(solutions_notebook_path)
-        print(f"...publishing {len(solutions_commands)} solutions commands")
+        print(f"...publishing {len(solutions_commands)} commands")
         publish_notebook(solutions_commands, solutions_notebook_path, replacements)
 
 # COMMAND ----------
