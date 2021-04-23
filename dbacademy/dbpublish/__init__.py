@@ -18,6 +18,12 @@ def get_leading_comments(command) -> []:
     lines = command.split("\n")
 
     for line in lines:
+        
+        if line.startswith("# MAGIC"):
+          line = line[7:].strip()
+        elif line.startswith("# COMMAND"):
+          line = line[9:].strip()
+        
         if line.strip().startswith("%"):
             # Remove the magic command from this line
             pos = line.find(" ")
@@ -42,11 +48,12 @@ def parse_directives(comments):
   for line in comments:
     if line == line.upper():
       # The comment is in all upper case, must be one or more directives
-      if " " in line: raise ValueError(f"Whitespace found in directive: {line}")
-      if "_" in line: raise ValueError(f"Underscore found in directive: {line}")
-      
       directive = line.strip()
-      if directive not in SUPPORTED_DIRECTIVES: raise ValueError(f"Unspported directive {directive}: {SUPPORTED_DIRECTIVES}")
+      
+      if " " in directive: raise ValueError(f"Whitespace found in directive {directive}: {line}")
+      if "_" in directive: raise ValueError(f"Underscore found in directive {directive}: {line}")
+      
+      if directive not in SUPPORTED_DIRECTIVES: raise ValueError(f"Unspported directive {directive} {SUPPORTED_DIRECTIVES}: {line}")
       directives.append(line)
       
   return directives
@@ -115,3 +122,54 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
     client = DBAcademyRestClient()
     client.workspace().import_notebook("PYTHON", target_notebook_path, final_source)
+
+# COMMAND ----------
+
+# content = """%md #    SOURCE-ONLY
+# # TODO
+# # This is a test
+#  # of the emergency
+# #broadcast system
+#      #   This is only a test       """
+
+# lines = content.split("\n")
+# for line in lines:  print(line)
+
+# print("-"*80)
+  
+# comments = get_leading_comments(content)
+# for comment in comments:  print(comment)
+  
+# print("-"*80)
+
+# directives = parse_directives(comments)
+# for directive in directives:
+#   print(directive)
+  
+# print("-"*80)
+
+# COMMAND ----------
+
+# content = """# MAGIC %md #    SOURCE-ONLY
+# # MAGIC # TODO
+# # MAGIC # This is a test
+# # MAGIC  # of the emergency
+# # MAGIC #broadcast system
+# # MAGIC      #   This is only a test       """
+
+
+# lines = content.split("\n")
+# for line in lines:  print(line)
+
+# print("-"*80)
+  
+# comments = get_leading_comments(content)
+# for comment in comments:  print(comment)
+  
+# print("-"*80)
+
+# directives = parse_directives(comments)
+# for directive in directives:
+#   print(directive)
+  
+# print("-"*80)
