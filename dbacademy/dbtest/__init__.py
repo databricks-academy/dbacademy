@@ -1,12 +1,18 @@
 class TestConfig:
     def __init__(self, name, spark_version, workers, instance_pool, libraries, results_table):
-        import uuid
+        import uuid, re
 
         # The instance of this test run
         self.suite_id = str(uuid.uuid1())
 
         # The name of the table results will be logged to
-        self.results_table = "test_results.apache_spark_programming_capstone"
+        self.results_table = re.sub("[^a-z0-9]", "_", name.lower()).replace(".", "_")
+        for i in range(10): 
+            # Make N passes over the table name to remove duplicate underscores
+            self.results_table = self.results_table.replace("__", "_")
+        # Lastly, prefix the database name to the table name
+        self.results_table = "test_results." + self.results_table
+
 
         # Course Name
         self.name = name
