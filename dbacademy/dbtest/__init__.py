@@ -1,5 +1,5 @@
 class TestConfig:
-    def __init__(self, sku, spark_version, workers, instance_pool, libraries, results_table):
+    def __init__(self, name, spark_version, workers, instance_pool, libraries, results_table):
         import uuid
 
         # The instance of this test run
@@ -9,7 +9,7 @@ class TestConfig:
         self.results_table = "test_results.apache_spark_programming_capstone"
 
         # Course Name
-        self.sku = sku
+        self.name = name
 
         # The runtime you wish to test against
         self.spark_version = spark_version
@@ -29,7 +29,7 @@ class TestConfig:
     def print(self):
         print(f"suite_id:      {self.suite_id}")
         print(f"results_table: {self.results_table}")
-        print(f"sku:           {self.sku}")
+        print(f"name:          {self.name}")
         print(f"spark_version: {self.spark_version}")
         print(f"workers:       {self.workers}")
         print(f"instance_pool: {self.instance_pool}")
@@ -131,12 +131,12 @@ def log_run(test_config, response, job_name):
         notebook_path = response["task"]["notebook_task"]["notebook_path"] if "task" in response and "notebook_task" in response["task"] and "notebook_path" in response["task"][
             "notebook_task"] else "UNKNOWN"
 
-        test_results = [(test_config.suite_id, test_config.sku, result_state, execution_duration, job_name, job_id, run_id, notebook_path, test_config.spark_version)]
+        test_results = [(test_config.suite_id, test_config.name, result_state, execution_duration, job_name, job_id, run_id, notebook_path, test_config.spark_version)]
 
         sc, spark, dbutils = dbgems.init_locals()
 
         (spark.createDataFrame(test_results)
-         .toDF("suite_id", "sku", "status", "execution_duration", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
+         .toDF("suite_id", "name", "status", "execution_duration", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
          .withColumn("executed_at", current_timestamp())
          .write
          .format("delta")
