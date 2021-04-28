@@ -1,17 +1,24 @@
 class TestConfig:
-    def __init__(self, name, spark_version, workers, instance_pool, libraries, results_table):
+    def __init__(self, name, spark_version, workers, instance_pool, libraries, results_table, results_database="test_results"):
         import uuid, re
 
         # The instance of this test run
         self.suite_id = str(uuid.uuid1())
 
-        # The name of the table results will be logged to
-        self.results_table = re.sub("[^a-z0-9]", "_", name.lower()).replace(".", "_")
-        for i in range(10): 
-            # Make N passes over the table name to remove duplicate underscores
-            self.results_table = self.results_table.replace("__", "_")
-        # Lastly, prefix the database name to the table name
-        self.results_table = "test_results." + self.results_table
+        # Update the name of the database results will be logged to - convert any special characters to underscores
+        results_database = re.sub("[^a-zA-Z0-9]", "_", results_database.lower())
+        # Make N passes over the database name to remove duplicate underscores
+        for i in range(10): results_database = results_database.replace("__", "_")
+        
+        # Update the name of the table results will be logged to
+        if "." in results_table: raise ValueError("The results_table should not include the database name")
+        # Convert any special characters to underscores
+        results_table = re.sub("[^a-zA-Z0-9]", "_", results_table.lower())
+        # Make N passes over the table name to remove duplicate underscores
+        for i in range(10): results_table = results_table.replace("__", "_")
+            
+        # Lastly, prefix the database name to the table name and set to the class attribute
+        self.results_table = f"{results_database}.{results_table}"
 
 
         # Course Name
