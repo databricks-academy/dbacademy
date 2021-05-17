@@ -34,11 +34,16 @@ sc, spark, dbutils = init_locals()
 
 
 def get_cloud():
-    host_name = get_tag("browserHostName")
-    if host_name.endswith(".gcp.databricks.com"): return "GCP"
-    elif host_name.endswith(".cloud.databricks.com"): return "AWS"
-    elif host_name.endswith(".azuredatabricks.net"): return "MSA"
-    else: raise ValueError(f"""No identifiable cloud for "{host_name}".""")
+    with open("/databricks/common/conf/deploy.conf") as f:
+        for line in f:
+            if "databricks.instance.metadata.cloudProvider" in line and "\"GCP\"" in line:
+                return "GCP"
+            elif "databricks.instance.metadata.cloudProvider" in line and "\"AWS\"" in line:
+                return "AWS"
+            elif "databricks.instance.metadata.cloudProvider" in line and "\"Azure\"" in line:
+                return "MSA"
+
+    raise Exception("Unable to identify the cloud provider.")
 
 
 def get_tags() -> dict:
