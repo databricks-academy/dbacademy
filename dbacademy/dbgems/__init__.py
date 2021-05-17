@@ -34,9 +34,11 @@ sc, spark, dbutils = init_locals()
 
 
 def get_cloud():
-    import requests
-    response = requests.get("http://169.254.169.254/latest/dynamic/instance-identity/document")
-    return "AWS" if response.status_code == 200 else "MSA"
+    host_name = get_tag("browserHostName")
+    if host_name.endswith(".gcp.databricks.com"): return "GCP"
+    elif host_name.endswith(".cloud.databricks.com"): return "AWS"
+    elif host_name.endswith(".azuredatabricks.net"): return "MSA"
+    else: raise ValueError(f"""No identifiable cloud for "{host_name}".""")
 
 
 def get_tags() -> dict:
