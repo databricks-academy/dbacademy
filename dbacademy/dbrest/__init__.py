@@ -22,6 +22,11 @@ class DBAcademyRestClient:
 
         return JobsClient(self, self.token, self.endpoint)
 
+    def repos(self):
+        from dbacademy.dbrest.repos import ReposClient
+
+        return ReposClient(self, self.token, self.endpoint)
+
     def runs(self):
         from dbacademy.dbrest.runs import RunsClient
 
