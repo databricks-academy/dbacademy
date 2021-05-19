@@ -76,3 +76,10 @@ class WorkspaceClient:
         response = requests.get(uri, headers=auth_header)
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         return response.text
+
+    def get_status(self, notebook_path) -> str:
+        auth_header = {"Authorization": "Bearer " + self.token + ""}
+        uri = f"{self.endpoint}/api/2.0/workspace/get-status?path={notebook_path}"
+        response = requests.get(uri, headers=auth_header)
+        assert response.status_code == 200, f"({response.status_code}): {response.text}"
+        return response.text
