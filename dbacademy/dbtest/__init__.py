@@ -171,12 +171,12 @@ def log_run(test_config, response, job_name):
         spark.sql(f"OPTIMIZE {test_config.results_table}")
         
         # Next we will take our historical data and create a "current" variant, starting with the list of distinct names
-        names = list(map(lambda r: r.name, spark.read.table(tbl_name).select("name").distinct().collect()))
+        names = list(map(lambda r: r.name, spark.read.table(test_config.results_table).select("name").distinct().collect()))
 
         # For each distinct name, get the latest suite ID and build a new condition
         or_cond = ""
         for name in names:
-          suite_id = spark.read.table(tbl_name).where(col("name") == name).select(first("suite_id")).first()[0]
+          suite_id = spark.read.table(test_config.results_table).where(col("name") == name).select(first("suite_id")).first()[0]
           if len(or_cond) > 0: or_cond += " OR "
           or_cond += f"suite_id = '{suite_id}'"
 
