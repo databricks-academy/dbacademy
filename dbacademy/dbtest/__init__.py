@@ -1,3 +1,4 @@
+# Databricks notebook source
 class TestConfig:
     def __init__(self, name, spark_version, workers, instance_pool, libraries, results_table, results_database="test_results"):
         import uuid, re
