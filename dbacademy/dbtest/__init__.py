@@ -6,8 +6,8 @@ class TestConfig:
                  cloud,
                  instance_pool, 
                  libraries=[], 
-                 results_table="test_results", 
-                 results_database="test_results"):
+                 results_database="test_results"
+                 results_table="smoke_tests"):
       
         import uuid, re
 
