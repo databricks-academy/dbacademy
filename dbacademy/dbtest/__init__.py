@@ -48,9 +48,6 @@ class TestConfig:
         # The libraries to be attached to the cluster
         self.libraries = libraries
 
-        # The spark table to which results will be appended
-        self.results_table = results_table
-
     def print(self):
         print(f"suite_id:      {self.suite_id}")
         print(f"results_table: {self.results_table}")
