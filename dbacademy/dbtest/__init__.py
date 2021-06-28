@@ -143,7 +143,7 @@ def conclude_test(test_config, response, job_name, fail_fast):
 def log_run(test_config, response, job_name):
     import traceback
     from dbacademy import dbgems
-    from pyspark.sql.functions import current_timestamp
+    from pyspark.sql.functions import col, current_timestamp
 
     # noinspection PyBroadException
     try:
@@ -158,6 +158,7 @@ def log_run(test_config, response, job_name):
 
         sc, spark, dbutils = dbgems.init_locals()
 
+        # Append our tests results to the main DB
         (spark.createDataFrame(test_results)
          .toDF("suite_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
          .withColumn("executed_at", current_timestamp())
@@ -165,6 +166,27 @@ def log_run(test_config, response, job_name):
          .format("delta")
          .mode("append")
          .saveAsTable(test_config.results_table))
+        
+        # Optimize the table we just updated
+        spark.sql(f"OPTIMIZE {test_config.results_table}")
+        
+        # Next we will take our historical data and create a "current" variant, starting with the list of distinct names
+        names = list(map(lambda r: r.name, spark.read.table(tbl_name).select("name").distinct().collect()))
+
+        # For each distinct name, get the latest suite ID and build a new condition
+        or_cond = ""
+        for name in names:
+          suite_id = spark.read.table(tbl_name).where(col("name") == name).select(first("suite_id")).first()[0]
+          if len(or_cond) > 0: or_cond += " OR "
+          or_cond += f"suite_id = '{suite_id}'"
+
+        # Read in the full dataset, grabbing only the latest records, and write that back out to the new DB
+        latest_tbl = f"{test_config.results_table}_latest"
+        spark.read.table(test_config.results_table).filter(or_cond).write.format("delta").mode("overwrite").saveAsTable(latest_tbl)
+        
+        # Lastly, optimize our "current" table
+        spark.sql(f"OPTIMIZE {latest_tbl}")
+        
         print(f"Logged results to {test_config.results_table}")
 
     except Exception:
