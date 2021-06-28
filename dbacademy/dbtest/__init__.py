@@ -4,6 +4,7 @@ class TestConfig:
                  spark_version, 
                  workers, 
                  instance_pool, 
+                 cloud,
                  libraries=[], 
                  results_table="test_results", 
                  results_database="test_results"):
@@ -41,6 +42,9 @@ class TestConfig:
         # The instance pool from which to obtain VMs
         self.instance_pool = instance_pool
 
+        # The name of the cloud on which this tests was ran
+        self.cloud = cloud
+        
         # The libraries to be attached to the cluster
         self.libraries = libraries
 
@@ -54,6 +58,7 @@ class TestConfig:
         print(f"spark_version: {self.spark_version}")
         print(f"workers:       {self.workers}")
         print(f"instance_pool: {self.instance_pool}")
+        print(f"cloud:         {self.cloud}")
         print(f"libraries:     {self.libraries}")
         print(f"results_table: {self.results_table}")
 
@@ -152,12 +157,12 @@ def log_run(test_config, response, job_name):
         notebook_path = response["task"]["notebook_task"]["notebook_path"] if "task" in response and "notebook_task" in response["task"] and "notebook_path" in response["task"][
             "notebook_task"] else "UNKNOWN"
 
-        test_results = [(test_config.suite_id, test_config.name, result_state, execution_duration, job_name, job_id, run_id, notebook_path, test_config.spark_version)]
+        test_results = [(test_config.suite_id, test_config.name, result_state, execution_duration, test_config.cloud, job_name, job_id, run_id, notebook_path, test_config.spark_version)]
 
         sc, spark, dbutils = dbgems.init_locals()
 
         (spark.createDataFrame(test_results)
-         .toDF("suite_id", "name", "status", "execution_duration", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
+         .toDF("suite_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
          .withColumn("executed_at", current_timestamp())
          .write
          .format("delta")
