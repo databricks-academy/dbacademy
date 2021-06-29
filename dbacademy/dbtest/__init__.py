@@ -143,7 +143,7 @@ def conclude_test(test_config, response, job_name, fail_fast):
 def log_run(test_config, response, job_name):
     import traceback
     from dbacademy import dbgems
-    from pyspark.sql.functions import col, current_timestamp
+    from pyspark.sql.functions import col, current_timestamp, first
 
     # noinspection PyBroadException
     try:
