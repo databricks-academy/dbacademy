@@ -9,7 +9,7 @@ class TestConfig:
                  results_database="test_results",
                  results_table="smoke_tests"):
       
-        import uuid, re
+        import uuid, re, time
 
         # The instance of this test run
         self.suite_id = str(time.time())+"-"+str(uuid.uuid1())
