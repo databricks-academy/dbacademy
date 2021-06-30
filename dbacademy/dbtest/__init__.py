@@ -162,13 +162,12 @@ def log_run(test_config, response, job_name):
         (spark.createDataFrame(test_results)
          .toDF("suite_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
          .withColumn("executed_at", current_timestamp())
-         .write
-         .format("delta")
-         .mode("append")
-         .saveAsTable(test_config.results_table))
+         .write.format("delta").mode("append").saveAsTable(test_config.results_table))
+        print(f"Logged results to {test_config.results_table}")
         
         # Optimize the table we just updated
         spark.sql(f"OPTIMIZE {test_config.results_table}")
+        print(f"Optimized {test_config.results_table}")
         
         # Next we will take our historical data and create a "current" variant, starting with the list of distinct names
         names = list(map(lambda r: r.name, spark.read.table(test_config.results_table).select("name").distinct().collect()))
@@ -182,12 +181,17 @@ def log_run(test_config, response, job_name):
 
         # Read in the full dataset, grabbing only the latest records, and write that back out to the new DB
         latest_tbl = f"{test_config.results_table}_latest"
-        spark.read.table(test_config.results_table).filter(or_cond).write.format("delta").mode("overwrite").saveAsTable(latest_tbl)
+        filtered_df = spark.read.table(test_config.results_table).filter(or_cond)
+        print(f"Updating current dataset with {filtered_df.count()} records: {or_cond}")
+        
+        filtered_df.write.format("delta").mode("overwrite").saveAsTable(latest_tbl)
+        print(f"Wrote latest results to {latest_tbl}")
         
         # Lastly, optimize our "current" table
         spark.sql(f"OPTIMIZE {latest_tbl}")
+        print(f"Optimized {latest_tbl}")
         
-        print(f"Logged results to {test_config.results_table}")
+        print(f"* Testing results logging complete.")
 
     except Exception:
         print(f"Unable to log test results.")
