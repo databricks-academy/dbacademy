@@ -12,7 +12,7 @@ class TestConfig:
         import uuid, re
 
         # The instance of this test run
-        self.suite_id = str(uuid.uuid1())
+        self.suite_id = str(time.time())+"-"+str(uuid.uuid1())
 
         # Update the name of the database results will be logged to - convert any special characters to underscores
         results_database = re.sub("[^a-zA-Z0-9]", "_", results_database.lower())
