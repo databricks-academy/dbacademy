@@ -147,6 +147,8 @@ def log_run(test_config, response, job_name):
 
     # noinspection PyBroadException
     try:
+        print(f""*** Processing test results to {test_config.results_table}")
+              
         job_id = response["job_id"] if "job_id" in response else 0
         run_id = response["run_id"] if "run_id" in response else 0
         result_state = response["state"]["result_state"] if "state" in response and "result_state" in response["state"] else "UNKNOWN"
@@ -163,11 +165,11 @@ def log_run(test_config, response, job_name):
          .toDF("suite_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
          .withColumn("executed_at", current_timestamp())
          .write.format("delta").mode("append").saveAsTable(test_config.results_table))
-        print(f"Logged results to {test_config.results_table}")
+        print(f""*** Logged results to {test_config.results_table}")
         
         # Optimize the table we just updated
         spark.sql(f"OPTIMIZE {test_config.results_table}")
-        print(f"Optimized {test_config.results_table}")
+        print(f""*** Optimized {test_config.results_table}")
         
         # Next we will take our historical data and create a "current" variant, starting with the list of distinct names
         names = list(map(lambda r: r.name, spark.read.table(test_config.results_table).select("name").distinct().collect()))
@@ -182,16 +184,16 @@ def log_run(test_config, response, job_name):
         # Read in the full dataset, grabbing only the latest records, and write that back out to the new DB
         latest_tbl = f"{test_config.results_table}_latest"
         filtered_df = spark.read.table(test_config.results_table).filter(or_cond)
-        print(f"Updating current dataset with {filtered_df.count()} records: {or_cond}")
+        print(f""*** Updating current dataset with {filtered_df.count()} records: {or_cond}")
         
         filtered_df.write.format("delta").mode("overwrite").saveAsTable(latest_tbl)
-        print(f"Wrote latest results to {latest_tbl}")
+        print(f""*** Wrote latest results to {latest_tbl}")
         
         # Lastly, optimize our "current" table
         spark.sql(f"OPTIMIZE {latest_tbl}")
-        print(f"Optimized {latest_tbl}")
+        print(f"*** Optimized {latest_tbl}")
         
-        print(f"* Testing results logging complete.")
+        print(f"*** Testing results logging complete.")
 
     except Exception:
         print(f"Unable to log test results.")
