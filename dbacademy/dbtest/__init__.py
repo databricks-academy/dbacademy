@@ -97,7 +97,7 @@ def wait_for_notebooks(test_config, jobs, fail_fast):
         conclude_test(test_config, response, job_name, fail_fast, ignored)
         
 
-def test_one_notebook(job_name, job, fail_fast=False):
+def test_one_notebook(test_config, job_name, job, fail_fast=False):
   print(f"Starting job for {job_name}")
   notebook_path, job_id, run_id, ignored = job
   test_notebook(test_config, job_name, notebook_path, fail_fast, ignored)
