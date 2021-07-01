@@ -156,15 +156,16 @@ def log_run(test_config, response, job_name):
         notebook_path = response["task"]["notebook_task"]["notebook_path"] if "task" in response and "notebook_task" in response["task"] and "notebook_path" in response["task"][
             "notebook_task"] else "UNKNOWN"
 
-        test_results = [(test_config.suite_id, test_config.name, result_state, execution_duration, test_config.cloud, job_name, job_id, run_id, notebook_path, test_config.spark_version)]
+        test_id = str(time.time())+"-"+str(uuid.uuid1())
+
+        test_results = [(test_config.suite_id, test_id, test_config.name, result_state, execution_duration, test_config.cloud, job_name, job_id, run_id, notebook_path, test_config.spark_version)]
 
         sc, spark, dbutils = dbgems.init_locals()
 
         # Append our tests results to the database
         (spark.createDataFrame(test_results)
-         .toDF("suite_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
+         .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
          .withColumn("executed_at", current_timestamp())
-         .repartition(1)
          .write.format("csv").mode("append").saveAsTable(test_config.results_table))
         print(f"*** Logged results to {test_config.results_table}")
         
