@@ -90,39 +90,44 @@ def wait_for_notebooks(test_config, jobs, fail_fast):
     from dbacademy.dbrest import DBAcademyRestClient
 
     for job_name in jobs:
-        notebook_path, job_id, run_id = jobs[job_name]
+        notebook_path, job_id, run_id, status = jobs[job_name]
         print(f"Waiting for {notebook_path}")
 
         response = DBAcademyRestClient().runs().wait_for(run_id)
-        conclude_test(test_config, response, job_name, fail_fast)
+        conclude_test(test_config, response, job_name, fail_fast, status)
 
 
-def test_notebook(test_config, job_name, notebook_path, fail_fast):
+def test_notebook(test_config, job_name, notebook_path, fail_fast, status):
     from dbacademy.dbrest import DBAcademyRestClient
 
     job_id = create_test_job(test_config, job_name, notebook_path)
     run_id = DBAcademyRestClient().jobs().run_now(job_id)["run_id"]
 
     response = DBAcademyRestClient().runs().wait_for(run_id)
-    conclude_test(test_config, response, job_name, fail_fast)
+    conclude_test(test_config, response, job_name, fail_fast, status)
 
 
 def test_all_notebooks(jobs, test_config):
     from dbacademy.dbrest import DBAcademyRestClient
 
     for job_name in jobs:
-        notebook_path, job_id, run_id = jobs[job_name]
-        print(f"Starting job for {notebook_path}")
+        notebook_path, job_id, run_id, status = jobs[job_name]
+        
+        if status:
+            # It came in with a status (e.g. IGNORED), use it
+            jobs[job_name] = (notebook_path, job_id, run_id, status)
+        else:
+            print(f"Starting job for {notebook_path}")
 
-        job_id = create_test_job(test_config, job_name, notebook_path)
-        run_id = DBAcademyRestClient().jobs().run_now(job_id)["run_id"]
+            job_id = create_test_job(test_config, job_name, notebook_path)
+            run_id = DBAcademyRestClient().jobs().run_now(job_id)["run_id"]
 
-        jobs[job_name] = (notebook_path, job_id, run_id)
+            jobs[job_name] = (notebook_path, job_id, run_id)
 
 
-def conclude_test(test_config, response, job_name, fail_fast):
+def conclude_test(test_config, response, job_name, fail_fast, status):
     import json
-    log_run(test_config, response, job_name)
+    log_run(test_config, response, job_name, status)
 
     if response['state']['life_cycle_state'] == 'INTERNAL_ERROR':
         print()  # Usually a notebook-not-found
@@ -140,7 +145,7 @@ def conclude_test(test_config, response, job_name, fail_fast):
         raise RuntimeError(f"{response['task']['notebook_task']['notebook_path']} failed.")
 
 
-def log_run(test_config, response, job_name):
+def log_run(test_config, response, job_name, status):
     import traceback, time, uuid
     from dbacademy import dbgems
     from pyspark.sql.functions import col, current_timestamp, first
@@ -151,7 +156,12 @@ def log_run(test_config, response, job_name):
               
         job_id = response["job_id"] if "job_id" in response else 0
         run_id = response["run_id"] if "run_id" in response else 0
-        result_state = response["state"]["result_state"] if "state" in response and "result_state" in response["state"] else "UNKNOWN"
+        
+        if status:
+            result_state = status
+        else:
+            result_state = response["state"]["result_state"] if "state" in response and "result_state" in response["state"] else "UNKNOWN"
+        
         execution_duration = response["execution_duration"] if "execution_duration" in response else 0
         notebook_path = response["task"]["notebook_task"]["notebook_path"] if "task" in response and "notebook_task" in response["task"] and "notebook_path" in response["task"][
             "notebook_task"] else "UNKNOWN"
