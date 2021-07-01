@@ -5,9 +5,10 @@ class TestConfig:
                  workers, 
                  cloud,
                  instance_pool, 
-                 libraries=[], 
+                 libraries, 
+                 results_table,
                  results_database="test_results",
-                 results_table="smoke_tests"):
+                 ):
       
         import uuid, re, time
 
@@ -160,10 +161,11 @@ def log_run(test_config, response, job_name):
 
         sc, spark, dbutils = dbgems.init_locals()
 
-        # Append our tests results to the main DB
+        # Append our tests results to the database
         (spark.createDataFrame(test_results)
          .toDF("suite_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
          .withColumn("executed_at", current_timestamp())
+         .repartition(1)
          .write.format("delta").mode("append").saveAsTable(test_config.results_table))
         print(f"*** Logged results to {test_config.results_table}")
         
@@ -172,26 +174,26 @@ def log_run(test_config, response, job_name):
         print(f"*** Optimized {test_config.results_table}")
         
         # Next we will take our historical data and create a "current" variant, starting with the list of distinct names
-        names = list(map(lambda r: r.name, spark.read.table(test_config.results_table).select("name").distinct().collect()))
+        # names = list(map(lambda r: r.name, spark.read.table(test_config.results_table).select("name").distinct().collect()))
 
         # For each distinct name, get the latest suite ID and build a new condition
-        or_cond = ""
-        for name in names:
-          suite_id = spark.read.table(test_config.results_table).where(col("name") == name).select(first("suite_id")).first()[0]
-          if len(or_cond) > 0: or_cond += " OR "
-          or_cond += f"suite_id = '{suite_id}'"
+        # or_cond = ""
+        # for name in names:
+        #   suite_id = spark.read.table(test_config.results_table).where(col("name") == name).select(first("suite_id")).first()[0]
+        #   if len(or_cond) > 0: or_cond += " OR "
+        #   or_cond += f"suite_id = '{suite_id}'"
 
         # Read in the full dataset, grabbing only the latest records, and write that back out to the new DB
-        latest_tbl = f"{test_config.results_table}_latest"
-        filtered_df = spark.read.table(test_config.results_table).filter(or_cond)
-        print(f"*** Updating current dataset with {filtered_df.count()} records: {or_cond}")
+        # latest_tbl = f"{test_config.results_table}_latest"
+        # filtered_df = spark.read.table(test_config.results_table).filter(or_cond)
+        # print(f"*** Updating current dataset with {filtered_df.count()} records: {or_cond}")
         
-        filtered_df.write.format("delta").mode("overwrite").saveAsTable(latest_tbl)
-        print(f"*** Wrote latest results to {latest_tbl}")
+        # filtered_df.write.format("delta").mode("overwrite").saveAsTable(latest_tbl)
+        # print(f"*** Wrote latest results to {latest_tbl}")
         
         # Lastly, optimize our "current" table
-        spark.sql(f"OPTIMIZE {latest_tbl}")
-        print(f"*** Optimized {latest_tbl}")
+        # spark.sql(f"OPTIMIZE {latest_tbl}")
+        # print(f"*** Optimized {latest_tbl}")
         
         print(f"*** Testing results logging complete.")
 
