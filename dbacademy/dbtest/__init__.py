@@ -169,8 +169,8 @@ def log_run(test_config, response, job_name):
         print(f"*** Logged results to {test_config.results_table}")
         
         # Optimize the table we just updated
-        spark.sql(f"OPTIMIZE {test_config.results_table}")
-        print(f"*** Optimized {test_config.results_table}")
+        # spark.sql(f"OPTIMIZE {test_config.results_table}")
+        # print(f"*** Optimized {test_config.results_table}")
         
         # Next we will take our historical data and create a "current" variant, starting with the list of distinct names
         # names = list(map(lambda r: r.name, spark.read.table(test_config.results_table).select("name").distinct().collect()))
