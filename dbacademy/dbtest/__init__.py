@@ -90,44 +90,46 @@ def wait_for_notebooks(test_config, jobs, fail_fast):
     from dbacademy.dbrest import DBAcademyRestClient
 
     for job_name in jobs:
-        notebook_path, job_id, run_id, status = jobs[job_name]
+        notebook_path, job_id, run_id, ignored = jobs[job_name]
         print(f"Waiting for {notebook_path}")
 
         response = DBAcademyRestClient().runs().wait_for(run_id)
-        conclude_test(test_config, response, job_name, fail_fast, status)
+        conclude_test(test_config, response, job_name, fail_fast, ignored)
+        
 
-
-def test_notebook(test_config, job_name, notebook_path, fail_fast, status):
+def test_one_notebook(job_name, job, fail_fast=False):
+  print(f"Starting job for {job_name}")
+  notebook_path, job_id, run_id, ignored = job
+  test_notebook(test_config, job_name, notebook_path, fail_fast, ignored)
+    
+    
+def test_notebook(test_config, job_name, notebook_path, fail_fast, ignored):
     from dbacademy.dbrest import DBAcademyRestClient
 
     job_id = create_test_job(test_config, job_name, notebook_path)
     run_id = DBAcademyRestClient().jobs().run_now(job_id)["run_id"]
 
     response = DBAcademyRestClient().runs().wait_for(run_id)
-    conclude_test(test_config, response, job_name, fail_fast, status)
+    conclude_test(test_config, response, job_name, fail_fast, ignored)
 
 
 def test_all_notebooks(jobs, test_config):
     from dbacademy.dbrest import DBAcademyRestClient
 
     for job_name in jobs:
-        notebook_path, job_id, run_id, status = jobs[job_name]
+        notebook_path, job_id, run_id, ignored = jobs[job_name]
         
-        if status:
-            # It came in with a status (e.g. IGNORED), use it
-            jobs[job_name] = (notebook_path, job_id, run_id, status)
-        else:
-            print(f"Starting job for {notebook_path}")
+        print(f"Starting job for {notebook_path}")
 
-            job_id = create_test_job(test_config, job_name, notebook_path)
-            run_id = DBAcademyRestClient().jobs().run_now(job_id)["run_id"]
+        job_id = create_test_job(test_config, job_name, notebook_path)
+        run_id = DBAcademyRestClient().jobs().run_now(job_id)["run_id"]
 
-            jobs[job_name] = (notebook_path, job_id, run_id)
+        jobs[job_name] = (notebook_path, job_id, run_id, ignored)
+        
 
-
-def conclude_test(test_config, response, job_name, fail_fast, status):
+def conclude_test(test_config, response, job_name, fail_fast, ignored):
     import json
-    log_run(test_config, response, job_name, status)
+    log_run(test_config, response, job_name, ignored)
 
     if response['state']['life_cycle_state'] == 'INTERNAL_ERROR':
         print()  # Usually a notebook-not-found
@@ -143,9 +145,9 @@ def conclude_test(test_config, response, job_name, fail_fast, status):
 
     if fail_fast and result_state == 'FAILED':
         raise RuntimeError(f"{response['task']['notebook_task']['notebook_path']} failed.")
+        
 
-
-def log_run(test_config, response, job_name, status):
+def log_run(test_config, response, job_name, ignored):
     import traceback, time, uuid
     from dbacademy import dbgems
     from pyspark.sql.functions import col, current_timestamp, first
@@ -157,10 +159,8 @@ def log_run(test_config, response, job_name, status):
         job_id = response["job_id"] if "job_id" in response else 0
         run_id = response["run_id"] if "run_id" in response else 0
         
-        if status:
-            result_state = status
-        else:
-            result_state = response["state"]["result_state"] if "state" in response and "result_state" in response["state"] else "UNKNOWN"
+        result_state = response["state"]["result_state"] if "state" in response and "result_state" in response["state"] else "UNKNOWN"
+        if result_state == "FAILED" and ignored: result_state = "IGNORED"
         
         execution_duration = response["execution_duration"] if "execution_duration" in response else 0
         notebook_path = response["task"]["notebook_task"]["notebook_path"] if "task" in response and "notebook_task" in response["task"] and "notebook_path" in response["task"][
@@ -178,34 +178,6 @@ def log_run(test_config, response, job_name, status):
          .withColumn("executed_at", current_timestamp())
          .write.format("csv").mode("append").saveAsTable(test_config.results_table))
         print(f"*** Logged results to {test_config.results_table}")
-        
-        # Optimize the table we just updated
-        # spark.sql(f"OPTIMIZE {test_config.results_table}")
-        # print(f"*** Optimized {test_config.results_table}")
-        
-        # Next we will take our historical data and create a "current" variant, starting with the list of distinct names
-        # names = list(map(lambda r: r.name, spark.read.table(test_config.results_table).select("name").distinct().collect()))
-
-        # For each distinct name, get the latest suite ID and build a new condition
-        # or_cond = ""
-        # for name in names:
-        #   suite_id = spark.read.table(test_config.results_table).where(col("name") == name).select(first("suite_id")).first()[0]
-        #   if len(or_cond) > 0: or_cond += " OR "
-        #   or_cond += f"suite_id = '{suite_id}'"
-
-        # Read in the full dataset, grabbing only the latest records, and write that back out to the new DB
-        # latest_tbl = f"{test_config.results_table}_latest"
-        # filtered_df = spark.read.table(test_config.results_table).filter(or_cond)
-        # print(f"*** Updating current dataset with {filtered_df.count()} records: {or_cond}")
-        
-        # filtered_df.write.format("delta").mode("overwrite").saveAsTable(latest_tbl)
-        # print(f"*** Wrote latest results to {latest_tbl}")
-        
-        # Lastly, optimize our "current" table
-        # spark.sql(f"OPTIMIZE {latest_tbl}")
-        # print(f"*** Optimized {latest_tbl}")
-        
-        print(f"*** Testing results logging complete.")
 
     except Exception:
         print(f"Unable to log test results.")
