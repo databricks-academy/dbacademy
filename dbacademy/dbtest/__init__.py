@@ -51,7 +51,6 @@ class TestConfig:
 
     def print(self):
         print(f"suite_id:      {self.suite_id}")
-        print(f"results_table: {self.results_table}")
         print(f"name:          {self.name}")
         print(f"spark_version: {self.spark_version}")
         print(f"workers:       {self.workers}")
