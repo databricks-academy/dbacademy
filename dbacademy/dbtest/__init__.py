@@ -28,7 +28,7 @@ class TestConfig:
         for i in range(10): results_table = results_table.replace("__", "_")
             
         # Lastly, prefix the database name to the table name and set to the class attribute
-        self.results_table = f"{results_database}.{results_table}"
+        self.results_table = f"{results_database}.{results_table}_csv"
 
 
         # Course Name
@@ -165,7 +165,7 @@ def log_run(test_config, response, job_name):
          .toDF("suite_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
          .withColumn("executed_at", current_timestamp())
          .repartition(1)
-         .write.format("delta").mode("append").saveAsTable(test_config.results_table))
+         .write.format("csv").mode("append").saveAsTable(test_config.results_table))
         print(f"*** Logged results to {test_config.results_table}")
         
         # Optimize the table we just updated
