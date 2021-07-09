@@ -14,6 +14,9 @@ class DBAcademyRestClient:
             self.endpoint = dbgems.get_notebooks_api_endpoint()
         else:
             self._get_local_credentials(config_file, profile)
+        
+        if self.throttle > 0:
+          print(f"** WARNING ** Requests are being throttled by {self.throttle} per request.")
 
     def workspace(self):
         from dbacademy.dbrest.workspace import WorkspaceClient
