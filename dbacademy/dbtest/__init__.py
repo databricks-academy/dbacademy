@@ -94,7 +94,7 @@ def wait_for_notebooks(client, test_config, jobs, fail_fast):
         
 
 def test_one_notebook(client, test_config, job_name, job, fail_fast=False):
-  print(f"Starting job for {job_name}")
+  print(f"Starting job for {job[0]}")
   notebook_path, job_id, run_id, ignored = job
   test_notebook(client, test_config, job_name, notebook_path, fail_fast, ignored)
     
