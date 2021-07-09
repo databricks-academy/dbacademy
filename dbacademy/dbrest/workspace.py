@@ -1,4 +1,5 @@
-# Databricks notebook sourceimport json
+# Databricks notebook source
+import json
 import requests
 from dbacademy.dbrest import DBAcademyRestClient
 
