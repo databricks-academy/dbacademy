@@ -1,3 +1,4 @@
+# Databricks notebook source
 import requests
 from dbacademy.dbrest import DBAcademyRestClient
 
