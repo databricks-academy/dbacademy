@@ -1,6 +1,7 @@
 # Databricks notebook source
 class TestConfig:
-    def __init__(self, name, 
+    def __init__(self, 
+                 name, 
                  spark_version, 
                  workers, 
                  cloud,
@@ -60,9 +61,7 @@ class TestConfig:
         print(f"results_table: {self.results_table}")
 
 
-def create_test_job(test_config, job_name, notebook_path):
-    from dbacademy.dbrest import DBAcademyRestClient
-
+def create_test_job(client, test_config, job_name, notebook_path):
     spark_conf = {"spark.master": "local[*]"} if test_config.workers == 0 else dict()
 
     params = {
@@ -81,48 +80,41 @@ def create_test_job(test_config, job_name, notebook_path):
             "spark_conf": spark_conf
         }
     }
-    client = DBAcademyRestClient()
     json_response = client.jobs().create(params)
     return json_response["job_id"]
 
 
-def wait_for_notebooks(test_config, jobs, fail_fast):
-    from dbacademy.dbrest import DBAcademyRestClient
-
+def wait_for_notebooks(client, test_config, jobs, fail_fast):
     for job_name in jobs:
         notebook_path, job_id, run_id, ignored = jobs[job_name]
         print(f"Waiting for {notebook_path}")
 
-        response = DBAcademyRestClient().runs().wait_for(run_id)
+        response = client.runs().wait_for(run_id)
         conclude_test(test_config, response, job_name, fail_fast, ignored)
         
 
-def test_one_notebook(test_config, job_name, job, fail_fast=False):
+def test_one_notebook(client, test_config, job_name, job, fail_fast=False):
   print(f"Starting job for {job_name}")
   notebook_path, job_id, run_id, ignored = job
-  test_notebook(test_config, job_name, notebook_path, fail_fast, ignored)
+  test_notebook(client, test_config, job_name, notebook_path, fail_fast, ignored)
     
     
-def test_notebook(test_config, job_name, notebook_path, fail_fast, ignored):
-    from dbacademy.dbrest import DBAcademyRestClient
-
+def test_notebook(client, test_config, job_name, notebook_path, fail_fast, ignored):
     job_id = create_test_job(test_config, job_name, notebook_path)
-    run_id = DBAcademyRestClient().jobs().run_now(job_id)["run_id"]
+    run_id = client.jobs().run_now(job_id)["run_id"]
 
-    response = DBAcademyRestClient().runs().wait_for(run_id)
+    response = client.runs().wait_for(run_id)
     conclude_test(test_config, response, job_name, fail_fast, ignored)
 
 
-def test_all_notebooks(jobs, test_config):
-    from dbacademy.dbrest import DBAcademyRestClient
-
+def test_all_notebooks(client, jobs, test_config):
     for job_name in jobs:
         notebook_path, job_id, run_id, ignored = jobs[job_name]
         
         print(f"Starting job for {notebook_path}")
 
         job_id = create_test_job(test_config, job_name, notebook_path)
-        run_id = DBAcademyRestClient().jobs().run_now(job_id)["run_id"]
+        run_id = client.jobs().run_now(job_id)["run_id"]
 
         jobs[job_name] = (notebook_path, job_id, run_id, ignored)
         

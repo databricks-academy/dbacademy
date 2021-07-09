@@ -6,10 +6,11 @@ from dbacademy.dbrest import DBAcademyRestClient
 
 class JobsClient:
 
-    def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
-        self.client = client
-        self.token = token
-        self.endpoint = endpoint
+    def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str, throttle: int):
+        self.client = client      # Client API exposing other operations to this class
+        self.token = token        # The authentication token
+        self.endpoint = endpoint  # The API endpoint
+        self.throttle = throttle  # Number of seconds by which to throttle input
 
     def create(self, params):
         response = requests.post(
@@ -17,6 +18,7 @@ class JobsClient:
             headers={"Authorization": "Bearer " + self.token},
             data=json.dumps(params)
         )
+        time.sleep(self.throttle)
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         return response.json()
 
@@ -26,6 +28,7 @@ class JobsClient:
             headers={"Authorization": f"Bearer {self.token}"},
             data=json.dumps({"job_id": job_id})
         )
+        time.sleep(self.throttle)
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         return response.json()
 
@@ -35,6 +38,7 @@ class JobsClient:
             headers={"Authorization": f"Bearer {self.token}"},
             data=json.dumps({"job_id": job_id})
         )
+        time.sleep(self.throttle)
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
     def delete_by_name(self, jobs, success_only):
@@ -51,6 +55,7 @@ class JobsClient:
             f"{self.endpoint}/api/2.0/jobs/list",
             headers={"Authorization": f"Bearer {self.token}"}
         )
+        time.sleep(self.throttle)
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
         deleted = 0

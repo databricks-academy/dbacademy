@@ -4,7 +4,9 @@ import os
 
 
 class DBAcademyRestClient:
-    def __init__(self, local=False, config_file=None, profile="DEFAULT"):
+  
+    def __init__(self, local=False, config_file=None, profile="DEFAULT", throttle=0):
+        self.throttle = throttle
         if not local:
             from dbacademy import dbgems
 
@@ -20,8 +22,7 @@ class DBAcademyRestClient:
 
     def jobs(self):
         from dbacademy.dbrest.jobs import JobsClient
-
-        return JobsClient(self, self.token, self.endpoint)
+        return JobsClient(self, self.token, self.endpoint, self.throttle)
 
     def repos(self):
         from dbacademy.dbrest.repos import ReposClient
