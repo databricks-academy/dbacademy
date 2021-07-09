@@ -1,5 +1,6 @@
 # Databricks notebook source
 import json
+import time
 import requests
 from dbacademy.dbrest import DBAcademyRestClient
 

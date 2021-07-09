@@ -18,7 +18,7 @@ class DBAcademyRestClient:
     def workspace(self):
         from dbacademy.dbrest.workspace import WorkspaceClient
 
-        return WorkspaceClient(self, self.token, self.endpoint)
+        return WorkspaceClient(self, self.token, self.endpoint, self.throttle)
 
     def jobs(self):
         from dbacademy.dbrest.jobs import JobsClient
