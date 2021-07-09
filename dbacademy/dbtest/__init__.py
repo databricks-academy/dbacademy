@@ -100,7 +100,7 @@ def test_one_notebook(client, test_config, job_name, job, fail_fast=False):
     
     
 def test_notebook(client, test_config, job_name, notebook_path, fail_fast, ignored):
-    job_id = create_test_job(test_config, job_name, notebook_path)
+    job_id = create_test_job(client, test_config, job_name, notebook_path)
     run_id = client.jobs().run_now(job_id)["run_id"]
 
     response = client.runs().wait_for(run_id)
@@ -113,7 +113,7 @@ def test_all_notebooks(client, jobs, test_config):
         
         print(f"Starting job for {notebook_path}")
 
-        job_id = create_test_job(test_config, job_name, notebook_path)
+        job_id = create_test_job(client, test_config, job_name, notebook_path)
         run_id = client.jobs().run_now(job_id)["run_id"]
 
         jobs[job_name] = (notebook_path, job_id, run_id, ignored)
