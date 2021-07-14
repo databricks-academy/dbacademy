@@ -5,13 +5,16 @@ import os
 
 class DBAcademyRestClient:
   
-    def __init__(self, local=False, config_file=None, profile="DEFAULT", throttle=0):
+    def __init__(self, local=False, config_file=None, profile="DEFAULT", throttle=0, endpoint=None):
         self.throttle = throttle
         if not local:
             from dbacademy import dbgems
 
             self.token = dbgems.get_notebooks_api_token()
-            self.endpoint = dbgems.get_notebooks_api_endpoint()
+            if endpoint:
+              self.endpoint = endpoint
+            else:
+              self.endpoint = dbgems.get_notebooks_api_endpoint()
         else:
             self._get_local_credentials(config_file, profile)
         
