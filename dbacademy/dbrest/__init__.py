@@ -19,7 +19,8 @@ class DBAcademyRestClient:
             self._get_local_credentials(config_file, profile)
         
         if self.throttle > 0:
-          print(f"** WARNING ** Requests are being throttled by {self.throttle} per request.")
+          s = "" if self.throttle == 1 else "s"
+          print(f"** WARNING ** Requests are being throttled by {self.throttle} second{s} per request.")
 
     def workspace(self):
         from dbacademy.dbrest.workspace import WorkspaceClient
