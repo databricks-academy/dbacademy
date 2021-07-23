@@ -54,12 +54,15 @@ def parse_directives(comments):
     if line == line.upper():
       # The comment is in all upper case, must be one or more directives
       directive = line.strip()
-      
-      if " " in directive: raise ValueError(f"Whitespace found in directive {directive}: {line}")
-      if "-" in directive: raise ValueError(f"Hyphen found in directive {directive}: {line}")
-      
-      if directive not in SUPPORTED_DIRECTIVES: raise ValueError(f"Unspported directive {directive} {SUPPORTED_DIRECTIVES}: {line}")
-      directives.append(line)
+
+      if directive in ["<FILL_IN>", FILL_IN]:
+          print("ignoring FILL_IN")
+      else:
+          if " " in directive: raise ValueError(f"Whitespace found in directive {directive}: {line}")
+          if "-" in directive: raise ValueError(f"Hyphen found in directive {directive}: {line}")
+
+          if directive not in SUPPORTED_DIRECTIVES: raise ValueError(f"Unspported directive {directive} {SUPPORTED_DIRECTIVES}: {line}")
+          directives.append(line)
       
   return directives
 
