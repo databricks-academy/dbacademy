@@ -107,6 +107,8 @@ def publish_notebook(commands:list, target_path:str, replacements:dict = {}) -> 
     final_source = replace_contents(final_source, replacements)
 
     client = DBAcademyRestClient()
+    parent_dir = "/".join(target_path.split("/")[0:-1])
+    client.workspace().mkdirs(parent_dir)
     client.workspace().import_notebook("PYTHON", target_path, final_source)
     
     
