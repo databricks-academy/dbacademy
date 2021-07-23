@@ -112,7 +112,7 @@ def publish_notebook(commands:list, target_path:str, replacements:dict = {}) -> 
     client.workspace().import_notebook("PYTHON", target_path, final_source)
     
     
-def publish(source_project:str, target_project:str, notebook_name:str, replacements:dict = {}, include_solution=False, debug=False) -> None:
+def publish(source_project:str, target_project:str, notebook_name:str, replacements:dict = {}, include_solution=False) -> None:
     global found_setup
     print("-" * 80)
 
@@ -176,19 +176,13 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     # Create the student's notebooks
     students_notebook_path = f"{target_project}/{notebook_name}"
     print(students_notebook_path)
-    if debug:
-        print(f"...debugging {len(students_commands)} commands")
-    else:
-        print(f"...publishing {len(students_commands)} commands")
-        publish_notebook(students_commands, students_notebook_path, replacements)
+    print(f"...publishing {len(students_commands)} commands")
+    publish_notebook(students_commands, students_notebook_path, replacements)
     
     # Create the solutions notebooks
     if include_solution:
         solutions_notebook_path = f"{target_project}/Solutions/{notebook_name}"
         print(solutions_notebook_path)
-        if debug:
-            print(f"...debugging {len(solutions_commands)} commands")
-        else:
-            print(f"...publishing {len(solutions_commands)} commands")
-            publish_notebook(solutions_commands, solutions_notebook_path, replacements)
+        print(f"...publishing {len(solutions_commands)} commands")
+        publish_notebook(solutions_commands, solutions_notebook_path, replacements)
             
