@@ -150,12 +150,12 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
         # Check the command for BDC markers
         tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY","AMAZON_ONLY","AZURE_ONLY","TODO","ANSWER","TEST"
-                  "PRIVATE_TEST","VIDEO","INSTRUCTOR_NOTE","SOURCE_ONLY","ILT_ONLY","SELF_PACED_ONLY","ALL_NOTEBOOKS","INLINE","NEW_PART"]
+                  "PRIVATE_TEST","VIDEO","INSTRUCTOR_NOTE","ILT_ONLY","SELF_PACED_ONLY","ALL_NOTEBOOKS","INLINE","NEW_PART"]
         
         for token in tokens:
             if token in command:
                 print("-"*80)
-                print("- Found {token} in command #{i}"
+                print("- Found {token} in command #{i}")
                 print("-"*80)
             
     if todo_count > answ_count:
