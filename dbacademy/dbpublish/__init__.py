@@ -48,7 +48,7 @@ def get_leading_comments(command) -> []:
 
     return leading_comments
   
-def parse_directives(comments):
+def parse_directives(i, comments):
   directives = list()
   for line in comments:
     if line == line.upper():
@@ -58,8 +58,8 @@ def parse_directives(comments):
       if directive in ["<FILL_IN>", "FILL_IN"]:
           print("Ignoring FILL_IN")
       else:
-          if " " in directive: raise ValueError(f"""Whitespace found in directive {directive}: {line}""")
-          if "-" in directive: raise ValueError(f"""Hyphen found in directive {directive}: {line}""")
+          if " " in directive: raise ValueError(f"""Whitespace found in directive {directive}, line #{i}: {line}""")
+          if "-" in directive: raise ValueError(f"""Hyphen found in directive {directive}, line #{i}: {line}""")
 
           if directive not in SUPPORTED_DIRECTIVES: raise ValueError(f"Unspported directive {directive} {SUPPORTED_DIRECTIVES}: {line}")
           directives.append(line)
@@ -125,7 +125,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     for i in range(len(commands)):
         command = commands[i].strip()
         leading_comments = get_leading_comments(command)
-        directives = parse_directives(leading_comments)
+        directives = parse_directives(i, leading_comments)
 
         if DIRECTIVE_SOURCE_ONLY in directives:
             skipped += 1
