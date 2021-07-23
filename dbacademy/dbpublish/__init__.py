@@ -56,7 +56,7 @@ def parse_directives(comments):
       directive = line.strip()
       
       if " " in directive: raise ValueError(f"Whitespace found in directive {directive}: {line}")
-      if "_" in directive: raise ValueError(f"Underscore found in directive {directive}: {line}")
+      if "-" in directive: raise ValueError(f"Hyphen found in directive {directive}: {line}")
       
       if directive not in SUPPORTED_DIRECTIVES: raise ValueError(f"Unspported directive {directive} {SUPPORTED_DIRECTIVES}: {line}")
       directives.append(line)
