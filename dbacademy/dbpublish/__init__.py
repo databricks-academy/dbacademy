@@ -2,8 +2,11 @@
 DIRECTIVE_TODO = "TODO"
 DIRECTIVE_ANSWER = "ANSWER"
 DIRECTIVE_SOURCE_ONLY = "SOURCE-ONLY"
+
 SUPPORTED_DIRECTIVES = [DIRECTIVE_SOURCE_ONLY, DIRECTIVE_ANSWER, DIRECTIVE_TODO]
 
+# "IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY","AMAZON_ONLY","AZURE_ONLY","TODO","ANSWER","TEST"
+# "PRIVATE_TEST","VIDEO","INSTRUCTOR_NOTE","SOURCE_ONLY","ILT_ONLY","SELF_PACED_ONLY","ALL_NOTEBOOKS","INLINE","NEW_PART"
 
 def replace_contents(contents:str, replacements:dict):
   for old_value in replacements:
@@ -150,7 +153,10 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
                   "PRIVATE_TEST","VIDEO","INSTRUCTOR_NOTE","SOURCE_ONLY","ILT_ONLY","SELF_PACED_ONLY","ALL_NOTEBOOKS","INLINE","NEW_PART"]
         
         for token in tokens:
-            assert token not in command, f"Found {token} in command #{i}"
+            if token in command:
+                print("-"*80)
+                print("- Found {token} in command #{i}"
+                print("-"*80)
             
     if todo_count > answ_count:
         raise Exception(f"Found more {DIRECTIVE_TODO} commands ({todo_count}) than {DIRECTIVE_ANSWER} commands ({answ_count})")
