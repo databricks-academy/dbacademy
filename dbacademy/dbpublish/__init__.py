@@ -7,11 +7,6 @@ DIRECTIVE_ILT_ONLY = "ILT_ONLY"
 
 SUPPORTED_DIRECTIVES = [DIRECTIVE_SOURCE_ONLY, DIRECTIVE_ANSWER, DIRECTIVE_TODO, DIRECTIVE_SELF_PACED_ONLY, DIRECTIVE_ILT_ONLY, ]
 
-# "IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY",
-# "R_ONLY","AMAZON_ONLY","AZURE_ONLY","TODO","ANSWER","TEST"
-# "PRIVATE_TEST","VIDEO","INSTRUCTOR_NOTE","INSTRUCTOR_ONLY","SOURCE_ONLY",
-# "ILT_ONLY","SELF_PACED_ONLY","ALL_NOTEBOOKS","INLINE","NEW_PART"
-
 def replace_contents(contents:str, replacements:dict):
   for old_value in replacements:
     new_value = replacements[old_value]
@@ -72,7 +67,15 @@ def parse_directives(i, comments):
           if directive not in SUPPORTED_DIRECTIVES: 
             raise ValueError(f"""Unspported directive "{directive}" in Cmd #{i} {SUPPORTED_DIRECTIVES}: {line}""")
           directives.append(line)
-      
+
+  bdc_directives = ["IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY",
+                    "R_ONLY","AMAZON_ONLY","AZURE_ONLY","TODO","ANSWER","TEST",
+                    "PRIVATE_TEST","VIDEO","INSTRUCTOR_NOTE","INSTRUCTOR_ONLY","SOURCE_ONLY",
+                    "ILT_ONLY","SELF_PACED_ONLY","ALL_NOTEBOOKS","INLINE","NEW_PART","%python","%r"]
+        
+  for bdc_directive in bdc_directives:
+    assert bdc_directive not in directives, f"Found unsupported BDC directive: {bdc_directive}"
+    
   return directives
 
 # COMMAND ----------
