@@ -55,8 +55,8 @@ def parse_directives(comments):
       # The comment is in all upper case, must be one or more directives
       directive = line.strip()
 
-      if directive in ["<FILL_IN>", FILL_IN]:
-          print("ignoring FILL_IN")
+      if directive in ["<FILL_IN>", "FILL_IN"]:
+          print("Ignoring FILL_IN")
       else:
           if " " in directive: raise ValueError(f"Whitespace found in directive {directive}: {line}")
           if "-" in directive: raise ValueError(f"Hyphen found in directive {directive}: {line}")
