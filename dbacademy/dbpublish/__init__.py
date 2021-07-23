@@ -152,18 +152,18 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     students_notebook_path = f"{target_project}/{notebook_name}"
     print(students_notebook_path)
     if debug:
+        print(f"...debugging {len(students_commands)} commands")
+    else:
         print(f"...publishing {len(students_commands)} commands")
         publish_notebook(students_commands, students_notebook_path, replacements)
-    else:
-        print(f"...debugging {len(students_commands)} commands")
     
     # Create the solutions notebooks
     if include_solution:
         solutions_notebook_path = f"{target_project}/Solutions/{notebook_name}"
         print(solutions_notebook_path)
         if debug:
+            print(f"...debugging {len(solutions_commands)} commands")
+        else:
             print(f"...publishing {len(solutions_commands)} commands")
             publish_notebook(solutions_commands, solutions_notebook_path, replacements)
-        else:
-            print(f"...debugging {len(solutions_commands)} commands")
             
