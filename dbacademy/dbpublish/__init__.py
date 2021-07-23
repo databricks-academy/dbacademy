@@ -51,18 +51,24 @@ def get_leading_comments(command) -> []:
 def parse_directives(i, comments):
   directives = list()
   for line in comments:
-    if line == line.upper():
+    if line != line.upper():
+        # Directives only in the header. Now that
+        # there is other content, we can move on.
+        return directives
+    else:
       # The comment is in all upper case, must be one or more directives
       directive = line.strip()
 
-      if directive in ["<FILL_IN>", "FILL_IN", "# FILL_IN"]:
+      if directive in []: # ["<FILL_IN>", "FILL_IN", "# FILL_IN"]:
           print("Ignoring FILL_IN")
       else:
           print(f"""Processing "{directive}" in Cmd #{i} """)
-          if " " in directive: raise ValueError(f"""Whitespace found in directive "{directive}", Cmd #{i}: {line}""")
-          if "-" in directive: raise ValueError(f"""Hyphen found in directive "{directive}", Cmd #{i}: {line}""")
-
-          if directive not in SUPPORTED_DIRECTIVES: raise ValueError(f"Unspported directive {directive} {SUPPORTED_DIRECTIVES}: {line}")
+          if " " in directive: 
+            raise ValueError(f"""Whitespace found in directive "{directive}", Cmd #{i}: {line}""")
+          if "-" in directive: 
+            raise ValueError(f"""Hyphen found in directive "{directive}", Cmd #{i}: {line}""")
+          if directive not in SUPPORTED_DIRECTIVES: 
+            raise ValueError(f"Unspported directive "{directive}" in Cmd #{i} {SUPPORTED_DIRECTIVES}: {line}")
           directives.append(line)
       
   return directives
