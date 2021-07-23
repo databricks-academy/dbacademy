@@ -140,11 +140,18 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             solutions_commands.append(command)
 
         else:
-            # Not a TODO or ANSWEr, just append to both
+            # Not a TODO or ANSWER, just append to both
             assert_only_one_setup_cell(command, i)
             students_commands.append(command)
             solutions_commands.append(command)
 
+        # Check the command for BDC markers
+        tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY","AMAZON_ONLY","AZURE_ONLY","TODO","ANSWER","TEST"
+                  "PRIVATE_TEST","VIDEO","INSTRUCTOR_NOTE","SOURCE_ONLY","ILT_ONLY","SELF_PACED_ONLY","ALL_NOTEBOOKS","INLINE","NEW_PART"]
+        
+        for token in tokens
+            assert token not in command, f"Found {token} in command #{i}"
+            
     if todo_count > answ_count:
         raise Exception(f"Found more {DIRECTIVE_TODO} commands ({todo_count}) than {DIRECTIVE_ANSWER} commands ({answ_count})")
             
