@@ -59,7 +59,7 @@ def parse_directives(i, comments):
       # The comment is in all upper case, must be one or more directives
       directive = line.strip()
 
-      if directive in []: # ["TODO", "ANSWER"]:
+      if directive in ["TODO", "ANSWER"]:
           pass
       else:
           print(f"""Processing "{directive}" in Cmd #{i} """)
