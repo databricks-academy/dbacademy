@@ -20,7 +20,6 @@ def get_leading_comments(command) -> []:
     lines = command.split("\n")
 
     for line in lines:
-        
         if line.startswith("# MAGIC"):
           line = line[7:].strip()
         elif line.startswith("# COMMAND"):
@@ -68,14 +67,6 @@ def parse_directives(i, comments):
             raise ValueError(f"""Unspported directive "{directive}" in Cmd #{i} {SUPPORTED_DIRECTIVES}: {line}""")
           directives.append(line)
 
-  bdc_directives = ["IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY",
-                    "R_ONLY","AMAZON_ONLY","AZURE_ONLY","TODO","ANSWER","TEST",
-                    "PRIVATE_TEST","VIDEO","INSTRUCTOR_NOTE","INSTRUCTOR_ONLY","SOURCE_ONLY",
-                    "ILT_ONLY","SELF_PACED_ONLY","ALL_NOTEBOOKS","INLINE","NEW_PART","%python","%r"]
-        
-  for bdc_directive in bdc_directives:
-    assert bdc_directive not in directives, f"Found unsupported BDC directive: {bdc_directive}"
-    
   return directives
 
 # COMMAND ----------
@@ -168,12 +159,11 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             solutions_commands.append(command)
 
         # Check the command for BDC markers
-        tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY","AMAZON_ONLY","AZURE_ONLY","TEST"
-                  "PRIVATE_TEST","VIDEO","INSTRUCTOR_NOTE","ILT_ONLY","SELF_PACED_ONLY","ALL_NOTEBOOKS","INLINE","NEW_PART"]
+        tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY","AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST",
+                  "VIDEO","INSTRUCTOR_NOTE","INSTRUCTOR_ONLY","ILT_ONLY","SELF_PACED_ONLY","ALL_NOTEBOOKS","INLINE","NEW_PART","%python","%r"]
         
         for token in tokens:
-            if token in command:
-                print(f"| Found {token} in command #{i}")
+            assert token not in command, f"Found {token} in command #{i}")
             
     if todo_count > answ_count:
         raise Exception(f"Found more {DIRECTIVE_TODO} commands ({todo_count}) than {DIRECTIVE_ANSWER} commands ({answ_count})")
