@@ -160,7 +160,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
         # Check the command for BDC markers
         bdc_tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY","AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST",
-                  "VIDEO","INSTRUCTOR_NOTE","INSTRUCTOR_ONLY","ILT_ONLY","SELF_PACED_ONLY","ALL_NOTEBOOKS","INLINE","NEW_PART","%python","%r"]
+                  "VIDEO","INSTRUCTOR_ONLY","ILT_ONLY","SELF_PACED_ONLY","ALL_NOTEBOOKS","INLINE","NEW_PART","%python"]
         
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i}"
