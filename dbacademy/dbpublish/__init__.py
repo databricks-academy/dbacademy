@@ -154,9 +154,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         
         for token in tokens:
             if token in command:
-                print("-"*80)
-                print(f"- Found {token} in command #{i}")
-                print("-"*80)
+                print(f"| Found {token} in command #{i}")
             
     if todo_count > answ_count:
         raise Exception(f"Found more {DIRECTIVE_TODO} commands ({todo_count}) than {DIRECTIVE_ANSWER} commands ({answ_count})")
