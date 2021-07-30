@@ -137,17 +137,15 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         command = commands[i].strip()
         leading_comments = get_leading_comments(command)
         if len(leading_comments) > 0:
-            print("-- LEADING COMMENTS --"+("-"*78))
+            print("-- LEADING COMMENTS --"+("-"*58))
             for comment in leading_comments:
-                print(comment)
-            print("-"*80)
+                print("   |"+comment)
         
         directives = parse_directives(i, leading_comments)
         if len(directives) > 0:
-            print("-- DIRECTIVES --"+("-"*85))
+            print("-- DIRECTIVES --"+("-"*64))
             for directive in directives:
-                print(directive)
-            print("-"*80)
+                print("   |"+directive)
         
         include_header = True if "INCLUDE_HEADER_TRUE" in directives else include_header
         found_header_directive = True if "INCLUDE_HEADER_TRUE" in directives or "INCLUDE_HEADER_FALSE" in directives else found_header_directive
