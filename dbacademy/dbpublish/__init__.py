@@ -177,8 +177,8 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i}"
             
-    assert found_header_directive, f"One of the two header directives were not found."
-    assert found_footer_directive, f"One of the two footer directives were not found."
+    # assert found_header_directive, f"One of the two header directives were not found."
+    # assert found_footer_directive, f"One of the two footer directives were not found."
     assert todo_count == answ_count, f"Found more {DIRECTIVE_TODO} commands ({todo_count}) than {DIRECTIVE_ANSWER} commands ({answ_count})"
             
     # Create the student's notebooks
