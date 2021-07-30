@@ -179,7 +179,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             
     assert found_header_directive, f"One of the two header directives were not found."
     assert found_footer_directive, f"One of the two footer directives were not found."
-    assert todo_count = answ_count, f"Found more {DIRECTIVE_TODO} commands ({todo_count}) than {DIRECTIVE_ANSWER} commands ({answ_count})"
+    assert todo_count == answ_count, f"Found more {DIRECTIVE_TODO} commands ({todo_count}) than {DIRECTIVE_ANSWER} commands ({answ_count})"
             
     # Create the student's notebooks
     students_notebook_path = f"{target_project}/{notebook_name}"
