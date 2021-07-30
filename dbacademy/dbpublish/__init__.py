@@ -131,12 +131,12 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     found_footer_directive = False
     
     for i in range(len(commands)):
-        print(f"\nCommand {i}")
         command = commands[i].strip()
         leading_comments = get_leading_comments(command)
         directives = parse_directives(i, leading_comments)
 
         # Print statements for debugging parsing.
+        # print(f"\nCommand {i}")
         # if len(leading_comments) > 0:
         #     print("   |-LEADING COMMENTS --"+("-"*57))
         #     for comment in leading_comments:
