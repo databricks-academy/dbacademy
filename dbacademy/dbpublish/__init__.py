@@ -56,7 +56,7 @@ def parse_directives(i, comments):
       directive = line.strip()
 
       if directive in ["TODO", "ANSWER", "SOURCE_ONLY"]:
-          pass
+          directives.append(line)
       else:
           print(f"""Processing "{directive}" in Cmd #{i} """)
           if " " in directive: 
@@ -127,10 +127,22 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     todo_count = 0
     answ_count = 0
 
+    include_header = False
+    found_header_directive = False
+
+    include_footer = False
+    found_footer_directive = False
+    
     for i in range(len(commands)):
         command = commands[i].strip()
         leading_comments = get_leading_comments(command)
         directives = parse_directives(i, leading_comments)
+        
+        include_header = True if "INCLUDE_HEADER_TRUE" in directives else include_header
+        found_header_directive = True if "INCLUDE_HEADER_TRUE" in directives or "INCLUDE_HEADER_FALSE" in directives else found_header_directive
+
+        include_footer = True if "INCLUDE_FOOTER_TRUE" in directives else include_footer
+        found_footer_directive = True if "INCLUDE_FOOTER_TRUE" in directives or "INCLUDE_FOOTER_FALSE" in directives else found_footer_directive
 
         if DIRECTIVE_SOURCE_ONLY in directives:
             skipped += 1
@@ -165,8 +177,9 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i}"
             
-    if todo_count > answ_count:
-        raise Exception(f"Found more {DIRECTIVE_TODO} commands ({todo_count}) than {DIRECTIVE_ANSWER} commands ({answ_count})")
+    assert found_header_directive, f"One of the two header directives were not found."
+    assert found_footer_directive, f"One of the two footer directives were not found."
+    assert todo_count = answ_count, f"Found more {DIRECTIVE_TODO} commands ({todo_count}) than {DIRECTIVE_ANSWER} commands ({answ_count})"
             
     # Create the student's notebooks
     students_notebook_path = f"{target_project}/{notebook_name}"
