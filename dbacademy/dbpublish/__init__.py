@@ -47,12 +47,9 @@ def get_leading_comments(command) -> []:
 def parse_directives(i, comments):
   directives = list()
   for line in comments:
-    if line != line.upper():
-        # Directives only in the header. Now that
-        # there is other content, we can move on.
-        return directives
-    else:
-      # The comment is in all upper case, must be one or more directives
+    if line == line.upper()
+      # The comment is in all upper case,
+      # must be one or more directives
       directive = line.strip()
 
       if directive in ["TODO", "ANSWER", "SOURCE_ONLY"]:
@@ -138,13 +135,13 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         command = commands[i].strip()
         leading_comments = get_leading_comments(command)
         if len(leading_comments) > 0:
-            print("   | LEADING COMMENTS --"+("-"*57))
+            print("   |-LEADING COMMENTS --"+("-"*57))
             for comment in leading_comments:
                 print("   |"+comment)
         
         directives = parse_directives(i, leading_comments)
         if len(directives) > 0:
-            print("   |DIRECTIVES --"+("-"*63))
+            print("   |-DIRECTIVES --"+("-"*62))
             for directive in directives:
                 print("   |"+directive)
         
