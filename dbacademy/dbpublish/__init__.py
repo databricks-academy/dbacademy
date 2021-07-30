@@ -134,16 +134,17 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     found_footer_directive = False
     
     for i in range(len(commands)):
+        print(f"\nCommand {i}")
         command = commands[i].strip()
         leading_comments = get_leading_comments(command)
         if len(leading_comments) > 0:
-            print("-- LEADING COMMENTS --"+("-"*58))
+            print("   | LEADING COMMENTS --"+("-"*57))
             for comment in leading_comments:
                 print("   |"+comment)
         
         directives = parse_directives(i, leading_comments)
         if len(directives) > 0:
-            print("-- DIRECTIVES --"+("-"*64))
+            print("   |DIRECTIVES --"+("-"*63))
             for directive in directives:
                 print("   |"+directive)
         
