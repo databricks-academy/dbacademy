@@ -47,7 +47,7 @@ def get_leading_comments(command) -> []:
 def parse_directives(i, comments):
   directives = list()
   for line in comments:
-    if line == line.upper()
+    if line == line.upper():
       # The comment is in all upper case,
       # must be one or more directives
       directive = line.strip()
