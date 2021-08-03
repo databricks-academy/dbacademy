@@ -16,3 +16,6 @@ Once setup, unit tests can by ran by executing
 ## Usage - Notebook/Online/Remote
 To use this module in your notebook add to the first command the following call:<br/>
 ```%pip install git+https://github.com/databricks-academy/dbacademy```
+
+Note: this will reset the Python interpreter removing any local variables or functions declared
+before this call.
