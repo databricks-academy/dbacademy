@@ -24,9 +24,9 @@ class DBAcademyRestClient:
 
     def throttle_calls(self):
         import time
-        if self.throttle > 0:
-            s = "" if self.throttle == 1 else "s"
-            print(f"** Throttling requests by {self.throttle} second{s} per request.")
+        # if self.throttle > 0:
+        #     s = "" if self.throttle == 1 else "s"
+        #     print(f"** Throttling requests by {self.throttle} second{s} per request.")
 
         time.sleep(self.throttle)
 
