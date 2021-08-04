@@ -31,7 +31,8 @@ class JobsClient:
         jobs = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/list")["jobs"]
 
         deleted = 0
-        print(f"Found {len(jobs)} jobs total")
+        s = "s" if len(jobs) != 1 else ""
+        print(f"Found {len(jobs)} job{s} total")
 
         for job_name in job_list:
             for job in jobs:
@@ -39,7 +40,8 @@ class JobsClient:
                     job_id = job["job_id"]
 
                     runs = self.client.runs().list_by_job_id(job_id)
-                    print(f"Found {len(runs)} for job {job_id}")
+                    s = "s" if len(runs) != 1 else ""
+                    print(f"Found {len(runs)} run{s} for job {job_id}")
                     delete_job = True
 
                     for run in runs:
