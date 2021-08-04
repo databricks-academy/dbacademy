@@ -76,12 +76,13 @@ class JobsClient:
                         state = run["state"]
                         if success_only and state["life_cycle_state"] != "TERMINATED":
                             delete_job = False
-                            print(f"""The job "{job_name}" was not "TERMINATED" but "{state["life_cycle_state"]}", this job must be deleted manually""")
+                            print(f""" - The job "{job_name}" was not "TERMINATED" but "{state["life_cycle_state"]}", this job must be deleted manually""")
                         if success_only and state["result_state"] != "SUCCESS":
                             delete_job = False
-                            print(f"""The job "{job_name}" was not "SUCCESS" but "{state["result_state"]}", this job must be deleted manually""")
+                            print(f""" - The job "{job_name}" was not "SUCCESS" but "{state["result_state"]}", this job must be deleted manually""")
 
                     if delete_job:
+                        print(f""" - Deleting The job "{job_name}" ({job_id})""")
                         self.delete_by_job_id(job_id)
                         deleted += 1
 
