@@ -22,14 +22,22 @@ class DBAcademyRestClient:
             s = "" if self.throttle == 1 else "s"
             print(f"** WARNING ** Requests are being throttled by {self.throttle} second{s} per request.")
 
+    def throttle_calls(self):
+        import time
+        if self.throttle > 0:
+            s = "" if self.throttle == 1 else "s"
+            print(f"** Throttling requests by {self.throttle} second{s} per request.")
+
+        time.sleep(self.throttle)
+
     def workspace(self):
         from dbacademy.dbrest.workspace import WorkspaceClient
 
-        return WorkspaceClient(self, self.token, self.endpoint, self.throttle)
+        return WorkspaceClient(self, self.token, self.endpoint)
 
     def jobs(self):
         from dbacademy.dbrest.jobs import JobsClient
-        return JobsClient(self, self.token, self.endpoint, self.throttle)
+        return JobsClient(self, self.token, self.endpoint)
 
     def repos(self):
         from dbacademy.dbrest.repos import ReposClient
@@ -39,7 +47,7 @@ class DBAcademyRestClient:
     def runs(self):
         from dbacademy.dbrest.runs import RunsClient
 
-        return RunsClient(self, self.token, self.endpoint, self.throttle)
+        return RunsClient(self, self.token, self.endpoint)
 
     def _get_local_credentials(self, config_file, profile):
         if config_file is None:

@@ -1,5 +1,4 @@
 pytest
-databricks-connect==7.3.5
 requests
 pyspark
 IPython

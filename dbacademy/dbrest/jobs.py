@@ -1,17 +1,15 @@
 # Databricks notebook source
 import json
-import time
 import requests
 from dbacademy.dbrest import DBAcademyRestClient
 
 
 class JobsClient:
 
-    def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str, throttle: int):
+    def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
         self.client = client      # Client API exposing other operations to this class
         self.token = token        # The authentication token
         self.endpoint = endpoint  # The API endpoint
-        self.throttle = throttle  # Number of seconds by which to throttle input
 
     def create(self, params):
         response = requests.post(
@@ -19,7 +17,7 @@ class JobsClient:
             headers={"Authorization": "Bearer " + self.token},
             data=json.dumps(params)
         )
-        time.sleep(self.throttle)
+        self.client.throttle()
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         return response.json()
 
@@ -29,7 +27,7 @@ class JobsClient:
             headers={"Authorization": f"Bearer {self.token}"},
             data=json.dumps({"job_id": job_id})
         )
-        time.sleep(self.throttle)
+        self.client.throttle()
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         return response.json()
 
@@ -39,7 +37,7 @@ class JobsClient:
             headers={"Authorization": f"Bearer {self.token}"},
             data=json.dumps({"job_id": job_id})
         )
-        time.sleep(self.throttle)
+        self.client.throttle()
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
     def delete_by_name(self, jobs, success_only):
@@ -56,7 +54,7 @@ class JobsClient:
             f"{self.endpoint}/api/2.0/jobs/list",
             headers={"Authorization": f"Bearer {self.token}"}
         )
-        time.sleep(self.throttle)
+        self.client.throttle()
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
         deleted = 0
@@ -82,7 +80,7 @@ class JobsClient:
                             print(f""" - The job "{job_name}" was not "SUCCESS" but "{state["result_state"]}", this job must be deleted manually""")
 
                     if delete_job:
-                        print(f""" - Deleting The job "{job_name}" ({job_id})""")
+                        print(f""" - Deleting job #{job_id}, "{job_name}""")
                         self.delete_by_job_id(job_id)
                         deleted += 1
 

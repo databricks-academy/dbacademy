@@ -1,22 +1,20 @@
 # Databricks notebook source
-import time
 import json
 import requests
 from dbacademy.dbrest import DBAcademyRestClient
 
 
 class WorkspaceClient:
-    def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str, throttle:int):
+    def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
         self.client = client
         self.token = token
         self.endpoint = endpoint
-        self.throttle = throttle
 
     def ls(self, path):
         auth_header = {"Authorization": "Bearer " + self.token + ""}
         uri = f"{self.endpoint}/api/2.0/workspace/list?path={path}"
         response = requests.get(uri, headers=auth_header)
-        time.sleep(self.throttle)
+        self.client.throttle()
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         return response.json()["objects"]
 
@@ -38,7 +36,7 @@ class WorkspaceClient:
             headers={"Authorization": "Bearer " + self.token},
             data=json.dumps(payload),
         )
-        time.sleep(self.throttle)
+        self.client.throttle()
         assert response.status_code in [200], f"({response.status_code}): {response.text}"
         return response
 
@@ -51,7 +49,7 @@ class WorkspaceClient:
             headers={"Authorization": "Bearer " + self.token},
             data=json.dumps(payload),
         )
-        time.sleep(self.throttle)
+        self.client.throttle()
         assert response.status_code in [200,404,], f"({response.status_code}): {response.text}"
         return response
 
@@ -70,7 +68,7 @@ class WorkspaceClient:
             headers={"Authorization": "Bearer " + self.token},
             data=json.dumps(payload),
         )
-        time.sleep(self.throttle)
+        self.client.throttle()
         assert response.status_code in [200], f"({response.status_code}): {response.text}"
         return response
 
@@ -78,7 +76,7 @@ class WorkspaceClient:
         auth_header = {"Authorization": "Bearer " + self.token + ""}
         uri = f"{self.endpoint}/api/2.0/workspace/export?path={notebook_path}&direct_download=true"
         response = requests.get(uri, headers=auth_header)
-        time.sleep(self.throttle)
+        self.client.throttle()
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         return response.text
 
@@ -86,6 +84,6 @@ class WorkspaceClient:
         auth_header = {"Authorization": "Bearer " + self.token + ""}
         uri = f"{self.endpoint}/api/2.0/workspace/get-status?path={notebook_path}"
         response = requests.get(uri, headers=auth_header)
-        time.sleep(self.throttle)
+        self.client.throttle()
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         return response.json()
