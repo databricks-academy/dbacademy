@@ -6,7 +6,7 @@ import os
 class DBAcademyRestClient:
   
     def __init__(self, local=False, config_file=None, profile="DEFAULT", throttle=0, endpoint=None):
-        self.timeout = 60
+        self.timeout = 120
         self.throttle = throttle
         if not local:
             from dbacademy import dbgems
@@ -60,10 +60,10 @@ class DBAcademyRestClient:
         self.username = config.get(profile, "username")
         self.token = config.get(profile, "token")
 
-    def execute_patch_json(self, url: str, params: dict, expected = 200) -> dict:
+    def execute_patch_json(self, url: str, params: dict, expected=200) -> dict:
         return self.execute_patch(url, params, expected)
 
-    def execute_patch(self, url: str, params: dict, expected = 200):
+    def execute_patch(self, url: str, params: dict, expected=200):
         import json, requests
         expected = self.expected_to_list(expected)
 
@@ -86,11 +86,11 @@ class DBAcademyRestClient:
         self.throttle_calls()
         return response.json()
 
-    def execute_get_json(self, url: str, expected = 200) -> dict:
+    def execute_get_json(self, url: str, expected=200) -> dict:
         response = self.execute_get(url, expected)
         return response.json()
 
-    def execute_get(self, url: str, expected = 200):
+    def execute_get(self, url: str, expected=200):
         import requests
         expected = self.expected_to_list(expected)
 
