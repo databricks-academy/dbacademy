@@ -6,7 +6,7 @@ import os
 class DBAcademyRestClient:
   
     def __init__(self, local=False, config_file=None, profile="DEFAULT", throttle=0, endpoint=None):
-        self.timeout = 120
+        self.timeout = 240
         self.throttle = throttle
         if not local:
             from dbacademy import dbgems
