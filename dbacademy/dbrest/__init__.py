@@ -6,8 +6,19 @@ import os
 class DBAcademyRestClient:
   
     def __init__(self, local=False, config_file=None, profile="DEFAULT", throttle=0, endpoint=None):
-        self.timeout = None
+        import requests
+        from urllib3.util.retry import Retry
+        from requests.adapters import HTTPAdapter
+
         self.throttle = throttle
+
+        self.timeout = 5  # seconds
+        backoff_factor = self.timeout
+        retry = Retry(connect=Retry.BACKOFF_MAX / backoff_factor, backoff_factor=backoff_factor)
+
+        self.session = requests.Session()
+        self.session.mount('https://', HTTPAdapter(max_retries=retry))
+
         if not local:
             from dbacademy import dbgems
 
@@ -64,10 +75,10 @@ class DBAcademyRestClient:
         return self.execute_patch(url, params, expected)
 
     def execute_patch(self, url: str, params: dict, expected=200):
-        import json, requests
+        import json
         expected = self.expected_to_list(expected)
 
-        response = requests.patch(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=self.timeout)
+        response = self.session.patch(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=self.timeout)
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
@@ -77,10 +88,10 @@ class DBAcademyRestClient:
         return self.execute_post(url, params, expected)
 
     def execute_post(self, url: str, params: dict, expected=200):
-        import json, requests
+        import json
         expected = self.expected_to_list(expected)
 
-        response = requests.post(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=self.timeout)
+        response = self.session.post(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=self.timeout)
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
@@ -91,10 +102,9 @@ class DBAcademyRestClient:
         return response.json()
 
     def execute_get(self, url: str, expected=200):
-        import requests
         expected = self.expected_to_list(expected)
 
-        response = requests.get(url, headers={"Authorization": f"Bearer {self.token}"}, timeout=self.timeout)
+        response = self.session.get(url, headers={"Authorization": f"Bearer {self.token}"}, timeout=self.timeout)
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()

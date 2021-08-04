@@ -1,4 +1,5 @@
 pytest
+urllib3
 requests
 pyspark
 IPython
