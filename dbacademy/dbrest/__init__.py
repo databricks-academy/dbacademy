@@ -6,6 +6,7 @@ import os
 class DBAcademyRestClient:
   
     def __init__(self, local=False, config_file=None, profile="DEFAULT", throttle=0, endpoint=None):
+        self.timeout = 60
         self.throttle = throttle
         if not local:
             from dbacademy import dbgems
@@ -66,7 +67,7 @@ class DBAcademyRestClient:
         import json, requests
         expected = self.expected_to_list(expected)
 
-        response = requests.patch(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=30)
+        response = requests.patch(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=self.timeout)
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
@@ -79,7 +80,7 @@ class DBAcademyRestClient:
         import json, requests
         expected = self.expected_to_list(expected)
 
-        response = requests.post(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=30)
+        response = requests.post(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=self.timeout)
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
@@ -93,7 +94,7 @@ class DBAcademyRestClient:
         import requests
         expected = self.expected_to_list(expected)
 
-        response = requests.get(url, headers={"Authorization": f"Bearer {self.token}"}, timeout=30)
+        response = requests.get(url, headers={"Authorization": f"Bearer {self.token}"}, timeout=self.timeout)
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
