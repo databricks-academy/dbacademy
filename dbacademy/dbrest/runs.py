@@ -5,16 +5,18 @@ from dbacademy.dbrest import DBAcademyRestClient
 
 class RunsClient:
 
-    def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
+    def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str, throttle: int):
         self.client = client
         self.token = token
         self.endpoint = endpoint
+        self.throttle = throttle  # Number of seconds by which to throttle input
 
     def get(self, run_id):
         response = requests.get(
             f"{self.endpoint}/api/2.0/jobs/runs/get?run_id={run_id}",
             headers={"Authorization": f"Bearer {self.token}"}
         )
+        time.sleep(self.throttle)
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         return response.json()
 
@@ -23,6 +25,7 @@ class RunsClient:
             f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}",
             headers={"Authorization": f"Bearer {self.token}"}
         )
+        time.sleep(self.throttle)
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         json_response = response.json()
         return json_response["runs"] if "runs" in json_response else []
