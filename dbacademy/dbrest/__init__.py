@@ -66,20 +66,20 @@ class DBAcademyRestClient:
         import json, requests
         expected = self.expected_to_list(expected)
 
-        response = requests.patch(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params))
+        response = requests.patch(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=30)
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
         return response.json()
 
-    def execute_post_json(self, url: str, params: dict, expected = 200) -> dict:
+    def execute_post_json(self, url: str, params: dict, expected=200) -> dict:
         return self.execute_post(url, params, expected)
 
-    def execute_post(self, url: str, params: dict, expected = 200):
+    def execute_post(self, url: str, params: dict, expected=200):
         import json, requests
         expected = self.expected_to_list(expected)
 
-        response = requests.post(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params))
+        response = requests.post(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=30)
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
@@ -93,7 +93,7 @@ class DBAcademyRestClient:
         import requests
         expected = self.expected_to_list(expected)
 
-        response = requests.get(url, headers={"Authorization": f"Bearer {self.token}"})
+        response = requests.get(url, headers={"Authorization": f"Bearer {self.token}"}, timeout=30)
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
