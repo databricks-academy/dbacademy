@@ -1,6 +1,4 @@
 # Databricks notebook source
-import json
-import requests
 from dbacademy.dbrest import DBAcademyRestClient
 
 
@@ -12,33 +10,13 @@ class JobsClient:
         self.endpoint = endpoint  # The API endpoint
 
     def create(self, params):
-        response = requests.post(
-            f"{self.endpoint}/api/2.0/jobs/create",
-            headers={"Authorization": "Bearer " + self.token},
-            data=json.dumps(params)
-        )
-        self.client.throttle()
-        assert response.status_code == 200, f"({response.status_code}): {response.text}"
-        return response.json()
+        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/create", params)
 
     def run_now(self, job_id):
-        response = requests.post(
-            f"{self.endpoint}/api/2.0/jobs/run-now",
-            headers={"Authorization": f"Bearer {self.token}"},
-            data=json.dumps({"job_id": job_id})
-        )
-        self.client.throttle()
-        assert response.status_code == 200, f"({response.status_code}): {response.text}"
-        return response.json()
+        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/run-now", {"job_id": job_id})
 
     def delete_by_job_id(self, job_id):
-        response = requests.post(
-            f"{self.endpoint}/api/2.0/jobs/delete",
-            headers={"Authorization": f"Bearer {self.token}"},
-            data=json.dumps({"job_id": job_id})
-        )
-        self.client.throttle()
-        assert response.status_code == 200, f"({response.status_code}): {response.text}"
+        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/delete", {"job_id": job_id})
 
     def delete_by_name(self, jobs, success_only):
         if type(jobs) == dict:
@@ -50,15 +28,9 @@ class JobsClient:
         else:
             raise Exception(f"Unsupported type: {type(jobs)}")
 
-        response = requests.get(
-            f"{self.endpoint}/api/2.0/jobs/list",
-            headers={"Authorization": f"Bearer {self.token}"}
-        )
-        self.client.throttle()
-        assert response.status_code == 200, f"({response.status_code}): {response.text}"
+        jobs = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/list")["jobs"]
 
         deleted = 0
-        jobs = response.json()["jobs"]
         print(f"Found {len(jobs)} jobs total")
 
         for job_name in job_list:

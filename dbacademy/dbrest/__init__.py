@@ -58,3 +58,50 @@ class DBAcademyRestClient:
         self.endpoint = config.get(profile, "host")
         self.username = config.get(profile, "username")
         self.token = config.get(profile, "token")
+
+    def execute_patch_json(self, url: str, params: dict, expected = 200) -> dict:
+        return self.execute_patch(url, params, expected)
+
+    def execute_patch(self, url: str, params: dict, expected = 200):
+        import json, requests
+        expected = self.expected_to_list(expected)
+
+        response = requests.patch(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params))
+        assert response.status_code in expected, f"({response.status_code}): {response.text}"
+
+        self.throttle_calls()
+        return response.json()
+
+    def execute_post_json(self, url: str, params: dict, expected = 200) -> dict:
+        return self.execute_post(url, params, expected)
+
+    def execute_post(self, url: str, params: dict, expected = 200):
+        import json, requests
+        expected = self.expected_to_list(expected)
+
+        response = requests.post(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params))
+        assert response.status_code in expected, f"({response.status_code}): {response.text}"
+
+        self.throttle_calls()
+        return response.json()
+
+    def execute_get_json(self, url: str, expected = 200) -> dict:
+        response = self.execute_get(url, expected)
+        return response.json()
+
+    def execute_get(self, url: str, expected = 200):
+        import requests
+        expected = self.expected_to_list(expected)
+
+        response = requests.get(url, headers={"Authorization": f"Bearer {self.token}"})
+        assert response.status_code in expected, f"({response.status_code}): {response.text}"
+
+        self.throttle_calls()
+        return response
+
+    @staticmethod
+    def expected_to_list(expected) -> list:
+        if type(expected) == str: expected = int(expected)
+        if type(expected) == int: expected = [expected]
+        assert type(expected) == list, f"The parameter was expected to be of type str, int or list, found {type(expected)}"
+        return expected

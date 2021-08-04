@@ -1,5 +1,4 @@
 # Databricks notebook source
-import requests
 from dbacademy.dbrest import DBAcademyRestClient
 
 
@@ -10,22 +9,10 @@ class RunsClient:
         self.endpoint = endpoint
 
     def get(self, run_id):
-        response = requests.get(
-            f"{self.endpoint}/api/2.0/jobs/runs/get?run_id={run_id}",
-            headers={"Authorization": f"Bearer {self.token}"}
-        )
-        self.client.throttle()
-        assert response.status_code == 200, f"({response.status_code}): {response.text}"
-        return response.json()
+        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/get?run_id={run_id}")
 
     def list_by_job_id(self, job_id):
-        response = requests.get(
-            f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}",
-            headers={"Authorization": f"Bearer {self.token}"}
-        )
-        self.client.throttle()
-        assert response.status_code == 200, f"({response.status_code}): {response.text}"
-        json_response = response.json()
+        json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}")
         return json_response["runs"] if "runs" in json_response else []
 
     def wait_for(self, run_id):

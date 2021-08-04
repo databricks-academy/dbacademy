@@ -11,13 +11,5 @@ class ReposClient:
         self.token = token
         self.endpoint = endpoint
 
-    def update(self, repo_id, branch):
-        response = requests.patch(
-            f"{self.endpoint}/api/2.0/repos/{repo_id}",
-            headers={"Authorization": "Bearer " + self.token},
-            data=json.dumps({
-                "branch": branch
-            })
-        )
-        assert response.status_code == 200, f"({response.status_code}): {response.text}"
-        return response.json()
+    def update(self, repo_id, branch) -> dict:
+        return self.client.execute_patch_json(f"{self.endpoint}/api/2.0/repos/{repo_id}", {"branch": branch})
