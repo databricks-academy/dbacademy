@@ -69,6 +69,7 @@ class JobsClient:
                     job_id = job["job_id"]
 
                     runs = self.client.runs().list_by_job_id(job_id)
+                    print(f"Found {len(runs)} for job {job_id}")
                     delete_job = True
 
                     for run in runs:
