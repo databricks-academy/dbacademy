@@ -4,7 +4,6 @@ from dbacademy.dbrest import DBAcademyRestClient
 
 
 class RunsClient:
-
     def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str, throttle: int):
         self.client = client
         self.token = token
@@ -12,6 +11,7 @@ class RunsClient:
         self.throttle = throttle  # Number of seconds by which to throttle input
 
     def get(self, run_id):
+        import time
         response = requests.get(
             f"{self.endpoint}/api/2.0/jobs/runs/get?run_id={run_id}",
             headers={"Authorization": f"Bearer {self.token}"}
@@ -21,6 +21,7 @@ class RunsClient:
         return response.json()
 
     def list_by_job_id(self, job_id):
+        import time
         response = requests.get(
             f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}",
             headers={"Authorization": f"Bearer {self.token}"}
