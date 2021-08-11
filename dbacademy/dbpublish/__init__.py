@@ -1,11 +1,16 @@
 # Databricks notebook source
-DIRECTIVE_TODO = "TODO"
-DIRECTIVE_ANSWER = "ANSWER"
-DIRECTIVE_SOURCE_ONLY = "SOURCE_ONLY"
-DIRECTIVE_SELF_PACED_ONLY = "SELF_PACED_ONLY"
-DIRECTIVE_ILT_ONLY = "ILT_ONLY"
+D_TODO = "TODO"
+D_ANSWER = "ANSWER"
+D_SOURCE_ONLY = "SOURCE_ONLY"
+D_SELF_PACED_ONLY = "SELF_PACED_ONLY"
+D_ILT_ONLY = "ILT_ONLY"
 
-SUPPORTED_DIRECTIVES = [DIRECTIVE_SOURCE_ONLY, DIRECTIVE_ANSWER, DIRECTIVE_TODO, DIRECTIVE_SELF_PACED_ONLY, DIRECTIVE_ILT_ONLY, ]
+D_INCLUDE_HEADER_TRUE = "INCLUDE_HEADER_TRUE"
+D_INCLUDE_HEADER_FALSE = "INCLUDE_HEADER_FALSE"
+D_INCLUDE_FOOTER_TRUE = "INCLUDE_FOOTER_TRUE"
+D_INCLUDE_FOOTER_FALSE = "INCLUDE_FOOTER_FALSE"
+
+SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_SELF_PACED_ONLY, D_ILT_ONLY, ]
 
 def replace_contents(contents:str, replacements:dict):
   for old_value in replacements:
@@ -52,7 +57,7 @@ def parse_directives(i, comments):
       # must be one or more directives
       directive = line.strip()
 
-      if directive in ["TODO", "ANSWER", "SOURCE_ONLY"]:
+      if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
           directives.append(line)
       else:
           print(f"""Processing "{directive}" in Cmd #{i} """)
@@ -116,6 +121,9 @@ def publish_notebook(commands:list, target_path:str, replacements:dict = {}) -> 
     client.workspace().mkdirs(parent_dir)
     client.workspace().import_notebook("PYTHON", target_path, final_source)
     
+def skipping(i, label):
+    print(f"Skipping Cmd #{i + 1} - {label}")
+    return 1;
     
 def publish(source_project:str, target_project:str, notebook_name:str, replacements:dict = {}, include_solution=False) -> None:
     global found_setup
@@ -158,27 +166,26 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         #     for directive in directives:
         #         print("   |"+directive)
         
-        include_header = True if "INCLUDE_HEADER_TRUE" in directives else include_header
-        found_header_directive = True if "INCLUDE_HEADER_TRUE" in directives or "INCLUDE_HEADER_FALSE" in directives else found_header_directive
+        include_header = True if D_INCLUDE_HEADER_TRUE in directives else include_header
+        found_header_directive = True if D_INCLUDE_HEADER_TRUE in directives or D_INCLUDE_HEADER_FALSE in directives else found_header_directive
 
-        include_footer = True if "INCLUDE_FOOTER_TRUE" in directives else include_footer
-        found_footer_directive = True if "INCLUDE_FOOTER_TRUE" in directives or "INCLUDE_FOOTER_FALSE" in directives else found_footer_directive
+        include_footer = True if D_INCLUDE_FOOTER_TRUE in directives else include_footer
+        found_footer_directive = True if D_INCLUDE_FOOTER_TRUE in directives or D_INCLUDE_FOOTER_FALSE in directives else found_footer_directive
 
-        if DIRECTIVE_SOURCE_ONLY in directives:
-            skipped += 1
-            print(f"Skipping Cmd #{i + 1} - Source-Only")
+        if D_SOURCE_ONLY in directives:            skipped += skipping(i, "Source-Only")
+        elif command.strip() == "":                skipped += skipping(i, "Empty Cell")
+        elif D_INCLUDE_HEADER_TRUE in directives:  skipped += skipping(i, "Including Header")
+        elif D_INCLUDE_HEADER_FALSE in directives: skipped += skipping(i, "Excluding Header")
+        elif D_INCLUDE_FOOTER_TRUE in directives:  skipped += skipping(i, "Including Footer")
+        elif D_INCLUDE_FOOTER_FALSE in directives: skipped += skipping(i, "Excluding Footer")
 
-        elif command.strip() == "":
-            skipped += 1
-            print(f"Skipping Cmd #{i + 1} - Empty Cell")
-
-        elif DIRECTIVE_TODO in directives:
+        elif D_TODO in directives:
             # This is a TODO cell, exclude from solution notebooks
             todo_count += 1
             assert_only_one_setup_cell(command, i)
             students_commands.append(command)
 
-        elif DIRECTIVE_ANSWER in directives:
+        elif D_ANSWER in directives:
             # This is an ANSWER cell, exclude from lab notebooks
             answ_count += 1
             assert_only_one_setup_cell(command, i)
@@ -199,7 +206,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
            
     assert found_header_directive, f"One of the two header directives were not found."
     assert found_footer_directive, f"One of the two footer directives were not found."
-    assert answ_count >= todo_count, f"Found more {DIRECTIVE_TODO} commands ({todo_count}) than {DIRECTIVE_ANSWER} commands ({answ_count})"
+    assert answ_count >= todo_count, f"Found more {D_TODO} commands ({todo_count}) than {D_ANSWER} commands ({answ_count})"
 
     if include_header is True:
         students_commands.insert(0, header_cell)
