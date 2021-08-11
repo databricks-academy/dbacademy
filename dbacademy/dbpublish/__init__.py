@@ -68,11 +68,24 @@ def parse_directives(i, comments):
 
 # COMMAND ----------
 
+from datetime import date
 from dbacademy.dbrest import DBAcademyRestClient
 
 found_setup = False
 cmd_delim = "\n# COMMAND ----------\n"
 
+header_cell = """%md-sandbox
+# MAGIC %md-sandbox
+# MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
+# MAGIC   <img src="https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png" alt="Databricks Learning" style="width: 600px">
+# MAGIC </div>"""
+
+footer_cell = f"""
+# MAGIC %md-sandbox
+# MAGIC &copy; {date.today().year} Databricks, Inc. All rights reserved.<br/>
+# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+# MAGIC <br/>
+# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>"""
 
 def assert_only_one_setup_cell(command, index):
     global found_setup
@@ -85,7 +98,6 @@ def assert_only_one_setup_cell(command, index):
             raise Exception(f"Duplicate call to setup in command #{index + 1}")
         else:
             found_setup = True
-            
             
 def publish_notebook(commands:list, target_path:str, replacements:dict = {}) -> None:
     final_source = ""
@@ -184,11 +196,19 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i}"
-            
-    # assert found_header_directive, f"One of the two header directives were not found."
-    # assert found_footer_directive, f"One of the two footer directives were not found."
+           
+    assert found_header_directive, f"One of the two header directives were not found."
+    assert found_footer_directive, f"One of the two footer directives were not found."
     assert answ_count >= todo_count, f"Found more {DIRECTIVE_TODO} commands ({todo_count}) than {DIRECTIVE_ANSWER} commands ({answ_count})"
-            
+
+    if include_header is True:
+        students_commands.insert(0, header_cell)
+        solutions_commands.insert(0, header_cell)
+    
+    if include_footer is True:
+        students_commands.append(footer_cell)
+        solutions_commands.append(footer_cell)
+    
     # Create the student's notebooks
     students_notebook_path = f"{target_project}/{notebook_name}"
     print(students_notebook_path)
