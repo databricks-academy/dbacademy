@@ -8,18 +8,13 @@ def init_locals():
     # noinspection PyGlobalUndefined
     global spark, sc, dbutils
 
-    try:
-        spark
-    except NameError:
-        spark = SparkSession.builder.getOrCreate()
+    try: spark
+    except NameError:spark = SparkSession.builder.getOrCreate()
 
-    try:
-        sc
-    except NameError:
-        sc = spark.sparkContext
+    try: sc
+    except NameError: sc = spark.sparkContext
 
-    try:
-        dbutils
+    try: dbutils
     except NameError:
         if spark.conf.get("spark.databricks.service.client.enabled") == "true":
             from pyspark.dbutils import DBUtils
