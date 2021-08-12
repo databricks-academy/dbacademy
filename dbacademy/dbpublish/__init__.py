@@ -233,9 +233,12 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             solutions_commands.append(command)
 
         # Check the command for BDC markers
-        bdc_tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY","AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST",
-                  "VIDEO","INSTRUCTOR_ONLY","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART","%python"]
+        bdc_tokens = ["%python","IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY",
+                      "AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST",
+                      "VIDEO","INSTRUCTOR_ONLY","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART",
+                      ":HINT:",":CAUTION:",":BESTPRACTICE:",":SIDENOTE:"]
         
+
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i+1}"
            
