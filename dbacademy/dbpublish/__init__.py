@@ -63,8 +63,6 @@ def parse_directives(i, comments):
 
       if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
           directives.append(line)
-      elif "ALL_NOTEBOOKS" in directives:
-          pass # Just ignore for now.
         
       elif D_TODO in directives:
           # This is already a TODO cell, no point
@@ -135,7 +133,27 @@ def publish_notebook(commands:list, target_path:str, replacements:dict = {}) -> 
 def skipping(i, label):
     print(f"Skipping Cmd #{i + 1} - {label}")
     return 1;
+
+def clean_todo_cell(i, command):
+    new_command = ""
+    lines = command.split("\n")
     
+    for i in range(len(lines)):
+        line = lines[i]
+        if i==0 and line.strip().replace(" ", "") not in ["#TODO", "##TODO"]:
+            raise Exception(f"""Expected line #1 to be the {D_TODO} directive: "{line}" """)
+        elif not line.startswith("#") and line.strip() != "":
+            raise Exception(f"""Expected line #{i+1} to be commented out: "{line}" """)
+        elif line.strip() == "":
+            # No comment, do not process
+            new_command += line
+            new_command += "\n"
+        else:
+            new_command += line[1:].strip()
+            new_command += "\n"
+    
+    return new_command
+
 def publish(source_project:str, target_project:str, notebook_name:str, replacements:dict = {}, include_solution=False) -> None:
     global found_setup
     print("-" * 80)
@@ -194,6 +212,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             # This is a TODO cell, exclude from solution notebooks
             todo_count += 1
             assert_only_one_setup_cell(command, i)
+            command = clean_todo_cell(command)
             students_commands.append(command)
 
         elif D_ANSWER in directives:
