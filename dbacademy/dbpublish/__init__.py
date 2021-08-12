@@ -240,15 +240,12 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         # Check the command for BDC markers
         bdc_tokens = ["%python","IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY",
                       "AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST",
-                      "VIDEO","INSTRUCTOR_ONLY","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART","INSTRUCTOR_NOTE"
+                      "VIDEO","INSTRUCTOR_ONLY","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART","INSTRUCTOR_NOTE",
                       ":BESTPRACTICE:", "{{dbr}}"]
 
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i+1}"
 
-        print(("-"*80) + " " + str("INSTRUCTOR_NOTE" in bdc_tokens))
-        print(command)
-           
     assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
     assert found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found."
     assert answ_count >= todo_count, f"Found more {D_TODO} commands ({todo_count}) than {D_ANSWER} commands ({answ_count})"
