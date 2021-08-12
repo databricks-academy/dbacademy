@@ -44,7 +44,7 @@ def get_leading_comments(command) -> []:
             pos = line.find(" ")
             if pos != -1 and line[pos:].strip().startswith(mark):
               # append to our list
-              comment = line[pos:].strip()[1:].strip()
+              comment = line[pos:].strip()[len(mark):].strip()
               leading_comments.append(comment)
               
         elif line.strip() == mark:
@@ -53,7 +53,7 @@ def get_leading_comments(command) -> []:
             
         elif line.strip().startswith(mark):
             # append to our list
-            comment = line.strip()[1:].strip()
+            comment = line.strip()[len(mark):].strip()
             leading_comments.append(comment)
             
         else:
