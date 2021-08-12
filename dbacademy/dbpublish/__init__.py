@@ -242,10 +242,12 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
                       "AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST",
                       "VIDEO","INSTRUCTOR_ONLY","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART", "INSTRUCTOR_NOTE"
                       ":BESTPRACTICE:", "{{dbr}}"]
-        
 
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i+1}"
+
+        print("-"*80)
+        print(command)
            
     assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
     assert found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found."
