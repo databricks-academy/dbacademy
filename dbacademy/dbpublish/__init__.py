@@ -28,6 +28,11 @@ def get_leading_comments(command) -> []:
     leading_comments = []
     lines = command.split("\n")
 
+    is_md_cell =  lines[0].lower().startswith("# magic %md")
+    is_sql_cell = lines[0].lower().startswith("# magic %sql")
+
+    mark = "--" if is_md_cell or is_sql_cell else "#"
+
     for line in lines:
         if line.startswith("# MAGIC"):
           line = line[7:].strip()
@@ -37,16 +42,16 @@ def get_leading_comments(command) -> []:
         if line.strip().startswith("%"):
             # Remove the magic command from this line
             pos = line.find(" ")
-            if pos != -1 and line[pos:].strip().startswith("#"):
+            if pos != -1 and line[pos:].strip().startswith(mark):
               # append to our list
               comment = line[pos:].strip()[1:].strip()
               leading_comments.append(comment)
               
-        elif line.strip() == "#":
+        elif line.strip() == mark:
             # empty comment line, don't break, just ignore
             pass
             
-        elif line.strip().startswith("#"):
+        elif line.strip().startswith(mark):
             # append to our list
             comment = line.strip()[1:].strip()
             leading_comments.append(comment)
