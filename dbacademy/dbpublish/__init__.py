@@ -40,6 +40,7 @@ def get_leading_comments(command) -> []:
               
         elif line.strip() == "#":
             # empty comment line, don't break, just ignore
+            pass
             
         elif line.strip().startswith("#"):
             # append to our list
