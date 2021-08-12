@@ -63,6 +63,11 @@ def parse_directives(i, comments):
 
       if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
           directives.append(line)
+
+      elif "FILL_IN" in directive:
+          # Some form of instruction - classic FILL_IN.
+          pass
+    
       else:
           print(f"""Processing "{directive}" in Cmd #{i+1} """)
           if " " in directive: 
@@ -70,9 +75,6 @@ def parse_directives(i, comments):
           if "-" in directive: 
             raise ValueError(f"""Hyphen found in directive "{directive}", Cmd #{i+1}: {line}""")
           if directive not in SUPPORTED_DIRECTIVES: 
-            print("-"*80)
-            print(comments)
-            print("-"*80)
             raise ValueError(f"""Unspported directive "{directive}" in Cmd #{i+1} {SUPPORTED_DIRECTIVES}: {line}""")
           directives.append(line)
 
