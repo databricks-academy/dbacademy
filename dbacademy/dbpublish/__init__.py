@@ -63,7 +63,9 @@ def parse_directives(i, comments):
 
       if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
           directives.append(line)
-
+      elif "ALL_NOTEBOOKS" in directives:
+          pass # Just ignore for now.
+        
       elif D_TODO in directives:
           # This is already a TODO cell, no point
           # in trying to process this any further.
@@ -208,7 +210,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
         # Check the command for BDC markers
         bdc_tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY","AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST",
-                  "VIDEO","INSTRUCTOR_ONLY","ILT_ONLY","SELF_PACED_ONLY","ALL_NOTEBOOKS","INLINE","NEW_PART","%python"]
+                  "VIDEO","INSTRUCTOR_ONLY","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART","%python"]
         
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i+1}"
