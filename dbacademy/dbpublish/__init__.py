@@ -148,7 +148,7 @@ def clean_todo_cell(command, cmd):
             # No comment, do not process
             new_command += line
             new_command += "\n"
-        elif line.strip().startswith("# ")
+        elif line.strip().startswith("# "):
             # Remove comment and space
             new_command += line[2:]
             new_command += "\n"
