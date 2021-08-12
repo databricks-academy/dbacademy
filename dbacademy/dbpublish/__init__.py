@@ -10,7 +10,11 @@ D_INCLUDE_HEADER_FALSE = "INCLUDE_HEADER_FALSE"
 D_INCLUDE_FOOTER_TRUE = "INCLUDE_FOOTER_TRUE"
 D_INCLUDE_FOOTER_FALSE = "INCLUDE_FOOTER_FALSE"
 
-SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_SELF_PACED_ONLY, D_ILT_ONLY, ]
+# Only for backwards compatibility!
+D_INSTRUCTOR_NOTE = "INSTRUCTOR_NOTE" 
+
+SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_SELF_PACED_ONLY, D_ILT_ONLY, 
+                        D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
 
 def replace_contents(contents:str, replacements:dict):
   for old_value in replacements:
@@ -61,7 +65,7 @@ def parse_directives(i, comments):
       # must be one or more directives
       directive = line.strip()
 
-      if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
+      if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, D_INSTRUCTOR_NOTE]:
           directives.append(line)
         
       elif D_TODO in directives:
@@ -206,8 +210,9 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         include_footer = True if D_INCLUDE_FOOTER_TRUE in directives else include_footer
         found_footer_directive = True if D_INCLUDE_FOOTER_TRUE in directives or D_INCLUDE_FOOTER_FALSE in directives else found_footer_directive
 
-        if D_SOURCE_ONLY in directives:            skipped += skipping(i, "Source-Only")
-        elif command.strip() == "":                skipped += skipping(i, "Empty Cell")
+        if command.strip() == "":                  skipped += skipping(i, "Empty Cell")
+        elif D_SOURCE_ONLY in directives:          skipped += skipping(i, "Source-Only")
+        elif D_INSTRUCTOR_NOTE in directives:      skipped += skipping(i, "Instructor Note")
         elif D_INCLUDE_HEADER_TRUE in directives:  skipped += skipping(i, "Including Header")
         elif D_INCLUDE_HEADER_FALSE in directives: skipped += skipping(i, "Excluding Header")
         elif D_INCLUDE_FOOTER_TRUE in directives:  skipped += skipping(i, "Including Footer")
@@ -235,7 +240,8 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         # Check the command for BDC markers
         bdc_tokens = ["%python","IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY",
                       "AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST",
-                      "VIDEO","INSTRUCTOR_ONLY","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART", ":BESTPRACTICE:"]
+                      "VIDEO","INSTRUCTOR_ONLY","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART", "INSTRUCTOR_NOTE"
+                      ":BESTPRACTICE:", "{{dbr}}"]
         
 
         for token in bdc_tokens:
