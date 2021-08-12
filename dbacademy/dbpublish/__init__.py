@@ -246,7 +246,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i+1}"
 
-        print(("-"*80) + " " + ("INSTRUCTOR_NOTE" in bdc_tokens))
+        print(("-"*80) + " " + str("INSTRUCTOR_NOTE" in bdc_tokens))
         print(command)
            
     assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
