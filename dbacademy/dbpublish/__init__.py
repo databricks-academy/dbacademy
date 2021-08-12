@@ -38,6 +38,9 @@ def get_leading_comments(command) -> []:
               comment = line[pos:].strip()[1:].strip()
               leading_comments.append(comment)
               
+        elif line.strip() == "#":
+            # empty comment line, don't break, just ignore
+            
         elif line.strip().startswith("#"):
             # append to our list
             comment = line.strip()[1:].strip()
