@@ -64,7 +64,7 @@ def parse_directives(i, comments):
       if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
           directives.append(line)
 
-      elif D_TODO in directive:
+      elif D_TODO in directives:
           # This is already a TODO cell, no point
           # in trying to process this any further.
           pass
