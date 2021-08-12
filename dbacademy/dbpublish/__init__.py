@@ -134,7 +134,7 @@ def skipping(i, label):
     print(f"Skipping Cmd #{i + 1} - {label}")
     return 1;
 
-def clean_todo_cell(i, command):
+def clean_todo_cell(command, i):
     new_command = ""
     lines = command.split("\n")
     
@@ -212,7 +212,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             # This is a TODO cell, exclude from solution notebooks
             todo_count += 1
             assert_only_one_setup_cell(command, i)
-            command = clean_todo_cell(command)
+            command = clean_todo_cell(command, i)
             students_commands.append(command)
 
         elif D_ANSWER in directives:
