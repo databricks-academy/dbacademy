@@ -103,8 +103,7 @@ header_cell = """# MAGIC %md-sandbox
 # MAGIC   <img src="https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png" alt="Databricks Learning" style="width: 600px">
 # MAGIC </div>"""
 
-footer_cell = f"""
-# MAGIC %md-sandbox
+footer_cell = f"""# MAGIC %md-sandbox
 # MAGIC &copy; {date.today().year} Databricks, Inc. All rights reserved.<br/>
 # MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
 # MAGIC <br/>
