@@ -66,7 +66,10 @@ def parse_directives(i, comments):
           if "-" in directive: 
             raise ValueError(f"""Hyphen found in directive "{directive}", Cmd #{i}: {line}""")
           if directive not in SUPPORTED_DIRECTIVES: 
-            raise ValueError(f"""Unspported directive "{directive}" in Cmd #{i} {SUPPORTED_DIRECTIVES}: "{line}"\n"{comments}"" """)
+            print("-"*80)
+            print(comments)
+            print("-"*80)
+            raise ValueError(f"""Unspported directive "{directive}" in Cmd #{i} {SUPPORTED_DIRECTIVES}: {line}""")
           directives.append(line)
 
   return directives
