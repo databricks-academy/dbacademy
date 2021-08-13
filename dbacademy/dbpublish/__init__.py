@@ -109,18 +109,6 @@ footer_cell = f"""# MAGIC %md-sandbox
 # MAGIC <br/>
 # MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>"""
 
-def assert_only_one_setup_cell(command, index):
-    global found_setup
-    setup_prefix = "# magic %run ./_includes/setup-"
-    
-    if command.strip().lower().startswith(setup_prefix):
-        # This is a setup cell - just want to make sure we don't have duplicates, 
-        # a problem Jacob creates when he is testing the setup notebooks
-        if found_setup:
-            raise Exception(f"Duplicate call to setup in command #{index + 1}")
-        else:
-            found_setup = True
-            
 def publish_notebook(commands:list, target_path:str, replacements:dict = {}) -> None:
     final_source = ""
     
@@ -193,8 +181,8 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     found_footer_directive = False
     
     for i in range(len(commands)):
-        command = commands[i].strip()
-        leading_comments = get_leading_comments(command)
+        command = commands[i]
+        leading_comments = get_leading_comments(command.strip())
         directives = parse_directives(i, leading_comments)
 
         # Print statements for debugging parsing.
@@ -225,19 +213,16 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         elif D_TODO in directives:
             # This is a TODO cell, exclude from solution notebooks
             todo_count += 1
-            assert_only_one_setup_cell(command, i)
             command = clean_todo_cell(command, i)
             students_commands.append(command)
 
         elif D_ANSWER in directives:
             # This is an ANSWER cell, exclude from lab notebooks
             answ_count += 1
-            assert_only_one_setup_cell(command, i)
             solutions_commands.append(command)
 
         else:
             # Not a TODO or ANSWER, just append to both
-            assert_only_one_setup_cell(command, i)
             students_commands.append(command)
             solutions_commands.append(command)
 
