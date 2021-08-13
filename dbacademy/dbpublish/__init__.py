@@ -181,7 +181,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     found_footer_directive = False
     
     for i in range(len(commands)):
-        command = commands[i]
+        command = commands[i].lstrip()
         leading_comments = get_leading_comments(command.strip())
         directives = parse_directives(i, leading_comments)
 
