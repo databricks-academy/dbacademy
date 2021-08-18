@@ -12,8 +12,10 @@ class DBAcademyRestClient:
 
         self.throttle = throttle
 
-        self.timeout = 5  # seconds
-        backoff_factor = self.timeout
+        self.read_timeout = 300 # seconds
+        self.connect_timeout = 5  # seconds
+
+        backoff_factor = self.connect_timeout
         retry = Retry(connect=Retry.BACKOFF_MAX / backoff_factor, backoff_factor=backoff_factor)
 
         self.session = requests.Session()
@@ -78,7 +80,7 @@ class DBAcademyRestClient:
         import json
         expected = self.expected_to_list(expected)
 
-        response = self.session.patch(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=self.timeout)
+        response = self.session.patch(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=(self.connect_timeout, self.read_timeout))
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
@@ -91,7 +93,7 @@ class DBAcademyRestClient:
         import json
         expected = self.expected_to_list(expected)
 
-        response = self.session.post(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=self.timeout)
+        response = self.session.post(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=(self.connect_timeout, self.read_timeout))
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
@@ -104,7 +106,7 @@ class DBAcademyRestClient:
     def execute_get(self, url: str, expected=200):
         expected = self.expected_to_list(expected)
 
-        response = self.session.get(url, headers={"Authorization": f"Bearer {self.token}"}, timeout=self.timeout)
+        response = self.session.get(url, headers={"Authorization": f"Bearer {self.token}"}, timeout=(self.connect_timeout, self.read_timeout))
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
