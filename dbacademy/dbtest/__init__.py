@@ -15,9 +15,9 @@ class ResultsEvaluator:
         
     def to_html(self) -> int:
       html = "</body>"
-      html += render_results("Failed", self.failed_set)
-      html += render_results("Ignored", self.ignored_set)
-      html += render_results("Success", self.success_set, links=False)
+      html += self.render_results("Failed", self.failed_set)
+      html += self.render_results("Ignored", self.ignored_set)
+      html += self.render_results("Success", self.success_set, links=False)
       html += "</body>"
       return html
 
@@ -39,7 +39,7 @@ class ResultsEvaluator:
         return html
 
       html += f"""<table style="border-collapse: collapse; width:100%">"""
-      html += add_row(header_style, "Cloud", "Job", "Version", "Executed", "Duration")
+      html += self.add_row(header_style, "Cloud", "Job", "Version", "Executed", "Duration")
 
       for row in rows:
         if not links:
@@ -49,14 +49,14 @@ class ResultsEvaluator:
           if row["cloud"] == "GCP": link = f"""<a href="{self.gcp_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
           if row["cloud"] == "MSA": link = f"""<a href="{self.msa_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
 
-        html += add_row(cell_style, row["cloud"], link, row["spark_version"], row["executed_at"], f"""{row["execution_duration"]:,d} ms""")
+        html += self.add_row(cell_style, row["cloud"], link, row["spark_version"], row["executed_at"], f"""{row["execution_duration"]:,d} ms""")
         html += """<tbody></tbody><tbody>"""
 
       html += "</table>"
 
       return html
 
-      
+
 class TestConfig:
     def __init__(self, 
                  name, 
