@@ -8,6 +8,9 @@ class ResultsEvaluator:
         self.failed_set = df.filter("status == 'FAILED'").collect()
         self.ignored_set = df.filter("status == 'IGNORED'").collect()
         self.success_set = df.filter("status == 'SUCCESS'").collect()
+
+        self.cell_style = "padding: 5px; border: 1px solid black; white-space:nowrap"
+        self.header_style = "padding-right:1em; border: 1px solid black; font-weight:bold; padding: 5px; background-color: F0F0F0"
         
     @property
     def passed(self) -> bool:
@@ -39,7 +42,7 @@ class ResultsEvaluator:
         return html
 
       html += f"""<table style="border-collapse: collapse; width:100%">"""
-      html += self.add_row(header_style, "Cloud", "Job", "Version", "Executed", "Duration")
+      html += self.add_row(self.header_style, "Cloud", "Job", "Version", "Executed", "Duration")
 
       for row in rows:
         if not links:
@@ -49,7 +52,7 @@ class ResultsEvaluator:
           if row["cloud"] == "GCP": link = f"""<a href="{self.gcp_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
           if row["cloud"] == "MSA": link = f"""<a href="{self.msa_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
 
-        html += self.add_row(cell_style, row["cloud"], link, row["spark_version"], row["executed_at"], f"""{row["execution_duration"]:,d} ms""")
+        html += self.add_row(self.cell_style, row["cloud"], link, row["spark_version"], row["executed_at"], f"""{row["execution_duration"]:,d} ms""")
         html += """<tbody></tbody><tbody>"""
 
       html += "</table>"
