@@ -18,9 +18,9 @@ class ResultsEvaluator:
         
     def to_html(self) -> int:
       html = "</body>"
-      html += self.render_results("Failed", self.failed_set)
-      html += self.render_results("Ignored", self.ignored_set)
-      html += self.render_results("Success", self.success_set, links=False)
+      html += self.add_section("Failed", self.failed_set)
+      html += self.add_section("Ignored", self.ignored_set)
+      html += self.add_section("Success", self.success_set, links=False)
       html += "</body>"
       return html
 
@@ -35,7 +35,7 @@ class ResultsEvaluator:
       </tr>
       """
 
-    def add_section(title, rows, links=True):
+    def add_section(self, title, rows, links=True):
       html = f"""<h1>{title}</h1>"""
       if len(rows) == 0:
         html += "<p>No records found</p>"
