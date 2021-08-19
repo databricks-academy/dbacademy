@@ -1,4 +1,62 @@
 # Databricks notebook source
+class ResultsEvaluator:
+    def __init__(self, df):
+        self.aws_workspace = "https://curriculum.cloud.databricks.com/?o=5775574114781423"
+        self.gcp_workspace = "https://8422030046858219.9.gcp.databricks.com/?o=8422030046858219"
+        self.msa_workspace = "https://westus2.azuredatabricks.net/?o=2472203627577334"
+        
+        self.failed_set = df.filter("status == 'FAILED'").collect()
+        self.ignored_set = df.filter("status == 'IGNORED'").collect()
+        self.success_set = df.filter("status == 'SUCCESS'").collect()
+        
+    @property
+    def passed(self) -> bool:
+      return len(self.failed_set) == 0
+        
+    def to_html(self) -> int:
+      html = "</body>"
+      html += render_results("Failed", self.failed_set)
+      html += render_results("Ignored", self.ignored_set)
+      html += render_results("Success", self.success_set, links=False)
+      html += "</body>"
+      return html
+
+    def add_row(self, style, cloud, job, version, executed, duration):
+      return f"""
+      <tr>
+          <td style="{style}">{cloud}</td>
+          <td style="{style}; width:100%">{job}</td>
+          <td style="{style}">{version}</td>
+          <td style="{style}">{executed}</td>
+          <td style="{style}; text-align:right">{duration}</td>
+      </tr>
+      """
+
+    def add_section(title, rows, links=True):
+      html = f"""<h1>{title}</h1>"""
+      if len(rows) == 0:
+        html += "<p>No records found</p>"
+        return html
+
+      html += f"""<table style="border-collapse: collapse; width:100%">"""
+      html += add_row(header_style, "Cloud", "Job", "Version", "Executed", "Duration")
+
+      for row in rows:
+        if not links:
+          link = row["notebook_path"]
+        else:
+          if row["cloud"] == "AWS": link = f"""<a href="{self.aws_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
+          if row["cloud"] == "GCP": link = f"""<a href="{self.gcp_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
+          if row["cloud"] == "MSA": link = f"""<a href="{self.msa_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
+
+        html += add_row(cell_style, row["cloud"], link, row["spark_version"], row["executed_at"], f"""{row["execution_duration"]:,d} ms""")
+        html += """<tbody></tbody><tbody>"""
+
+      html += "</table>"
+
+      return html
+
+      
 class TestConfig:
     def __init__(self, 
                  name, 
