@@ -80,9 +80,9 @@ class Publisher:
       version_info_notebook = None
       main_notebooks = []
       
-      if self.client.workspace().get_status(target_dir) is not None:
+      if self.client.workspace().get_status(self.target_dir) is not None:
         if overwrite:
-          self.client.workspace().delete_path(target_dir)
+          self.client.workspace().delete_path(self.target_dir)
         else:
           raise Exception("The target path already exists and overwrite=False")
 
