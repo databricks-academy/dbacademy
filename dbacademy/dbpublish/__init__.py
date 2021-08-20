@@ -22,7 +22,7 @@ def replace_contents(contents:str, replacements:dict):
         new_value = replacements[old_value]
         contents = contents.replace(old_value, new_value)
   
-  return contents
+    return contents
   
     
 def get_leading_comments(command) -> []:
