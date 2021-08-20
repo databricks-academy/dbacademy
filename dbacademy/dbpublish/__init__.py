@@ -247,7 +247,7 @@ def clean_todo_cell(command, cmd):
             # Remove just the comment
             new_command += line[1:]
         
-        if i < len(lines):
+        if i < len(lines-1):
             # Add new line for all but the last line
             new_command += "\n"
 
