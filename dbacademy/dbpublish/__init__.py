@@ -192,7 +192,6 @@ from dbacademy.dbrest import DBAcademyRestClient
 cmd_delim = "\n# COMMAND ----------\n"
 
 header_cell = """
-# MAGIC 
 # MAGIC %md-sandbox
 # MAGIC
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
@@ -247,7 +246,7 @@ def clean_todo_cell(command, cmd):
             # Remove just the comment
             new_command += line[1:]
         
-        if i == len(lines)-1:
+        if i < len(lines):
             # Add new line for all but the last line
             new_command += "\n"
 
