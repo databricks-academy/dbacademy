@@ -16,6 +16,18 @@ D_INSTRUCTOR_NOTE = "INSTRUCTOR_NOTE"
 SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_SELF_PACED_ONLY, D_ILT_ONLY, 
                         D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
 
+class Publisher:
+    def __init__(self, source_dir, target_dir, include_solution_default=False):
+        pass
+        self.source_dir = source_dir
+        self.target_dir = target_dir
+        self.include_solution_default = include_solution_default
+        self.notebooks = []
+        self.job_number = 1
+
+    def add(self, round, notebook):
+    
+
 def replace_contents(contents:str, replacements:dict):
   for old_value in replacements:
     new_value = replacements[old_value]
@@ -95,7 +107,6 @@ def parse_directives(i, comments):
 from datetime import date
 from dbacademy.dbrest import DBAcademyRestClient
 
-found_setup = False
 cmd_delim = "\n# COMMAND ----------\n"
 
 header_cell = """# MAGIC %md-sandbox
@@ -109,7 +120,8 @@ footer_cell = f"""# MAGIC %md-sandbox
 # MAGIC <br/>
 # MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>"""
 
-def publish_notebook(commands:list, target_path:str, replacements:dict = {}) -> None:
+def publish_notebook(commands:list, target_path:str, replacements:dict = None) -> None:
+    replacements = dict() if replacements is None else replacements
     final_source = ""
     
     for command in commands[:-1]:
@@ -155,8 +167,7 @@ def clean_todo_cell(command, cmd):
     
     return new_command
 
-def publish(source_project:str, target_project:str, notebook_name:str, replacements:dict = {}, include_solution=False) -> None:
-    global found_setup
+def publish(source_project:str, target_project:str, notebook_name:str, replacements:dict = {}, include_solution=False, ) -> None:
     print("-" * 80)
 
     source_notebook_path = f"{source_project}/{notebook_name}"
@@ -170,7 +181,6 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     solutions_commands = []
     commands = raw_source.split(cmd_delim)
 
-    found_setup = False
     todo_count = 0
     answ_count = 0
 
