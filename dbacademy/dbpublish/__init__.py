@@ -17,13 +17,99 @@ SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_SELF_PACED_ONLY, D_IL
                         D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
  
 
+class NotebookDef:
+    def __init__(self, source_dir:str, target_dir:str, path:str, replacements:dict, include_solution:bool):
+      assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
+      assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
+      assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
+
+      assert type(replacements) == dict, f"""Expected the parameter "replacements" to be of type "dict", found "{type(notebook)}" """
+      assert type(include_solution) == bool, f"""Expected the parameter "include_solution" to be of type "bool", found "{type(include_solution)}" """
+      
+      self.path = path
+      self.source_dir = source_dir
+      self.target_dir = target_dir
+      self.replacements = replacements
+      self.include_solution = include_solution
+
+    def __str__(self):
+      result = self.path
+      result += f"\n - include_solution = {self.include_solution}"
+      result += f"\n - source_dir = {self.source_dir}"
+      result += f"\n - target_dir = {self.target_dir}"
+      result += f"\n - replacements = {self.replacements}"
+      return result
+    
+    def publish(self):
+      dbpublish.publish(self.source_dir, self.target_dir, self.path, self.replacements, self.include_solution)
+      
+
+class Publisher:
+    def __init__(self, client, version:str, source_dir:str, target_dir:str, include_solution:bool=False):
+        self.client = client
+        self.version = version
+        self.version_info_notebook_name = "Version Info"
+
+        self.source_dir = source_dir
+        self.target_dir = target_dir
+        
+        self.include_solution = include_solution
+        self.notebooks = []
+        
+    def add_path(self, path, replacements:dict = None, include_solution = None):
+      
+      # Configure our various default values.
+      include_solution = self.include_solution if include_solution is None else include_solution
+      replacements = dict() if replacements is None else replacements
+      
+      notebook = NotebookDef(self.source_dir, self.target_dir, path, replacements, include_solution)
+      
+      if notebook.path == self.version_info_notebook_name:
+        notebook.replacements["{{verison_number}}"] = self.version
+        notebook.replacements["{{built_on}}"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
+
+      self.add_notebook_def(notebook)
+        
+    def add_notebook_def(self, notebook):
+      assert type(notebook) == NotebookDef, f"""Expected the parameter "notebook" to be of type "NotebookDef", found "{type(notebook)}" """
+
+      self.notebooks.append(notebook)
+        
+    def publish(self, testing):
+      version_info_notebook = None
+      main_notebooks = []
+      
+      for notebook in self.notebooks:
+        if notebook.path == self.version_info_notebook_name: version_info_notebook = notebook
+        else: main_notebooks.append(notebook)
+          
+      assert version_info_notebook is not None, f"""The required notebook "{self.version_info_notebook_name}" was not found."""
+
+      # Backup the version info in case we are just testing
+      try: version_info_source = client.workspace().export_notebook(f"{version_info_notebook.target_dir}/{version_info_notebook.path}")
+      except: version_info_source = None
+
+      # Determine if we are in test mode or not.
+      try: testing = version_info_source is not None and testing
+      except: testing = False
+      
+      for notebook in main_notebooks:
+        notebook.publish()
+        
+      if testing:
+        print("-"*80) # We are in test-mode, write back the original Version Info notebook
+        print(f"RESTORING: {target_dir}/Version Info")
+        self.client.workspace().import_notebook("PYTHON", f"{target_dir}/Version Info", version_info_source)
+      else:
+        version_info_notebook.publish()
+
+
 def replace_contents(contents:str, replacements:dict):
     for old_value in replacements:
         new_value = replacements[old_value]
         contents = contents.replace(old_value, new_value)
   
     return contents
-  
     
 def get_leading_comments(command) -> []:
     leading_comments = []
