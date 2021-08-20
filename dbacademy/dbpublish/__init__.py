@@ -82,9 +82,9 @@ class Publisher:
       
       if self.client.workspace().get_status(self.target_dir) is None:
         pass # Who care, it doesn't already exist.
-      elif str(mode).lower() == "delete" 
+      elif str(mode).lower() == "delete":
         self.client.workspace().delete_path(self.target_dir)
-      elif str(mode).lower() != "overwrite" 
+      elif str(mode).lower() != "overwrite":
         raise Exception("Expected mode to be one of None, DELETE or OVERWRITE")
 
       for notebook in self.notebooks:
