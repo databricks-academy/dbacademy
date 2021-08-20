@@ -191,8 +191,7 @@ from dbacademy.dbrest import DBAcademyRestClient
 
 cmd_delim = "\n# COMMAND ----------\n"
 
-header_cell = """# MAGIC
-# MAGIC %md-sandbox
+header_cell = """# MAGIC %md-sandbox
 # MAGIC
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
 # MAGIC   <img src="https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png" alt="Databricks Learning" style="width: 600px">
@@ -239,15 +238,17 @@ def clean_todo_cell(command, cmd):
         elif i==0 or line.strip() == "":
             # No comment, do not process
             new_command += line
-            new_command += "\n"
         elif line.strip().startswith("# "):
             # Remove comment and space
             new_command += line[2:]
-            new_command += "\n"
         else:
             # Remove just the comment
             new_command += line[1:]
+        
+        if i == len(lines)-1:
+            # Add new line for all but the last line
             new_command += "\n"
+
     
     return new_command
 
