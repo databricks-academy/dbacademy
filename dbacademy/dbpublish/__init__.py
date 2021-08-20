@@ -29,9 +29,9 @@ class Publisher:
     
 
 def replace_contents(contents:str, replacements:dict):
-  for old_value in replacements:
-    new_value = replacements[old_value]
-    contents = contents.replace(old_value, new_value)
+    for old_value in replacements:
+        new_value = replacements[old_value]
+        contents = contents.replace(old_value, new_value)
   
   return contents
   
