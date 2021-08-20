@@ -57,6 +57,7 @@ class Publisher:
         self.notebooks = []
         
     def add_path(self, path, replacements:dict = None, include_solution = None):
+      from datetime import datetime
       
       # Configure our various default values.
       include_solution = self.include_solution if include_solution is None else include_solution
