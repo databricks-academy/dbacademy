@@ -15,18 +15,7 @@ D_INSTRUCTOR_NOTE = "INSTRUCTOR_NOTE"
 
 SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_SELF_PACED_ONLY, D_ILT_ONLY, 
                         D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
-
-class Publisher:
-    def __init__(self, source_dir, target_dir, include_solution_default=False):
-        pass
-        self.source_dir = source_dir
-        self.target_dir = target_dir
-        self.include_solution_default = include_solution_default
-        self.notebooks = []
-        self.job_number = 1
-
-    def add(self, round, notebook):
-    
+ 
 
 def replace_contents(contents:str, replacements:dict):
     for old_value in replacements:
