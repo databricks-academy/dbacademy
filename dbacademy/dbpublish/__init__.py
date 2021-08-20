@@ -41,7 +41,7 @@ class NotebookDef:
       return result
     
     def publish(self):
-      dbpublish.publish(self.source_dir, self.target_dir, self.path, self.replacements, self.include_solution)
+      publish(self.source_dir, self.target_dir, self.path, self.replacements, self.include_solution)
       
 
 class Publisher:
@@ -58,7 +58,7 @@ class Publisher:
         
     def add_path(self, path, replacements:dict = None, include_solution = None):
       from datetime import datetime
-      
+
       # Configure our various default values.
       include_solution = self.include_solution if include_solution is None else include_solution
       replacements = dict() if replacements is None else replacements
