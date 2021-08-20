@@ -76,15 +76,16 @@ class Publisher:
 
       self.notebooks.append(notebook)
         
-    def publish(self, testing, overwrite):
+    def publish(self, testing, mode=None):
       version_info_notebook = None
       main_notebooks = []
       
-      if self.client.workspace().get_status(self.target_dir) is not None:
-        if overwrite:
-          self.client.workspace().delete_path(self.target_dir)
-        else:
-          raise Exception("The target path already exists and overwrite=False")
+      if self.client.workspace().get_status(self.target_dir) is None:
+        pass # Who care, it doesn't already exist.
+      elif str(mode).lower() == "delete" 
+        self.client.workspace().delete_path(self.target_dir)
+      elif str(mode).lower() != "overwrite" 
+        raise Exception("Expected mode to be one of None, DELETE or OVERWRITE")
 
       for notebook in self.notebooks:
         if notebook.path == self.version_info_notebook_name: version_info_notebook = notebook
