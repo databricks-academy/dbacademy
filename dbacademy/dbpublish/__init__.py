@@ -76,11 +76,15 @@ class Publisher:
 
       self.notebooks.append(notebook)
         
-    def publish(self, testing):
+    def publish(self, testing, overwrite):
       version_info_notebook = None
       main_notebooks = []
       
-      client.workspace().delete_path(target_dir)
+      if client.workspace().get_status(target_dir) is not None:
+        if overwrite:
+          client.workspace().delete_path(target_dir)
+        else:
+          raise Exception("The target path already exists and overwrite=False")
 
       for notebook in self.notebooks:
         if notebook.path == self.version_info_notebook_name: version_info_notebook = notebook
