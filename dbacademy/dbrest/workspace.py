@@ -49,4 +49,9 @@ class WorkspaceClient:
         return self.client.execute_get(f"{self.endpoint}/api/2.0/workspace/export?path={notebook_path}&direct_download=true").text
 
     def get_status(self, notebook_path) -> dict:
-        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/workspace/get-status?path={notebook_path}", expected=[200,404])
+        response = self.client.execute_get(f"{self.endpoint}/api/2.0/workspace/get-status?path={notebook_path}")
+        if response.status_code == 404:
+            return None
+        else:
+            assert response.status_code in expected, f"({response.status_code}): {response.text}"
+            return response.json()
