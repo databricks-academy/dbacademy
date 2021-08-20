@@ -207,7 +207,7 @@ footer_cell = f"""# MAGIC %md-sandbox
 
 def publish_notebook(commands:list, target_path:str, replacements:dict = None) -> None:
     replacements = dict() if replacements is None else replacements
-    final_source = ""
+    final_source = "# Databricks notebook source"
     
     for command in commands[:-1]:
         final_source += command
