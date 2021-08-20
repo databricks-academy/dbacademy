@@ -80,6 +80,8 @@ class Publisher:
       version_info_notebook = None
       main_notebooks = []
       
+      client.workspace().delete_path(target_dir)
+
       for notebook in self.notebooks:
         if notebook.path == self.version_info_notebook_name: version_info_notebook = notebook
         else: main_notebooks.append(notebook)
