@@ -53,5 +53,5 @@ class WorkspaceClient:
         if response.status_code == 404:
             return None
         else:
-            assert response.status_code in expected, f"({response.status_code}): {response.text}"
+            assert response.status_code == 200, f"({response.status_code}): {response.text}"
             return response.json()
