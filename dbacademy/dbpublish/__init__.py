@@ -213,10 +213,9 @@ def publish_notebook(commands:list, target_path:str, replacements:dict = None) -
     
     for command in commands[:-1]:
         final_source += command
-        final_source += "\n"
+        if command[-1] != "\n":
+          final_source += "\n"
         final_source += cmd_delim
-        # final_source += "\n"
-        # final_source += "|moo1\n"
 
     final_source += commands[-1]
     final_source = replace_contents(final_source, replacements)
