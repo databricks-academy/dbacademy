@@ -45,11 +45,12 @@ class NotebookDef:
       
 
 class Publisher:
-    def __init__(self, client, version:str, source_dir:str, target_dir:str, include_solution:bool=False):
+    def __init__(self, client, version:str, source_dir:str, target_dir:str, dbr:str, include_solution:bool=False):
         self.client = client
         self.version = version
         self.version_info_notebook_name = "Version Info"
 
+        self.dbr = dbr
         self.source_dir = source_dir
         self.target_dir = target_dir
         
@@ -65,9 +66,10 @@ class Publisher:
       
       notebook = NotebookDef(self.source_dir, self.target_dir, path, replacements, include_solution)
       
-      if notebook.path == self.version_info_notebook_name:
-        notebook.replacements["{{verison_number}}"] = self.version
-        notebook.replacements["{{built_on}}"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
+      # Add the universal replacements
+      notebook.replacements["{{dbr}}"] = self.dbr
+      notebook.replacements["{{verison_number}}"] = self.version
+      notebook.replacements["{{built_on}}"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
 
       self.add_notebook_def(notebook)
         
