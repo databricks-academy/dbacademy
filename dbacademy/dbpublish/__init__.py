@@ -239,9 +239,9 @@ def clean_todo_cell(command, cmd):
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be the {D_TODO} directive: "{line}"\n{"-"*80}\n{command}\n{"-"*80}""")
         elif not line.startswith("#") and line.strip() != "":
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" """)
-        # elif i==0 or line.strip() == "":
-        #     # No comment, do not process
-        #     new_command += line
+        elif i==0 or line.strip() == "":
+            # No comment, do not process
+            new_command += line
         elif line.strip().startswith("# "):
             # Remove comment and space
             new_command += line[2:]
