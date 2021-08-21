@@ -216,8 +216,10 @@ def publish_notebook(commands:list, target_path:str, replacements:dict = None) -
         final_source += "\n"
         final_source += cmd_delim
         final_source += "\n"
+        final_source += "|moo1\n"
 
     final_source += commands[-1]
+    final_source += "|moo2"
     final_source = replace_contents(final_source, replacements)
 
     client = DBAcademyRestClient()
