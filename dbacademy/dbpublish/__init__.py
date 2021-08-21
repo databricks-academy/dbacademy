@@ -231,6 +231,9 @@ def clean_todo_cell(command, cmd):
     new_command = ""
     lines = command.split("\n")
     
+    if len(lines) > 0 and lines[0].strip() == "":
+      lines = lines[1:] # Remove the leading empty line
+
     for i in range(len(lines)):
         line = lines[i]
         if i==0 and line.strip().replace(" ", "") not in ["#TODO", "##TODO"]:
