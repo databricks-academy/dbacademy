@@ -209,11 +209,8 @@ footer_cell = f"""# MAGIC %md-sandbox
 
 def publish_notebook(commands:list, target_path:str, replacements:dict = None) -> None:
     replacements = dict() if replacements is None else replacements
-    final_source = "# Databricks notebook source\n"
+    final_source = "# Databricks notebook source\n# Moo"
 
-    # Matching BDC's behavior with this one extra line
-    final_source += "# MAGIC \n" if commands[0].startswith("# MAGIC") else "\n\n"
-    
     # Processes all commands except the last
     for command in commands[:-1]:
         final_source += command
