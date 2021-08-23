@@ -218,7 +218,7 @@ def publish_notebook(commands:list, target_path:str, replacements:dict = None) -
 
     # Process the last command
     final_source += commands[-1]
-    final_source += "" if commands[-1].startswith("# MAGIC") else "\n"
+    final_source += "" if commands[-1].startswith("# MAGIC") else "# Moo\n"
 
     final_source = replace_contents(final_source, replacements)
 
