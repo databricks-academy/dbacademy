@@ -42,7 +42,13 @@ class NotebookDef:
     
     def publish(self):
       publish(self.source_dir, self.target_dir, self.path, self.replacements, self.include_solution)
-      
+
+    def to_test(course_name, course_home, job_number, test_version, ignored=False, jobs=None):
+      if jobs is None jobs = dict()
+
+      job_name = f"[TEST] {course_name} #{job_number:02d} | Source {test_version}"
+      jobs_map[job_name] = (f"{course_home}/{self.path}", 0, 0, ignored)
+     
 
 class Publisher:
     def __init__(self, client, version:str, source_dir:str, target_dir:str, dbr:str, include_solutions:bool=False):
