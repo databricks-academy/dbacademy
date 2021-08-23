@@ -45,7 +45,7 @@ class NotebookDef:
       
 
 class Publisher:
-    def __init__(self, client, version:str, source_dir:str, target_dir:str, dbr:str, include_solution:bool=False):
+    def __init__(self, client, version:str, source_dir:str, target_dir:str, dbr:str, include_solutions:bool=False):
         self.client = client
         self.version = version
         self.version_info_notebook_name = "Version Info"
@@ -54,14 +54,14 @@ class Publisher:
         self.source_dir = source_dir
         self.target_dir = target_dir
         
-        self.include_solution = include_solution
+        self.include_solutions = include_solutions
         self.notebooks = []
         
     def add_path(self, path, replacements:dict = None, include_solution = None):
       from datetime import datetime
 
       # Configure our various default values.
-      include_solution = self.include_solution if include_solution is None else include_solution
+      include_solution = self.include_solutions if include_solution is None else include_solution
       replacements = dict() if replacements is None else replacements
       
       notebook = NotebookDef(self.source_dir, self.target_dir, path, replacements, include_solution)
