@@ -46,7 +46,7 @@ class NotebookDef:
       publish(self.source_dir, self.target_dir, self.path, self.replacements, self.include_solution)
 
     def to_test(jobs, job_number, course_name, course_home, test_version, ignored=False):
-      if jobs is None jobs = dict()
+      if jobs is None: jobs = dict()
 
       job_name = f"[TEST] {course_name} #{job_number:02d} | Source {test_version}"
       jobs_map[job_name] = (f"{course_home}/{self.path}", 0, 0, ignored)
