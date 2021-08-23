@@ -211,8 +211,8 @@ def publish_notebook(commands:list, target_path:str, replacements:dict = None) -
     replacements = dict() if replacements is None else replacements
     final_source = "# Databricks notebook source\n"
 
-    # Matching BDC's behavior with this one extra line
-    # final_source += "# MAGIC \n" if commands[0].startswith("# MAGIC") else "\n\n"
+    Matching BDC's behavior with this one extra line
+    final_source += "# MAGIC \n" if commands[0].startswith("# MAGIC") else "\n\n"
     
     # Processes all commands except the last
     for command in commands[:-1]:
