@@ -212,7 +212,7 @@ def publish_notebook(commands:list, target_path:str, replacements:dict = None) -
     final_source = "# Databricks notebook source\n# MAGIC "
 
     # Matching BDC's behavior with this one extra line
-    final_source += "# MAGIC Moo\n" if commands[0].startswith("# MAGIC") else "# Moo\n"
+    final_source += "# MAGIC\n" if commands[0].startswith("# MAGIC") else "\n"
     
     # Processes all commands except the last
     for command in commands[:-1]:
