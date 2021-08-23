@@ -18,17 +18,19 @@ SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_SELF_PACED_ONLY, D_IL
  
 
 class NotebookDef:
-    def __init__(self, source_dir:str, target_dir:str, path:str, replacements:dict, include_solution:bool):
+    def __init__(self, source_dir:str, target_dir:str, path:str, replacements:dict, include_solution:bool, test_group:int):
       assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
       assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
       assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
 
       assert type(replacements) == dict, f"""Expected the parameter "replacements" to be of type "dict", found "{type(notebook)}" """
       assert type(include_solution) == bool, f"""Expected the parameter "include_solution" to be of type "bool", found "{type(include_solution)}" """
+      assert type(test_group) == int, f"""Expected the parameter "test_group" to be of type "int", found "{type(test_group)}" """
       
       self.path = path
       self.source_dir = source_dir
       self.target_dir = target_dir
+      self.test_group = test_group
       self.replacements = replacements
       self.include_solution = include_solution
 
@@ -43,11 +45,12 @@ class NotebookDef:
     def publish(self):
       publish(self.source_dir, self.target_dir, self.path, self.replacements, self.include_solution)
 
-    def to_test(course_name, course_home, job_number, test_version, ignored=False, jobs=None):
+    def to_test(jobs, job_number, course_name, course_home, test_version, ignored=False):
       if jobs is None jobs = dict()
 
       job_name = f"[TEST] {course_name} #{job_number:02d} | Source {test_version}"
       jobs_map[job_name] = (f"{course_home}/{self.path}", 0, 0, ignored)
+      return job_number + 1
      
 
 class Publisher:
@@ -63,14 +66,14 @@ class Publisher:
         self.include_solutions = include_solutions
         self.notebooks = []
         
-    def add_path(self, path, replacements:dict = None, include_solution = None):
+    def add_path(self, path, replacements:dict = None, include_solution = None, test_group=1):
       from datetime import datetime
 
       # Configure our various default values.
       include_solution = self.include_solutions if include_solution is None else include_solution
       replacements = dict() if replacements is None else replacements
       
-      notebook = NotebookDef(self.source_dir, self.target_dir, path, replacements, include_solution)
+      notebook = NotebookDef(self.source_dir, self.target_dir, path, replacements, include_solution, test_group)
       
       # Add the universal replacements
       notebook.replacements["{{dbr}}"] = self.dbr
