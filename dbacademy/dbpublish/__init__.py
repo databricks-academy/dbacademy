@@ -194,7 +194,7 @@ from dbacademy.dbrest import DBAcademyRestClient
 
 cmd_delim = "\n# COMMAND ----------\n"
 
-header_cell = """
+header_cell = """# MAGIC
 # MAGIC %md-sandbox
 # MAGIC
 # MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
