@@ -236,8 +236,20 @@ def log_run(test_config, response, job_name, ignored):
         print(f"Unable to log test results.")
         traceback.print_exc()
 
-def add_job(client, jobs_map, course_name, test_type, notebook_path, ignored=False):
-    job_number = client.workspace().get_status(notebook_path)["object_id"]
-    job_name = f"[TEST] {course_name} | {test_type} | #{job_number}"
-    jobs_map[job_name] = (notebook_path, 0, 0, ignored)
+class SuiteBuilder:
+    def __init__(self, client, jobs_map, course_name, test_type):
+      self.client = client
+      self.jobs_map = jobs_map
+      self.course_name = course_name
+      self.test_type = test_type
+      self.jobs = dict()
+
+    def add(self, notebook_path, ignored=False):
+        status = self.client.workspace().get_status(notebook_path)
+        if status is None:
+          raise Exception(f"Notebook not found: {notebook_path}")
+
+        job_number = status["object_id"]
+        job_name = f"[TEST] {self.course_name} | {self.test_type} | #{job_number}"
+        self.jobs[job_name] = (notebook_path, 0, 0, ignored)
 
