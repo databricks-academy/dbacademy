@@ -236,7 +236,7 @@ def log_run(test_config, response, job_name, ignored):
         print(f"Unable to log test results.")
         traceback.print_exc()
 
-def add_job(client, jobs_map, notebook_path, type, ignored=False):
+def add_job(client, jobs_map, type, notebook_path, ignored=False):
     job_number = client.workspace().get_status(notebook_path)["object_id"]
     job_name = f"[TEST] {name} | {type} | #{job_number}"
     jobs_map[job_name] = (notebook_path, 0, 0, ignored)
