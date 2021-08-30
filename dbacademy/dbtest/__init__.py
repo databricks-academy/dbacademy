@@ -237,9 +237,8 @@ def log_run(test_config, response, job_name, ignored):
         traceback.print_exc()
 
 class SuiteBuilder:
-    def __init__(self, client, jobs_map, course_name, test_type):
+    def __init__(self, client, course_name, test_type):
       self.client = client
-      self.jobs_map = jobs_map
       self.course_name = course_name
       self.test_type = test_type
       self.jobs = dict()
