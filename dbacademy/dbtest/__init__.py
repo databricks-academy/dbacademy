@@ -238,15 +238,18 @@ def log_run(test_config, response, job_name, ignored):
 
 class SuiteBuilder:
     def __init__(self, client, course_name, test_type):
-        self.client = client
-        self.course_name = course_name
-        self.test_type = test_type
-        self.jobs = dict()
+      self.client = client
+      self.course_name = course_name
+      self.test_type = test_type
+      self.jobs = dict()
 
     def add(self, notebook_path, ignored=False):
         import hashlib
-        hash = hashlib.sha256(notebook_path.encode())
 
+        if self.client.workspace().get_status(notebook_path) is None:
+          raise Exception(f"Notebook not found: {notebook_path}")
+
+        hash = hashlib.sha256(notebook_path.encode())
         job_name = f"[TEST] {self.course_name} | {self.test_type} | {hash}"
         self.jobs[job_name] = (notebook_path, 0, 0, ignored)
 
