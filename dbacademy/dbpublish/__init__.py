@@ -57,7 +57,7 @@ class Publisher:
         self.include_solutions = include_solutions
         self.notebooks = []
         
-    def add_path(self, path, replacements:dict = None, include_solution = None):
+    def add(self, path, replacements:dict = None, include_solution = None):
       from datetime import datetime
 
       # Configure our various default values.
@@ -72,6 +72,9 @@ class Publisher:
       notebook.replacements["{{built_on}}"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
 
       self.add_notebook_def(notebook)
+        
+    def add_path(self, path, replacements:dict = None, include_solution = None):
+      self.add(path, replacements, include_solution)
         
     def add_notebook_def(self, notebook):
       assert type(notebook) == NotebookDef, f"""Expected the parameter "notebook" to be of type "NotebookDef", found "{type(notebook)}" """
