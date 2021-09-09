@@ -68,7 +68,8 @@ class TestConfig:
                  cloud,
                  instance_pool, 
                  libraries, 
-                 results_table,
+                 spark_conf = dict(),
+                 results_table = None,
                  results_database="test_results",
                  ):
       
@@ -82,10 +83,15 @@ class TestConfig:
         # Make N passes over the database name to remove duplicate underscores
         for i in range(10): results_database = results_database.replace("__", "_")
         
+        # Default the results_table if necissary
+        if results_table is None: results_table = "smoke_test_" + course_name.replace(" ", "_").lower()
+
         # Update the name of the table results will be logged to
         if "." in results_table: raise ValueError("The results_table should not include the database name")
+
         # Convert any special characters to underscores
         results_table = re.sub("[^a-zA-Z0-9]", "_", results_table.lower())
+
         # Make N passes over the table name to remove duplicate underscores
         for i in range(10): results_table = results_table.replace("__", "_")
             
@@ -105,6 +111,11 @@ class TestConfig:
         # The instance pool from which to obtain VMs
         self.instance_pool = instance_pool
 
+        # Spark configuration parameters
+        self.spark_conf = spark_conf
+        if self.workers == 0:
+          self.spark_conf["spark.master"] = "local[*]"
+
         # The name of the cloud on which this tests was ran
         self.cloud = cloud
         
@@ -117,14 +128,13 @@ class TestConfig:
         print(f"spark_version: {self.spark_version}")
         print(f"workers:       {self.workers}")
         print(f"instance_pool: {self.instance_pool}")
+        print(f"spark_conf:    {self.spark_conf}")
         print(f"cloud:         {self.cloud}")
         print(f"libraries:     {self.libraries}")
         print(f"results_table: {self.results_table}")
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
-    spark_conf = {"spark.master": "local[*]"} if test_config.workers == 0 else dict()
-
     params = {
         "notebook_task": {
             "notebook_path": f"{notebook_path}",
@@ -138,7 +148,7 @@ def create_test_job(client, test_config, job_name, notebook_path):
             "num_workers": test_config.workers,
             "instance_pool_id": f"{test_config.instance_pool}",
             "spark_version": f"{test_config.spark_version}",
-            "spark_conf": spark_conf
+            "spark_conf": test_config.spark_conf
         }
     }
     json_response = client.jobs().create(params)
