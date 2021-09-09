@@ -84,7 +84,7 @@ class TestConfig:
         for i in range(10): results_database = results_database.replace("__", "_")
         
         # Default the results_table if necissary
-        if results_table is None: results_table = "smoke_test_" + course_name.replace(" ", "_").lower()
+        if results_table is None: results_table = "smoke_test_" + name.replace(" ", "_").lower()
 
         # Update the name of the table results will be logged to
         if "." in results_table: raise ValueError("The results_table should not include the database name")
