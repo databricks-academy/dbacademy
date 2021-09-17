@@ -211,7 +211,7 @@ def conclude_test(test_config, response, job_name, fail_fast, ignored):
         
 
 def log_run(test_config, response, job_name, ignored):
-    import traceback, time, uuid
+    import traceback, time, uuid, requests
     from dbacademy import dbgems
     from pyspark.sql.functions import col, current_timestamp, first
 
@@ -241,6 +241,22 @@ def log_run(test_config, response, job_name, ignored):
          .withColumn("executed_at", current_timestamp())
          .write.format("csv").mode("append").saveAsTable(test_config.results_table))
         print(f"*** Logged results to {test_config.results_table}")
+
+        response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/smoke-tests", data=json.dumps({
+          "suite_id": test_config.suite_id, 
+          "test_id": test_id, 
+          "name": test_config.name, 
+          "result_state": result_state, 
+          "execution_duration": execution_duration, 
+          "cloud": test_config.cloud, 
+          "job_name": job_name, 
+          "job_id": job_id, 
+          "run_id": run_id, 
+          "notebook_path": notebook_path, 
+          "spark_version": test_config.spark_version
+        }))
+        assert response.status_code == 200, f"({response.status_code}): {response.text}"
+        print(f"*** Logged results to REST endpoint")
 
     except Exception:
         print(f"Unable to log test results.")
