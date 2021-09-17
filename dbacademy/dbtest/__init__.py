@@ -211,7 +211,7 @@ def conclude_test(test_config, response, job_name, fail_fast, ignored):
         
 
 def log_run(test_config, response, job_name, ignored):
-    import traceback, time, uuid, requests
+    import traceback, time, uuid, requests, json
     from dbacademy import dbgems
     from pyspark.sql.functions import col, current_timestamp, first
 
