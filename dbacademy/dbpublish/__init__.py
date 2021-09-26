@@ -102,6 +102,9 @@ class Publisher:
       try: version_info_source = self.client.workspace().export_notebook(f"{version_info_notebook.target_dir}/{version_info_notebook.path}")
       except: version_info_source = None
 
+      if not version_info_source:
+        print("**** version_info_source is None ****")
+
       # Determine if we are in test mode or not.
       try: testing = version_info_source is not None and testing
       except: testing = False
