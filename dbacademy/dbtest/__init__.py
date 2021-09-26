@@ -35,6 +35,14 @@ class ResultsEvaluator:
       </tr>
       """
 
+    def format_duration(self, duration):
+      from math import floor
+      ms =      floor(duration%1000)
+      seconds = floor(duration/1000)%60
+      minutes = floor(duration/(1000*60))%60
+      hours =   floor(duration/(1000*60*60))%24
+      return f"{hours}:{minutes}:{seconds}.{ms}"
+
     def add_section(self, title, rows, links=True):
       html = f"""<h1>{title}</h1>"""
       if len(rows) == 0:
@@ -52,7 +60,7 @@ class ResultsEvaluator:
           if row["cloud"] == "GCP": link = f"""<a href="{self.gcp_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
           if row["cloud"] == "MSA": link = f"""<a href="{self.msa_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
 
-        html += self.add_row(self.cell_style, row["cloud"], link, row["spark_version"], row["executed_at"], f"""{row["execution_duration"]:,d} ms""")
+        html += self.add_row(self.cell_style, row["cloud"], link, row["spark_version"], row["executed_at"], format_duration(row["execution_duration"]))
         html += """<tbody></tbody><tbody>"""
 
       html += "</table>"
