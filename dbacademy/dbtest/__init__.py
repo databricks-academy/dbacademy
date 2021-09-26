@@ -37,11 +37,13 @@ class ResultsEvaluator:
 
     def format_duration(self, duration):
       from math import floor
-      ms =      floor(duration%1000)
       seconds = floor(duration/1000)%60
       minutes = floor(duration/(1000*60))%60
       hours =   floor(duration/(1000*60*60))%24
-      return f"{hours}:{minutes}:{seconds}.{ms}"
+
+      if hours > 0: return     f"{hours}h, {minutes}m, {seconds}s"
+      elif minutes > 0: return f"{minutes}m, {seconds}s"
+      else: return             f"{seconds}s"
 
     def add_section(self, title, rows, print_links=True):
       html = f"""<h1>{title}</h1>"""
