@@ -18,7 +18,7 @@ class RunsClient:
     def wait_for(self, run_id):
         import time
 
-        wait = 60
+        wait = 15
         response = self.get(run_id)
         state = response["state"]["life_cycle_state"]
 
