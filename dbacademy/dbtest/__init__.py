@@ -60,7 +60,7 @@ class ResultsEvaluator:
           if row["cloud"] == "GCP": link = f"""<a href="{self.gcp_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
           if row["cloud"] == "MSA": link = f"""<a href="{self.msa_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
 
-        html += self.add_row(self.cell_style, row["cloud"], link, row["spark_version"], row["executed_at"], format_duration(row["execution_duration"]))
+        html += self.add_row(self.cell_style, row["cloud"], link, row["spark_version"], row["executed_at"], self.format_duration(row["execution_duration"]))
         html += """<tbody></tbody><tbody>"""
 
       html += "</table>"
