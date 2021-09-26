@@ -85,13 +85,6 @@ class Publisher:
       version_info_notebook = None
       main_notebooks = []
       
-      if self.client.workspace().get_status(self.target_dir) is None:
-        pass # Who care, it doesn't already exist.
-      elif str(mode).lower() == "delete":
-        self.client.workspace().delete_path(self.target_dir)
-      elif str(mode).lower() != "overwrite":
-        raise Exception("Expected mode to be one of None, DELETE or OVERWRITE")
-
       for notebook in self.notebooks:
         if notebook.path == self.version_info_notebook_name: version_info_notebook = notebook
         else: main_notebooks.append(notebook)
@@ -100,10 +93,17 @@ class Publisher:
 
       # Backup the version info in case we are just testing
       try: version_info_source = self.client.workspace().export_notebook(f"{version_info_notebook.target_dir}/{version_info_notebook.path}")
-      except: version_info_source = None
+      except:
+        version_info_source = None
+        print("**** version_info_source was not found ****")
 
-      if not version_info_source:
-        print("**** version_info_source is None ****")
+      # Now that we backed up the version-info, we can delete everything.
+      if self.client.workspace().get_status(self.target_dir) is None:
+        pass # Who care, it doesn't already exist.
+      elif str(mode).lower() == "delete":
+        self.client.workspace().delete_path(self.target_dir)
+      elif str(mode).lower() != "overwrite":
+        raise Exception("Expected mode to be one of None, DELETE or OVERWRITE")
 
       # Determine if we are in test mode or not.
       try: testing = version_info_source is not None and testing
