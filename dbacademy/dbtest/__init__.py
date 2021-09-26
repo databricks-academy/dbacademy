@@ -16,11 +16,11 @@ class ResultsEvaluator:
     def passed(self) -> bool:
       return len(self.failed_set) == 0
         
-    def to_html(self) -> int:
+    def to_html(self, print_success_links=False) -> int:
       html = "</body>"
       html += self.add_section("Failed", self.failed_set)
       html += self.add_section("Ignored", self.ignored_set)
-      html += self.add_section("Success", self.success_set, links=False)
+      html += self.add_section("Success", self.success_set, print_links=print_success_links)
       html += "</body>"
       return html
 
@@ -43,7 +43,7 @@ class ResultsEvaluator:
       hours =   floor(duration/(1000*60*60))%24
       return f"{hours}:{minutes}:{seconds}.{ms}"
 
-    def add_section(self, title, rows, links=True):
+    def add_section(self, title, rows, print_links=True):
       html = f"""<h1>{title}</h1>"""
       if len(rows) == 0:
         html += "<p>No records found</p>"
@@ -53,7 +53,7 @@ class ResultsEvaluator:
       html += self.add_row(self.header_style, "Cloud", "Job", "Version", "Executed", "Duration")
 
       for row in rows:
-        if not links:
+        if not print_links:
           link = row["notebook_path"]
         else:
           if row["cloud"] == "AWS": link = f"""<a href="{self.aws_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
