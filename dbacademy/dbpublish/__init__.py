@@ -265,6 +265,8 @@ def clean_todo_cell(command, cmd):
     return new_command
 
 def publish(source_project:str, target_project:str, notebook_name:str, replacements:dict = {}, include_solution=False, ) -> None:
+    import re
+
     print("-" * 80)
 
     source_notebook_path = f"{source_project}/{notebook_name}"
@@ -341,6 +343,8 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i+1}"
+
+        assert not re.compile(r"\{.*\}").search(command), f"Found the mustache pattern in command #{i+1}"
 
     assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
     assert found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found."
