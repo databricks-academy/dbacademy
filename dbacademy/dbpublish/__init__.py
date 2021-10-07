@@ -344,8 +344,6 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i+1}"
 
-        assert "{dbr}" not in command, "Found " + "{dbr}" + f" pattern in command #{i+1}"
-
     assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
     assert found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found."
     assert answ_count >= todo_count, f"Found more {D_TODO} commands ({todo_count}) than {D_ANSWER} commands ({answ_count})"
