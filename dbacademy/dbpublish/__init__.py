@@ -10,9 +10,6 @@ D_INCLUDE_HEADER_FALSE = "INCLUDE_HEADER_FALSE"
 D_INCLUDE_FOOTER_TRUE = "INCLUDE_FOOTER_TRUE"
 D_INCLUDE_FOOTER_FALSE = "INCLUDE_FOOTER_FALSE"
 
-# Only for backwards compatibility!
-D_INSTRUCTOR_NOTE = "INSTRUCTOR_NOTE" 
-
 SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_SELF_PACED_ONLY, D_ILT_ONLY, 
                         D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
  
@@ -173,7 +170,7 @@ def parse_directives(i, comments):
       # must be one or more directives
       directive = line.strip()
 
-      if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, D_INSTRUCTOR_NOTE]:
+      if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
           directives.append(line)
         
       elif D_TODO in directives:
@@ -313,7 +310,6 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
         if command.strip() == "":                  skipped += skipping(i, "Empty Cell")
         elif D_SOURCE_ONLY in directives:          skipped += skipping(i, "Source-Only")
-        elif D_INSTRUCTOR_NOTE in directives:      skipped += skipping(i, "Instructor Note")
         elif D_INCLUDE_HEADER_TRUE in directives:  skipped += skipping(i, "Including Header")
         elif D_INCLUDE_HEADER_FALSE in directives: skipped += skipping(i, "Excluding Header")
         elif D_INCLUDE_FOOTER_TRUE in directives:  skipped += skipping(i, "Including Footer")
@@ -336,9 +332,10 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             solutions_commands.append(command)
 
         # Check the command for BDC markers
-        bdc_tokens = ["%python","IPYTHON_ONLY","DATABRICKS_ONLY","SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY",
-                      "AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST", "INSTRUCTOR_NOTE"
-                      "VIDEO","INSTRUCTOR_ONLY","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART",
+        bdc_tokens = ["%python","IPYTHON_ONLY","DATABRICKS_ONLY",
+                      "AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST","INSTRUCTOR_NOTE","INSTRUCTOR_ONLY",
+                      "SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY"
+                      "VIDEO","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART",
                       ":BESTPRACTICE:"]
 
         for token in bdc_tokens:
