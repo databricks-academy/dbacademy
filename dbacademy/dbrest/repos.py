@@ -13,3 +13,6 @@ class ReposClient:
 
     def update(self, repo_id, branch) -> dict:
         return self.client.execute_patch_json(f"{self.endpoint}/api/2.0/repos/{repo_id}", {"branch": branch})
+
+    def get(self, repo_id) -> dict:
+        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/repos/{repo_id}")
