@@ -335,8 +335,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         bdc_tokens = ["%python","IPYTHON_ONLY","DATABRICKS_ONLY",
                       "AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST","INSTRUCTOR_NOTE","INSTRUCTOR_ONLY",
                       "SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY"
-                      "VIDEO","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART",
-                      ":BESTPRACTICE:"]
+                      "VIDEO","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART"]
 
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i+1}"
@@ -356,7 +355,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     # Augment the replacements to duplicate the :NOTE:, :CAUTION:, etc features from BDC
     replacements[":HINT:"] =         """<img src="https://files.training.databricks.com/images/icon_hint_24.png"/>&nbsp;**Hint:**"""
     replacements[":CAUTION:"] =      """<img src="https://files.training.databricks.com/images/icon_warn_24.png"/>"""
-    # replacements[":BESTPRACTICE:"] = """<img src="https://files.training.databricks.com/images/icon_best_24.png"/>"""
+    replacements[":BESTPRACTICE:"] = """<img src="https://files.training.databricks.com/images/icon_best_24.png"/>"""
     replacements[":SIDENOTE:"] =     """<img src="https://files.training.databricks.com/images/icon_note_24.png"/>"""
 
     # Create the student's notebooks
