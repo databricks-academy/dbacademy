@@ -9,4 +9,4 @@ class ClustersClient:
         self.endpoint = endpoint
 
     def get(self, cluster_id):
-        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/get?cluster_id={cluster_id}")
+        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/clusters/get?cluster_id={cluster_id}")
