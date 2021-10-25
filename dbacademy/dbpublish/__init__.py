@@ -372,22 +372,13 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 def update_and_validate_git_branch(client, path, target_branch="published"):
   repo_id = client.workspace().get_status(path)["object_id"]
 
-  repo = client.repos().get(repo_id)
-  branch = repo["branch"]
+  a_repo = client.repos().get(repo_id)
+  a_branch = a_repo["branch"]
+  assert a_branch == target_branch, f"""Expected the branch to be "{target_branch}", found "{a_branch}" """
 
-  print(f"""Path:           {path}\n""")
+  b_repo = client.repos().update(repo_id, target_branch)
+  b_branch = b_repo["branch"]
 
-  print(f"** Before **")
-  print(f"""branch:         {repo["branch"]}""")
-  print(f"""head_commit_id: {repo["head_commit_id"]}""")
-
-  assert branch == target_branch, f"""Expected the branch to be "{target_branch}", found "{branch}" """
-
-  repo = client.repos().update(repo_id, target_branch)
-  branch = repo["branch"]
-
-  print(f"\n** After **")
-  print(f"""branch:         {repo["branch"]}""")
-  print(f"""head_commit_id: {repo["head_commit_id"]}""")
-  
-  assert branch == target_branch, f"""Expected the branch to be "{target_branch}", found "{branch}" """
+  print(f"""Path:   {path}\n""")
+  print(f"""Before: {a_repo["a_branch"]}  |  {a_repo["head_commit_id"]}""")
+  print(f"""After:  {b_repo["b_branch"]}  |  {b_repo["head_commit_id"]}""")
