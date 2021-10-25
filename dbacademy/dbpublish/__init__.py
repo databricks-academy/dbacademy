@@ -375,9 +375,9 @@ def update_and_validate_git_branch(client, path, target_branch="published"):
   repo = client.repos().get(repo_id)
   branch = repo["branch"]
 
-  print(f"Path:             {path}\n")
+  print(f"""Path:             {path}\n""")
 
-  print("** Before **")
+  print(f"** Before **")
   print(f"""branch:         {repo["branch"]}""")
   print(f"""head_commit_id: {repo["head_commit_id"]}""")
 
@@ -386,7 +386,7 @@ def update_and_validate_git_branch(client, path, target_branch="published"):
   repo = client.repos().update(repo_id, target_branch)
   branch = repo["branch"]
 
-  print("\n** After **")
+  print(f"\n** After **")
   print(f"""branch:         {repo["branch"]}""")
   print(f"""head_commit_id: {repo["head_commit_id"]}""")
   
