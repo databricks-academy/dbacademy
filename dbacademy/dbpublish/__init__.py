@@ -379,6 +379,6 @@ def update_and_validate_git_branch(client, path, target_branch="published"):
   b_repo = client.repos().update(repo_id, target_branch)
   b_branch = b_repo["branch"]
 
-  print(f"""Path:   {path}\n""")
+  print(f"""Path:   {path}""")
   print(f"""Before: {a_repo["branch"]}  |  {a_repo["head_commit_id"]}""")
   print(f"""After:  {b_repo["branch"]}  |  {b_repo["head_commit_id"]}""")
