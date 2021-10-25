@@ -33,15 +33,10 @@ def get_current_spark_version():
     assert spark_version, "The DBR has not yet been defined, please try again."
     return spark_version
 
-def get_current_instance_pool_id(client, fail_fast=True):
+def get_current_instance_pool_id(client):
     cluster_id = get_tags()["clusterId"]
     cluster = client.clusters().get(cluster_id)
-    
-    instance_pool_id = cluster["instance_pool_id"] if "instance_pool_id" in cluster else None
-
-    if fail_fast: assert instance_pool_id, "The current cluster is not defined using an cluster pool"
-
-    return instance_pool_id
+    return cluster["instance_pool_id"] if "instance_pool_id" in cluster else None
 
 def get_cloud():
     with open("/databricks/common/conf/deploy.conf") as f:
