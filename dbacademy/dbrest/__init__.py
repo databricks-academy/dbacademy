@@ -63,6 +63,12 @@ class DBAcademyRestClient:
 
         return RunsClient(self, self.token, self.endpoint)
 
+    def clusters(self):
+        from dbacademy.dbrest.clusters import ClustersClient
+
+        return ClustersClient(self, self.token, self.endpoint)
+
+
     def _get_local_credentials(self, config_file, profile):
         if config_file is None:
             config_file = os.environ["HOME"] + "/.databrickscfg"
