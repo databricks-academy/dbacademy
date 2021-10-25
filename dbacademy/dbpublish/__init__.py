@@ -369,3 +369,23 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         print(f"...publishing {len(solutions_commands)} commands")
         publish_notebook(solutions_commands, solutions_notebook_path, replacements)
             
+def update_and_validate_git_branch(client, path, target_branch="published"):
+  repo_id = client.workspace().get_status(path)["object_id"]
+
+  repo = client.repos().get(repo_id)
+  branch = repo["branch"]
+
+  print("** Before **")
+  print(f"""branch:         {repo["branch"]}""")
+  print(f"""head_commit_id: {repo["head_commit_id"]}""")
+
+  assert branch == target_branch, f"""Expected the branch to be "{target_branch}", found "{branch}" """
+
+  repo = client.repos().update(repo_id, target_branch)
+  branch = repo["branch"]
+
+  print("\n** After **")
+  print(f"""branch:         {repo["branch"]}""")
+  print(f"""head_commit_id: {repo["head_commit_id"]}""")
+  
+  assert branch == target_branch, f"""Expected the branch to be "{target_branch}", found "{branch}" """
