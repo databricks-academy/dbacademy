@@ -301,15 +301,15 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         directives = parse_directives(i, leading_comments)
 
         # Print statements for debugging parsing.
-        # print(f"\nCommand {i}")
-        # if len(leading_comments) > 0:
-        #     print("   |-LEADING COMMENTS --"+("-"*57))
-        #     for comment in leading_comments:
-        #         print("   |"+comment)
-        # if len(directives) > 0:
-        #     print("   |-DIRECTIVES --"+("-"*62))
-        #     for directive in directives:
-        #         print("   |"+directive)
+        print(f"\nCommand {i}")
+        if len(leading_comments) > 0:
+            print("   |-LEADING COMMENTS --"+("-"*57))
+            for comment in leading_comments:
+                print("   |"+comment)
+        if len(directives) > 0:
+            print("   |-DIRECTIVES --"+("-"*62))
+            for directive in directives:
+                print("   |"+directive)
         
         include_header = True if D_INCLUDE_HEADER_TRUE in directives else include_header
         found_header_directive = True if D_INCLUDE_HEADER_TRUE in directives or D_INCLUDE_HEADER_FALSE in directives else found_header_directive
