@@ -2,15 +2,16 @@
 D_TODO = "TODO"
 D_ANSWER = "ANSWER"
 D_SOURCE_ONLY = "SOURCE_ONLY"
-D_SELF_PACED_ONLY = "SELF_PACED_ONLY"
-D_ILT_ONLY = "ILT_ONLY"
+# D_SELF_PACED_ONLY = "SELF_PACED_ONLY"
+# D_ILT_ONLY = "ILT_ONLY"
 
 D_INCLUDE_HEADER_TRUE = "INCLUDE_HEADER_TRUE"
 D_INCLUDE_HEADER_FALSE = "INCLUDE_HEADER_FALSE"
 D_INCLUDE_FOOTER_TRUE = "INCLUDE_FOOTER_TRUE"
 D_INCLUDE_FOOTER_FALSE = "INCLUDE_FOOTER_FALSE"
 
-SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_SELF_PACED_ONLY, D_ILT_ONLY, 
+SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, 
+                        # D_SELF_PACED_ONLY, D_ILT_ONLY, 
                         D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
  
 
@@ -139,12 +140,10 @@ def get_leading_comments(source_language, command) -> []:
     mark = "--" if is_md_cell or is_sql_cell else lead
 
     for line in lines:
-        if line.startswith(f"{lead} MAGIC"):
-          length = 6 + len(lead)
-          line = line[length:].strip()
-        elif line.startswith(f"{lead} COMMAND"):
-          length = 8 + len(lead)
-          line = line[length:].strip()
+        if line.startswith("# MAGIC"):
+          line = line[7:].strip()
+        elif line.startswith("# COMMAND"):
+          line = line[9:].strip()
         
         if line.strip().startswith("%"):
             # Remove the magic command from this line
@@ -303,15 +302,15 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         directives = parse_directives(i, leading_comments)
 
         # Print statements for debugging parsing.
-        print(f"\nCommand {i}")
-        if len(leading_comments) > 0:
-            print("   |-LEADING COMMENTS --"+("-"*57))
-            for comment in leading_comments:
-                print("   |"+comment)
-        if len(directives) > 0:
-            print("   |-DIRECTIVES --"+("-"*62))
-            for directive in directives:
-                print("   |"+directive)
+        # print(f"\nCommand {i}")
+        # if len(leading_comments) > 0:
+        #     print("   |-LEADING COMMENTS --"+("-"*57))
+        #     for comment in leading_comments:
+        #         print("   |"+comment)
+        # if len(directives) > 0:
+        #     print("   |-DIRECTIVES --"+("-"*62))
+        #     for directive in directives:
+        #         print("   |"+directive)
         
         include_header = True if D_INCLUDE_HEADER_TRUE in directives else include_header
         found_header_directive = True if D_INCLUDE_HEADER_TRUE in directives or D_INCLUDE_HEADER_FALSE in directives else found_header_directive
