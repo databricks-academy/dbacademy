@@ -271,8 +271,10 @@ def clean_todo_cell(language, command, cmd):
         line = lines[i]
         if (i==0) and line.strip().replace(" ", "") not in [f"{m}TODO", f"{m}{m}TODO","%sql",f"{m}MAGIC%sql"]:
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be the {D_TODO} directive: "{line}"\n{"-"*80}\n{command}\n{"-"*80}""")
-        elif not line.startswith("#") and line.strip() != "":
+
+        elif not line.startswith(m) and line.strip() != "":
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" """)
+
         elif i==0 or line.strip() == "":
             # No comment, do not process
             new_command += line
