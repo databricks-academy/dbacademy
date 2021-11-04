@@ -361,7 +361,8 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         elif source_language == "scala":
             assert "%scala" not in command, f"""Found "%scala" in command #{i+1}"""
         elif source_language == "r":
-            assert "%r" not in command, f"""Found "%r" in command #{i+1}"""
+            assert "%r " not in command, f"""Found "%r" in command #{i+1}"""
+            assert "%r\n" not in command, f"""Found "%r" in command #{i+1}"""
         else:
           raise Exception(f"The language {source_language} is not supported")
 
