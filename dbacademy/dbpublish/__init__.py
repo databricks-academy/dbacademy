@@ -343,10 +343,10 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         print(source_info)
         print("-"*80)
 
-        if source_info[language].lower() != "python":
+        if source_info["language"].lower() != "python":
             assert "%python" not in command, f"Found {token} in command #{i+1}"
 
-        if source_info[language].lower() != "sql":
+        if source_info["language"].lower() != "sql":
             assert "%sql" not in command, f"Found {token} in command #{i+1}"
 
     assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
