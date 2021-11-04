@@ -337,10 +337,10 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
                       "VIDEO","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART", "{dbr}"]
 
         for token in bdc_tokens:
-            assert token not in command, f"Found {token} in command #{i+1}"
+            assert token not in command, f"Found {token} in command #{i+1}\n{command}"
 
         language = source_info["language"].lower()
-        
+
         if language != "python":
             assert "%python" not in command, f"Found {token} in command #{i+1}"
         elif language != "sql":
