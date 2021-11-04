@@ -198,13 +198,13 @@ from dbacademy.dbrest import DBAcademyRestClient
 
 def get_comment_marker(language):
       if language.lower() == "python":
-        lead = "#"
+        return "#"
       elif language.lower() == "sql":
-        lead = "--"
+        return "--"
       elif language.lower() == "r":
-        lead = "#"
+        return "#"
       elif language.lower() == "scala":
-        lead = "//"
+        return "//"
       else:
         raise Exception(f"The language {language} is not supported.")
 
