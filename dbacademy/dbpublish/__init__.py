@@ -220,7 +220,7 @@ footer_cell = f"""# MAGIC %md-sandbox
 # MAGIC <br/>
 # MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>"""
 
-def publish_notebook(commands:list, target_path:str, replacements:dict = None) -> None:
+def publish_notebook(source_language:str, commands:list, target_path:str, replacements:dict = None) -> None:
     replacements = dict() if replacements is None else replacements
     final_source = "# Databricks notebook source\n"
 
@@ -238,7 +238,7 @@ def publish_notebook(commands:list, target_path:str, replacements:dict = None) -
     client = DBAcademyRestClient()
     parent_dir = "/".join(target_path.split("/")[0:-1])
     client.workspace().mkdirs(parent_dir)
-    client.workspace().import_notebook("PYTHON", target_path, final_source)
+    client.workspace().import_notebook(source_language, target_path, final_source)
     
 def skipping(i, label):
     print(f"Skipping Cmd #{i + 1} - {label}")
@@ -388,14 +388,14 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     students_notebook_path = f"{target_project}/{notebook_name}"
     print(students_notebook_path)
     print(f"...publishing {len(students_commands)} commands")
-    publish_notebook(students_commands, students_notebook_path, replacements)
+    publish_notebook(source_language, students_commands, students_notebook_path, replacements)
     
     # Create the solutions notebooks
     if include_solution:
         solutions_notebook_path = f"{target_project}/Solutions/{notebook_name}"
         print(solutions_notebook_path)
         print(f"...publishing {len(solutions_commands)} commands")
-        publish_notebook(solutions_commands, solutions_notebook_path, replacements)
+        publish_notebook(source_language, solutions_commands, solutions_notebook_path, replacements)
             
 def update_and_validate_git_branch(client, path, target_branch="published"):
   repo_id = client.workspace().get_status(path)["object_id"]
