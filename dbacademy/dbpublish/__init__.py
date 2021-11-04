@@ -238,7 +238,7 @@ def publish_notebook(source_language:str, commands:list, target_path:str, replac
     client = DBAcademyRestClient()
     parent_dir = "/".join(target_path.split("/")[0:-1])
     client.workspace().mkdirs(parent_dir)
-    client.workspace().import_notebook(source_language, target_path, final_source)
+    client.workspace().import_notebook(source_language.upper(), target_path, final_source)
     
 def skipping(i, label):
     print(f"Skipping Cmd #{i + 1} - {label}")
