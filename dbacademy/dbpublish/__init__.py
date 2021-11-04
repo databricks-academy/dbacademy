@@ -123,30 +123,20 @@ def replace_contents(contents:str, replacements:dict):
   
     return contents
     
-def get_leading_comments(source_language, command) -> []:
+def get_leading_comments(language, command) -> []:
     leading_comments = []
     lines = command.split("\n")
 
-    if source_language == "python":
-      lead = "#"
-    elif source_language == "sql":
-      lead = "--"
-    elif source_language == "r":
-      lead = "#"
-    elif source_language == "scala":
-      lead = "//"
-    else:
-      raise Exception(f"The language {source_language} is not supported.")
+    m = get_comment_marker(language)
 
-    is_md_cell =  lines[0].lower().startswith(f"{lead} magic %md")
-    is_sql_cell = lines[0].lower().startswith(f"{lead} magic %sql")
-
-    mark = "--" if is_md_cell or is_sql_cell else lead
+    is_md_cell =  lines[0].lower().startswith(f"{m} magic %md")
+    is_sql_cell = lines[0].lower().startswith(f"{m} magic %sql")
+    mark = "--" if is_md_cell or is_sql_cell else m
 
     for line in lines:
-        if line.startswith("# MAGIC"):
+        if line.startswith(f"{m} MAGIC"):
           line = line[7:].strip()
-        elif line.startswith("# COMMAND"):
+        elif line.startswith(f"{m} COMMAND"):
           line = line[9:].strip()
         
         if line.strip().startswith("%"):
@@ -205,21 +195,47 @@ def parse_directives(i, comments):
 from datetime import date
 from dbacademy.dbrest import DBAcademyRestClient
 
-header_cell = """# MAGIC
-# MAGIC %md-sandbox
-# MAGIC
-# MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
-# MAGIC   <img src="https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png" alt="Databricks Learning" style="width: 600px">
-# MAGIC </div>"""
 
-footer_cell = f"""# MAGIC %md-sandbox
-# MAGIC &copy; {date.today().year} Databricks, Inc. All rights reserved.<br/>
-# MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
-# MAGIC <br/>
-# MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>"""
+def get_comment_marker(language):
+      if language.lower() == "python":
+        lead = "#"
+      elif language.lower() == "sql":
+        lead = "--"
+      elif language.lower() == "r":
+        lead = "#"
+      elif language.lower() == "scala":
+        lead = "//"
+      else:
+        raise Exception(f"The language {language} is not supported.")
+
+
+def get_header_cell(language):
+  m = get_comment_marker(language)
+  return f"""
+{m} MAGIC
+{m} MAGIC %md-sandbox
+{m} MAGIC
+{m} MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
+{m} MAGIC   <img src="https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png" alt="Databricks Learning" style="width: 600px">
+{m} MAGIC </div>
+""".strip()
+
+
+def get_footer_cell(language):
+  m = get_comment_marker(language)
+  return f"""
+{m} MAGIC %md-sandbox
+{m} MAGIC &copy; {date.today().year} Databricks, Inc. All rights reserved.<br/>
+{m} MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+{m} MAGIC <br/>
+{m} MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>
+""".strip()
+
 
 def get_cmd_delim(language):
-  return f"\n# COMMAND ----------\n"
+  marker = get_comment_marker(language)
+  return f"\n{marker} COMMAND ----------\n"
+
 
 def publish_notebook(language:str, commands:list, target_path:str, replacements:dict = None) -> None:
     replacements = dict() if replacements is None else replacements
@@ -231,8 +247,9 @@ def publish_notebook(language:str, commands:list, target_path:str, replacements:
         final_source += get_cmd_delim(language)
 
     # Process the last command
+    m = get_comment_marker(language)
     final_source += commands[-1]
-    final_source += "" if commands[-1].startswith("# MAGIC") else "\n\n"
+    final_source += "" if commands[-1].startswith(f"{m} MAGIC") else "\n\n"
 
     final_source = replace_contents(final_source, replacements)
 
@@ -245,25 +262,28 @@ def skipping(i, label):
     print(f"Skipping Cmd #{i + 1} - {label}")
     return 1;
 
-def clean_todo_cell(command, cmd):
+def clean_todo_cell(language, command, cmd):
     new_command = ""
     lines = command.split("\n")
+    m = get_comment_marker(language)
     
     for i in range(len(lines)):
         line = lines[i]
-        if (i==0) and line.strip().replace(" ", "") not in ["#TODO", "##TODO","%sql","#MAGIC%sql"]:
+        if (i==0) and line.strip().replace(" ", "") not in [f"{m}TODO", f"{m}{m}TODO","%sql",f"{m}MAGIC%sql"]:
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be the {D_TODO} directive: "{line}"\n{"-"*80}\n{command}\n{"-"*80}""")
         elif not line.startswith("#") and line.strip() != "":
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" """)
         elif i==0 or line.strip() == "":
             # No comment, do not process
             new_command += line
-        elif line.strip().startswith("# "):
+        elif line.strip().startswith(f"{m} "):
             # Remove comment and space
-            new_command += line[2:]
+            length = len(m)+1
+            new_command += line[length:]
         else:
             # Remove just the comment
-            new_command += line[1:]
+            length = len(m)
+            new_command += line[length:]
         
         if i < len(lines)-1:
             # Add new line for all but the last line
@@ -283,15 +303,15 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     client = DBAcademyRestClient()
 
     source_info = client.workspace().get_status(source_notebook_path) 
-    source_language = source_info["language"].lower()
+    language = source_info["language"].lower()
 
     raw_source = client.workspace().export_notebook(source_notebook_path)
 
     skipped = 0
     students_commands = []
     solutions_commands = []
-    
-    cmd_delim = get_cmd_delim(source_language)
+
+    cmd_delim = get_cmd_delim(language)
     commands = raw_source.split(cmd_delim)
 
     todo_count = 0
@@ -305,7 +325,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     
     for i in range(len(commands)):
         command = commands[i].lstrip()
-        leading_comments = get_leading_comments(source_language, command.strip())
+        leading_comments = get_leading_comments(language, command.strip())
         directives = parse_directives(i, leading_comments)
 
         # Print statements for debugging parsing.
@@ -335,7 +355,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         elif D_TODO in directives:
             # This is a TODO cell, exclude from solution notebooks
             todo_count += 1
-            command = clean_todo_cell(command, i)
+            command = clean_todo_cell(language, command, i)
             students_commands.append(command)
 
         elif D_ANSWER in directives:
@@ -357,29 +377,29 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         for token in bdc_tokens:
             assert token not in command, f"""Found the token "{token}" in command #{i+1}"""
 
-        if source_language == "python":
+        if language.lower() == "python":
             assert "%python" not in command, f"""Found "%python" in command #{i+1}"""
-        elif source_language == "sql":
+        elif language.lower() == "sql":
             assert "%sql" not in command, f"""Found "%sql" in command #{i+1}"""
-        elif source_language == "scala":
+        elif language.lower() == "scala":
             assert "%scala" not in command, f"""Found "%scala" in command #{i+1}"""
-        elif source_language == "r":
+        elif language.lower() == "r":
             assert "%r " not in command, f"""Found "%r" in command #{i+1}"""
             assert "%r\n" not in command, f"""Found "%r" in command #{i+1}"""
         else:
-          raise Exception(f"The language {source_language} is not supported")
+          raise Exception(f"The language {language} is not supported")
 
     assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
     assert found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found."
     assert answ_count >= todo_count, f"Found more {D_TODO} commands ({todo_count}) than {D_ANSWER} commands ({answ_count})"
 
     if include_header is True:
-        students_commands.insert(0, header_cell)
-        solutions_commands.insert(0, header_cell)
+        students_commands.insert(0, get_header_cell(language))
+        solutions_commands.insert(0, get_header_cell(language))
     
     if include_footer is True:
-        students_commands.append(footer_cell)
-        solutions_commands.append(footer_cell)
+        students_commands.append(get_footer_cell(language))
+        solutions_commands.append(get_footer_cell(language))
     
     # Augment the replacements to duplicate the :NOTE:, :CAUTION:, etc features from BDC
     replacements[":HINT:"] =         """<img src="https://files.training.databricks.com/images/icon_hint_24.png"/>&nbsp;**Hint:**"""
@@ -391,14 +411,14 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     students_notebook_path = f"{target_project}/{notebook_name}"
     print(students_notebook_path)
     print(f"...publishing {len(students_commands)} commands")
-    publish_notebook(source_language, students_commands, students_notebook_path, replacements)
+    publish_notebook(language, students_commands, students_notebook_path, replacements)
     
     # Create the solutions notebooks
     if include_solution:
         solutions_notebook_path = f"{target_project}/Solutions/{notebook_name}"
         print(solutions_notebook_path)
         print(f"...publishing {len(solutions_commands)} commands")
-        publish_notebook(source_language, solutions_commands, solutions_notebook_path, replacements)
+        publish_notebook(language, solutions_commands, solutions_notebook_path, replacements)
             
 def update_and_validate_git_branch(client, path, target_branch="published"):
   repo_id = client.workspace().get_status(path)["object_id"]
