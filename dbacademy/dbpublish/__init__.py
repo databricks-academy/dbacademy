@@ -341,11 +341,11 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
         language = source_info["language"].lower()
 
-        if language != "python":
+        if language == "python":
             assert "%python" not in command, f"""Found "%python" in command #{i+1}"""
-        elif language != "sql":
+        elif language == "sql":
             assert "%sql" not in command, f"""Found "%sql" in command #{i+1}"""
-        elif language != "scala":
+        elif language == "scala":
             assert "%scala" not in command, f"""Found "%scala" in command #{i+1}"""
         else:
           raise Exception(f"The source notebook language {language} is not supported")
