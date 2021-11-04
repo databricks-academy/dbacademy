@@ -341,7 +341,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
               print("-"*80)
               print(command)
               print("-"*80)
-            assert token not in command, f"Found {token} in command #{i+1}"
+            assert token not in command, f"Found the {token} in command #{i+1}"
 
         language = source_info["language"].lower()
 
