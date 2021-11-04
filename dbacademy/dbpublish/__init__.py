@@ -205,8 +205,6 @@ def parse_directives(i, comments):
 from datetime import date
 from dbacademy.dbrest import DBAcademyRestClient
 
-cmd_delim = "\n# COMMAND ----------\n"
-
 header_cell = """# MAGIC
 # MAGIC %md-sandbox
 # MAGIC
@@ -220,14 +218,17 @@ footer_cell = f"""# MAGIC %md-sandbox
 # MAGIC <br/>
 # MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>"""
 
-def publish_notebook(source_language:str, commands:list, target_path:str, replacements:dict = None) -> None:
+def get_cmd_delim(language):
+  return f"\n# COMMAND ----------\n"
+
+def publish_notebook(language:str, commands:list, target_path:str, replacements:dict = None) -> None:
     replacements = dict() if replacements is None else replacements
     final_source = "# Databricks notebook source\n"
 
     # Processes all commands except the last
     for command in commands[:-1]:
         final_source += command
-        final_source += cmd_delim
+        final_source += get_cmd_delim(language)
 
     # Process the last command
     final_source += commands[-1]
@@ -238,7 +239,7 @@ def publish_notebook(source_language:str, commands:list, target_path:str, replac
     client = DBAcademyRestClient()
     parent_dir = "/".join(target_path.split("/")[0:-1])
     client.workspace().mkdirs(parent_dir)
-    client.workspace().import_notebook(source_language.upper(), target_path, final_source)
+    client.workspace().import_notebook(language.upper(), target_path, final_source)
     
 def skipping(i, label):
     print(f"Skipping Cmd #{i + 1} - {label}")
@@ -289,6 +290,8 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     skipped = 0
     students_commands = []
     solutions_commands = []
+    
+    cmd_delim = get_cmd_delim(source_language)
     commands = raw_source.split(cmd_delim)
 
     todo_count = 0
