@@ -268,6 +268,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     print(source_notebook_path)
 
     client = DBAcademyRestClient()
+    source_info = client.workspace().get_status(source_notebook_path) 
     raw_source = client.workspace().export_notebook(source_notebook_path)
 
     skipped = 0
@@ -330,13 +331,19 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             solutions_commands.append(command)
 
         # Check the command for BDC markers
-        bdc_tokens = ["%python","IPYTHON_ONLY","DATABRICKS_ONLY",
+        bdc_tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY",
                       "AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST","INSTRUCTOR_NOTE","INSTRUCTOR_ONLY",
                       "SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY"
                       "VIDEO","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART", "{dbr}"]
 
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i+1}"
+
+        if source_info[language].lower() != "python":
+            assert "%python" not in command, f"Found {token} in command #{i+1}"
+
+        if source_info[language].lower() != "sql":
+            assert "%sql" not in command, f"Found {token} in command #{i+1}"
 
     assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
     assert found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found."
