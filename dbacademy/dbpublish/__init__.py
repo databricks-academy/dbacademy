@@ -337,20 +337,16 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
                       "VIDEO","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART", "{dbr}"]
 
         for token in bdc_tokens:
-            if token in command:
-              print("-"*80)
-              print(command)
-              print("-"*80)
             assert token not in command, f"""Found the token "{token}" in command #{i+1}"""
 
         language = source_info["language"].lower()
 
         if language != "python":
-            assert "%python" not in command, f"Found {token} in command #{i+1}"
+            assert "%python" not in command, f"""Found "%python" in command #{i+1}"""
         elif language != "sql":
-            assert "%sql" not in command, f"Found {token} in command #{i+1}"
+            assert "%sql" not in command, f"""Found "%sql" in command #{i+1}"""
         elif language != "scala":
-            assert "%scala" not in command, f"Found {token} in command #{i+1}"
+            assert "%scala" not in command, f"""Found "%scala" in command #{i+1}"""
         else:
           raise Exception(f"The source notebook language {language} is not supported")
 
