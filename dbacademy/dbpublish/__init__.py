@@ -131,6 +131,10 @@ def get_leading_comments(source_language, command) -> []:
       lead = "#"
     elif source_language == "sql":
       lead = "--"
+    elif source_language == "r":
+      lead = "#"
+    elif source_language == "scala":
+      lead = "//"
     else:
       raise Exception(f"The language {source_language} is not supported.")
 
