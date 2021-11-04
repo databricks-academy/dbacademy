@@ -239,7 +239,9 @@ def get_cmd_delim(language):
 
 def publish_notebook(language:str, commands:list, target_path:str, replacements:dict = None) -> None:
     replacements = dict() if replacements is None else replacements
-    final_source = "# Databricks notebook source\n"
+
+    m = get_comment_marker(language)
+    final_source = f"{m} Databricks notebook source\n"
 
     # Processes all commands except the last
     for command in commands[:-1]:
