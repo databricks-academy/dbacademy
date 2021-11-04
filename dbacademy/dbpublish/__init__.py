@@ -139,10 +139,12 @@ def get_leading_comments(source_language, command) -> []:
     mark = "--" if is_md_cell or is_sql_cell else lead
 
     for line in lines:
-        if line.startswith("# MAGIC"):
-          line = line[7:].strip()
-        elif line.startswith("# COMMAND"):
-          line = line[9:].strip()
+        if line.startswith(f"{lead} MAGIC"):
+          length = 6 + len(lead)
+          line = line[length:].strip()
+        elif line.startswith(f"{lead} COMMAND"):
+          length = 8 + len(lead)
+          line = line[length:].strip()
         
         if line.strip().startswith("%"):
             # Remove the magic command from this line
