@@ -122,14 +122,21 @@ def replace_contents(contents:str, replacements:dict):
   
     return contents
     
-def get_leading_comments(command) -> []:
+def get_leading_comments(source_language, command) -> []:
     leading_comments = []
     lines = command.split("\n")
 
-    is_md_cell =  lines[0].lower().startswith("# magic %md")
-    is_sql_cell = lines[0].lower().startswith("# magic %sql")
+    if source_language == "python":
+      lead = "#"
+    elif source_language == "sql":
+      lead = "--"
+    else:
+      raise Exception(f"The language {source_language} is not supported.")
 
-    mark = "--" if is_md_cell or is_sql_cell else "#"
+    is_md_cell =  lines[0].lower().startswith(f"{lead} magic %md")
+    is_sql_cell = lines[0].lower().startswith(f"{lead} magic %sql")
+
+    mark = "--" if is_md_cell or is_sql_cell else lead
 
     for line in lines:
         if line.startswith("# MAGIC"):
@@ -268,7 +275,10 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     print(source_notebook_path)
 
     client = DBAcademyRestClient()
+
     source_info = client.workspace().get_status(source_notebook_path) 
+    source_language = source_info["language"].lower()
+
     raw_source = client.workspace().export_notebook(source_notebook_path)
 
     skipped = 0
@@ -287,7 +297,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     
     for i in range(len(commands)):
         command = commands[i].lstrip()
-        leading_comments = get_leading_comments(command.strip())
+        leading_comments = get_leading_comments(source_language, command.strip())
         directives = parse_directives(i, leading_comments)
 
         # Print statements for debugging parsing.
@@ -339,16 +349,14 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         for token in bdc_tokens:
             assert token not in command, f"""Found the token "{token}" in command #{i+1}"""
 
-        language = source_info["language"].lower()
-
-        if language == "python":
+        if source_language == "python":
             assert "%python" not in command, f"""Found "%python" in command #{i+1}"""
-        elif language == "sql":
+        elif source_language == "sql":
             assert "%sql" not in command, f"""Found "%sql" in command #{i+1}"""
-        elif language == "scala":
-            assert "%scala" not in command, f"""Found "%scala" in command #{i+1}"""
+        # elif source_language == "scala":
+        #     assert "%scala" not in command, f"""Found "%scala" in command #{i+1}"""
         else:
-          raise Exception(f"The source notebook language {language} is not supported")
+          raise Exception(f"The source notebook language {source_language} is not supported")
 
     assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
     assert found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found."
