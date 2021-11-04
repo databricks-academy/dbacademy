@@ -339,15 +339,16 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         for token in bdc_tokens:
             assert token not in command, f"Found {token} in command #{i+1}"
 
-        print("-"*80)
-        print(source_info)
-        print("-"*80)
-
-        if source_info["language"].lower() != "python":
+        language = source_info["language"].lower()
+        
+        if language != "python":
             assert "%python" not in command, f"Found {token} in command #{i+1}"
-
-        if source_info["language"].lower() != "sql":
+        elif language != "sql":
             assert "%sql" not in command, f"Found {token} in command #{i+1}"
+        elif language != "scala":
+            assert "%scala" not in command, f"Found {token} in command #{i+1}"
+        else:
+          raise Exception(f"The source notebook language {language} is not supported")
 
     assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
     assert found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found."
