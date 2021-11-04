@@ -358,10 +358,12 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             assert "%python" not in command, f"""Found "%python" in command #{i+1}"""
         elif source_language == "sql":
             assert "%sql" not in command, f"""Found "%sql" in command #{i+1}"""
-        # elif source_language == "scala":
-        #     assert "%scala" not in command, f"""Found "%scala" in command #{i+1}"""
+        elif source_language == "scala":
+            assert "%scala" not in command, f"""Found "%scala" in command #{i+1}"""
+        elif source_language == "r":
+            assert "%r" not in command, f"""Found "%r" in command #{i+1}"""
         else:
-          raise Exception(f"The source notebook language {source_language} is not supported")
+          raise Exception(f"The language {source_language} is not supported")
 
     assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
     assert found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found."
