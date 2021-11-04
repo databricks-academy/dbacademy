@@ -337,9 +337,10 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
                       "VIDEO","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART", "{dbr}"]
 
         for token in bdc_tokens:
-            print("-"*80)
-            print(command)
-            print("-"*80)
+            if token not in command:
+              print("-"*80)
+              print(command)
+              print("-"*80)
             assert token not in command, f"Found {token} in command #{i+1}"
 
         language = source_info["language"].lower()
