@@ -371,7 +371,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         for directive in directives:
           if directive not in [D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
             directive_count += 1
-        assert directive_count == 1, f"Found multiple directives in {i+1}: {directives}"
+        assert directive_count == 1, f"Found multiple directives({directive_count}) in Cmd #{i+1}: {directives}"
 
         # Process the various directives
         if command.strip() == "":                  skipped += skipping(i, "Empty Cell")
