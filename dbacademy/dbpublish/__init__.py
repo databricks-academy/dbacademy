@@ -348,7 +348,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         leading_comments = get_leading_comments(language, command.strip())
         directives = parse_directives(i, leading_comments)
 
-        assert len(directives) == 1, "Expected one and only one directive per command."
+        assert len(directives) == 1, f"Found multiple directives in {i+1}."
 
         # Print statements for debugging parsing.
         # print(f"\nCommand {i}")
