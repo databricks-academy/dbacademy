@@ -147,9 +147,11 @@ def get_leading_comments(language, command) -> []:
 
     for line in lines:
         if line.startswith(f"{source_m} MAGIC"):
-          line = line[7:].strip()
+          length = len(source_m)+6
+          line = line[length:].strip()
         elif line.startswith(f"{source_m} COMMAND"):
-          line = line[9:].strip()
+          length = len(source_m)+8
+          line = line[length:].strip()
         
         if line.strip().startswith("%"):
             # Remove the magic command from this line
