@@ -348,17 +348,18 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         leading_comments = get_leading_comments(language, command.strip())
         directives = parse_directives(i, leading_comments)
 
-        if "DUMMY" in command:
-          # Print statements for debugging parsing.
-          print(f"\nCommand {i}")
-          if len(leading_comments) > 0:
-              print("   |-LEADING COMMENTS --"+("-"*57))
-              for comment in leading_comments:
-                  print("   |"+comment)
-          if len(directives) > 0:
-              print("   |-DIRECTIVES --"+("-"*62))
-              for directive in directives:
-                  print("   |"+directive)
+        assert len(directives) == 1, "Expected one and only one directive per command."
+
+        # Print statements for debugging parsing.
+        # print(f"\nCommand {i}")
+        # if len(leading_comments) > 0:
+        #     print("   |-LEADING COMMENTS --"+("-"*57))
+        #     for comment in leading_comments:
+        #         print("   |"+comment)
+        # if len(directives) > 0:
+        #     print("   |-DIRECTIVES --"+("-"*62))
+        #     for directive in directives:
+        #         print("   |"+directive)
         
         include_header = True if D_INCLUDE_HEADER_TRUE in directives else include_header
         found_header_directive = True if D_INCLUDE_HEADER_TRUE in directives or D_INCLUDE_HEADER_FALSE in directives else found_header_directive
@@ -384,9 +385,11 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             answ_count += 1
             solutions_commands.append(command)
 
+        elif D_DUMMY in directives:
+            students_commands.append(command)
+            solutions_commands.append(command.replace("DUMMY", "DUMMY: Ya, that wasn't too smart. Then again, this is just a dummy-directive"))
+
         else:
-            if D_DUMMY in directives: command = command.replace("DUMMY", "DUMMY: Ya, that wasn't too smart. Then again, this is just a dummy-directive")
-                
             # Not a TODO or ANSWER, just append to both
             students_commands.append(command)
             solutions_commands.append(command)
