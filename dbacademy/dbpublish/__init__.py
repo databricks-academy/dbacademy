@@ -348,8 +348,6 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         leading_comments = get_leading_comments(language, command.strip())
         directives = parse_directives(i, leading_comments)
 
-        assert len(directives) == 1, f"Found multiple directives in {i+1}."
-
         # Print statements for debugging parsing.
         # print(f"\nCommand {i}")
         # if len(leading_comments) > 0:
@@ -366,6 +364,15 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
         include_footer = True if D_INCLUDE_FOOTER_TRUE in directives else include_footer
         found_footer_directive = True if D_INCLUDE_FOOTER_TRUE in directives or D_INCLUDE_FOOTER_FALSE in directives else found_footer_directive
+
+
+        directives_copy = directives.copy()
+        directives_copy.remove(D_INCLUDE_HEADER_TRUE)
+        directives_copy.remove(D_INCLUDE_HEADER_FALSE)
+        directives_copy.remove(D_INCLUDE_FOOTER_TRUE)
+        directives_copy.remove(D_INCLUDE_FOOTER_FALSE)
+        assert len(directives_copy) == 1, f"Found multiple directives in {i+1}: {directives_copy}"
+
 
         if command.strip() == "":                  skipped += skipping(i, "Empty Cell")
         elif D_SOURCE_ONLY in directives:          skipped += skipping(i, "Source-Only")
