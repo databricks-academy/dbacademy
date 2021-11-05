@@ -367,12 +367,11 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         found_footer_directive = True if D_INCLUDE_FOOTER_TRUE in directives or D_INCLUDE_FOOTER_FALSE in directives else found_footer_directive
 
         # Make sure we have one and only one directive in this command (ignoring the header directives)
-        directives_copy = directives.copy()
-        directives_copy.remove(D_INCLUDE_HEADER_TRUE)
-        directives_copy.remove(D_INCLUDE_HEADER_FALSE)
-        directives_copy.remove(D_INCLUDE_FOOTER_TRUE)
-        directives_copy.remove(D_INCLUDE_FOOTER_FALSE)
-        assert len(directives_copy) == 1, f"Found multiple directives in {i+1}: {directives_copy}"
+        directive_count = 0
+        for directive in directives:
+          if directive not in [D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
+            directive_count += 1
+        assert directive_count == 1, f"Found multiple directives in {i+1}: {directives}"
 
         # Process the various directives
         if command.strip() == "":                  skipped += skipping(i, "Empty Cell")
