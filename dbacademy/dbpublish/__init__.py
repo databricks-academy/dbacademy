@@ -143,6 +143,8 @@ def get_leading_comments(language, command) -> []:
       cell_m = source_m # Included to preclude traping for R language below
     elif first_line.startswith(f"{source_m} magic %r"):
       cell_m = get_comment_marker("r")
+    else:
+      cell_m = source_m
 
     for line in lines:
         if line.startswith(f"{source_m} MAGIC"):
