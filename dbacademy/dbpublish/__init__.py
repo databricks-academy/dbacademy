@@ -2,6 +2,7 @@
 D_TODO = "TODO"
 D_ANSWER = "ANSWER"
 D_SOURCE_ONLY = "SOURCE_ONLY"
+D_TEST = "TEST"
 # D_SELF_PACED_ONLY = "SELF_PACED_ONLY"
 # D_ILT_ONLY = "ILT_ONLY"
 
@@ -10,7 +11,7 @@ D_INCLUDE_HEADER_FALSE = "INCLUDE_HEADER_FALSE"
 D_INCLUDE_FOOTER_TRUE = "INCLUDE_FOOTER_TRUE"
 D_INCLUDE_FOOTER_FALSE = "INCLUDE_FOOTER_FALSE"
 
-SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, 
+SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_TEST,
                         # D_SELF_PACED_ONLY, D_ILT_ONLY, 
                         D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
  
@@ -127,33 +128,43 @@ def get_leading_comments(language, command) -> []:
     leading_comments = []
     lines = command.split("\n")
 
-    m = get_comment_marker(language)
+    source_m = get_comment_marker(language)
+    first_line = lines[0].lower()
 
-    is_md_cell =  lines[0].lower().startswith(f"{m} magic %md")
-    is_sql_cell = lines[0].lower().startswith(f"{m} magic %sql")
-    mark = "--" if is_md_cell or is_sql_cell else m
+    if first_line.startswith(f"{source_m} magic %md"):
+      cell_m = get_comment_marker("md")
+    elif first_line.startswith(f"{source_m} magic %sql"):
+      cell_m = get_comment_marker("sql")
+    elif first_line.startswith(f"{source_m} magic %python"):
+      cell_m = get_comment_marker("python")
+    elif first_line.startswith(f"{source_m} magic %scala"):
+      cell_m = get_comment_marker("scala")
+    elif first_line.startswith(f"{source_m} magic %run"):
+      cell_m = source_m # Included to preclude traping for R language below
+    elif first_line.startswith(f"{source_m} magic %r"):
+      cell_m = get_comment_marker("r")
 
     for line in lines:
-        if line.startswith(f"{m} MAGIC"):
+        if line.startswith(f"{source_m} MAGIC"):
           line = line[7:].strip()
-        elif line.startswith(f"{m} COMMAND"):
+        elif line.startswith(f"{source_m} COMMAND"):
           line = line[9:].strip()
         
         if line.strip().startswith("%"):
             # Remove the magic command from this line
             pos = line.find(" ")
-            if pos != -1 and line[pos:].strip().startswith(mark):
+            if pos != -1 and line[pos:].strip().startswith(cell_m):
               # append to our list
-              comment = line[pos:].strip()[len(mark):].strip()
+              comment = line[pos:].strip()[len(cell_m):].strip()
               leading_comments.append(comment)
               
-        elif line.strip() == mark:
+        elif line.strip() == cell_m:
             # empty comment line, don't break, just ignore
             pass
             
-        elif line.strip().startswith(mark):
+        elif line.strip().startswith(cell_m):
             # append to our list
-            comment = line.strip()[len(mark):].strip()
+            comment = line.strip()[len(cell_m):].strip()
             leading_comments.append(comment)
             
         else:
@@ -200,6 +211,8 @@ def get_comment_marker(language):
       if language.lower() == "python":
         return "#"
       elif language.lower() == "sql":
+        return "--"
+      elif language.lower() == "md":
         return "--"
       elif language.lower() == "r":
         return "#"
