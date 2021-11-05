@@ -382,12 +382,11 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             solutions_commands.append(command)
 
         else:
+            if D_DUMMY in directives: command = command.replace("DUMMY", "DUMMY: Ya, that wasn't too smart. Then again, this is just a dummy-directive")
+                
             # Not a TODO or ANSWER, just append to both
             students_commands.append(command)
             solutions_commands.append(command)
-
-        if D_DUMMY in directives:
-          command = command.replace("DUMMY", "DUMMY: Ya, that wasn't too smart. Then again, this is just a dummy-directive")
 
         # Check the command for BDC markers
         bdc_tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY",
