@@ -386,6 +386,9 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             students_commands.append(command)
             solutions_commands.append(command)
 
+        if D_DUMMY in directives:
+          command = command.replace("DUMMY", "DUMMY: Ya, that wasn't too smart. Then again, this is just a dummy-directive")
+
         # Check the command for BDC markers
         bdc_tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY",
                       "AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST","INSTRUCTOR_NOTE","INSTRUCTOR_ONLY",
