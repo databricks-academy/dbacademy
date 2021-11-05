@@ -389,7 +389,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
         # Check the command for BDC markers
         bdc_tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY",
-                      "AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST","INSTRUCTOR_NOTE","INSTRUCTOR_ONLY",
+                      "AMAZON_ONLY","AZURE_ONLY","PRIVATE_TEST","INSTRUCTOR_NOTE","INSTRUCTOR_ONLY",
                       "SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY"
                       "VIDEO","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART", "{dbr}"]
 
