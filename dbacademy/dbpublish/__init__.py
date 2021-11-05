@@ -359,13 +359,14 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         #     for directive in directives:
         #         print("   |"+directive)
         
+        # Update flags to indicate if we found the required header and footer directives
         include_header = True if D_INCLUDE_HEADER_TRUE in directives else include_header
         found_header_directive = True if D_INCLUDE_HEADER_TRUE in directives or D_INCLUDE_HEADER_FALSE in directives else found_header_directive
 
         include_footer = True if D_INCLUDE_FOOTER_TRUE in directives else include_footer
         found_footer_directive = True if D_INCLUDE_FOOTER_TRUE in directives or D_INCLUDE_FOOTER_FALSE in directives else found_footer_directive
 
-
+        # Make sure we have one and only one directive in this command (ignoring the header directives)
         directives_copy = directives.copy()
         directives_copy.remove(D_INCLUDE_HEADER_TRUE)
         directives_copy.remove(D_INCLUDE_HEADER_FALSE)
@@ -373,7 +374,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         directives_copy.remove(D_INCLUDE_FOOTER_FALSE)
         assert len(directives_copy) == 1, f"Found multiple directives in {i+1}: {directives_copy}"
 
-
+        # Process the various directives
         if command.strip() == "":                  skipped += skipping(i, "Empty Cell")
         elif D_SOURCE_ONLY in directives:          skipped += skipping(i, "Source-Only")
         elif D_INCLUDE_HEADER_TRUE in directives:  skipped += skipping(i, "Including Header")
