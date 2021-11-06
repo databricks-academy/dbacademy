@@ -373,6 +373,9 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             directive_count += 1
         assert directive_count <= 1, f"Found multiple directives ({directive_count}) in Cmd #{i+1}: {directives}"
 
+        students_command__found = False
+        solutions_command_found = False
+
         # Process the various directives
         if command.strip() == "":                  skipped += skipping(i, "Empty Cell")
         elif D_SOURCE_ONLY in directives:          skipped += skipping(i, "Source-Only")
@@ -385,21 +388,34 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             # This is a TODO cell, exclude from solution notebooks
             todo_count += 1
             command = clean_todo_cell(language, command, i)
+
+            students_command_found = True
             students_commands.append(command)
 
         elif D_ANSWER in directives:
             # This is an ANSWER cell, exclude from lab notebooks
             answ_count += 1
+            solutions_command_found = True
             solutions_commands.append(command)
 
         elif D_DUMMY in directives:
+            students_command_found = True
             students_commands.append(command)
+
+            solutions_command_found = True
             solutions_commands.append(command.replace("DUMMY", "DUMMY: Ya, that wasn't too smart. Then again, this is just a dummy-directive"))
 
         else:
             # Not a TODO or ANSWER, just append to both
+            students_command_found = True
             students_commands.append(command)
+
+            solutions_command_found = True
             solutions_commands.append(command)
+
+        # Make sure the 
+        assert students_command_found and D_TODO not in command, f"Found {D_TODO} directive student-command, command #{i+1}"
+
 
         # Check the command for BDC markers
         bdc_tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY",
