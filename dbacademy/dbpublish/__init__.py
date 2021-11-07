@@ -184,7 +184,7 @@ def get_leading_comments(language, cmd, command) -> list:
             
         else:
             # All done, this is a non-comment
-            print(f"""  - Stopped at line #{il}, non-comment: "{comment}" """)
+            print(f"""  - Stopped at line #{il}, non-comment: "{line}" """)
             return leading_comments
 
     return leading_comments
