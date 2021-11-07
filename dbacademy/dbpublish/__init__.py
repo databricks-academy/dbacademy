@@ -130,7 +130,6 @@ def get_leading_comments(language, cmd, command) -> list:
 
     source_m = get_comment_marker(language)
     first_line = lines[0].lower()
-    print(f"Cmd {cmd+1} First Line: {first_line}")
 
     if first_line.startswith(f"{source_m} magic %md"):
       cell_m = get_comment_marker("md")
@@ -160,10 +159,10 @@ def get_leading_comments(language, cmd, command) -> list:
           length = len(source_m)+8
           line = line[length:].strip()
         
-
+        # 
         if line.strip().startswith("%"):
             # Remove the magic command from this line
-            print(f"REMOVING Magic-Command in Cmd #{cmd+1}")
+            print(f"""REMOVING Magic-Command "{line}" in Cmd #{cmd+1}""")
 
             pos = line.find(" ")
             if pos != -1 and line[pos:].strip().startswith(cell_m):
