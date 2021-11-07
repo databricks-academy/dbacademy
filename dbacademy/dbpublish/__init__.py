@@ -194,9 +194,11 @@ def parse_directives(i, comments):
           directives.append(line)
         
       elif "FILL-IN" in directive or "FILL_IN" in directive:
+          print("Skipping directive: FILL-IN")
           pass # Not a directive, just a random chance
 
       elif directive != re.sub("[^0-9]", "_", directive):
+          print("Skipping directive: Numbered")
           pass # Number and symbols are not used in directives
 
       else:
