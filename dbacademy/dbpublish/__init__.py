@@ -296,8 +296,9 @@ def clean_todo_cell(source_language, command, cmd):
     for i in range(len(lines)):
         line = lines[i]
 
-        if first != 0:
-          pass # This is language magic command, ignore it
+        if i == 0 and first == 1:
+          # This is the first command, but the first is a magic command
+          new_command += line
 
         elif (i==first) and line.strip() not in [f"{prefix} {D_TODO}", f"{prefix} {D_EXPECTED_EXCEPTION}"]:
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be the "{D_TODO}" or "{D_EXPECTED_EXCEPTION}" directive: "{line}"\n{"-"*80}\n{command}\n{"-"*80}""")
@@ -305,7 +306,7 @@ def clean_todo_cell(source_language, command, cmd):
         elif not line.startswith(prefix) and line.strip() != "":
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" with prefix "{prefix}" """)
 
-        elif i>=first or line.strip() == "":
+        elif i>=first or line.strip() == "" or line.strip() == "{source_m} MAGIC":
             # No comment, do not process
             new_command += line
 
