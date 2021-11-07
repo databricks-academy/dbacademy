@@ -305,7 +305,7 @@ def clean_todo_cell(source_language, command, cmd):
         elif not line.startswith(prefix) and line.strip() != "":
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" with prefix "{prefix}" """)
 
-        elif i<=first or line.strip() == "":
+        elif i>=first or line.strip() == "":
             # No comment, do not process
             new_command += line
 
