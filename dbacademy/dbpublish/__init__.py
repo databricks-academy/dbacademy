@@ -282,14 +282,12 @@ def clean_todo_cell(source_language, command, cmd):
     m = get_comment_marker(source_language)
 
     first = 0
-    cell_m = m
 
     for test_a in ["%r", "%md", "%sql", "%python", "%scala"]:
       test_b = f"{m} MAGIC {test_a}"
       if len(lines) > 1 and (lines[0].startswith(test_a) or lines[0].startswith(test_b)):
         first = 1
-        cell_m = get_comment_marker(test_a)
-        print(f"{m} vs {cell_m}")
+        m = get_comment_marker(test_a)
 
     for i in range(len(lines)):
         line = lines[i]
