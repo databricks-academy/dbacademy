@@ -210,16 +210,13 @@ from dbacademy.dbrest import DBAcademyRestClient
 
 
 def get_comment_marker(language):
-      if language.lower() == "python":
-        return "#"
-      elif language.lower() == "sql":
-        return "--"
-      elif language.lower() == "md":
-        return "--"
-      elif language.lower() == "r":
-        return "#"
-      elif language.lower() == "scala":
-        return "//"
+      language = language.replace("%", "")
+
+      if language.lower() in "python":  return "#"
+      elif language.lower() in "sql":   return "--"
+      elif language.lower() in "md":    return "--"
+      elif language.lower() in "r":     return "#"
+      elif language.lower() in "scala": return "//"
       else:
         raise Exception(f"The language {language} is not supported.")
 
@@ -279,16 +276,20 @@ def skipping(i, label):
     print(f"Skipping Cmd #{i + 1} - {label}")
     return 1;
 
-def clean_todo_cell(language, command, cmd):
+def clean_todo_cell(source_language, command, cmd):
     new_command = ""
     lines = command.split("\n")
-    m = get_comment_marker(language)
+    m = get_comment_marker(source_language)
 
     first = 0
+    cell_language = source_language
+
     for test_a in ["%r", "%md", "%sql", "%python", "%scala"]:
       test_b = f"{m} MAGIC {test_a}"
       if len(lines) > 1 and (lines[0].startswith(test_a) or lines[0].startswith(test_b)):
         first = 1
+        cell_language = get_comment_marker(test_a)
+        print(f"{source_language} vs {cell_language}")
 
     for i in range(len(lines)):
         line = lines[i]
