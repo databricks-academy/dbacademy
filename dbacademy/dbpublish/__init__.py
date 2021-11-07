@@ -286,7 +286,7 @@ def clean_todo_cell(language, command, cmd):
 
     first = 0
     for test_a in ["%r", "%md", "%sql", "%python", "%scala"]:
-      test_b = "{m} MAGIC {test_a}"
+      test_b = f"{m} MAGIC {test_a}"
       if len(lines) > 1 and (lines[0].startswith(test_a) or lines[0].startswith(test_b)):
         first = 1
 
