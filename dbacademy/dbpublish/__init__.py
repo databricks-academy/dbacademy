@@ -159,7 +159,7 @@ def get_leading_comments(language, cmd, command) -> list:
           length = len(source_m)+8
           line = line[length:].strip()
         
-        # 
+        # With the source prefix removed, proceede with processing
         if line.strip().startswith("%"):
             # Remove the magic command from this line
             print(f"""REMOVING Magic-Command "{line}" in Cmd #{cmd+1}""")
