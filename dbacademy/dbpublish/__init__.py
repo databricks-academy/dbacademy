@@ -279,15 +279,19 @@ def skipping(i, label):
 def clean_todo_cell(source_language, command, cmd):
     new_command = ""
     lines = command.split("\n")
-    m = get_comment_marker(source_language)
+    source_m = get_comment_marker(source_language)
 
     first = 0
+    cell_m = source_m
+    prefix = source_m
 
     for test_a in ["%r", "%md", "%sql", "%python", "%scala"]:
-      test_b = f"{m} MAGIC {test_a}"
+      test_b = f"{source_m} MAGIC {test_a}"
       if len(lines) > 1 and (lines[0].startswith(test_a) or lines[0].startswith(test_b)):
         first = 1
-        m = get_comment_marker(test_a)
+        cell_m = get_comment_marker(test_a)
+        prefix = f"{source_m} MAGIC {cell_m}"
+        print(f"{source_m} vs {prefix}")
 
     for i in range(len(lines)):
         line = lines[i]
