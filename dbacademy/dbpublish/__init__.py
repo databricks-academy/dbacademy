@@ -170,7 +170,7 @@ def get_leading_comments(language, cmd, command) -> list:
             else: line = line[pos:].strip()
             print(f"""  - new Line: "{line}" """)
 
-        # Finally process the line for any comments.
+        # Finally process the refactored-line for any comments.
         if line.strip() == cell_m:
             # empty comment line, don't break, just ignore
             print(f"  - skipping Line #{il}")
