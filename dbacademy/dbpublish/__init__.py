@@ -178,6 +178,8 @@ def get_leading_comments(language, command) -> list:
     return leading_comments
   
 def parse_directives(i, comments):
+  import re
+  
   directives = list()
   for line in comments:
     if line == line.upper():
