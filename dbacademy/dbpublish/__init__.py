@@ -320,7 +320,7 @@ def clean_todo_cell(source_language, command, cmd):
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" with prefix "{prefix}" """)
 
         elif line.strip() == "" or line.strip() == "{source_m} MAGIC":
-            print(f""" - line #{i+1}: Empty line, just add: "{line}"" """)
+            print(f""" - line #{i+1}: Empty line, just add: "{line}" """)
             # No comment, do not process
             new_command += line
 
