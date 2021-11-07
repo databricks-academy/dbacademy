@@ -282,7 +282,7 @@ def clean_todo_cell(source_language, command, cmd):
     m = get_comment_marker(source_language)
 
     first = 0
-    cell_language = source_language
+    cell_m = m
 
     for test_a in ["%r", "%md", "%sql", "%python", "%scala"]:
       test_b = f"{m} MAGIC {test_a}"
