@@ -389,6 +389,14 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
           print(f"Debug Command {i+1}")
 
         command = commands[i].lstrip()
+        
+        # Remove the DBTITLE line
+        m = get_comment_marker(language)
+        if command.startswith(f"{m} DBTITLE"):
+          pos = command.find("\n")
+          command = command[pos:].lstrip()
+
+        # Extract the leading comments and then the directives
         leading_comments = get_leading_comments(language, i, command.strip())
         directives = parse_directives(i, leading_comments)
 
