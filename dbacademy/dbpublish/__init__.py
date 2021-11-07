@@ -124,7 +124,7 @@ def replace_contents(contents:str, replacements:dict):
   
     return contents
     
-def get_leading_comments(language, command) -> list:
+def get_leading_comments(language, cmd, command) -> list:
     leading_comments = []
     lines = command.split("\n")
 
@@ -150,12 +150,15 @@ def get_leading_comments(language, command) -> list:
         if line.startswith(f"{source_m} MAGIC"):
           length = len(source_m)+6
           line = line[length:].strip()
+
         elif line.startswith(f"{source_m} COMMAND"):
           length = len(source_m)+8
           line = line[length:].strip()
         
         if line.strip().startswith("%"):
             # Remove the magic command from this line
+            print(f"REMOVING magic command Cmd #{cmd+1}")
+
             pos = line.find(" ")
             if pos != -1 and line[pos:].strip().startswith(cell_m):
               # append to our list
@@ -365,7 +368,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     
     for i in range(len(commands)):
         command = commands[i].lstrip()
-        leading_comments = get_leading_comments(language, command.strip())
+        leading_comments = get_leading_comments(language, i, command.strip())
         directives = parse_directives(i, leading_comments)
 
         # Print statements for debugging parsing.
