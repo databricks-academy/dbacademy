@@ -383,12 +383,15 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     print("="*80)
 
     for i in range(len(commands)):
-        DEBUG = True
+        DEBUG = False
         if DEBUG:
           print("\n"+("="*80))
           print(f"Debug Command {i+1}")
 
         command = commands[i].lstrip()
+
+        if "DBTITLE" in command:
+          raise Exception(f"Unsupported Cell-Title found in Cmd #{i+1}")
         
         # Extract the leading comments and then the directives
         leading_comments = get_leading_comments(language, i, command.strip())
