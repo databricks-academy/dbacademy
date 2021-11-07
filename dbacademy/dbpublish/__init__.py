@@ -325,13 +325,13 @@ def clean_todo_cell(source_language, command, cmd):
             new_command += line
 
         elif line.strip().startswith(f"{prefix} "):
-            print(f""" - line #{i+1}: Removing comment and space: "{line}" """)
+            print(f""" - line #{i+1}: Removing comment and space ({prefix}): "{line}" """)
             # Remove comment and space
             length = len(prefix)+1
             new_command += line[length:]
 
         else:
-            print(f""" - line #{i+1}: Removing comment only: "{line}" """)
+            print(f""" - line #{i+1}: Removing comment only ({prefix}): "{line}" """)
             # Remove just the comment
             length = len(prefix)
             new_command += line[length:]
