@@ -195,7 +195,7 @@ def parse_directives(i, comments):
           directives.append(line)
         
       elif "FILL-IN" in directive or "FILL_IN" in directive:
-          print("Skipping directive: FILL-IN")
+          # print("Skipping directive: FILL-IN")
           pass # Not a directive, just a random chance
 
       elif directive != mod_directive:
