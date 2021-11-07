@@ -178,13 +178,13 @@ def get_leading_comments(language, cmd, command) -> list:
             
         elif line.strip().startswith(cell_m):
             # append to our list
-            print(f"  - Picking up comment from line ${il}")
+            print(f"  - Picking up comment from line #{il}")
             comment = line.strip()[len(cell_m):].strip()
             leading_comments.append(comment)
             
         else:
             # All done, this is a non-comment
-            print(f"  - Stopped at line ${il}, non-comment")
+            print(f"""  - Stopped at line #{il}, non-comment: "{comment}" """)
             return leading_comments
 
     return leading_comments
