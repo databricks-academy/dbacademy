@@ -146,8 +146,6 @@ def get_leading_comments(language, cmd, command) -> list:
     else:
       cell_m = source_m
 
-    print(f"Leading Comment: {language}/{source_m} vs {cell_m}")
-
     for il in range(len(lines)):
         line = lines[il]
 
@@ -163,28 +161,22 @@ def get_leading_comments(language, cmd, command) -> list:
         # Next, if it starts with a magic command, remove it.
         if line.strip().startswith("%"):
             # Remove the magic command from this line
-            print(f"""REMOVING Magic-Command "{line}" in Cmd #{cmd+1}""")
-
             pos = line.find(" ")
             if pos == -1: line = ""
             else: line = line[pos:].strip()
-            print(f"""  - new Line: "{line}" """)
 
         # Finally process the refactored-line for any comments.
         if line.strip() == cell_m or line.strip() == "":
             # empty comment line, don't break, just ignore
-            print(f"  - skipping Line #{il+1}")
             pass
             
         elif line.strip().startswith(cell_m):
             # append to our list
-            print(f"  - Picking up comment from line #{il+1}")
             comment = line.strip()[len(cell_m):].strip()
             leading_comments.append(comment)
             
         else:
             # All done, this is a non-comment
-            print(f"""  - Stopped at line #{il+1}, non-comment: "{line}" """)
             return leading_comments
 
     return leading_comments
