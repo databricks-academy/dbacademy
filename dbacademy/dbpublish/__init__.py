@@ -285,8 +285,9 @@ def clean_todo_cell(language, command, cmd):
     m = get_comment_marker(language)
 
     first = 0
-    for test in ["%r", "%md", "%sql", "%python", "%scala"]:
-      if len(lines) > 1 and lines[0].startswith(test):
+    for test_a in ["%r", "%md", "%sql", "%python", "%scala"]:
+      test_b = "{m} MAGIC {test_a}"
+      if len(lines) > 1 and (lines[0].startswith(test_a) or lines[0].startswith(test_b)):
         first = 1
 
     for i in range(len(lines)):
