@@ -306,13 +306,13 @@ def clean_todo_cell(source_language, command, cmd):
         cell_m = get_comment_marker(test_a)
         prefix = f"{source_m} MAGIC {cell_m}"
 
-    print(f"Clean TODO cell, Cmd {cmd+1}")
+    # print(f"Clean TODO cell, Cmd {cmd+1}")
 
     for i in range(len(lines)):
         line = lines[i]
 
         if i == 0 and first == 1:
-          print(f" - line #{i+1}: First line is a magic command")
+          # print(f" - line #{i+1}: First line is a magic command")
           # This is the first line, but the first is a magic command
           new_command += line
 
@@ -323,23 +323,23 @@ def clean_todo_cell(source_language, command, cmd):
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" with prefix "{prefix}" """)
 
         elif line.strip().startswith(f"{prefix} {D_TODO}"):
-            print(f""" - line #{i+1}: Processing TODO line ({prefix}): "{line}" """)
+            # print(f""" - line #{i+1}: Processing TODO line ({prefix}): "{line}" """)
             # Add as-is
             new_command += line
 
         elif line.strip() == "" or line.strip() == f"{source_m} MAGIC":
-            print(f""" - line #{i+1}: Empty line, just add: "{line}" """)
+            # print(f""" - line #{i+1}: Empty line, just add: "{line}" """)
             # No comment, do not process
             new_command += line
 
         elif line.strip().startswith(f"{prefix} "):
-            print(f""" - line #{i+1}: Removing comment and space ({prefix}): "{line}" """)
+            # print(f""" - line #{i+1}: Removing comment and space ({prefix}): "{line}" """)
             # Remove comment and space
             length = len(prefix)+1
             new_command += line[length:]
 
         else:
-            print(f""" - line #{i+1}: Removing comment only ({prefix}): "{line}" """)
+            # print(f""" - line #{i+1}: Removing comment only ({prefix}): "{line}" """)
             # Remove just the comment
             length = len(prefix)
             new_command += line[length:]
