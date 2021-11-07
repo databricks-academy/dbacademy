@@ -367,12 +367,12 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     include_footer = False
     found_footer_directive = False
     
-    print("="*80)
-    for i in range(len(commands)):
-        command = commands[i].lstrip()
-        first = command.split("\n")[0]
-        print(f"""Cmd {i+1}: {first}""")
-    print("="*80)
+    # print("="*80)
+    # for i in range(len(commands)):
+    #     command = commands[i].lstrip()
+    #     first = command.split("\n")[0]
+    #     print(f"""Cmd {i+1}: {first}""")
+    # print("="*80)
 
     for i in range(len(commands)):
         DEBUG = False
