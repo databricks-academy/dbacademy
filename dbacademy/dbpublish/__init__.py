@@ -377,22 +377,25 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
     print("="*80)
 
     for i in range(len(commands)):
+        DEBUG = True
+        if DEBUG:
+          print("\n"+("="*80))
+          print(f"Debug Command {i+1}")
+
         command = commands[i].lstrip()
         leading_comments = get_leading_comments(language, i, command.strip())
         directives = parse_directives(i, leading_comments)
 
-        # Print statements for debugging parsing.
-        print("\n"+("="*80))
-        print(f"Debug Command {i+1}")
-        if len(leading_comments) > 0:
-            print("   |-LEADING COMMENTS --"+("-"*57))
-            for comment in leading_comments:
-                print("   |"+comment)
-        if len(directives) > 0:
-            print("   |-DIRECTIVES --"+("-"*62))
-            for directive in directives:
-                print("   |"+directive)
-        print()
+        if DEBUG:
+          if len(leading_comments) > 0:
+              print("   |-LEADING COMMENTS --"+("-"*57))
+              for comment in leading_comments:
+                  print("   |"+comment)
+          if len(directives) > 0:
+              print("   |-DIRECTIVES --"+("-"*62))
+              for directive in directives:
+                  print("   |"+directive)
+          print()
         
         # Update flags to indicate if we found the required header and footer directives
         include_header = True if D_INCLUDE_HEADER_TRUE in directives else include_header
