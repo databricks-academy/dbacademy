@@ -188,6 +188,9 @@ def parse_directives(i, comments):
       if directive in [D_TODO, D_EXPECTED_EXCEPTION, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
           directives.append(line)
         
+      if "FILL-IN" in directive or "FILL_IN" in directive:
+          pass # Not a directive, just a random chance
+
       else:
           print(f"""Processing "{directive}" in Cmd #{i+1} """)
           if " " in directive: 
