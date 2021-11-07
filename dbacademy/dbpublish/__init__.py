@@ -202,11 +202,11 @@ def parse_directives(i, comments):
           if mod_directive in [f"__{D_TODO}", f"___{D_TODO}"]:
             raise Exception(f"Double-Comment of TODO directive found in Cmd #{i+1}")
 
-          print(f"Skipping directive: {directive} vs {mod_directive}")
+          # print(f"Skipping directive: {directive} vs {mod_directive}")
           pass # Number and symbols are not used in directives
 
       else:
-          print(f"""Processing "{directive}" in Cmd #{i+1} """)
+          # print(f"""Processing "{directive}" in Cmd #{i+1} """)
           if " " in directive: 
             raise ValueError(f"""Whitespace found in directive "{directive}", Cmd #{i+1}: {line}""")
           if "-" in directive: 
