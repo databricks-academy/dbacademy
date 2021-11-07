@@ -365,7 +365,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         directives = parse_directives(i, leading_comments)
 
         # Print statements for debugging parsing.
-        print(f"\nCommand {i}")
+        print(f"\nCommand {i+1}")
         if len(leading_comments) > 0:
             print("   |-LEADING COMMENTS --"+("-"*57))
             for comment in leading_comments:
