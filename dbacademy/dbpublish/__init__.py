@@ -373,7 +373,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             directive_count += 1
         assert directive_count <= 1, f"Found multiple directives ({directive_count}) in Cmd #{i+1}: {directives}"
 
-        students_command__found = False
+        students_command_found = False
         solutions_command_found = False
 
         # Process the various directives
