@@ -130,7 +130,7 @@ def get_leading_comments(language, cmd, command) -> list:
 
     source_m = get_comment_marker(language)
     first_line = lines[0].lower()
-    print(f"First Line: {first_line}")
+    print(f"Cmd {i+1} First Line: {first_line}")
 
     if first_line.startswith(f"{source_m} magic %md"):
       cell_m = get_comment_marker("md")
@@ -392,6 +392,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             print("   |-DIRECTIVES --"+("-"*62))
             for directive in directives:
                 print("   |"+directive)
+        print()
         
         # Update flags to indicate if we found the required header and footer directives
         include_header = True if D_INCLUDE_HEADER_TRUE in directives else include_header
