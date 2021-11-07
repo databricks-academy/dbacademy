@@ -293,6 +293,8 @@ def clean_todo_cell(source_language, command, cmd):
         prefix = f"{source_m} MAGIC {cell_m}"
         print(f"{source_m} vs {prefix}")
 
+    print("Prefix: {prefix}")
+
     for i in range(len(lines)):
         line = lines[i]
 
