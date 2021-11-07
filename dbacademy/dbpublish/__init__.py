@@ -441,6 +441,10 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
         elif D_EXPECTED_EXCEPTION in directives:
             # This is an EXPECTED_EXCEPTION cell, exclude from solution notebooks
+            # The solution gets the commented out version
+            solutions_commands.append(command)
+
+            # The students get the uncommented out version
             command = clean_todo_cell(language, command, i)
             students_commands.append(command)
 
