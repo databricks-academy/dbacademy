@@ -309,7 +309,7 @@ def clean_todo_cell(source_language, command, cmd):
         line = lines[i]
 
         if i == 0 and first == 1:
-          printf(f"Line #{i+1}: First line is a magic command")
+          print(f"Line #{i+1}: First line is a magic command")
           # This is the first line, but the first is a magic command
           new_command += line
 
@@ -320,18 +320,18 @@ def clean_todo_cell(source_language, command, cmd):
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" with prefix "{prefix}" """)
 
         elif i>=first or line.strip() == "" or line.strip() == "{source_m} MAGIC":
-            printf(f"Line #{i+1}: Empty line, just add")
+            print(f"Line #{i+1}: Empty line, just add")
             # No comment, do not process
             new_command += line
 
         elif line.strip().startswith(f"{prefix} "):
-            printf(f"Line #{i+1}: Removing comment and space")
+            print(f"Line #{i+1}: Removing comment and space")
             # Remove comment and space
             length = len(prefix)+1
             new_command += line[length:]
 
         else:
-            printf(f"Line #{i+1}: Removing comment only")
+            print(f"Line #{i+1}: Removing comment only")
             # Remove just the comment
             length = len(m)
             new_command += line[length:]
