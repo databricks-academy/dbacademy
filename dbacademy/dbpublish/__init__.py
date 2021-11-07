@@ -414,8 +414,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             solutions_commands.append(command)
 
         # Make sure the 
-        assert students_command_found and D_TODO not in command, f"Found {D_TODO} directive student-command, command #{i+1}"
-
+        assert not (students_command_found and D_TODO in command), f"Found {D_TODO} directive in student-command, command #{i+1}"
 
         # Check the command for BDC markers
         bdc_tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY",
