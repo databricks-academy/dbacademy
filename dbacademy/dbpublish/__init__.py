@@ -166,7 +166,7 @@ def get_leading_comments(language, cmd, command) -> list:
             print(f"""REMOVING Magic-Command "{line}" in Cmd #{cmd+1}""")
 
             pos = line.find(" ")
-            if pos == -1: comment = ""
+            if pos == -1: line = ""
             else: line = line[pos:].strip()
             print(f"""  - new Line: "{line}" """)
 
