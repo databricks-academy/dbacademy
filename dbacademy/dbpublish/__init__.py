@@ -191,6 +191,9 @@ def parse_directives(i, comments):
       elif "FILL-IN" in directive or "FILL_IN" in directive:
           pass # Not a directive, just a random chance
 
+      elif directive != re.sub("[^0-9]", "_", directive):
+          pass # Number and symbols are not used in directives
+
       else:
           print(f"""Processing "{directive}" in Cmd #{i+1} """)
           if " " in directive: 
