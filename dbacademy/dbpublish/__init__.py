@@ -296,7 +296,7 @@ def clean_todo_cell(source_language, command, cmd):
     for i in range(len(lines)):
         line = lines[i]
 
-        if (i==first) and line.strip().replace(" ", "") not in [f"{m}{D_TODO}", f"{m}{m}{D_TODO}", f"{m}{D_EXPECTED_EXCEPTION}", f"{m}{m}{D_EXPECTED_EXCEPTION}"]:
+        if (i==first) and line.strip().replace(" ", "") not in [f"{prefix} {D_TODO}", f"{prefix} {D_EXPECTED_EXCEPTION}"]:
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be the "{D_TODO}" or "{D_EXPECTED_EXCEPTION}" directive: "{line}"\n{"-"*80}\n{command}\n{"-"*80}""")
 
         elif not line.startswith(m) and line.strip() != "":
@@ -305,7 +305,7 @@ def clean_todo_cell(source_language, command, cmd):
         elif i==0 or line.strip() == "":
             # No comment, do not process
             new_command += line
-        elif line.strip().startswith(f"{m} "):
+        elif line.strip().startswith(f"{prefix} "):
             # Remove comment and space
             length = len(m)+1
             new_command += line[length:]
