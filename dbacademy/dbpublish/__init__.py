@@ -302,9 +302,10 @@ def clean_todo_cell(source_language, command, cmd):
         elif not line.startswith(prfix) and line.strip() != "":
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" """)
 
-        elif i==0 or line.strip() == "":
+        elif i<=first or line.strip() == "":
             # No comment, do not process
             new_command += line
+
         elif line.strip().startswith(f"{prefix} "):
             # Remove comment and space
             length = len(m)+1
