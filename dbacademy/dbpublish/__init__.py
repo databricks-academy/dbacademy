@@ -300,8 +300,6 @@ def clean_todo_cell(source_language, command, cmd):
         cell_m = get_comment_marker(test_a)
         prefix = f"{source_m} MAGIC {cell_m}"
 
-    print(f"Cmd #{cmd+1} Prefix: {prefix}")
-
     for i in range(len(lines)):
         line = lines[i]
 
