@@ -1,6 +1,5 @@
 # Databricks notebook source
 D_TODO = "TODO"
-D_EXPECTED_EXCEPTION = "EXPECTED_EXCEPTION"
 D_ANSWER = "ANSWER"
 D_SOURCE_ONLY = "SOURCE_ONLY"
 D_DUMMY = "DUMMY"
@@ -12,7 +11,7 @@ D_INCLUDE_HEADER_FALSE = "INCLUDE_HEADER_FALSE"
 D_INCLUDE_FOOTER_TRUE = "INCLUDE_FOOTER_TRUE"
 D_INCLUDE_FOOTER_FALSE = "INCLUDE_FOOTER_FALSE"
 
-SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY, D_EXPECTED_EXCEPTION,
+SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY,
                         D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
  
 
@@ -191,7 +190,7 @@ def parse_directives(i, comments):
       # must be one or more directives
       directive = line.strip()
 
-      if directive in [D_TODO, D_EXPECTED_EXCEPTION, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
+      if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
           directives.append(line)
         
       elif "FILL-IN" in directive or "FILL_IN" in directive:
@@ -310,8 +309,8 @@ def clean_todo_cell(source_language, command, cmd):
           # This is the first command, but the first is a magic command
           new_command += line
 
-        elif (i==first) and line.strip() not in [f"{prefix} {D_TODO}", f"{prefix} {D_EXPECTED_EXCEPTION}"]:
-            raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be the "{D_TODO}" or "{D_EXPECTED_EXCEPTION}" directive: "{line}"\n{"-"*80}\n{command}\n{"-"*80}""")
+        elif (i==first) and line.strip() not in [f"{prefix} {D_TODO}"]:
+            raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be the "{D_TODO}" directive: "{line}"\n{"-"*80}\n{command}\n{"-"*80}""")
 
         elif not line.startswith(prefix) and line.strip() != "" and line.strip() != f"{source_m} MAGIC":
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" with prefix "{prefix}" """)
@@ -425,15 +424,6 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         elif D_TODO in directives:
             # This is a TODO cell, exclude from solution notebooks
             todo_count += 1
-            command = clean_todo_cell(language, command, i)
-            students_commands.append(command)
-
-        elif D_EXPECTED_EXCEPTION in directives:
-            # This is an EXPECTED_EXCEPTION cell, exclude from solution notebooks
-            # The solution gets the commented out version
-            solutions_commands.append(command)
-
-            # The students get the uncommented out version
             command = clean_todo_cell(language, command, i)
             students_commands.append(command)
 
