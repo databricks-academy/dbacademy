@@ -146,7 +146,7 @@ def get_leading_comments(language, cmd, command) -> list:
     else:
       cell_m = source_m
 
-    print(f"Leading Comment: {source_m} vs {cell_m}")
+    print(f"Leading Comment: {language}/{source_m} vs {cell_m}")
 
     for line in lines:
         if line.startswith(f"{source_m} MAGIC"):
