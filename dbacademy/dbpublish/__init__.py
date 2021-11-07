@@ -189,7 +189,7 @@ def parse_directives(i, comments):
       # The comment is in all upper case,
       # must be one or more directives
       directive = line.strip()
-      mod_directive = re.sub("[^0-9]", "_", directive)
+      mod_directive = re.sub("[^a-zA-Z_]", "_", directive)
 
       if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
           directives.append(line)
