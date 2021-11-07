@@ -319,6 +319,11 @@ def clean_todo_cell(source_language, command, cmd):
         elif not line.startswith(prefix) and line.strip() != "" and line.strip() != f"{source_m} MAGIC":
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" with prefix "{prefix}" """)
 
+        elif line.strip().startswith(f"{prefix} {D_TODO}"):
+            print(f""" - line #{i+1}: Processing TODO line ({prefix}): "{line}" """)
+            # Add as-is
+            new_command += line
+
         elif line.strip() == "" or line.strip() == f"{source_m} MAGIC":
             print(f""" - line #{i+1}: Empty line, just add: "{line}" """)
             # No comment, do not process
