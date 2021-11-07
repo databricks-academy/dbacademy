@@ -168,7 +168,7 @@ def get_leading_comments(language, cmd, command) -> list:
             pos = line.find(" ")
             if pos == -1: comment = ""
             else: comment = line[pos:].strip()
-            print(f"""New Line: "{comment}"" """)
+            print(f"""  - new Line: "{comment}" """)
 
         # Finally process the line for any comments.
         if line.strip() == cell_m:
