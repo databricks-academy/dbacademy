@@ -308,7 +308,7 @@ def clean_todo_cell(source_language, command, cmd):
 
         elif line.strip().startswith(f"{prefix} "):
             # Remove comment and space
-            length = len(m)+1
+            length = len(prefix)+1
             new_command += line[length:]
         else:
             # Remove just the comment
