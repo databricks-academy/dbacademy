@@ -199,6 +199,9 @@ def parse_directives(i, comments):
           pass # Not a directive, just a random chance
 
       elif directive != mod_directive:
+          if mod_directive == f"__{D_TODO}":
+            raise Exception(f"Double-Comment of TODO directive found in Cmd #{i+1}")
+
           print(f"Skipping directive: {directive} vs {mod_directive}")
           pass # Number and symbols are not used in directives
 
