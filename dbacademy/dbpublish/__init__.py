@@ -189,6 +189,7 @@ def parse_directives(i, comments):
       # The comment is in all upper case,
       # must be one or more directives
       directive = line.strip()
+      mod_directive = re.sub("[^0-9]", "_", directive)
 
       if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
           directives.append(line)
@@ -197,8 +198,8 @@ def parse_directives(i, comments):
           print("Skipping directive: FILL-IN")
           pass # Not a directive, just a random chance
 
-      elif directive != re.sub("[^0-9]", "_", directive):
-          print("Skipping directive: Numbered")
+      elif directive != mod_directive:
+          print(f"Skipping directive: {directive} vs {mod_directive}")
           pass # Number and symbols are not used in directives
 
       else:
