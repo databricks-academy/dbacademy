@@ -290,6 +290,8 @@ def clean_todo_cell(language, command, cmd):
       if len(lines) > 1 and (lines[0].startswith(test_a) or lines[0].startswith(test_b)):
         first = 1
 
+    print(f"First: {first}: {lines[0]}")
+
     for i in range(len(lines)):
         line = lines[i]
 
