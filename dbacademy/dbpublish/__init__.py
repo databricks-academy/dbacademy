@@ -146,6 +146,8 @@ def get_leading_comments(language, cmd, command) -> list:
     else:
       cell_m = source_m
 
+    print(f"Leading Comment: {source_m} vs {cell_m}")
+
     for line in lines:
         if line.startswith(f"{source_m} MAGIC"):
           length = len(source_m)+6
@@ -155,7 +157,7 @@ def get_leading_comments(language, cmd, command) -> list:
           length = len(source_m)+8
           line = line[length:].strip()
         
-        if line.strip().startswith("%") or line.strip().startswith("{source_m} MAGIC %"):
+        if line.strip().startswith("%"):
             # Remove the magic command from this line
             print(f"REMOVING magic command Cmd #{cmd+1}")
 
@@ -165,7 +167,7 @@ def get_leading_comments(language, cmd, command) -> list:
               comment = line[pos:].strip()[len(cell_m):].strip()
               leading_comments.append(comment)
               
-        elif line.strip() == cell_m:
+        elif line.strip() in [cell_m, f"{source_m} MAGIC {cell_m}"]:
             # empty comment line, don't break, just ignore
             pass
             
