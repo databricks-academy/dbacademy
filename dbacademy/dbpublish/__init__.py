@@ -300,7 +300,7 @@ def clean_todo_cell(source_language, command, cmd):
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be the "{D_TODO}" or "{D_EXPECTED_EXCEPTION}" directive: "{line}"\n{"-"*80}\n{command}\n{"-"*80}""")
 
         elif not line.startswith(prefix) and line.strip() != "":
-            raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" """)
+            raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" with prefix "{prefix}" """)
 
         elif i<=first or line.strip() == "":
             # No comment, do not process
