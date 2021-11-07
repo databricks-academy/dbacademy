@@ -390,12 +390,6 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
 
         command = commands[i].lstrip()
         
-        # Remove the DBTITLE line
-        # m = get_comment_marker(language)
-        # if command.startswith(f"{m} DBTITLE"):
-        #   pos = command.find("\n")
-        #   command = command[pos:].lstrip()
-
         # Extract the leading comments and then the directives
         leading_comments = get_leading_comments(language, i, command.strip())
         directives = parse_directives(i, leading_comments)
@@ -463,7 +457,7 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
             solutions_commands.append(command)
 
         # Check the command for BDC markers
-        bdc_tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY","DBTITLE",
+        bdc_tokens = ["IPYTHON_ONLY","DATABRICKS_ONLY",
                       "AMAZON_ONLY","AZURE_ONLY","TEST","PRIVATE_TEST","INSTRUCTOR_NOTE","INSTRUCTOR_ONLY",
                       "SCALA_ONLY","PYTHON_ONLY","SQL_ONLY","R_ONLY"
                       "VIDEO","ILT_ONLY","SELF_PACED_ONLY","INLINE","NEW_PART", "{dbr}"]
