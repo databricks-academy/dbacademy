@@ -1,5 +1,6 @@
 # Databricks notebook source
 D_TODO = "TODO"
+D_EXPECTED_EXCEPTION = "EXPECTED_EXCEPTION"
 D_ANSWER = "ANSWER"
 D_SOURCE_ONLY = "SOURCE_ONLY"
 D_DUMMY = "DUMMY"
@@ -11,7 +12,7 @@ D_INCLUDE_HEADER_FALSE = "INCLUDE_HEADER_FALSE"
 D_INCLUDE_FOOTER_TRUE = "INCLUDE_FOOTER_TRUE"
 D_INCLUDE_FOOTER_FALSE = "INCLUDE_FOOTER_FALSE"
 
-SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY,
+SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY, D_EXPECTED_EXCEPTION,
                         D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
  
 
@@ -184,14 +185,9 @@ def parse_directives(i, comments):
       # must be one or more directives
       directive = line.strip()
 
-      if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
+      if directive in [D_TODO, D_EXPECTED_EXCEPTION, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
           directives.append(line)
         
-      elif D_TODO in directives:
-          # This is already a TODO cell, no point
-          # in trying to process this any further.
-          pass
-    
       else:
           print(f"""Processing "{directive}" in Cmd #{i+1} """)
           if " " in directive: 
@@ -284,11 +280,17 @@ def clean_todo_cell(language, command, cmd):
     new_command = ""
     lines = command.split("\n")
     m = get_comment_marker(language)
-    
+
+    first = 0
+    for test in ["%r", "%md", "%sql", "%python", "%scala"]:
+      if len(lines) > 1 and lines[0].startswith(test):
+        first = 1
+
     for i in range(len(lines)):
         line = lines[i]
-        if (i==0) and line.strip().replace(" ", "") not in [f"{m}TODO", f"{m}{m}TODO","%sql",f"{m}MAGIC%sql"]:
-            raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be the {D_TODO} directive: "{line}"\n{"-"*80}\n{command}\n{"-"*80}""")
+
+        if (i==first) and line.strip().replace(" ", "") not in [f"{m}{D_TODO}", f"{m}{m}{D_TODO}", f"{m}{D_EXPECTED_EXCEPTION}", f"{m}{m}{D_EXPECTED_EXCEPTION}"]:
+            raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be the "{D_TODO}" or "{D_EXPECTED_EXCEPTION}" directive: "{line}"\n{"-"*80}\n{command}\n{"-"*80}""")
 
         elif not line.startswith(m) and line.strip() != "":
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" """)
