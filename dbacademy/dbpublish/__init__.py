@@ -333,7 +333,7 @@ def clean_todo_cell(source_language, command, cmd):
         else:
             print(f" - line #{i+1}: Removing comment only")
             # Remove just the comment
-            length = len(m)
+            length = len(prefix)
             new_command += line[length:]
 
 
