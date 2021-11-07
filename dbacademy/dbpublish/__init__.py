@@ -289,7 +289,8 @@ def clean_todo_cell(source_language, command, cmd):
       if len(lines) > 1 and (lines[0].startswith(test_a) or lines[0].startswith(test_b)):
         first = 1
         cell_language = get_comment_marker(test_a)
-        print(f"{source_language} vs {cell_language}")
+        cell_m = get_comment_marker(cell_language)
+        print(f"{m} vs {cell_m}")
 
     for i in range(len(lines)):
         line = lines[i]
