@@ -130,6 +130,7 @@ def get_leading_comments(language, cmd, command) -> list:
 
     source_m = get_comment_marker(language)
     first_line = lines[0].lower()
+    print(f"First Line: {first_line}")
 
     if first_line.startswith(f"{source_m} magic %md"):
       cell_m = get_comment_marker("md")
