@@ -179,7 +179,7 @@ def get_leading_comments(language, command) -> list:
   
 def parse_directives(i, comments):
   import re
-  
+
   directives = list()
   for line in comments:
     if line == line.upper():
@@ -401,9 +401,14 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         elif D_INCLUDE_FOOTER_TRUE in directives:  skipped += skipping(i, "Including Footer")
         elif D_INCLUDE_FOOTER_FALSE in directives: skipped += skipping(i, "Excluding Footer")
 
-        elif D_TODO in directives or D_EXPECTED_EXCEPTION in directives:
+        elif D_TODO in directives:
             # This is a TODO cell, exclude from solution notebooks
             todo_count += 1
+            command = clean_todo_cell(language, command, i)
+            students_commands.append(command)
+
+        elif D_EXPECTED_EXCEPTION in directives:
+            # This is an EXPECTED_EXCEPTION cell, exclude from solution notebooks
             command = clean_todo_cell(language, command, i)
             students_commands.append(command)
 
