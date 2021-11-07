@@ -391,11 +391,13 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
               print("   |-LEADING COMMENTS --"+("-"*57))
               for comment in leading_comments:
                   print("   |"+comment)
+          else: print("   |-NO LEADING COMMENTS --"+("-"*54))
+
           if len(directives) > 0:
               print("   |-DIRECTIVES --"+("-"*62))
               for directive in directives:
                   print("   |"+directive)
-          print()
+          else: print("   |-NO DIRECTIVES --"+("-"*59))
         
         # Update flags to indicate if we found the required header and footer directives
         include_header = True if D_INCLUDE_HEADER_TRUE in directives else include_header
