@@ -299,7 +299,7 @@ def clean_todo_cell(source_language, command, cmd):
         if (i==first) and line.strip() not in [f"{prefix} {D_TODO}", f"{prefix} {D_EXPECTED_EXCEPTION}"]:
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be the "{D_TODO}" or "{D_EXPECTED_EXCEPTION}" directive: "{line}"\n{"-"*80}\n{command}\n{"-"*80}""")
 
-        elif not line.startswith(m) and line.strip() != "":
+        elif not line.startswith(prfix) and line.strip() != "":
             raise Exception(f"""Expected line #{i+1} in Cmd #{cmd+1} to be commented out: "{line}" """)
 
         elif i==0 or line.strip() == "":
