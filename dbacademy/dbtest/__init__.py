@@ -108,7 +108,6 @@ class TestConfig:
         # Lastly, prefix the database name to the table name and set to the class attribute
         self.results_table = f"{results_database}.{results_table}_csv"
 
-
         # Course Name
         self.name = name
 
@@ -131,6 +130,8 @@ class TestConfig:
         
         # The libraries to be attached to the cluster
         self.libraries = libraries
+
+        self.notebooks = []
 
     def print(self):
         print(f"suite_id:      {self.suite_id}")
