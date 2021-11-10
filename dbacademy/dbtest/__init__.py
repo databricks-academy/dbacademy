@@ -140,10 +140,14 @@ class TestConfig:
 
       for entity in entities:
         path = entity["path"][len(self.source_dir)+1:]
+        round = 1 if path in ["/Includes/Reset", "/Version Info"] else 2
+
+
         self.notebooks[path] = {
           "ignored": False,
           "include_solution": include_solutions,
-          "replacements": {}
+          "replacements": {},
+          "round": round
         }
 
     def print(self):
@@ -168,10 +172,11 @@ class TestConfig:
           print(f"\nself.notebooks: {len(self.notebooks)}")
           for notebook in self.notebooks:
             path = notebook.ljust(max_length)
+            round = str(self.notebooks[notebook]["round"]).ljust(2)
             ignored = str(self.notebooks[notebook]["ignored"]).ljust(5)
             replacements = str(self.notebooks[notebook]["replacements"])
             include_solution = str(self.notebooks[notebook]["include_solution"]).ljust(5)
-            print(f"{path} ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
+            print(f"{path}   round={round}   ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
