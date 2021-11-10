@@ -131,23 +131,28 @@ class TestConfig:
         # The libraries to be attached to the cluster
         self.libraries = libraries
 
+        self.source_dir = None
         self.notebooks = []
 
     def print(self):
-        print(f"suite_id:      {self.suite_id}")
-        print(f"name:          {self.name}")
-        print(f"spark_version: {self.spark_version}")
-        print(f"workers:       {self.workers}")
-        print(f"instance_pool: {self.instance_pool}")
-        print(f"spark_conf:    {self.spark_conf}")
-        print(f"cloud:         {self.cloud}")
-        print(f"libraries:     {self.libraries}")
-        print(f"results_table: {self.results_table}")
+        print(f"suite_id:       {self.suite_id}")
+        print(f"name:           {self.name}")
+        print(f"spark_version:  {self.spark_version}")
+        print(f"workers:        {self.workers}")
+        print(f"instance_pool:  {self.instance_pool}")
+        print(f"spark_conf:     {self.spark_conf}")
+        print(f"cloud:          {self.cloud}")
+        print(f"libraries:      {self.libraries}")
+        print(f"results_table:  {self.results_table}")
+
+        print(f"results_table:  {self.results_table}")
+        print()
+        print(f"source_dir:     {self.source_dir}")
 
         if len(self.notebooks) == 0:
-          print("No notebooks")
+          print(f"self.notebooks: none")
         else:
-          print("Notebooks:")
+          print(f"self.notebooks:")
           for notebook in self.notebooks:
             print(f" - {notebook}")
 
