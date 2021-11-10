@@ -139,7 +139,7 @@ class TestConfig:
       entities = client.workspace().ls(self.source_dir, recursive=True)
 
       for entity in entities:
-        path = entity["path"][len(self.source_dir):]
+        path = entity["path"][len(self.source_dir)+1:]
         self.notebooks[path] = {
           "ignored": False,
           "include_solution": include_solutions,
