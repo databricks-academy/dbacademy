@@ -144,6 +144,13 @@ class TestConfig:
         print(f"libraries:     {self.libraries}")
         print(f"results_table: {self.results_table}")
 
+        if len(self.notebooks) == 0:
+          print("No notebooks")
+        else:
+          print("Notebooks:")
+          for notebook in self.notebooks:
+            print(f" - {notebook")
+
 
 def create_test_job(client, test_config, job_name, notebook_path):
     params = {
