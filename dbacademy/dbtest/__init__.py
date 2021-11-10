@@ -134,7 +134,7 @@ class TestConfig:
         self.source_dir = None
         self.notebooks = []
 
-    def auto_index_notebooks(self, client, source_dir):
+    def index_notebooks(self, client, source_dir):
       self.source_dir = source_dir
       entities = client.workspace().ls(self.source_dir, recursive=True)
       self.notebooks = list(map(lambda n: n["path"][len(self.source_dir):], entities))
