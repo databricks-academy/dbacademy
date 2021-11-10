@@ -80,6 +80,10 @@ class Publisher:
     def publish(self, testing, mode=None):
       version_info_notebook = None
       main_notebooks = []
+
+      mode = str(mode).lower()
+      expected_modes = ["delete", "overwrite", "no-overwrite"]
+      assert mode in expected_modes, f"Expected mode {mode} to be one of {expected_modes}"
       
       for notebook in self.notebooks:
         if notebook.path == self.version_info_notebook_name: version_info_notebook = notebook
@@ -94,11 +98,14 @@ class Publisher:
         print("**** version_info_source was not found ****")
 
       # Now that we backed up the version-info, we can delete everything.
-      if self.client.workspace().get_status(self.target_dir) is None:
+      target_status = self.client.workspace().get_status(self.target_dir)
+      if target_status is None:
         pass # Who care, it doesn't already exist.
-      elif str(mode).lower() == "delete":
+      elif mode == "no-overwrite":
+        assert target_status is None, "The target path already exists and the build is configured for no-overwrite"
+      elif mode == "delete":
         self.client.workspace().delete_path(self.target_dir)
-      elif str(mode).lower() != "overwrite":
+      elif mode.lower() != "overwrite":
         raise Exception("Expected mode to be one of None, DELETE or OVERWRITE")
 
       # Determine if we are in test mode or not.
