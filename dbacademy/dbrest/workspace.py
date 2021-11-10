@@ -22,6 +22,8 @@ class WorkspaceClient:
                     entities.append(next)
                 elif object_type == "DIRECTORY":
                     queue.extend(self.ls(next["path"]))
+                    
+            return entities
 
     def ls_pd(self, path):
         # I don't have Pandas and I don't want to have to add Pandas.
