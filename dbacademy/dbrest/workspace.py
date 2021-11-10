@@ -13,7 +13,7 @@ class WorkspaceClient:
             return self.client.execute_get_json(f"{self.endpoint}/api/2.0/workspace/list?path={path}")["objects"]
         else:
             entities = []
-            queue = self.ls(source_dir)
+            queue = self.ls(path)
 
             while len(queue) > 0:
                 next = queue.pop()
