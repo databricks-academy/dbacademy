@@ -167,9 +167,9 @@ class TestConfig:
           print(f"\nself.notebooks: {len(self.notebooks)}")
           for notebook in self.notebooks:
             path = notebook.ljust(max_length)
-            ignored = str(self.notebooks[notebook]["ignored"]).rjust(5)
-            include_solutions = str(self.notebooks[notebook]["include_solutions"]).rjust(5)
-            print(f"{path} ignored={ignored} include_solutions={include_solutions}")
+            ignored = str(self.notebooks[notebook]["ignored"]).ljust(5)
+            include_solutions = str(self.notebooks[notebook]["include_solutions"]).ljust(5)
+            print(f"{path} ignored={ignored}   include_solutions={include_solutions}")
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
