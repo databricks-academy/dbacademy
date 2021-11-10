@@ -140,7 +140,7 @@ class TestConfig:
 
       for entity in entities:
         path = entity["path"][len(self.source_dir)+1:]
-        round = 1 if path in ["/Includes/Reset", "/Version Info"] else 2
+        round = 1 if path in ["Includes/Reset", "Version Info"] else 2
 
 
         self.notebooks[path] = {
