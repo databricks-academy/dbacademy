@@ -164,12 +164,12 @@ class TestConfig:
         if len(self.notebooks) == 0:
           print(f"self.notebooks: none")
         else:
-          print(f"\nself.notebooks:")
+          print(f"\nself.notebooks: {len(self.notebooks)}")
           for notebook in self.notebooks:
             path = notebook.ljust(max_length)
             ignored = self.notebooks[notebook]["ignored"]
             include_solutions = self.notebooks[notebook]["include_solutions"]
-            print(f"{path}: ignored={ignored}, include_solutions={include_solutions}")
+            print(f"{path} ignored={ignored}, include_solutions={include_solutions}")
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
