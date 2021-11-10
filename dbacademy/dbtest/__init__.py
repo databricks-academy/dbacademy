@@ -142,7 +142,7 @@ class TestConfig:
         path = entity["path"][len(self.source_dir):]
         self.notebooks[path] = {
           "ignored": False,
-          "include_solutions": include_solutions,
+          "include_solution": include_solutions,
           "replacements": {}
         }
 
@@ -170,8 +170,8 @@ class TestConfig:
             path = notebook.ljust(max_length)
             ignored = str(self.notebooks[notebook]["ignored"]).ljust(5)
             replacements = str(self.notebooks[notebook]["replacements"])
-            include_solutions = str(self.notebooks[notebook]["include_solutions"]).ljust(5)
-            print(f"{path} ignored={ignored}   include_solutions={include_solutions}   replacements={replacements}")
+            include_solution = str(self.notebooks[notebook]["include_solution"]).ljust(5)
+            print(f"{path} ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
