@@ -69,9 +69,9 @@ class Publisher:
 
       self.add_notebook_def(notebook)
         
-    def add_all(self, source_dir, notebooks):
+    def add_all(self, notebooks):
       for notebook in notebooks:
-        path = source_dir+notebook
+        path = notebook
         replacements = notebooks[notebook]["replacements"]
         include_solution = notebooks[notebook]["include_solution"]
         self.add_path(path, replacements=replacements, include_solution=include_solution)        
