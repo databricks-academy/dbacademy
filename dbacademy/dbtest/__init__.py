@@ -149,17 +149,14 @@ class TestConfig:
         print(f"cloud:          {self.cloud}")
         print(f"libraries:      {self.libraries}")
         print(f"results_table:  {self.results_table}")
-
-        print(f"results_table:  {self.results_table}")
-        print()
         print(f"source_dir:     {self.source_dir}")
 
         if len(self.notebooks) == 0:
           print(f"self.notebooks: none")
         else:
-          print(f"self.notebooks:")
+          print(f"\nself.notebooks:")
           for notebook in self.notebooks:
-            print(f"  {notebook}")
+            print(f"{notebook}")
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
