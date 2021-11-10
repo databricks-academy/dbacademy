@@ -134,6 +134,11 @@ class TestConfig:
         self.source_dir = None
         self.notebooks = []
 
+    def auto_index_notebooks(self, source_dir):
+      self.source_dir = source_dir
+      entities = client.workspace().ls(self.source_dir, recursive=True)
+      self.notebooks = list(map(lambda n: n["path"][len(self.source_dir):], entities))
+
     def print(self):
         print(f"suite_id:       {self.suite_id}")
         print(f"name:           {self.name}")
@@ -154,7 +159,7 @@ class TestConfig:
         else:
           print(f"self.notebooks:")
           for notebook in self.notebooks:
-            print(f" - {notebook}")
+            print(notebook)
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
