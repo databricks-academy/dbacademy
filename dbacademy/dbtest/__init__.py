@@ -140,8 +140,10 @@ class TestConfig:
 
       for entity in entities:
         path = entity["path"][len(self.source_dir)+1:]
-        round = 1 if path in ["Includes/Reset", "Version Info"] else 2
-
+        round = 2 # Default round for all notebooks
+        round = 0 if path.lower().startswith("includes/") else round
+        round = 0 if path.lower().startswith("_includes") else round
+        round = 1 if path.lower() in ["includes/reset", "version info"] else round
 
         self.notebooks[path] = {
           "ignored": False,
