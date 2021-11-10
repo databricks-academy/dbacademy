@@ -8,8 +8,20 @@ class WorkspaceClient:
         self.token = token
         self.endpoint = endpoint
 
-    def ls(self, path):
-        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/workspace/list?path={path}")["objects"]
+    def ls(self, path, recursive=False):
+        if not recursive:
+            return self.client.execute_get_json(f"{self.endpoint}/api/2.0/workspace/list?path={path}")["objects"]
+        else:
+            entities = []
+            queue = self.ls(source_dir)
+
+            while len(queue) > 0:
+                next = queue.pop()
+                object_type = next["object_type"]
+                if object_type == "NOTEBOOK":
+                    entities.append(next)
+                elif object_type == "DIRECTORY":
+                    queue.extend(self.ls(next["path"]))
 
     def ls_pd(self, path):
         # I don't have Pandas and I don't want to have to add Pandas.
