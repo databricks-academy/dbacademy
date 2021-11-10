@@ -132,18 +132,18 @@ class TestConfig:
         self.libraries = libraries
 
         self.source_dir = None
-        self.notebooks = []
+        self.notebooks = dict()
 
-    def index_notebooks(self, client, source_dir):
+    def index_notebooks(self, client, source_dir, include_solutions=True):
       self.source_dir = source_dir
       entities = client.workspace().ls(self.source_dir, recursive=True)
-      self.notebooks = []
+
       for entity in entities:
-        self.notebooks.append({
-          "path": entity["path"][len(self.source_dir):],
+        path = entity["path"][len(self.source_dir):]
+        self.notebooks[path] = {
           "ignored": False,
-          "include_solutions": True
-        })
+          "include_solutions": include_solutions
+        }
 
     def print(self):
         print(f"suite_id:       {self.suite_id}")
@@ -162,9 +162,8 @@ class TestConfig:
         else:
           print(f"\nself.notebooks:")
           for notebook in self.notebooks:
-            path = notebook["path"]
-            ignored = notebook["ignored"]
-            include_solutions = notebook["include_solutions"]
+            ignored = self.notebooks["ignored"]
+            include_solutions = self.notebooks["include_solutions"]
             print(f"ignored={ignored}, include_solutions={include_solutions} path={path}")
 
 
