@@ -98,7 +98,9 @@ class Publisher:
       assert version_info_notebook is not None, f"""The required notebook "{self.version_info_notebook_name}" was not found."""
 
       # Backup the version info in case we are just testing
-      try: version_info_source = self.client.workspace().export_notebook(f"{version_info_notebook.target_dir}/{version_info_notebook.path}")
+      try: 
+        version_info_source = self.client.workspace().export_notebook(f"{version_info_notebook.target_dir}/{version_info_notebook.path}")
+        print("**** backed up version_info_source ****")
       except:
         version_info_source = None
         print("**** version_info_source was not found ****")
