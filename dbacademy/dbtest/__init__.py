@@ -149,7 +149,7 @@ class TestConfig:
         else:
           print("Notebooks:")
           for notebook in self.notebooks:
-            print(f" - {notebook")
+            print(f" - {notebook}")
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
