@@ -137,7 +137,13 @@ class TestConfig:
     def index_notebooks(self, client, source_dir):
       self.source_dir = source_dir
       entities = client.workspace().ls(self.source_dir, recursive=True)
-      self.notebooks = list(map(lambda n: n["path"][len(self.source_dir):], entities))
+      self.notebooks = []
+      for entity in entities:
+        self.notebooks.append({
+          "path": entity["path"][len(self.source_dir):],
+          "ignored": False,
+          "include_solutions": True
+        })
 
     def print(self):
         print(f"suite_id:       {self.suite_id}")
@@ -156,7 +162,7 @@ class TestConfig:
         else:
           print(f"\nself.notebooks:")
           for notebook in self.notebooks:
-            print(f"{notebook}")
+            print(f"ignored={notebook['ignored']}, include_solutions={notebook['include_solutions']} {notebook}")
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
