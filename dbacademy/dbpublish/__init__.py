@@ -125,8 +125,9 @@ class Publisher:
         
       if testing:
         print("-"*80) # We are in test-mode, write back the original Version Info notebook
-        print(f"RESTORING: {self.target_dir}/Version Info")
-        self.client.workspace().import_notebook("PYTHON", f"{self.target_dir}/Version Info", version_info_source)
+        version_info_path = f"{self.target_dir}/Version Info"
+        print(f"RESTORING: {version_info_path}")
+        self.client.workspace().import_notebook("PYTHON", version_info_path, version_info_source)
       else:
         version_info_notebook.publish()
 
