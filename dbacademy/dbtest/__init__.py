@@ -157,14 +157,19 @@ class TestConfig:
         print(f"results_table:  {self.results_table}")
         print(f"source_dir:     {self.source_dir}")
 
+        max_length = 0
+        for notebook in self.notebooks:
+          if len(notebook) > max_length: max_length = len(notebook)
+
         if len(self.notebooks) == 0:
           print(f"self.notebooks: none")
         else:
           print(f"\nself.notebooks:")
           for notebook in self.notebooks:
+            path = string.rjust(notebook, max_length)
             ignored = self.notebooks[notebook]["ignored"]
             include_solutions = self.notebooks[notebook]["include_solutions"]
-            print(f"ignored={ignored}, include_solutions={include_solutions} path={path}")
+            print(f"{path}: ignored={ignored}, include_solutions={include_solutions}")
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
