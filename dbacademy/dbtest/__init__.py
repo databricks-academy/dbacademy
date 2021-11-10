@@ -162,7 +162,7 @@ class TestConfig:
         else:
           print(f"\nself.notebooks:")
           for notebook in self.notebooks:
-            print(f"ignored={notebook['ignored']}, include_solutions={notebook['include_solutions']} {notebook}")
+            print(f"ignored={notebook['ignored']}, include_solutions={notebook['include_solutions']} path={notebook}")
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
