@@ -166,7 +166,7 @@ class TestConfig:
         else:
           print(f"\nself.notebooks:")
           for notebook in self.notebooks:
-            path = string.rjust(notebook, max_length)
+            path = notebook.rjust(max_length)
             ignored = self.notebooks[notebook]["ignored"]
             include_solutions = self.notebooks[notebook]["include_solutions"]
             print(f"{path}: ignored={ignored}, include_solutions={include_solutions}")
