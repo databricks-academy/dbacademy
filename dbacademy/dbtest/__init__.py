@@ -162,8 +162,8 @@ class TestConfig:
         else:
           print(f"\nself.notebooks:")
           for notebook in self.notebooks:
-            ignored = self.notebooks["ignored"]
-            include_solutions = self.notebooks["include_solutions"]
+            ignored = self.notebooks[notebook]["ignored"]
+            include_solutions = self.notebooks[notebook]["include_solutions"]
             print(f"ignored={ignored}, include_solutions={include_solutions} path={path}")
 
 
