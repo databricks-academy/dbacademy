@@ -134,6 +134,7 @@ class TestConfig:
 
         # The name of the cloud on which this tests was ran
         self.cloud = dbgems.get_cloud() if None else cloud
+        print(f"Cloud: {self.cloud}")
         
         # The libraries to be attached to the cluster
         self.libraries = [] if libraries is None else libraries
