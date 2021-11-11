@@ -180,17 +180,27 @@ class TestConfig:
         for notebook in self.notebooks:
           if len(notebook) > max_length: max_length = len(notebook)
 
+
         if len(self.notebooks) == 0:
           print(f"self.notebooks: none")
         else:
           print(f"\nself.notebooks: {len(self.notebooks)}")
-          for notebook in self.notebooks:
-            path = notebook.ljust(max_length)
-            round = str(self.notebooks[notebook]["round"]).ljust(2)
-            ignored = str(self.notebooks[notebook]["ignored"]).ljust(5)
-            replacements = str(self.notebooks[notebook]["replacements"])
-            include_solution = str(self.notebooks[notebook]["include_solution"]).ljust(5)
-            print(f"{path}   round={round}   ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
+
+          rounds = list(map(lambda n: self.notebooks[n]["round"],  self.notebooks))
+          rounds.sort()
+
+          for round in rounds:          
+            if round == 0: print("Round 0: Published but not tested")
+            else: print(f"Round {round}")
+
+            for notebook in self.notebooks:
+              if round == self.notebooks[notebook]["round"]:
+                path = notebook.ljust(max_length)
+                round = str(self.notebooks[notebook]["round"]).ljust(2)
+                ignored = str(self.notebooks[notebook]["ignored"]).ljust(5)
+                replacements = str(self.notebooks[notebook]["replacements"])
+                include_solution = str(self.notebooks[notebook]["include_solution"]).ljust(5)
+                print(f"  {path}   round={round}   ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
 
         print("-"*80)
 
