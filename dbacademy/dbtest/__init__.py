@@ -193,7 +193,7 @@ class TestConfig:
             if round == 0: print("\nRound #0: Published but not tested")
             else: print(f"\nRound #{round}")
 
-            notebook_names = dict.keys()
+            notebook_names = list(dict.keys())
             notebook_names.sort()
 
             for notebook in notebook_names:
