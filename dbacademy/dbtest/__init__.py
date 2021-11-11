@@ -143,7 +143,7 @@ class TestConfig:
 
     def get_distribution_name(self, version):
       distribution_name = f"{self.name}-v{version}"
-      return distribution_name.replace(" ", "-"").replace(" ", "-"").replace(" ", "-"")
+      return distribution_name.replace(" ", "-"").replace(" ", "-"").replace(" ", "-")
 
     def index_notebooks(self, include_solutions=True):
       assert self.source_dir is not None, "TestConfig.source_dir must be specified"
