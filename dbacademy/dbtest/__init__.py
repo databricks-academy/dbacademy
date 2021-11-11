@@ -183,15 +183,15 @@ class TestConfig:
         if len(self.notebooks) == 0:
           print(f"self.notebooks: none")
         else:
-          print(f"self.notebooks: {len(self.notebooks)}\n")
+          print(f"self.notebooks: {len(self.notebooks)}")
 
           rounds = list(map(lambda n: self.notebooks[n]["round"],  self.notebooks))
           rounds.sort()
           rounds = set(rounds)
 
           for round in rounds:          
-            if round == 0: print("Round #0: Published but not tested")
-            else: print(f"Round #{round}")
+            if round == 0: print("\nRound #0: Published but not tested")
+            else: print(f"\nRound #{round}")
 
             notebook_names = dict.keys()
             notebook_names.sort()
