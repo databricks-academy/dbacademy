@@ -71,13 +71,13 @@ class NotebookDef:
 
 class Publisher:
 
-    @classmethod
+    @staticmethod
     def from_test_config(test_config, target_dir, include_solutions=True):
       publisher = Publisher(client=test_config.client, 
-                       version=test_config.version, 
-                      source_dir=test_config.source_dir,
-                      target_dir=target_dir,
-                      include_solutions=include_solutions)
+                            version=test_config.version, 
+                            source_dir=test_config.source_dir,
+                            target_dir=target_dir,
+                            include_solutions=include_solutions)
       publisher.add_all(test_config.notebooks)
       return publisher
 
