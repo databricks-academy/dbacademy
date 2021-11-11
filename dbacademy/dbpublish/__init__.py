@@ -31,7 +31,8 @@ def help():
   print("Publishing Help")
   print("Supported directives")
   for directive in SUPPORTED_DIRECTIVES:
-    print(docs[directive])
+    doc = docs[directive]
+    print(f" - {doc}")
   print("-"*100)
 
 class NotebookDef:
