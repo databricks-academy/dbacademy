@@ -164,7 +164,7 @@ class TestConfig:
 
     def print(self):
         print("-"*80)
-        print("** Test Configuration **")
+        print("Test Configuration")
         print(f"suite_id:       {self.suite_id}")
         print(f"name:           {self.name}")
         print(f"spark_version:  {self.spark_version}")
@@ -184,7 +184,7 @@ class TestConfig:
         if len(self.notebooks) == 0:
           print(f"self.notebooks: none")
         else:
-          print(f"\nself.notebooks: {len(self.notebooks)}")
+          print(f"self.notebooks: {len(self.notebooks)}\n")
 
           rounds = list(map(lambda n: self.notebooks[n]["round"],  self.notebooks))
           rounds.sort()
