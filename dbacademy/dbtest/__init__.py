@@ -126,6 +126,7 @@ class TestConfig:
 
         # Course Name
         self.name = name
+        assert self.name not None, "The course's name must be specified."
 
         # The runtime you wish to test against
         self.spark_version = dbgems.get_current_spark_version() if spark_version is None else spark_version
