@@ -328,31 +328,43 @@ class SuiteBuilder:
         self.jobs[job_name] = (notebook_path, 0, 0, ignored)
 
 class TestSuite:
-    def __init__(self, client, test_config, test_type):
-        self.client = client
-        self.test_config = test_config
-        self.test_type = test_type
-        self.jobs = dict()
-
-    def add(self, notebook_path, ignored=False):
+    def __init__(self, client, test_config, test_dir, test_type):
         import hashlib
 
-        if self.client.workspace().get_status(notebook_path) is None:
+        self.client = client
+        self.test_dir = test_dir
+        self.test_config = test_config
+        self.test_type = test_type
+        self.rounds = dict()
+
+        # Define each round first to make the next step full-proof
+        for notebook in test_config.notebooks:
+          round = test_config.notebooks[notebook]["round"]
+          self.rounds[round] = dict()
+
+        # Add each notebook to the dictionary or rounds which is a dictionary of tests
+        for notebook in test_config.notebooks:
+          if self.client.workspace().get_status(notebook_path) is None:
             raise Exception(f"Notebook not found: {notebook_path}")
 
-        hash = hashlib.sha256(notebook_path.encode()).hexdigest()
-        job_name = f"[TEST] {self.test_config.name} | {self.test_type} | {hash}"
-        self.jobs[job_name] = (notebook_path, 0, 0, ignored)
+          round = test_config.notebooks[notebook]["round"]
+          ignored = test_config.notebooks[notebook]["ignored"]
+          if round > 0:
+            hash = hashlib.sha256(notebook_path.encode()).hexdigest()
+            job_name = f"[TEST] {test_config.name} | {test_type} | {hash}"
+            notebook_path = f"{test_dir}/{notebook}"
+            rounds[round][job_name] = (notebook_path, 0, 0, ignored)
 
     def delete_all_jobs(self, success_only=False):
-        self.client.jobs().delete_by_name(self.jobs, success_only=success_only)
+        for round in self.rounds:
+          self.client.jobs().delete_by_name(self.rounds[round], success_only=success_only)
         
-    def test_all_synchronously(self):
+    def test_all_synchronously(self, round):
         from dbacademy import dbtest
-        for job_name in self.jobs:
-            dbtest.test_one_notebook(self.client, self.test_config, job_name, self.jobs[job_name])      
+        for job_name in self.rounds[round]:
+            dbtest.test_one_notebook(self.client, self.test_config, job_name, self.rounds[round][job_name])      
 
-    def test_all_asynchronously(self, fail_fast=True):
+    def test_all_asynchronously(self, round, fail_fast=True):
         from dbacademy import dbtest
-        dbtest.test_all_notebooks(self.client, self.jobs, self.test_config)  
-        dbtest.wait_for_notebooks(self.client, self.test_config, self.jobs, fail_fast=fail_fast)
+        dbtest.test_all_notebooks(self.client, self.rounds[round], self.test_config)  
+        dbtest.wait_for_notebooks(self.client, self.test_config, self.rounds[round], fail_fast=fail_fast)
