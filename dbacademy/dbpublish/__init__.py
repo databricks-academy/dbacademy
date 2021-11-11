@@ -15,7 +15,7 @@ SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY,
                         D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
  
  
-def help():
+def help_html():
   docs = {
     D_SOURCE_ONLY: f"Indicates that this cell is used in the source notebook only and is not to be included in the published version.",
     D_TODO: f"Indicates that this cell is an exercise for students - the entire cell is expected to be commented out.",
