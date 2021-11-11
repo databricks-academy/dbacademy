@@ -73,7 +73,7 @@ class ResultsEvaluator:
 class TestConfig:
     def __init__(self, 
                  name, 
-                 spark_version, 
+                 spark_version = None, 
                  cloud = None,
                  instance_pool = None, 
                  workers = None, 
