@@ -157,7 +157,7 @@ class TestConfig:
         round = 1 if path.lower() in ["includes/reset", "version info"] else round
 
         if "wip" in path.lower():
-          print(f"** WARNING ** The notebook {path} is excluded from the build")
+          print(f"""** WARNING ** The notebook "{path}" is excluded from the build""")
         else:
           excluded_solutions = ["includes/reset", "version info"]
 
