@@ -30,7 +30,7 @@ def init_locals():
 sc, spark, dbutils = init_locals()
 
 def get_parameter(name):
-    try: return str(dbutils.widgets.get(name)).lower()
+    try: return str(dbutils.widgets.get(name))
     except: return ""
 
 def get_current_spark_version():
