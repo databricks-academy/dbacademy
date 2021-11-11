@@ -141,7 +141,7 @@ class TestConfig:
         self.source_dir = source_dir
         self.notebooks = dict()
 
-    def get_distribution_name(version):
+    def get_distribution_name(self, version):
       return f"{self.name.replace(' ','-')} v{version}"
 
     def index_notebooks(self, include_solutions=True):
