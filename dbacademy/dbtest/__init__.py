@@ -145,6 +145,9 @@ class TestConfig:
         round = 0 if path.lower().startswith("_includes") else round
         round = 1 if path.lower() in ["includes/reset", "version info"] else round
 
+        if path.lower() in ["includes/reset", "version info"]:
+          include_solutions = False
+
         self.notebooks[path] = {
           "ignored": False,
           "include_solution": include_solutions,
