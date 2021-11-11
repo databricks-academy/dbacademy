@@ -154,7 +154,9 @@ class TestConfig:
         round = 2 # Default round for all notebooks
         round = 0 if path.lower().startswith("includes/") else round
         round = 0 if path.lower().startswith("_includes") else round
+        round = 0 if "wip" in path.lower() else round
         round = 1 if path.lower() in ["includes/reset", "version info"] else round
+
 
         excluded_solutions = ["includes/reset", "version info"]
 
