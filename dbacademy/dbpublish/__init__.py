@@ -35,7 +35,7 @@ def help_html():
     
     if directive in docs:
       doc = docs[directive]
-      html += f"<div><b>{directive}: {doc}</b></div>"
+      html += f"<div><b>{directive}</b>: {doc}</div>"
   
   html += "</body>"
   return html
