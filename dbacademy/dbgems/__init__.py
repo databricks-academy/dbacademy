@@ -1,4 +1,5 @@
 # Databricks notebook source
+from requests.sessions import default_headers
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
 
@@ -27,6 +28,10 @@ def init_locals():
 
 
 sc, spark, dbutils = init_locals()
+
+def get_parameter(name):
+    try: return str(dbutils.widgets.get(name)).lower()
+    except: return ""
 
 def get_current_spark_version():
     spark_version = get_tags()["sparkVersion"]

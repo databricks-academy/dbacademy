@@ -70,6 +70,15 @@ class ResultsEvaluator:
       return html
 
 
+class NotebookDef:
+    def __init__(self, round, path, ignored, include_solution, replacements):
+      self.round = round
+      self.path = path
+      self.ignored = ignored
+      self.include_solution = include_solution
+      self.replacements = replacements
+
+
 class TestConfig:
     def __init__(self, 
                  name, 
@@ -160,13 +169,8 @@ class TestConfig:
           print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
         else:
           excluded_solutions = ["includes/reset", "version info"]
-
-          self.notebooks[path] = {
-            "ignored": False,
-            "include_solution": False if path.lower() in excluded_solutions else include_solutions,
-            "replacements": {},
-            "round": round
-          }
+          include_solution = False if path.lower() in excluded_solutions else include_solutions
+          self.notebooks[path] = NotebookDef(round=round, path=path, ignored=False, include_solution=include_solution, replacements=dict())
 
     def print(self):
         print("-"*100)
@@ -183,8 +187,8 @@ class TestConfig:
         print(f"source_dir:     {self.source_dir}")
 
         max_length = 0
-        for notebook in self.notebooks:
-          if len(notebook) > max_length: max_length = len(notebook)
+        for path in self.notebooks:
+          if len(path) > max_length: max_length = len(path)
 
 
         if len(self.notebooks) == 0:
@@ -192,23 +196,23 @@ class TestConfig:
         else:
           print(f"self.notebooks: {len(self.notebooks)}")
 
-          rounds = list(map(lambda n: self.notebooks[n]["round"],  self.notebooks))
+          rounds = set(map(lambda path: self.notebooks[path].round,  self.notebooks))
           rounds.sort()
-          rounds = set(rounds)
 
           for round in rounds:          
             if round == 0: print("\nRound #0: Published but not tested")
             else: print(f"\nRound #{round}")
 
-            notebook_names = list(self.notebooks.keys())
-            notebook_names.sort()
+            notebook_paths = list(self.notebooks.keys())
+            notebook_paths.sort()
 
-            for notebook in notebook_names:
-              if round == self.notebooks[notebook]["round"]:
-                path = notebook.ljust(max_length)
-                ignored = str(self.notebooks[notebook]["ignored"]).ljust(5)
-                replacements = str(self.notebooks[notebook]["replacements"])
-                include_solution = str(self.notebooks[notebook]["include_solution"]).ljust(5)
+            for path in notebook_paths:
+              notebook = self.notebooks[path]
+              if round == notebook.round:
+                path = notebook.path.ljust(max_length)
+                ignored = str(notebook.ignored).ljust(5)
+                replacements = str(notebook.replacements)
+                include_solution = str(notebook.include_solution).ljust(5)
                 print(f"  {path}   ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
 
         print("-"*100)
