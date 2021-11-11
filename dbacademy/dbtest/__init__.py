@@ -163,6 +163,8 @@ class TestConfig:
         }
 
     def print(self):
+        print("-"*80)
+        print("** Test Configuration **")
         print(f"suite_id:       {self.suite_id}")
         print(f"name:           {self.name}")
         print(f"spark_version:  {self.spark_version}")
@@ -189,6 +191,8 @@ class TestConfig:
             replacements = str(self.notebooks[notebook]["replacements"])
             include_solution = str(self.notebooks[notebook]["include_solution"]).ljust(5)
             print(f"{path}   round={round}   ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
+
+        print("-"*80)
 
 
 def create_test_job(client, test_config, job_name, notebook_path):
