@@ -186,8 +186,9 @@ class TestConfig:
         else:
           print(f"\nself.notebooks: {len(self.notebooks)}")
 
-          rounds = set(list(map(lambda n: self.notebooks[n]["round"],  self.notebooks)))
+          rounds = list(map(lambda n: self.notebooks[n]["round"],  self.notebooks))
           rounds.sort()
+          rounds = set(rounds)
 
           for round in rounds:          
             if round == 0: print("Round 0: Published but not tested")
