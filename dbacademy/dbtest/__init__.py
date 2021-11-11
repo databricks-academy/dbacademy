@@ -193,7 +193,10 @@ class TestConfig:
             if round == 0: print("Round #0: Published but not tested")
             else: print(f"Round #{round}")
 
-            for notebook in self.notebooks:
+            notebook_names = dict.keys()
+            notebook_names.sort()
+
+            for notebook in notebook_names:
               if round == self.notebooks[notebook]["round"]:
                 path = notebook.ljust(max_length)
                 ignored = str(self.notebooks[notebook]["ignored"]).ljust(5)
