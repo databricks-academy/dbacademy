@@ -147,7 +147,8 @@ class TestConfig:
         # The libraries to be attached to the cluster
         self.libraries = [] if libraries is None else libraries
 
-        self.source_dir = source_dir
+        self.source_dir = f"{dbgems.get_notebook_dir(-2)}/Source" if source_dir is None else source_dir
+
         self.notebooks = dict()
 
     def get_distribution_name(self, version):
