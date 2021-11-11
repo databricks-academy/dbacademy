@@ -350,7 +350,7 @@ class TestSuite:
           if test_config.notebooks[notebook]["include_solution"]: 
             notebook_path = f"{test_dir}/Solutions/{notebook}"
           else:
-            notebook_path = f"{test_dir}/Solutions/{notebook}"
+            notebook_path = f"{test_dir}/{notebook}"
 
           if round > 0:
             hash = hashlib.sha256(notebook_path.encode()).hexdigest()
