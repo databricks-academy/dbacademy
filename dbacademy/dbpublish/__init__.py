@@ -14,6 +14,25 @@ D_INCLUDE_FOOTER_FALSE = "INCLUDE_FOOTER_FALSE"
 SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY,
                         D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
  
+ 
+def help():
+  docs = {
+    D_SOURCE_ONLY: f"{D_SOURCE_ONLY}: Indicates that this cell is used in the source notebook only and is not to be included in the published version.",
+    D_TODO: f"{D_TODO}: Indicates that this cell is an exercise for students - the entire cell is expected to be commented out.",
+    D_ANSWER: f"{D_ANSWER}: Indicates that this cell is the solution to a preceeding {D_TODO} cell. The build will fail if there total number of {D_TODO} cells is less than  the total number of {D_ANSWER} cells",
+    D_DUMMY: f"{D_DUMMY}: A directive that replaces itself with a nice little message for you - used in unit tests for the build engine",
+    D_INCLUDE_HEADER_TRUE: f"{D_INCLUDE_HEADER_TRUE}: Indicates that this notebook should include the default header - to be included in the first cell of the notebook.",
+    D_INCLUDE_HEADER_FALSE: f"{D_INCLUDE_HEADER_FALSE}: Indicates that this notebook should NOT include the default header - to be included in the first cell of the notebook.",
+    D_INCLUDE_FOOTER_TRUE: f"{D_INCLUDE_FOOTER_TRUE}: Indicates that this notebook should include the default footer - to be included in the first cell of the notebook.",
+    D_INCLUDE_FOOTER_FALSE: f"{D_INCLUDE_FOOTER_FALSE}: Indicates that this notebook should NOT include the default footer - to be included in the first cell of the notebook.",
+  }
+
+  print("-"*100)
+  print("Publishing Help")
+  print("Supported directives")
+  for directive in SUPPORTED_DIRECTIVES:
+    print(docs[directive])
+  print("-"*100)
 
 class NotebookDef:
     def __init__(self, source_dir:str, target_dir:str, path:str, replacements:dict, include_solution:bool):
