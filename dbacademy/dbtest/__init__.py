@@ -347,12 +347,12 @@ class TestSuite:
     def delete_all_jobs(self, success_only=False):
         self.client.jobs().delete_by_name(self.jobs, success_only=success_only)
         
-    def test_all_synchronously(self, fail_fast=True):
+    def test_all_synchronously(self):
+        from dbacademy import dbtest
+        for job_name in self.jobs:
+            dbtest.test_one_notebook(self.client, self.test_config, job_name, self.jobs[job_name])      
+
+    def test_all_asynchronously(self, fail_fast=True):
         from dbacademy import dbtest
         dbtest.test_all_notebooks(self.client, self.jobs, self.test_config)  
         dbtest.wait_for_notebooks(self.client, self.test_config, self.jobs, fail_fast=fail_fast)
-
-    def test_all_asynchronously(self):
-        from dbacademy import dbtest
-        for job_name in self.jobs:
-            dbtest.test_one_notebook(self.client, self.test_config, job_name, self.jobs[job_name])
