@@ -354,12 +354,12 @@ class SuiteBuilder:
         self.jobs[job_name] = (notebook_path, 0, 0, ignored)
 
 class TestSuite:
-    def __init__(self, client, test_config, test_dir, test_type):
+    def __init__(self, test_config, test_dir, test_type):
         import hashlib
 
-        self.client = client
         self.test_dir = test_dir
         self.test_config = test_config
+        self.client = test_config.client
         self.test_type = test_type
         self.rounds = dict()
 
