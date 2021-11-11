@@ -70,7 +70,7 @@ class NotebookDef:
      
 
 class Publisher:
-    def __init__(self, client, version:str, source_dir:str, target_dir:str, include_solutions:bool=False):
+    def __init__(self, client, version:str, source_dir:str, target_dir:str, include_solutions:bool=True):
         self.client = client
         self.version = version
         self.version_info_notebook_name = "Version Info"
