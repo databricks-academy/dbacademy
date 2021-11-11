@@ -346,7 +346,10 @@ class TestSuite:
         for notebook in test_config.notebooks:
           round = test_config.notebooks[notebook]["round"]
           ignored = test_config.notebooks[notebook]["ignored"]
-          notebook_path = f"{test_dir}/{notebook}"
+          if test_config.notebooks[notebook]["include_solution"]: 
+            notebook_path = f"{test_dir}/Solutions/{notebook}"
+          else:
+            notebook_path = f"{test_dir}/Solutions/{notebook}"
 
           if round > 0:
             hash = hashlib.sha256(notebook_path.encode()).hexdigest()
