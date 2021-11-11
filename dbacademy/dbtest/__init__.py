@@ -309,6 +309,7 @@ def log_run(test_config, response, job_name, ignored):
         print(f"Unable to log test results.")
         traceback.print_exc()
 
+# DEPRECATED - use TestSuite instead
 class SuiteBuilder:
     def __init__(self, client, course_name, test_type):
       self.client = client
@@ -326,3 +327,32 @@ class SuiteBuilder:
         job_name = f"[TEST] {self.course_name} | {self.test_type} | {hash}"
         self.jobs[job_name] = (notebook_path, 0, 0, ignored)
 
+class TestSuite:
+    def __init__(self, client, test_config, test_type):
+        self.client = client
+        self.test_config = test_config
+        self.test_type = test_type
+        self.jobs = dict()
+
+    def add(self, notebook_path, ignored=False):
+        import hashlib
+
+        if self.client.workspace().get_status(notebook_path) is None:
+            raise Exception(f"Notebook not found: {notebook_path}")
+
+        hash = hashlib.sha256(notebook_path.encode()).hexdigest()
+        job_name = f"[TEST] {self.test_config.name} | {self.test_type} | {hash}"
+        self.jobs[job_name] = (notebook_path, 0, 0, ignored)
+
+    def delete_all_jobs(success_only=False):
+        self.client.jobs().delete_by_name(self.jobs, success_only=success_only)
+        
+    def test_all_synchronously(fail_fast=True):
+        from dbacademy import dbtest
+        dbtest.test_all_notebooks(self.client, self.jobs, self.test_config)  
+        dbtest.wait_for_notebooks(self.client, self.test_config, self.jobs, fail_fast=fail_fast)
+
+    def test_all_asynchronously():
+        from dbacademy import dbtest
+        for job_name in self.jobs:
+            dbtest.test_one_notebook(self.client, self.test_config, job_name, self.jobs[job_name])
