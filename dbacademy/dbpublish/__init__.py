@@ -97,10 +97,10 @@ class Publisher:
       self.add_notebook_def(notebook)
         
     def add_all(self, notebooks):
-      for notebook in notebooks:
-        replacements = notebooks[notebook]["replacements"]
-        include_solution = notebooks[notebook]["include_solution"]
-        self.add_path(notebook, replacements=replacements, include_solution=include_solution)        
+      for path in notebooks:
+        self.add_path(path, 
+                      replacements = notebooks[path].replacements, 
+                      include_solution = notebooks[path].include_solution)        
 
     def add_path(self, path, replacements:dict = None, include_solution = None):
       self.add(path, replacements, include_solution)
