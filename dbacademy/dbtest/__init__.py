@@ -82,6 +82,7 @@ class NotebookDef:
 class TestConfig:
     def __init__(self, 
                  name, 
+                 version,
                  spark_version = None, 
                  cloud = None,
                  instance_pool = None, 
@@ -127,6 +128,10 @@ class TestConfig:
         # Course Name
         self.name = name
         assert self.name is not None, "The course's name must be specified."
+
+        # The Distribution's version
+        self.version = version
+        assert self.version is not None, "The course's version must be specified."
 
         # The runtime you wish to test against
         self.spark_version = dbgems.get_current_spark_version() if spark_version is None else spark_version
