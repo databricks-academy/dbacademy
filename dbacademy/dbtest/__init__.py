@@ -142,7 +142,7 @@ class TestConfig:
         self.notebooks = dict()
 
     def get_distribution_name(self, version):
-      distribution_name = f"{self.name}-v{version}"
+      distribution_name = f"{self.name}" if version is None else f"{self.name}-v{version}"
       return distribution_name.replace(" ", "-").replace(" ", "-").replace(" ", "-")
 
     def index_notebooks(self, include_solutions=True):
