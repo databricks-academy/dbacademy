@@ -74,8 +74,8 @@ class TestConfig:
     def __init__(self, 
                  name, 
                  spark_version, 
-                 cloud,
-                 instance_pool, 
+                 cloud = None,
+                 instance_pool = None, 
                  workers = None, 
                  libraries = None, 
                  client = None,
@@ -125,7 +125,7 @@ class TestConfig:
         self.workers = 0 if workers is None else workers
 
         # The instance pool from which to obtain VMs
-        self.instance_pool = dbgems.get_current_instance_pool_id(client) if instance_pool is None else instance_pool
+        self.instance_pool = dbgems.get_current_instance_pool_id(self.client) if instance_pool is None else instance_pool
 
         # Spark configuration parameters
         self.spark_conf = dict() if spark_conf is None else spark_conf
