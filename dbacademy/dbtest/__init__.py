@@ -403,7 +403,7 @@ class TestSuite:
         for job_name in self.rounds[round]:
             dbtest.test_one_notebook(self.client, self.test_config, job_name, self.rounds[round][job_name])      
 
-    def test_all_asynchronously(self, round, fail_fast=True):
+    def test_all_asynchronously(self, round, fail_fast=False):
         from dbacademy import dbtest
         dbtest.test_all_notebooks(self.client, self.rounds[round], self.test_config)  
         dbtest.wait_for_notebooks(self.client, self.test_config, self.rounds[round], fail_fast=fail_fast)
