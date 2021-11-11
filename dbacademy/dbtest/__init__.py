@@ -95,7 +95,7 @@ class TestConfig:
         self.suite_id = str(time.time())+"-"+str(uuid.uuid1())
 
         # Update the name of the database results will be logged to - convert any special characters to underscores
-        results_database = "test_results" if test_results is None else results_database
+        results_database = "test_results" if results_database is None else results_database
         results_database = re.sub("[^a-zA-Z0-9]", "_", results_database.lower())
         # Make N passes over the database name to remove duplicate underscores
         for i in range(10): results_database = results_database.replace("__", "_")
