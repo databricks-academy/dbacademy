@@ -73,11 +73,13 @@ class Publisher:
 
     @classmethod
     def from_test_config(test_config, target_dir, include_solutions=True):
-      return Publisher(client=test_config.client, 
+      publisher = Publisher(client=test_config.client, 
                        version=test_config.version, 
                       source_dir=test_config.source_dir,
                       target_dir=target_dir,
                       include_solutions=include_solutions)
+      publisher.add_all(test_config.notebooks)
+      return publisher
 
     def __init__(self, client, version:str, source_dir:str, target_dir:str, include_solutions:bool=True):
         self.client = client

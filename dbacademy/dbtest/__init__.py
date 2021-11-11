@@ -184,6 +184,7 @@ class TestConfig:
         print("Test Configuration")
         print(f"suite_id:       {self.suite_id}")
         print(f"name:           {self.name}")
+        print(f"version:        {self.version}")
         print(f"spark_version:  {self.spark_version}")
         print(f"workers:        {self.workers}")
         print(f"instance_pool:  {self.instance_pool}")
