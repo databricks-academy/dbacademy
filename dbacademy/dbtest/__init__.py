@@ -154,18 +154,17 @@ class TestConfig:
         round = 2 # Default round for all notebooks
         round = 0 if path.lower().startswith("includes/") else round
         round = 0 if path.lower().startswith("_includes") else round
-        round = 0 if "wip" in path.lower() else round
         round = 1 if path.lower() in ["includes/reset", "version info"] else round
 
+        if "wip" not in path.lower():
+          excluded_solutions = ["includes/reset", "version info"]
 
-        excluded_solutions = ["includes/reset", "version info"]
-
-        self.notebooks[path] = {
-          "ignored": False,
-          "include_solution": False if path.lower() in excluded_solutions else include_solutions,
-          "replacements": {},
-          "round": round
-        }
+          self.notebooks[path] = {
+            "ignored": False,
+            "include_solution": False if path.lower() in excluded_solutions else include_solutions,
+            "replacements": {},
+            "round": round
+          }
 
     def print(self):
         print("-"*100)
