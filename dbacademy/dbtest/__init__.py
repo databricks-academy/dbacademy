@@ -133,8 +133,9 @@ class TestConfig:
           self.spark_conf["spark.master"] = "local[*]"
 
         # The name of the cloud on which this tests was ran
+        print(f"cloud: {cloud}")
         self.cloud = dbgems.get_cloud() if None else cloud
-        print(f"Cloud: {self.cloud}")
+        print(f"self.cloud: {self.cloud}")
         
         # The libraries to be attached to the cluster
         self.libraries = [] if libraries is None else libraries
