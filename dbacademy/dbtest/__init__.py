@@ -74,16 +74,22 @@ class TestConfig:
     def __init__(self, 
                  name, 
                  spark_version, 
-                 workers, 
                  cloud,
                  instance_pool, 
-                 libraries, 
-                 spark_conf = dict(),
+                 workers = None, 
+                 libraries = None, 
+                 client = None,
+                 source_dir = None,
+                 spark_conf = None,
                  results_table = None,
-                 results_database="test_results",
+                 results_database = None,
                  ):
       
         import uuid, re, time
+        from dbacademy import dbrest
+        from dbacademy import dbgems
+
+        self.client = dbrest.DBAcademyRestClient() if client is None else client
 
         # The instance of this test run
         self.suite_id = str(time.time())+"-"+str(uuid.uuid1())
@@ -116,13 +122,13 @@ class TestConfig:
         self.spark_version = spark_version
 
         # We can use local-mode clusters here
-        self.workers = workers
+        self.workers = 0 if workers is None else workers
 
         # The instance pool from which to obtain VMs
-        self.instance_pool = instance_pool
+        self.instance_pool = dbgems.get_current_instance_pool_id(client) if instance_pool is None else instance_pool
 
         # Spark configuration parameters
-        self.spark_conf = spark_conf
+        self.spark_conf = dict() if spark_conf is None else spark_conf
         if self.workers == 0:
           self.spark_conf["spark.master"] = "local[*]"
 
@@ -130,14 +136,14 @@ class TestConfig:
         self.cloud = cloud
         
         # The libraries to be attached to the cluster
-        self.libraries = libraries
+        self.libraries = [] if libraries is None else libraries
 
-        self.source_dir = None
+        self.source_dir = source_dir
         self.notebooks = dict()
 
-    def index_notebooks(self, client, source_dir, include_solutions=True):
-      self.source_dir = source_dir
-      entities = client.workspace().ls(self.source_dir, recursive=True)
+    def index_notebooks(self, include_solutions=True):
+      assert self.source_dir is not None, "TestConfig.source_dir must be specified"
+      entities = self.client.workspace().ls(self.source_dir, recursive=True)
 
       for entity in entities:
         path = entity["path"][len(self.source_dir)+1:]
