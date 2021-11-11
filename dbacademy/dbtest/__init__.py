@@ -377,15 +377,15 @@ class TestSuite:
 
         # Define each round first to make the next step full-proof
         for notebook in test_config.notebooks:
-          round = test_config.notebooks[notebook]["round"]
+          round = test_config.notebooks[notebook].round
           self.rounds[round] = dict()
 
         # Add each notebook to the dictionary or rounds which is a dictionary of tests
         for notebook in test_config.notebooks:
-          round = test_config.notebooks[notebook]["round"]
-          ignored = test_config.notebooks[notebook]["ignored"]
+          round = test_config.notebooks[notebook].round
+          ignored = test_config.notebooks[notebook].ignored
 
-          if test_config.notebooks[notebook]["include_solution"]: 
+          if test_config.notebooks[notebook].include_solution: 
             notebook_path = f"{test_dir}/Solutions/{notebook}"
           else:
             notebook_path = f"{test_dir}/{notebook}"
