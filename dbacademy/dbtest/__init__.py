@@ -344,16 +344,18 @@ class TestSuite:
 
         # Add each notebook to the dictionary or rounds which is a dictionary of tests
         for notebook in test_config.notebooks:
-          if self.client.workspace().get_status(notebook_path) is None:
-            raise Exception(f"Notebook not found: {notebook_path}")
-
           round = test_config.notebooks[notebook]["round"]
           ignored = test_config.notebooks[notebook]["ignored"]
+          notebook_path = f"{test_dir}/{notebook}"
+
           if round > 0:
             hash = hashlib.sha256(notebook_path.encode()).hexdigest()
             job_name = f"[TEST] {test_config.name} | {test_type} | {hash}"
-            notebook_path = f"{test_dir}/{notebook}"
             rounds[round][job_name] = (notebook_path, 0, 0, ignored)
+
+            if self.client.workspace().get_status(notebook_path) is None:
+              raise Exception(f"Notebook not found: {notebook_path}")
+
 
     def delete_all_jobs(self, success_only=False):
         for round in self.rounds:
