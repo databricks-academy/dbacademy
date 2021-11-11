@@ -119,7 +119,7 @@ class TestConfig:
         self.name = name
 
         # The runtime you wish to test against
-        self.spark_version = spark_version
+        self.spark_version = dbgems.get_current_spark_version() if spark_version is None else spark_version
 
         # We can use local-mode clusters here
         self.workers = 0 if workers is None else workers
@@ -133,7 +133,7 @@ class TestConfig:
           self.spark_conf["spark.master"] = "local[*]"
 
         # The name of the cloud on which this tests was ran
-        self.cloud = cloud
+        self.cloud = dbgems.get_cloud() if None else cloud
         
         # The libraries to be attached to the cluster
         self.libraries = [] if libraries is None else libraries
