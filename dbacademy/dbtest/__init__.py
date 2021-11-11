@@ -346,6 +346,7 @@ class TestSuite:
         for notebook in test_config.notebooks:
           round = test_config.notebooks[notebook]["round"]
           ignored = test_config.notebooks[notebook]["ignored"]
+
           if test_config.notebooks[notebook]["include_solution"]: 
             notebook_path = f"{test_dir}/Solutions/{notebook}"
           else:
