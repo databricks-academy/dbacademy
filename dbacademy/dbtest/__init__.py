@@ -191,13 +191,12 @@ class TestConfig:
           rounds = set(rounds)
 
           for round in rounds:          
-            if round == 0: print("Round 0: Published but not tested")
-            else: print(f"Round {round}")
+            if round == 0: print("Round #0: Published but not tested")
+            else: print(f"Round #{round}")
 
             for notebook in self.notebooks:
               if round == self.notebooks[notebook]["round"]:
                 path = notebook.ljust(max_length)
-                round = str(self.notebooks[notebook]["round"]).ljust(2)
                 ignored = str(self.notebooks[notebook]["ignored"]).ljust(5)
                 replacements = str(self.notebooks[notebook]["replacements"])
                 include_solution = str(self.notebooks[notebook]["include_solution"]).ljust(5)
