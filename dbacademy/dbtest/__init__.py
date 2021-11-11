@@ -344,15 +344,15 @@ class TestSuite:
         job_name = f"[TEST] {self.test_config.name} | {self.test_type} | {hash}"
         self.jobs[job_name] = (notebook_path, 0, 0, ignored)
 
-    def delete_all_jobs(success_only=False):
+    def delete_all_jobs(self, success_only=False):
         self.client.jobs().delete_by_name(self.jobs, success_only=success_only)
         
-    def test_all_synchronously(fail_fast=True):
+    def test_all_synchronously(self, fail_fast=True):
         from dbacademy import dbtest
         dbtest.test_all_notebooks(self.client, self.jobs, self.test_config)  
         dbtest.wait_for_notebooks(self.client, self.test_config, self.jobs, fail_fast=fail_fast)
 
-    def test_all_asynchronously():
+    def test_all_asynchronously(self):
         from dbacademy import dbtest
         for job_name in self.jobs:
             dbtest.test_one_notebook(self.client, self.test_config, job_name, self.jobs[job_name])
