@@ -186,7 +186,7 @@ class TestConfig:
         else:
           print(f"\nself.notebooks: {len(self.notebooks)}")
 
-          rounds = list(map(lambda n: self.notebooks[n]["round"],  self.notebooks))
+          rounds = set(list(map(lambda n: self.notebooks[n]["round"],  self.notebooks)))
           rounds.sort()
 
           for round in rounds:          
