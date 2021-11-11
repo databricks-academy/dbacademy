@@ -141,6 +141,9 @@ class TestConfig:
         self.source_dir = source_dir
         self.notebooks = dict()
 
+    def get_distribution_name(version):
+      return f"{self.name.replace(' ','-')} v{version}"
+
     def index_notebooks(self, include_solutions=True):
       assert self.source_dir is not None, "TestConfig.source_dir must be specified"
       entities = self.client.workspace().ls(self.source_dir, recursive=True)
