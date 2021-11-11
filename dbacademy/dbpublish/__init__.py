@@ -32,10 +32,12 @@ def help_html():
   html += f"<h1>Publishing Help</h1>"
   html += f"<h2>Supported directives</h2>"
   for directive in SUPPORTED_DIRECTIVES:
-    
     if directive in docs:
       doc = docs[directive]
       html += f"<div><b>{directive}</b>: {doc}</div>"
+    else:
+      html += f"<div><b>{directive}</b>: Undocumented</div>"
+
   
   html += "</body>"
   return html
