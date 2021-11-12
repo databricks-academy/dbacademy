@@ -10,7 +10,10 @@ class WorkspaceClient:
 
     def ls(self, path, recursive=False):
         if not recursive:
-            return self.client.execute_get_json(f"{self.endpoint}/api/2.0/workspace/list?path={path}")["objects"]
+            try:
+                return self.client.execute_get_json(f"{self.endpoint}/api/2.0/workspace/list?path={path}")["objects"]
+            except Exception as e:
+                raise Exception(f"Unexpected exception listing {path}") from e
         else:
             entities = []
             queue = self.ls(path)
