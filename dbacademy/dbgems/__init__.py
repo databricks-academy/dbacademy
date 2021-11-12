@@ -29,9 +29,9 @@ def init_locals():
 
 sc, spark, dbutils = init_locals()
 
-def get_parameter(name):
+def get_parameter(name, default_value=""):
     try: return str(dbutils.widgets.get(name))
-    except: return ""
+    except: return default_value
 
 def get_current_spark_version():
     spark_version = get_tags()["sparkVersion"]
