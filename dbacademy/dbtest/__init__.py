@@ -82,7 +82,7 @@ class NotebookDef:
 class TestConfig:
     def __init__(self, 
                  name, 
-                 version,
+                 version = 0,
                  spark_version = None, 
                  cloud = None,
                  instance_pool = None, 
