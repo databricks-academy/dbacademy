@@ -173,7 +173,7 @@ def replace_contents(contents:str, replacements:dict):
 
     for key in replacements:
         old_value = "{{"+key+"}}"
-        new_value = replacements[old_value]
+        new_value = replacements[key]
         contents = contents.replace(old_value, new_value)
 
     mustach_pattern = re.compile(r"{{.*}}")
