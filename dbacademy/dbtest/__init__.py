@@ -93,6 +93,7 @@ class TestConfig:
                  spark_conf = None,
                  results_table = None,
                  results_database = None,
+                 include_solutions = True,
                  ):
       
         import uuid, re, time
@@ -157,7 +158,7 @@ class TestConfig:
 
         self.notebooks = dict()
 
-        self.index_notebooks()
+        self.index_notebooks(include_solutions=include_solutions)
 
     def get_distribution_name(self, version):
       distribution_name = f"{self.name}" if version is None else f"{self.name}-v{version}"
