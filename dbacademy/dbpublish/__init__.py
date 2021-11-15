@@ -100,8 +100,8 @@ class Publisher:
       notebook = NotebookDef(self.source_dir, self.target_dir, path, replacements, include_solution)
       
       # Add the universal replacements
-      notebook.replacements["{{verison_number}}"] = self.version
-      notebook.replacements["{{built_on}}"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
+      notebook.replacements["verison_number"] = self.version
+      notebook.replacements["built_on"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
 
       self.add_notebook_def(notebook)
         
