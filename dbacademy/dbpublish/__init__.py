@@ -177,8 +177,9 @@ def replace_contents(contents:str, replacements:dict):
         contents = contents.replace(old_value, new_value)
 
     mustach_pattern = re.compile(r"{{.*}}")
-    if mustach_pattern.search(contents):
-      raise Exception(f"A mustach pattern was detected after all replacements were processed.")
+    result = mustach_pattern.search(contents)
+    if result is not None:
+      raise Exception(f"A mustach pattern was detected after all replacements were processed: {result}")
 
     for icon in [":HINT:", ":CAUTION:", ":BESTPRACTICE:", ":SIDENOTE:"]:
       if icon in contents: raise Exception(f"The deprecated {icon} pattern was found after all replacements were processed.")
