@@ -169,10 +169,25 @@ class Publisher:
 
 
 def replace_contents(contents:str, replacements:dict):
-    for old_value in replacements:
+    import re
+
+    for key in replacements:
+        old_value = "{{"+key+"}}"
         new_value = replacements[old_value]
         contents = contents.replace(old_value, new_value)
-  
+
+    mustach_pattern = re.compile(r"{{.*}}")
+    if mustach_pattern.search(contents):
+      raise Exception(f"A mustach pattern was detected after all replacements were processed.")
+
+    for icon in [":HINT:", ":CAUTION:", ":BESTPRACTICE:", ":SIDENOTE:"]:
+      if icon in contents: raise Exception(f"The deprecated {icon} pattern was found after all replacements were processed.")
+    
+    # replacements[":HINT:"] =         """<img src="https://files.training.databricks.com/images/icon_hint_24.png"/>&nbsp;**Hint:**"""
+    # replacements[":CAUTION:"] =      """<img src="https://files.training.databricks.com/images/icon_warn_24.png"/>"""
+    # replacements[":BESTPRACTICE:"] = """<img src="https://files.training.databricks.com/images/icon_best_24.png"/>"""
+    # replacements[":SIDENOTE:"] =     """<img src="https://files.training.databricks.com/images/icon_note_24.png"/>"""
+
     return contents
     
 def get_leading_comments(language, cmd, command) -> list:
@@ -546,10 +561,10 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         solutions_commands.append(get_footer_cell(language))
     
     # Augment the replacements to duplicate the :NOTE:, :CAUTION:, etc features from BDC
-    replacements[":HINT:"] =         """<img src="https://files.training.databricks.com/images/icon_hint_24.png"/>&nbsp;**Hint:**"""
-    replacements[":CAUTION:"] =      """<img src="https://files.training.databricks.com/images/icon_warn_24.png"/>"""
-    replacements[":BESTPRACTICE:"] = """<img src="https://files.training.databricks.com/images/icon_best_24.png"/>"""
-    replacements[":SIDENOTE:"] =     """<img src="https://files.training.databricks.com/images/icon_note_24.png"/>"""
+    # replacements[":HINT:"] =         """<img src="https://files.training.databricks.com/images/icon_hint_24.png"/>&nbsp;**Hint:**"""
+    # replacements[":CAUTION:"] =      """<img src="https://files.training.databricks.com/images/icon_warn_24.png"/>"""
+    # replacements[":BESTPRACTICE:"] = """<img src="https://files.training.databricks.com/images/icon_best_24.png"/>"""
+    # replacements[":SIDENOTE:"] =     """<img src="https://files.training.databricks.com/images/icon_note_24.png"/>"""
 
     # Create the student's notebooks
     students_notebook_path = f"{target_project}/{notebook_name}"
