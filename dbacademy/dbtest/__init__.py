@@ -389,6 +389,8 @@ class TestSuite:
         self.test_type = test_type
         self.rounds = dict()
 
+        assert test_type is not None and test_type.trim() != "", "The test type must be specified."
+
         # Define each round first to make the next step full-proof
         for notebook in test_config.notebooks:
           round = test_config.notebooks[notebook].round
