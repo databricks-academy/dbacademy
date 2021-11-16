@@ -90,6 +90,7 @@ class TestConfig:
                  libraries = None, 
                  client = None,
                  source_dir = None,
+                 source_repo = None,
                  spark_conf = None,
                  results_table = None,
                  results_database = None,
@@ -154,7 +155,8 @@ class TestConfig:
         # The libraries to be attached to the cluster
         self.libraries = [] if libraries is None else libraries
 
-        self.source_dir = f"{dbgems.get_notebook_dir(-2)}/Source" if source_dir is None else source_dir
+        self.source_repo = dbgems.get_notebook_dir(offset=-2) if source_repo is None else source_repo
+        self.source_dir = f"{self.source_repo}/Source" if source_dir is None else source_dir
 
         self.notebooks = dict()
 
