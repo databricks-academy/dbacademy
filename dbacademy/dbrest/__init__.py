@@ -118,6 +118,19 @@ class DBAcademyRestClient:
         self.throttle_calls()
         return response
 
+    def execute_delete_json(self, url: str, expected=200) -> dict:
+        response = self.execute_delete(url, expected)
+        return response.json()
+
+    def execute_delete(self, url: str, expected=200):
+        expected = self.expected_to_list(expected)
+
+        response = self.session.get(url, headers={"Authorization": f"Bearer {self.token}"}, timeout=(self.connect_timeout, self.read_timeout))
+        assert response.status_code in expected, f"({response.status_code}): {response.text}"
+
+        self.throttle_calls()
+        return response
+
     @staticmethod
     def expected_to_list(expected) -> list:
         if type(expected) == str: expected = int(expected)
