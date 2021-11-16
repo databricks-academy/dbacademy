@@ -197,6 +197,7 @@ class TestConfig:
         print(f"cloud:          {self.cloud}")
         print(f"libraries:      {self.libraries}")
         print(f"results_table:  {self.results_table}")
+        print(f"source_repo:    {self.source_repo}")
         print(f"source_dir:     {self.source_dir}")
 
         max_length = 0
