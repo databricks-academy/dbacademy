@@ -118,11 +118,11 @@ class DBAcademyRestClient:
         self.throttle_calls()
         return response
 
-    def execute_delete_json(self, url: str, expected=200) -> dict:
+    def execute_delete_json(self, url: str, expected=[200,404]) -> dict:
         response = self.execute_delete(url, expected)
         return response.json()
 
-    def execute_delete(self, url: str, expected=200):
+    def execute_delete(self, url: str, expected=[200,404]):
         expected = self.expected_to_list(expected)
 
         response = self.session.get(url, headers={"Authorization": f"Bearer {self.token}"}, timeout=(self.connect_timeout, self.read_timeout))
