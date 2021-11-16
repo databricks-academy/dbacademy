@@ -561,12 +561,6 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         students_commands.append(get_footer_cell(language))
         solutions_commands.append(get_footer_cell(language))
     
-    # Augment the replacements to duplicate the :NOTE:, :CAUTION:, etc features from BDC
-    # replacements[":HINT:"] =         """<img src="https://files.training.databricks.com/images/icon_hint_24.png"/>&nbsp;**Hint:**"""
-    # replacements[":CAUTION:"] =      """<img src="https://files.training.databricks.com/images/icon_warn_24.png"/>"""
-    # replacements[":BESTPRACTICE:"] = """<img src="https://files.training.databricks.com/images/icon_best_24.png"/>"""
-    # replacements[":SIDENOTE:"] =     """<img src="https://files.training.databricks.com/images/icon_note_24.png"/>"""
-
     # Create the student's notebooks
     students_notebook_path = f"{target_project}/{notebook_name}"
     print(students_notebook_path)
