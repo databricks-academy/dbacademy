@@ -181,7 +181,7 @@ def replace_contents(contents:str, replacements:dict):
     if result is not None:
       raise Exception(f"A mustach pattern was detected after all replacements were processed: {result}")
 
-    for icon in [":HINT:", ":CAUTION:", ":BESTPRACTICE:", ":SIDENOTE:"]:
+    for icon in [":HINT:", ":CAUTION:", ":BESTPRACTICE:", ":SIDENOTE:", ":NOTE:"]:
       if icon in contents: raise Exception(f"The deprecated {icon} pattern was found after all replacements were processed.")
     
     # replacements[":HINT:"] =         """<img src="https://files.training.databricks.com/images/icon_hint_24.png"/>&nbsp;**Hint:**"""

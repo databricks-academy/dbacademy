@@ -125,7 +125,7 @@ class DBAcademyRestClient:
     def execute_delete(self, url: str, expected=[200,404]):
         expected = self.expected_to_list(expected)
 
-        response = self.session.get(url, headers={"Authorization": f"Bearer {self.token}"}, timeout=(self.connect_timeout, self.read_timeout))
+        response = self.session.delete(url, headers={"Authorization": f"Bearer {self.token}"}, timeout=(self.connect_timeout, self.read_timeout))
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
