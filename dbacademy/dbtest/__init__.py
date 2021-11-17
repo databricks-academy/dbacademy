@@ -125,8 +125,7 @@ class TestConfig:
         # Make N passes over the table name to remove duplicate underscores
         for i in range(10): results_table = results_table.replace("__", "_")
             
-        # Lastly, prefix the database name to the table name and set to the class attribute
-        self.results_table = f"{results_database}.{results_table}_csv"
+        self.results_table = results_table
 
         # Course Name
         self.name = name
@@ -188,18 +187,19 @@ class TestConfig:
     def print(self):
         print("-"*100)
         print("Test Configuration")
-        print(f"suite_id:       {self.suite_id}")
-        print(f"name:           {self.name}")
-        print(f"version:        {self.version}")
-        print(f"spark_version:  {self.spark_version}")
-        print(f"workers:        {self.workers}")
-        print(f"instance_pool:  {self.instance_pool}")
-        print(f"spark_conf:     {self.spark_conf}")
-        print(f"cloud:          {self.cloud}")
-        print(f"libraries:      {self.libraries}")
-        print(f"results_table:  {self.results_table}")
-        print(f"source_repo:    {self.source_repo}")
-        print(f"source_dir:     {self.source_dir}")
+        print(f"suite_id:         {self.suite_id}")
+        print(f"name:             {self.name}")
+        print(f"version:          {self.version}")
+        print(f"spark_version:    {self.spark_version}")
+        print(f"workers:          {self.workers}")
+        print(f"instance_pool:    {self.instance_pool}")
+        print(f"spark_conf:       {self.spark_conf}")
+        print(f"cloud:            {self.cloud}")
+        print(f"libraries:        {self.libraries}")
+        print(f"results_database: {self.results_database}")
+        print(f"results_table:    {self.results_table}")
+        print(f"source_repo:      {self.source_repo}")
+        print(f"source_dir:       {self.source_dir}")
 
         max_length = 0
         for path in self.notebooks:
@@ -336,11 +336,11 @@ def log_run(test_config, response, job_name, ignored):
         sc, spark, dbutils = dbgems.init_locals()
 
         # Append our tests results to the database
-        spark.sql.create(f"CREATE DATABASE IF NOT EXISTS {results_database}")
+        spark.sql.create(f"CREATE DATABASE IF NOT EXISTS {test_config.results_database}")
         (spark.createDataFrame(test_results)
          .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
          .withColumn("executed_at", current_timestamp())
-         .write.format("csv").mode("append").saveAsTable(test_config.results_table))
+         .write.format("csv").mode("append").saveAsTable(f"{test_config.results_database}.{test_config.results_table}"))
         print(f"*** Logged results to {test_config.results_table}")
 
         response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/smoke-tests", data=json.dumps({
