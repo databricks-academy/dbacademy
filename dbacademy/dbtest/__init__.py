@@ -336,7 +336,7 @@ def log_run(test_config, response, job_name, ignored):
         sc, spark, dbutils = dbgems.init_locals()
 
         # Append our tests results to the database
-        spark.sql.create(f"CREATE DATABASE IF NOT EXISTS {}")
+        spark.sql.create(f"CREATE DATABASE IF NOT EXISTS {results_database}")
         (spark.createDataFrame(test_results)
          .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
          .withColumn("executed_at", current_timestamp())
