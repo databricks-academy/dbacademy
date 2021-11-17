@@ -92,8 +92,8 @@ class TestConfig:
                  source_dir = None,
                  source_repo = None,
                  spark_conf = None,
-                 results_table = None,
-                 results_database = None,
+                 results_table = None,     # Deprecated
+                 results_database = None,  # Deprecated
                  include_solutions = True,
                  ):
       
@@ -111,6 +111,7 @@ class TestConfig:
         results_database = re.sub("[^a-zA-Z0-9]", "_", results_database.lower())
         # Make N passes over the database name to remove duplicate underscores
         for i in range(10): results_database = results_database.replace("__", "_")
+        self.results_database = results_database
         
         # Default the results_table if necissary
         if results_table is None: results_table = "smoke_test_" + name.replace(" ", "_").lower()
@@ -316,7 +317,7 @@ def log_run(test_config, response, job_name, ignored):
 
     # noinspection PyBroadException
     try:
-        print(f"*** Processing test results to {test_config.results_table}")
+        print(f"*** Adding test results to {test_config.results_table}")
               
         job_id = response["job_id"] if "job_id" in response else 0
         run_id = response["run_id"] if "run_id" in response else 0
@@ -335,6 +336,7 @@ def log_run(test_config, response, job_name, ignored):
         sc, spark, dbutils = dbgems.init_locals()
 
         # Append our tests results to the database
+        spark.sql.create(f"CREATE DATABASE IF NOT EXISTS {}")
         (spark.createDataFrame(test_results)
          .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
          .withColumn("executed_at", current_timestamp())
