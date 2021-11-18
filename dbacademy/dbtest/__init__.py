@@ -171,17 +171,25 @@ class TestConfig:
       entities = self.client.workspace().ls(self.source_dir, recursive=True)
 
       for entity in entities:
-        path = entity["path"][len(self.source_dir)+1:]
         round = 2                                                  # Default round for all notebooks
-        round = 0 if "includes/" in path.lower() else round        # Any folder that ends in "includes"
-        round = 1 if "includes/reset" in path.lower() else round   # Any reset notebook in any "includes" folder
-        round = 1 if path.lower().startswith("version") else round # Any notebook that starts with "version"
+        include_solution = True                                    # By default, include with the solutions
+        path = entity["path"][len(self.source_dir)+1:]             # Get the notebook's path relative too the source root
+
+        if path.lower().startswith("version"):                     # Any notebook that starts with "version" as in "Version Info" or "Version 1.2.3"
+          round = 0                                                # Never test the version notebook
+          include_solution = False                                 # Exclude from the solutions folder
+
+        if "includes/" in path.lower():                            # Any folder that ends in "includes"
+          round = 0                                                # Never test notebooks in the "includes" folders
+
+        if "includes/reset" in path.lower():                       # Any reset notebook in any "includes" folder
+          round = 1                                                # Add to round #1 before all other tests
+          include_solution = False                                 # Exclude from the solutions folder
 
         if "wip" in path.lower():
           print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
         else:
-          excluded_solutions = ["includes/reset", "version info"]
-          include_solution = False if path.lower() in excluded_solutions else include_solutions
+          # Add our notebook to the set of notebooks to be tested.
           self.notebooks[path] = NotebookDef(round=round, path=path, ignored=False, include_solution=include_solution, replacements=dict())
 
     def print(self):
