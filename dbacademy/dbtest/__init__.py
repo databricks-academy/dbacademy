@@ -431,8 +431,11 @@ class TestSuite:
         
     def test_all_synchronously(self, round):
         from dbacademy import dbtest
-        for job_name in self.rounds[round]:
-            dbtest.test_one_notebook(self.client, self.test_config, job_name, self.rounds[round][job_name])      
+        if round not in self.rounds:
+          print(f"** WARNING ** There are no notebooks in round {round}")
+        else:
+          for job_name in self.rounds[round]:
+              dbtest.test_one_notebook(self.client, self.test_config, job_name, self.rounds[round][job_name])      
 
     def test_all_asynchronously(self, round, fail_fast=False):
         from dbacademy import dbtest
