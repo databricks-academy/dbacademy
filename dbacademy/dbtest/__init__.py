@@ -172,10 +172,10 @@ class TestConfig:
 
       for entity in entities:
         path = entity["path"][len(self.source_dir)+1:]
-        round = 2 # Default round for all notebooks
-        round = 0 if path.lower().startswith("includes/") else round
-        round = 0 if path.lower().startswith("_includes") else round
-        round = 1 if path.lower() in ["includes/reset", "version info"] else round
+        round = 2                                                  # Default round for all notebooks
+        round = 0 if "includes/" in path.lower() else round        # Any folder that ends in "includes"
+        round = 1 if "includes/reset" in path.lower() else round   # Any reset notebook in any "includes" folder
+        round = 1 if path.lower().startswith("version") else round # Any notebook that starts with "version"
 
         if "wip" in path.lower():
           print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
