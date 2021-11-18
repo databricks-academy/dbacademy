@@ -158,8 +158,6 @@ class TestConfig:
         self.source_repo = dbgems.get_notebook_dir(offset=-2) if source_repo is None else source_repo
         self.source_dir = f"{self.source_repo}/Source" if source_dir is None else source_dir
 
-        self.notebooks = dict()
-
         self.index_notebooks(include_solutions=include_solutions)
 
     def get_distribution_name(self, version):
@@ -168,6 +166,8 @@ class TestConfig:
 
     def index_notebooks(self, include_solutions=True):
       assert self.source_dir is not None, "TestConfig.source_dir must be specified"
+
+      self.notebooks = dict()
       entities = self.client.workspace().ls(self.source_dir, recursive=True)
 
       for entity in entities:
