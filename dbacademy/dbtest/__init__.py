@@ -172,7 +172,7 @@ class TestConfig:
 
       for entity in entities:
         round = 2                                                  # Default round for all notebooks
-        include_solution = True                                    # By default, include with the solutions
+        include_solution = include_solutions                       # Initialize to the default value
         path = entity["path"][len(self.source_dir)+1:]             # Get the notebook's path relative too the source root
 
         if path.lower().startswith("version"):                     # Any notebook that starts with "version" as in "Version Info" or "Version 1.2.3"
