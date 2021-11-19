@@ -176,7 +176,7 @@ def replace_contents(contents:str, replacements:dict):
         new_value = replacements[key]
         contents = contents.replace(old_value, new_value)
 
-    mustach_pattern = re.compile(r"{{[a-zA-Z\\-\\_]*}}")
+    mustach_pattern = re.compile(r"{{[a-zA-Z\\-\\_\\#\\/]*}}")
     result = mustach_pattern.search(contents)
     if result is not None:
       raise Exception(f"A mustach pattern was detected after all replacements were processed: {result}")
