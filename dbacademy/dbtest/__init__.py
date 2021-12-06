@@ -222,9 +222,9 @@ class TestConfig:
 
 
         if len(self.notebooks) == 0:
-          print(f"self.notebooks:   none")
+          print(f"notebooks:        none")
         else:
-          print(f"self.notebooks: {len(self.notebooks)}")
+          print(f"notebooks: {len(self.notebooks)}")
 
           rounds = list(map(lambda path: self.notebooks[path].round,  self.notebooks))
           rounds.sort()
