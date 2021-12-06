@@ -158,7 +158,7 @@ class TestConfig:
         self.source_repo = dbgems.get_notebook_dir(offset=-2) if source_repo is None else source_repo
         self.source_dir = f"{self.source_repo}/Source" if source_dir is None else source_dir
 
-        print(f"source_dir={source_dir}")
+        print(f"source_dir={source_dir} and {source_dir is None}")
 
         # We don't want the folling function to fail if we are using the "default" path which 
         # may or may not exists. The implication being that this will fail if called explicitly
