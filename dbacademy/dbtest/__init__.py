@@ -158,17 +158,24 @@ class TestConfig:
         self.source_repo = dbgems.get_notebook_dir(offset=-2) if source_repo is None else source_repo
         self.source_dir = f"{self.source_repo}/Source" if source_dir is None else source_dir
 
-        self.index_notebooks(include_solutions=include_solutions)
+        # We don't want the folling function to fail if we are using the "default" path which 
+        # may or may not exists. The implication being that this will fail if called explicitly
+        self.index_notebooks(include_solutions=include_solutions, fail_fast=source_dir is None)
 
     def get_distribution_name(self, version):
       distribution_name = f"{self.name}" if version is None else f"{self.name}-v{version}"
       return distribution_name.replace(" ", "-").replace(" ", "-").replace(" ", "-")
 
-    def index_notebooks(self, include_solutions=True):
+    def index_notebooks(self, include_solutions=True, fail_fast=True):
       assert self.source_dir is not None, "TestConfig.source_dir must be specified"
 
       self.notebooks = dict()
       entities = self.client.workspace().ls(self.source_dir, recursive=True)
+
+      if entities is None and fail_fast == False:
+        return # The directory doesn't exist
+      elif entities is None and fail_fast == True:
+        raise Exception(f"The specified directory ({self.source_dir}) does not exist.")
 
       for entity in entities:
         round = 2                                                  # Default round for all notebooks

@@ -11,14 +11,20 @@ class WorkspaceClient:
     def ls(self, path, recursive=False):
         if not recursive:
             try:
-                results = self.client.execute_get_json(f"{self.endpoint}/api/2.0/workspace/list?path={path}")
-                return results["objects"] if "objects" in results else []
+                results = self.client.execute_get_json(f"{self.endpoint}/api/2.0/workspace/list?path={path}", expected=[200, 404])
+                if response.status_code == 404:
+                    return None
+                else:
+                    return results["objects"] if "objects" in results else []
 
             except Exception as e:
                 raise Exception(f"Unexpected exception listing {path}") from e
         else:
             entities = []
             queue = self.ls(path)
+            
+            if queue is None:
+                return None
 
             while len(queue) > 0:
                 next = queue.pop()
