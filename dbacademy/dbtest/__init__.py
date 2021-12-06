@@ -175,7 +175,7 @@ class TestConfig:
       if entities is None and fail_fast == False:
         return # The directory doesn't exist
       elif entities is None and fail_fast == True:
-        raise Exception(f"The specified directory ({self.source_dir}) does not exist.")
+        raise Exception(f"The specified directory ({self.source_dir}) does not exist (fail_fast={fail_fast}).")
 
       for entity in entities:
         round = 2                                                  # Default round for all notebooks
