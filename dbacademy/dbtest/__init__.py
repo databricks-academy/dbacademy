@@ -222,7 +222,7 @@ class TestConfig:
 
 
         if len(self.notebooks) == 0:
-          print(f"self.notebooks: none")
+          print(f"self.notebooks:   none")
         else:
           print(f"self.notebooks: {len(self.notebooks)}")
 
