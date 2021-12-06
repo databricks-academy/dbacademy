@@ -107,7 +107,11 @@ class DBAcademyRestClient:
 
     def execute_get_json(self, url: str, expected=200) -> dict:
         response = self.execute_get(url, expected)
-        return response.json()
+
+        if response.status_code == 200:
+            return response.json()
+        else: # For example, expected includes 404
+            return None
 
     def execute_get(self, url: str, expected=200):
         expected = self.expected_to_list(expected)

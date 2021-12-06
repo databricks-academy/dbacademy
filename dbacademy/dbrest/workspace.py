@@ -12,7 +12,7 @@ class WorkspaceClient:
         if not recursive:
             try:
                 results = self.client.execute_get_json(f"{self.endpoint}/api/2.0/workspace/list?path={path}", expected=[200, 404])
-                if response.status_code == 404:
+                if results is None:
                     return None
                 else:
                     return results["objects"] if "objects" in results else []
