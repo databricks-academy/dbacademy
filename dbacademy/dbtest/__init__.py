@@ -427,15 +427,11 @@ class TestSuite:
         assert test_type is not None and test_type.strip() != "", "The test type must be specified."
 
         # Define each round first to make the next step full-proof
-        for notebook in test_config.notebooks:
-          round = test_config.notebooks[notebook].round
-          self.rounds[round] = list()
+        for notebook in test_config.notebooks.values():
+          self.rounds[notebook.round] = list()
 
         # Add each notebook to the dictionary or rounds which is a dictionary of tests
         for notebook in test_config.notebooks.values():
-          # round = notebook.round
-          # ignored = notebook.ignored
-
           if round > 0:
             # [job_name] = (notebook_path, 0, 0, ignored)
             test_instance = TestInstance(test_config, notebook, test_dir, test_type) 
