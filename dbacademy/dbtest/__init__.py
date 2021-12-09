@@ -455,6 +455,7 @@ class TestSuite:
           print(f"Round #{round} test order:")
           for test in tests:
             print(f" - {test.notebook.path}")
+          print()
 
           # for job_name in job_names:
           #     dbtest.test_one_notebook(self.client, self.test_config, job_name, self.rounds[round][job_name])      
