@@ -419,7 +419,7 @@ class TestSuite:
           self.rounds[round] = dict()
 
         # Sort the notebooks by their pre-defined order
-        notebooks = sorted(test_config.notebooks, lambda n: n.order)
+        notebooks = sorted(test_config.notebooks, key=lambda n: n.order)
         
         # Add each notebook to the dictionary or rounds which is a dictionary of tests
         for notebook in notebooks:
