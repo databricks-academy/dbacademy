@@ -431,11 +431,8 @@ class TestSuite:
           round = test_config.notebooks[notebook].round
           self.rounds[round] = list()
 
-        # Sort the notebooks by their pre-defined order
-        notebooks = test_config.notebooks.values()
-        
         # Add each notebook to the dictionary or rounds which is a dictionary of tests
-        for notebook in notebooks.values():
+        for notebook in test_config.notebooks.values():
           # round = notebook.round
           # ignored = notebook.ignored
 
