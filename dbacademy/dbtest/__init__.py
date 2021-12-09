@@ -441,7 +441,9 @@ class TestSuite:
         if round not in self.rounds:
           print(f"** WARNING ** There are no notebooks in round {round}")
         else:
-          for job_name in self.rounds[round]:
+          job_names = list(self.rounds[round].keys())
+          job_names.sort()
+          for job_name in job_names:
               dbtest.test_one_notebook(self.client, self.test_config, job_name, self.rounds[round][job_name])      
 
     def test_all_asynchronously(self, round, fail_fast=False):
