@@ -442,8 +442,12 @@ class TestSuite:
           print(f"** WARNING ** There are no notebooks in round {round}")
         else:
           job_names = list(self.rounds[round].keys())
-          print(f"Test order: {job_names}")
           job_names.sort()
+          
+          print(f"Test order:")
+          for job_name in job_names:
+            print(f" - {job_name}")
+
           for job_name in job_names:
               dbtest.test_one_notebook(self.client, self.test_config, job_name, self.rounds[round][job_name])      
 
