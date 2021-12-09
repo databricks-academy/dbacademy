@@ -425,7 +425,7 @@ class TestSuite:
 
           if round > 0:
             hash = hashlib.sha256(notebook_path.encode()).hexdigest()
-            job_name = f"[TEST] {test_config.name} | {test_type} | {hash}"
+            job_name = f"[TEST] {test_config.name} | {test_type} | {notebook_path} | {hash}"
             self.rounds[round][job_name] = (notebook_path, 0, 0, ignored)
 
             if self.client.workspace().get_status(notebook_path) is None:
