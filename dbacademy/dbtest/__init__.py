@@ -432,7 +432,7 @@ class TestSuite:
 
         # Add each notebook to the dictionary or rounds which is a dictionary of tests
         for notebook in test_config.notebooks.values():
-          if round > 0:
+          if notebook.round > 0:
             # [job_name] = (notebook_path, 0, 0, ignored)
             test_instance = TestInstance(test_config, notebook, test_dir, test_type) 
             self.rounds[round].append(test_instance)
