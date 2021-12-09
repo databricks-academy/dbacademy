@@ -235,7 +235,7 @@ class TestConfig:
           rounds = set(rounds)
 
           for round in rounds:          
-            if round == 0: print("\nRound #0: Published but not tested")
+            if round == 0: print("\nRound #0: (published but not tested)")
             else: print(f"\nRound #{round}")
 
             notebook_paths = list(self.notebooks.keys())
