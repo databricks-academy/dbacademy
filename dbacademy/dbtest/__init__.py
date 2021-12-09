@@ -201,9 +201,6 @@ class TestConfig:
           # Add our notebook to the set of notebooks to be tested.
           self.notebooks[path] = NotebookDef(round=round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order=i)
 
-      # Now that we are indexed, reorder the notebooks
-      # self.notebooks.sort(key=lambda n: n.order)
-
     def print(self):
         print("-"*100)
         print("Test Configuration")
@@ -242,7 +239,8 @@ class TestConfig:
             notebook_paths = list(self.notebooks.keys())
             notebook_paths.sort()
 
-            for path in notebook_paths:
+            # for path in notebook_paths:
+            for notebook in sorted(self.notebooks, key=lambda n: n.order):
               notebook = self.notebooks[path]
               if round == notebook.round:
                 path = notebook.path.ljust(max_length)
