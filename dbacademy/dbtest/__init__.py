@@ -393,7 +393,7 @@ class SuiteBuilder:
           raise Exception(f"Notebook not found: {notebook_path}")
 
         hash = hashlib.sha256(notebook_path.encode()).hexdigest()
-        job_name = f"[TEST] {self.course_name} | {self.test_type} | {hash}"
+        job_name = f"[TEST] {self.course_name} | {self.test_type} | {notebook_path} | {hash}"
         self.jobs[job_name] = (notebook_path, 0, 0, ignored)
 
 class TestSuite:
