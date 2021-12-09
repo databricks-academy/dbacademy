@@ -71,12 +71,13 @@ class ResultsEvaluator:
 
 
 class NotebookDef:
-    def __init__(self, round, path, ignored, include_solution, replacements):
+    def __init__(self, round, path, ignored, include_solution, replacements, order):
       self.round = round
       self.path = path
       self.ignored = ignored
       self.include_solution = include_solution
       self.replacements = replacements
+      self.order = order
 
 
 class TestConfig:
@@ -177,7 +178,8 @@ class TestConfig:
       elif entities is None and fail_fast == True:
         raise Exception(f"The specified directory ({self.source_dir}) does not exist (fail_fast={fail_fast}).")
 
-      for entity in entities:
+      for order in range(len(entities)):
+        entity = entities[order]
         round = 2                                                  # Default round for all notebooks
         include_solution = include_solutions                       # Initialize to the default value
         path = entity["path"][len(self.source_dir)+1:]             # Get the notebook's path relative too the source root
@@ -197,7 +199,7 @@ class TestConfig:
           print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
         else:
           # Add our notebook to the set of notebooks to be tested.
-          self.notebooks[path] = NotebookDef(round=round, path=path, ignored=False, include_solution=include_solution, replacements=dict())
+          self.notebooks[path] = NotebookDef(round=round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order)
 
     def print(self):
         print("-"*100)
@@ -224,7 +226,7 @@ class TestConfig:
         if len(self.notebooks) == 0:
           print(f"notebooks:        none")
         else:
-          print(f"notebooks: {len(self.notebooks)}")
+          print(f"notebooks:        {len(self.notebooks)}")
 
           rounds = list(map(lambda path: self.notebooks[path].round,  self.notebooks))
           rounds.sort()
@@ -244,7 +246,7 @@ class TestConfig:
                 ignored = str(notebook.ignored).ljust(5)
                 replacements = str(notebook.replacements)
                 include_solution = str(notebook.include_solution).ljust(5)
-                print(f"  {path}   ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
+                print(f"  {notebook.order}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
 
         print("-"*100)
 
@@ -393,7 +395,7 @@ class SuiteBuilder:
           raise Exception(f"Notebook not found: {notebook_path}")
 
         hash = hashlib.sha256(notebook_path.encode()).hexdigest()
-        job_name = f"[TEST] {self.course_name} | {self.test_type} | {notebook_path} | {hash}"
+        job_name = f"[TEST] {self.course_name} | {self.test_type} | {hash}"
         self.jobs[job_name] = (notebook_path, 0, 0, ignored)
 
 class TestSuite:
@@ -425,7 +427,7 @@ class TestSuite:
 
           if round > 0:
             hash = hashlib.sha256(notebook_path.encode()).hexdigest()
-            job_name = f"[TEST] {test_config.name} | {test_type} | {notebook_path} | {hash}"
+            job_name = f"[TEST] {test_config.name} | {test_type} | {hash}"
             self.rounds[round][job_name] = (notebook_path, 0, 0, ignored)
 
             if self.client.workspace().get_status(notebook_path) is None:
