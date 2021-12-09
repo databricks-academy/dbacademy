@@ -202,7 +202,7 @@ class TestConfig:
           self.notebooks[path] = NotebookDef(round=round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order=i)
 
       # Now that we are indexed, reorder the notebooks
-      self.notebooks.sort(key=lambda n: n.order)
+      # self.notebooks.sort(key=lambda n: n.order)
 
     def print(self):
         print("-"*100)
