@@ -201,6 +201,8 @@ class TestConfig:
           # Add our notebook to the set of notebooks to be tested.
           self.notebooks[path] = NotebookDef(round=round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order=i)
 
+      self.notebooks.sort(key=lambda n: n.order)
+
     def print(self):
         print("-"*100)
         print("Test Configuration")
