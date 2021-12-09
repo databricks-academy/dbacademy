@@ -298,16 +298,20 @@ def test_notebook(client, test_config, job_name, notebook_path, fail_fast, ignor
     conclude_test(test_config, response, job_name, fail_fast, ignored)
 
 
-def test_all_notebooks(client, jobs, test_config):
-    for job_name in jobs:
-        notebook_path, job_id, run_id, ignored = jobs[job_name]
+def test_all_notebooks(client, tests, test_config):
+    for test in tests:
+        # test is an instance of TestInstance
+        notebook_path test.notebook_path
+        job_id = test.job_id
+        run_id = test.run_id
+        ignored = test.notebook.ignored
         
-        print(f"Starting job for {notebook_path}")
+        print(f"Starting job for {test.notebook_path}")
 
-        job_id = create_test_job(client, test_config, job_name, notebook_path)
-        run_id = client.jobs().run_now(job_id)["run_id"]
+        test.job_id = create_test_job(client, test_config, test.job_name, test.notebook_path)
+        test.run_id = client.jobs().run_now(test.job_id)["run_id"]
 
-        jobs[job_name] = (notebook_path, job_id, run_id, ignored)
+        # jobs[job_name] = (test.notebook_path, job_id, run_id, ignored)
         
 
 def conclude_test(test_config, response, job_name, fail_fast, ignored):
@@ -406,6 +410,8 @@ class TestInstance:
       import hashlib
 
       self.notebook = notebook
+      self.job_id = 0
+      self.run_id = 0
 
       if notebook.include_solution: 
         self.notebook_path = f"{test_dir}/Solutions/{notebook.path}"
@@ -414,6 +420,9 @@ class TestInstance:
 
       hash = hashlib.sha256(self.notebook_path.encode()).hexdigest()
       self.job_name = f"[TEST] {test_config.name} | {test_type} | {hash}"
+    
+    def to_init_tuple():
+      return (self.notebook_path, 0, 0, self.notebook.ignored)
 
 
 class TestSuite:
@@ -459,8 +468,7 @@ class TestSuite:
           print()
 
           for test in tests:
-            test_tuple = (test.notebook_path, 0, 0, test.notebook.ignored)
-            dbtest.test_one_notebook(self.client, self.test_config, test.job_name, test_tuple)      
+            dbtest.test_one_notebook(self.client, self.test_config, test.job_name, test.to_init_tuple())      
 
     def test_all_asynchronously(self, round, fail_fast=False):
         from dbacademy import dbtest
