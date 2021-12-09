@@ -403,6 +403,8 @@ class SuiteBuilder:
 
 class TestInstance:
     def __init__(self, test_config, notebook, test_dir, test_type):
+      import hashlib
+
       self.notebook = notebook
 
       if notebook.include_solution: 
@@ -416,8 +418,6 @@ class TestInstance:
 
 class TestSuite:
     def __init__(self, test_config, test_dir, test_type):
-        import hashlib
-
         self.test_dir = test_dir
         self.test_config = test_config
         self.client = test_config.client
