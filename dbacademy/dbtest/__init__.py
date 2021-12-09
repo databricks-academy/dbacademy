@@ -419,17 +419,17 @@ class TestSuite:
           self.rounds[round] = dict()
 
         # Sort the notebooks by their pre-defined order
-        notebooks = sorted(test_config.notebooks, key=lambda n: n.order)
+        notebooks = sorted(test_config.notebooks.values, key=lambda n: n.order)
         
         # Add each notebook to the dictionary or rounds which is a dictionary of tests
         for notebook in notebooks:
-          round = notebooks[notebook].round
-          ignored = notebooks[notebook].ignored
+          round = notebook.round
+          ignored = notebook.ignored
 
-          if notebooks[notebook].include_solution: 
-            notebook_path = f"{test_dir}/Solutions/{notebook}"
+          if notebook.include_solution: 
+            notebook_path = f"{test_dir}/Solutions/{notebook.path}"
           else:
-            notebook_path = f"{test_dir}/{notebook}"
+            notebook_path = f"{test_dir}/{notebook.path}"
 
           if round > 0:
             hash = hashlib.sha256(notebook_path.encode()).hexdigest()
