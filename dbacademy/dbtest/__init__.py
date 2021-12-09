@@ -454,11 +454,12 @@ class TestSuite:
           
           print(f"Round #{round} test order:")
           for test in tests:
-            print(f" - {test.notebook.path}")
+            print(f" {test.notebook.path}")
           print()
 
-          # for job_name in job_names:
-          #     dbtest.test_one_notebook(self.client, self.test_config, job_name, self.rounds[round][job_name])      
+          for test in tests:
+            test_tuple = (test.notebook_path, 0, 0, test.notebook.ignored)
+            dbtest.test_one_notebook(self.client, self.test_config, test.job_name, test_tuple)      
 
     def test_all_asynchronously(self, round, fail_fast=False):
         from dbacademy import dbtest
