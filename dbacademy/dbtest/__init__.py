@@ -178,6 +178,8 @@ class TestConfig:
       elif entities is None and fail_fast == True:
         raise Exception(f"The specified directory ({self.source_dir}) does not exist (fail_fast={fail_fast}).")
 
+      entities.sort(key=lambda e: e.path)
+
       for i in range(len(entities)):
         entity = entities[i]
         round = 2                                                  # Default round for all notebooks
