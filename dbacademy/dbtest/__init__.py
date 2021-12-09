@@ -444,6 +444,7 @@ class TestSuite:
     def delete_all_jobs(self, success_only=False):
         for round in self.rounds:
           self.client.jobs().delete_by_name(self.rounds[round], success_only=success_only)
+        print()
         
     def test_all_synchronously(self, round):
         from dbacademy import dbtest
