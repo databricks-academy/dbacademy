@@ -282,7 +282,7 @@ def wait_for_notebooks(client, test_config, tests, fail_fast):
         print(f"Waiting for {test.notebook_path}")
 
         response = client.runs().wait_for(test.run_id)
-        conclude_test(test_config, response, test.job_name, fail_fast, test.ignored)
+        conclude_test(test_config, response, test.job_name, fail_fast, test.notebook.ignored)
         
 
 def test_one_notebook(client, test_config, job_name, job, fail_fast=False):
