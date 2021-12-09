@@ -275,13 +275,14 @@ def create_test_job(client, test_config, job_name, notebook_path):
     return json_response["job_id"]
 
 
-def wait_for_notebooks(client, test_config, jobs, fail_fast):
-    for job_name in jobs:
-        notebook_path, job_id, run_id, ignored = jobs[job_name]
-        print(f"Waiting for {notebook_path}")
+def wait_for_notebooks(client, test_config, tests, fail_fast):
+    for test in tests:
+        # test is an instance of TestInstance
+        # notebook_path, job_id, run_id, ignored = jobs[job_name]
+        print(f"Waiting for {test.notebook_path}")
 
-        response = client.runs().wait_for(run_id)
-        conclude_test(test_config, response, job_name, fail_fast, ignored)
+        response = client.runs().wait_for(test.run_id)
+        conclude_test(test_config, response, test.job_name, fail_fast, test.ignored)
         
 
 def test_one_notebook(client, test_config, job_name, job, fail_fast=False):
