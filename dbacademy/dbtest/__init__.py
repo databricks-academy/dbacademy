@@ -285,10 +285,10 @@ def wait_for_notebooks(client, test_config, tests, fail_fast):
         conclude_test(test_config, response, test.job_name, fail_fast, test.notebook.ignored)
         
 
-def test_one_notebook(client, test_config, job_name, job, fail_fast=False):
-  print(f"Starting job for {job[0]}")
-  notebook_path, job_id, run_id, ignored = job
-  test_notebook(client, test_config, job_name, notebook_path, fail_fast, ignored)
+def test_one_notebook(client, test_config, test, fail_fast=False):
+  print(f"Starting job for {test.notebook.path}")
+  #notebook_path, job_id, run_id, ignored = job
+  test_notebook(client, test_config, test.job_name, test.notebook_path, fail_fast, test.notebook.ignored)
     
     
 def test_notebook(client, test_config, job_name, notebook_path, fail_fast, ignored):
@@ -422,8 +422,8 @@ class TestInstance:
       hash = hashlib.sha256(self.notebook_path.encode()).hexdigest()
       self.job_name = f"[TEST] {test_config.name} | {test_type} | {hash}"
     
-    def to_init_tuple():
-      return (self.notebook_path, 0, 0, self.notebook.ignored)
+    # def to_init_tuple():
+    #  return (self.notebook_path, 0, 0, self.notebook.ignored)
 
 
 class TestSuite:
@@ -469,7 +469,7 @@ class TestSuite:
           print()
 
           for test in tests:
-            dbtest.test_one_notebook(self.client, self.test_config, test.job_name, test.to_init_tuple())      
+            dbtest.test_one_notebook(self.client, self.test_config, test)      
 
     def test_all_asynchronously(self, round, fail_fast=False):
         from dbacademy import dbtest
