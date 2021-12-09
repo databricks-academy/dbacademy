@@ -401,6 +401,19 @@ class SuiteBuilder:
         job_name = f"[TEST] {self.course_name} | {self.test_type} | {hash}"
         self.jobs[job_name] = (notebook_path, 0, 0, ignored)
 
+class TestInstance:
+    def __init__(self, test_config, notebook, test_dir, test_type):
+      self.notebook = notebook
+
+      if notebook.include_solution: 
+        self.notebook_path = f"{test_dir}/Solutions/{notebook.path}"
+      else:
+        self.notebook_path = f"{test_dir}/{notebook.path}"
+
+      hash = hashlib.sha256(self.notebook_path.encode()).hexdigest()
+      self.job_name = f"[TEST] {test_config.name} | {test_type} | {hash}"
+
+
 class TestSuite:
     def __init__(self, test_config, test_dir, test_type):
         import hashlib
@@ -416,28 +429,23 @@ class TestSuite:
         # Define each round first to make the next step full-proof
         for notebook in test_config.notebooks:
           round = test_config.notebooks[notebook].round
-          self.rounds[round] = dict()
+          self.rounds[round] = list()
 
         # Sort the notebooks by their pre-defined order
-        notebooks = sorted(test_config.notebooks.values(), key=lambda n: n.order)
+        #notebooks = sorted(test_config.notebooks.values(), key=lambda n: n.order)
         
         # Add each notebook to the dictionary or rounds which is a dictionary of tests
-        for notebook in notebooks:
-          round = notebook.round
-          ignored = notebook.ignored
-
-          if notebook.include_solution: 
-            notebook_path = f"{test_dir}/Solutions/{notebook.path}"
-          else:
-            notebook_path = f"{test_dir}/{notebook.path}"
+        for notebook in notebooks.values():
+          # round = notebook.round
+          # ignored = notebook.ignored
 
           if round > 0:
-            hash = hashlib.sha256(notebook_path.encode()).hexdigest()
-            job_name = f"[TEST] {test_config.name} | {test_type} | {hash}"
-            self.rounds[round][job_name] = (notebook_path, 0, 0, ignored)
+            # [job_name] = (notebook_path, 0, 0, ignored)
+            test_instance = TestInstance(test_config, notebook, test_dir, test_type) 
+            self.rounds[round].append(test_instance)
 
-            if self.client.workspace().get_status(notebook_path) is None:
-              raise Exception(f"Notebook not found: {notebook_path}")
+            if self.client.workspace().get_status(test_instance.notebook_path) is None:
+              raise Exception(f"Notebook not found: {test_instance.notebook_path}")
 
 
     def delete_all_jobs(self, success_only=False):
@@ -449,15 +457,14 @@ class TestSuite:
         if round not in self.rounds:
           print(f"** WARNING ** There are no notebooks in round {round}")
         else:
-          job_names = list(self.rounds[round].keys())
-          job_names.sort()
+          tests = sorted(self.rounds[round], key=lambda t: t.notebook.order)
           
           print(f"Test order:")
-          for job_name in job_names:
-            print(f" - {job_name}")
+          for test in tests:
+            print(f" - {test.notebook.path}")
 
-          for job_name in job_names:
-              dbtest.test_one_notebook(self.client, self.test_config, job_name, self.rounds[round][job_name])      
+          # for job_name in job_names:
+          #     dbtest.test_one_notebook(self.client, self.test_config, job_name, self.rounds[round][job_name])      
 
     def test_all_asynchronously(self, round, fail_fast=False):
         from dbacademy import dbtest
