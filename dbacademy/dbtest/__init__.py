@@ -301,10 +301,10 @@ def test_notebook(client, test_config, job_name, notebook_path, fail_fast, ignor
 def test_all_notebooks(client, tests, test_config):
     for test in tests:
         # test is an instance of TestInstance
-        notebook_path test.notebook_path
-        job_id = test.job_id
-        run_id = test.run_id
-        ignored = test.notebook.ignored
+        # notebook_path = test.notebook_path
+        # job_id = test.job_id
+        # run_id = test.run_id
+        # ignored = test.notebook.ignored
         
         print(f"Starting job for {test.notebook_path}")
 
