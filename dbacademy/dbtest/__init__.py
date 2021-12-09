@@ -249,7 +249,7 @@ class TestConfig:
                 ignored = str(notebook.ignored).ljust(5)
                 replacements = str(notebook.replacements)
                 include_solution = str(notebook.include_solution).ljust(5)
-                print(f"  {notebook.order}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
+                print(f"  {notebook.order: <2}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
 
         print("-"*100)
 
