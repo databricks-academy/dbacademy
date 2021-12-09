@@ -240,8 +240,8 @@ class TestConfig:
             notebook_paths.sort()
 
             # for path in notebook_paths:
-            for notebook in sorted(self.notebooks, key=lambda n: n.order):
-              # notebook = self.notebooks[path]
+            for notebook in sorted(self.notebooks.values(), key=lambda n: n.order):
+              notebook = self.notebooks[path]
               if round == notebook.round:
                 path = notebook.path.ljust(max_length)
                 ignored = str(notebook.ignored).ljust(5)
