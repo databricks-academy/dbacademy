@@ -452,7 +452,7 @@ class TestSuite:
         else:
           tests = sorted(self.rounds[round], key=lambda t: t.notebook.order)
           
-          print(f"Test order:")
+          print(f"Round #{round} test order:")
           for test in tests:
             print(f" - {test.notebook.path}")
 
