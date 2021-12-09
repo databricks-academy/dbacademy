@@ -435,7 +435,7 @@ class TestSuite:
           if notebook.round > 0:
             # [job_name] = (notebook_path, 0, 0, ignored)
             test_instance = TestInstance(test_config, notebook, test_dir, test_type) 
-            self.rounds[round].append(test_instance)
+            self.rounds[notebook.round].append(test_instance)
 
             if self.client.workspace().get_status(test_instance.notebook_path) is None:
               raise Exception(f"Notebook not found: {test_instance.notebook_path}")
