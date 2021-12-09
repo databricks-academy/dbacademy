@@ -178,8 +178,8 @@ class TestConfig:
       elif entities is None and fail_fast == True:
         raise Exception(f"The specified directory ({self.source_dir}) does not exist (fail_fast={fail_fast}).")
 
-      for order in range(len(entities)):
-        entity = entities[order]
+      for i in range(len(entities)):
+        entity = entities[i]
         round = 2                                                  # Default round for all notebooks
         include_solution = include_solutions                       # Initialize to the default value
         path = entity["path"][len(self.source_dir)+1:]             # Get the notebook's path relative too the source root
@@ -199,7 +199,7 @@ class TestConfig:
           print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
         else:
           # Add our notebook to the set of notebooks to be tested.
-          self.notebooks[path] = NotebookDef(round=round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order)
+          self.notebooks[path] = NotebookDef(round=round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order=i)
 
     def print(self):
         print("-"*100)
