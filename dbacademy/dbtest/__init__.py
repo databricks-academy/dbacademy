@@ -111,7 +111,7 @@ class TestConfig:
         self.cloud = dbgems.get_cloud() if cloud is None else cloud
 
         # Update the name of the database results will be logged to - convert any special characters to underscores
-        results_database = f"test_results_{dbgems.get_cloud().lower()}" if results_database is None else results_database
+        results_database = f"smoke_tests_{dbgems.get_cloud().lower()}" if results_database is None else results_database
         results_database = re.sub("[^a-zA-Z0-9]", "_", results_database.lower())
         # Make N passes over the database name to remove duplicate underscores
         for i in range(10): results_database = results_database.replace("__", "_")
