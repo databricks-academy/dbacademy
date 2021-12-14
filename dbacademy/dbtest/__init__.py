@@ -364,7 +364,7 @@ def log_run(test_config, response, job_name, ignored):
         # Append our tests results to the database
         spark.sql(f"CREATE DATABASE IF NOT EXISTS {test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
         (spark.createDataFrame(test_results)
-         .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
+         .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
          .withColumn("executed_at", current_timestamp())
          .write.format("csv").mode("append").saveAsTable(f"{test_config.results_database}.{test_config.results_table}"))
         print(f"*** Logged results to {test_config.results_table}")
