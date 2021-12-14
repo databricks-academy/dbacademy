@@ -107,8 +107,11 @@ class TestConfig:
         # The instance of this test run
         self.suite_id = str(time.time())+"-"+str(uuid.uuid1())
 
+        # The name of the cloud on which this tests was ran
+        self.cloud = dbgems.get_cloud() if cloud is None else cloud
+
         # Update the name of the database results will be logged to - convert any special characters to underscores
-        results_database = "test_results" if results_database is None else results_database
+        results_database = f"test_results_{dbgems.get_cloud().lower()}" if results_database is None else results_database
         results_database = re.sub("[^a-zA-Z0-9]", "_", results_database.lower())
         # Make N passes over the database name to remove duplicate underscores
         for i in range(10): results_database = results_database.replace("__", "_")
@@ -149,9 +152,6 @@ class TestConfig:
         self.spark_conf = dict() if spark_conf is None else spark_conf
         if self.workers == 0:
           self.spark_conf["spark.master"] = "local[*]"
-
-        # The name of the cloud on which this tests was ran
-        self.cloud = dbgems.get_cloud() if cloud is None else cloud
         
         # The libraries to be attached to the cluster
         self.libraries = [] if libraries is None else libraries
@@ -361,7 +361,7 @@ def log_run(test_config, response, job_name, ignored):
         sc, spark, dbutils = dbgems.init_locals()
 
         # Append our tests results to the database
-        spark.sql(f"CREATE DATABASE IF NOT EXISTS {test_config.results_database}")
+        # spark.sql(f"CREATE DATABASE IF NOT EXISTS {test_config.results_database}")
         (spark.createDataFrame(test_results)
          .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version")
          .withColumn("executed_at", current_timestamp())
