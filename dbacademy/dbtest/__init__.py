@@ -357,7 +357,7 @@ def log_run(test_config, response, job_name, ignored):
 
         test_id = str(time.time())+"-"+str(uuid.uuid1())
 
-        test_results = [(test_config.suite_id, test_id, test_config.name, result_state, execution_duration, test_config.cloud, job_name, job_id, run_id, notebook_path, test_config.spark_version)]
+        test_results = [(test_config.suite_id, test_id, test_config.name, result_state, execution_duration, test_config.cloud, job_name, job_id, run_id, notebook_path, test_config.spark_version, test_config.test_type)]
 
         sc, spark, dbutils = dbgems.init_locals()
 
