@@ -102,6 +102,7 @@ class TestConfig:
         from dbacademy import dbrest
         from dbacademy import dbgems
 
+        self.test_type = None
         self.client = dbrest.DBAcademyRestClient() if client is None else client
 
         # The instance of this test run
@@ -379,7 +380,8 @@ def log_run(test_config, response, job_name, ignored):
           "job_id": job_id, 
           "run_id": run_id, 
           "notebook_path": notebook_path, 
-          "spark_version": test_config.spark_version
+          "spark_version": test_config.spark_version,
+          "test_type": test_config.test_type,
         }))
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         print(f"*** Logged results to REST endpoint")
@@ -387,6 +389,7 @@ def log_run(test_config, response, job_name, ignored):
     except Exception:
         print(f"Unable to log test results.")
         traceback.print_exc()
+
 
 # DEPRECATED - use TestSuite instead
 class SuiteBuilder:
@@ -406,6 +409,7 @@ class SuiteBuilder:
         job_name = f"[TEST] {self.course_name} | {self.test_type} | {hash}"
         self.jobs[job_name] = (notebook_path, 0, 0, ignored)
 
+
 class TestInstance:
     def __init__(self, test_config, notebook, test_dir, test_type):
       import hashlib
@@ -422,8 +426,8 @@ class TestInstance:
       hash = hashlib.sha256(self.notebook_path.encode()).hexdigest()
       self.job_name = f"[TEST] {test_config.name} | {test_type} | {hash}"
     
-    # def to_init_tuple():
-    #  return (self.notebook_path, 0, 0, self.notebook.ignored)
+      # Hack to bring the test type down into the test resutls via the test_config
+      test_config.test_type = test_type
 
 
 class TestSuite:
