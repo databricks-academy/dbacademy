@@ -369,7 +369,7 @@ def log_run(test_config, response, job_name, ignored):
          .write.format("csv").mode("append").saveAsTable(f"{test_config.results_database}.{test_config.results_table}"))
         print(f"*** Logged results to {test_config.results_table}")
 
-        response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/smoke-tests", data=json.dumps({
+        response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
           "suite_id": test_config.suite_id, 
           "test_id": test_id, 
           "name": test_config.name, 
