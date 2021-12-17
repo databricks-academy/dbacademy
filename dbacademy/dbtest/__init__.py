@@ -384,10 +384,6 @@ def log_run(test_config, response, job_name, ignored):
           "test_type": test_config.test_type,
         }))
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
-        print("-"*80)
-        print(f"*** Logged results to REST endpoint")
-        print(response.text)
-        print("-"*80)
 
     except Exception:
         print(f"Unable to log test results.")
