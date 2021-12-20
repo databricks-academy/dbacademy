@@ -1,5 +1,3 @@
-from dbacademy.dbpublish.notebook_def_class import NotebookDef
-from dbacademy.dbpublish.publisher_class import Publisher
 from datetime import date
 from dbacademy.dbrest import DBAcademyRestClient
 
@@ -326,3 +324,7 @@ def update_and_validate_git_branch(client, path, target_branch="published"):
     print(f"""Path:   {path}""")
     print(f"""Before: {a_repo["branch"]}  |  {a_repo["head_commit_id"]}""")
     print(f"""After:  {b_repo["branch"]}  |  {b_repo["head_commit_id"]}""")
+
+
+from dbacademy.dbpublish.notebook_def_class import NotebookDef
+from dbacademy.dbpublish.publisher_class import Publisher
