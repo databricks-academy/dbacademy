@@ -198,7 +198,7 @@ class NotebookDef:
             print()
             print("="*80)
             what = "error" if len(self.errors) == 1 else "errors"
-            print(f"ABORTING: {len(self.errors)} {what} were found while publishing the notebook\n{self.path}")
+            print(f"ABORTING: {len(self.errors)} {what} were found while publishing the notebook\n.../{self.path}")
             for error in self.errors:
                 print("-" * 80)
                 print(error.message)
