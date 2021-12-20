@@ -204,8 +204,6 @@ class NotebookDef:
             students_commands.append(self.get_footer_cell(language))
             solutions_commands.append(self.get_footer_cell(language))
 
-        self.assert_no_errors()
-
         # Create the student's notebooks
         students_notebook_path = f"{self.target_dir}/{self.path}"
         print(students_notebook_path)
@@ -234,6 +232,8 @@ class NotebookDef:
         final_source += "" if commands[-1].startswith(f"{m} MAGIC") else "\n\n"
 
         final_source = self.replace_contents(final_source)
+
+        self.assert_no_errors()
 
         client = DBAcademyRestClient()
         parent_dir = "/".join(target_path.split("/")[0:-1])
