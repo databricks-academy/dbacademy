@@ -64,7 +64,7 @@ class Publisher:
             print("**** backed up version_info_source ****")
         except:
             version_info_source = None
-            print("**** version_info_source was not found ****")
+            print(f"""**** The notebook "{version_info_notebook.path}" was not found ****""")
 
         # Now that we backed up the version-info, we can delete everything.
         target_status = self.client.workspace().get_status(self.target_dir)
