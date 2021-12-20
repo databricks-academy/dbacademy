@@ -63,16 +63,20 @@ class Publisher:
             version_info_source = self.client.workspace().export_notebook(f"{version_info_notebook.target_dir}/{version_info_notebook.path}")
             print("**** backed up version_info_source ****")
         except:
-            pass # It's OK if the published version of this notebook doesn't exist
+            pass  # It's OK if the published version of this notebook doesn't exist
             # print(f"""**** The notebook "{version_info_notebook.path}" was not found ****""")
+
+        print(f"Source: {self.source_dir}")
+        print(f"Target: {self.target_dir}")
 
         # Now that we backed up the version-info, we can delete everything.
         target_status = self.client.workspace().get_status(self.target_dir)
         if target_status is None:
-            pass  # Who care, it doesn't already exist.
+            pass  # Who cares, it doesn't already exist.
         elif mode == "no-overwrite":
             assert target_status is None, "The target path already exists and the build is configured for no-overwrite"
         elif mode == "delete":
+            print(f"Deleting target directory...")
             self.client.workspace().delete_path(self.target_dir)
         elif mode.lower() != "overwrite":
             raise Exception("Expected mode to be one of None, DELETE or OVERWRITE")

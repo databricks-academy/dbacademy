@@ -51,10 +51,7 @@ class WorkspaceClient:
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/workspace/mkdirs", {"path": path})
 
     def delete_path(self, path) -> dict:
-        print("-" * 80)
-        print(f"Deleting {path}")
         payload = {"path": path, "recursive": True}
-
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/workspace/delete", payload, expected=[200, 404])
 
     def import_notebook(self, language, notebook_path, content) -> dict:
