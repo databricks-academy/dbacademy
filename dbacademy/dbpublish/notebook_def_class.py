@@ -197,11 +197,13 @@ class NotebookDef:
         if len(self.errors) > 0:
             print()
             print("="*80)
+            print("="*80)
             what = "error" if len(self.errors) == 1 else "errors"
             print(f"ABORTING: {len(self.errors)} {what} were found while publishing the notebook\n.../{self.path}")
             for error in self.errors:
                 print("-" * 80)
                 print(error.message)
+            print("="*80)
             print("="*80)
             print()
             raise Exception("Publish aborted - see previous errors for more information")
