@@ -61,10 +61,10 @@ class Publisher:
         print(f"Source: {self.source_dir}")
         print(f"Target: {self.target_dir}")
         print("Arguments:")
-        print(f"mode =      {mode}")
-        print(f"verbose =   {verbose}")
-        print(f"debugging = {debugging}")
-        print(f"testing =   {testing}")
+        print(f"  mode =      {mode}")
+        print(f"  verbose =   {verbose}")
+        print(f"  debugging = {debugging}")
+        print(f"  testing =   {testing}")
 
         # Backup the version info in case we are just testing
         try:
