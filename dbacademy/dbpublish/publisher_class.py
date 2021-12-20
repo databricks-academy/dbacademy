@@ -60,10 +60,10 @@ class Publisher:
 
         print(f"Source:        {self.source_dir}")
         print(f"Target:        {self.target_dir}")
-        print(f"arg mode:      {mode}")
-        print(f"arg verbose:   {verbose}")
-        print(f"arg debugging: {debugging}")
-        print(f"arg testing:   {testing}")
+        print(f"Arg mode:      {mode}")
+        print(f"Arg verbose:   {verbose}")
+        print(f"Arg debugging: {debugging}")
+        print(f"Arg testing:   {testing}")
 
         # Backup the version info in case we are just testing
         try:
@@ -106,3 +106,6 @@ class Publisher:
             self.client.workspace().import_notebook("PYTHON", version_info_path, version_info_source)
         else:
             version_info_notebook.publish(verbose=verbose, debugging=debugging)
+
+        print("-"*80)
+        print("All done!")
