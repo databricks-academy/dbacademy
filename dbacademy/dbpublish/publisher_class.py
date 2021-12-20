@@ -63,7 +63,7 @@ class Publisher:
             version_info_source = self.client.workspace().export_notebook(f"{version_info_notebook.target_dir}/{version_info_notebook.path}")
             print("**** backed up version_info_source ****")
         except:
-            pass  # It's OK if the published version of this notebook doesn't exist
+            version_info_source = None  # It's OK if the published version of this notebook doesn't exist
             # print(f"""**** The notebook "{version_info_notebook.path}" was not found ****""")
 
         print(f"Mode:      {mode}")
