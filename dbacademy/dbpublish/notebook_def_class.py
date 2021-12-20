@@ -44,7 +44,7 @@ class NotebookDef:
         return result
 
     def test(self, assertion, message: str) -> None:
-        if not assertion():
+        if assertion is None or not assertion():
             self.errors.append(NotebookError(message))
 
     def publish(self) -> None:
@@ -64,7 +64,7 @@ class NotebookDef:
         students_commands = []
         solutions_commands = []
 
-        cmd_delim = get_cmd_delim(language)
+        cmd_delim = self.get_cmd_delim(language)
         commands = raw_source.split(cmd_delim)
 
         todo_count = 0
@@ -85,12 +85,11 @@ class NotebookDef:
 
             command = commands[i].lstrip()
 
-            if "DBTITLE" in command:
-                raise Exception(f"Unsupported Cell-Title found in Cmd #{i + 1}")
+            self.test("DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}")
 
             # Extract the leading comments and then the directives
-            leading_comments = get_leading_comments(language, command.strip())
-            directives = parse_directives(i, leading_comments)
+            leading_comments = self.get_leading_comments(language, command.strip())
+            directives = self.parse_directives(i, leading_comments)
 
             if debugging:
                 if len(leading_comments) > 0:
@@ -124,22 +123,22 @@ class NotebookDef:
 
             # Process the various directives
             if command.strip() == "":
-                skipped += skipping(i, "Empty Cell")
+                skipped += self.skipping(i, "Empty Cell")
             elif D_SOURCE_ONLY in directives:
-                skipped += skipping(i, "Source-Only")
+                skipped += self.skipping(i, "Source-Only")
             elif D_INCLUDE_HEADER_TRUE in directives:
-                skipped += skipping(i, "Including Header")
+                skipped += self.skipping(i, "Including Header")
             elif D_INCLUDE_HEADER_FALSE in directives:
-                skipped += skipping(i, "Excluding Header")
+                skipped += self.skipping(i, "Excluding Header")
             elif D_INCLUDE_FOOTER_TRUE in directives:
-                skipped += skipping(i, "Including Footer")
+                skipped += self.skipping(i, "Including Footer")
             elif D_INCLUDE_FOOTER_FALSE in directives:
-                skipped += skipping(i, "Excluding Footer")
+                skipped += self.skipping(i, "Excluding Footer")
 
             elif D_TODO in directives:
                 # This is a TODO cell, exclude from solution notebooks
                 todo_count += 1
-                command = clean_todo_cell(language, command, i)
+                command = self.clean_todo_cell(language, command, i)
                 students_commands.append(command)
 
             elif D_ANSWER in directives:
@@ -188,12 +187,12 @@ class NotebookDef:
         self.test(lambda: answer_count >= todo_count, f"Found more {D_TODO} commands ({todo_count}) than {D_ANSWER} commands ({answer_count})")
 
         if include_header is True:
-            students_commands.insert(0, get_header_cell(language))
-            solutions_commands.insert(0, get_header_cell(language))
+            students_commands.insert(0, self.get_header_cell(language))
+            solutions_commands.insert(0, self.get_header_cell(language))
 
         if include_footer is True:
-            students_commands.append(get_footer_cell(language))
-            solutions_commands.append(get_footer_cell(language))
+            students_commands.append(self.get_footer_cell(language))
+            solutions_commands.append(self.get_footer_cell(language))
 
         if len(self.errors) > 0:
             print("="*80)
@@ -219,260 +218,247 @@ class NotebookDef:
                 self.publish_notebook(language, solutions_commands, solutions_notebook_path)
 
     def publish_notebook(self, language: str, commands: list, target_path: str) -> None:
-        m = get_comment_marker(language)
+        m = self.get_comment_marker(language)
         final_source = f"{m} Databricks notebook source\n"
 
         # Processes all commands except the last
         for command in commands[:-1]:
             final_source += command
-            final_source += get_cmd_delim(language)
+            final_source += self.get_cmd_delim(language)
 
         # Process the last command
-        m = get_comment_marker(language)
+        m = self.get_comment_marker(language)
         final_source += commands[-1]
         final_source += "" if commands[-1].startswith(f"{m} MAGIC") else "\n\n"
 
-        final_source = replace_contents(final_source, self.replacements)
+        final_source = self.replace_contents(final_source)
 
         client = DBAcademyRestClient()
         parent_dir = "/".join(target_path.split("/")[0:-1])
         client.workspace().mkdirs(parent_dir)
         client.workspace().import_notebook(language.upper(), target_path, final_source)
 
+    def clean_todo_cell(self, source_language, command, cmd):
+        new_command = ""
+        lines = command.split("\n")
+        source_m = self.get_comment_marker(source_language)
 
-def replace_contents(contents: str, replacements: dict):
-    import re
+        first = 0
+        prefix = source_m
 
-    for key in replacements:
-        old_value = "{{" + key + "}}"
-        new_value = replacements[key]
-        contents = contents.replace(old_value, new_value)
+        for test_a in ["%r", "%md", "%sql", "%python", "%scala"]:
+            test_b = f"{source_m} MAGIC {test_a}"
+            if len(lines) > 1 and (lines[0].startswith(test_a) or lines[0].startswith(test_b)):
+                first = 1
+                cell_m = self.get_comment_marker(test_a)
+                prefix = f"{source_m} MAGIC {cell_m}"
 
-    mustache_pattern = re.compile(r"{{[a-zA-Z\\-\\_\\#\\/]*}}")
-    result = mustache_pattern.search(contents)
-    if result is not None:
-        raise Exception(f"A mustache pattern was detected after all replacements were processed: {result}")
+        # print(f"Clean TODO cell, Cmd {cmd+1}")
 
-    for icon in [":HINT:", ":CAUTION:", ":BESTPRACTICE:", ":SIDENOTE:", ":NOTE:"]:
-        if icon in contents: raise Exception(
-            f"The deprecated {icon} pattern was found after all replacements were processed.")
+        for i in range(len(lines)):
+            line = lines[i]
 
-    # replacements[":HINT:"] =         """<img src="https://files.training.databricks.com/images/icon_hint_24.png"/>&nbsp;**Hint:**"""
-    # replacements[":CAUTION:"] =      """<img src="https://files.training.databricks.com/images/icon_warn_24.png"/>"""
-    # replacements[":BESTPRACTICE:"] = """<img src="https://files.training.databricks.com/images/icon_best_24.png"/>"""
-    # replacements[":SIDENOTE:"] =     """<img src="https://files.training.databricks.com/images/icon_note_24.png"/>"""
+            if i == 0 and first == 1:
+                # print(f" - line #{i+1}: First line is a magic command")
+                # This is the first line, but the first is a magic command
+                new_command += line
 
-    return contents
+            elif (i == first) and line.strip() not in [f"{prefix} {D_TODO}"]:
+                self.test(None, f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be the "{D_TODO}" directive: "{line}"\n{"-" * 80}\n{command}\n{"-" * 80}""")
 
+            elif not line.startswith(prefix) and line.strip() != "" and line.strip() != f"{source_m} MAGIC":
+                self.test(None, f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be commented out: "{line}" with prefix "{prefix}" """)
 
-def get_comment_marker(language):
-    language = language.replace("%", "")
+            elif line.strip().startswith(f"{prefix} {D_TODO}"):
+                # print(f""" - line #{i+1}: Processing TODO line ({prefix}): "{line}" """)
+                # Add as-is
+                new_command += line
 
-    if language.lower() in "python":
-        return "#"
-    elif language.lower() in "sql":
-        return "--"
-    elif language.lower() in "md":
-        return "--"
-    elif language.lower() in "r":
-        return "#"
-    elif language.lower() in "scala":
-        return "//"
-    else:
-        raise Exception(f"The language {language} is not supported.")
+            elif line.strip() == "" or line.strip() == f"{source_m} MAGIC":
+                # print(f""" - line #{i+1}: Empty line, just add: "{line}" """)
+                # No comment, do not process
+                new_command += line
 
-
-def get_cmd_delim(language):
-    marker = get_comment_marker(language)
-    return f"\n{marker} COMMAND ----------\n"
-
-
-def get_leading_comments(language, command) -> list:
-    leading_comments = []
-    lines = command.split("\n")
-
-    source_m = get_comment_marker(language)
-    first_line = lines[0].lower()
-
-    if first_line.startswith(f"{source_m} magic %md"):
-        cell_m = get_comment_marker("md")
-    elif first_line.startswith(f"{source_m} magic %sql"):
-        cell_m = get_comment_marker("sql")
-    elif first_line.startswith(f"{source_m} magic %python"):
-        cell_m = get_comment_marker("python")
-    elif first_line.startswith(f"{source_m} magic %scala"):
-        cell_m = get_comment_marker("scala")
-    elif first_line.startswith(f"{source_m} magic %run"):
-        cell_m = source_m  # Included to preclude traping for R language below
-    elif first_line.startswith(f"{source_m} magic %r"):
-        cell_m = get_comment_marker("r")
-    else:
-        cell_m = source_m
-
-    for il in range(len(lines)):
-        line = lines[il]
-
-        # Start by removing any "source" prefix
-        if line.startswith(f"{source_m} MAGIC"):
-            length = len(source_m) + 6
-            line = line[length:].strip()
-
-        elif line.startswith(f"{source_m} COMMAND"):
-            length = len(source_m) + 8
-            line = line[length:].strip()
-
-        # Next, if it starts with a magic command, remove it.
-        if line.strip().startswith("%"):
-            # Remove the magic command from this line
-            pos = line.find(" ")
-            if pos == -1:
-                line = ""
-            else:
-                line = line[pos:].strip()
-
-        # Finally process the refactored-line for any comments.
-        if line.strip() == cell_m or line.strip() == "":
-            # empty comment line, don't break, just ignore
-            pass
-
-        elif line.strip().startswith(cell_m):
-            # append to our list
-            comment = line.strip()[len(cell_m):].strip()
-            leading_comments.append(comment)
-
-        else:
-            # All done, this is a non-comment
-            return leading_comments
-
-    return leading_comments
-
-
-def parse_directives(i, comments):
-    import re
-
-    directives = list()
-    for line in comments:
-        if line == line.upper():
-            # The comment is in all upper case,
-            # must be one or more directives
-            directive = line.strip()
-            mod_directive = re.sub("[^a-zA-Z_]", "_", directive)
-
-            if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE,
-                             D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
-                directives.append(line)
-
-            elif "FILL-IN" in directive or "FILL_IN" in directive:
-                # print("Skipping directive: FILL-IN")
-                pass  # Not a directive, just a random chance
-
-            elif directive != mod_directive:
-                if mod_directive in [f"__{D_TODO}", f"___{D_TODO}"]:
-                    raise Exception(f"Double-Comment of TODO directive found in Cmd #{i + 1}")
-
-                # print(f"Skipping directive: {directive} vs {mod_directive}")
-                pass  # Number and symbols are not used in directives
+            elif line.strip().startswith(f"{prefix} "):
+                # print(f""" - line #{i+1}: Removing comment and space ({prefix}): "{line}" """)
+                # Remove comment and space
+                length = len(prefix) + 1
+                new_command += line[length:]
 
             else:
-                # print(f"""Processing "{directive}" in Cmd #{i+1} """)
-                if " " in directive:
-                    raise ValueError(f"""Whitespace found in directive "{directive}", Cmd #{i + 1}: {line}""")
-                if "-" in directive:
-                    raise ValueError(f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
-                if directive not in SUPPORTED_DIRECTIVES:
-                    raise ValueError(
-                        f"""Unsupported directive "{directive}" in Cmd #{i + 1} {SUPPORTED_DIRECTIVES}: {line}""")
-                directives.append(line)
+                # print(f""" - line #{i+1}: Removing comment only ({prefix}): "{line}" """)
+                # Remove just the comment
+                length = len(prefix)
+                new_command += line[length:]
 
-    return directives
+            # Add new line for all but the last line
+            if i < len(lines) - 1:
+                new_command += "\n"
 
+        return new_command
 
-def skipping(i, label):
-    print(f"Skipping Cmd #{i + 1} - {label}")
-    return 1
+    def replace_contents(self, contents: str):
+        import re
 
+        for key in self.replacements:
+            old_value = "{{" + key + "}}"
+            new_value = self.replacements[key]
+            contents = contents.replace(old_value, new_value)
 
-def clean_todo_cell(source_language, command, cmd):
-    new_command = ""
-    lines = command.split("\n")
-    source_m = get_comment_marker(source_language)
+        mustache_pattern = re.compile(r"{{[a-zA-Z\-\\_\\#\\/]*}}")
+        result = mustache_pattern.search(contents)
+        if result is not None:
+            self.test(None, f"A mustache pattern was detected after all replacements were processed: {result}")
 
-    first = 0
-    prefix = source_m
+        for icon in [":HINT:", ":CAUTION:", ":BESTPRACTICE:", ":SIDENOTE:", ":NOTE:"]:
+            if icon in contents:
+                self.test(None, f"The deprecated {icon} pattern was found after all replacements were processed.")
 
-    for test_a in ["%r", "%md", "%sql", "%python", "%scala"]:
-        test_b = f"{source_m} MAGIC {test_a}"
-        if len(lines) > 1 and (lines[0].startswith(test_a) or lines[0].startswith(test_b)):
-            first = 1
-            cell_m = get_comment_marker(test_a)
-            prefix = f"{source_m} MAGIC {cell_m}"
+        # No longer supported
+        # replacements[":HINT:"] =         """<img src="https://files.training.databricks.com/images/icon_hint_24.png"/>&nbsp;**Hint:**"""
+        # replacements[":CAUTION:"] =      """<img src="https://files.training.databricks.com/images/icon_warn_24.png"/>"""
+        # replacements[":BESTPRACTICE:"] = """<img src="https://files.training.databricks.com/images/icon_best_24.png"/>"""
+        # replacements[":SIDENOTE:"] =     """<img src="https://files.training.databricks.com/images/icon_note_24.png"/>"""
 
-    # print(f"Clean TODO cell, Cmd {cmd+1}")
+        return contents
 
-    for i in range(len(lines)):
-        line = lines[i]
+    def get_comment_marker(self, language):
+        language = language.replace("%", "")
 
-        if i == 0 and first == 1:
-            # print(f" - line #{i+1}: First line is a magic command")
-            # This is the first line, but the first is a magic command
-            new_command += line
-
-        elif (i == first) and line.strip() not in [f"{prefix} {D_TODO}"]:
-            raise Exception(
-                f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be the "{D_TODO}" directive: "{line}"\n{"-" * 80}\n{command}\n{"-" * 80}""")
-
-        elif not line.startswith(prefix) and line.strip() != "" and line.strip() != f"{source_m} MAGIC":
-            raise Exception(f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be commented out: "{line}" with prefix "{prefix}" """)
-
-        elif line.strip().startswith(f"{prefix} {D_TODO}"):
-            # print(f""" - line #{i+1}: Processing TODO line ({prefix}): "{line}" """)
-            # Add as-is
-            new_command += line
-
-        elif line.strip() == "" or line.strip() == f"{source_m} MAGIC":
-            # print(f""" - line #{i+1}: Empty line, just add: "{line}" """)
-            # No comment, do not process
-            new_command += line
-
-        elif line.strip().startswith(f"{prefix} "):
-            # print(f""" - line #{i+1}: Removing comment and space ({prefix}): "{line}" """)
-            # Remove comment and space
-            length = len(prefix) + 1
-            new_command += line[length:]
-
+        if language.lower() in "python":
+            return "#"
+        elif language.lower() in "sql":
+            return "--"
+        elif language.lower() in "md":
+            return "--"
+        elif language.lower() in "r":
+            return "#"
+        elif language.lower() in "scala":
+            return "//"
         else:
-            # print(f""" - line #{i+1}: Removing comment only ({prefix}): "{line}" """)
-            # Remove just the comment
-            length = len(prefix)
-            new_command += line[length:]
+            raise ValueError(f"The language {language} is not supported.")
 
-        # Add new line for all but the last line
-        if i < len(lines) - 1:
-            new_command += "\n"
+    def get_cmd_delim(self, language):
+        marker = self.get_comment_marker(language)
+        return f"\n{marker} COMMAND ----------\n"
 
-    return new_command
+    def get_leading_comments(self, language, command) -> list:
+        leading_comments = []
+        lines = command.split("\n")
 
+        source_m = self.get_comment_marker(language)
+        first_line = lines[0].lower()
 
-def get_header_cell(language):
-    m = get_comment_marker(language)
-    return f"""
-{m} MAGIC
-{m} MAGIC %md-sandbox
-{m} MAGIC
-{m} MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
-{m} MAGIC   <img src="https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png" alt="Databricks Learning" style="width: 600px">
-{m} MAGIC </div>
-""".strip()
+        if first_line.startswith(f"{source_m} magic %md"):
+            cell_m = self.get_comment_marker("md")
+        elif first_line.startswith(f"{source_m} magic %sql"):
+            cell_m = self.get_comment_marker("sql")
+        elif first_line.startswith(f"{source_m} magic %python"):
+            cell_m = self.get_comment_marker("python")
+        elif first_line.startswith(f"{source_m} magic %scala"):
+            cell_m = self.get_comment_marker("scala")
+        elif first_line.startswith(f"{source_m} magic %run"):
+            cell_m = source_m  # Included to preclude trapping for R language below
+        elif first_line.startswith(f"{source_m} magic %r"):
+            cell_m = self.get_comment_marker("r")
+        else:
+            cell_m = source_m
 
+        for il in range(len(lines)):
+            line = lines[il]
 
-def get_footer_cell(language):
-    from datetime import date
+            # Start by removing any "source" prefix
+            if line.startswith(f"{source_m} MAGIC"):
+                length = len(source_m) + 6
+                line = line[length:].strip()
 
-    m = get_comment_marker(language)
-    return f"""
-{m} MAGIC %md-sandbox
-{m} MAGIC &copy; {date.today().year} Databricks, Inc. All rights reserved.<br/>
-{m} MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
-{m} MAGIC <br/>
-{m} MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>
-""".strip()
+            elif line.startswith(f"{source_m} COMMAND"):
+                length = len(source_m) + 8
+                line = line[length:].strip()
+
+            # Next, if it starts with a magic command, remove it.
+            if line.strip().startswith("%"):
+                # Remove the magic command from this line
+                pos = line.find(" ")
+                if pos == -1:
+                    line = ""
+                else:
+                    line = line[pos:].strip()
+
+            # Finally process the refactored-line for any comments.
+            if line.strip() == cell_m or line.strip() == "":
+                # empty comment line, don't break, just ignore
+                pass
+
+            elif line.strip().startswith(cell_m):
+                # append to our list
+                comment = line.strip()[len(cell_m):].strip()
+                leading_comments.append(comment)
+
+            else:
+                # All done, this is a non-comment
+                return leading_comments
+
+        return leading_comments
+
+    def parse_directives(self, i, comments):
+        import re
+
+        directives = list()
+        for line in comments:
+            if line == line.upper():
+                # The comment is in all upper case,
+                # must be one or more directives
+                directive = line.strip()
+                mod_directive = re.sub("[^a-zA-Z_]", "_", directive)
+
+                if directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY, D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE,
+                                 D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
+                    directives.append(line)
+
+                elif "FILL-IN" in directive or "FILL_IN" in directive:
+                    # print("Skipping directive: FILL-IN")
+                    pass  # Not a directive, just a random chance
+
+                elif directive != mod_directive:
+                    if mod_directive in [f"__{D_TODO}", f"___{D_TODO}"]:
+                        self.test(None, f"Double-Comment of TODO directive found in Cmd #{i + 1}")
+
+                    # print(f"Skipping directive: {directive} vs {mod_directive}")
+                    pass  # Number and symbols are not used in directives
+
+                else:
+                    # print(f"""Processing "{directive}" in Cmd #{i+1} """)
+                    self.test(" " not in directive, f"""Whitespace found in directive "{directive}", Cmd #{i + 1}: {line}""")
+                    self.test("-" not in directive, f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
+                    self.test(directive in SUPPORTED_DIRECTIVES, f"""Unsupported directive "{directive}" in Cmd #{i + 1} {SUPPORTED_DIRECTIVES}: {line}""")
+                    directives.append(line)
+
+        return directives
+
+    def skipping(self, i, label):
+        print(f"Skipping Cmd #{i + 1} - {label}")
+        return 1
+
+    def get_header_cell(self, language):
+        m = self.get_comment_marker(language)
+        return f"""
+    {m} MAGIC
+    {m} MAGIC %md-sandbox
+    {m} MAGIC
+    {m} MAGIC <div style="text-align: center; line-height: 0; padding-top: 9px;">
+    {m} MAGIC   <img src="https://databricks.com/wp-content/uploads/2018/03/db-academy-rgb-1200px.png" alt="Databricks Learning" style="width: 600px">
+    {m} MAGIC </div>
+    """.strip()
+
+    def get_footer_cell(self, language):
+        from datetime import date
+
+        m = self.get_comment_marker(language)
+        return f"""
+    {m} MAGIC %md-sandbox
+    {m} MAGIC &copy; {date.today().year} Databricks, Inc. All rights reserved.<br/>
+    {m} MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
+    {m} MAGIC <br/>
+    {m} MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>
+    """.strip()
