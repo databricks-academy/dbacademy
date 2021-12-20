@@ -63,7 +63,8 @@ class Publisher:
             version_info_source = self.client.workspace().export_notebook(f"{version_info_notebook.target_dir}/{version_info_notebook.path}")
             print("**** backed up version_info_source ****")
         except:
-            print(f"""**** The notebook "{version_info_notebook.path}" was not found ****""")
+            pass # It's OK if the published version of this notebook doesn't exist
+            # print(f"""**** The notebook "{version_info_notebook.path}" was not found ****""")
 
         # Now that we backed up the version-info, we can delete everything.
         target_status = self.client.workspace().get_status(self.target_dir)
