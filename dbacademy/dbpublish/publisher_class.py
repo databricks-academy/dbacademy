@@ -58,12 +58,12 @@ class Publisher:
 
         assert version_info_notebook is not None, f"""The required notebook "{self.version_info_notebook_name}" was not found."""
 
-        print(f"Source:    {self.source_dir}")
-        print(f"Target:    {self.target_dir}")
-        print(f"Mode:      {mode}")
-        print(f"Verbose:   {verbose}")
-        print(f"Debugging: {debugging}")
-        print(f"Testing:   {testing}")
+        print(f"Source:        {self.source_dir}")
+        print(f"Target:        {self.target_dir}")
+        print(f"arg mode:      {mode}")
+        print(f"arg verbose:   {verbose}")
+        print(f"arg debugging: {debugging}")
+        print(f"arg testing:   {testing}")
 
         # Backup the version info in case we are just testing
         try:
