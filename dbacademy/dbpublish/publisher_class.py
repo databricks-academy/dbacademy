@@ -58,20 +58,22 @@ class Publisher:
 
         assert version_info_notebook is not None, f"""The required notebook "{self.version_info_notebook_name}" was not found."""
 
-        # Backup the version info in case we are just testing
-        try:
-            version_info_source = self.client.workspace().export_notebook(f"{version_info_notebook.target_dir}/{version_info_notebook.path}")
-            print("**** backed up version_info_source ****")
-        except:
-            version_info_source = None  # It's OK if the published version of this notebook doesn't exist
-            # print(f"""**** The notebook "{version_info_notebook.path}" was not found ****""")
-
+        print(f"Source:    {self.source_dir}")
+        print(f"Target:    {self.target_dir}")
         print(f"Mode:      {mode}")
         print(f"Verbose:   {verbose}")
         print(f"Debugging: {debugging}")
         print(f"Testing:   {testing}")
-        print(f"Source:    {self.source_dir}")
-        print(f"Target:    {self.target_dir}")
+
+        # Backup the version info in case we are just testing
+        try:
+            version_info_source = self.client.workspace().export_notebook(f"{version_info_notebook.target_dir}/{version_info_notebook.path}")
+            if verbose: print("-"*80)
+            if verbose: print(f"Backed up .../{version_info_notebook.path}")
+        except:
+            if verbose: print("-"*80)
+            if verbose: print(f"An existing copy of .../{version_info_notebook.path} was not found to backup")
+            version_info_source = None  # It's OK if the published version of this notebook doesn't exist
 
         # Now that we backed up the version-info, we can delete everything.
         target_status = self.client.workspace().get_status(self.target_dir)
