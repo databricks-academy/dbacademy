@@ -14,6 +14,11 @@ SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY,
                         D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
 
 
+class NotebookError:
+    def __init__(self, message):
+        self.message = message
+
+
 class NotebookDef:
     def __init__(self, source_dir: str, target_dir: str, path: str, replacements: dict, include_solution: bool):
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
@@ -25,8 +30,10 @@ class NotebookDef:
         self.path = path
         self.source_dir = source_dir
         self.target_dir = target_dir
-        self.replacements = replacements
+        self.replacements = dict() if replacements is None else replacements
+
         self.include_solution = include_solution
+        self.errors = list()
 
     def __str__(self):
         result = self.path
@@ -35,6 +42,10 @@ class NotebookDef:
         result += f"\n - target_dir = {self.target_dir}"
         result += f"\n - replacements = {self.replacements}"
         return result
+
+    def test(self, assertion, message: str) -> None:
+        if not assertion():
+            self.errors.append(NotebookError(message))
 
     def publish(self) -> None:
         print("-" * 80)
@@ -109,7 +120,7 @@ class NotebookDef:
                 if directive not in [D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE,
                                      D_INCLUDE_FOOTER_FALSE]:
                     directive_count += 1
-            assert directive_count <= 1, f"Found multiple directives ({directive_count}) in Cmd #{i + 1}: {directives}"
+            self.test(lambda: directive_count <= 1, f"Found multiple directives ({directive_count}) in Cmd #{i + 1}: {directives}")
 
             # Process the various directives
             if command.strip() == "":
@@ -154,27 +165,27 @@ class NotebookDef:
                           "NEW_PART", "{dbr}"]
 
             for token in bdc_tokens:
-                assert token not in command, f"""Found the token "{token}" in command #{i + 1}"""
+                self.test(lambda: token not in command, f"""Found the token "{token}" in command #{i + 1}""")
 
             if language.lower() == "python":
-                assert "%python" not in command, f"""Found "%python" in command #{i + 1}"""
+                self.test(lambda: "%python" not in command, f"""Found "%python" in command #{i + 1}""")
             elif language.lower() == "sql":
-                assert "%sql" not in command, f"""Found "%sql" in command #{i + 1}"""
+                self.test(lambda: "%sql" not in command, f"""Found "%sql" in command #{i + 1}""")
             elif language.lower() == "scala":
-                assert "%scala" not in command, f"""Found "%scala" in command #{i + 1}"""
+                self.test(lambda: "%scala" not in command, f"""Found "%scala" in command #{i + 1}""")
             elif language.lower() == "r":
-                assert "%r " not in command, f"""Found "%r" in command #{i + 1}"""
-                assert "%r\n" not in command, f"""Found "%r" in command #{i + 1}"""
+                self.test(lambda: "%r " not in command,  f"""Found "%r" in command #{i + 1}""")
+                self.test(lambda: "%r\n" not in command, f"""Found "%r" in command #{i + 1}""")
             else:
                 raise Exception(f"The language {language} is not supported")
 
             for year in range(2017, 2999):
                 tag = f"{year} Databricks, Inc"
-                assert tag not in command, f"""Found copyright ({tag}) in command #{i + 1}"""
+                self.test(lambda: tag not in command, f"""Found copyright ({tag}) in command #{i + 1}""")
 
-        assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
-        assert found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found."
-        assert answer_count >= todo_count, f"Found more {D_TODO} commands ({todo_count}) than {D_ANSWER} commands ({answer_count})"
+        self.test(lambda: found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found.")
+        self.test(lambda: found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found.")
+        self.test(lambda: answer_count >= todo_count, f"Found more {D_TODO} commands ({todo_count}) than {D_ANSWER} commands ({answer_count})")
 
         if include_header is True:
             students_commands.insert(0, get_header_cell(language))
@@ -184,42 +195,48 @@ class NotebookDef:
             students_commands.append(get_footer_cell(language))
             solutions_commands.append(get_footer_cell(language))
 
+        if len(self.errors) > 0:
+            print("="*80)
+            what = "error" if len(self.errors) == 1 else "errors"
+            print(f"ABORTING: {len(self.errors)} {what} were found while publishing the notebook\n{self.path}")
+            for error in self.errors:
+                print("-" * 80)
+                print(error.message)
+            print("="*80)
+
         # Create the student's notebooks
         students_notebook_path = f"{self.target_dir}/{self.path}"
         print(students_notebook_path)
         print(f"...publishing {len(students_commands)} commands")
-        publish_notebook(language, students_commands, students_notebook_path, self.replacements)
+        self.publish_notebook(language, students_commands, students_notebook_path)
 
         # Create the solutions notebooks
         if self.include_solution:
             solutions_notebook_path = f"{self.target_dir}/Solutions/{self.path}"
             print(solutions_notebook_path)
             print(f"...publishing {len(solutions_commands)} commands")
-            publish_notebook(language, solutions_commands, solutions_notebook_path, self.replacements)
+            self.publish_notebook(language, solutions_commands, solutions_notebook_path)
 
+    def publish_notebook(self, language: str, commands: list, target_path: str) -> None:
+        m = get_comment_marker(language)
+        final_source = f"{m} Databricks notebook source\n"
 
-def publish_notebook(language: str, commands: list, target_path: str, replacements: dict = None) -> None:
-    replacements = dict() if replacements is None else replacements
+        # Processes all commands except the last
+        for command in commands[:-1]:
+            final_source += command
+            final_source += get_cmd_delim(language)
 
-    m = get_comment_marker(language)
-    final_source = f"{m} Databricks notebook source\n"
+        # Process the last command
+        m = get_comment_marker(language)
+        final_source += commands[-1]
+        final_source += "" if commands[-1].startswith(f"{m} MAGIC") else "\n\n"
 
-    # Processes all commands except the last
-    for command in commands[:-1]:
-        final_source += command
-        final_source += get_cmd_delim(language)
+        final_source = replace_contents(final_source, self.replacements)
 
-    # Process the last command
-    m = get_comment_marker(language)
-    final_source += commands[-1]
-    final_source += "" if commands[-1].startswith(f"{m} MAGIC") else "\n\n"
-
-    final_source = replace_contents(final_source, replacements)
-
-    client = DBAcademyRestClient()
-    parent_dir = "/".join(target_path.split("/")[0:-1])
-    client.workspace().mkdirs(parent_dir)
-    client.workspace().import_notebook(language.upper(), target_path, final_source)
+        client = DBAcademyRestClient()
+        parent_dir = "/".join(target_path.split("/")[0:-1])
+        client.workspace().mkdirs(parent_dir)
+        client.workspace().import_notebook(language.upper(), target_path, final_source)
 
 
 def replace_contents(contents: str, replacements: dict):
