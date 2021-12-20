@@ -85,7 +85,7 @@ class NotebookDef:
 
             command = commands[i].lstrip()
 
-            self.test("DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}")
+            self.test(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}")
 
             # Extract the leading comments and then the directives
             leading_comments = self.get_leading_comments(language, command.strip())
@@ -429,9 +429,9 @@ class NotebookDef:
 
                 else:
                     # print(f"""Processing "{directive}" in Cmd #{i+1} """)
-                    self.test(" " not in directive, f"""Whitespace found in directive "{directive}", Cmd #{i + 1}: {line}""")
-                    self.test("-" not in directive, f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
-                    self.test(directive in SUPPORTED_DIRECTIVES, f"""Unsupported directive "{directive}" in Cmd #{i + 1} {SUPPORTED_DIRECTIVES}: {line}""")
+                    self.test(lambda: " " not in directive, f"""Whitespace found in directive "{directive}", Cmd #{i + 1}: {line}""")
+                    self.test(lambda: "-" not in directive, f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
+                    self.test(lambda: directive in SUPPORTED_DIRECTIVES, f"""Unsupported directive "{directive}" in Cmd #{i + 1} {SUPPORTED_DIRECTIVES}: {line}""")
                     directives.append(line)
 
         return directives
