@@ -126,14 +126,10 @@ class NotebookDef:
                 skipped += self.skipping(i, "Empty Cell")
             elif D_SOURCE_ONLY in directives:
                 skipped += self.skipping(i, "Source-Only")
-            elif D_INCLUDE_HEADER_TRUE in directives:
-                skipped += self.skipping(i, "Including Header")
-            elif D_INCLUDE_HEADER_FALSE in directives:
-                skipped += self.skipping(i, "Excluding Header")
-            elif D_INCLUDE_FOOTER_TRUE in directives:
-                skipped += self.skipping(i, "Including Footer")
-            elif D_INCLUDE_FOOTER_FALSE in directives:
-                skipped += self.skipping(i, "Excluding Footer")
+            elif D_INCLUDE_HEADER_TRUE in directives:  skipped += self.skipping(i, None)
+            elif D_INCLUDE_HEADER_FALSE in directives: skipped += self.skipping(i, None)
+            elif D_INCLUDE_FOOTER_TRUE in directives:  skipped += self.skipping(i, None)
+            elif D_INCLUDE_FOOTER_FALSE in directives: skipped += self.skipping(i, None)
 
             elif D_TODO in directives:
                 # This is a TODO cell, exclude from solution notebooks
@@ -441,7 +437,8 @@ class NotebookDef:
         return directives
 
     def skipping(self, i, label):
-        print(f"Skipping Cmd #{i + 1} - {label}")
+        if label:
+            print(f"Skipping Cmd #{i + 1} - {label}")
         return 1
 
     def get_header_cell(self, language):
