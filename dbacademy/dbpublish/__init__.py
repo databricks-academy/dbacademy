@@ -326,5 +326,5 @@ def update_and_validate_git_branch(client, path, target_branch="published"):
     print(f"""After:  {b_repo["branch"]}  |  {b_repo["head_commit_id"]}""")
 
 
-from dbacademy.dbpublish.notebook_def_class import NotebookDef
-from dbacademy.dbpublish.publisher_class import Publisher
+from notebook_def_class import NotebookDef
+from publisher_class import Publisher
