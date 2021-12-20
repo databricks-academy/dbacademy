@@ -202,20 +202,20 @@ class NotebookDef:
                 print("-" * 80)
                 print(error.message)
             print("="*80)
+            raise Exception("Publish aborted - see previous errors for more information")
 
-        else:
-            # Create the student's notebooks
-            students_notebook_path = f"{self.target_dir}/{self.path}"
-            print(students_notebook_path)
-            print(f"...publishing {len(students_commands)} commands")
-            self.publish_notebook(language, students_commands, students_notebook_path)
+        # Create the student's notebooks
+        students_notebook_path = f"{self.target_dir}/{self.path}"
+        print(students_notebook_path)
+        print(f"...publishing {len(students_commands)} commands")
+        self.publish_notebook(language, students_commands, students_notebook_path)
 
-            # Create the solutions notebooks
-            if self.include_solution:
-                solutions_notebook_path = f"{self.target_dir}/Solutions/{self.path}"
-                print(solutions_notebook_path)
-                print(f"...publishing {len(solutions_commands)} commands")
-                self.publish_notebook(language, solutions_commands, solutions_notebook_path)
+        # Create the solutions notebooks
+        if self.include_solution:
+            solutions_notebook_path = f"{self.target_dir}/Solutions/{self.path}"
+            print(solutions_notebook_path)
+            print(f"...publishing {len(solutions_commands)} commands")
+            self.publish_notebook(language, solutions_commands, solutions_notebook_path)
 
     def publish_notebook(self, language: str, commands: list, target_path: str) -> None:
         m = self.get_comment_marker(language)
