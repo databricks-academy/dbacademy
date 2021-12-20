@@ -80,9 +80,10 @@ class Publisher:
         elif mode == "no-overwrite":
             assert target_status is None, "The target path already exists and the build is configured for no-overwrite"
         elif mode == "delete":
-            print(f"Deleting target directory...")
+            if verbose: print(f"Deleting target directory...")
             self.client.workspace().delete_path(self.target_dir)
         elif mode.lower() != "overwrite":
+            if verbose: print(f"Overwriting target directory (unused files will not be removed)...")
             raise Exception("Expected mode to be one of None, DELETE or OVERWRITE")
 
         # Determine if we are in test mode or not.
