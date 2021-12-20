@@ -42,7 +42,7 @@ class Publisher:
 
         self.notebooks.append(notebook)
 
-    def publish(self, testing, mode=None):
+    def publish(self, testing, mode=None, verbose=False, debugging=False):
         version_info_notebook = None
         main_notebooks = []
 
@@ -66,8 +66,12 @@ class Publisher:
             pass  # It's OK if the published version of this notebook doesn't exist
             # print(f"""**** The notebook "{version_info_notebook.path}" was not found ****""")
 
-        print(f"Source: {self.source_dir}")
-        print(f"Target: {self.target_dir}")
+        print(f"Mode:      {mode}")
+        print(f"Verbose:   {verbose}")
+        print(f"Debugging: {debugging}")
+        print(f"Testing:   {testing}")
+        print(f"Source:    {self.source_dir}")
+        print(f"Target:    {self.target_dir}")
 
         # Now that we backed up the version-info, we can delete everything.
         target_status = self.client.workspace().get_status(self.target_dir)
@@ -88,7 +92,7 @@ class Publisher:
             testing = False
 
         for notebook in main_notebooks:
-            notebook.publish()
+            notebook.publish(verbose=verbose, debugging=debugging)
 
         if testing:
             print("-" * 80)  # We are in test-mode, write back the original Version Info notebook
@@ -96,4 +100,4 @@ class Publisher:
             print(f"RESTORING: {version_info_path}")
             self.client.workspace().import_notebook("PYTHON", version_info_path, version_info_source)
         else:
-            version_info_notebook.publish()
+            version_info_notebook.publish(verbose=verbose, debugging=debugging)

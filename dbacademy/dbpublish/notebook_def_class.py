@@ -61,11 +61,11 @@ class NotebookDef:
             print()
             raise Exception("Publish aborted - see previous errors for more information")
 
-    def publish(self) -> None:
+    def publish(self, verbose=False, debugging=False) -> None:
         print("-" * 80)
+        print(f".../{self.path}")
 
         source_notebook_path = f"{self.source_dir}/{self.path}"
-        print(source_notebook_path)
 
         client = DBAcademyRestClient()
 
@@ -91,8 +91,6 @@ class NotebookDef:
         found_footer_directive = False
 
         for i in range(len(commands)):
-            debugging = False
-
             if debugging:
                 print("\n" + ("=" * 80))
                 print(f"Debug Command {i + 1}")
@@ -206,15 +204,15 @@ class NotebookDef:
 
         # Create the student's notebooks
         students_notebook_path = f"{self.target_dir}/{self.path}"
-        print(students_notebook_path)
-        print(f"...publishing {len(students_commands)} commands")
+        if verbose: print(students_notebook_path)
+        if verbose: print(f"...publishing {len(students_commands)} commands")
         self.publish_notebook(language, students_commands, students_notebook_path)
 
         # Create the solutions notebooks
         if self.include_solution:
             solutions_notebook_path = f"{self.target_dir}/Solutions/{self.path}"
-            print(solutions_notebook_path)
-            print(f"...publishing {len(solutions_commands)} commands")
+            if verbose: print(solutions_notebook_path)
+            if verbose: print(f"...publishing {len(solutions_commands)} commands")
             self.publish_notebook(language, solutions_commands, solutions_notebook_path)
 
     def publish_notebook(self, language: str, commands: list, target_path: str) -> None:
