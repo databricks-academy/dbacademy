@@ -1,10 +1,12 @@
-# Databricks notebook source
+from notebook_def_class import NotebookDef
+from publisher_class import Publisher
+from datetime import date
+from dbacademy.dbrest import DBAcademyRestClient
+
 D_TODO = "TODO"
 D_ANSWER = "ANSWER"
 D_SOURCE_ONLY = "SOURCE_ONLY"
 D_DUMMY = "DUMMY"
-# D_SELF_PACED_ONLY = "SELF_PACED_ONLY"
-# D_ILT_ONLY = "ILT_ONLY"
 
 D_INCLUDE_HEADER_TRUE = "INCLUDE_HEADER_TRUE"
 D_INCLUDE_HEADER_FALSE = "INCLUDE_HEADER_FALSE"
@@ -42,32 +44,6 @@ def help_html():
     return html
 
 
-class NotebookDef:
-    def __init__(self, source_dir: str, target_dir: str, path: str, replacements: dict, include_solution: bool):
-        assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
-        assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
-        assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
-        assert type(replacements) == dict, f"""Expected the parameter "replacements" to be of type "dict", found "{type(replacements)}" """
-        assert type(include_solution) == bool, f"""Expected the parameter "include_solution" to be of type "bool", found "{type(include_solution)}" """
-
-        self.path = path
-        self.source_dir = source_dir
-        self.target_dir = target_dir
-        self.replacements = replacements
-        self.include_solution = include_solution
-
-    def __str__(self):
-        result = self.path
-        result += f"\n - include_solution = {self.include_solution}"
-        result += f"\n - source_dir = {self.source_dir}"
-        result += f"\n - target_dir = {self.target_dir}"
-        result += f"\n - replacements = {self.replacements}"
-        return result
-
-    def publish(self):
-        publish(self.source_dir, self.target_dir, self.path, self.replacements, self.include_solution)
-
-
 def from_test_config(test_config, target_dir, include_solutions=True):
     publisher = Publisher(client=test_config.client,
                           version=test_config.version,
@@ -78,101 +54,6 @@ def from_test_config(test_config, target_dir, include_solutions=True):
     return publisher
 
 
-class Publisher:
-    def __init__(self, client, version: str, source_dir: str, target_dir: str, include_solutions: bool = True):
-        self.client = client
-        self.version = version
-        self.version_info_notebook_name = "Version Info"
-
-        self.source_dir = source_dir
-        self.target_dir = target_dir
-
-        self.include_solutions = include_solutions
-        self.notebooks = []
-
-    def add(self, path, replacements: dict = None, include_solution=None):
-        from datetime import datetime
-
-        # Configure our various default values.
-        include_solution = self.include_solutions if include_solution is None else include_solution
-        replacements = dict() if replacements is None else replacements
-
-        notebook = NotebookDef(self.source_dir, self.target_dir, path, replacements, include_solution)
-
-        # Add the universal replacements
-        notebook.replacements["verison_number"] = self.version
-        notebook.replacements["built_on"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
-
-        self.add_notebook_def(notebook)
-
-    def add_all(self, notebooks):
-        for path in notebooks:
-            self.add_path(path,
-                          replacements=notebooks[path].replacements,
-                          include_solution=notebooks[path].include_solution)
-
-    def add_path(self, path, replacements: dict = None, include_solution=None):
-        self.add(path, replacements, include_solution)
-
-    def add_notebook_def(self, notebook):
-        assert type(
-            notebook) == NotebookDef, f"""Expected the parameter "notebook" to be of type "NotebookDef", found "{type(notebook)}" """
-
-        self.notebooks.append(notebook)
-
-    def publish(self, testing, mode=None):
-        version_info_notebook = None
-        main_notebooks = []
-
-        mode = str(mode).lower()
-        expected_modes = ["delete", "overwrite", "no-overwrite"]
-        assert mode in expected_modes, f"Expected mode {mode} to be one of {expected_modes}"
-
-        for notebook in self.notebooks:
-            if notebook.path == self.version_info_notebook_name:
-                version_info_notebook = notebook
-            else:
-                main_notebooks.append(notebook)
-
-        assert version_info_notebook is not None, f"""The required notebook "{self.version_info_notebook_name}" was not found."""
-
-        # Backup the version info in case we are just testing
-        try:
-            version_info_source = self.client.workspace().export_notebook(f"{version_info_notebook.target_dir}/{version_info_notebook.path}")
-            print("**** backed up version_info_source ****")
-        except:
-            version_info_source = None
-            print("**** version_info_source was not found ****")
-
-        # Now that we backed up the version-info, we can delete everything.
-        target_status = self.client.workspace().get_status(self.target_dir)
-        if target_status is None:
-            pass  # Who care, it doesn't already exist.
-        elif mode == "no-overwrite":
-            assert target_status is None, "The target path already exists and the build is configured for no-overwrite"
-        elif mode == "delete":
-            self.client.workspace().delete_path(self.target_dir)
-        elif mode.lower() != "overwrite":
-            raise Exception("Expected mode to be one of None, DELETE or OVERWRITE")
-
-        # Determine if we are in test mode or not.
-        try:
-            testing = version_info_source is not None and testing
-        except:
-            testing = False
-
-        for notebook in main_notebooks:
-            notebook.publish()
-
-        if testing:
-            print("-" * 80)  # We are in test-mode, write back the original Version Info notebook
-            version_info_path = f"{self.target_dir}/Version Info"
-            print(f"RESTORING: {version_info_path}")
-            self.client.workspace().import_notebook("PYTHON", version_info_path, version_info_source)
-        else:
-            version_info_notebook.publish()
-
-
 def replace_contents(contents: str, replacements: dict):
     import re
 
@@ -181,8 +62,8 @@ def replace_contents(contents: str, replacements: dict):
         new_value = replacements[key]
         contents = contents.replace(old_value, new_value)
 
-    mustach_pattern = re.compile(r"{{[a-zA-Z\\-\\_\\#\\/]*}}")
-    result = mustach_pattern.search(contents)
+    mustache_pattern = re.compile(r"{{[a-zA-Z\\-\\_\\#\\/]*}}")
+    result = mustache_pattern.search(contents)
     if result is not None:
         raise Exception(f"A mustach pattern was detected after all replacements were processed: {result}")
 
@@ -198,7 +79,7 @@ def replace_contents(contents: str, replacements: dict):
     return contents
 
 
-def get_leading_comments(language, cmd, command) -> list:
+def get_leading_comments(language, command) -> list:
     leading_comments = []
     lines = command.split("\n")
 
@@ -292,15 +173,10 @@ def parse_directives(i, comments):
                     raise ValueError(f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
                 if directive not in SUPPORTED_DIRECTIVES:
                     raise ValueError(
-                        f"""Unspported directive "{directive}" in Cmd #{i + 1} {SUPPORTED_DIRECTIVES}: {line}""")
+                        f"""Unsupported directive "{directive}" in Cmd #{i + 1} {SUPPORTED_DIRECTIVES}: {line}""")
                 directives.append(line)
 
     return directives
-
-# COMMAND ----------
-
-from datetime import date
-from dbacademy.dbrest import DBAcademyRestClient
 
 
 def get_comment_marker(language):
@@ -337,9 +213,9 @@ def get_footer_cell(language):
     return f"""
 {m} MAGIC %md-sandbox
 {m} MAGIC &copy; {date.today().year} Databricks, Inc. All rights reserved.<br/>
-{m} MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a>.<br/>
+{m} MAGIC Apache, Apache Spark, Spark and the Spark logo are trademarks of the <a href="https://www.apache.org/">Apache Software Foundation</a>.<br/>
 {m} MAGIC <br/>
-{m} MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="http://help.databricks.com/">Support</a>
+{m} MAGIC <a href="https://databricks.com/privacy-policy">Privacy Policy</a> | <a href="https://databricks.com/terms-of-use">Terms of Use</a> | <a href="https://help.databricks.com/">Support</a>
 """.strip()
 
 
@@ -383,7 +259,6 @@ def clean_todo_cell(source_language, command, cmd):
     source_m = get_comment_marker(source_language)
 
     first = 0
-    cell_m = source_m
     prefix = source_m
 
     for test_a in ["%r", "%md", "%sql", "%python", "%scala"]:
@@ -437,177 +312,6 @@ def clean_todo_cell(source_language, command, cmd):
             new_command += "\n"
 
     return new_command
-
-
-def publish(source_project: str, target_project: str, notebook_name: str, replacements: dict = dict(),
-            include_solution=False, ) -> None:
-
-    print("-" * 80)
-
-    source_notebook_path = f"{source_project}/{notebook_name}"
-    print(source_notebook_path)
-
-    client = DBAcademyRestClient()
-
-    source_info = client.workspace().get_status(source_notebook_path)
-    language = source_info["language"].lower()
-
-    raw_source = client.workspace().export_notebook(source_notebook_path)
-
-    skipped = 0
-    students_commands = []
-    solutions_commands = []
-
-    cmd_delim = get_cmd_delim(language)
-    commands = raw_source.split(cmd_delim)
-
-    todo_count = 0
-    answ_count = 0
-
-    include_header = False
-    found_header_directive = False
-
-    include_footer = False
-    found_footer_directive = False
-
-    # print("="*80)
-    # for i in range(len(commands)):
-    #     command = commands[i].lstrip()
-    #     first = command.split("\n")[0]
-    #     print(f"""Cmd {i+1}: {first}""")
-    # print("="*80)
-
-    for i in range(len(commands)):
-        debugging = False
-
-        if debugging:
-            print("\n" + ("=" * 80))
-            print(f"Debug Command {i + 1}")
-
-        command = commands[i].lstrip()
-
-        if "DBTITLE" in command:
-            raise Exception(f"Unsupported Cell-Title found in Cmd #{i + 1}")
-
-        # Extract the leading comments and then the directives
-        leading_comments = get_leading_comments(language, i, command.strip())
-        directives = parse_directives(i, leading_comments)
-
-        if debugging:
-            if len(leading_comments) > 0:
-                print("   |-LEADING COMMENTS --" + ("-" * 57))
-                for comment in leading_comments:
-                    print("   |" + comment)
-            else:
-                print("   |-NO LEADING COMMENTS --" + ("-" * 54))
-
-            if len(directives) > 0:
-                print("   |-DIRECTIVES --" + ("-" * 62))
-                for directive in directives:
-                    print("   |" + directive)
-            else:
-                print("   |-NO DIRECTIVES --" + ("-" * 59))
-
-        # Update flags to indicate if we found the required header and footer directives
-        include_header = True if D_INCLUDE_HEADER_TRUE in directives else include_header
-        found_header_directive = True if D_INCLUDE_HEADER_TRUE in directives or D_INCLUDE_HEADER_FALSE in directives else found_header_directive
-
-        include_footer = True if D_INCLUDE_FOOTER_TRUE in directives else include_footer
-        found_footer_directive = True if D_INCLUDE_FOOTER_TRUE in directives or D_INCLUDE_FOOTER_FALSE in directives else found_footer_directive
-
-        # Make sure we have one and only one directive in this command (ignoring the header directives)
-        directive_count = 0
-        for directive in directives:
-            if directive not in [D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE,
-                                 D_INCLUDE_FOOTER_FALSE]:
-                directive_count += 1
-        assert directive_count <= 1, f"Found multiple directives ({directive_count}) in Cmd #{i + 1}: {directives}"
-
-        # Process the various directives
-        if command.strip() == "":
-            skipped += skipping(i, "Empty Cell")
-        elif D_SOURCE_ONLY in directives:
-            skipped += skipping(i, "Source-Only")
-        elif D_INCLUDE_HEADER_TRUE in directives:
-            skipped += skipping(i, "Including Header")
-        elif D_INCLUDE_HEADER_FALSE in directives:
-            skipped += skipping(i, "Excluding Header")
-        elif D_INCLUDE_FOOTER_TRUE in directives:
-            skipped += skipping(i, "Including Footer")
-        elif D_INCLUDE_FOOTER_FALSE in directives:
-            skipped += skipping(i, "Excluding Footer")
-
-        elif D_TODO in directives:
-            # This is a TODO cell, exclude from solution notebooks
-            todo_count += 1
-            command = clean_todo_cell(language, command, i)
-            students_commands.append(command)
-
-        elif D_ANSWER in directives:
-            # This is an ANSWER cell, exclude from lab notebooks
-            answ_count += 1
-            solutions_commands.append(command)
-
-        elif D_DUMMY in directives:
-            students_commands.append(command)
-            solutions_commands.append(command.replace("DUMMY",
-                                                      "DUMMY: Ya, that wasn't too smart. Then again, this is just a dummy-directive"))
-
-        else:
-            # Not a TODO or ANSWER, just append to both
-            students_commands.append(command)
-            solutions_commands.append(command)
-
-        # Check the command for BDC markers
-        bdc_tokens = ["IPYTHON_ONLY", "DATABRICKS_ONLY",
-                      "AMAZON_ONLY", "AZURE_ONLY", "TEST", "PRIVATE_TEST", "INSTRUCTOR_NOTE", "INSTRUCTOR_ONLY",
-                      "SCALA_ONLY", "PYTHON_ONLY", "SQL_ONLY", "R_ONLY"
-                                                               "VIDEO", "ILT_ONLY", "SELF_PACED_ONLY", "INLINE",
-                      "NEW_PART", "{dbr}"]
-
-        for token in bdc_tokens:
-            assert token not in command, f"""Found the token "{token}" in command #{i + 1}"""
-
-        if language.lower() == "python":
-            assert "%python" not in command, f"""Found "%python" in command #{i + 1}"""
-        elif language.lower() == "sql":
-            assert "%sql" not in command, f"""Found "%sql" in command #{i + 1}"""
-        elif language.lower() == "scala":
-            assert "%scala" not in command, f"""Found "%scala" in command #{i + 1}"""
-        elif language.lower() == "r":
-            assert "%r " not in command, f"""Found "%r" in command #{i + 1}"""
-            assert "%r\n" not in command, f"""Found "%r" in command #{i + 1}"""
-        else:
-            raise Exception(f"The language {language} is not supported")
-
-        for year in range(2017, 2999):
-            tag = f"{year} Databricks, Inc"
-            assert tag not in command, f"""Found copyright ({tag}) in command #{i + 1}"""
-
-    assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
-    assert found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found."
-    assert answ_count >= todo_count, f"Found more {D_TODO} commands ({todo_count}) than {D_ANSWER} commands ({answ_count})"
-
-    if include_header is True:
-        students_commands.insert(0, get_header_cell(language))
-        solutions_commands.insert(0, get_header_cell(language))
-
-    if include_footer is True:
-        students_commands.append(get_footer_cell(language))
-        solutions_commands.append(get_footer_cell(language))
-
-    # Create the student's notebooks
-    students_notebook_path = f"{target_project}/{notebook_name}"
-    print(students_notebook_path)
-    print(f"...publishing {len(students_commands)} commands")
-    publish_notebook(language, students_commands, students_notebook_path, replacements)
-
-    # Create the solutions notebooks
-    if include_solution:
-        solutions_notebook_path = f"{target_project}/Solutions/{notebook_name}"
-        print(solutions_notebook_path)
-        print(f"...publishing {len(solutions_commands)} commands")
-        publish_notebook(language, solutions_commands, solutions_notebook_path, replacements)
 
 
 def update_and_validate_git_branch(client, path, target_branch="published"):
