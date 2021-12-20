@@ -266,7 +266,7 @@ class NotebookDef:
                 new_command += line
 
             elif (i == first) and line.strip() not in [f"{prefix} {D_TODO}"]:
-                self.test(None, f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be the "{D_TODO}" directive: "{line}"\n{"-" * 80}\n{command}\n{"-" * 80}""")
+                self.test(None, f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be the "{D_TODO}" directive: "{line}" """)
 
             elif not line.startswith(prefix) and line.strip() != "" and line.strip() != f"{source_m} MAGIC":
                 self.test(None, f"""Expected line #{i + 1} in Cmd #{cmd + 1} to be commented out: "{line}" with prefix "{prefix}" """)
