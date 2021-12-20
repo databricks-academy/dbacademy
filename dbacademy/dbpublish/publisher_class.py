@@ -1,4 +1,4 @@
-from notebook_def_class import NotebookDef
+from dbacademy.dbpublish.notebook_def_class import NotebookDef
 
 
 class Publisher:
