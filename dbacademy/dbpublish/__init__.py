@@ -1,4 +1,4 @@
-from publisher_class import Publisher
+from dbacademy.dbpublish.publisher_class import Publisher
 
 
 def help_html():
