@@ -1,5 +1,5 @@
-from notebook_def_class import NotebookDef
-from publisher_class import Publisher
+from dbacademy.dbpublish.notebook_def_class import NotebookDef
+from dbacademy.dbpublish.publisher_class import Publisher
 from datetime import date
 from dbacademy.dbrest import DBAcademyRestClient
 
