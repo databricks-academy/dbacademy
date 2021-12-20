@@ -549,6 +549,11 @@ def publish(source_project:str, target_project:str, notebook_name:str, replaceme
         else:
           raise Exception(f"The language {language} is not supported")
 
+        for year in range (2017, 2999):
+          tag = f"{year} Databricks, Inc"
+          assert tag not in command, f"""Found copyright ({tag}) in command #{i+1}"""
+
+
     assert found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found."
     assert found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found."
     assert answ_count >= todo_count, f"Found more {D_TODO} commands ({todo_count}) than {D_ANSWER} commands ({answ_count})"
