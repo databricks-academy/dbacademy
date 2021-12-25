@@ -389,7 +389,7 @@ class TestSuite:
         self.send_status_update("info", f"Round #{test_round}: Testing {len(tests)} {what}  asynchronously")
 
         for test in tests:
-            self.send_status_update("info", f"Starting job for */{test.notebook.path}*")
+            self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
             test.job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
