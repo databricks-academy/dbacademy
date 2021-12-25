@@ -327,8 +327,8 @@ class TestSuite:
         self.test_type = test_type
         self.test_rounds = dict()
 
-        self.first_message = None
         self.slack_thread_ts = None
+        self.slack_first_message = None
 
         assert test_type is not None and test_type.strip() != "", "The test type must be specified."
 
@@ -357,6 +357,13 @@ class TestSuite:
         else:
             tests = sorted(self.test_rounds[test_round], key=lambda t: t.notebook.order)
 
+            # Reset our slack thread
+            self.slack_first_message = None
+            self.slack_thread_ts = None
+
+            what = "notebook" if len(tests) == 1 else "notebooks"
+            self.send_status_update("info", f"{self.test_config.name} - Round #{test_round} - {len(tests)} {what}")
+
             print(f"Round #{test_round} test order:")
             for test in tests:
                 print(f" {test.notebook.path}")
@@ -372,17 +379,22 @@ class TestSuite:
                 self.conclude_test(response, test.job_name, fail_fast, test.notebook.ignored)
 
     def test_all_asynchronously(self, test_round, fail_fast=False):
-        self.test_all_notebooks(self.test_rounds[test_round], self.test_config)
-        self.wait_for_notebooks(self.test_rounds[test_round], fail_fast=fail_fast)
 
-    def test_all_notebooks(self, tests, test_config):
+        tests = self.test_rounds[test_round]
+
+        # Reset our slack thread
+        self.slack_first_message = None
+        self.slack_thread_ts = None
+
+        what = "notebook" if len(tests) == 1 else "notebooks"
+        self.send_status_update("info", f"{self.test_config.name} - Round #{test_round} - {len(tests)} {what} async")
+
         for test in tests:
             self.send_status_update("info", f"Starting job for {test.notebook_path}")
 
-            test.job_id = create_test_job(self.client, test_config, test.job_name, test.notebook_path)
+            test.job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
 
-    def wait_for_notebooks(self, tests, fail_fast):
         for test in tests:
             self.send_status_update("info", f"Waiting for {test.notebook_path}")
 
@@ -477,13 +489,13 @@ class TestSuite:
     def send_status_update(self, message_type, message):
         import requests, json
 
-        if self.first_message is None: self.first_message = message
+        if self.slack_first_message is None: self.slack_first_message = message
 
         payload = {
             "channel": "curr-smoke-tests",
             "message": message,
             "message_type": message_type,
-            "first_message": self.first_message,
+            "first_message": self.slack_first_message,
             "thread_ts": self.slack_thread_ts
         }
 
