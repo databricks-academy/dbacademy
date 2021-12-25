@@ -1,9 +1,11 @@
 # Databricks notebook source
+aws_workspace = "https://curriculum-dev.cloud.databricks.com/?o=3551974319838082"
+gcp_workspace = "https://8422030046858219.9.gcp.databricks.com/?o=8422030046858219"
+msa_workspace = "https://westus2.azuredatabricks.net/?o=2472203627577334"
+
+
 class ResultsEvaluator:
     def __init__(self, df):
-        self.aws_workspace = "https://curriculum.cloud.databricks.com/?o=5775574114781423"
-        self.gcp_workspace = "https://8422030046858219.9.gcp.databricks.com/?o=8422030046858219"
-        self.msa_workspace = "https://westus2.azuredatabricks.net/?o=2472203627577334"
 
         self.failed_set = df.filter("status == 'FAILED'").collect()
         self.ignored_set = df.filter("status == 'IGNORED'").collect()
@@ -60,9 +62,7 @@ class ResultsEvaluator:
         for row in rows:
             link = row["notebook_path"]
             if print_links:
-                if row["cloud"] == "AWS": link = f"""<a href="{self.aws_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
-                if row["cloud"] == "GCP": link = f"""<a href="{self.gcp_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
-                if row["cloud"] == "MSA": link = f"""<a href="{self.msa_workspace}#job/{row["job_id"]}/run/1" target="_blank">{row["notebook_path"]}</a>"""
+                link = to_link(row["cloud"], row["job_id"], row["notebook_path"])
 
             html += self.add_row(self.cell_style, row["cloud"], link, row["spark_version"], row["executed_at"], self.format_duration(row["execution_duration"]))
             html += """<tbody></tbody><tbody>"""
@@ -70,6 +70,13 @@ class ResultsEvaluator:
         html += "</table>"
 
         return html
+
+
+def to_link(cloud, job_id, label):
+    if cloud == "AWS": return f"""<a href="{aws_workspace}#job/{job_id}/run/1" target="_blank">{label}</a>"""
+    if cloud == "GCP": return f"""<a href="{gcp_workspace}#job/{job_id}/run/1" target="_blank">{label}</a>"""
+    if cloud == "MSA": return f"""<a href="{msa_workspace}#job/{job_id}/run/1" target="_blank">{label}</a>"""
+    raise Exception(f"The cloud {cloud} is not supported")
 
 
 class NotebookDef:
@@ -474,7 +481,8 @@ class TestSuite:
             assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
             message_type = "error" if result_state in ["FAILED", "IGNORED"] else "info"
-            self.send_status_update(message_type, f"*{result_state}* ({int(execution_duration/1000)} sec): */{test.notebook.path}*")
+            link = to_link(self.test_config.cloud, job_id, f"/{test.notebook.path}")
+            self.send_status_update(message_type, f"*{result_state}* ({int(execution_duration/1000)} sec): *{link}")
 
         except Exception:
             print(f"Unable to log test results.")
