@@ -351,7 +351,7 @@ class TestSuite:
             self.client.jobs().delete_by_name(self.test_rounds[test_round], success_only=success_only)
         print()
 
-    def test_all_synchronously(self, test_round, fail_fast=False):
+    def test_all_synchronously(self, test_round, fail_fast=True):
         if test_round not in self.test_rounds:
             print(f"** WARNING ** There are no notebooks in round #{test_round}")
         else:
@@ -362,7 +362,7 @@ class TestSuite:
             self.slack_thread_ts = None
 
             what = "Notebook" if len(tests) == 1 else "Notebooks"
-            self.send_status_update("info", f"*{self.test_config.name}* - Round #{test_round}: {len(tests)} {what}  Sync")
+            self.send_status_update("info", f"*{self.test_config.name}*\nRound #{test_round}: {len(tests)} {what}  Sync")
 
             print(f"Round #{test_round} test order:")
             for test in tests:
@@ -376,7 +376,7 @@ class TestSuite:
                 run_id = self.client.jobs().run_now(job_id)["run_id"]
 
                 response = self.client.runs().wait_for(run_id)
-                self.conclude_test(response, test.job_name, fail_fast, test.notebook.ignored)
+                self.conclude_test(test, response, fail_fast)
 
     def test_all_asynchronously(self, test_round, fail_fast=False):
 
@@ -387,7 +387,7 @@ class TestSuite:
         self.slack_thread_ts = None
 
         what = "Notebook" if len(tests) == 1 else "Notebooks"
-        self.send_status_update("info", f"*{self.test_config.name}* - Round #{test_round}: {len(tests)} {what}  Async")
+        self.send_status_update("info", f"*{self.test_config.name}*\nRound #{test_round}: {len(tests)} {what}  Async")
 
         for test in tests:
             self.send_status_update("info", f"Starting job for {test.notebook_path}")
@@ -399,11 +399,11 @@ class TestSuite:
             self.send_status_update("info", f"Waiting for {test.notebook_path}")
 
             response = self.client.runs().wait_for(test.run_id)
-            self.conclude_test(response, test.job_name, fail_fast, test.notebook.ignored)
+            self.conclude_test(test, response, fail_fast)
 
-    def conclude_test(self, response, job_name, fail_fast, ignored):
+    def conclude_test(self, test, response, fail_fast):
         import json
-        self.log_run(response, job_name, ignored)
+        self.log_run(response, test)
 
         if response['state']['life_cycle_state'] == 'INTERNAL_ERROR':
             print()  # Usually a notebook-not-found
@@ -420,7 +420,7 @@ class TestSuite:
         if fail_fast and result_state == 'FAILED':
             raise RuntimeError(f"{response['task']['notebook_task']['notebook_path']} failed.")
 
-    def log_run(self, response, job_name, ignored):
+    def log_run(self, test, response):
         import traceback, time, uuid, requests, json
         from dbacademy import dbgems
         from pyspark.sql.functions import current_timestamp
@@ -432,7 +432,7 @@ class TestSuite:
             run_id = response["run_id"] if "run_id" in response else 0
 
             result_state = response["state"]["result_state"] if "state" in response and "result_state" in response["state"] else "UNKNOWN"
-            if result_state == "FAILED" and ignored: result_state = "IGNORED"
+            if result_state == "FAILED" and test.notebook.ignored: result_state = "IGNORED"
 
             execution_duration = response["execution_duration"] if "execution_duration" in response else 0
             notebook_path = response["task"]["notebook_task"]["notebook_path"] if "task" in response and "notebook_task" in response["task"] and "notebook_path" in response["task"][
@@ -446,7 +446,7 @@ class TestSuite:
                              result_state,
                              execution_duration,
                              self.test_config.cloud,
-                             job_name,
+                             test.job_name,
                              job_id,
                              run_id,
                              notebook_path,
@@ -470,7 +470,7 @@ class TestSuite:
                 "result_state": result_state,
                 "execution_duration": execution_duration,
                 "cloud": self.test_config.cloud,
-                "job_name": job_name,
+                "job_name": test.job_name,
                 "job_id": job_id,
                 "run_id": run_id,
                 "notebook_path": notebook_path,
@@ -480,7 +480,7 @@ class TestSuite:
             assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
             message_type = "error" if result_state in ["FAILED", "IGNORED"] else "info"
-            self.send_status_update(message_type, f"*{result_state}* ({int(execution_duration/1000) Sec}): `{notebook_path}`")
+            self.send_status_update(message_type, f"*{result_state}* ({int(execution_duration/1000)} sec): `{test.name}`")
 
         except Exception:
             print(f"Unable to log test results.")
