@@ -377,7 +377,7 @@ class TestSuite:
             print()
 
             for test in tests:
-                self.send_status_update("info", f"Starting job for */{test.notebook.path}*")
+                self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
                 job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
                 run_id = self.client.jobs().run_now(job_id)["run_id"]
