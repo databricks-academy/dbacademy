@@ -480,7 +480,7 @@ class TestSuite:
             assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
             message_type = "error" if result_state in ["FAILED", "IGNORED"] else "info"
-            self.send_status_update(message_type, f"{result_state} ({execution_duration}): {notebook_path}")
+            self.send_status_update(message_type, f"*{result_state}* ({int(execution_duration/1000) Sec}): `{notebook_path}`")
 
         except Exception:
             print(f"Unable to log test results.")
