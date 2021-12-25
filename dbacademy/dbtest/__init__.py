@@ -361,8 +361,8 @@ class TestSuite:
             self.slack_first_message = None
             self.slack_thread_ts = None
 
-            what = "notebook" if len(tests) == 1 else "notebooks"
-            self.send_status_update("info", f"{self.test_config.name} - Round #{test_round} - {len(tests)} {what}")
+            what = "Notebook" if len(tests) == 1 else "Notebooks"
+            self.send_status_update("info", f"*{self.test_config.name}* - Round #{test_round}: {len(tests)} {what}  Sync")
 
             print(f"Round #{test_round} test order:")
             for test in tests:
@@ -386,8 +386,8 @@ class TestSuite:
         self.slack_first_message = None
         self.slack_thread_ts = None
 
-        what = "notebook" if len(tests) == 1 else "notebooks"
-        self.send_status_update("info", f"{self.test_config.name} - Round #{test_round} - {len(tests)} {what} async")
+        what = "Notebook" if len(tests) == 1 else "Notebooks"
+        self.send_status_update("info", f"*{self.test_config.name}* - Round #{test_round}: {len(tests)} {what}  Async")
 
         for test in tests:
             self.send_status_update("info", f"Starting job for {test.notebook_path}")
