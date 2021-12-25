@@ -364,7 +364,7 @@ class TestSuite:
 
             if self.slack_first_message is None: self.send_status_update("info", f"*{self.test_config.name}*")
             what = "notebook" if len(tests) == 1 else "notebooks"
-            self.send_status_update("info", f"Round #{test_round}: Testing {len(tests)} {what}  sync")
+            self.send_status_update("info", f"Round #{test_round}: Testing {len(tests)} {what}  synchronously")
 
             print(f"Round #{test_round} test order:")
             for test in tests:
@@ -386,7 +386,7 @@ class TestSuite:
 
         if self.slack_first_message is None: self.send_status_update("info", f"*{self.test_config.name}*")
         what = "notebook" if len(tests) == 1 else "notebooks"
-        self.send_status_update("info", f"Round #{test_round}: Testing {len(tests)} {what}  async")
+        self.send_status_update("info", f"Round #{test_round}: Testing {len(tests)} {what}  asynchronously")
 
         for test in tests:
             self.send_status_update("info", f"Starting job for */{test.notebook.path}*")
