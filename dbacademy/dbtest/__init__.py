@@ -485,8 +485,7 @@ class TestSuite:
 
             message_type = "error" if result_state in ["FAILED", "IGNORED"] else "info"
             url = to_job_url(self.test_config.cloud, job_id)
-            duration = int(execution_duration/1000)
-            self.send_status_update(message_type, f"`{result_state}` ({duration} sec): *{test.notebook.path}*\n{url}")
+            self.send_status_update(message_type, f"*`{result_state}`* Completed [/{test.notebook.path}]({url})")
 
         except Exception:
             print(f"Unable to log test results.")
