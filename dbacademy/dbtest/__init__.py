@@ -1,9 +1,3 @@
-# Databricks notebook source
-aws_workspace = "https://curriculum-dev.cloud.databricks.com/?o=3551974319838082"
-gcp_workspace = "https://8422030046858219.9.gcp.databricks.com/?o=8422030046858219"
-msa_workspace = "https://westus2.azuredatabricks.net/?o=2472203627577334"
-
-
 class ResultsEvaluator:
     def __init__(self, df):
 
@@ -73,6 +67,10 @@ class ResultsEvaluator:
 
 
 def to_link(cloud, job_id, label):
+    aws_workspace = "https://curriculum-dev.cloud.databricks.com/?o=3551974319838082"
+    gcp_workspace = "https://8422030046858219.9.gcp.databricks.com/?o=8422030046858219"
+    msa_workspace = "https://westus2.azuredatabricks.net/?o=2472203627577334"
+
     if cloud == "AWS": return f"""<a href="{aws_workspace}#job/{job_id}/run/1" target="_blank">{label}</a>"""
     if cloud == "GCP": return f"""<a href="{gcp_workspace}#job/{job_id}/run/1" target="_blank">{label}</a>"""
     if cloud == "MSA": return f"""<a href="{msa_workspace}#job/{job_id}/run/1" target="_blank">{label}</a>"""
