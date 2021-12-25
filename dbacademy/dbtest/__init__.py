@@ -370,7 +370,7 @@ class TestSuite:
             print()
 
             for test in tests:
-                self.send_status_update("info", f"Starting job for {test.notebook.path}")
+                self.send_status_update("info", f"Starting job for *{test.notebook.path}*")
 
                 job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
                 run_id = self.client.jobs().run_now(job_id)["run_id"]
@@ -390,20 +390,20 @@ class TestSuite:
         self.send_status_update("info", f"*{self.test_config.name}*\nRound #{test_round}: Testing {len(tests)} {what}  async")
 
         for test in tests:
-            self.send_status_update("info", f"Starting job for {test.notebook.path}")
+            self.send_status_update("info", f"Starting job for *{test.notebook.path}*")
 
             test.job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
 
         for test in tests:
-            self.send_status_update("info", f"Waiting for {test.notebook.path}")
+            self.send_status_update("info", f"Waiting for *{test.notebook.path}*")
 
             response = self.client.runs().wait_for(test.run_id)
             self.conclude_test(test, response, fail_fast)
 
     def conclude_test(self, test, response, fail_fast):
         import json
-        self.log_run(response, test)
+        self.log_run(test, response)
 
         if response['state']['life_cycle_state'] == 'INTERNAL_ERROR':
             print()  # Usually a notebook-not-found
