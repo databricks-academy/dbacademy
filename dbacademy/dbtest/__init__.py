@@ -493,7 +493,7 @@ class TestSuite:
             print(f"Unable to log test results.")
             traceback.print_exc()
 
-    def send_frst_message(self):
+    def send_first_message(self):
       if self.slack_first_message is None:
         self.send_status_update("info", f"*{self.test_config.name} {self.test_config.cloud} {self.test_type} *")
 
