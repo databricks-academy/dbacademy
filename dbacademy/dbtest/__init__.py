@@ -367,7 +367,8 @@ class TestSuite:
         else:
             tests = sorted(self.test_rounds[test_round], key=lambda t: t.notebook.order)
 
-            if self.slack_first_message is None: self.send_status_update("info", f"*{self.test_config.name}*")
+            self.send_first_message()
+
             what = "notebook" if len(tests) == 1 else "notebooks"
             self.send_status_update("info", f"Round #{test_round}: Testing {len(tests)} {what}  synchronously")
 
@@ -389,7 +390,8 @@ class TestSuite:
 
         tests = self.test_rounds[test_round]
 
-        if self.slack_first_message is None: self.send_status_update("info", f"*{self.test_config.name}*")
+        self.send_first_message()
+
         what = "notebook" if len(tests) == 1 else "notebooks"
         self.send_status_update("info", f"Round #{test_round}: Testing {len(tests)} {what}  asynchronously")
 
@@ -490,6 +492,10 @@ class TestSuite:
         except Exception:
             print(f"Unable to log test results.")
             traceback.print_exc()
+
+    def send_frst_message(self):
+      if self.slack_first_message is None:
+        self.send_status_update("info", f"*{self.test_config.name} {self.test_config.cloud} {self.test_type} *")
 
     def send_status_update(self, message_type, message):
         import requests, json
