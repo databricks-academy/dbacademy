@@ -495,7 +495,7 @@ class TestSuite:
 
     def send_first_message(self):
       if self.slack_first_message is None:
-        self.send_status_update("info", f"*{self.test_config.name} {self.test_config.cloud} {self.test_type} *")
+        self.send_status_update("info", f"*{self.test_config.name}* | *{self.test_config.cloud}* | *{self.test_type}*")
 
     def send_status_update(self, message_type, message):
         import requests, json
