@@ -48,9 +48,12 @@ class NotebookDef:
         if assertion is None or not assertion():
             self.errors.append(NotebookError(message))
 
-    def warn(self, assertion, message: str) -> None:
+    def warn(self, assertion, message: str) -> bool:
         if assertion is None or not assertion():
             self.warnings.append(NotebookError(message))
+            return False
+        else:
+            return True
 
     def assert_no_warnings(self) -> None:
         if len(self.warnings) > 0:
@@ -449,10 +452,11 @@ class NotebookDef:
 
                 else:
                     # print(f"""Processing "{directive}" in Cmd #{i+1} """)
-                    self.warn(lambda: " " not in directive, f"""Whitespace found in directive "{directive}", Cmd #{i + 1}: {line}""")
-                    self.warn(lambda: "-" not in directive, f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
-                    self.warn(lambda: directive in SUPPORTED_DIRECTIVES, f"""Unsupported directive "{directive}" in Cmd #{i + 1}, see dbacademy.Publisher.help_html() for more information.""")
-                    directives.append(line)
+                    reslut_a = self.warn(lambda: " " not in directive, f"""Whitespace found in directive "{directive}", Cmd #{i + 1}: {line}""")
+                    reslut_b = self.warn(lambda: "-" not in directive, f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
+                    reslut_c = self.warn(lambda: directive in SUPPORTED_DIRECTIVES, f"""Unsupported directive "{directive}" in Cmd #{i + 1}, see dbacademy.Publisher.help_html() for more information.""")
+                    if reslut_a and reslut_b and reslut_c:
+                        directives.append(line)
 
         return directives
 
