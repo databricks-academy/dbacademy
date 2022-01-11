@@ -77,7 +77,7 @@ class WorkspaceClient:
 
     def get_status(self, notebook_path) -> dict:
         from urllib.parse import urlencode
-        params = urlencodeurlencode({
+        params = urlencode({
             "path" : notebook_path
         })
         response = self.client.execute_get(f"{self.endpoint}/api/2.0/workspace/get-status?{params}", expected=[200,404])
