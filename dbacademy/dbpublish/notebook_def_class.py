@@ -62,6 +62,7 @@ class NotebookDef:
             for warning in self.warnings:
                 print("-" * 80)
                 print(warning.message)
+            print("="*80)
             print()
 
     def assert_no_errors(self) -> None:
@@ -74,6 +75,7 @@ class NotebookDef:
             for error in self.errors:
                 print("-" * 80)
                 print(error.message)
+            print("="*80)
             print()
             raise Exception("Publish aborted - see previous errors for more information")
 
@@ -191,14 +193,15 @@ class NotebookDef:
                 self.test(lambda: token not in command, f"""Found the token "{token}" in command #{i + 1}""")
 
             if language.lower() == "python":
-                self.test(lambda: "%python" not in command, f"""Found "%python" in command #{i + 1}""")
+                self.warn(lambda: "%python" not in command, f"""Found "%python" in command #{i + 1}""")
             elif language.lower() == "sql":
-                self.test(lambda: "%sql" not in command, f"""Found "%sql" in command #{i + 1}""")
+                self.warn(lambda: "%sql" not in command, f"""Found "%sql" in command #{i + 1}""")
             elif language.lower() == "scala":
-                self.test(lambda: "%scala" not in command, f"""Found "%scala" in command #{i + 1}""")
+                self.warn(lambda: "%scala" not in command, f"""Found "%scala" in command #{i + 1}""")
             elif language.lower() == "r":
-                self.test(lambda: "%r " not in command,  f"""Found "%r" in command #{i + 1}""")
-                self.test(lambda: "%r\n" not in command, f"""Found "%r" in command #{i + 1}""")
+                # We have to check both cases so as not to catch %run by accident
+                self.warn(lambda: "%r " not in command,  f"""Found "%r" in command #{i + 1}""")
+                self.warn(lambda: "%r\n" not in command, f"""Found "%r" in command #{i + 1}""")
             else:
                 raise Exception(f"The language {language} is not supported")
 
