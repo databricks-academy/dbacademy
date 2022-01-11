@@ -34,6 +34,7 @@ class NotebookDef:
 
         self.include_solution = include_solution
         self.errors = list()
+        self.warnings = list()
 
     def __str__(self):
         result = self.path
@@ -47,8 +48,23 @@ class NotebookDef:
         if assertion is None or not assertion():
             self.errors.append(NotebookError(message))
 
-    def assert_no_errors(self) -> None:
+    def warn(self, assertion, message: str) -> None:
+        if assertion is None or not assertion():
+            self.warnings.append(NotebookError(message))
 
+    def assert_no_warnings(self) -> None:
+        if len(self.warnings) > 0:
+            print()
+            print()
+            print("="*80)
+            what = "warning" if len(self.warnings) == 1 else "warnings"
+            print(f"CAUTION: {len(self.warnings)} {what} were found while publishing\n.../Notebook: {self.path}")
+            for warning in self.warnings:
+                print("-" * 80)
+                print(warning.message)
+            print()
+
+    def assert_no_errors(self) -> None:
         if len(self.errors) > 0:
             print()
             print()
@@ -231,6 +247,7 @@ class NotebookDef:
 
         final_source = self.replace_contents(final_source)
 
+        self.assert_no_warnings()
         self.assert_no_errors()
 
         client = DBAcademyRestClient()
@@ -429,9 +446,9 @@ class NotebookDef:
 
                 else:
                     # print(f"""Processing "{directive}" in Cmd #{i+1} """)
-                    self.test(lambda: " " not in directive, f"""Whitespace found in directive "{directive}", Cmd #{i + 1}: {line}""")
-                    self.test(lambda: "-" not in directive, f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
-                    self.test(lambda: directive in SUPPORTED_DIRECTIVES, f"""Unsupported directive "{directive}" in Cmd #{i + 1}, see dbacademy.Publisher.help_html() for more information.""")
+                    self.warn(lambda: " " not in directive, f"""Whitespace found in directive "{directive}", Cmd #{i + 1}: {line}""")
+                    self.warn(lambda: "-" not in directive, f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
+                    self.warn(lambda: directive in SUPPORTED_DIRECTIVES, f"""Unsupported directive "{directive}" in Cmd #{i + 1}, see dbacademy.Publisher.help_html() for more information.""")
                     directives.append(line)
 
         return directives
