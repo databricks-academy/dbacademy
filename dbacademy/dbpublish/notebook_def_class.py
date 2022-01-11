@@ -57,8 +57,8 @@ class NotebookDef:
             print()
             print()
             print("="*80)
-            what = "warning" if len(self.warnings) == 1 else "warnings"
-            print(f"CAUTION: {len(self.warnings)} {what} were found while publishing\n.../Notebook: {self.path}")
+            what = "warning was" if len(self.warnings) == 1 else "warnings were"
+            print(f"CAUTION: {len(self.warnings)} {what} found while publishing\n.../{self.path}")
             for warning in self.warnings:
                 print("-" * 80)
                 print(warning.message)
@@ -69,8 +69,8 @@ class NotebookDef:
             print()
             print()
             print("="*80)
-            what = "error" if len(self.errors) == 1 else "errors"
-            print(f"ABORTING: {len(self.errors)} {what} were found while publishing\n.../Notebook: {self.path}")
+            what = "error was" if len(self.errors) == 1 else "errors were"
+            print(f"ABORTING: {len(self.errors)} {what} found while publishing\n.../{self.path}")
             for error in self.errors:
                 print("-" * 80)
                 print(error.message)
