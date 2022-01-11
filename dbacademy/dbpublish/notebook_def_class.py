@@ -59,13 +59,13 @@ class NotebookDef:
         if len(self.warnings) > 0:
             print()
             print()
-            print("="*80)
+            print("="*160)
             what = "warning was" if len(self.warnings) == 1 else "warnings were"
             print(f"CAUTION: {len(self.warnings)} {what} found while publishing\n.../{self.path}")
             for warning in self.warnings:
                 print("-" * 80)
                 print(warning.message)
-            print("="*80)
+            print("="*160)
             print()
 
     def assert_no_errors(self) -> None:
