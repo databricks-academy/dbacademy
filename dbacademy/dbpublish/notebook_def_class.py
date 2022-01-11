@@ -228,16 +228,16 @@ class NotebookDef:
         students_notebook_path = f"{self.target_dir}/{self.path}"
         if verbose: print(students_notebook_path)
         if verbose: print(f"...publishing {len(students_commands)} commands")
-        self.publish_notebook(language, students_commands, students_notebook_path)
+        self.publish_notebook(language, students_commands, students_notebook_path, print_warnings=True)
 
         # Create the solutions notebooks
         if self.include_solution:
             solutions_notebook_path = f"{self.target_dir}/Solutions/{self.path}"
             if verbose: print(solutions_notebook_path)
             if verbose: print(f"...publishing {len(solutions_commands)} commands")
-            self.publish_notebook(language, solutions_commands, solutions_notebook_path)
+            self.publish_notebook(language, solutions_commands, solutions_notebook_path, print_warnings=False)
 
-    def publish_notebook(self, language: str, commands: list, target_path: str) -> None:
+    def publish_notebook(self, language: str, commands: list, target_path: str, print_warnings: bool) -> None:
         m = self.get_comment_marker(language)
         final_source = f"{m} Databricks notebook source\n"
 
@@ -253,7 +253,8 @@ class NotebookDef:
 
         final_source = self.replace_contents(final_source)
 
-        #self.assert_no_warnings()
+        if print_warnings: 
+            self.assert_no_warnings()
         self.assert_no_errors()
 
         client = DBAcademyRestClient()
