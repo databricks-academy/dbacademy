@@ -253,7 +253,7 @@ class NotebookDef:
 
         final_source = self.replace_contents(final_source)
 
-        self.assert_no_warnings()
+        #self.assert_no_warnings()
         self.assert_no_errors()
 
         client = DBAcademyRestClient()
