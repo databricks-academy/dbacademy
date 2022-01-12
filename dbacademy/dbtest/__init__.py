@@ -417,10 +417,11 @@ class TestSuite:
             raise RuntimeError(response['state']['state_message'])
 
         result_state = response['state']['result_state']
-        run_id = response["run_id"] if "run_id" in response else 0
-
+        run_id = response.get("run_id", 0)
+        job_id = response.get("job_id", 0)
+        
         print("-" * 80)
-        print(f"Run #{run_id} is {response['state']['life_cycle_state']} - {result_state}")
+        print(f"Job/Run #{job_id}/{run_id} is {response['state']['life_cycle_state']} - {result_state}")
         print("-" * 80)
 
         if fail_fast and result_state == 'FAILED':

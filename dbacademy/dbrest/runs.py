@@ -21,13 +21,14 @@ class RunsClient:
         wait = 15
         response = self.get(run_id)
         state = response["state"]["life_cycle_state"]
+        job_id = response.get("job_id", 0)
 
         if state != "TERMINATED" and state != "INTERNAL_ERROR":
             if state == "PENDING" or state == "RUNNING":
-                print(f" - Run #{run_id} is {state}, checking again in {wait} seconds")
+                print(f" - Job/Run #{job_id}/{run_id} is {state}, checking again in {wait} seconds")
                 time.sleep(wait)
             else:
-                print(f" - Run #{run_id} is {state}, checking again in 5 seconds")
+                print(f" - Job/Run #{job_id}/{run_id} is {state}, checking again in 5 seconds")
                 time.sleep(5)
 
             return self.wait_for(run_id)
