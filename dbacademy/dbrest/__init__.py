@@ -84,7 +84,7 @@ class DBAcademyRestClient:
         self.token = config.get(profile, "token")
 
     def execute_patch_json(self, url: str, params: dict, expected=200) -> dict:
-        return self.execute_patch(url, params, expected)
+        return self.execute_patch(url, params, expected).json()
 
     def execute_patch(self, url: str, params: dict, expected=200):
         import json
@@ -94,10 +94,10 @@ class DBAcademyRestClient:
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
-        return response.json()
+        return response
 
     def execute_post_json(self, url: str, params: dict, expected=200) -> dict:
-        return self.execute_post(url, params, expected)
+        return self.execute_post(url, params, expected).json()
 
     def execute_post(self, url: str, params: dict, expected=200):
         import json
@@ -107,7 +107,7 @@ class DBAcademyRestClient:
         assert response.status_code in expected, f"({response.status_code}): {response.text}"
 
         self.throttle_calls()
-        return response.json()
+        return response
 
     def execute_get_json(self, url: str, expected=200) -> dict:
         response = self.execute_get(url, expected)
