@@ -14,13 +14,19 @@ class PermissionsClient:
         return self.client.execute_get_json(f"{self.endpoint}/api/2.0/permissions/jobs/{job_id}")
 
     def change_job_owner(self, job_id, username):
+        from dbacademy import dbgems
         params = {
             "access_control_list": [
+                {
+                    "user_name": dbgems.get_username(),
+                    "permission_level": "CAN_MANAGE"
+                },
                 {
                     "user_name": username,
                     "permission_level": "IS_OWNER"
                 }
             ]
         }
-        return self.client.execute_patch(f"{self.endpoint}/permissions/jobs/{job_id}", params)
+        return self.client.execute_patch_json(f"{self.endpoint}/api/2.0/permissions/jobs/{job_id}", params)
         
+
