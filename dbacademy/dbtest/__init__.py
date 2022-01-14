@@ -401,7 +401,7 @@ class TestSuite:
             self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
             test.job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
-            if owner: self.client.permissions().change_job_owner(job_id, owner)
+            if owner: self.client.permissions().change_job_owner(test.job_id, owner)
 
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
 
