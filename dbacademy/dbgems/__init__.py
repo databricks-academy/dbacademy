@@ -36,7 +36,7 @@ def get_parameter(name, default_value=""):
 def lookup_current_spark_version(client):
     cluster_id = get_tags()["clusterId"]
     cluster = client.clusters().get(cluster_id)
-    return cluster
+    return cluster.get("spark_version")
 
 def get_current_spark_version():
     spark_version = get_tags()["sparkVersion"]
