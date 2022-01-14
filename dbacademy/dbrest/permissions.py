@@ -1,3 +1,5 @@
+from dbacademy.dbrest import DBAcademyRestClient
+
 class PermissionsClient:
 
     def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
