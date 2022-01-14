@@ -35,6 +35,7 @@ def get_parameter(name, default_value=""):
 
 def get_current_spark_version():
     cluster_id = get_tags()["clusterId"]
+    client = dbrest.DBAcademyRestClient()
     cluster = client.clusters().get(cluster_id)
     return cluster.get("spark_version", None)
 
