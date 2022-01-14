@@ -49,6 +49,10 @@ class DBAcademyRestClient:
 
         return WorkspaceClient(self, self.token, self.endpoint)
 
+    def permissions(self):
+        from dbacademy.dbrest.permissions import PermissionsClient
+        return PermissionsClient(self, self.token, self.endpoint)
+
     def jobs(self):
         from dbacademy.dbrest.jobs import JobsClient
         return JobsClient(self, self.token, self.endpoint)

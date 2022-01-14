@@ -361,7 +361,7 @@ class TestSuite:
             self.client.jobs().delete_by_name(self.test_rounds[test_round], success_only=success_only)
         print()
 
-    def test_all_synchronously(self, test_round, fail_fast=True):
+    def test_all_synchronously(self, test_round, fail_fast=True, owner=None):
         if test_round not in self.test_rounds:
             print(f"** WARNING ** There are no notebooks in round #{test_round}")
         else:
@@ -381,12 +381,20 @@ class TestSuite:
                 self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
                 job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
+
+                try: 
+                    if owner: self.client.permissions().change_job_owner(job_id, owner)
+                except Exception as e:
+                    print("="*80)
+                    print(e)
+                    print("="*80)
+
                 run_id = self.client.jobs().run_now(job_id)["run_id"]
 
                 response = self.client.runs().wait_for(run_id)
                 self.conclude_test(test, response, fail_fast)
 
-    def test_all_asynchronously(self, test_round, fail_fast=False):
+    def test_all_asynchronously(self, test_round, fail_fast=False, owner=None):
 
         tests = self.test_rounds[test_round]
 
@@ -399,6 +407,14 @@ class TestSuite:
             self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
             test.job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
+
+            try:
+                if owner: self.client.permissions().change_job_owner(job_id, owner)
+            except Exception as e:
+                print("="*80)
+                print(e)
+                print("="*80)
+
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
 
         for test in tests:
