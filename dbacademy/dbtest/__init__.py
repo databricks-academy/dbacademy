@@ -381,13 +381,7 @@ class TestSuite:
                 self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
                 job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
-
-                try: 
-                    if owner: self.client.permissions().change_job_owner(job_id, owner)
-                except Exception as e:
-                    print("="*80)
-                    print(e)
-                    print("="*80)
+                if owner: self.client.permissions().change_job_owner(job_id, owner)
 
                 run_id = self.client.jobs().run_now(job_id)["run_id"]
 
@@ -407,13 +401,7 @@ class TestSuite:
             self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
             test.job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
-
-            try:
-                if owner: self.client.permissions().change_job_owner(job_id, owner)
-            except Exception as e:
-                print("="*80)
-                print(e)
-                print("="*80)
+            if owner: self.client.permissions().change_job_owner(job_id, owner)
 
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
 
