@@ -16,5 +16,5 @@ class PermissionsClient:
                 }
             ]
         }
-        return self.client.execute_patch_json(f"{self.endpoint}/permissions/jobs/{job_id}", params)
+        return self.client.execute_patch(f"{self.endpoint}/permissions/jobs/{job_id}", params)
         
