@@ -33,7 +33,7 @@ def get_parameter(name, default_value=""):
     try: return str(dbutils.widgets.get(name))
     except: return default_value
 
-def lookup_current_spark_version():
+def lookup_current_spark_version(client):
     cluster_id = get_tags()["clusterId"]
     cluster = client.clusters().get(cluster_id)
     return cluster.get("instance_pool_id", None)
