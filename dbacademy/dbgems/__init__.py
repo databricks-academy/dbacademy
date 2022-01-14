@@ -33,6 +33,11 @@ def get_parameter(name, default_value=""):
     try: return str(dbutils.widgets.get(name))
     except: return default_value
 
+def lookup_current_spark_version():
+    cluster_id = get_tags()["clusterId"]
+    cluster = client.clusters().get(cluster_id)
+    return cluster.get("instance_pool_id", None)
+
 def get_current_spark_version():
     spark_version = get_tags()["sparkVersion"]
     assert spark_version, "The DBR has not yet been defined, please try again."
@@ -41,7 +46,8 @@ def get_current_spark_version():
 def get_current_instance_pool_id(client):
     cluster_id = get_tags()["clusterId"]
     cluster = client.clusters().get(cluster_id)
-    return cluster["instance_pool_id"] if "instance_pool_id" in cluster else None
+    # return cluster["instance_pool_id"] if "instance_pool_id" in cluster else None
+    return cluster.get("instance_pool_id", None)
 
 def get_cloud():
     with open("/databricks/common/conf/deploy.conf") as f:
