@@ -8,7 +8,7 @@ class PermissionsClient:
         self.endpoint = endpoint  # The API endpoint
 
     def get_job_permissions(self, job_id):
-        return client.execute_get_json(f"{client.endpoint}/api/2.0/permissions/jobs/{job_id}/permissionLevels")
+        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/permissions/jobs/{job_id}/permissionLevels")
 
     def change_job_owner(self, job_id, username):
         params = {
