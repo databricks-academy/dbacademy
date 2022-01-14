@@ -25,10 +25,10 @@ class RunsClient:
 
         if state != "TERMINATED" and state != "INTERNAL_ERROR":
             if state == "PENDING" or state == "RUNNING":
-                print(f" - Job/Run #{job_id}/{run_id} is {state}, checking again in {wait} seconds")
+                print(f" - Job #{job_id}-{run_id} is {state}, checking again in {wait} seconds")
                 time.sleep(wait)
             else:
-                print(f" - Job/Run #{job_id}/{run_id} is {state}, checking again in 5 seconds")
+                print(f" - Job #{job_id}-{run_id} is {state}, checking again in 5 seconds")
                 time.sleep(5)
 
             return self.wait_for(run_id)

@@ -437,7 +437,7 @@ class TestSuite:
         job_id = response.get("job_id", 0)
         
         print("-" * 80)
-        print(f"Job/Run #{job_id}/{run_id} is {response['state']['life_cycle_state']} - {result_state}")
+        print(f"Job #{job_id}-{run_id} is {response['state']['life_cycle_state']} - {result_state}")
         print("-" * 80)
 
         if fail_fast and result_state == 'FAILED':
