@@ -358,7 +358,7 @@ class TestSuite:
 
     def delete_all_jobs(self, success_only=False):
         for test_round in self.test_rounds:
-            job_names = [j.name for j in self.test_rounds[test_round]]
+            job_names = [j.job_name for j in self.test_rounds[test_round]]
 
             print(f"Deleting the jobs {job_names}")
             self.client.jobs().delete_by_name(job_names, success_only=success_only)
