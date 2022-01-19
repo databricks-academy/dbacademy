@@ -358,7 +358,9 @@ class TestSuite:
 
     def delete_all_jobs(self, success_only=False):
         for test_round in self.test_rounds:
-            self.client.jobs().delete_by_name(self.test_rounds[test_round], success_only=success_only)
+            job_names = self.test_rounds[test_round]
+            print(f"Deleting the jobs {job_names}")
+            self.client.jobs().delete_by_name(job_names, success_only=success_only)
         print()
 
     def test_all_synchronously(self, test_round, fail_fast=True, owner=None):
