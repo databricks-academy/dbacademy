@@ -17,6 +17,9 @@ class JobsClient:
     def delete_by_job_id(self, job_id):
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/delete", {"job_id": job_id})
 
+    def list_jobs(self):
+        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/list")["jobs"]
+
     def delete_by_name(self, jobs, success_only):
         if type(jobs) == dict:
             job_list = list(jobs.keys())
@@ -27,7 +30,7 @@ class JobsClient:
         else:
             raise Exception(f"Unsupported type: {type(jobs)}")
 
-        jobs = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/list")["jobs"]
+        jobs = self.list_jobs()
 
         deleted = 0
         s = "s" if len(jobs) != 1 else ""
