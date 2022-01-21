@@ -56,7 +56,7 @@ class ResultsEvaluator:
         for row in rows:
             link = row["notebook_path"]
             if print_links:
-                link = to_job_link(row["cloud"], row["job_id"], row["notebook_path"])
+                link = to_job_link(row["cloud"], row["job_id"], row["run_id"], row["notebook_path"])
 
             html += self.add_row(self.cell_style, row["cloud"], link, row["spark_version"], row["executed_at"], self.format_duration(row["execution_duration"]))
             html += """<tbody></tbody><tbody>"""
@@ -66,19 +66,19 @@ class ResultsEvaluator:
         return html
 
 
-def to_job_url(cloud, job_id):
+def to_job_url(cloud, job_id, run_id):
     aws_workspace = "https://curriculum-dev.cloud.databricks.com/?o=3551974319838082"
     gcp_workspace = "https://8422030046858219.9.gcp.databricks.com/?o=8422030046858219"
     msa_workspace = "https://westus2.azuredatabricks.net/?o=2472203627577334"
 
-    if cloud == "AWS": return f"{aws_workspace}#job/{job_id}/run/1"
-    if cloud == "GCP": return f"{gcp_workspace}#job/{job_id}/run/1"
-    if cloud == "MSA": return f"{msa_workspace}#job/{job_id}/run/1"
+    if cloud == "AWS": return f"{aws_workspace}#job/{job_id}/run/{run_id}"
+    if cloud == "GCP": return f"{gcp_workspace}#job/{job_id}/run/{run_id}"
+    if cloud == "MSA": return f"{msa_workspace}#job/{job_id}/run/{run_id}"
     raise Exception(f"The cloud {cloud} is not supported")
 
 
-def to_job_link(cloud, job_id, label):
-    url = to_job_url(cloud, job_id)
+def to_job_link(cloud, job_id, run_id, label):
+    url = to_job_url(cloud, job_id, run_id)
     return f"""<a href="{url}" target="_blank">{label}</a>"""
 
 
