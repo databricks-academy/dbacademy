@@ -18,7 +18,8 @@ class JobsClient:
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/delete", {"job_id": job_id})
 
     def list(self):
-        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/list")["jobs"]
+        response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/list")
+        return response.get("jobs", list())
 
     def delete_by_name(self, jobs, success_only):
         if type(jobs) == dict:
