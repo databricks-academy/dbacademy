@@ -73,10 +73,14 @@ def get_tag(tag_name: str, default_value: str = None) -> str:
     except KeyError:
         return default_value
 
-
 def get_username() -> str:
     return get_tags()["user"]
 
+def get_browser_host_name():
+    dbgems.get_tags()["browserHostName"]
+
+def get_workspace_id() -> str:
+    return dbutils.entry_point.getDbutils().notebook().getContext().workspaceId().getOrElse(None)
 
 def get_notebook_path() -> str:
     return dbutils.entry_point.getDbutils().notebook().getContext().notebookPath().getOrElse(None)
