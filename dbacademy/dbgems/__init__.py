@@ -77,7 +77,7 @@ def get_username() -> str:
     return get_tags()["user"]
 
 def get_browser_host_name():
-    dbgems.get_tags()["browserHostName"]
+    return get_tags()["browserHostName"]
 
 def get_workspace_id() -> str:
     return dbutils.entry_point.getDbutils().notebook().getContext().workspaceId().getOrElse(None)
