@@ -67,6 +67,7 @@ class ResultsEvaluator:
 
 
 def to_job_url(cloud, job_id, run_id):
+    from dbacademy import dbgems
     # aws_workspace = "https://curriculum-dev.cloud.databricks.com/?o=3551974319838082"
     # gcp_workspace = "https://8422030046858219.9.gcp.databricks.com/?o=8422030046858219"
     # msa_workspace = "https://westus2.azuredatabricks.net/?o=2472203627577334"
