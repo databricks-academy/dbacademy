@@ -8,10 +8,10 @@ class SqlEndpointsClient:
         self.token = token
         self.endpoint = endpoint
 
-    def start(endpoint_id):
+    def start(self, endpoint_id):
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints/{endpoint_id}/start")
 
-    def stop(endpoint_id):
+    def stop(self, endpoint_id):
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints/{endpoint_id}/stop")
 
     # def get(self, run_id):
