@@ -69,7 +69,7 @@ class DBAcademyRestClient:
         from dbacademy.dbrest.clusters import ClustersClient
         return ClustersClient(self, self.token, self.endpoint)
 
-    def SqlEndpointsClient(self):
+    def sql_endpoints(self):
         from dbacademy.dbrest.clusters import SqlEndpointsClient
         return SqlEndpointsClient(self, self.token, self.endpoint)
 
