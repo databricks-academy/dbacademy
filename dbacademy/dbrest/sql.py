@@ -2,16 +2,16 @@
 from dbacademy.dbrest import DBAcademyRestClient
 
 
-class SqlEndpointsClient:
+class SqlClient:
     def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
         self.client = client
         self.token = token
         self.endpoint = endpoint
 
-    def start(self, endpoint_id):
+    def start_endpoint(self, endpoint_id):
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints/{endpoint_id}/start", {})
 
-    def stop(self, endpoint_id):
+    def stop_endpoint(self, endpoint_id):
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints/{endpoint_id}/stop", {})
 
     # def get(self, run_id):

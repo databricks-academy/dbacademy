@@ -224,6 +224,9 @@ class NotebookDef:
             students_commands.append(self.get_footer_cell(language))
             solutions_commands.append(self.get_footer_cell(language))
 
+        for key in ["\"", "*", "<", ">", "?", "\\", "/", "|", ":"]:
+                self.warn(lambda: key not in self.path,  f"Found invalid character {key} in notebook name: {self.path}")
+
         # Create the student's notebooks
         students_notebook_path = f"{self.target_dir}/{self.path}"
         if verbose: print(students_notebook_path)

@@ -69,9 +69,9 @@ class DBAcademyRestClient:
         from dbacademy.dbrest.clusters import ClustersClient
         return ClustersClient(self, self.token, self.endpoint)
 
-    def sql_endpoints(self):
-        from dbacademy.dbrest.sql_endpoints import SqlEndpointsClient
-        return SqlEndpointsClient(self, self.token, self.endpoint)
+    def sql(self):
+        from dbacademy.dbrest.sql import SqlClient
+        return SqlClient(self, self.token, self.endpoint)
 
     def _get_local_credentials(self, config_file, profile):
         if config_file is None:
