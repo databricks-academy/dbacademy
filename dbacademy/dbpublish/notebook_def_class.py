@@ -456,6 +456,7 @@ class NotebookDef:
                     pass  # Number and symbols are not used in directives
 
                 else:
+                    ALLOWED_DIRECTIVES = SUPPORTED_DIRECTIVES + ["SELECT", "FROM", "AS"]
                     # print(f"""Processing "{directive}" in Cmd #{i+1} """)
                     reslut_a = self.warn(lambda: " " not in directive, f"""Whitespace found in directive "{directive}", Cmd #{i + 1}: {line}""")
                     reslut_b = self.warn(lambda: "-" not in directive, f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
