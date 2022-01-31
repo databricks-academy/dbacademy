@@ -224,7 +224,8 @@ class NotebookDef:
             students_commands.append(self.get_footer_cell(language))
             solutions_commands.append(self.get_footer_cell(language))
 
-        for key in ["\"", "*", "<", ">", "?", "\\", "/", "|", ":"]:
+        for key in ["\"", "*", "<", ">", "?", "\\", "|", ":"]:
+                # Not checking for forward slash as the platform itself enforces this.
                 self.warn(lambda: key not in self.path,  f"Found invalid character {key} in notebook name: {self.path}")
 
         # Create the student's notebooks
