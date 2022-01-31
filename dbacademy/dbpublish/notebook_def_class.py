@@ -14,6 +14,8 @@ SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY,
                         D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
 
 
+SQL_DIRECTIVES = ["SELECT", "FROM", "AS"]
+
 class NotebookError:
     def __init__(self, message):
         self.message = message
@@ -149,8 +151,9 @@ class NotebookDef:
             # Make sure we have one and only one directive in this command (ignoring the header directives)
             directive_count = 0
             for directive in directives:
-                if directive not in [D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE,
-                                     D_INCLUDE_FOOTER_FALSE]:
+                if directive in SQL_DIRECTIVES:
+                    pass # not a real directive, just looks like one.
+                elif directive not in [D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
                     directive_count += 1
             self.test(lambda: directive_count <= 1, f"Found multiple directives ({directive_count}) in Cmd #{i + 1}: {directives}")
 
@@ -456,7 +459,7 @@ class NotebookDef:
                     pass  # Number and symbols are not used in directives
 
                 else:
-                    ALLOWED_DIRECTIVES = SUPPORTED_DIRECTIVES + ["SELECT", "FROM", "AS"]
+                    ALLOWED_DIRECTIVES = SUPPORTED_DIRECTIVES + SQL_DIRECTIVES
                     # print(f"""Processing "{directive}" in Cmd #{i+1} """)
                     reslut_a = self.warn(lambda: " " not in directive, f"""Whitespace found in directive "{directive}", Cmd #{i + 1}: {line}""")
                     reslut_b = self.warn(lambda: "-" not in directive, f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
