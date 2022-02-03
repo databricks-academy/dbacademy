@@ -121,9 +121,7 @@ class NotebookDef:
             self.test(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}")
             cm = self.get_comment_marker(language)
             if command.startswith(f"%md") or command.startswith(f"{cm} MAGIC %md"):
-                self.warn(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}"))
-
-
+                self.warn(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}")
 
             # 
             # if  == "%md":
