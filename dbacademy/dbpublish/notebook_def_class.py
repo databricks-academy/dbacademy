@@ -119,6 +119,16 @@ class NotebookDef:
             command = commands[i].lstrip()
 
             self.test(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}")
+            cm = self.get_comment_marker(language)
+            if command.startswith(f"%md") or command.startswith(f"{cm} MAGIC %md"):
+                self.warn(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}"))
+
+
+
+            # 
+            # if  == "%md":
+            #     pass
+            #     # self.warn(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}"))
 
             # Extract the leading comments and then the directives
             leading_comments = self.get_leading_comments(language, command.strip())
@@ -459,11 +469,10 @@ class NotebookDef:
                     pass  # Number and symbols are not used in directives
 
                 else:
-                    ALLOWED_DIRECTIVES = SUPPORTED_DIRECTIVES + SQL_DIRECTIVES
                     # print(f"""Processing "{directive}" in Cmd #{i+1} """)
                     reslut_a = self.warn(lambda: " " not in directive, f"""Whitespace found in directive "{directive}", Cmd #{i + 1}: {line}""")
                     reslut_b = self.warn(lambda: "-" not in directive, f"""Hyphen found in directive "{directive}", Cmd #{i + 1}: {line}""")
-                    reslut_c = self.warn(lambda: directive in ALLOWED_DIRECTIVES, f"""Unsupported directive "{directive}" in Cmd #{i + 1}, see dbacademy.Publisher.help_html() for more information.""")
+                    reslut_c = self.warn(lambda: directive in SUPPORTED_DIRECTIVES, f"""Unsupported directive "{directive}" in Cmd #{i + 1}, see dbacademy.Publisher.help_html() for more information.""")
                     if reslut_a and reslut_b and reslut_c:
                         directives.append(line)
         
