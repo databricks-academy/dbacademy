@@ -123,9 +123,7 @@ class NotebookDef:
             
             cm = self.get_comment_marker(language)
             if command.startswith(f"%md") or command.startswith(f"{cm} MAGIC %md"):
-                tick_pattern = re.compile(r"[^\*]`[^\s]*`[^\*]")
-                result = tick_pattern.search(command)
-                if result is not None:
+                for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
                     self.warn(None, f"Found a single-tick block, expected the **`xx`** pattern: {result}")
 
             # Extract the leading comments and then the directives
