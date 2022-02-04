@@ -83,6 +83,7 @@ class NotebookDef:
             raise Exception("Publish aborted - see previous errors for more information")
 
     def publish(self, verbose=False, debugging=False) -> None:
+        import re
         print("-" * 80)
         print(f".../{self.path}")
 
