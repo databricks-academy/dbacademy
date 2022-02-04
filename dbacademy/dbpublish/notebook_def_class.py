@@ -119,14 +119,13 @@ class NotebookDef:
             command = commands[i].lstrip()
 
             self.test(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}")
+            
             cm = self.get_comment_marker(language)
             if command.startswith(f"%md") or command.startswith(f"{cm} MAGIC %md"):
-                self.warn(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}")
-
-            # 
-            # if  == "%md":
-            #     pass
-            #     # self.warn(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}"))
+                tick_pattern = re.compile(r"[^\*]`[^\s]*`[^\*]")
+                result = tick_pattern.search(contents)
+                if result is not None:
+                    self.warn(None, f"Found a single-tick block, expected the **`xx`** pattern: {result}")
 
             # Extract the leading comments and then the directives
             leading_comments = self.get_leading_comments(language, command.strip())
