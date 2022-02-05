@@ -83,6 +83,7 @@ class NotebookDef:
             raise Exception("Publish aborted - see previous errors for more information")
 
     def test_md_cells(self, language, command):
+        import re
         cm = self.get_comment_marker(language)
         if command.startswith(f"%md") or command.startswith(f"{cm} MAGIC %md"):
             # Test for usage of single-ticks that should also be bolded
@@ -94,7 +95,6 @@ class NotebookDef:
                 self.warn(None, f"Found a MD link, expected HTML link: \"{result}\"")
 
     def publish(self, verbose=False, debugging=False) -> None:
-        import re
         print("-" * 80)
         print(f".../{self.path}")
 
