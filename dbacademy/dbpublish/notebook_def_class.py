@@ -82,6 +82,17 @@ class NotebookDef:
             print()
             raise Exception("Publish aborted - see previous errors for more information")
 
+    def test_md_cells(self, language, command):
+        cm = self.get_comment_marker(language)
+        if command.startswith(f"%md") or command.startswith(f"{cm} MAGIC %md"):
+            # Test for usage of single-ticks that should also be bolded
+            for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
+                self.warn(None, f"Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
+
+            # Test for MD links to be replaced with html links
+            for result in re.findall(f"\[.*\]\(.*\)", command):
+                self.warn(None, f"Found a MD link, expected HTML link: \"{result}\"")
+
     def publish(self, verbose=False, debugging=False) -> None:
         import re
         print("-" * 80)
@@ -120,12 +131,9 @@ class NotebookDef:
             command = commands[i].lstrip()
 
             self.test(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}")
-            
-            cm = self.get_comment_marker(language)
-            if command.startswith(f"%md") or command.startswith(f"{cm} MAGIC %md"):
-                for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
-                    if result != "```":
-                        self.warn(None, f"Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
+
+            # Misc tests specific for markdown cells            
+            self.test_md_cells(language, command)
 
             # Extract the leading comments and then the directives
             leading_comments = self.get_leading_comments(language, command.strip())
