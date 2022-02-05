@@ -98,7 +98,7 @@ class NotebookDef:
             # Test all HTML links to ensure they have a target to _blank
             for link in re.findall(r"<a .*<\/a>", command):
                 if "target=\"_blank\"" not in link:
-                    self.warn(None, f"Found HTML link without the required target=\"_blank\": \"{result}\"")
+                    self.warn(None, f"Found HTML link without the required target=\"_blank\": \"{link}\"")
 
     def publish(self, verbose=False, debugging=False) -> None:
         print("-" * 80)
