@@ -86,6 +86,7 @@ class NotebookDef:
         import re
         cm = self.get_comment_marker(language)
         if command.startswith(f"%md") or command.startswith(f"{cm} MAGIC %md"):
+            
             # Test for usage of single-ticks that should also be bolded
             for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
                 self.warn(None, f"Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
@@ -94,6 +95,7 @@ class NotebookDef:
             for result in re.findall(r"[^!]\[.*\]\(.*\)", command):
                 self.warn(None, f"Found a MD link, expected HTML link: \"{result}\"")
 
+            # Test all HTML links to ensure they have a target to _blank
             for link in re.findall(r"<a .*<\/a>", command):
                 if "target=\"_blank\"" not in link:
                     self.warn(None, f"Found HTML link without the required target=\"_blank\": \"{result}\"")
