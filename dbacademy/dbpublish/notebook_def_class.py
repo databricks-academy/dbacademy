@@ -96,8 +96,10 @@ class NotebookDef:
             self.warn(None, f"Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
 
         # Test for MD links to be replaced with html links
-        for result in re.findall(r"[^!]\[.*\]\(.*\)", command):
-            self.warn(None, f"Found a MD link, expected HTML link: \"{result}\"")
+        for link in re.findall(r"[^!]\[.*\]\(.*\)", command):
+            # If this is a relative link, we can ignore it.
+            if len(re.findall(f"\(\$.*\)", link)) == 0:
+                self.warn(None, f"Found a MD link, expected HTML link: \"{link}\"")
 
         # Test all HTML links to ensure they have a target to _blank
         for link in re.findall(r"<a .*<\/a>", command):
