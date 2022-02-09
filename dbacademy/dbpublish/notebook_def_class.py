@@ -104,8 +104,11 @@ class NotebookDef:
             if "target=\"_blank\"" not in link:
                 self.warn(None, f"Found HTML link without the required target=\"_blank\": \"{link}\"")
 
-    def publish(self, source_dir:str, target_dir:str, verbose=False, debugging=False) -> None:
+    def publish(self, source_dir:str, target_dir:str, verbose:bool, debugging:bool) -> None:
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
+        assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
+        assert type(verbose) == bool, f"""Expected the parameter "verbose" to be of type "bool", found "{type(verbose)}" """
+        assert type(debugging) == bool, f"""Expected the parameter "debugging" to be of type "bool", found "{type(debugging)}" """
 
         print("-" * 80)
         print(f".../{self.path}")

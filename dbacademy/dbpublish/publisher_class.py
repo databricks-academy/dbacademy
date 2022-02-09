@@ -97,10 +97,9 @@ class Publisher:
             print(f"RESTORING: {version_info_path}")
             self.client.workspace().import_notebook("PYTHON", version_info_path, version_info_source)
         else:
-            version_info_notebook.publish(source_dir=source_dir,
-                                          target_dir=target_dir,
+            version_info_notebook.publish(source_dir=self.source_dir,
+                                          target_dir=self.target_dir,
                                           verbose=verbose, 
                                           debugging=debugging)
-
         print("-"*80)
         print("All done!")
