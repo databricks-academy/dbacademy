@@ -2,7 +2,7 @@ from dbacademy.dbpublish.notebook_def_class import NotebookDef
 
 
 class Publisher:
-    def __init__(self, client, version: str, source_dir: str, target_dir: str, include_solutions: bool = True):
+    def __init__(self, client, version: str, source_dir: str, target_dir: str):
         self.client = client
         self.version = version
         self.version_info_notebook_name = "Version Info"
@@ -10,7 +10,6 @@ class Publisher:
         self.source_dir = source_dir
         self.target_dir = target_dir
 
-        self.include_solutions = include_solutions
         self.notebooks = []
 
     def add_all(self, notebooks):
@@ -20,27 +19,16 @@ class Publisher:
             notebooks = list(notebooks.values())
 
         for notebook in notebooks:
-            self.add_path(notebook.path,
-                          replacements=notebooks[notebook.path].replacements,
-                          include_solution=notebooks[notebook.path].include_solution)
+            self.add_notebook(notebook)
 
-    def add_path(self, path, replacements: dict = None, include_solution=None):
+    def add_notebook(self, notebook):
         from datetime import datetime
 
-        # Configure our various default values.
-        include_solution = self.include_solutions if include_solution is None else include_solution
-        replacements = dict() if replacements is None else replacements
-
-        notebook = NotebookDef(self.source_dir, self.target_dir, path, replacements, include_solution)
+        assert type(notebook) == NotebookDef, f"""Expected the parameter "notebook" to be of type "NotebookDef", found "{type(notebook)}" """
 
         # Add the universal replacements
         notebook.replacements["version_number"] = self.version
         notebook.replacements["built_on"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
-
-        self.add_notebook_def(notebook)
-
-    def add_notebook_def(self, notebook):
-        assert type(notebook) == NotebookDef, f"""Expected the parameter "notebook" to be of type "NotebookDef", found "{type(notebook)}" """
 
         self.notebooks.append(notebook)
 
