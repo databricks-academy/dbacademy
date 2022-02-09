@@ -20,7 +20,7 @@ class NotebookError:
 
 
 class NotebookDef:
-    def __init__(self, source_dir: str, target_dir: str, path: str, replacements: dict, include_solution: bool):
+    def __init__(self, source_dir: str, target_dir: str, path: str, replacements: dict, include_solution: bool, test_round: int, ignored: bool, order: int):
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
         assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
         assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
@@ -35,6 +35,10 @@ class NotebookDef:
         self.include_solution = include_solution
         self.errors = list()
         self.warnings = list()
+
+        self.test_round = test_round
+        self.ignored = ignored
+        self.order = order
 
     def __str__(self):
         result = self.path

@@ -82,20 +82,9 @@ def to_job_url(cloud, job_id, run_id):
         raise Exception(f"The cloud {cloud} is not supported")
 
 
-
 def to_job_link(cloud, job_id, run_id, label):
     url = to_job_url(cloud, job_id, run_id)
     return f"""<a href="{url}" target="_blank">{label}</a>"""
-
-
-class NotebookDef:
-    def __init__(self, test_round, path, ignored, include_solution, replacements, order):
-        self.test_round = test_round
-        self.path = path
-        self.ignored = ignored
-        self.include_solution = include_solution
-        self.replacements = replacements
-        self.order = order
 
 
 class TestConfig:
