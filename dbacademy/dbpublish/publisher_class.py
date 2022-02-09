@@ -14,15 +14,15 @@ class Publisher:
         self.notebooks = []
 
     def add_all(self, notebooks):
-        print("-"*80)
-        print(type(notebooks))
-        print(type(list(notebooks.values())[0]))
-        print("-"*80)
 
-        for path in notebooks:
-            self.add_path(path,
-                          replacements=notebooks[path].replacements,
-                          include_solution=notebooks[path].include_solution)
+        if type(notebooks) == dict:
+            print(f"DEBUG: Converting dict to list in Publisher.add_all")
+            notebooks = list(notebooks.values())
+
+        for notebook in notebooks:
+            self.add_path(notebook.path,
+                          replacements=notebooks[notebook.path].replacements,
+                          include_solution=notebooks[notebook.path].include_solution)
 
     def add_path(self, path, replacements: dict = None, include_solution=None):
         from datetime import datetime
