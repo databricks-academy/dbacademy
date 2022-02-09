@@ -16,9 +16,9 @@ class Publisher:
     def add_all(self, notebooks):
         print("-"*80)
         print(type(notebooks))
-        print(type(notebooks[0]))
+        print(type(notebooks.values()[0]))
         print("-"*80)
-        
+
         for path in notebooks:
             self.add_path(path,
                           replacements=notebooks[path].replacements,
