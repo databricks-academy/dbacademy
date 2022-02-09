@@ -177,6 +177,8 @@ class TestConfig:
         return distribution_name.replace(" ", "-").replace(" ", "-").replace(" ", "-")
 
     def index_notebooks(self, include_solutions=True, fail_fast=True):
+        from dbacademy.dbpublish import NotebookDef
+
         assert self.source_dir is not None, "TestConfig.source_dir must be specified"
 
         self.notebooks = dict()

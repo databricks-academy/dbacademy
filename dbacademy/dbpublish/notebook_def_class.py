@@ -20,16 +20,12 @@ class NotebookError:
 
 
 class NotebookDef:
-    def __init__(self, source_dir: str, target_dir: str, path: str, replacements: dict, include_solution: bool, test_round: int, ignored: bool, order: int):
-        assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
-        assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
+    def __init__(self, path: str, replacements: dict, include_solution: bool, test_round: int, ignored: bool, order: int):
         assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
         assert type(replacements) == dict, f"""Expected the parameter "replacements" to be of type "dict", found "{type(replacements)}" """
         assert type(include_solution) == bool, f"""Expected the parameter "include_solution" to be of type "bool", found "{type(include_solution)}" """
 
         self.path = path
-        self.source_dir = source_dir
-        self.target_dir = target_dir
         self.replacements = dict() if replacements is None else replacements
 
         self.include_solution = include_solution
@@ -43,8 +39,6 @@ class NotebookDef:
     def __str__(self):
         result = self.path
         result += f"\n - include_solution = {self.include_solution}"
-        result += f"\n - source_dir = {self.source_dir}"
-        result += f"\n - target_dir = {self.target_dir}"
         result += f"\n - replacements = {self.replacements}"
         return result
 
@@ -110,11 +104,13 @@ class NotebookDef:
             if "target=\"_blank\"" not in link:
                 self.warn(None, f"Found HTML link without the required target=\"_blank\": \"{link}\"")
 
-    def publish(self, verbose=False, debugging=False) -> None:
+    def publish(self, source_dir:str, target_dir:str, verbose=False, debugging=False) -> None:
+        assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
+
         print("-" * 80)
         print(f".../{self.path}")
 
-        source_notebook_path = f"{self.source_dir}/{self.path}"
+        source_notebook_path = f"{source_dir}/{self.path}"
 
         client = DBAcademyRestClient()
 
@@ -260,14 +256,14 @@ class NotebookDef:
                 self.warn(lambda: key not in self.path,  f"Found invalid character {key} in notebook name: {self.path}")
 
         # Create the student's notebooks
-        students_notebook_path = f"{self.target_dir}/{self.path}"
+        students_notebook_path = f"{target_dir}/{self.path}"
         if verbose: print(students_notebook_path)
         if verbose: print(f"...publishing {len(students_commands)} commands")
         self.publish_notebook(language, students_commands, students_notebook_path, print_warnings=True)
 
         # Create the solutions notebooks
         if self.include_solution:
-            solutions_notebook_path = f"{self.target_dir}/Solutions/{self.path}"
+            solutions_notebook_path = f"{target_dir}/Solutions/{self.path}"
             if verbose: print(solutions_notebook_path)
             if verbose: print(f"...publishing {len(solutions_commands)} commands")
             self.publish_notebook(language, solutions_commands, solutions_notebook_path, print_warnings=False)
