@@ -89,7 +89,10 @@ class Publisher:
             testing = False
 
         for notebook in main_notebooks:
-            notebook.publish(verbose=verbose, debugging=debugging)
+            notebook.publish(source_dir=self.source_dir,
+                             target_dir=self.target_dir,
+                             verbose=verbose, 
+                             debugging=debugging)
 
         if testing:
             print("-" * 80)  # We are in test-mode, write back the original Version Info notebook
