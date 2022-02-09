@@ -32,12 +32,12 @@ def help_html():
     return html
 
 
-def from_test_config(test_config, target_dir, include_solutions=True):
+def from_test_config(test_config, target_dir):
     publisher = Publisher(client=test_config.client,
                           version=test_config.version,
                           source_dir=test_config.source_dir,
-                          target_dir=target_dir,
-                          include_solutions=include_solutions)
+                          target_dir=target_dir)
+                          
     publisher.add_all(test_config.notebooks)
     return publisher
 
