@@ -82,23 +82,29 @@ class NotebookDef:
             print()
             raise Exception("Publish aborted - see previous errors for more information")
 
+    def test_run_cells(self, language, command):
+        pass
+    
     def test_md_cells(self, language, command):
         import re
+
+        # First verify that the specified command is a mark-down cell
         cm = self.get_comment_marker(language)
-        if command.startswith(f"%md") or command.startswith(f"{cm} MAGIC %md"):
+        if not command.startswith(f"%md") and not command.startswith(f"{cm} MAGIC %md"):
+            return
             
-            # Test for usage of single-ticks that should also be bolded
-            for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
-                self.warn(None, f"Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
+        # Test for usage of single-ticks that should also be bolded
+        for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
+            self.warn(None, f"Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
 
-            # Test for MD links to be replaced with html links
-            for result in re.findall(r"[^!]\[.*\]\(.*\)", command):
-                self.warn(None, f"Found a MD link, expected HTML link: \"{result}\"")
+        # Test for MD links to be replaced with html links
+        for result in re.findall(r"[^!]\[.*\]\(.*\)", command):
+            self.warn(None, f"Found a MD link, expected HTML link: \"{result}\"")
 
-            # Test all HTML links to ensure they have a target to _blank
-            for link in re.findall(r"<a .*<\/a>", command):
-                if "target=\"_blank\"" not in link:
-                    self.warn(None, f"Found HTML link without the required target=\"_blank\": \"{link}\"")
+        # Test all HTML links to ensure they have a target to _blank
+        for link in re.findall(r"<a .*<\/a>", command):
+            if "target=\"_blank\"" not in link:
+                self.warn(None, f"Found HTML link without the required target=\"_blank\": \"{link}\"")
 
     def publish(self, verbose=False, debugging=False) -> None:
         print("-" * 80)
@@ -140,6 +146,7 @@ class NotebookDef:
 
             # Misc tests specific for markdown cells            
             self.test_md_cells(language, command)
+            self.test_run_cells(language, command)
 
             # Extract the leading comments and then the directives
             leading_comments = self.get_leading_comments(language, command.strip())
