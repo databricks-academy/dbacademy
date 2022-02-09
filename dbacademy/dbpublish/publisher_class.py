@@ -23,6 +23,7 @@ class Publisher:
 
     def add_notebook(self, notebook):
         from datetime import datetime
+        from dbacademy.dbtest import NotebookDef
 
         assert type(notebook) == NotebookDef, f"""Expected the parameter "notebook" to be of type "NotebookDef", found "{type(notebook)}" """
 
