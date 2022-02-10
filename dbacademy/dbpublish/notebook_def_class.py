@@ -91,10 +91,11 @@ class NotebookDef:
                 offset -= 1
                 target = target[3:] 
                 
-            parent = '/'.join(self.path.split("/")[:offset]) + "/" + target
+            target = '/'.join(self.path.split("/")[:offset]) + "/" + target
 
         elif target.startswith("./"):
             target = target[2:]
+            target = '/'.join(self.path.split("/")[:-1]) + "/" + target
 
         notebooks = [n.path for n in other_notebooks if target == n.path]
         self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook for the {what} target: \"{original_target}\" |{target}|")
