@@ -80,7 +80,7 @@ class NotebookDef:
             print()
             raise Exception("Publish aborted - see previous errors for more information")
 
-    def test_notebook_exists(self, original_target, target, other_notebooks):
+    def test_notebook_exists(self, what, original_target, target, other_notebooks):
         if not target.startswith("../") and not target.startswith("./"):
             self.warn(None, f"Found unexpected relative link target: \"{target}\"")
             return
@@ -97,7 +97,7 @@ class NotebookDef:
             target = target[2:]
 
         notebooks = [n.path for n in other_notebooks if target == n.path]
-        self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook for the link target: \"{original_target}\"")
+        self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook for the {what} target: \"{original_target}\"")
 
     def test_run_cells(self, language, command, other_notebooks):
         # First verify that the specified command is a %run cell
@@ -110,7 +110,7 @@ class NotebookDef:
         link = link[:1] if link.endswith("\"") else link
         self.warn(None, f"Untested: |{link}| in |{self.path}|")
 
-        self.test_notebook_exists(link, link, other_notebooks)
+        self.test_notebook_exists("%run", link, link, other_notebooks)
     
     def test_md_cells(self, language, command, other_notebooks):
         import re
@@ -133,7 +133,7 @@ class NotebookDef:
             else:
                 original_target = match.group()[1:-1]
                 target = original_target[1:]
-                self.test_notebook_exists(original_target, target, other_notebooks)
+                self.test_notebook_exists("MD link", original_target, target, other_notebooks)
 
         
         # Test all HTML links to ensure they have a target to _blank
