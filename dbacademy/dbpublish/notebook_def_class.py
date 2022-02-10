@@ -102,14 +102,11 @@ class NotebookDef:
     def test_run_cells(self, language, command, other_notebooks):
         # First verify that the specified command is a %run cell
         cm = self.get_comment_marker(language)
-        if not command.startswith(f"{cm} MAGIC %run"):
+        prefix = f"{cm} MAGIC %run"
+        if not command.startswith(prefix):
             return
 
-        link = command.split("\n")[0]
-        self.warn(None, f"Untested: |{link}| in |{self.path}|")
-
-        link = link[4:].strip()
-
+        link = command.split("\n")[0][len(prefix):].strip()
         link = link[1:] if link.startswith("\"") else link
         link = link[:1] if link.endswith("\"") else link
         self.warn(None, f"Untested: |{link}| in |{self.path}|")
