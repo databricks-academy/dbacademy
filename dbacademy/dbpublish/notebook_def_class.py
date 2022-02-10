@@ -110,7 +110,7 @@ class NotebookDef:
                     target = target[2:]
                     found = False
                     notebooks = [n.path for n in other_notebooks if target == n.path]
-                    self.warn(lambda: len(notebooks) == 0, f"Cannot find notebook for the link target: \"{target}\"")
+                    self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook for the link target: \"{target}\"")
 
                 else:
                     self.warn(None, f"Found unexpected relative link target: \"{target}\"")
