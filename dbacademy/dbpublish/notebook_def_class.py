@@ -80,9 +80,9 @@ class NotebookDef:
             print()
             raise Exception("Publish aborted - see previous errors for more information")
 
-    def test_notebook_exists(self, what, original_target, target, other_notebooks):
+    def test_notebook_exists(self, i, what, original_target, target, other_notebooks):
         if not target.startswith("../") and not target.startswith("./"):
-            self.warn(None, f"Found unexpected, relative, {what} target: \"{original_target}\" resolved as \"{target}\"")
+            self.warn(None, f"Found unexpected, relative, {what} target in command #{i+1}: \"{original_target}\" resolved as \"{target}\"")
             return
 
         offset = -1
@@ -102,9 +102,9 @@ class NotebookDef:
         if target.startswith("/"): target = target[1:]
 
         notebooks = [n.path for n in other_notebooks if target == n.path]
-        self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook for the {what} target: \"{original_target}\" resolved as \"{target}\"")
+        self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook in command #{i+1} for the {what} target: \"{original_target}\" resolved as \"{target}\"")
 
-    def test_run_cells(self, language, command, other_notebooks):
+    def test_run_cells(self, language, command, i, other_notebooks):
         # First verify that the specified command is a %run cell
         cm = self.get_comment_marker(language)
         prefix = f"{cm} MAGIC %run"
@@ -115,9 +115,9 @@ class NotebookDef:
         link = link[1:] if link.startswith("\"") else link
         link = link[:1] if link.endswith("\"") else link
 
-        self.test_notebook_exists("%run", link, link, other_notebooks)
+        self.test_notebook_exists(i, "%run", link, link, other_notebooks)
     
-    def test_md_cells(self, language, command, other_notebooks):
+    def test_md_cells(self, language, command, i, other_notebooks):
         import re
 
         # First verify that the specified command is a mark-down cell
@@ -127,24 +127,24 @@ class NotebookDef:
             
         # Test for usage of single-ticks that should also be bolded
         for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
-            self.warn(None, f"Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
+            self.warn(None, f"Found a single-tick block in command #{i+1}, expected the **`xx`** pattern: \"{result}\"")
 
         # Test for MD links to be replaced with html links
         for link in re.findall(r"[^!]\[.*\]\(.*\)", command):
             # If this is a relative link, we can ignore it.
             match = re.search(f"\(\$.*\)", link)
             if not match:
-                self.warn(None, f"Found a MD link, expected HTML link: \"{link}\"")
+                self.warn(None, f"Found a MD link in command #{i+1}, expected HTML link: \"{link}\"")
             else:
                 original_target = match.group()[1:-1]
                 target = original_target[1:]
-                self.test_notebook_exists("MD link", original_target, target, other_notebooks)
+                self.test_notebook_exists(i, "MD link", original_target, target, other_notebooks)
 
         
         # Test all HTML links to ensure they have a target to _blank
         for link in re.findall(r"<a .*<\/a>", command):
             if "target=\"_blank\"" not in link:
-                self.warn(None, f"Found HTML link without the required target=\"_blank\": \"{link}\"")
+                self.warn(None, f"Found HTML link in command #{i+1} without the required target=\"_blank\": \"{link}\"")
 
     def publish(self, source_dir:str, target_dir:str, verbose:bool, debugging:bool, other_notebooks:list) -> None:
         from dbacademy.dbpublish.notebook_def_class import NotebookDef
@@ -196,8 +196,8 @@ class NotebookDef:
             self.test(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}")
 
             # Misc tests specific for markdown cells            
-            self.test_md_cells(language, command, other_notebooks)
-            self.test_run_cells(language, command, other_notebooks)
+            self.test_md_cells(language, command, i, other_notebooks)
+            self.test_run_cells(language, command, i, other_notebooks)
 
             # Extract the leading comments and then the directives
             leading_comments = self.get_leading_comments(language, command.strip())
