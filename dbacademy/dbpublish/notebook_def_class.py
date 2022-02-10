@@ -98,9 +98,15 @@ class NotebookDef:
         # Test for MD links to be replaced with html links
         for link in re.findall(r"[^!]\[.*\]\(.*\)", command):
             # If this is a relative link, we can ignore it.
-            if len(re.findall(f"\(\$.*\)", link)) == 0:
+            targets = re.findall(f"\(\$.*\)", link)
+            if len(targets) == 0:
                 self.warn(None, f"Found a MD link, expected HTML link: \"{link}\"")
-
+            else:
+                # for notebook in other_notebooks:
+                print("-"*80)
+                print(targets[0])
+                print("-"*80)
+        
         # Test all HTML links to ensure they have a target to _blank
         for link in re.findall(r"<a .*<\/a>", command):
             if "target=\"_blank\"" not in link:
