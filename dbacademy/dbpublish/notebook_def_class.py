@@ -103,22 +103,24 @@ class NotebookDef:
                 self.warn(None, f"Found a MD link, expected HTML link: \"{link}\"")
             else:
                 target = match.group()[2:-1]
-                if target.startswith("../"):
-                    offset = -1
-                    while target.startswith("../"):
-                        offset -= 1
-                        target = target[3:] 
-                    parent = '/'.join(self.path.split("/")[:offset])
-                    self.warn(None, f"Untested - link to parent directory: \"{target}\" from {self.path} | {parent}")
+                if not target.startswith("../") and not target.startswith("./"):
+                    self.warn(None, f"Found unexpected relative link target: \"{target}\"")
+                else:
+                    if target.startswith("../"):
+                        offset = -1
+                        while target.startswith("../"):
+                            offset -= 1
+                            target = target[3:] 
+                            
+                        parent = '/'.join(self.path.split("/")[:offset]) + "/" + target
+                        # self.warn(None, f"Untested - link to parent directory: \"{target}\" from {self.path} |{parent}|")
 
-                elif target.startswith("./"):
-                    target = target[2:]
-                    found = False
+                    elif target.startswith("./"):
+                        target = target[2:]
+
                     notebooks = [n.path for n in other_notebooks if target == n.path]
                     self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook for the link target: \"{target}\"")
 
-                else:
-                    self.warn(None, f"Found unexpected relative link target: \"{target}\"")
         
         # Test all HTML links to ensure they have a target to _blank
         for link in re.findall(r"<a .*<\/a>", command):
