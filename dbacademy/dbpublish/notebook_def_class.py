@@ -103,7 +103,7 @@ class NotebookDef:
                 self.warn(None, f"Found a MD link, expected HTML link: \"{link}\"")
             else:
                 # for notebook in other_notebooks:
-                target = match.group()
+                target = match.group()[1:-1]
                 print("-"*80)
                 print(target)
                 print("-"*80)
