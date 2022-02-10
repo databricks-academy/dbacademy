@@ -97,7 +97,7 @@ class NotebookDef:
 
         if "/" in self.path:
             parent = '/'.join(self.path.split("/")[:offset])
-            target = f"{parent}/{target}"[1:]
+            target = f"{parent}/{target}"
 
         notebooks = [n.path for n in other_notebooks if target == n.path]
         self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook for the {what} target: \"{original_target}\" resolved as \"{target}\"")
