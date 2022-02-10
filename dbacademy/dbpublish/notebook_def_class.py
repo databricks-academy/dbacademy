@@ -106,11 +106,17 @@ class NotebookDef:
             if "target=\"_blank\"" not in link:
                 self.warn(None, f"Found HTML link without the required target=\"_blank\": \"{link}\"")
 
-    def publish(self, source_dir:str, target_dir:str, verbose:bool, debugging:bool) -> None:
+    def publish(self, source_dir:str, target_dir:str, verbose:bool, debugging:bool, other_notebooks:list) -> None:
+        from dbacademy.dbpublish.notebook_def_class import NotebookDef
+
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
         assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
         assert type(verbose) == bool, f"""Expected the parameter "verbose" to be of type "bool", found "{type(verbose)}" """
         assert type(debugging) == bool, f"""Expected the parameter "debugging" to be of type "bool", found "{type(debugging)}" """
+
+        assert type(other_notebooks) == list, f"""Expected the parameter "other_notebooks" to be of type "list", found "{type(other_notebooks)}" """
+        for i, notebook in enumerate(other_notebooks):
+            assert type(other_notebooks[i]) == str, f"""Expected the parameter "other_notebooks[{i}]" to be of type "NotebookDef", found "{type(other_notebooks[i])}" """
 
         print("-" * 80)
         print(f".../{self.path}")

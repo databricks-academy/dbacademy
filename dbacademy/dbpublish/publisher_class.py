@@ -92,7 +92,8 @@ class Publisher:
             notebook.publish(source_dir=self.source_dir,
                              target_dir=self.target_dir,
                              verbose=verbose, 
-                             debugging=debugging)
+                             debugging=debugging,
+                             other_notebooks=self.notebooks)
 
         if testing:
             print("-" * 80)  # We are in test-mode, write back the original Version Info notebook
@@ -103,6 +104,7 @@ class Publisher:
             version_info_notebook.publish(source_dir=self.source_dir,
                                           target_dir=self.target_dir,
                                           verbose=verbose, 
-                                          debugging=debugging)
+                                          debugging=debugging,
+                                          other_notebooks=self.notebooks)
         print("-"*80)
         print("All done!")
