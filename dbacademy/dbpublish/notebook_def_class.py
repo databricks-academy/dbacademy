@@ -80,9 +80,9 @@ class NotebookDef:
             print()
             raise Exception("Publish aborted - see previous errors for more information")
 
-    def test_notebook_exists(self, i, what, original_target, target, other_notebooks):
+    def test_notebook_exists(self, i, what, original_target, target, other_notebooks, context=""):
         if not target.startswith("../") and not target.startswith("./"):
-            self.warn(None, f"Found unexpected, relative, {what} target in command #{i+1}: \"{original_target}\" resolved as \"{target}\"")
+            self.warn(None, f"Found unexpected, relative, {what} target in command #{i+1}: \"{original_target}\" resolved as \"{target}\"\n{context}".strip())
             return
 
         offset = -1
@@ -115,7 +115,7 @@ class NotebookDef:
         link = link[1:] if link.startswith("\"") else link
         link = link[:1] if link.endswith("\"") else link
 
-        self.test_notebook_exists(i, "%run", link, link, other_notebooks)
+        self.test_notebook_exists(i, "%run", link, link, other_notebooks, context=command.split("\n")[0])
     
     def test_md_cells(self, language, command, i, other_notebooks):
         import re
