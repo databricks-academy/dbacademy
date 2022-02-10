@@ -109,7 +109,6 @@ class NotebookDef:
         link = command.split("\n")[0][len(prefix):].strip()
         link = link[1:] if link.startswith("\"") else link
         link = link[:1] if link.endswith("\"") else link
-        self.warn(None, f"Untested: |{link}| in |{self.path}|")
 
         self.test_notebook_exists("%run", link, link, other_notebooks)
     
