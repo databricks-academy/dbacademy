@@ -116,7 +116,7 @@ class NotebookDef:
         link = link[1:] if link.startswith("\"") else link
         link = link[:1] if link.endswith("\"") else link
 
-        self.test_notebook_exists(i, "%run", link, link, other_notebooks, context=command.split("\n")[0])
+        self.test_notebook_exists(i, "%run", link, link, other_notebooks, context=line_zero)
     
     def test_md_cells(self, language, command, i, other_notebooks):
         import re
