@@ -119,7 +119,7 @@ class NotebookDef:
                         else:
                             print(notebook.path)
                     
-                    self.warn(found, f"Cannot find notebook for the link target: \"{target}\"")
+                    if not found: self.warn(None, f"Cannot find notebook for the link target: \"{target}\"")
 
                 else:
                     self.warn(None, f"Found unexpected relative link target: \"{target}\"")
