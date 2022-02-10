@@ -102,7 +102,8 @@ class NotebookDef:
             if not match:
                 self.warn(None, f"Found a MD link, expected HTML link: \"{link}\"")
             else:
-                target = match.group()[2:-1]
+                original_target = match.group()[1:-1]
+                target = original_target[1:]
                 if not target.startswith("../") and not target.startswith("./"):
                     self.warn(None, f"Found unexpected relative link target: \"{target}\"")
                 else:
@@ -119,7 +120,7 @@ class NotebookDef:
                         target = target[2:]
 
                     notebooks = [n.path for n in other_notebooks if target == n.path]
-                    self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook for the link target: \"{target}\"")
+                    self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook for the link target: \"{original_target}\"")
 
         
         # Test all HTML links to ensure they have a target to _blank
