@@ -80,10 +80,10 @@ class NotebookDef:
             print()
             raise Exception("Publish aborted - see previous errors for more information")
 
-    def test_run_cells(self, language, command):
+    def test_run_cells(self, language, command, other_notebooks):
         pass
     
-    def test_md_cells(self, language, command):
+    def test_md_cells(self, language, command, other_notebooks):
         import re
 
         # First verify that the specified command is a mark-down cell
@@ -156,8 +156,8 @@ class NotebookDef:
             self.test(lambda: "DBTITLE" not in command, f"Unsupported Cell-Title found in Cmd #{i + 1}")
 
             # Misc tests specific for markdown cells            
-            self.test_md_cells(language, command)
-            self.test_run_cells(language, command)
+            self.test_md_cells(language, command, other_notebooks)
+            self.test_run_cells(language, command, other_notebooks)
 
             # Extract the leading comments and then the directives
             leading_comments = self.get_leading_comments(language, command.strip())
