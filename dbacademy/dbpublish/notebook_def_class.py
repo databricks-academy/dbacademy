@@ -114,8 +114,19 @@ class NotebookDef:
         line_zero = command.split("\n")[0]
         suffix = line_zero[len(prefix):].strip()
         link = suffix
-        link = link[1:] if link.startswith("\"") else link
-        link = link[:1] if link.endswith("\"") else link
+
+        if link.startswith("\""):
+            link = link[1:]
+            pos = link.index("\"")
+            if pos < 0:
+                self.warn(lambda: len(notebooks) != 0, f"Missing closing quote in %run target in command #{i+1}")
+                return
+            else:
+                link = link[:pos]
+        else:
+            pos = link.index(" ")
+            if pos > 0:
+                link = link[:pos]
 
         self.test_notebook_exists(i, "%run", link, link, other_notebooks, context=suffix)
     
