@@ -106,11 +106,21 @@ class NotebookDef:
                 print("-"*80)
                 target = match.group()[2:-1]
                 if target.startswith("../"):
-                    print("Previous")
-                    print(target)
+                    # print("Previous")
+                    # print(target)
+                    pass
+
                 elif target.startswith("./"):
-                    print("Current")
-                    print(target)
+                    target = target[2:]
+                    found = False
+                    for notebook in other_notebooks:
+                        if target == notebook.path: 
+                            found = True
+                        else:
+                            print(notebook.path)
+                    
+                    self.warn(found, f"Cannot find notebook for the link target: \"{target}\"")
+
                 else:
                     self.warn(None, f"Found unexpected relative link target: \"{target}\"")
         
