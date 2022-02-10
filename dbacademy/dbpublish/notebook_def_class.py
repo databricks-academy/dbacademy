@@ -80,6 +80,25 @@ class NotebookDef:
             print()
             raise Exception("Publish aborted - see previous errors for more information")
 
+    def test_notebook_exists(self, target, other_notebooks):
+        if not target.startswith("../") and not target.startswith("./"):
+            self.warn(None, f"Found unexpected relative link target: \"{target}\"")
+            return
+
+        if target.startswith("../"):
+            offset = -1
+            while target.startswith("../"):
+                offset -= 1
+                target = target[3:] 
+                
+            parent = '/'.join(self.path.split("/")[:offset]) + "/" + target
+
+        elif target.startswith("./"):
+            target = target[2:]
+
+        notebooks = [n.path for n in other_notebooks if target == n.path]
+        self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook for the link target: \"{original_target}\"")
+
     def test_run_cells(self, language, command, other_notebooks):
         pass
     
@@ -104,23 +123,7 @@ class NotebookDef:
             else:
                 original_target = match.group()[1:-1]
                 target = original_target[1:]
-                if not target.startswith("../") and not target.startswith("./"):
-                    self.warn(None, f"Found unexpected relative link target: \"{target}\"")
-                else:
-                    if target.startswith("../"):
-                        offset = -1
-                        while target.startswith("../"):
-                            offset -= 1
-                            target = target[3:] 
-                            
-                        parent = '/'.join(self.path.split("/")[:offset]) + "/" + target
-                        # self.warn(None, f"Untested - link to parent directory: \"{target}\" from {self.path} |{parent}|")
-
-                    elif target.startswith("./"):
-                        target = target[2:]
-
-                    notebooks = [n.path for n in other_notebooks if target == n.path]
-                    self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook for the link target: \"{original_target}\"")
+                self.test_notebook_exists(original_target, target, other_notebooks)
 
         
         # Test all HTML links to ensure they have a target to _blank
