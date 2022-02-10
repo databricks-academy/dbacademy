@@ -103,10 +103,16 @@ class NotebookDef:
                 self.warn(None, f"Found a MD link, expected HTML link: \"{link}\"")
             else:
                 # for notebook in other_notebooks:
-                target = match.group()[3:-1]
                 print("-"*80)
-                print(target)
-                print("-"*80)
+                target = match.group()[2:-1]
+                if target.startswith("../"):
+                    print("Previous")
+                    print(target)
+                elif target.startswith("./"):
+                    print("Current")
+                    print(target)
+                else:
+                    self.warn(None, f"Found unexpected relative link target: \"{target}\"")
         
         # Test all HTML links to ensure they have a target to _blank
         for link in re.findall(r"<a .*<\/a>", command):
