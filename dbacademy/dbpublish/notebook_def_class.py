@@ -171,8 +171,8 @@ class NotebookDef:
         for i, notebook in enumerate(other_notebooks):
             assert type(other_notebooks[i]) == NotebookDef, f"""Expected the parameter "other_notebooks[{i}]" to be of type "NotebookDef", found "{type(other_notebooks[i])}" """
 
-        # self.errors = list()
-        # self.warnings = list()
+        self.errors = list()
+        self.warnings = list()
 
         print("-" * 80)
         print(f".../{self.path}")
