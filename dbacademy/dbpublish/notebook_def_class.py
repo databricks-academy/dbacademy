@@ -82,7 +82,7 @@ class NotebookDef:
 
     def test_notebook_exists(self, what, original_target, target, other_notebooks):
         if not target.startswith("../") and not target.startswith("./"):
-            self.warn(None, f"Found unexpected, relative, {what} link target: \"{original_target}\" resolved as \"{target}\"")
+            self.warn(None, f"Found unexpected, relative, {what} target: \"{original_target}\" resolved as \"{target}\"")
             return
 
         offset = -1
