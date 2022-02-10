@@ -100,7 +100,17 @@ class NotebookDef:
         self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook for the link target: \"{original_target}\"")
 
     def test_run_cells(self, language, command, other_notebooks):
-        pass
+        # First verify that the specified command is a %run cell
+        cm = self.get_comment_marker(language)
+        if not command.startswith(f"{cm} MAGIC %run"):
+            return
+
+        link = command.split("\n")[0][4:].strip()
+        link = link[1:] if link.startswith("\"") else link
+        link = link[:1] if link.endswith("\"") else link
+        self.warn(None, f"Untested: {link} in {self.path}")
+
+        self.test_notebook_exists(link, link, other_notebooks)
     
     def test_md_cells(self, language, command, other_notebooks):
         import re
