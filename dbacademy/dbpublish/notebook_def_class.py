@@ -105,7 +105,11 @@ class NotebookDef:
         if not command.startswith(f"{cm} MAGIC %run"):
             return
 
-        link = command.split("\n")[0][4:].strip()
+        link = command.split("\n")[0]
+        self.warn(None, f"Untested: |{link}| in |{self.path}|")
+
+        link = link[4:].strip()
+
         link = link[1:] if link.startswith("\"") else link
         link = link[:1] if link.endswith("\"") else link
         self.warn(None, f"Untested: |{link}| in |{self.path}|")
