@@ -102,7 +102,7 @@ class NotebookDef:
         if target.startswith("/"): target = target[1:]
 
         notebooks = [n.path for n in other_notebooks if target == n.path]
-        self.warn(lambda: len(notebooks) != 0, f"Cannot find notebook for the {what} target in command #{i+1}: \"{original_target}\" resolved as \"{target}\"")
+        self.test(lambda: len(notebooks) != 0, f"Cannot find notebook for the {what} target in command #{i+1}: \"{original_target}\" resolved as \"{target}\"")
 
     def test_run_cells(self, language, command, i, other_notebooks):
         # First verify that the specified command is a %run cell
