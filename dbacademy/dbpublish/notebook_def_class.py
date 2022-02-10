@@ -116,10 +116,11 @@ class NotebookDef:
                     for notebook in other_notebooks:
                         if target == notebook.path: 
                             found = True
-                        else:
-                            print(notebook.path)
                     
-                    if not found: self.warn(None, f"Cannot find notebook for the link target: \"{target}\"")
+                    if not found: 
+                        self.warn(None, f"Cannot find notebook for the link target: \"{target}\"")
+                        for notebook in other_notebooks:
+                            print(notebook.path)
 
                 else:
                     self.warn(None, f"Found unexpected relative link target: \"{target}\"")
