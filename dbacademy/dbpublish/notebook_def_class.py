@@ -112,7 +112,8 @@ class NotebookDef:
             return
 
         line_zero = command.split("\n")[0]
-        link = line_zero[len(prefix):].strip()
+        suffix = line_zero[len(prefix):].strip()
+        link = suffix
         link = link[1:] if link.startswith("\"") else link
         link = link[:1] if link.endswith("\"") else link
 
