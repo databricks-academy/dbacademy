@@ -102,12 +102,8 @@ class NotebookDef:
             if not match:
                 self.warn(None, f"Found a MD link, expected HTML link: \"{link}\"")
             else:
-                # for notebook in other_notebooks:
-                print("-"*80)
                 target = match.group()[2:-1]
                 if target.startswith("../"):
-                    # print("Previous")
-                    # print(target)
                     pass
 
                 elif target.startswith("./"):
