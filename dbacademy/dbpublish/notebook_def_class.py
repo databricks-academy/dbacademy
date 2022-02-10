@@ -104,8 +104,11 @@ class NotebookDef:
             else:
                 target = match.group()[2:-1]
                 if target.startswith("../"):
-                    parts = self.path.split("/")
-                    parent = '/'.join(parts[:-1])
+                    offset = -1
+                    while target.startswith("../"):
+                        offset -= 1
+                        target = target[3:] 
+                    parent = '/'.join(self.path.split("/")[:offset])
                     self.warn(None, f"Untested - link to parent directory: \"{target}\" from {self.path} | {parent}")
 
                 elif target.startswith("./"):
