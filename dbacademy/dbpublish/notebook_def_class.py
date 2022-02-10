@@ -117,14 +117,14 @@ class NotebookDef:
 
         if link.startswith("\""):
             link = link[1:]
-            pos = link.index("\"")
+            pos = link.find("\"")
             if pos < 0:
                 self.warn(lambda: len(notebooks) != 0, f"Missing closing quote in %run target in command #{i+1}")
                 return
             else:
                 link = link[:pos]
         else:
-            pos = link.index(" ")
+            pos = link.find(" ")
             if pos > 0:
                 link = link[:pos]
 
