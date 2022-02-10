@@ -113,14 +113,8 @@ class NotebookDef:
                 elif target.startswith("./"):
                     target = target[2:]
                     found = False
-                    for notebook in other_notebooks:
-                        if target == notebook.path: 
-                            found = True
-                    
-                    if not found: 
-                        self.warn(None, f"Cannot find notebook for the link target: \"{target}\"")
-                        for notebook in other_notebooks:
-                            print(notebook.path)
+                    notebooks = [n.path for n in other_notebooks if target == n.path]
+                    self.warn(lambda: len(notebooks) == 0, f"Cannot find notebook for the link target: \"{target}\"")
 
                 else:
                     self.warn(None, f"Found unexpected relative link target: \"{target}\"")
