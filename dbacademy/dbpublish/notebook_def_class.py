@@ -80,7 +80,7 @@ class NotebookDef:
             print()
             raise Exception("Publish aborted - see previous errors for more information")
 
-    def test_notebook_exists(self, target, other_notebooks):
+    def test_notebook_exists(self, original_target, target, other_notebooks):
         if not target.startswith("../") and not target.startswith("./"):
             self.warn(None, f"Found unexpected relative link target: \"{target}\"")
             return
