@@ -80,9 +80,9 @@ class NotebookDef:
             print()
             raise Exception("Publish aborted - see previous errors for more information")
 
-    def test_notebook_exists(self, i, what, original_target, target, other_notebooks, context=""):
+    def test_notebook_exists(self, i, what, original_target, target, other_notebooks):
         if not target.startswith("../") and not target.startswith("./"):
-            self.warn(None, f"Found unexpected, relative, {what} target in command #{i+1}: \"{original_target}\" resolved as \"{target}\"\n{context}".strip())
+            self.warn(None, f"Found unexpected, relative, {what} target in command #{i+1}: \"{original_target}\" resolved as \"{target}\"".strip())
             return
 
         offset = -1
@@ -102,7 +102,11 @@ class NotebookDef:
         if target.startswith("/"): target = target[1:]
 
         notebooks = [n.path for n in other_notebooks if target == n.path]
-        self.test(lambda: len(notebooks) != 0, f"Cannot find notebook for the {what} target in command #{i+1}: \"{original_target}\" resolved as \"{target}\"")
+
+        message = f"Cannot find notebook for the {what} target in command #{i+1}: \"{original_target}\" resolved as \"{target}\""
+        # self.test(lambda: len(notebooks) != 0, message)
+        self.warn(lambda: len(notebooks) != 0, message)
+
 
     def test_run_cells(self, language, command, i, other_notebooks):
         # First verify that the specified command is a %run cell
@@ -112,8 +116,7 @@ class NotebookDef:
             return
 
         line_zero = command.split("\n")[0]
-        suffix = line_zero[len(prefix):].strip()
-        link = suffix
+        link = line_zero[len(prefix):].strip()
 
         if link.startswith("\""):
             link = link[1:]
@@ -128,7 +131,7 @@ class NotebookDef:
             if pos > 0:
                 link = link[:pos]
 
-        self.test_notebook_exists(i, "%run", link, link, other_notebooks, context=suffix)
+        self.test_notebook_exists(i, "%run", link, link, other_notebooks)
     
     def test_md_cells(self, language, command, i, other_notebooks):
         import re
