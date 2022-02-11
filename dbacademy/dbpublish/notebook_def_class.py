@@ -159,7 +159,7 @@ class NotebookDef:
             if "target=\"_blank\"" not in link:
                 self.warn(None, f"Found HTML link in command #{i+1} without the required target=\"_blank\": \"{link}\"")
 
-    def create_resource_bundle(lang, resource_dir) -> None:
+    def create_resource_bundle(self, lang, resource_dir) -> None:
         from dbacademy.dbpublish.notebook_def_class import NotebookDef
 
         assert type(lang) == str, f"""Expected the parameter "lang" to be of type "str", found "{type(lang)}" """
