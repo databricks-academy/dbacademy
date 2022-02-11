@@ -196,7 +196,7 @@ class NotebookDef:
         print(f"Writing resource bundle: {resource_path}")
         print(f"...writing {len(comments)} blocks")
 
-        # self.publish_notebook(language, comments, resource_path, print_warnings=True)
+        self.publish_notebook(language, comments, resource_path, print_warnings=True)
 
     def publish(self, source_dir:str, target_dir:str, verbose:bool, debugging:bool, other_notebooks:list) -> None:
         from dbacademy.dbpublish.notebook_def_class import NotebookDef
