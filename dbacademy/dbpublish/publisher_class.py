@@ -35,7 +35,7 @@ class Publisher:
 
     def create_resource_bundle(self, language:str, target_dir:str):
         for notebook in self.notebooks:
-            notebook.create_resource_bundle(language, source_dir:str, target_dir:str)
+            notebook.create_resource_bundle(language, self.source_dir, target_dir)
 
     def publish(self, testing, mode=None, verbose=False, debugging=False):
         version_info_notebook = None
