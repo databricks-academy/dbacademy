@@ -192,11 +192,15 @@ class NotebookDef:
             if command.startswith(f"%md") or command.startswith(f"{cm} MAGIC %md"):
                 comments.append(command)
 
-        resource_path = f"{target_dir}/{lang}/{self.path}"
-        print(f"Writing resource bundle: {resource_path}")
-        print(f"...writing {len(comments)} blocks")
+        if len(comments) == 0:
+            print(f"Skipping resource bundle: {self.path}")
+        else:
+            resource_path = f"{target_dir}/{lang}/{self.path}"
+            print(f"Writing resource bundle: {self.path}")
+            print(f"...writing {len(comments)} blocks")
 
-        self.publish_notebook(language, comments, resource_path, print_warnings=True)
+            self.publish_notebook(language, comments, resource_path, print_warnings=True)
+
 
     def publish(self, source_dir:str, target_dir:str, verbose:bool, debugging:bool, other_notebooks:list) -> None:
         from dbacademy.dbpublish.notebook_def_class import NotebookDef
