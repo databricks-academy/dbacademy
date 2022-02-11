@@ -33,6 +33,10 @@ class Publisher:
 
         self.notebooks.append(notebook)
 
+    def create_resource_bundle(self, language:str, resource_dir:str):
+        for notebook in self.notebooks:
+            notebook.create_resource_bundle(language, resource_dir)
+
     def publish(self, testing, mode=None, verbose=False, debugging=False):
         version_info_notebook = None
         main_notebooks = []
@@ -51,6 +55,7 @@ class Publisher:
 
         print(f"Source: {self.source_dir}")
         print(f"Target: {self.target_dir}")
+        print()
         print("Arguments:")
         print(f"  mode =      {mode}")
         print(f"  verbose =   {verbose}")

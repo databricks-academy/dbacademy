@@ -159,6 +159,44 @@ class NotebookDef:
             if "target=\"_blank\"" not in link:
                 self.warn(None, f"Found HTML link in command #{i+1} without the required target=\"_blank\": \"{link}\"")
 
+    def create_resource_bundle(lang, resource_dir) -> None:
+        from dbacademy.dbpublish.notebook_def_class import NotebookDef
+
+        assert type(lang) == str, f"""Expected the parameter "lang" to be of type "str", found "{type(lang)}" """
+        assert type(resource_dir) == str, f"""Expected the parameter "resource_dir" to be of type "str", found "{type(resource_dir)}" """
+
+        lang = lang.lower()
+
+        print("-" * 80)
+        print(f".../{self.path}")
+
+        source_notebook_path = f"{source_dir}/{self.path}"
+
+        client = DBAcademyRestClient()
+
+        source_info = client.workspace().get_status(source_notebook_path)
+        language = source_info["language"].lower()
+
+        raw_source = client.workspace().export_notebook(source_notebook_path)
+
+        cmd_delim = self.get_cmd_delim(language)
+        commands = raw_source.split(cmd_delim)
+
+        comments = list()
+
+        for i in range(len(commands)):
+            command = commands[i].lstrip()
+
+            cm = self.get_comment_marker(language)
+            if command.startswith(f"%md") or command.startswith(f"{cm} MAGIC %md"):
+                comments.append(command)
+
+        resource_path = f"{target_dir}/{lang}/{self.path}"
+        print(f"Writing resource bundle: {resource_path}")
+        print(f"...writing {len(comments)} blocks")
+
+        # self.publish_notebook(language, comments, resource_path, print_warnings=True)
+
     def publish(self, source_dir:str, target_dir:str, verbose:bool, debugging:bool, other_notebooks:list) -> None:
         from dbacademy.dbpublish.notebook_def_class import NotebookDef
 
