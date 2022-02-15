@@ -579,7 +579,7 @@ class NotebookDef:
                 # The comment is in all upper case,
                 # must be one or more directives
                 directive = line.strip()
-                mod_directive = re.sub("[^a-zA-Z_]", "_", directive)
+                mod_directive = re.sub("[^-a-zA-Z_]", "_", directive)
 
                 if directive in ["SELECT", "FROM", "AS"]:
                     pass # not a real directive, but flagged as one because of its SQL syntax
@@ -606,6 +606,7 @@ class NotebookDef:
                     reslut_c = self.warn(lambda: directive in SUPPORTED_DIRECTIVES, f"""Unsupported directive "{directive}" in Cmd #{i + 1}, see dbacademy.Publisher.help_html() for more information.""")
                     if reslut_a and reslut_b and reslut_c:
                         directives.append(line)
+                        print()
         
         return directives
 
