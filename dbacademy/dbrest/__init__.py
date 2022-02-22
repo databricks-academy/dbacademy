@@ -113,6 +113,19 @@ class DBAcademyRestClient:
         self.throttle_calls()
         return response
 
+    def execute_put_json(self, url: str, params: dict, expected=200) -> dict:
+        return self.execute_put(url, params, expected).json()
+
+    def execute_put(self, url: str, params: dict, expected=200):
+        import json
+        expected = self.expected_to_list(expected)
+
+        response = self.session.put(url, headers={"Authorization": "Bearer " + self.token}, data=json.dumps(params), timeout=(self.connect_timeout, self.read_timeout))
+        assert response.status_code in expected, f"({response.status_code}): {response.text}"
+
+        self.throttle_calls()
+        return response
+
     def execute_get_json(self, url: str, expected=200) -> dict:
         response = self.execute_get(url, expected)
 
