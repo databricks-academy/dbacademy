@@ -10,3 +10,9 @@ class UcClient:
     def metastore_summary(self):
         return self.client.execute_get_json(f"{self.endpoint}/api/2.0/unity-catalog/metastore_summary")
 
+    def set_default_metastore(self, workspace_id, catalog_name, metastore_id) -> str:
+        payload = {
+            "default_catalog_name": catalog_name,
+            "metastore_id": metastore_id
+        }
+        return self.client.execute_put_json(f"{self.endpoint}/api/2.0/unity-catalog/workspaces/{workspace_id}/metastore", payload)

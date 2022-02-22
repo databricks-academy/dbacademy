@@ -86,10 +86,3 @@ class WorkspaceClient:
         else:
             assert response.status_code == 200, f"({response.status_code}): {response.text}"
             return response.json()
-
-    def set_default_metastore(self, catalog_name, metastore_id) -> str:
-        payload = {
-            "default_catalog_name": catalog_name,
-            "metastore_id": metastore_id
-        }
-        return self.client.execute_put_json(f"{self.endpoint}/api/2.0/workspace/metastore", payload)
