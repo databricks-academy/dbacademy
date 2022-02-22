@@ -86,3 +86,6 @@ class WorkspaceClient:
         else:
             assert response.status_code == 200, f"({response.status_code}): {response.text}"
             return response.json()
+
+    def get_metastore() -> str:
+        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/workspace/metastore")
