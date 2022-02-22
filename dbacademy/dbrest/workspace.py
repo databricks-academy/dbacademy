@@ -92,4 +92,4 @@ class WorkspaceClient:
             "default_catalog_name": catalog_name,
             "metastore_id": metastore_id
         }
-        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/workspace/metastore", payload)
+        return self.client.execute_put_json(f"{self.endpoint}/api/2.0/workspace/metastore", payload)
