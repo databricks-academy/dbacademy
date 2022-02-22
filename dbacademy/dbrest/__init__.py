@@ -73,6 +73,10 @@ class DBAcademyRestClient:
         from dbacademy.dbrest.sql import SqlClient
         return SqlClient(self, self.token, self.endpoint)
 
+    def uc(self):
+        from dbacademy.dbrest.uc import UcClient
+        return UcClient(self, self.token, self.endpoint)
+
     def _get_local_credentials(self, config_file, profile):
         if config_file is None:
             config_file = os.environ["HOME"] + "/.databrickscfg"
