@@ -71,7 +71,7 @@ class DBAcademyRestClient:
 
     def scim(self):
         class SCIM():
-            def __init__():
+            def __init__(self):
                 pass
 
             def me():
@@ -93,7 +93,7 @@ class DBAcademyRestClient:
                 raise Exception("The groups() client is not yet supported.")
                 # from dbacademy.dbrest.scim.groups import ScimGroupsClient
                 # return ScimGroupsClient(self, self.token, self.endpoint)
-                
+
         return SCIM()
 
     def sql(self):
