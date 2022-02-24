@@ -74,22 +74,22 @@ class DBAcademyRestClient:
             def __init__(self):
                 pass
 
-            def me():
+            def me(self):
                 raise Exception("The me() client is not yet supported.")
                 # from dbacademy.dbrest.scim.me import ScimMeClient
                 # return ScimMeClient(self, self.token, self.endpoint)
 
-            def users():
+            def users(self):
                 raise Exception("The users() client is not yet supported.")
                 # from dbacademy.dbrest.scim.users import ScimUsersClient
                 # return ScimUsersClient(self, self.token, self.endpoint)
 
-            def service_principals():
+            def service_principals(self):
                 raise Exception("The service_principals() client is not yet supported.")
                 # from dbacademy.dbrest.scim.sp import ScimServicePrincipalsClient
                 # return ScimServicePrincipalsClient(self, self.token, self.endpoint)
 
-            def groups():
+            def groups(self):
                 raise Exception("The groups() client is not yet supported.")
                 # from dbacademy.dbrest.scim.groups import ScimGroupsClient
                 # return ScimGroupsClient(self, self.token, self.endpoint)
