@@ -36,6 +36,11 @@ class DBAcademyRestClient:
             s = "" if self.throttle == 1 else "s"
             print(f"** WARNING ** Requests are being throttled by {self.throttle} second{s} per request.")
 
+    def help(self):
+        methods = [func for func in dir(self) if callable(getattr(self, func)) and not func.startswith("__")]
+        for method in methods:
+            print(f"{method}()")
+
     def throttle_calls(self):
         import time
         # if self.throttle > 0:
@@ -44,18 +49,17 @@ class DBAcademyRestClient:
 
         time.sleep(self.throttle)
 
-    def workspace(self):
-        from dbacademy.dbrest.workspace import WorkspaceClient
-
-        return WorkspaceClient(self, self.token, self.endpoint)
-
-    def permissions(self):
-        from dbacademy.dbrest.permissions import PermissionsClient
-        return PermissionsClient(self, self.token, self.endpoint)
+    def clusters(self):
+        from dbacademy.dbrest.clusters import ClustersClient
+        return ClustersClient(self, self.token, self.endpoint)
 
     def jobs(self):
         from dbacademy.dbrest.jobs import JobsClient
         return JobsClient(self, self.token, self.endpoint)
+
+    def permissions(self):
+        from dbacademy.dbrest.permissions import PermissionsClient
+        return PermissionsClient(self, self.token, self.endpoint)
 
     def repos(self):
         from dbacademy.dbrest.repos import ReposClient
@@ -65,10 +69,6 @@ class DBAcademyRestClient:
         from dbacademy.dbrest.runs import RunsClient
         return RunsClient(self, self.token, self.endpoint)
 
-    def clusters(self):
-        from dbacademy.dbrest.clusters import ClustersClient
-        return ClustersClient(self, self.token, self.endpoint)
-
     def sql(self):
         from dbacademy.dbrest.sql import SqlClient
         return SqlClient(self, self.token, self.endpoint)
@@ -76,6 +76,11 @@ class DBAcademyRestClient:
     def uc(self):
         from dbacademy.dbrest.uc import UcClient
         return UcClient(self, self.token, self.endpoint)
+
+    def workspace(self):
+        from dbacademy.dbrest.workspace import WorkspaceClient
+
+        return WorkspaceClient(self, self.token, self.endpoint)
 
     def _get_local_credentials(self, config_file, profile):
         if config_file is None:
