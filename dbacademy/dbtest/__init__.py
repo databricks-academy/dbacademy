@@ -359,7 +359,7 @@ class TestSuite:
             self.client.jobs().delete_by_name(job_names, success_only=success_only)
         print()
 
-    def test_all_synchronously(self, test_round, fail_fast=True, owner=None):
+    def test_all_synchronously(self, test_round, fail_fast=False, owner=None):
         if test_round not in self.test_rounds:
             print(f"** WARNING ** There are no notebooks in round #{test_round}")
         else:
