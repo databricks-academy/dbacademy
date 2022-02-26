@@ -359,34 +359,41 @@ class TestSuite:
             self.client.jobs().delete_by_name(job_names, success_only=success_only)
         print()
 
-    def test_all_synchronously(self, test_round, fail_fast=False, owner=None):
+    def test_all_synchronously(self, test_round, fail_fast=False, owner=None) -> bool:
+
         if test_round not in self.test_rounds:
             print(f"** WARNING ** There are no notebooks in round #{test_round}")
-        else:
-            tests = sorted(self.test_rounds[test_round], key=lambda t: t.notebook.order)
+            return True
 
-            self.send_first_message()
+        tests = sorted(self.test_rounds[test_round], key=lambda t: t.notebook.order)
 
-            what = "notebook" if len(tests) == 1 else "notebooks"
-            self.send_status_update("info", f"Round #{test_round}: Testing {len(tests)} {what}  synchronously")
+        self.send_first_message()
 
-            print(f"Round #{test_round} test order:")
-            for test in tests:
-                print(f" {test.notebook.path}")
-            print()
+        what = "notebook" if len(tests) == 1 else "notebooks"
+        self.send_status_update("info", f"Round #{test_round}: Testing {len(tests)} {what}  synchronously")
 
-            for test in tests:
-                self.send_status_update("info", f"Starting */{test.notebook.path}*")
+        print(f"Round #{test_round} test order:")
+        for test in tests:
+            print(f" {test.notebook.path}")
+        print()
 
-                job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
-                if owner: self.client.permissions().change_job_owner(job_id, owner)
+        # Assume that all tests passed
+        passed = True
 
-                run_id = self.client.jobs().run_now(job_id)["run_id"]
+        for test in tests:
+            self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
-                response = self.client.runs().wait_for(run_id)
-                self.conclude_test(test, response, fail_fast)
+            job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
+            if owner: self.client.permissions().change_job_owner(job_id, owner)
 
-    def test_all_asynchronously(self, test_round, fail_fast=False, owner=None):
+            run_id = self.client.jobs().run_now(job_id)["run_id"]
+
+            response = self.client.runs().wait_for(run_id)
+            passed = False if not self.conclude_test(test, response, fail_fast) else passed
+
+        return passed
+
+    def test_all_asynchronously(self, test_round, fail_fast=False, owner=None) -> bool:
 
         tests = self.test_rounds[test_round]
 
@@ -395,6 +402,7 @@ class TestSuite:
         what = "notebook" if len(tests) == 1 else "notebooks"
         self.send_status_update("info", f"Round #{test_round}: Testing {len(tests)} {what}  asynchronously")
 
+        # Launch each test
         for test in tests:
             self.send_status_update("info", f"Starting */{test.notebook.path}*")
 
@@ -403,13 +411,19 @@ class TestSuite:
 
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
 
+        # Assume that all tests passed
+        passed = True
+
+        # Block until all tests completed
         for test in tests:
             self.send_status_update("info", f"Waiting for */{test.notebook.path}*")
 
             response = self.client.runs().wait_for(test.run_id)
-            self.conclude_test(test, response, fail_fast)
+            passed = False if not self.conclude_test(test, response, fail_fast) else passed
 
-    def conclude_test(self, test, response, fail_fast):
+        return passed
+
+    def conclude_test(self, test, response, fail_fast) -> bool:
         import json
         self.log_run(test, response)
 
@@ -428,6 +442,8 @@ class TestSuite:
 
         if fail_fast and result_state == 'FAILED':
             raise RuntimeError(f"{response['task']['notebook_task']['notebook_path']} failed.")
+
+        return result_state != 'FAILED'
 
     def log_run(self, test, response):
         import traceback, time, uuid, requests, json
