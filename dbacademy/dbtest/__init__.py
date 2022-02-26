@@ -214,6 +214,9 @@ class TestConfig:
                 # Add our notebook to the set of notebooks to be tested.
                 self.notebooks[path] = NotebookDef(test_round=test_round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order=i)
 
+    def to_DataFrame():
+        return spark.read.table(f"{self.results_database}.{self.results_table}").filter(f"suite_id = '{self.suite_id}'")
+    
     def print(self):
         print("-" * 100)
         print("Test Configuration")
