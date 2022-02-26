@@ -1,9 +1,9 @@
 class ResultsEvaluator:
     def __init__(self, df):
 
-        self.failed_set = df.filter("status == 'FAILED'").collect()
-        self.ignored_set = df.filter("status == 'IGNORED'").collect()
-        self.success_set = df.filter("status == 'SUCCESS'").collect()
+        self.failed_set = df.filter("status == 'FAILED'").orderBy("notebook_path").collect()
+        self.ignored_set = df.filter("status == 'IGNORED'").orderBy("notebook_path").collect()
+        self.success_set = df.filter("status == 'SUCCESS'").orderBy("notebook_path").collect()
 
         self.cell_style = "padding: 5px; border: 1px solid black; white-space:nowrap"
         self.header_style = "padding-right:1em; border: 1px solid black; font-weight:bold; padding: 5px; background-color: F0F0F0"
