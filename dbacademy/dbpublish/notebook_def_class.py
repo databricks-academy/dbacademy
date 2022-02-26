@@ -297,8 +297,7 @@ class NotebookDef:
             # Process the various directives
             if command.strip() == "":
                 skipped += self.skipping(i, "Empty Cell")
-            elif D_SOURCE_ONLY in directives:
-                skipped += self.skipping(i, "Source-Only")
+            elif D_SOURCE_ONLY in directives:          skipped += self.skipping(i, None)
             elif D_INCLUDE_HEADER_TRUE in directives:  skipped += self.skipping(i, None)
             elif D_INCLUDE_HEADER_FALSE in directives: skipped += self.skipping(i, None)
             elif D_INCLUDE_FOOTER_TRUE in directives:  skipped += self.skipping(i, None)
