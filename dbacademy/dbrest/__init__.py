@@ -80,9 +80,8 @@ class DBAcademyRestClient:
                 # return ScimMeClient(self, self.token, self.endpoint)
 
             def users(self):
-                raise Exception("The users() client is not yet supported.")
-                # from dbacademy.dbrest.scim.users import ScimUsersClient
-                # return ScimUsersClient(self, self.token, self.endpoint)
+                from dbacademy.dbrest.scim.users import ScimUsersClient
+                return ScimUsersClient(self, self.token, self.endpoint)
 
             def service_principals(self):
                 raise Exception("The service_principals() client is not yet supported.")
