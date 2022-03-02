@@ -12,7 +12,7 @@ class ScimClient():
         # return ScimMeClient(self, self.token, self.endpoint)
 
     def users(self):
-        from dbacademy.dbrest.users import ScimUsersClient
+        from dbacademy.dbrest.scim.users import ScimUsersClient
         return ScimUsersClient(self.client, self.token, self.endpoint)
 
     def service_principals(self):
