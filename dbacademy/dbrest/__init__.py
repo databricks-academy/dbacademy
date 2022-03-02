@@ -111,6 +111,8 @@ class DBAcademyRestClient:
                 from dbacademy.dbrest.sql_endpoints import SqlEndpointsClient
                 return SqlEndpointsClient(self.client, self.token, self.endpoint)
 
+        return SqlClient(self, self.token, self.endpoint)
+
     def uc(self):
         from dbacademy.dbrest.uc import UcClient
         return UcClient(self, self.token, self.endpoint)
