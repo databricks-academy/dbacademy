@@ -95,7 +95,7 @@ class DBAcademyRestClient:
                 # from dbacademy.dbrest.scim.groups import ScimGroupsClient
                 # return ScimGroupsClient(self, self.token, self.endpoint)
 
-        return ScimClient(self.client, self.token, self.endpoint)
+        return ScimClient(self, self.token, self.endpoint)
 
     def sql(self):
         from dbacademy.dbrest.sql import SqlClient
