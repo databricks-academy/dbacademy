@@ -17,8 +17,8 @@ class SqlEndpointsClient:
     #     return self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/get?run_id={run_id}")
 
     def list(self):
-        endpoints = self.client.execute_get_json(f"{self.endpoint}/api/2.0/sql/endpoints")
-        return [] if endpoints is None else endpoints
+        result = self.client.execute_get_json(f"{self.endpoint}/api/2.0/sql/endpoints")
+        return [] if "endpoints" not in result else result.get("endpoints")
 
     # def list_by_job_id(self, job_id):
     #     json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}")

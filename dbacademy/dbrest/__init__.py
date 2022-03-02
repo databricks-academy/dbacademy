@@ -98,9 +98,6 @@ class DBAcademyRestClient:
         return ScimClient(self, self.token, self.endpoint)
 
     def sql(self):
-        # from dbacademy.dbrest.sql import SqlClient
-        # return SqlClient(self, self.token, self.endpoint)
-
         class SqlClient:
             def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
                 self.client = client
