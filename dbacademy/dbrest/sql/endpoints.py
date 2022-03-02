@@ -83,9 +83,6 @@ class SqlEndpointsClient:
             },
         }
 
-        print("Creating cluster: ")
-        print(params)
-
         for key in tags:
             value = tags[key]
             params.get("custom_tags").append({
