@@ -65,3 +65,5 @@ class SqlEndpointsClient:
         assert spot_instance_policy in SPOT_POLICIES, f"Expected spot_instance_policy to be one of {SPOT_POLICIES}, found {spot_instance_policy}"
         assert channel in CHANNELS, f"Expected channel to be one of {CHANNELS}, found {channel}"
         assert cluster_size in CLUSTER_SIZES, f"Expected cluster_size to be one of {CLUSTER_SIZES}, found {cluster_size}"
+
+        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints")
