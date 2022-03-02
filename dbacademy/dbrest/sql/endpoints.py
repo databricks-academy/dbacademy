@@ -79,6 +79,9 @@ class SqlEndpointsClient:
             # channel: channel,
         }
 
+        print("Creating cluster: ")
+        print(params)
+
         # for key in tags:
         #     value = tags[key]
         #     params.append({
