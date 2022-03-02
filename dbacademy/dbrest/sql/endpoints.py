@@ -68,15 +68,15 @@ class SqlEndpointsClient:
 
         params = {
             name: name,
-            cluster_size: cluster_size,
-            min_num_clusters: min_num_clusters,
-            max_num_clusters: max_num_clusters,
-            auto_stop_mins: auto_stop_mins,
-            tags: [],
-            spot_instance_policy: spot_instance_policy,
-            enable_photon: enable_photon,
-            enable_serverless_compute: enable_serverless_compute,
-            channel: channel
+            # cluster_size: cluster_size,
+            # min_num_clusters: min_num_clusters,
+            # max_num_clusters: max_num_clusters,
+            # auto_stop_mins: auto_stop_mins,
+            # tags: [],
+            # spot_instance_policy: spot_instance_policy,
+            # enable_photon: enable_photon,
+            # enable_serverless_compute: enable_serverless_compute,
+            # channel: channel,
         }
 
         # for key in tags:
