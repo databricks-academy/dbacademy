@@ -53,17 +53,30 @@ class SqlEndpointsClient:
 
     def create(self, name:str,
                      cluster_size:str,
-                     min_num_clusters:int,
-                     max_num_clusters:int,
-                     auto_stop_mins:int,
-                     tags:dict,
-                     spot_instance_policy:str,
-                     enable_photon:bool,
-                     enable_serverless_compute:bool,
-                     channel:str):
+                     min_num_clusters:int = 1,
+                     max_num_clusters:int = 1,
+                     auto_stop_mins:int = 120,
+                     enable_photon:bool = True,
+                     enable_serverless_compute:bool = True,
+                     spot_instance_policy:str = RELIABILITY_OPTIMIZED,
+                     channel:str = CHANNEL_NAME_CURRENT,
+                     tags:dict = dict()):
 
         assert spot_instance_policy in SPOT_POLICIES, f"Expected spot_instance_policy to be one of {SPOT_POLICIES}, found {spot_instance_policy}"
         assert channel in CHANNELS, f"Expected channel to be one of {CHANNELS}, found {channel}"
         assert cluster_size in CLUSTER_SIZES, f"Expected cluster_size to be one of {CLUSTER_SIZES}, found {cluster_size}"
 
-        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints")
+        params = {
+            name: name,
+            cluster_size: cluster_size,
+            min_num_clusters: min_num_clusters,
+            max_num_clusters: max_num_clusters,
+            auto_stop_mins: auto_stop_mins,
+            tags: tags,
+            spot_instance_policy: spot_instance_policy,
+            enable_photon: enable_photon,
+            enable_serverless_compute: enable_serverless_compute,
+            channel: channel
+        }
+
+        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints", params)
