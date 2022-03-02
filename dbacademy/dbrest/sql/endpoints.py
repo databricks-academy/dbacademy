@@ -61,6 +61,7 @@ class SqlEndpointsClient:
                      spot_instance_policy:str = RELIABILITY_OPTIMIZED,
                      channel:str = CHANNEL_NAME_CURRENT,
                      tags:dict = dict()):
+        import json
 
         assert spot_instance_policy in SPOT_POLICIES, f"Expected spot_instance_policy to be one of {SPOT_POLICIES}, found {spot_instance_policy}"
         assert channel in CHANNELS, f"Expected channel to be one of {CHANNELS}, found {channel}"
@@ -89,4 +90,4 @@ class SqlEndpointsClient:
         #         "value": value
         #     })
 
-        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints", params)
+        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints", json.dumps(params))
