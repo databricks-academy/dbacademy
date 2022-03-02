@@ -79,11 +79,11 @@ class SqlEndpointsClient:
             channel: channel
         }
 
-        for key in tags:
-            value = tags[key]
-            params.append({
-                "key": key,
-                "value": value
-            })
+        # for key in tags:
+        #     value = tags[key]
+        #     params.append({
+        #         "key": key,
+        #         "value": value
+        #     })
 
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints", params)
