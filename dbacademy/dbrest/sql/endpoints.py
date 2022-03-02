@@ -72,11 +72,18 @@ class SqlEndpointsClient:
             min_num_clusters: min_num_clusters,
             max_num_clusters: max_num_clusters,
             auto_stop_mins: auto_stop_mins,
-            tags: tags,
+            tags: [],
             spot_instance_policy: spot_instance_policy,
             enable_photon: enable_photon,
             enable_serverless_compute: enable_serverless_compute,
             channel: channel
         }
+
+        for key in tags:
+            value = tags[key]
+            params.append({
+                "key": key,
+                "value": value
+            })
 
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints", params)
