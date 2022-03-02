@@ -53,11 +53,11 @@ class SqlEndpointsClient:
 
     def create(self, name:str,
                      cluster_size:str,
+                     enable_serverless_compute:bool,
                      min_num_clusters:int = 1,
                      max_num_clusters:int = 1,
                      auto_stop_mins:int = 120,
                      enable_photon:bool = True,
-                     enable_serverless_compute:bool = False,
                      spot_instance_policy:str = RELIABILITY_OPTIMIZED,
                      channel:str = CHANNEL_NAME_CURRENT,
                      tags:dict = dict()):
@@ -85,7 +85,7 @@ class SqlEndpointsClient:
 
         for key in tags:
             value = tags[key]
-            params.get("custom_tags").append({
+            params.get("tags").get("custom_tags").append({
                 "key": key,
                 "value": value
             })
