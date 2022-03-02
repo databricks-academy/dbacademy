@@ -2,7 +2,6 @@
 import configparser
 import os
 
-
 class DBAcademyRestClient:
   
     def __init__(self, local=False, config_file=None, profile="DEFAULT", throttle=0, endpoint=None):
@@ -70,44 +69,11 @@ class DBAcademyRestClient:
         return RunsClient(self, self.token, self.endpoint)
 
     def scim(self):
-        class ScimClient():
-            def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
-                self.client = client      # Client API exposing other operations to this class
-                self.token = token        # The authentication token
-                self.endpoint = endpoint  # The API endpoint
-
-            def me(self):
-                raise Exception("The me() client is not yet supported.")
-                # from dbacademy.dbrest.scim.me import ScimMeClient
-                # return ScimMeClient(self, self.token, self.endpoint)
-
-            def users(self):
-                from dbacademy.dbrest.scim_users import ScimUsersClient
-                return ScimUsersClient(self.client, self.token, self.endpoint)
-
-            def service_principals(self):
-                raise Exception("The service_principals() client is not yet supported.")
-                # from dbacademy.dbrest.scim.sp import ScimServicePrincipalsClient
-                # return ScimServicePrincipalsClient(self, self.token, self.endpoint)
-
-            def groups(self):
-                raise Exception("The groups() client is not yet supported.")
-                # from dbacademy.dbrest.scim.groups import ScimGroupsClient
-                # return ScimGroupsClient(self, self.token, self.endpoint)
-
+        from dbacademy.dbrest.scim import ScimClient
         return ScimClient(self, self.token, self.endpoint)
 
     def sql(self):
-        class SqlClient:
-            def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
-                self.client = client
-                self.token = token
-                self.endpoint = endpoint
-
-            def endpoints(self):
-                from dbacademy.dbrest.sql_endpoints import SqlEndpointsClient
-                return SqlEndpointsClient(self.client, self.token, self.endpoint)
-
+        from dbacademy.dbrest.sql import SqlClient
         return SqlClient(self, self.token, self.endpoint)
 
     def uc(self):

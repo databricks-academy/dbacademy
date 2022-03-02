@@ -1,5 +1,31 @@
 from dbacademy.dbrest import DBAcademyRestClient
 
+COST_OPTIMIZED = "COST_OPTIMIZED"
+RELIABILITY_OPTIMIZED = "RELIABILITY_OPTIMIZED"
+SPOT_POLICIES = [COST_OPTIMIZED, RELIABILITY_OPTIMIZED]
+
+CHANNEL_NAME_PREVIEW = "CHANNEL_NAME_PREVIEW"
+CHANNEL_NAME_CURRENT = "CHANNEL_NAME_CURRENT"
+CHANNELS = [CHANNEL_NAME_PREVIEW, CHANNEL_NAME_CURRENT]
+
+
+CLUSTER_SIZE_2X_SMALL = "2X-Small" 
+CLUSTER_SIZE_X_SMALL = "X-Small" 
+CLUSTER_SIZE_SMALL = "Small" 
+CLUSTER_SIZE_MEDIUM = "Medium" 
+CLUSTER_SIZE_LARGE = "Large" 
+CLUSTER_SIZE_X_LARGE = "X-Large" 
+CLUSTER_SIZE_2X_LARGE = "2X-Large" 
+CLUSTER_SIZE_3X_LARGE = "3X-Large" 
+CLUSTER_SIZE_4X_LARGE = "4X-Large" 
+CLUSTER_SIZES = [CLUSTER_SIZE_X_SMALL, 
+                 CLUSTER_SIZE_SMALL, 
+                 CLUSTER_SIZE_MEDIUM, 
+                 CLUSTER_SIZE_LARGE, 
+                 CLUSTER_SIZE_X_LARGE, 
+                 CLUSTER_SIZE_2X_LARGE, 
+                 CLUSTER_SIZE_3X_LARGE, 
+                 CLUSTER_SIZE_4X_LARGE]
 
 class SqlEndpointsClient:
 
@@ -7,12 +33,6 @@ class SqlEndpointsClient:
         self.client = client
         self.token = token
         self.endpoint = endpoint
-
-        self.COST_OPTIMIZED = "COST_OPTIMIZED"
-        self.RELIABILITY_OPTIMIZED = "RELIABILITY_OPTIMIZED"
-
-        self.CHANNEL_NAME_PREVIEW = "CHANNEL_NAME_PREVIEW"
-        self.CHANNEL_NAME_CURRENT = "CHANNEL_NAME_CURRENT"
 
     def start(self, endpoint_id):
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints/{endpoint_id}/start", {})
@@ -41,5 +61,6 @@ class SqlEndpointsClient:
                      enable_serverless_compute:bool,
                      channel:str):
 
-        assert spot_instance_policy in [self.COST_OPTIMIZED, self.RELIABILITY_OPTIMIZED], "Expected spot_instance_policy to be one of {self.COST_OPTIMIZED} or {self.RELIABILITY_OPTIMIZED}, found {spot_instance_policy}"
-        assert channel in [self.CHANNEL_NAME_PREVIEW, self.CHANNEL_NAME_CURRENT], "Expected channel to be one of {self.CHANNEL_NAME_PREVIEW} or {self.CHANNEL_NAME_CURRENT}, found {spot_instance_policy}"
+        assert spot_instance_policy in SPOT_POLICIES, "Expected spot_instance_policy to be one of {SPOT_POLICIES}, found {spot_instance_policy}"
+        assert channel in CHANNELS, "Expected channel to be one of {CHANNELS}, found {channel}"
+        assert cluster_size in CLUSTER_SIZES, "Expected cluster_size to be one of {CLUSTER_SIZES}, found {cluster_size}"
