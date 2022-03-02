@@ -1,7 +1,7 @@
 from dbacademy.dbrest import DBAcademyRestClient
 
 
-class SqlClient:
+class SqlEndpointsClient:
     def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
         self.client = client
         self.token = token
@@ -13,8 +13,8 @@ class SqlClient:
     def stop_endpoint(self, endpoint_id):
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints/{endpoint_id}/stop", {})
 
-    # def get(self, run_id):
-    #     return self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/get?run_id={run_id}")
+    def get(self, run_id):
+        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/get?run_id={run_id}")
 
     # def list_by_job_id(self, job_id):
     #     json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}")
