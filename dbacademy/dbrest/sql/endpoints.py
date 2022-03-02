@@ -57,7 +57,7 @@ class SqlEndpointsClient:
                      max_num_clusters:int = 1,
                      auto_stop_mins:int = 120,
                      enable_photon:bool = True,
-                     enable_serverless_compute:bool = True,
+                     enable_serverless_compute:bool = False,
                      spot_instance_policy:str = RELIABILITY_OPTIMIZED,
                      channel:str = CHANNEL_NAME_CURRENT,
                      tags:dict = dict()):
