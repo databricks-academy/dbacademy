@@ -12,4 +12,6 @@ class ScimUsersClient:
         return self.client.execute_get_json(f"{self.endpoint}/api/2.0/preview/scim/v2/Users")
 
     def get_user_by_id(self, user_id):
-        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}")
+        url = f"{self.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
+        print(url)
+        return self.client.execute_get_json(url)
