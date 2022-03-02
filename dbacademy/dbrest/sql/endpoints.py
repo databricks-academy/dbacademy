@@ -78,7 +78,9 @@ class SqlEndpointsClient:
             "spot_instance_policy": spot_instance_policy,
             "enable_photon": enable_photon,
             "enable_serverless_compute": enable_serverless_compute,
-            "channel": channel,
+            "channel": {
+                "name": channel
+            },
         }
 
         print("Creating cluster: ")
