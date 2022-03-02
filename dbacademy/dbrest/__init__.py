@@ -80,7 +80,7 @@ class DBAcademyRestClient:
                 # return ScimMeClient(self, self.token, self.endpoint)
 
             def users(self):
-                from dbacademy.dbrest.scim.users import ScimUsersClient
+                from dbacademy.dbrest.scim_users import ScimUsersClient
                 return ScimUsersClient(self, self.token, self.endpoint)
 
             def service_principals(self):
