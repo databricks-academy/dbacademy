@@ -68,7 +68,7 @@ class SqlEndpointsClient:
 
         params = {
             name: name,
-            # cluster_size: cluster_size,
+            cluster_size: cluster_size,
             # min_num_clusters: min_num_clusters,
             # max_num_clusters: max_num_clusters,
             # auto_stop_mins: auto_stop_mins,
