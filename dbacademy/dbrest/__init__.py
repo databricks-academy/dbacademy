@@ -70,9 +70,11 @@ class DBAcademyRestClient:
         return RunsClient(self, self.token, self.endpoint)
 
     def scim(self):
-        class SCIM():
-            def __init__(self):
-                pass
+        class ScimClient():
+            def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
+                self.client = client      # Client API exposing other operations to this class
+                self.token = token        # The authentication token
+                self.endpoint = endpoint  # The API endpoint
 
             def me(self):
                 raise Exception("The me() client is not yet supported.")
@@ -93,7 +95,7 @@ class DBAcademyRestClient:
                 # from dbacademy.dbrest.scim.groups import ScimGroupsClient
                 # return ScimGroupsClient(self, self.token, self.endpoint)
 
-        return SCIM()
+        return ScimClient(self.client, self.token, self.endpoint)
 
     def sql(self):
         from dbacademy.dbrest.sql import SqlClient
