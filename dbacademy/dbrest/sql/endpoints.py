@@ -61,33 +61,34 @@ class SqlEndpointsClient:
                      spot_instance_policy:str = RELIABILITY_OPTIMIZED,
                      channel:str = CHANNEL_NAME_CURRENT,
                      tags:dict = dict()):
-        import json
 
         assert spot_instance_policy in SPOT_POLICIES, f"Expected spot_instance_policy to be one of {SPOT_POLICIES}, found {spot_instance_policy}"
         assert channel in CHANNELS, f"Expected channel to be one of {CHANNELS}, found {channel}"
         assert cluster_size in CLUSTER_SIZES, f"Expected cluster_size to be one of {CLUSTER_SIZES}, found {cluster_size}"
 
         params = {
-            name: name,
-            cluster_size: cluster_size,
-            # min_num_clusters: min_num_clusters,
-            # max_num_clusters: max_num_clusters,
-            # auto_stop_mins: auto_stop_mins,
-            # tags: [],
-            # spot_instance_policy: spot_instance_policy,
-            # enable_photon: enable_photon,
-            # enable_serverless_compute: enable_serverless_compute,
-            # channel: channel,
+            "name": name,
+            "cluster_size": cluster_size,
+            "min_num_clusters": min_num_clusters,
+            "max_num_clusters": max_num_clusters,
+            "auto_stop_mins": auto_stop_mins,
+            "tags": {
+                "custom_tags": []
+            },
+            "spot_instance_policy": spot_instance_policy,
+            "enable_photon": enable_photon,
+            "enable_serverless_compute": enable_serverless_compute,
+            "channel": channel,
         }
 
         print("Creating cluster: ")
         print(params)
 
-        # for key in tags:
-        #     value = tags[key]
-        #     params.append({
-        #         "key": key,
-        #         "value": value
-        #     })
+        for key in tags:
+            value = tags[key]
+            params.get("custom_tags").append({
+                "key": key,
+                "value": value
+            })
 
-        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints", json.dumps(params))
+        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints", params)
