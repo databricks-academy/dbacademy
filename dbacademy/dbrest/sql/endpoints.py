@@ -247,4 +247,4 @@ class SqlEndpointsClient:
                 print(f"Deleting the endpoint \"{endpoint_name}\" for the user \"{username}\"")
                 self.delete(endpoint.get("id"))
 
-        print(f"Skipping deletion of the endpoint \"{endpoint_name}\": Not found")
+        print(f"Skipping deletion of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found")
