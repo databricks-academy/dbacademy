@@ -61,7 +61,7 @@ class SqlEndpointsClient:
     #                  spot_instance_policy:str = RELIABILITY_OPTIMIZED,
     #                  channel:str = CHANNEL_NAME_CURRENT,
     #                  tags:dict = dict()):
-    def create(self, name:str,
+    def create(self, endpoint_name:str,
                      cluster_size:str,
                      enable_serverless_compute:bool,
                      min_num_clusters:int,
@@ -77,7 +77,7 @@ class SqlEndpointsClient:
         assert cluster_size in CLUSTER_SIZES, f"Expected cluster_size to be one of {CLUSTER_SIZES}, found {cluster_size}"
 
         params = {
-            "name": name,
+            "name": endpoint_name,
             "cluster_size": cluster_size,
             "min_num_clusters": min_num_clusters,
             "max_num_clusters": max_num_clusters,
