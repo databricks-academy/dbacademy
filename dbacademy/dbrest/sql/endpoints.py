@@ -228,7 +228,8 @@ class SqlEndpointsClient:
 
     def delete_user_endpoint(self, user, naming_template:str, naming_params:dict):
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
-        print("Deleting the endpoint {endpoint_name}")
+        
+        print("Deleting the endpoint \"{endpoint_name}\" for the user \"{username}\"")
 
     def to_endpoint_name(self, user, naming_template:str, naming_params:dict):
         username = user.get("userName")
