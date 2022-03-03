@@ -217,8 +217,11 @@ class SqlEndpointsClient:
         print(f"Creating the endpoint \"{endpoint_name}\" for the user \"{username}\"")
         print("-"*80)    
         
-        self.create(self, endpoint_name,
-                          cluster_size)
+        self.create(self, name,
+                          cluster_size,
+                          enable_serverless_compute)
+
+                        #   cluster_size)
                         #   enable_serverless_compute=enable_serverless_compute,
                         #   min_num_clusters=min_num_clusters,
                         #   max_num_clusters=max_num_clusters,
