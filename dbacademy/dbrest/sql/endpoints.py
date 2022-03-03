@@ -209,16 +209,10 @@ class SqlEndpointsClient:
         if "{da_hash}" in naming_template:
             assert naming_params.get("course", None) is not None, "The template is employing da_hash which requires course to be specified in naming_params"
             course = naming_params["course"]
-            da_hash = f"{username}-{course}"
+            da_hash = abs(hash(f"{username}-{course}")) % 10000
             naming_params["da_hash"] = da_hash
             
-        if "{da_hash}" in naming_template:
-            assert naming_params.get("course", None) is not None, "The template is employing da_hash which requires course to be specified in naming_params"
-            course = naming_params["course"]
-            da_hash = abs(hash(f"{username}-{course}")) % 10000
-            
         naming_params["da_name"] = username.split("@")[0]
-        naming_params["da_hash"] = da_hash
         endpoint_name = naming_template.format(**naming_params)
         print(f"Creating the endpoint \"{endpoint_name}\" for the user \"{username}\"")
         print("-"*80)    
