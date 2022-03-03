@@ -207,7 +207,7 @@ class SqlEndpointsClient:
         active = user.get("active")
         
         if not active:
-            print(f"Skipping creation of endpoint for the user \"{username}\": Inactive user")
+            print(f"Skipping creation of endpoint for the user \"{username}\":\n - Inactive user")
             return
         
         entitlements = user.get("entitlements")
@@ -215,14 +215,14 @@ class SqlEndpointsClient:
         
         entitlements = [u.get("value") for u in entitlements]
         if "databricks-sql-access" not in entitlements:
-            print(f"Skipping creation of endpoint for the user \"{username}\": Missing the databricks-sql-access entitlement, found {entitlements}")
+            print(f"Skipping creation of endpoint for the user \"{username}\":\n - Missing the databricks-sql-access entitlement, found {entitlements}")
             return
 
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
         for endpoint in self.client.sql().endpoints().list():
             if endpoint.get("name") == endpoint_name:
-                print(f"Skipping creation of the endpoint \"{endpoint_name}\" for the user \"{username}\": Already exists")
+                print(f"Skipping creation of the endpoint \"{endpoint_name}\" for the user \"{username}\":\n - The endpoint already exists")
                 return
 
         print(f"Creating the endpoint \"{endpoint_name}\" for the user \"{username}\"")
