@@ -249,6 +249,7 @@ class SqlEndpointsClient:
             if endpoint.get("name") == endpoint_name:
                 print(f"Deleting the endpoint \"{endpoint_name}\" for the user \"{username}\"")
                 self.delete(endpoint.get("id"))
+                return
 
         print(f"Skipping deletion of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found")
 
@@ -265,5 +266,6 @@ class SqlEndpointsClient:
             if endpoint.get("name") == endpoint_name:
                 print(f"Starting the endpoint \"{endpoint_name}\" for the user \"{username}\"")
                 self.start(endpoint.get("id"))
+                return
 
         print(f"Skipping start of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found")
