@@ -164,18 +164,17 @@ class SqlEndpointsClient:
         naming_params["da_name"] = username.split("@")[0]
         return naming_template.format(**naming_params)
 
-    def create_user_endpoints(self,
-                                   naming_template:str, 
-                                   naming_params:dict,
-                                   cluster_size:str,
-                                   enable_serverless_compute:bool,
-                                   min_num_clusters:int = 1,
-                                   max_num_clusters:int = 1,
-                                   auto_stop_mins:int = 120,
-                                   enable_photon:bool = True,
-                                   spot_instance_policy:str = RELIABILITY_OPTIMIZED,
-                                   channel:str = CHANNEL_NAME_CURRENT,
-                                   tags:dict = dict()):
+    def create_user_endpoints(self, naming_template:str, 
+                                    naming_params:dict,
+                                    cluster_size:str,
+                                    enable_serverless_compute:bool,
+                                    min_num_clusters:int = 1,
+                                    max_num_clusters:int = 1,
+                                    auto_stop_mins:int = 45,
+                                    enable_photon:bool = True,
+                                    spot_instance_policy:str = RELIABILITY_OPTIMIZED,
+                                    channel:str = CHANNEL_NAME_CURRENT,
+                                    tags:dict = dict()):
 
         for user in self.client.scim().users().list():
             self.create_user_endpoint(user=user, 
