@@ -6,6 +6,10 @@ class SqlClient():
         self.token = token        # The authentication token
         self.endpoint = endpoint  # The API endpoint
 
+    def config(self):
+        from dbacademy.dbrest.sql.endpoints import SqlConfigClient
+        return SqlConfigClient(self.client, self.token, self.endpoint)
+
     def endpoints(self):
         from dbacademy.dbrest.sql.endpoints import SqlEndpointsClient
         return SqlEndpointsClient(self.client, self.token, self.endpoint)
