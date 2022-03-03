@@ -19,6 +19,7 @@ class SqlConfigClient:
 
         params = {
             "security_policy": security_policy,
+            "instance_profile_arn": instance_profile_arn,
             "data_access_config": [],
             "sql_configuration_parameters": {"configuration_pairs": []}
         }
