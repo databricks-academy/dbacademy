@@ -242,7 +242,7 @@ class SqlEndpointsClient:
         username = user.get("userName")
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
-        for endpoint in client.sql().endpoints().list():
+        for endpoint in self.client.sql().endpoints().list():
             if endpoint.get("name") == endpoint_name:
                 print(f"Deleting the endpoint \"{endpoint_name}\" for the user \"{username}\"")
                 self.delete(endpoint.get("id"))
