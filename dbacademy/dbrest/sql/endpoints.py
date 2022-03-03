@@ -151,3 +151,76 @@ class SqlEndpointsClient:
 
         self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints/{endpoint_id}/edit", params)
         return self.get(endpoint_id)
+
+    def create_user_endpoints(self,
+                                   naming_template:str, 
+                                   naming_params:dict,
+                                   cluster_size:str,
+                                   enable_serverless_compute:bool,
+                                   min_num_clusters:int = 1,
+                                   max_num_clusters:int = 1,
+                                   auto_stop_mins:int = 120,
+                                   enable_photon:bool = True,
+                                   spot_instance_policy:str = RELIABILITY_OPTIMIZED,
+                                   channel:str = CHANNEL_NAME_CURRENT,
+                                   tags:dict = dict()):
+
+        users = client.scim().users().list()
+        for user in users:
+            self.create_user_endpoint(user, 
+                                      naming_template, 
+                                      naming_params,
+                                      cluster_size,
+                                      enable_serverless_compute,
+                                      min_num_clusters,
+                                      max_num_clusters,
+                                      auto_stop_mins,
+                                      enable_photon,
+                                      spot_instance_policy,
+                                      channel,
+                                      tags)
+
+    def create_user_endpoint(self, user,
+                                   naming_template:str, 
+                                   naming_params:dict,
+                                   cluster_size:str,
+                                   enable_serverless_compute:bool,
+                                   min_num_clusters:int = 1,
+                                   max_num_clusters:int = 1,
+                                   auto_stop_mins:int = 120,
+                                   enable_photon:bool = True,
+                                   spot_instance_policy:str = RELIABILITY_OPTIMIZED,
+                                   channel:str = CHANNEL_NAME_CURRENT,
+                                   tags:dict = dict()):
+        username = user.get("userName")
+        active = user.get("active")
+        
+        if not active:
+            print(f"Skipping creation of endpoint for the user \"{username}\": Inactive user")
+            return
+        
+        entitlements = user.get("entitlements")
+        if entitlements is None: entitlements = []
+        
+        entitlements = [u.get("value") for u in entitlements]
+        if "databricks-sql-access" not in entitlements:
+            print(f"Skipping creation of endpoint for the user \"{username}\": Missing the databricks-sql-access entitlement, found {entitlements}")
+            return
+            
+        if "{da_hash}" in naming_template:
+            assert naming_params.get("course", None) is not None, "The template is employing da_hash which requires course to be specified in naming_params"
+            course = naming_params["course"]
+            da_hash = f"{username}-{course}"
+            naming_params["da_hash"] = da_hash
+            
+        if "{da_hash}" in naming_template:
+            assert naming_params.get("course", None) is not None, "The template is employing da_hash which requires course to be specified in naming_params"
+            course = naming_params["course"]
+            da_hash = abs(hash(f"{username}-{course}")) % 10000
+            
+        naming_params["da_name"] = username.split("@")[0]
+        naming_params["da_hash"] = da_hash
+        endpoint_name = naming_template.format(**naming_params)
+        print(f"Creating the endpoint \"{endpoint_name}\" for the user \"{username}\"")
+        print("-"*80)    
+        
