@@ -51,33 +51,23 @@ class SqlEndpointsClient:
         result = self.client.execute_get_json(f"{self.endpoint}/api/2.0/sql/endpoints")
         return [] if "endpoints" not in result else result.get("endpoints")
 
-    # def create(self, name:str,
-    #                  cluster_size:str,
-    #                  enable_serverless_compute:bool,
-    #                  min_num_clusters:int = 1,
-    #                  max_num_clusters:int = 1,
-    #                  auto_stop_mins:int = 120,
-    #                  enable_photon:bool = True,
-    #                  spot_instance_policy:str = RELIABILITY_OPTIMIZED,
-    #                  channel:str = CHANNEL_NAME_CURRENT,
-    #                  tags:dict = dict()):
-    def create(self, endpoint_name:str,
+    def create(self, name:str,
                      cluster_size:str,
                      enable_serverless_compute:bool,
-                     min_num_clusters:int,
-                     max_num_clusters:int,
-                     auto_stop_mins:int,
-                     enable_photon:bool,
-                     spot_instance_policy:str,
-                     channel:str,
-                     tags:dict):
+                     min_num_clusters:int = 1,
+                     max_num_clusters:int = 1,
+                     auto_stop_mins:int = 120,
+                     enable_photon:bool = True,
+                     spot_instance_policy:str = RELIABILITY_OPTIMIZED,
+                     channel:str = CHANNEL_NAME_CURRENT,
+                     tags:dict = dict()):
 
         assert spot_instance_policy in SPOT_POLICIES, f"Expected spot_instance_policy to be one of {SPOT_POLICIES}, found {spot_instance_policy}"
         assert channel in CHANNELS, f"Expected channel to be one of {CHANNELS}, found {channel}"
         assert cluster_size in CLUSTER_SIZES, f"Expected cluster_size to be one of {CLUSTER_SIZES}, found {cluster_size}"
 
         params = {
-            "name": endpoint_name,
+            "name": name,
             "cluster_size": cluster_size,
             "min_num_clusters": min_num_clusters,
             "max_num_clusters": max_num_clusters,
