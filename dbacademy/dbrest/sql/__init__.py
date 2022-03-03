@@ -7,7 +7,7 @@ class SqlClient():
         self.endpoint = endpoint  # The API endpoint
 
     def config(self):
-        from dbacademy.dbrest.sql.endpoints import SqlConfigClient
+        from dbacademy.dbrest.sql.config import SqlConfigClient
         return SqlConfigClient(self.client, self.token, self.endpoint)
 
     def endpoints(self):
