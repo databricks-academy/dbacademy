@@ -13,7 +13,7 @@ class SqlConfigClient:
     def get(self):
         return self.client.execute_get_json(f"{self.endpoint}/api/2.0/sql/config/endpoints")
 
-    def edit(self, security_policy:str, data_access_config:dict, sql_configuration_parameters:dict, instance_profile_arn:str):
+    def edit(self, security_policy:str, instance_profile_arn:str, data_access_config:dict, sql_configuration_parameters:dict):
 
         assert security_policy in SECURITY_POLICIES, f"Expected security_policy to be one of {SECURITY_POLICIES}, found {security_policy}"
 
