@@ -217,23 +217,13 @@ class SqlEndpointsClient:
         print(f"Creating the endpoint \"{endpoint_name}\" for the user \"{username}\"")
         print("-"*80)    
         
-        self.create(self, name=endpoint_name,
-                          cluster_size=cluster_size,
-                          enable_serverless_compute=enable_serverless_compute,
-                          min_num_clusters=min_num_clusters,
-                          max_num_clusters=max_num_clusters,
-                          auto_stop_mins=auto_stop_mins,
-                          enable_photon=enable_photon,
-                          spot_instance_policy=spot_instance_policy,
-                          channel=channel,
-                          tags=tags)
-
-        # print(f"name={endpoint_name}")
-        # print(f"enable_serverless_compute={enable_serverless_compute}")
-        # print(f"min_num_clusters={min_num_clusters}")
-        # print(f"max_num_clusters={max_num_clusters}")
-        # print(f"auto_stop_mins={auto_stop_mins}")
-        # print(f"enable_photon={enable_photon}")
-        # print(f"spot_instance_policy={spot_instance_policy}")
-        # print(f"channel={channel}")
-        # print(f"tags={tags}")
+        self.create(name=endpoint_name,
+                    cluster_size=cluster_size,
+                    enable_serverless_compute=enable_serverless_compute,
+                    min_num_clusters=min_num_clusters,
+                    max_num_clusters=max_num_clusters,
+                    auto_stop_mins=auto_stop_mins,
+                    enable_photon=enable_photon,
+                    spot_instance_policy=spot_instance_policy,
+                    channel=channel,
+                    tags=tags)
