@@ -93,43 +93,60 @@ class SqlEndpointsClient:
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints", params)
 
     def edit(self, id:str,
-                   name:str,
-                   cluster_size:str,
-                   enable_serverless_compute:bool,
-                   min_num_clusters:int = 1,
-                   max_num_clusters:int = 1,
-                   auto_stop_mins:int = 120,
-                   enable_photon:bool = True,
-                   spot_instance_policy:str = RELIABILITY_OPTIMIZED,
-                   channel:str = CHANNEL_NAME_CURRENT,
-                   tags:dict = dict()):
+                   name:str = None,
+                   cluster_size:str = None,
+                   enable_serverless_compute:bool = None,
+                   min_num_clusters:int = None,
+                   max_num_clusters:int = None,
+                   auto_stop_mins:int = None,
+                   enable_photon:bool = None,
+                   spot_instance_policy:str = None,
+                   channel:str = None,
+                   tags:dict = None):
 
-        assert spot_instance_policy in SPOT_POLICIES, f"Expected spot_instance_policy to be one of {SPOT_POLICIES}, found {spot_instance_policy}"
-        assert channel in CHANNELS, f"Expected channel to be one of {CHANNELS}, found {channel}"
-        assert cluster_size in CLUSTER_SIZES, f"Expected cluster_size to be one of {CLUSTER_SIZES}, found {cluster_size}"
+        params = dict()
 
-        params = {
-            "name": name,
-            "cluster_size": cluster_size,
-            "min_num_clusters": min_num_clusters,
-            "max_num_clusters": max_num_clusters,
-            "auto_stop_mins": auto_stop_mins,
-            "tags": {
-                "custom_tags": []
-            },
-            "spot_instance_policy": spot_instance_policy,
-            "enable_photon": enable_photon,
-            "enable_serverless_compute": enable_serverless_compute,
-            "channel": {
+        if name is not None:
+            params["name"] = name
+
+        if cluster_size is not None:
+            assert cluster_size in CLUSTER_SIZES, f"Expected cluster_size to be one of {CLUSTER_SIZES}, found {cluster_size}"
+            params["cluster_size"] = cluster_size
+            
+        if enable_serverless_compute is not None:
+            params["enable_serverless_compute"] = enable_serverless_compute
+            
+        if min_num_clusters is not None:
+            params["min_num_clusters"] = min_num_clusters
+            
+        if max_num_clusters is not None:
+            params["max_num_clusters"] = max_num_clusters
+            
+        if auto_stop_mins is not None:
+            params["auto_stop_mins"] = auto_stop_mins
+            
+        if enable_photon is not None:
+            params["enable_photon"] = enable_photon
+
+        if spot_instance_policy is not None:
+            assert spot_instance_policy in SPOT_POLICIES, f"Expected spot_instance_policy to be one of {SPOT_POLICIES}, found {spot_instance_policy}"
+            params["spot_instance_policy"] = spot_instance_policy
+            
+        if channel is not None:
+            assert channel in CHANNELS, f"Expected channel to be one of {CHANNELS}, found {channel}"
+            params["channel"] = {
                 "name": channel
-            },
-        }
-
-        for key in tags:
-            value = tags[key]
-            params.get("tags").get("custom_tags").append({
-                "key": key,
-                "value": value
-            })
+            }
+            
+        if tags is not None:
+            params["tags"] = {
+                "custom_tags": []
+            }
+            for key in tags:
+                value = tags[key]
+                params.get("tags").get("custom_tags").append({
+                    "key": key,
+                    "value": value
+                })
 
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints/{id}/edit", params)
