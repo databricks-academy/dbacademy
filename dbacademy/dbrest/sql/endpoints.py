@@ -184,13 +184,13 @@ class SqlEndpointsClient:
                                    naming_params:dict,
                                    cluster_size:str,
                                    enable_serverless_compute:bool,
-                                   min_num_clusters:int = 1,
-                                   max_num_clusters:int = 1,
-                                   auto_stop_mins:int = 120,
-                                   enable_photon:bool = True,
-                                   spot_instance_policy:str = RELIABILITY_OPTIMIZED,
-                                   channel:str = CHANNEL_NAME_CURRENT,
-                                   tags:dict = dict()):
+                                   min_num_clusters:int,
+                                   max_num_clusters:int,
+                                   auto_stop_mins:int,
+                                   enable_photon:bool,
+                                   spot_instance_policy:str,
+                                   channel:str,
+                                   tags:dict):
         username = user.get("userName")
         active = user.get("active")
         
@@ -217,12 +217,21 @@ class SqlEndpointsClient:
         print(f"Creating the endpoint \"{endpoint_name}\" for the user \"{username}\"")
         print("-"*80)    
         
-        self.create(self, name=endpoint_name,
-                          enable_serverless_compute=enable_serverless_compute,
-                          min_num_clusters=min_num_clusters,
-                          max_num_clusters=max_num_clusters,
-                          auto_stop_mins=auto_stop_mins,
-                          enable_photon=enable_photon,
-                          spot_instance_policy=spot_instance_policy,
-                          channel=channel,
-                          tags=tags)
+        # self.create(self, name=endpoint_name,
+        #                   enable_serverless_compute=enable_serverless_compute,
+        #                   min_num_clusters=min_num_clusters,
+        #                   max_num_clusters=max_num_clusters,
+        #                   auto_stop_mins=auto_stop_mins,
+        #                   enable_photon=enable_photon,
+        #                   spot_instance_policy=spot_instance_policy,
+        #                   channel=channel,
+        #                   tags=tags)
+        print(f"name={endpoint_name}")
+        print(f"enable_serverless_compute={enable_serverless_compute}")
+        print(f"min_num_clusters={min_num_clusters}")
+        print(f"max_num_clusters={max_num_clusters}")
+        print(f"auto_stop_mins={auto_stop_mins}")
+        print(f"enable_photon={enable_photon}")
+        print(f"spot_instance_policy={spot_instance_policy}")
+        print(f"channel={channel}")
+        print(f"tags={tags}")
