@@ -7,5 +7,5 @@ class SqlConfigClient:
         self.token = token
         self.endpoint = endpoint
 
-    def get(self, endpoint_id):
+    def get(self):
         return self.client.execute_get_json(f"{self.endpoint}/api/2.0/sql/config/endpoints")
