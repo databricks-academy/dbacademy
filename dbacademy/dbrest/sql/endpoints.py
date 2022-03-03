@@ -152,6 +152,18 @@ class SqlEndpointsClient:
         self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints/{endpoint_id}/edit", params)
         return self.get(endpoint_id)
 
+    def to_endpoint_name(self, user, naming_template:str, naming_params:dict):
+        username = user.get("userName")
+
+        if "{da_hash}" in naming_template:
+            assert naming_params.get("course", None) is not None, "The template is employing da_hash which requires course to be specified in naming_params"
+            course = naming_params["course"]
+            da_hash = abs(hash(f"{username}-{course}")) % 10000
+            naming_params["da_hash"] = da_hash
+            
+        naming_params["da_name"] = username.split("@")[0]
+        return naming_template.format(**naming_params)
+
     def create_user_endpoints(self,
                                    naming_template:str, 
                                    naming_params:dict,
@@ -207,7 +219,7 @@ class SqlEndpointsClient:
             return
             
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
-        print("Creating the endpoint \"{endpoint_name}\" for the user \"{username}\"")
+        print(f"Creating the endpoint \"{endpoint_name}\" for the user \"{username}\"")
 
         self.create(name=endpoint_name,
                     cluster_size=cluster_size,
@@ -227,18 +239,12 @@ class SqlEndpointsClient:
                                       naming_params=naming_params)
 
     def delete_user_endpoint(self, user, naming_template:str, naming_params:dict):
-        endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
-        
-        print("Deleting the endpoint \"{endpoint_name}\" for the user \"{username}\"")
-
-    def to_endpoint_name(self, user, naming_template:str, naming_params:dict):
         username = user.get("userName")
+        endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
-        if "{da_hash}" in naming_template:
-            assert naming_params.get("course", None) is not None, "The template is employing da_hash which requires course to be specified in naming_params"
-            course = naming_params["course"]
-            da_hash = abs(hash(f"{username}-{course}")) % 10000
-            naming_params["da_hash"] = da_hash
-            
-        naming_params["da_name"] = username.split("@")[0]
-        return naming_template.format(**naming_params)
+        for endpoint in client.sql().endpoints().list():
+            if endpoint.get("name") == endpoint_name:
+                print(f"Deleting the endpoint \"{endpoint_name}\" for the user \"{username}\"")
+                self.delete(endpoint.get("id"))
+
+        print(f"Skipping deletion of the endpoint \"{endpoint_name}\": Not found")
