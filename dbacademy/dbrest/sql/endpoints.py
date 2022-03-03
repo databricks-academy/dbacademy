@@ -227,6 +227,7 @@ class SqlEndpointsClient:
                           spot_instance_policy=spot_instance_policy,
                           channel=channel,
                           tags=tags)
+
         # print(f"name={endpoint_name}")
         # print(f"enable_serverless_compute={enable_serverless_compute}")
         # print(f"min_num_clusters={min_num_clusters}")
