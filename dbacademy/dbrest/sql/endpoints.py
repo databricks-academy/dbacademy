@@ -206,7 +206,7 @@ class SqlEndpointsClient:
             print(f"Skipping creation of endpoint for the user \"{username}\": Missing the databricks-sql-access entitlement, found {entitlements}")
             return
             
-        endpoint_name = to_endpoint_name(user, naming_template, naming_params)
+        endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
         self.create(name=endpoint_name,
                     cluster_size=cluster_size,
@@ -226,7 +226,7 @@ class SqlEndpointsClient:
                                       naming_params=naming_params)
 
     def delete_user_endpoint(self, user, naming_template:str, naming_params:dict):
-        endpoint_name = to_endpoint_name(user, naming_template, naming_params)
+        endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
         print("Deleting the endpoint {endpoint_name}")
 
     def to_endpoint_name(self, user, naming_template:str, naming_params:dict):
