@@ -166,18 +166,18 @@ class SqlEndpointsClient:
                                    tags:dict = dict()):
 
         for user in self.client.scim().users().list():
-            self.create_user_endpoint(user, 
-                                      naming_template, 
-                                      naming_params,
-                                      cluster_size,
-                                      enable_serverless_compute,
-                                      min_num_clusters,
-                                      max_num_clusters,
-                                      auto_stop_mins,
-                                      enable_photon,
-                                      spot_instance_policy,
-                                      channel,
-                                      tags)
+            self.create_user_endpoint(user=user, 
+                                      naming_template=naming_template, 
+                                      naming_params=naming_params,
+                                      cluster_size=cluster_size,
+                                      enable_serverless_compute=enable_serverless_compute,
+                                      min_num_clusters=min_num_clusters,
+                                      max_num_clusters=max_num_clusters,
+                                      auto_stop_mins=auto_stop_mins,
+                                      enable_photon=enable_photon,
+                                      spot_instance_policy=spot_instance_policy,
+                                      channel=channel,
+                                      tags=tags)
 
     def create_user_endpoint(self, user,
                                    naming_template:str, 
