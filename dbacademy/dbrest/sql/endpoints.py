@@ -207,6 +207,7 @@ class SqlEndpointsClient:
             return
             
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
+        print("Creating the endpoint \"{endpoint_name}\" for the user \"{username}\"")
 
         self.create(name=endpoint_name,
                     cluster_size=cluster_size,
