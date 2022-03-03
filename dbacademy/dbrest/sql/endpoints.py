@@ -206,17 +206,8 @@ class SqlEndpointsClient:
             print(f"Skipping creation of endpoint for the user \"{username}\": Missing the databricks-sql-access entitlement, found {entitlements}")
             return
             
-        if "{da_hash}" in naming_template:
-            assert naming_params.get("course", None) is not None, "The template is employing da_hash which requires course to be specified in naming_params"
-            course = naming_params["course"]
-            da_hash = abs(hash(f"{username}-{course}")) % 10000
-            naming_params["da_hash"] = da_hash
-            
-        naming_params["da_name"] = username.split("@")[0]
-        endpoint_name = naming_template.format(**naming_params)
-        print(f"Creating the endpoint \"{endpoint_name}\" for the user \"{username}\"")
-        print("-"*80)    
-        
+        endpoint_name = to_endpoint_name(user, naming_template, naming_params)
+
         self.create(name=endpoint_name,
                     cluster_size=cluster_size,
                     enable_serverless_compute=enable_serverless_compute,
@@ -227,3 +218,25 @@ class SqlEndpointsClient:
                     spot_instance_policy=spot_instance_policy,
                     channel=channel,
                     tags=tags)
+
+    def delete_user_endpoints(self, naming_template:str, naming_params:dict):
+        for user in self.client.scim().users().list():
+            self.delete_user_endpoint(user=user, 
+                                      naming_template=naming_template, 
+                                      naming_params=naming_params)
+
+    def delete_user_endpoint(self, user, naming_template:str, naming_params:dict):
+        endpoint_name = to_endpoint_name(user, naming_template, naming_params)
+        print("Deleting the endpoint {endpoint_name}")
+
+    def to_endpoint_name(self, user, naming_template:str, naming_params:dict):
+        username = user.get("userName")
+
+        if "{da_hash}" in naming_template:
+            assert naming_params.get("course", None) is not None, "The template is employing da_hash which requires course to be specified in naming_params"
+            course = naming_params["course"]
+            da_hash = abs(hash(f"{username}-{course}")) % 10000
+            naming_params["da_hash"] = da_hash
+            
+        naming_params["da_name"] = username.split("@")[0]
+        return naming_template.format(**naming_params)
