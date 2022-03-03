@@ -38,5 +38,4 @@ class SqlConfigClient:
                 "value": value
             })
 
-        return params
-        # return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/config/endpoints")
+        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/config/endpoints")
