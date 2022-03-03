@@ -177,8 +177,6 @@ class SqlEndpointsClient:
                                    channel:str = CHANNEL_NAME_CURRENT,
                                    tags:dict = dict()):
 
-        endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
-
         for user in self.client.scim().users().list():
             self.create_user_endpoint(user=user, 
                                       naming_template=naming_template, 
