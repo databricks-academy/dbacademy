@@ -239,9 +239,7 @@ class SqlEndpointsClient:
 
     def delete_user_endpoints(self, naming_template:str, naming_params:dict):
         for user in self.client.scim().users().list():
-            self.delete_user_endpoint(user=user, 
-                                      naming_template=naming_template, 
-                                      naming_params=naming_params)
+            self.delete_user_endpoint(user=user, naming_template=naming_template, naming_params=naming_params)
 
     def delete_user_endpoint(self, user, naming_template:str, naming_params:dict):
         username = user.get("userName")
@@ -251,5 +249,21 @@ class SqlEndpointsClient:
             if endpoint.get("name") == endpoint_name:
                 print(f"Deleting the endpoint \"{endpoint_name}\" for the user \"{username}\"")
                 self.delete(endpoint.get("id"))
+
+        print(f"Skipping deletion of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found")
+
+
+    def start_user_endpoints(self, naming_template:str, naming_params:dict):
+        for user in self.client.scim().users().list():
+            self.start_user_endpoint(user=user, naming_template=naming_template, naming_params=naming_params)
+
+    def start_user_endpoint(self, user, naming_template:str, naming_params:dict):
+        username = user.get("userName")
+        endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
+
+        for endpoint in self.client.sql().endpoints().list():
+            if endpoint.get("name") == endpoint_name:
+                print(f"Starting the endpoint \"{endpoint_name}\" for the user \"{username}\"")
+                self.start(endpoint.get("id"))
 
         print(f"Skipping deletion of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found")
