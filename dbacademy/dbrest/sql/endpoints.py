@@ -92,7 +92,7 @@ class SqlEndpointsClient:
 
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints", params)
 
-    def edit(self, id:str,
+    def edit(self, endpoint_id:str,
                    name:str = None,
                    cluster_size:str = None,
                    enable_serverless_compute:bool = None,
@@ -149,4 +149,5 @@ class SqlEndpointsClient:
                     "value": value
                 })
 
-        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints/{id}/edit", params)
+        self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints/{endpoint_id}/edit", params)
+        return self.get(endpoint_id)
