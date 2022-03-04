@@ -54,7 +54,7 @@ class WorkspaceClient:
         payload = {"path": path, "recursive": True}
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/workspace/delete", payload, expected=[200, 404])
 
-    def import_html_file(self, html_path:str, content:str) -> dict:
+    def import_html_file(self, html_path:str, content:str, overwrite=True) -> dict:
         import base64
 
         payload = {
