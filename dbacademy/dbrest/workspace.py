@@ -54,17 +54,28 @@ class WorkspaceClient:
         payload = {"path": path, "recursive": True}
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/workspace/delete", payload, expected=[200, 404])
 
-    def import_notebook(self, language, notebook_path, content) -> dict:
+    def import_html_file(self, html_path:str, content:str) -> dict:
+        import base64
+
+        payload = {
+            "content": base64.b64encode(content.encode("utf-8")).decode("utf-8"),
+            "path": html_path,
+            "language": language,
+            "overwrite": overwrite,
+            "format": "SOURCE",
+        }
+        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/workspace/import", payload)
+
+    def import_notebook(self, language:str, notebook_path:str, content:str, overwrite=True) -> dict:
         import base64
 
         payload = {
             "content": base64.b64encode(content.encode("utf-8")).decode("utf-8"),
             "path": notebook_path,
             "language": language,
-            "overwrite": True,
+            "overwrite": overwrite,
             "format": "SOURCE",
         }
-
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/workspace/import", payload)
 
     def export_notebook(self, notebook_path) -> str:
