@@ -60,9 +60,8 @@ class WorkspaceClient:
         payload = {
             "content": base64.b64encode(content.encode("utf-8")).decode("utf-8"),
             "path": html_path,
-            "language": language,
             "overwrite": overwrite,
-            "format": "SOURCE",
+            "format": "HTML",
         }
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/workspace/import", payload)
 
