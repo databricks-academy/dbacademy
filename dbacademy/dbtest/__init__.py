@@ -464,7 +464,7 @@ class TestSuite:
                      .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
                      .withColumn("executed_at", F.current_timestamp()))
 
-    def to_results_evaluator(spark):
+    def to_results_evaluator(self, spark):
         df = self.to_data_frame(spark)
         return dbtest.ResultsEvaluator(df)
 
