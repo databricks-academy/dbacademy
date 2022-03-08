@@ -214,7 +214,7 @@ class TestConfig:
                 # Add our notebook to the set of notebooks to be tested.
                 self.notebooks[path] = NotebookDef(test_round=test_round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order=i)
 
-    def to_data_frame(self, spark):
+    def to_data_frame(self):
         return spark.read.table(f"{self.results_database}.{self.results_table}").filter(f"suite_id = '{self.suite_id}'")
     
     def print(self):
@@ -330,17 +330,20 @@ class TestInstance:
 
 
 class TestSuite:
-    def __init__(self, test_config, test_dir, test_type):
+    def __init__(self, test_config, test_dir, test_type, spark):
         self.test_dir = test_dir
         self.test_config = test_config
         self.client = test_config.client
         self.test_type = test_type
         self.test_rounds = dict()
+        self.spark = spark
 
+        self.spark = spark
         self.slack_thread_ts = None
         self.slack_first_message = None
 
         assert test_type is not None and test_type.strip() != "", "The test type must be specified."
+        assert spark is not None, "The parameter \"spark\" must be specified."
 
         # Define each test_round first to make the next step full-proof
         for notebook in test_config.notebooks.values():
@@ -493,19 +496,20 @@ class TestSuite:
                              self.test_config.spark_version,
                              self.test_config.test_type)]
 
-            sc, spark, dbutils = dbgems.init_locals()
+            if self.spark is None:
+                sc, self.spark, dbutils = dbgems.init_locals()
 
             # Append our tests results to the database
-            spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
+            self.spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
             
             print(f"*** DEBUG created database {self.test_config.results_database}")
 
 
             print("-"*80)
-            print(spark)
+            print(self.spark)
             print("-"*80)
 
-            (spark.createDataFrame(test_results)
+            (self.spark.createDataFrame(test_results)
                 .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
                 .withColumn("executed_at", current_timestamp())
                 .write.format("csv").mode("append").saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
