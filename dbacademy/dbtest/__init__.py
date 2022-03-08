@@ -363,6 +363,7 @@ class TestSuite:
         print()
 
     def test_all_synchronously(self, test_round, fail_fast=False, owner=None) -> bool:
+        from dbacademy import dbgems
 
         if test_round not in self.test_rounds:
             print(f"** WARNING ** There are no notebooks in round #{test_round}")
@@ -385,11 +386,14 @@ class TestSuite:
 
         for test in tests:
             self.send_status_update("info", f"Starting */{test.notebook.path}*")
+            print(f"Starting /{test.notebook.path}")
 
             job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
             if owner: self.client.permissions().change_job_owner(job_id, owner)
 
             run_id = self.client.jobs().run_now(job_id)["run_id"]
+
+            displayHTML(f"""<a href="/?o={dbgems.get_workspace_id()}#job/{job_id}/run/{run_id}" target="_blank">{test.notebook.path}</a>""")
 
             response = self.client.runs().wait_for(run_id)
             passed = False if not self.conclude_test(test, response, fail_fast) else passed
@@ -408,11 +412,14 @@ class TestSuite:
         # Launch each test
         for test in tests:
             self.send_status_update("info", f"Starting */{test.notebook.path}*")
+            print(f"Starting /{test.notebook.path}")
 
             test.job_id = create_test_job(self.client, self.test_config, test.job_name, test.notebook_path)
             if owner: self.client.permissions().change_job_owner(test.job_id, owner)
 
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
+
+            displayHTML(f"""<a href="/?o={dbgems.get_workspace_id()}#job/{test.job_id}/run/{test.run_id}" target="_blank">{test.notebook.path}</a>""")
 
         # Assume that all tests passed
         passed = True
