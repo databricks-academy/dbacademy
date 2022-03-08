@@ -460,6 +460,7 @@ class TestSuite:
         return result_state != 'FAILED'
 
     def to_data_frame(self, spark):
+        import pyspark.sql.functions as F
         return (spark.createDataFrame(self.test_results)
                      .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
                      .withColumn("executed_at", F.current_timestamp()))
