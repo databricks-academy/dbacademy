@@ -499,16 +499,16 @@ class TestSuite:
             spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
             
             print(f"*** DEBUG created database {self.test_config.results_database}")
-            print("Test Results:")
+            print("*** DEBUG Test Results:")
             print("-"*80)
             print(test_results)
             print("-"*80)
 
             (spark.createDataFrame(test_results)
-                  .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
-                  .withColumn("executed_at", current_timestamp())
-                  .write.format("csv").mode("append").saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
-            
+                .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
+                .withColumn("executed_at", current_timestamp())
+                .write.format("csv").mode("append").saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
+
             print(f"*** Logged results to {self.test_config.results_database}.{self.test_config.results_table}")
 
             response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
@@ -531,9 +531,8 @@ class TestSuite:
             url = to_job_url(self.test_config.cloud, job_id, run_id)
             self.send_status_update(message_type, f"*`{result_state}` /{test.notebook.path}*\n\n{url}")
 
-        except Exception:
-            print(f"Unable to log test results.")
-            traceback.print_exc()
+        except Exception as e:
+            raise e
 
     def send_first_message(self):
       if self.slack_first_message is None:
