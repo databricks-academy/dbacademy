@@ -27,7 +27,7 @@ class RunsClient:
         print(f"Total runs: {len(runs)}")
 
         if not json_response.get("has_more", False): return runs
-        else: return self.list(runs)
+        else: return self.list_by_job_id(runs)
 
     def cancel(self, run_id): 
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/runs/cancel", {"run_id": run_id})
