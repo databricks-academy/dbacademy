@@ -498,12 +498,17 @@ class TestSuite:
             # Append our tests results to the database
             spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
             
-            print(f"*** DEBUG created database={self.test_config.results_database}")
+            print(f"*** DEBUG created database {self.test_config.results_database}")
+            print("Test Results:")
+            print("-"*80)
+            print(test_results)
+            print("-"*80)
 
             (spark.createDataFrame(test_results)
                   .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
                   .withColumn("executed_at", current_timestamp())
                   .write.format("csv").mode("append").saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
+            
             print(f"*** Logged results to {self.test_config.results_table}")
 
             response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
