@@ -460,9 +460,9 @@ class TestSuite:
     def log_run(self, test, response):
         import traceback, time, uuid, requests, json
         from dbacademy import dbgems
-        from pyspark.sql.functions import current_timestamp
+        import pyspark.sql.functions as F
 
-        print(f"*** Adding test results to {self.test_config.results_table}")
+        print(f"*** Adding test results to {self.test_config.results_database}.{self.test_config.results_table}")
 
         job_id = response["job_id"] if "job_id" in response else 0
         run_id = response["run_id"] if "run_id" in response else 0
@@ -500,18 +500,22 @@ class TestSuite:
 
         # Append our tests results to the database
         self.spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
-        
         print(f"*** DEBUG created database {self.test_config.results_database}")
-
+        
+        self.spark.sql(f"DROP TABLE IF EXISTS {self.test_config.results_database}.{self.test_config.results_table}")
+        print(f"*** DEBUG dropped table {self.test_config.results_database}.{self.test_config.results_table}")
 
         print("-"*80)
         print(self.spark)
         print("-"*80)
 
-        (self.spark.createDataFrame(test_results)
-            .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
-            .withColumn("executed_at", current_timestamp())
-            .write.format("csv").mode("append").saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
+        try:
+            (self.spark.createDataFrame(test_results)
+                .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
+                .withColumn("executed_at", F.current_timestamp())
+                .write.format("csv").mode("append").saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
+        except Exception as e:
+
 
         print(f"*** Logged results to {self.test_config.results_database}.{self.test_config.results_table}")
 
