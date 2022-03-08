@@ -546,6 +546,8 @@ class TestSuite:
         url = to_job_url(self.test_config.cloud, job_id, run_id)
         self.send_status_update(message_type, f"*`{result_state}` /{test.notebook.path}*\n\n{url}")
 
+        print(f"*** DEBUG concluded log_run()")
+
     def send_first_message(self):
       if self.slack_first_message is None:
         self.send_status_update("info", f"*{self.test_config.name}*\nCloud: *{self.test_config.cloud}* | Mode: *{self.test_type}*")
