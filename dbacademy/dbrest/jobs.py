@@ -11,8 +11,15 @@ class JobsClient:
     def create(self, params):
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/create", params)
 
-    def run_now(self, job_id):
-        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/run-now", {"job_id": job_id})
+    def run_now(self, job_id:str, notebook_params:dict = None):
+        payload = {
+            "job_id": 
+            job_id
+        }
+        if notebook_params is not None:
+            payload["notebook_params"] = notebook_params
+
+        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/run-now", payload)
 
     def delete_by_job_id(self, job_id):
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/delete", {"job_id": job_id})
