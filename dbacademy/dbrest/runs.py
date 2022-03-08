@@ -19,12 +19,8 @@ class RunsClient:
             print("Returning first 1K runs")
             return runs
 
-        if json_response.get("has_more", False):
-            print(f"Recursing: {len(runs)} ")
-            return self.list(runs)
-        else:
-            print(f"Returning {len(runs)} runs")
-            return runs
+        if not json_response.get("has_more", False): return runs
+        else: return self.list_by_job_id(runs)
 
     def list_by_job_id(self, job_id, runs=builtins.list()):
         json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}")
