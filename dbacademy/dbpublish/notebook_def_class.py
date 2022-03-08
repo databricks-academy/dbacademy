@@ -334,18 +334,19 @@ class NotebookDef:
             for token in bdc_tokens:
                 self.test(lambda: token not in command, f"""Found the token "{token}" in command #{i + 1}""")
 
-            if language.lower() == "python":
-                self.warn(lambda: "%python" not in command, f"""Found "%python" in command #{i + 1} of a Python notebook""")
-            elif language.lower() == "sql":
-                self.warn(lambda: "%sql" not in command, f"""Found "%sql" in command #{i + 1} of a SQL notebook""")
-            elif language.lower() == "scala":
-                self.warn(lambda: "%scala" not in command, f"""Found "%scala" in command #{i + 1} of a Scala notebook""")
-            elif language.lower() == "r":
-                # We have to check both cases so as not to catch %run by accident
-                self.warn(lambda: "%r " not in command,  f"""Found "%r" in command #{i + 1} of an R notebook""")
-                self.warn(lambda: "%r\n" not in command, f"""Found "%r" in command #{i + 1} of an R notebook""")
-            else:
-                raise Exception(f"The language {language} is not supported")
+            if command.startswith("%md") == False:
+                if language.lower() == "python":
+                    self.warn(lambda: "%python" not in command, f"""Found "%python" in command #{i + 1} of a Python notebook""")
+                elif language.lower() == "sql":
+                    self.warn(lambda: "%sql" not in command, f"""Found "%sql" in command #{i + 1} of a SQL notebook""")
+                elif language.lower() == "scala":
+                    self.warn(lambda: "%scala" not in command, f"""Found "%scala" in command #{i + 1} of a Scala notebook""")
+                elif language.lower() == "r":
+                    # We have to check both cases so as not to catch %run by accident
+                    self.warn(lambda: "%r " not in command,  f"""Found "%r" in command #{i + 1} of an R notebook""")
+                    self.warn(lambda: "%r\n" not in command, f"""Found "%r" in command #{i + 1} of an R notebook""")
+                else:
+                    raise Exception(f"The language {language} is not supported")
 
             for year in range(2017, 2999):
                 tag = f"{year} Databricks, Inc"
