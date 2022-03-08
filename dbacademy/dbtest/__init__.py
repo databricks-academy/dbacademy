@@ -468,20 +468,14 @@ class TestSuite:
         job_id = response["job_id"] if "job_id" in response else 0
         run_id = response["run_id"] if "run_id" in response else 0
 
-        print(f"*** DEBUG job_id={job_id}, run_id={run_id}")
-
         result_state = response["state"]["result_state"] if "state" in response and "result_state" in response["state"] else "UNKNOWN"
         if result_state == "FAILED" and test.notebook.ignored: result_state = "IGNORED"
-
-        print(f"*** DEBUG result_state={result_state}")
 
         execution_duration = response["execution_duration"] if "execution_duration" in response else 0
         notebook_path = response["task"]["notebook_task"]["notebook_path"] if "task" in response and "notebook_task" in response["task"] and "notebook_path" in response["task"][
             "notebook_task"] else "UNKNOWN"
 
         test_id = str(time.time()) + "-" + str(uuid.uuid1())
-
-        print(f"*** DEBUG test_id={test_id}")
 
         test_results = [(self.test_config.suite_id,
                             test_id,
@@ -501,27 +495,16 @@ class TestSuite:
 
         # Append our tests results to the database
         self.spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
-        print(f"*** DEBUG created database {self.test_config.results_database}")
-        
         self.spark.sql(f"DROP TABLE IF EXISTS {self.test_config.results_database}.{self.test_config.results_table}")
-        print(f"*** DEBUG dropped table {self.test_config.results_database}.{self.test_config.results_table}")
 
-        print("-"*80)
-        print(test_results)
-        print("-"*80)
-
-        try:
-            (self.spark.createDataFrame(test_results)
-                 .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
-                 .withColumn("executed_at", F.current_timestamp())
-                 .write
-                 .option("overwriteSchema", True)
-                 .format("delta")
-                 .mode("overwrite")
-                 .saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
-
-        except Exception as e:
-            print("BOOM!")
+        (self.spark.createDataFrame(test_results)
+                .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
+                .withColumn("executed_at", F.current_timestamp())
+                .write
+                .option("overwriteSchema", True)
+                .format("delta")
+                .mode("overwrite")
+                .saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
 
         print(f"*** Logged results to {self.test_config.results_database}.{self.test_config.results_table}")
 
