@@ -15,6 +15,9 @@ class RunsClient:
         json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}")
         return json_response["runs"] if "runs" in json_response else []
 
+    def delete(self, run_id): 
+        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/runs/delete", {"run_id": run_id})
+
     def wait_for(self, run_id):
         import time
 

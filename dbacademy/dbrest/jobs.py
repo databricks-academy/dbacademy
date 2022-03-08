@@ -65,6 +65,11 @@ class JobsClient:
 
                     if delete_job:
                         print(f""" - Deleting job #{job_id}, "{job_name}""")
+                        for run in runs:
+                            run_id = run.get("run_id")
+                            self.client.runs().delete(run_id)
+                            print(f""" - Deleting run #{run_id}""")
+
                         self.delete_by_job_id(job_id)
                         deleted += 1
 
