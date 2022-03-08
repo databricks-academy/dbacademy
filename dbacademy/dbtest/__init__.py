@@ -362,7 +362,7 @@ class TestSuite:
             self.client.jobs().delete_by_name(job_names, success_only=success_only)
         print()
 
-    def test_all_synchronously(self, test_round, fail_fast=False, owner=None) -> bool:
+    def test_all_synchronously(self, test_round, fail_fast=False, owner=None, displayHTML=None) -> bool:
         from dbacademy import dbgems
 
         if test_round not in self.test_rounds:
@@ -393,14 +393,15 @@ class TestSuite:
 
             run_id = self.client.jobs().run_now(job_id)["run_id"]
 
-            displayHTML(f"""<a href="/?o={dbgems.get_workspace_id()}#job/{job_id}/run/{run_id}" target="_blank">{test.notebook.path}</a>""")
+            if displayHTML is not None:
+                displayHTML(f"""<a href="/?o={dbgems.get_workspace_id()}#job/{job_id}/run/{run_id}" target="_blank">{test.notebook.path}</a>""")
 
             response = self.client.runs().wait_for(run_id)
             passed = False if not self.conclude_test(test, response, fail_fast) else passed
 
         return passed
 
-    def test_all_asynchronously(self, test_round, fail_fast=False, owner=None) -> bool:
+    def test_all_asynchronously(self, test_round, fail_fast=False, owner=None, displayHTML=None) -> bool:
 
         tests = self.test_rounds[test_round]
 
@@ -419,7 +420,8 @@ class TestSuite:
 
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
 
-            displayHTML(f"""<a href="/?o={dbgems.get_workspace_id()}#job/{test.job_id}/run/{test.run_id}" target="_blank">{test.notebook.path}</a>""")
+            if displayHTML is not None:
+                displayHTML(f"""<a href="/?o={dbgems.get_workspace_id()}#job/{test.job_id}/run/{test.run_id}" target="_blank">{test.notebook.path}</a>""")
 
         # Assume that all tests passed
         passed = True
