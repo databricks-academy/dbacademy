@@ -462,82 +462,78 @@ class TestSuite:
         from dbacademy import dbgems
         from pyspark.sql.functions import current_timestamp
 
-        try:
-            print(f"*** Adding test results to {self.test_config.results_table}")
+        print(f"*** Adding test results to {self.test_config.results_table}")
 
-            job_id = response["job_id"] if "job_id" in response else 0
-            run_id = response["run_id"] if "run_id" in response else 0
+        job_id = response["job_id"] if "job_id" in response else 0
+        run_id = response["run_id"] if "run_id" in response else 0
 
-            print(f"*** DEBUG job_id={job_id}, run_id={run_id}")
+        print(f"*** DEBUG job_id={job_id}, run_id={run_id}")
 
-            result_state = response["state"]["result_state"] if "state" in response and "result_state" in response["state"] else "UNKNOWN"
-            if result_state == "FAILED" and test.notebook.ignored: result_state = "IGNORED"
+        result_state = response["state"]["result_state"] if "state" in response and "result_state" in response["state"] else "UNKNOWN"
+        if result_state == "FAILED" and test.notebook.ignored: result_state = "IGNORED"
 
-            print(f"*** DEBUG result_state={result_state}")
+        print(f"*** DEBUG result_state={result_state}")
 
-            execution_duration = response["execution_duration"] if "execution_duration" in response else 0
-            notebook_path = response["task"]["notebook_task"]["notebook_path"] if "task" in response and "notebook_task" in response["task"] and "notebook_path" in response["task"][
-                "notebook_task"] else "UNKNOWN"
+        execution_duration = response["execution_duration"] if "execution_duration" in response else 0
+        notebook_path = response["task"]["notebook_task"]["notebook_path"] if "task" in response and "notebook_task" in response["task"] and "notebook_path" in response["task"][
+            "notebook_task"] else "UNKNOWN"
 
-            test_id = str(time.time()) + "-" + str(uuid.uuid1())
+        test_id = str(time.time()) + "-" + str(uuid.uuid1())
 
-            print(f"*** DEBUG test_id={test_id}")
+        print(f"*** DEBUG test_id={test_id}")
 
-            test_results = [(self.test_config.suite_id,
-                             test_id,
-                             self.test_config.name,
-                             result_state,
-                             execution_duration,
-                             self.test_config.cloud,
-                             test.job_name,
-                             job_id,
-                             run_id,
-                             notebook_path,
-                             self.test_config.spark_version,
-                             self.test_config.test_type)]
+        test_results = [(self.test_config.suite_id,
+                            test_id,
+                            self.test_config.name,
+                            result_state,
+                            execution_duration,
+                            self.test_config.cloud,
+                            test.job_name,
+                            job_id,
+                            run_id,
+                            notebook_path,
+                            self.test_config.spark_version,
+                            self.test_config.test_type)]
 
-            if self.spark is None:
-                sc, self.spark, dbutils = dbgems.init_locals()
+        if self.spark is None:
+            sc, self.spark, dbutils = dbgems.init_locals()
 
-            # Append our tests results to the database
-            self.spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
-            
-            print(f"*** DEBUG created database {self.test_config.results_database}")
+        # Append our tests results to the database
+        self.spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
+        
+        print(f"*** DEBUG created database {self.test_config.results_database}")
 
 
-            print("-"*80)
-            print(self.spark)
-            print("-"*80)
+        print("-"*80)
+        print(self.spark)
+        print("-"*80)
 
-            (self.spark.createDataFrame(test_results)
-                .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
-                .withColumn("executed_at", current_timestamp())
-                .write.format("csv").mode("append").saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
+        (self.spark.createDataFrame(test_results)
+            .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
+            .withColumn("executed_at", current_timestamp())
+            .write.format("csv").mode("append").saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
 
-            print(f"*** Logged results to {self.test_config.results_database}.{self.test_config.results_table}")
+        print(f"*** Logged results to {self.test_config.results_database}.{self.test_config.results_table}")
 
-            response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
-                "suite_id": self.test_config.suite_id,
-                "test_id": test_id,
-                "name": self.test_config.name,
-                "result_state": result_state,
-                "execution_duration": execution_duration,
-                "cloud": self.test_config.cloud,
-                "job_name": test.job_name,
-                "job_id": job_id,
-                "run_id": run_id,
-                "notebook_path": notebook_path,
-                "spark_version": self.test_config.spark_version,
-                "test_type": self.test_config.test_type,
-            }))
-            assert response.status_code == 200, f"({response.status_code}): {response.text}"
+        response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
+            "suite_id": self.test_config.suite_id,
+            "test_id": test_id,
+            "name": self.test_config.name,
+            "result_state": result_state,
+            "execution_duration": execution_duration,
+            "cloud": self.test_config.cloud,
+            "job_name": test.job_name,
+            "job_id": job_id,
+            "run_id": run_id,
+            "notebook_path": notebook_path,
+            "spark_version": self.test_config.spark_version,
+            "test_type": self.test_config.test_type,
+        }))
+        assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
-            message_type = "error" if result_state in ["FAILED", "IGNORED"] else "info"
-            url = to_job_url(self.test_config.cloud, job_id, run_id)
-            self.send_status_update(message_type, f"*`{result_state}` /{test.notebook.path}*\n\n{url}")
-
-        except Exception as e:
-            raise e
+        message_type = "error" if result_state in ["FAILED", "IGNORED"] else "info"
+        url = to_job_url(self.test_config.cloud, job_id, run_id)
+        self.send_status_update(message_type, f"*`{result_state}` /{test.notebook.path}*\n\n{url}")
 
     def send_first_message(self):
       if self.slack_first_message is None:
