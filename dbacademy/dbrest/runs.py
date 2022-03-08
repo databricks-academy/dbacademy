@@ -15,16 +15,12 @@ class RunsClient:
         json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list")
         runs.extend(json_response.get("runs", []))
 
-        print(f"Total runs: {len(runs)}")
-
         if not json_response.get("has_more", False): return runs
         else: return self.list(runs)
 
     def list_by_job_id(self, job_id, runs=[]):
         json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}")
         runs.extend(json_response.get("runs", []))
-
-        print(f"Total runs: {len(runs)}")
 
         if not json_response.get("has_more", False): return runs
         else: return self.list_by_job_id(runs)
