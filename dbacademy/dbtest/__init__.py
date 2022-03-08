@@ -400,6 +400,7 @@ class TestSuite:
         return passed
 
     def test_all_asynchronously(self, test_round, fail_fast=False, owner=None) -> bool:
+        from dbacademy import dbgems
 
         tests = self.test_rounds[test_round]
 
