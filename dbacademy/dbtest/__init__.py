@@ -454,29 +454,16 @@ class TestSuite:
 
     def conclude_test(self, test, response, fail_fast) -> bool:
         import json
-        try:
-            self.log_run(test, response)
-        except Exception as e:
-            print(f"*** DEBUG: failed log_run()")
-            print(e)
-            raise e
-
-        print(f"*** DEBUG: concluding test")
+        self.log_run(test, response)
 
         if response['state']['life_cycle_state'] == 'INTERNAL_ERROR':
             print()  # Usually a notebook-not-found
             print(json.dumps(response, indent=1))
-            print(f"*** DEBUG: FAILED {response['state']['state_message']}")
             raise RuntimeError(response['state']['state_message'])
-
-        print(f"*** DEBUG: PASSED {response['state']['state_message']}")
 
         result_state = response['state']['result_state']
         run_id = response.get("run_id", 0)
         job_id = response.get("job_id", 0)
-
-        print(f"*** DEBUG run_id: {run_id}")
-        print(f"*** DEBUG job_id: {job_id}")
 
         print("-" * 80)
         print(f"Job #{job_id}-{run_id} is {response['state']['life_cycle_state']} - {result_state}")
@@ -517,8 +504,6 @@ class TestSuite:
 
         test_id = str(time.time()) + "-" + str(uuid.uuid1())
 
-        print(f"*** DEBUG test_id: {test_id}")
-
         self.test_results.append({
             "suite_id": self.test_config.suite_id,
             "test_id": test_id,
@@ -533,26 +518,6 @@ class TestSuite:
             "spark_version": self.test_config.spark_version,
             "test_type": self.test_config.test_type
         })
-
-        print(f"*** DEBUG self.test_results: {self.test_results}")
-
-        # if self.spark is None:
-        #     sc, self.spark, dbutils = dbgems.init_locals()
-        #
-        # Append our tests results to the database
-        # self.spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
-        # self.spark.sql(f"DROP TABLE IF EXISTS {self.test_config.results_database}.{self.test_config.results_table}")
-        #
-        # (self.spark.createDataFrame(test_results)
-        #         .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
-        #         .withColumn("executed_at", F.current_timestamp())
-        #         .write
-        #         .option("overwriteSchema", True)
-        #         .format("delta")
-        #         .mode("overwrite")
-        #         .saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
-        #
-        # print(f"*** Logged results to {self.test_config.results_database}.{self.test_config.results_table}")
 
         response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
             "suite_id": self.test_config.suite_id,
@@ -570,13 +535,9 @@ class TestSuite:
         }))
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
-        print(f"*** DEBUG response.status_code: {response.status_code}")
-
         message_type = "error" if result_state in ["FAILED", "IGNORED"] else "info"
         url = to_job_url(self.test_config.cloud, job_id, run_id)
         self.send_status_update(message_type, f"*`{result_state}` /{test.notebook.path}*\n\n{url}")
-
-        print(f"*** DEBUG concluded log_run()")
 
     def send_first_message(self):
       if self.slack_first_message is None:
