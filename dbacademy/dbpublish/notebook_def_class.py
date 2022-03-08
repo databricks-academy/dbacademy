@@ -334,7 +334,8 @@ class NotebookDef:
             for token in bdc_tokens:
                 self.test(lambda: token not in command, f"""Found the token "{token}" in command #{i + 1}""")
 
-            if command.startswith("%md") == False:
+            cm = self.get_comment_marker(language)
+            if command.startswith(f"{cm} MAGIC %md") == False:
                 if language.lower() == "python":
                     self.warn(lambda: "%python" not in command, f"""Found "%python" in command #{i + 1} of a Python notebook: ({command[:3]})""")
                 elif language.lower() == "sql":
