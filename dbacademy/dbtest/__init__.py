@@ -1,9 +1,9 @@
 class ResultsEvaluator:
-    def __init__(self, df):
+    def __init__(self, results):
 
-        self.failed_set = df.filter("status == 'FAILED'").orderBy("notebook_path").collect()
-        self.ignored_set = df.filter("status == 'IGNORED'").orderBy("notebook_path").collect()
-        self.success_set = df.filter("status == 'SUCCESS'").orderBy("notebook_path").collect()
+        self.failed_set = results # df.filter("status == 'FAILED'").orderBy("notebook_path").collect()
+        self.ignored_set = [] # df.filter("status == 'IGNORED'").orderBy("notebook_path").collect()
+        self.success_set = [] # df.filter("status == 'SUCCESS'").orderBy("notebook_path").collect()
 
         self.cell_style = "padding: 5px; border: 1px solid black; white-space:nowrap"
         self.header_style = "padding-right:1em; border: 1px solid black; font-weight:bold; padding: 5px; background-color: F0F0F0"
@@ -54,6 +54,23 @@ class ResultsEvaluator:
         html += self.add_row(self.header_style, "Cloud", "Job", "Version", "Executed", "Duration")
 
         for row in rows:
+
+            # self.test_results.append({
+            #     "suite_id": self.test_config.suite_id,
+            #     "test_id": test_id,
+            #     "name": self.test_config.name,
+            #     "result_state": result_state,
+            #     "execution_duration": execution_duration,
+            #     "cloud": self.test_config.cloud,
+            #     "job_name": test.job_name,
+            #     "job_id": job_id,
+            #     "run_id": run_id,
+            #     "notebook_path": notebook_path,
+            #     "spark_version": self.test_config.spark_version,
+            #     "test_type": self.test_config.test_type
+            # })
+
+
             link = row["notebook_path"]
             if print_links:
                 link = to_job_link(row["cloud"], row["job_id"], row["run_id"], row["notebook_path"])
@@ -480,10 +497,10 @@ class TestSuite:
 
     def to_results_evaluator(self, spark):
         from dbacademy import dbtest
-        df = self.to_data_frame(spark)
-        return dbtest.ResultsEvaluator(df)
+        return dbtest.ResultsEvaluator(self.test_results)
 
     def log_run(self, test, response):
+        import datetime
         import traceback, time, uuid, requests, json
         from dbacademy import dbgems
         import pyspark.sql.functions as F
@@ -504,18 +521,20 @@ class TestSuite:
 
         print(f"*** DEBUG test_id: {test_id}")
 
-        self.test_results.append((self.test_config.suite_id,
-                            test_id,
-                            self.test_config.name,
-                            result_state,
-                            execution_duration,
-                            self.test_config.cloud,
-                            test.job_name,
-                            job_id,
-                            run_id,
-                            notebook_path,
-                            self.test_config.spark_version,
-                            self.test_config.test_type))
+        self.test_results.append({
+            "suite_id": self.test_config.suite_id,
+            "test_id": test_id,
+            "name": self.test_config.name,
+            "result_state": result_state,
+            "execution_duration": execution_duration,
+            "cloud": self.test_config.cloud,
+            "job_name": test.job_name,
+            "job_id": job_id,
+            "run_id": run_id,
+            "notebook_path": notebook_path,
+            "spark_version": self.test_config.spark_version,
+            "test_type": self.test_config.test_type
+        })
 
         print(f"*** DEBUG self.test_results: {self.test_results}")
 
