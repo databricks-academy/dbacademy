@@ -15,14 +15,15 @@ class RunsClient:
         json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list")
         runs.extend(json_response.get("runs", list()))
 
-        if json_response.get("has_more", False):
-            return self.list(runs)
-        else:
-            return runs
+        if not json_response.get("has_more", False): return runs
+        else: return self.list(runs)
 
-    def list_by_job_id(self, job_id):
+    def list_by_job_id(self, job_id, runs=list()):
         json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}")
-        return json_response.get("runs", list())
+        runs.extend(json_response.get("runs", list()))
+
+        if not json_response.get("has_more", False): return runs
+        else: return self.list(runs)
 
     def cancel(self, run_id): 
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/runs/cancel", {"run_id": run_id})
