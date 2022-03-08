@@ -42,7 +42,7 @@ class JobsClient:
 
         deleted = 0
         s = "s" if len(jobs) != 1 else ""
-        print(f"Found {len(jobs)} job{s} total")
+        # print(f"Found {len(jobs)} job{s} total")
 
         for job_name in job_list:
             for job in jobs:
@@ -51,7 +51,7 @@ class JobsClient:
 
                     runs = self.client.runs().list_by_job_id(job_id)
                     s = "s" if len(runs) != 1 else ""
-                    print(f"Found {len(runs)} run{s} for job {job_id}")
+                    # print(f"Found {len(runs)} run{s} for job {job_id}")
                     delete_job = True
 
                     for run in runs:
@@ -64,11 +64,11 @@ class JobsClient:
                             print(f""" - The job "{job_name}" was not "SUCCESS" but "{state["result_state"]}", this job must be deleted manually""")
 
                     if delete_job:
-                        print(f""" - Deleting job #{job_id}, "{job_name}""")
+                        print(f"""Deleting job #{job_id}, "{job_name}""")
                         for run in runs:
                             run_id = run.get("run_id")
-                            self.client.runs().delete(run_id)
                             print(f""" - Deleting run #{run_id}""")
+                            self.client.runs().delete(run_id)
 
                         self.delete_by_job_id(job_id)
                         deleted += 1

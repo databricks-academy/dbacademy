@@ -296,7 +296,7 @@ class TestSuite:
         for test_round in self.test_rounds:
             job_names = [j.job_name for j in self.test_rounds[test_round]]
             self.client.jobs().delete_by_name(job_names, success_only=success_only)
-        print()
+        # print()
 
     def test_all_synchronously(self, test_round, fail_fast=False, owner=None) -> bool:
         from dbacademy import dbgems
