@@ -1,7 +1,7 @@
 class ResultsEvaluator:
     def __init__(self, results):
 
-        results.sort(key=lambda r: r.get("notebook_path"), reverse=True)
+        results.sort(key=lambda r: r.get("notebook_path"))
 
         self.failed_set =  [r for r in results if r.get("result_state") == "FAILED"] # df.filter("status == 'FAILED'").orderBy("notebook_path").collect()
         self.ignored_set = [r for r in results if r.get("result_state") == "IGNORED"] # df.filter("status == 'IGNORED'").orderBy("notebook_path").collect()
