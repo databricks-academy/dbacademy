@@ -11,11 +11,12 @@ class RunsClient:
     def get(self, run_id):
         return self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/get?run_id={run_id}")
 
-    def list(self, runs=__builtins__.list()):
+    def list(self):
         json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list")
-        runs.extend(json_response.get("runs", __builtins__.list()))
+        return json_response.get("runs", __builtins__.list())
+        # runs.extend(json_response.get("runs", __builtins__.list()))
 
-        return runs
+        # return runs
 
         # if not json_response.get("has_more", False): return runs
         # else: return self.list(runs)
