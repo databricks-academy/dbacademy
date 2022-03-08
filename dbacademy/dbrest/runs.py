@@ -14,12 +14,12 @@ class RunsClient:
     def list(self):
         json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list")
         return json_response.get("runs", builtins.list())
-        # runs.extend(json_response.get("runs", builtins.list()))
+        runs.extend(json_response.get("runs", builtins.list()))
 
-        # return runs
+        if len(runs) > 1000: return runs
 
-        # if not json_response.get("has_more", False): return runs
-        # else: return self.list(runs)
+        if not json_response.get("has_more", False): return runs
+        else: return self.list(runs)
 
     def list_by_job_id(self, job_id, runs=builtins.list()):
         json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}")
