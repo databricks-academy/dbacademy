@@ -336,14 +336,15 @@ class TestSuite:
         self.client = test_config.client
         self.test_type = test_type
         self.test_rounds = dict()
-        self.spark = spark
 
-        self.spark = spark
         self.slack_thread_ts = None
         self.slack_first_message = None
 
         assert test_type is not None and test_type.strip() != "", "The test type must be specified."
         assert spark is not None, "The parameter \"spark\" must be specified."
+
+        self.spark = spark # TODO - REMOVE
+        self.test_results = list()
 
         # Define each test_round first to make the next step full-proof
         for notebook in test_config.notebooks.values():
@@ -458,6 +459,11 @@ class TestSuite:
 
         return result_state != 'FAILED'
 
+    def to_data_frame(self, spark):
+        return (spark.createDataFrame(test_results)
+                     .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
+                     .withColumn("executed_at", F.current_timestamp()))
+
     def log_run(self, test, response):
         import traceback, time, uuid, requests, json
         from dbacademy import dbgems
@@ -477,7 +483,7 @@ class TestSuite:
 
         test_id = str(time.time()) + "-" + str(uuid.uuid1())
 
-        test_results = [(self.test_config.suite_id,
+        self.test_results.append((self.test_config.suite_id,
                             test_id,
                             self.test_config.name,
                             result_state,
@@ -488,25 +494,25 @@ class TestSuite:
                             run_id,
                             notebook_path,
                             self.test_config.spark_version,
-                            self.test_config.test_type)]
+                            self.test_config.test_type))
 
         # if self.spark is None:
         #     sc, self.spark, dbutils = dbgems.init_locals()
-
+        #
         # Append our tests results to the database
-        self.spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
-        self.spark.sql(f"DROP TABLE IF EXISTS {self.test_config.results_database}.{self.test_config.results_table}")
-
-        (self.spark.createDataFrame(test_results)
-                .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
-                .withColumn("executed_at", F.current_timestamp())
-                .write
-                .option("overwriteSchema", True)
-                .format("delta")
-                .mode("overwrite")
-                .saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
-
-        print(f"*** Logged results to {self.test_config.results_database}.{self.test_config.results_table}")
+        # self.spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
+        # self.spark.sql(f"DROP TABLE IF EXISTS {self.test_config.results_database}.{self.test_config.results_table}")
+        #
+        # (self.spark.createDataFrame(test_results)
+        #         .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
+        #         .withColumn("executed_at", F.current_timestamp())
+        #         .write
+        #         .option("overwriteSchema", True)
+        #         .format("delta")
+        #         .mode("overwrite")
+        #         .saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
+        #
+        # print(f"*** Logged results to {self.test_config.results_database}.{self.test_config.results_table}")
 
         response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
             "suite_id": self.test_config.suite_id,
