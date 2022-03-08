@@ -146,8 +146,8 @@ class TestConfig:
                 # Add our notebook to the set of notebooks to be tested.
                 self.notebooks[path] = NotebookDef(test_round=test_round, path=path, ignored=False, include_solution=include_solution, replacements=dict(), order=i)
 
-    def to_data_frame(self):
-        return spark.read.table(f"{self.results_database}.{self.results_table}").filter(f"suite_id = '{self.suite_id}'")
+    # def to_data_frame(self):
+    #     return spark.read.table(f"{self.results_database}.{self.results_table}").filter(f"suite_id = '{self.suite_id}'")
     
     def print(self):
         print("-" * 100)
@@ -223,22 +223,22 @@ def create_test_job(client, test_config, job_name, notebook_path):
 
 
 # DEPRECATED - use TestSuite instead
-class SuiteBuilder:
-    def __init__(self, client, course_name, test_type):
-        self.client = client
-        self.course_name = course_name
-        self.test_type = test_type
-        self.jobs = dict()
-
-    def add(self, notebook_path, ignored=False):
-        import hashlib
-
-        if self.client.workspace().get_status(notebook_path) is None:
-            raise Exception(f"Notebook not found: {notebook_path}")
-
-        hash_code = hashlib.sha256(notebook_path.encode()).hexdigest()
-        job_name = f"[TEST] {self.course_name} | {self.test_type} | {hash_code}"
-        self.jobs[job_name] = (notebook_path, 0, 0, ignored)
+# class SuiteBuilder:
+#     def __init__(self, client, course_name, test_type):
+#         self.client = client
+#         self.course_name = course_name
+#         self.test_type = test_type
+#         self.jobs = dict()
+# 
+#     def add(self, notebook_path, ignored=False):
+#         import hashlib
+# 
+#         if self.client.workspace().get_status(notebook_path) is None:
+#             raise Exception(f"Notebook not found: {notebook_path}")
+# 
+#         hash_code = hashlib.sha256(notebook_path.encode()).hexdigest()
+#         job_name = f"[TEST] {self.course_name} | {self.test_type} | {hash_code}"
+#         self.jobs[job_name] = (notebook_path, 0, 0, ignored)
 
 
 class TestInstance:
@@ -391,11 +391,11 @@ class TestSuite:
 
         return result_state != 'FAILED'
 
-    def to_data_frame(self, spark):
-        import pyspark.sql.functions as F
-        return (spark.createDataFrame(self.test_results)
-                     .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
-                     .withColumn("executed_at", F.current_timestamp()))
+    # def to_data_frame(self, spark):
+    #     import pyspark.sql.functions as F
+    #     return (spark.createDataFrame(self.test_results)
+    #                  .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
+    #                  .withColumn("executed_at", F.current_timestamp()))
 
     def to_results_evaluator(self, spark):
         from dbacademy.dbtest.results_evaluator import ResultsEvaluator
