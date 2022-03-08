@@ -1,6 +1,6 @@
 # Databricks notebook source
 from dbacademy.dbrest import DBAcademyRestClient
-
+import builtins
 
 class RunsClient:
     def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
@@ -13,8 +13,8 @@ class RunsClient:
 
     def list(self):
         json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list")
-        return json_response.get("runs", __builtins__.list())
-        # runs.extend(json_response.get("runs", __builtins__.list()))
+        return json_response.get("runs", builtins.list())
+        # runs.extend(json_response.get("runs", builtins.list()))
 
         # return runs
 
