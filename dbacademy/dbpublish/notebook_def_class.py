@@ -142,10 +142,12 @@ class NotebookDef:
             return
             
         # Test for usage of single-ticks that should also be bolded
-        for line in command.split("\n"):
-            if line.startswith("#") == False:
-                for result in re.findall(r"[^\*]`[^\s]*`[^\*]", line):
-                    self.warn(None, f"Found a single-tick block in command #{i+1}, expected the **`xx`** pattern: \"{result}\"")
+        # for line in command.split("\n"):
+        #     if line.startswith("#") == False:
+        #         for result in re.findall(r"[^\*]`[^\s]*`[^\*]", line):
+        #             self.warn(None, f"Found a single-tick block in command #{i+1}, expected the **`xx`** pattern: \"{result}\"")
+        for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
+            self.warn(None, f"Found a single-tick block in command #{i+1}, expected the **`xx`** pattern: \"{result}\"")
 
         # Test for MD links to be replaced with html links
         for link in re.findall(r"[^!]\[.*\]\(.*\)", command):
