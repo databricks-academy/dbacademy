@@ -460,16 +460,20 @@ class TestSuite:
         return result_state != 'FAILED'
 
     def to_data_frame(self, spark):
-        return (spark.createDataFrame(test_results)
+        return (spark.createDataFrame(self.test_results)
                      .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
                      .withColumn("executed_at", F.current_timestamp()))
+
+    def to_results_evaluator(spark):
+        df = self.to_data_frame(spark)
+        return dbtest.ResultsEvaluator(df)
 
     def log_run(self, test, response):
         import traceback, time, uuid, requests, json
         from dbacademy import dbgems
         import pyspark.sql.functions as F
 
-        print(f"*** Adding test results to {self.test_config.results_database}.{self.test_config.results_table}")
+        # print(f"*** Adding test results to {self.test_config.results_database}.{self.test_config.results_table}")
 
         job_id = response["job_id"] if "job_id" in response else 0
         run_id = response["run_id"] if "run_id" in response else 0
