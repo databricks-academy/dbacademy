@@ -489,6 +489,8 @@ class TestSuite:
 
         test_id = str(time.time()) + "-" + str(uuid.uuid1())
 
+        print(f"*** DEBUG test_id: {test_id}")
+
         self.test_results.append((self.test_config.suite_id,
                             test_id,
                             self.test_config.name,
@@ -501,6 +503,8 @@ class TestSuite:
                             notebook_path,
                             self.test_config.spark_version,
                             self.test_config.test_type))
+
+        print(f"*** DEBUG self.test_results: {self.test_results}")
 
         # if self.spark is None:
         #     sc, self.spark, dbutils = dbgems.init_locals()
@@ -535,6 +539,8 @@ class TestSuite:
             "test_type": self.test_config.test_type,
         }))
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
+
+        print(f"*** DEBUG response.status_code: {response.status_code}")
 
         message_type = "error" if result_state in ["FAILED", "IGNORED"] else "info"
         url = to_job_url(self.test_config.cloud, job_id, run_id)
