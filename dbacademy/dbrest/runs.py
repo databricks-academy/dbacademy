@@ -15,10 +15,6 @@ class RunsClient:
         json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list?limit=1000&offset={len(runs)}")
         runs.extend(json_response.get("runs", builtins.list()))
 
-        if len(runs) > 1000: 
-            print("Returning first 1K runs")
-            return runs
-
         if not json_response.get("has_more", False): return runs
         else: return self.list(runs)
 
