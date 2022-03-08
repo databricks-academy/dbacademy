@@ -499,9 +499,10 @@ class TestSuite:
             spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
             
             print(f"*** DEBUG created database {self.test_config.results_database}")
-            print("*** DEBUG Test Results:")
+
+
             print("-"*80)
-            print(test_results)
+            print(spark)
             print("-"*80)
 
             (spark.createDataFrame(test_results)
