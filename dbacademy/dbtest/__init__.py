@@ -439,7 +439,12 @@ class TestSuite:
 
     def conclude_test(self, test, response, fail_fast) -> bool:
         import json
-        self.log_run(test, response)
+        try:
+            self.log_run(test, response)
+        except Exception as e:
+            print(f"*** DEBUG: failed log_run()")
+            print(e)
+            raise e
 
         print(f"*** DEBUG: concluding test")
 
