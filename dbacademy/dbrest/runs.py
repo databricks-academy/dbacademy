@@ -12,7 +12,7 @@ class RunsClient:
         return self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/get?run_id={run_id}")
 
     def list(self, runs=builtins.list()):
-        json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list")
+        json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list?limit=1000&offset={len(runs)}")
         runs.extend(json_response.get("runs", builtins.list()))
 
         if len(runs) > 1000: 
@@ -23,7 +23,7 @@ class RunsClient:
         else: return self.list(runs)
 
     def list_by_job_id(self, job_id, runs=builtins.list()):
-        json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list?job_id={job_id}")
+        json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list?limit=1000&offset={len(runs)}&job_id={job_id}")
         runs.extend(json_response.get("runs", builtins.list()))
 
         if not json_response.get("has_more", False): return runs
