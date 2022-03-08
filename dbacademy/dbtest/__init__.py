@@ -20,13 +20,11 @@ class ResultsEvaluator:
         html += "</body>"
         return html
 
-    def add_row(self, style, cloud, job, version, executed, duration):
+    def add_row(self, style, cloud, job, duration):
         return f"""
       <tr>
           <td style="{style}">{cloud}</td>
           <td style="{style}; width:100%">{job}</td>
-          <td style="{style}">{version}</td>
-          <td style="{style}">{executed}</td>
           <td style="{style}; text-align:right">{duration}</td>
       </tr>
       """
