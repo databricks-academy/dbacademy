@@ -11,6 +11,9 @@ class JobsClient:
     def create(self, params):
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/create", params)
 
+    def get(self, job_id):
+        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/get?job_id={job_id}")
+
     def run_now(self, job_id:str, notebook_params:dict = None):
         payload = {
             "job_id": 
