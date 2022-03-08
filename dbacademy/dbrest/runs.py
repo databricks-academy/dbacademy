@@ -29,7 +29,7 @@ class RunsClient:
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/runs/cancel", {"run_id": run_id})
 
     def delete(self, run_id): 
-        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/runs/delete", {"run_id": run_id})
+        return self.client.execute_post_json(f"{self.endpoint}/api/2.0/jobs/runs/delete", {"run_id": run_id}, expected=[200,404])
 
     def wait_for(self, run_id):
         import time
