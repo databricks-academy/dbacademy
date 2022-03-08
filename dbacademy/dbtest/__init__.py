@@ -392,7 +392,7 @@ class TestSuite:
 
             run_id = self.client.jobs().run_now(job_id)["run_id"]
 
-            print(f"""Started {test.notebook.path}\n - {dbgems.get_browser_host_name()}?o={dbgems.get_workspace_id()}#job/{job_id}/run/{run_id}""")
+            print(f"""Started {test.notebook.path}\n - https://{dbgems.get_browser_host_name()}?o={dbgems.get_workspace_id()}#job/{job_id}/run/{run_id}""")
 
             response = self.client.runs().wait_for(run_id)
             passed = False if not self.conclude_test(test, response, fail_fast) else passed
@@ -417,7 +417,7 @@ class TestSuite:
 
             test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
 
-            print(f"""Started {test.notebook.path}\n - {dbgems.get_browser_host_name()}?o={dbgems.get_workspace_id()}#job/{test.job_id}/run/{test.run_id}""")
+            print(f"""Started {test.notebook.path}\n - https://{dbgems.get_browser_host_name()}?o={dbgems.get_workspace_id()}#job/{test.job_id}/run/{test.run_id}""")
 
         # Assume that all tests passed
         passed = True
