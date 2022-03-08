@@ -336,7 +336,7 @@ class NotebookDef:
 
             if command.startswith("%md") == False:
                 if language.lower() == "python":
-                    self.warn(lambda: "%python" not in command, f"""Found "%python" in command #{i + 1} of a Python notebook""")
+                    self.warn(lambda: "%python" not in command, f"""Found "%python" in command #{i + 1} of a Python notebook: ({command[:3]})""")
                 elif language.lower() == "sql":
                     self.warn(lambda: "%sql" not in command, f"""Found "%sql" in command #{i + 1} of a SQL notebook""")
                 elif language.lower() == "scala":
