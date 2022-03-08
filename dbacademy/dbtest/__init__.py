@@ -509,7 +509,7 @@ class TestSuite:
                   .withColumn("executed_at", current_timestamp())
                   .write.format("csv").mode("append").saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
             
-            print(f"*** Logged results to {self.test_config.results_table}")
+            print(f"*** Logged results to {self.test_config.results_database}.{self.test_config.results_table}")
 
             response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
                 "suite_id": self.test_config.suite_id,
