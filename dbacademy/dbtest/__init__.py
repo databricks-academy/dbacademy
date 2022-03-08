@@ -507,13 +507,16 @@ class TestSuite:
         print(f"*** DEBUG dropped table {self.test_config.results_database}.{self.test_config.results_table}")
 
         print("-"*80)
-        print(self.spark)
+        print(test_results)
         print("-"*80)
 
-        (self.spark.createDataFrame(test_results)
-            .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
-            .withColumn("executed_at", F.current_timestamp())
-            .write.format("delta").mode("overwrite").saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
+        try:
+            (self.spark.createDataFrame(test_results)
+                .toDF("suite_id", "test_id", "name", "status", "execution_duration", "cloud", "job_name", "job_id", "run_id", "notebook_path", "spark_version", "test_type")
+                .withColumn("executed_at", F.current_timestamp())
+                .write.format("delta").mode("overwrite").saveAsTable(f"{self.test_config.results_database}.{self.test_config.results_table}"))
+        except Exception as e:
+            print("BOOM!")
 
         print(f"*** Logged results to {self.test_config.results_database}.{self.test_config.results_table}")
 
