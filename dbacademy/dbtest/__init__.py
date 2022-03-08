@@ -51,7 +51,7 @@ class ResultsEvaluator:
             return html
 
         html += f"""<table style="border-collapse: collapse; width:100%">"""
-        html += self.add_row(self.header_style, "Cloud", "Job", "Version", "Executed", "Duration")
+        html += self.add_row(self.header_style, "Cloud", "Job", "Duration")
 
         for row in rows:
 
@@ -75,7 +75,7 @@ class ResultsEvaluator:
             if print_links:
                 link = to_job_link(row["cloud"], row["job_id"], row["run_id"], row["notebook_path"])
 
-            html += self.add_row(self.cell_style, row["cloud"], link, row["spark_version"], row["executed_at"], self.format_duration(row["execution_duration"]))
+            html += self.add_row(self.cell_style, row["cloud"], link, self.format_duration(row["execution_duration"]))
             html += """<tbody></tbody><tbody>"""
 
         html += "</table>"
