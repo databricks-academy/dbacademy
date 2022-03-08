@@ -441,15 +441,23 @@ class TestSuite:
         import json
         self.log_run(test, response)
 
+        print(f"*** DEBUG: concluding test")
+
         if response['state']['life_cycle_state'] == 'INTERNAL_ERROR':
             print()  # Usually a notebook-not-found
             print(json.dumps(response, indent=1))
+            print(f"*** DEBUG: FAILED {response['state']['state_message']}")
             raise RuntimeError(response['state']['state_message'])
+
+        print(f"*** DEBUG: PASSED {response['state']['state_message']}")
 
         result_state = response['state']['result_state']
         run_id = response.get("run_id", 0)
         job_id = response.get("job_id", 0)
-        
+
+        print(f"*** DEBUG run_id: {run_id}")
+        print(f"*** DEBUG job_id: {job_id}")
+
         print("-" * 80)
         print(f"Job #{job_id}-{run_id} is {response['state']['life_cycle_state']} - {result_state}")
         print("-" * 80)
