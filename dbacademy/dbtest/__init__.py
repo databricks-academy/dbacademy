@@ -496,8 +496,8 @@ class TestSuite:
                             self.test_config.spark_version,
                             self.test_config.test_type)]
 
-        if self.spark is None:
-            sc, self.spark, dbutils = dbgems.init_locals()
+        # if self.spark is None:
+        #     sc, self.spark, dbutils = dbgems.init_locals()
 
         # Append our tests results to the database
         self.spark.sql(f"CREATE DATABASE IF NOT EXISTS {self.test_config.results_database} COMMENT 'This is the temporary, cloud-specific database for smoke tests'")
