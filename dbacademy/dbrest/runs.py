@@ -13,7 +13,6 @@ class RunsClient:
 
     def list(self, runs=builtins.list()):
         json_response = self.client.execute_get_json(f"{self.endpoint}/api/2.0/jobs/runs/list")
-        return json_response.get("runs", builtins.list())
         runs.extend(json_response.get("runs", builtins.list()))
 
         if len(runs) > 1000: 
