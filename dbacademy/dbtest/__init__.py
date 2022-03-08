@@ -425,6 +425,7 @@ class TestSuite:
 
         # Assume that all tests passed
         passed = True
+        print(f"""\nWaiting for all test to complete:""")
 
         # Block until all tests completed
         for test in tests:
