@@ -466,6 +466,7 @@ class TestSuite:
                      .withColumn("executed_at", F.current_timestamp()))
 
     def to_results_evaluator(self, spark):
+        from dbacademy import dbtest
         df = self.to_data_frame(spark)
         return dbtest.ResultsEvaluator(df)
 
