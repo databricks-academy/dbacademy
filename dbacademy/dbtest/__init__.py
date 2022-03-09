@@ -440,7 +440,9 @@ class TestSuite:
         }))
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
 
-        message_type = "error" if result_state in ["FAILED", "IGNORED"] else "info"
+        if result_state == "FAILED":    message_type = "error"
+        elif result_state == "IGNORED": message_type = "warn"
+        else: message_type = "info"
         url = to_job_url(self.test_config.cloud, job_id, run_id)
         self.send_status_update(message_type, f"*`{result_state}` /{test.notebook.path}*\n\n{url}")
 
