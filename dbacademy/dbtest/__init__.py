@@ -252,7 +252,8 @@ class TestInstance:
             self.notebook_path = f"{test_dir}/{notebook.path}"
 
         hash_code = hashlib.sha256(self.notebook_path.encode()).hexdigest()
-        self.job_name = f"[TEST] {test_config.name} | {test_type} | {hash_code}"
+        test_name = test_config.name.lower().replace(" ","-")
+        self.job_name = f"[TEST] {test_name} | {test_type} | {hash_code}"
 
         # Hack to bring the test type down into the test results via the test_config
         test_config.test_type = test_type
