@@ -55,5 +55,11 @@ class SqlPermissionsClient:
             if access_control.get("user_name", None) != username:
                 access_control_list.append(access_control)
 
+        if permission_level is not None:
+            access_control_list.append({
+                "user_name": username,
+                "permission_level": permission_level
+            })
+
         permissions["access_control_list"] = access_control_list
         return permissions
