@@ -12,4 +12,7 @@ class SqlPermissionsClient:
         self.max_page_size = 250
 
     def get(self, object_type, object_id):
+        objects = ["alerts" "dashboards" "data_sources" "queries"]
+        assert object_type in objects, f"Expected object type to be one of {objects}, found {object_type}"
+
         return self.client.execute_get_json(f"{self.base_uri}/{object_type}/{object_id}")
