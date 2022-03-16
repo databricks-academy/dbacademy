@@ -34,7 +34,7 @@ class SqlPermissionsClient:
 
         return self.client.execute_post_json(f"{self.base_uri}/{object_type}/{object_id}", params)
 
-    def update_group(self, object_type, object_id, user_name, permission_level):
+    def update_user(self, object_type, object_id, user_name, permission_level):
         self._validate_object_type(object_type)
         self._validate_permission_level(permission_level)
 
