@@ -16,7 +16,7 @@ class SqlPermissionsClient:
     def _validate_object_type(self, object_type:str):
         assert object_type in self.valid_objects, f"Expected \"object_type\" to be one of {self.valid_objects}, found \"{object_type}\""
 
-    def _validate_permission_level(self, permission_level:str, allow_none:False):
+    def _validate_permission_level(self, permission_level:str, allow_none:bool=False):
         if allow_none and permission_level is None: return
         assert permission_level in self.valid_permissions, f"Expected \"permission_level\" to be one of {self.valid_permissions}, found \"{permission_level}\""
 
@@ -41,7 +41,7 @@ class SqlPermissionsClient:
 
         for access_control in access_control_list:
             assert "user_name" in access_control or "group_name" in access_control, "Expected the access_control to contain either user_name or group_name"
-            self._validate_permission_level(access_control.get("permission_level", None))            
+            self._validate_permission_level(access_control.get("permission_level", None))
 
         return self.client.execute_post_json(f"{self.base_uri}/{object_type}/{object_id}", params)
 
