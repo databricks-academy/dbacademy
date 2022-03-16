@@ -41,6 +41,10 @@ class SqlQueriesClient:
         if json_response.get("count") == len(queries): return None
         else: return self.get_by_name(query_name=query_name, queries=queries, page=page+1)
 
+    def clone(self, query:dict):
+        create_def = self.existing_to_create(query)
+        return self.create_from_dict(query)
+
     def existing_to_create(self, query:dict):
         assert type(query) == dict, f"Expected the \"query\" parameter to be of type dict, found {type(query)}"
 
@@ -51,13 +55,18 @@ class SqlQueriesClient:
         parameters = query.get("options", builtins.dict()).get("parameters", builtins.list())
         for parameter in parameters:
             del parameter["parentQueryId"]
-            
-        return query
 
-    def create(data_source_id, query, name:str=None, description:str=None, schedule:dict=None, options:dict=None):
-        pass
+        return query
 
     def create_from_dict(self, params:dict):
         return self.client.execute_post_json(f"{self.base_uri}", params)
 
+    def create(name:str, query:str, description:str=None, schedule:dict=None, options:dict=None):
+        params = dict()
+        params["query"] = query
+        params["name"] = name
+        params["description"] = description
+        params["schedule"] = schedule
+        params["options"] = options
+    
 
