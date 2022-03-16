@@ -148,7 +148,6 @@ class TestConfig:
         print(f"libraries:         {self.libraries}")
         print(f"source_repo:       {self.source_repo}")
         print(f"source_dir:        {self.source_dir}")
-        print(f"include_solutions: {self.include_solutions}")
 
         max_length = 0
         for path in self.notebooks:
