@@ -89,6 +89,7 @@ class TestConfig:
 
         # We don't want the folling function to fail if we are using the "default" path which 
         # may or may not exists. The implication being that this will fail if called explicitly
+        self.include_solutions = include_solutions
         self.index_notebooks(include_solutions=include_solutions, fail_fast=source_dir is not None)
 
     def get_distribution_name(self, version):
