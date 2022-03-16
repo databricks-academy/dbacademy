@@ -36,27 +36,11 @@ class SqlPermissionsClient:
     def update(self, object_type:str, object_id:str, params:dict):
         self._validate_object_type(object_type)
 
-        if object_type == "queries":
-            self._validate_params(params, "queries", "query", object_id)
-            # expected = f"queries/{object_id}"
-            # actual = params.get("object_id", None)
-            # assert actual == expected, f"The param's object_id expected to be \"{expected}\", found \"{actual}\""
-            
-            # expected = "query"
-            # actual = params.get("object_type", None)
-            # assert actual == expected, f"The param's object_type expected to be \"{expected}\", found \"{actual}\""
-
-        elif object_type == "dashboards":
-            self._validate_params(params, "dashboards", "dashboard", object_id)
-
-            # expected = f"queries/{object_id}"
-            # actual = params.get("object_id", None)
-            # assert actual == expected, f"The param's object_id expected to be \"{expected}\", found \"{actual}\""
-            
-            # expected = "query"
-            # actual = params.get("object_type", None)
-            # assert actual == expected, f"The param's object_type expected to be \"{expected}\", found \"{actual}\""
-
+        if object_type == "queries":        self._validate_params(params, object_type, "query", object_id)
+        elif object_type == "dashboards":   self._validate_params(params, object_type, "dashboard", object_id)
+        elif object_type == "alerts":       self._validate_params(params, object_type, "alert", object_id)
+        elif object_type == "data_sources": self._validate_params(params, object_type, "data_source", object_id)
+        else: raise Exception(f"Unsupported object_type {object_type}")
 
         access_control_list = params.get("access_control_list", None)
         assert type(access_control_list) == list, f"The param's access_control_list expected to be of type list, found {type(access_control_list)}"
