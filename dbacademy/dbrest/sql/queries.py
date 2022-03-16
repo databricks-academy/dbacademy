@@ -10,7 +10,8 @@ class SqlQueriesClient:
         self.base_uri = f"{self.endpoint}/api/2.0/preview/sql/queries"
 
     def list(self, queries=builtins.list(), page=1):
-        json_response = self.client.execute_get_json(f"{self.base_uri}?page_size=250&page={len(queries)+1}")
+        max_page_size = 250
+        json_response = self.client.execute_get_json(f"{self.base_uri}?page_size={max_page_size}&page={len(queries)+1}")
 
         queries.extend(json_response.get("results", builtins.list()))
 
