@@ -25,6 +25,9 @@ class SqlQueriesClient:
     def get_by_id(self, query_id):
         return self.client.execute_get_json(f"{self.base_uri}/{query_id}")
 
+    def delete_by_id(self, query_id):
+        return self.client.execute_delete_json(f"{self.base_uri}/{query_id}")
+
     def get_by_name(self, query_name, queries=None, page=1):
         if queries is None: queries = builtins.list()
 
