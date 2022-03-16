@@ -12,9 +12,7 @@ class SqlQueriesClient:
     def list(self, queries=None, page=1):
         if queries is None: queries = builtins.list()
         max_page_size = 250
-        print(f"Size: {len(queries)}")
-        url = f"{self.base_uri}?page_size={max_page_size}&page={len(queries)+1}"
-        print(f"Fetching: {url}")
+        url = f"{self.base_uri}?page_size={max_page_size}&page={page}"
         json_response = self.client.execute_get_json(url)
 
         queries.extend(json_response.get("results", builtins.list()))
