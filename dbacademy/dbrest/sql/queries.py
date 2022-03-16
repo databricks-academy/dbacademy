@@ -61,7 +61,7 @@ class SqlQueriesClient:
     def create_from_dict(self, params:dict):
         return self.client.execute_post_json(f"{self.base_uri}", params)
 
-    def create(name:str, query:str, description:str=None, schedule:dict=None, options:dict=None):
+    def create(self, name:str, query:str, description:str=None, schedule:dict=None, options:dict=None):
         params = dict()
         params["query"] = query
         params["name"] = name
