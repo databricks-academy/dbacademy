@@ -38,5 +38,5 @@ class SqlQueriesClient:
                 return query
 
         # Not found, continue looking.
-        if json_response.get("count") == len(queries): return queries
+        if json_response.get("count") == len(queries): return None
         else: return self.get_by_name(query_name=query_name, queries=queries, page=page+1)
