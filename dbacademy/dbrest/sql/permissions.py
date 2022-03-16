@@ -24,18 +24,40 @@ class SqlPermissionsClient:
         self._validate_object_type(object_type)
         return self.client.execute_get_json(f"{self.base_uri}/{object_type}/{object_id}")
 
+    def _validate_params(self, params:dict, plural_type:str, single_type:str, object_id:str):
+        expected = f"{plural_type}/{object_id}"
+        actual = params.get("object_id", None)
+        assert actual == expected, f"The param's object_id expected to be \"{expected}\", found \"{actual}\""
+        
+        actual = params.get("object_type", None)
+        assert actual == single_type, f"The param's object_type expected to be \"{single_type}\", found \"{actual}\""
+
+
     def update(self, object_type:str, object_id:str, params:dict):
         self._validate_object_type(object_type)
 
         if object_type == "queries":
-            expected = f"queries/{object_id}"
-            actual = params.get("object_id", None)
-            assert actual == expected, f"The param's object_id expected to be \"{expected}\", found \"{actual}\""
+            self._validate_params("queries", "query", object_id)
+            # expected = f"queries/{object_id}"
+            # actual = params.get("object_id", None)
+            # assert actual == expected, f"The param's object_id expected to be \"{expected}\", found \"{actual}\""
             
-            expected = "query"
-            actual = params.get("object_type", None)
-            assert actual == expected, f"The param's object_type expected to be \"{expected}\", found \"{actual}\""
-      
+            # expected = "query"
+            # actual = params.get("object_type", None)
+            # assert actual == expected, f"The param's object_type expected to be \"{expected}\", found \"{actual}\""
+
+        elif object_type == "dashboards":
+            self._validate_params("dashboards", "dashboard", object_id)
+
+            # expected = f"queries/{object_id}"
+            # actual = params.get("object_id", None)
+            # assert actual == expected, f"The param's object_id expected to be \"{expected}\", found \"{actual}\""
+            
+            # expected = "query"
+            # actual = params.get("object_type", None)
+            # assert actual == expected, f"The param's object_type expected to be \"{expected}\", found \"{actual}\""
+
+
         access_control_list = params.get("access_control_list", None)
         assert type(access_control_list) == list, f"The param's access_control_list expected to be of type list, found {type(access_control_list)}"
 
