@@ -29,7 +29,7 @@ class SqlQueriesClient:
         return self.client.execute_delete_json(f"{self.base_uri}/{query_id}")
 
     def undelete_by_id(self, query_id):
-        return self.client.execute_post_json(f"{self.base_uri}/trash/{query_id}")
+        return self.client.execute_post_json(f"{self.base_uri}/trash/{query_id}", params=None)
 
     def get_by_name(self, query_name, queries=None, page=1):
         if queries is None: queries = builtins.list()
