@@ -44,3 +44,13 @@ class SqlPermissionsClient:
 
         return self.client.execute_post_json(f"{self.base_uri}/{object_type}/{object_id}", params)
 
+    def add_user(self, object_type:str, object_id:str, username:str, params:dict):
+        permissions = self.get(object_type, object_id)
+        access_control_list = builtins.list()
+        
+        for access_control in permissions.get("access_control_list", builtins.list()):
+            if access_control.get("user_name", None) != username:
+                access_control_list.append(access_control)
+
+        permissions["access_control_list"] = access_control_list
+        return permissions
