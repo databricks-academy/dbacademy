@@ -75,14 +75,18 @@ class SqlQueriesClient:
         return self.create_from_dict(params)
 
     def update_from_dict(self, id:str, params:dict):
+        assert len(params.keys()) > 0, "Expected at least one parameter."
+        
         return self.client.execute_post_json(f"{self.base_uri}/{id}", params)
 
-    def update(self, id:str, name:str, query:str, description:str=None, schedule:dict=None, options:dict=None, data_source_id=None):
+    def update(self, id:str, name:str=None, query:str=None, description:str=None, schedule:dict=None, options:dict=None, data_source_id=None):
         params = dict()
-        params["data_source_id"] = data_source_id
-        params["query"] = query
-        params["name"] = name
-        params["description"] = description
-        params["schedule"] = schedule
-        params["options"] = builtins.dict() if options is None else options
+
+        if name is not None: params["name"] = name
+        if query is not None: params["query"] = query
+        if description is not None: params["description"] = description
+        if schedule is not None: params["schedule"] = schedule
+        if options is not None: params["options"] = builtins.dict() if options is None else options
+        if data_source_id is not None: params["data_source_id"] = data_source_id
+        
         return self.update_from_dict(id, params)
