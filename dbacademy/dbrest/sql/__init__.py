@@ -13,3 +13,7 @@ class SqlClient():
     def endpoints(self):
         from dbacademy.dbrest.sql.endpoints import SqlEndpointsClient
         return SqlEndpointsClient(self.client, self.token, self.endpoint)
+
+    def queries(self):
+        from dbacademy.dbrest.sql.queries import SqlQueriesClient
+        return SqlQueriesClient(self.client, self.token, self.endpoint)
