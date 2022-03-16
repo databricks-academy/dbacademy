@@ -25,7 +25,6 @@ class SqlPermissionsClient:
 
     def update(self, object_type:str, object_id:str, params:dict):
         self._validate_object_type(object_type)
-        self._validate_permission_level(permission_level)
 
         if object_type == "queries":
             expected = f"queries/{object_id}"
