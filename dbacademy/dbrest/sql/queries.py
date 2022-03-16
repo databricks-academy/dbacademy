@@ -74,10 +74,10 @@ class SqlQueriesClient:
         params["options"] = builtins.dict() if options is None else options
         return self.create_from_dict(params)
 
-    def update_from_dict(self, params:dict):
-        return self.client.execute_post_json(f"{self.base_uri}", params)
+    def update_from_dict(self, id:str, params:dict):
+        return self.client.execute_post_json(f"{self.base_uri}/{id}", params)
 
-    def update(self, name:str, query:str, description:str=None, schedule:dict=None, options:dict=None, data_source_id=None):
+    def update(self, id:str, name:str, query:str, description:str=None, schedule:dict=None, options:dict=None, data_source_id=None):
         params = dict()
         params["data_source_id"] = data_source_id
         params["query"] = query
@@ -85,4 +85,4 @@ class SqlQueriesClient:
         params["description"] = description
         params["schedule"] = schedule
         params["options"] = builtins.dict() if options is None else options
-        return self.update_from_dict(params)
+        return self.update_from_dict(id, params)
