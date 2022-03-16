@@ -40,3 +40,15 @@ class SqlQueriesClient:
         # Not found, continue looking.
         if json_response.get("count") == len(queries): return None
         else: return self.get_by_name(query_name=query_name, queries=queries, page=page+1)
+
+    def convert_existing_to_create(query:dict):
+        assert type(query) == dict, f"Expected the \"query\" existing to be of type dict, found {type(query)}"
+
+        for key in list(query.keys()):
+            if key not in ["data_source_id", "query", "name", "description", "schedule", "options"]:
+                del query[key]
+                
+        return query
+
+    def create(data_source_id, query, name, description, schedule, options):
+        pass
