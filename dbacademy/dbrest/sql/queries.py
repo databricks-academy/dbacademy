@@ -45,9 +45,13 @@ class SqlQueriesClient:
         assert type(query) == dict, f"Expected the \"query\" parameter to be of type dict, found {type(query)}"
 
         for key in list(query.keys()):
-            if key not in ["data_source_id", "query", "name", "description", "schedule", "options"]:
+            if key not in ["query", "name", "description", "schedule", "options"]:
                 del query[key]
 
+        parameters = query.get("options", builtins.dict()).get("parameters", builtins.list())
+        for parameter in parameters:
+            del parameter["parentQueryId"]
+            
         return query
 
     def create(data_source_id, query, name:str=None, description:str=None, schedule:dict=None, options:dict=None):
