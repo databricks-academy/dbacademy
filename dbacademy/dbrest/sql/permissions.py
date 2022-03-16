@@ -37,7 +37,7 @@ class SqlPermissionsClient:
         self._validate_object_type(object_type)
 
         if object_type == "queries":
-            self._validate_params("queries", "query", object_id)
+            self._validate_params(params, "queries", "query", object_id)
             # expected = f"queries/{object_id}"
             # actual = params.get("object_id", None)
             # assert actual == expected, f"The param's object_id expected to be \"{expected}\", found \"{actual}\""
@@ -47,7 +47,7 @@ class SqlPermissionsClient:
             # assert actual == expected, f"The param's object_type expected to be \"{expected}\", found \"{actual}\""
 
         elif object_type == "dashboards":
-            self._validate_params("dashboards", "dashboard", object_id)
+            self._validate_params(params, "dashboards", "dashboard", object_id)
 
             # expected = f"queries/{object_id}"
             # actual = params.get("object_id", None)
