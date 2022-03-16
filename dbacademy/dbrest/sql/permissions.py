@@ -20,7 +20,7 @@ class SqlPermissionsClient:
         assert permission_level in self.valid_permissions, f"Expected \"permission_level\" to be one of {self.valid_permissions}, found \"{permission_level}\""
 
     def get(self, object_type, object_id):
-        self._validate_object_type(self, object_type)
+        self._validate_object_type(object_type)
         return self.client.execute_get_json(f"{self.base_uri}/{object_type}/{object_id}")
 
     def update_group(self, object_type, object_id, group_name, permission_level):
