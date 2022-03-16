@@ -58,17 +58,14 @@ class SqlQueriesClient:
             if key not in ["query", "name", "description", "schedule", "options"]:
                 del query[key]
 
-        parameters = query.get("options", builtins.dict()).get("parameters", builtins.list())
-        for parameter in parameters:
-            del parameter["parentQueryId"]
-
         return query
 
     def create_from_dict(self, params:dict):
         return self.client.execute_post_json(f"{self.base_uri}", params)
 
-    def create(self, name:str, query:str, description:str=None, schedule:dict=None, options:dict=None):
+    def create(self, name:str, query:str, description:str=None, schedule:dict=None, options:dict=None, data_source_id=None):
         params = dict()
+        params["data_source_id"] = data_source_id
         params["query"] = query
         params["name"] = name
         params["description"] = description
@@ -77,13 +74,14 @@ class SqlQueriesClient:
         return self.create_from_dict(params)
 
     def update_from_dict(self, params:dict):
-        pass
+        return self.client.execute_post_json(f"{self.base_uri}", params)
 
-    def update(self, data_source_id:str, name:str, query:str, description:str=None, schedule:dict=None, options:dict=None):
+    def update(self, name:str, query:str, description:str=None, schedule:dict=None, options:dict=None, data_source_id=None):
         params = dict()
+        params["data_source_id"] = data_source_id
         params["query"] = query
         params["name"] = name
         params["description"] = description
         params["schedule"] = schedule
         params["options"] = builtins.dict() if options is None else options
-        return self.update_from_dict(params)        
+        return self.update_from_dict(params)
