@@ -42,7 +42,7 @@ class SqlQueriesClient:
         else: return self.get_by_name(query_name=query_name, queries=queries, page=page+1)
 
     def existing_to_create(self, query:dict):
-        assert type(query) == dict, f"Expected the \"query\" existing to be of type dict, found {type(query)}"
+        assert type(query) == dict, f"Expected the \"query\" parameter to be of type dict, found {type(query)}"
 
         for key in list(query.keys()):
             if key not in ["data_source_id", "query", "name", "description", "schedule", "options"]:
@@ -50,5 +50,10 @@ class SqlQueriesClient:
 
         return query
 
-    def create(data_source_id, query, name, description, schedule, options):
+    def create(data_source_id, query, name:str=None, description:str=None, schedule:dict=None, options:dict=None):
         pass
+
+    def create_from_dict(params:dict):
+        return self.client.execute_post_json(f"{self.base_uri}", params)
+
+
