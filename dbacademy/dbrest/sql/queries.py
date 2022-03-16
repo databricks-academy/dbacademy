@@ -41,7 +41,7 @@ class SqlQueriesClient:
         if json_response.get("count") == len(queries): return None
         else: return self.get_by_name(query_name=query_name, queries=queries, page=page+1)
 
-    def existing_to_create(query:dict):
+    def existing_to_create(self, query:dict):
         assert type(query) == dict, f"Expected the \"query\" existing to be of type dict, found {type(query)}"
 
         for key in list(query.keys()):
