@@ -62,7 +62,7 @@ class SqlPermissionsClient:
             })
 
         permissions["access_control_list"] = access_control_list
-        return permissions
+        return self.update(object_type, object_id, permissions)
 
     def update_group(self, object_type:str, object_id:str, group_name:str, permission_level:str, params:dict):
         self._validate_permission_level(permission_level, allow_none=True)
@@ -81,4 +81,4 @@ class SqlPermissionsClient:
             })
 
         permissions["access_control_list"] = access_control_list
-        return permissions
+        return self.update(object_type, object_id, permissions)
