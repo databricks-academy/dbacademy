@@ -68,3 +68,4 @@ class SqlQueriesClient:
         params["description"] = description
         params["schedule"] = schedule
         params["options"] = options
+        return self.create_from_dict(params)
