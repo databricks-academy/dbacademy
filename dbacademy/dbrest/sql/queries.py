@@ -49,6 +49,7 @@ class SqlQueriesClient:
 
     def clone(self, query:dict):
         create_def = self.existing_to_create(query)
+        create_def["name"] = "Clone - "+create_def["name"]
         return self.create_from_dict(query)
 
     def existing_to_create(self, query:dict):
