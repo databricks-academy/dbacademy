@@ -68,5 +68,3 @@ class SqlQueriesClient:
         params["description"] = description
         params["schedule"] = schedule
         params["options"] = options
-    
-
