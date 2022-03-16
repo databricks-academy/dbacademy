@@ -35,9 +35,9 @@ class SqlPermissionsClient:
             expected = "query"
             actual = params.get("object_type", None)
             assert actual == expected, f"The param's object_type expected to be \"{expected}\", found \"{actual}\""
-
+      
         access_control_list = params.get("access_control_list", None)
-        assert actual == expected, f"The param's access_control_list expected to be of type list, found {type(access_control_list)}"
+        assert type(access_control_list) == list, f"The param's access_control_list expected to be of type list, found {type(access_control_list)}"
 
         for access_control in access_control_list:
             assert "user_name" in access_control or "group_name" in access_control, "Expected the access_control to contain either user_name or group_name"
