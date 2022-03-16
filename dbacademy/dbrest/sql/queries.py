@@ -67,5 +67,5 @@ class SqlQueriesClient:
         params["name"] = name
         params["description"] = description
         params["schedule"] = schedule
-        params["options"] = options
+        params["options"] = builtins.dict() if options is None else options
         return self.create_from_dict(params)
