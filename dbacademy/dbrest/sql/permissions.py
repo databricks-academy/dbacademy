@@ -17,7 +17,7 @@ class SqlPermissionsClient:
         assert object_type in self.valid_objects, f"Expected \"object_type\" to be one of {self.valid_objects}, found \"{object_type}\""
 
     def _validate_permission_level(self, permission_level:str, allow_none:False):
-        if allow_null and permission_level is None: return
+        if allow_none and permission_level is None: return
         assert permission_level in self.valid_permissions, f"Expected \"permission_level\" to be one of {self.valid_permissions}, found \"{permission_level}\""
 
     def get(self, object_type:str, object_id:str):
