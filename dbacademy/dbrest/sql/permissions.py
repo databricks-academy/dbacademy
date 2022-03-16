@@ -45,7 +45,7 @@ class SqlPermissionsClient:
 
         return self.client.execute_post_json(f"{self.base_uri}/{object_type}/{object_id}", params)
 
-    def add_user(self, object_type:str, object_id:str, username:str, permission_level:str, params:dict):
+    def update_user(self, object_type:str, object_id:str, username:str, permission_level:str, params:dict):
         self._validate_permission_level(permission_level, allow_none=True)
 
         permissions = self.get(object_type, object_id)
@@ -53,11 +53,30 @@ class SqlPermissionsClient:
         
         for access_control in permissions.get("access_control_list", builtins.list()):
             if access_control.get("user_name", None) != username:
-                access_control_list.append(access_control)
+                access_control_list.append(access_control) # Keep it
 
         if permission_level is not None:
             access_control_list.append({
                 "user_name": username,
+                "permission_level": permission_level
+            })
+
+        permissions["access_control_list"] = access_control_list
+        return permissions
+
+    def update_group(self, object_type:str, object_id:str, group_name:str, permission_level:str, params:dict):
+        self._validate_permission_level(permission_level, allow_none=True)
+
+        permissions = self.get(object_type, object_id)
+        access_control_list = builtins.list()
+        
+        for access_control in permissions.get("access_control_list", builtins.list()):
+            if access_control.get("group_name", None) != group_name:
+                access_control_list.append(access_control) # Keep it
+
+        if permission_level is not None:
+            access_control_list.append({
+                "group_name": group_name,
                 "permission_level": permission_level
             })
 
