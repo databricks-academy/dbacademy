@@ -32,7 +32,7 @@ class TestConfig:
                  source_dir=None,
                  source_repo=None,
                  spark_conf=None,
-                 results_table=None,  # Deprecated
+                 results_table=None,     # Deprecated
                  results_database=None,  # Deprecated
                  include_solutions=True,
                  ):
@@ -40,6 +40,14 @@ class TestConfig:
         import uuid, re, time
         from dbacademy import dbrest
         from dbacademy import dbgems
+
+        # Refactored away
+        if results_table is not None:
+            print("WARNING - results_table is no longer supported/required")
+
+        # Refactored away
+        if results_database is not None:
+            print("WARNING - results_database is no longer supported/required")
 
         self.test_type = None
         self.notebooks = None
@@ -50,27 +58,6 @@ class TestConfig:
 
         # The name of the cloud on which this tests was ran
         self.cloud = dbgems.get_cloud() if cloud is None else cloud
-
-        # Update the name of the database results will be logged to - convert any special characters to underscores
-        results_database = f"smoke_tests_{dbgems.get_cloud().lower()}" if results_database is None else results_database
-        results_database = re.sub("[^a-zA-Z0-9]", "_", results_database.lower())
-        # Make N passes over the database name to remove duplicate underscores
-        for i in range(10): results_database = results_database.replace("__", "_")
-        self.results_database = results_database
-
-        # Default the results_table if necissary
-        if results_table is None: results_table = "smoke_test_" + name.replace(" ", "_").lower()
-
-        # Update the name of the table results will be logged to
-        if "." in results_table: raise ValueError("The results_table should not include the database name")
-
-        # Convert any special characters to underscores
-        results_table = re.sub("[^a-zA-Z0-9]", "_", results_table.lower())
-
-        # Make N passes over the table name to remove duplicate underscores
-        for i in range(10): results_table = results_table.replace("__", "_")
-
-        self.results_table = results_table
 
         # Course Name
         self.name = name
@@ -149,19 +136,18 @@ class TestConfig:
     def print(self):
         print("-" * 100)
         print("Test Configuration")
-        print(f"suite_id:         {self.suite_id}")
-        print(f"name:             {self.name}")
-        print(f"version:          {self.version}")
-        print(f"spark_version:    {self.spark_version}")
-        print(f"workers:          {self.workers}")
-        print(f"instance_pool:    {self.instance_pool}")
-        print(f"spark_conf:       {self.spark_conf}")
-        print(f"cloud:            {self.cloud}")
-        print(f"libraries:        {self.libraries}")
-        print(f"results_database: {self.results_database}")
-        print(f"results_table:    {self.results_table}")
-        print(f"source_repo:      {self.source_repo}")
-        print(f"source_dir:       {self.source_dir}")
+        print(f"suite_id:          {self.suite_id}")
+        print(f"name:              {self.name}")
+        print(f"version:           {self.version}")
+        print(f"spark_version:     {self.spark_version}")
+        print(f"workers:           {self.workers}")
+        print(f"instance_pool:     {self.instance_pool}")
+        print(f"spark_conf:        {self.spark_conf}")
+        print(f"cloud:             {self.cloud}")
+        print(f"libraries:         {self.libraries}")
+        print(f"source_repo:       {self.source_repo}")
+        print(f"source_dir:        {self.source_dir}")
+        print(f"include_solutions: {self.include_solutions}")
 
         max_length = 0
         for path in self.notebooks:
@@ -395,8 +381,6 @@ class TestSuite:
         import traceback, time, uuid, requests, json
         from dbacademy import dbgems
         import pyspark.sql.functions as F
-
-        # print(f"*** Adding test results to {self.test_config.results_database}.{self.test_config.results_table}")
 
         job_id = response["job_id"] if "job_id" in response else 0
         run_id = response["run_id"] if "run_id" in response else 0
