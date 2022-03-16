@@ -75,3 +75,15 @@ class SqlQueriesClient:
         params["schedule"] = schedule
         params["options"] = builtins.dict() if options is None else options
         return self.create_from_dict(params)
+
+    def update_from_dict(self, params:dict):
+        pass
+
+    def update(self, data_source_id:str, name:str, query:str, description:str=None, schedule:dict=None, options:dict=None):
+        params = dict()
+        params["query"] = query
+        params["name"] = name
+        params["description"] = description
+        params["schedule"] = schedule
+        params["options"] = builtins.dict() if options is None else options
+        return self.update_from_dict(params)        
