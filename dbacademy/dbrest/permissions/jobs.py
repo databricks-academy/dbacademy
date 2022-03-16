@@ -7,11 +7,11 @@ class JobsPermissionsClient:
         self.token = token        # The authentication token
         self.endpoint = endpoint  # The API endpoint
 
-    def get_levels(self, job_id):
-        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/permissions/jobs/{job_id}/permissionLevels")
+    def get_levels(self, id):
+        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/permissions/jobs/{id}/permissionLevels")
 
-    def get(self, job_id):
-        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/permissions/jobs/{job_id}")
+    def get(self, id):
+        return self.client.execute_get_json(f"{self.endpoint}/api/2.0/permissions/jobs/{id}")
 
     # def change_owner(self, job_id, username):
     #     from dbacademy import dbgems
