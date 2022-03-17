@@ -37,10 +37,10 @@ class SqlEndpointsClient:
         return self.client.execute_patch_json(f"{self.base_uri}/{id}", params)
 
     def update_user(self, id, username, permission_level):
-        return update("user_name", username, permission_level)
+        return self.update("user_name", username, permission_level)
 
     def update_group(self, id, group_name, permission_level):
-        return update("group_name", group_name, permission_level)
+        return self.update("group_name", group_name, permission_level)
 
     def update_service_principal(self, id, service_principal_name, permission_level):
-        return update("service_principal_name", service_principal_name, permission_level)
+        return self.update("service_principal_name", service_principal_name, permission_level)
