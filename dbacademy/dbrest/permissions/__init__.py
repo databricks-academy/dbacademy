@@ -5,16 +5,16 @@ class SqlProxy():
         self.client = client      # Client API exposing other operations to this class
         self.token = token        # The authentication token
         self.endpoint = endpoint  # The API endpoint
-        
-    def sql_endpoints(self):
+
+    def endpoints(self):
         from dbacademy.dbrest.permissions.sql_endpoints import SqlEndpointsClient
         return SqlEndpointsClient(self.client, self.token, self.endpoint)
 
-    def sql_queries(self):
+    def queries(self):
         from dbacademy.dbrest.permissions.sql_permissions_client import SqlPermissionsClient
         return SqlPermissionsClient(self.client, self.token, self.endpoint, "query", "queries")
 
-    def sql_dashboards(self):
+    def dashboards(self):
         from dbacademy.dbrest.permissions.sql_permissions_client import SqlPermissionsClient
         return SqlPermissionsClient(self.client, self.token, self.endpoint, "dashboard", "dashboards")
 
