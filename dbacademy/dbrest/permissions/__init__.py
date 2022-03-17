@@ -11,5 +11,9 @@ class PermissionsClient():
         return JobsPermissionsClient(self.client, self.token, self.endpoint)
 
     def sql_endpoints(self):
-        from dbacademy.dbrest.sql.endpoints import SqlEndpointsClient
+        from dbacademy.dbrest.permissions.sql_endpoints import SqlEndpointsClient
         return SqlEndpointsClient(self.client, self.token, self.endpoint)
+
+    def sql_queries(self):
+        from dbacademy.dbrest.permissions.sql_permissions_client import SqlPermissionsClient
+        return SqlPermissionsClient(self.client, self.token, self.endpoint, "query", "queries")
