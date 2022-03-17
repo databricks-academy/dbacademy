@@ -18,6 +18,9 @@ class SqlProxy():
         from dbacademy.dbrest.permissions.sql_permissions_client import SqlPermissionsClient
         return SqlPermissionsClient(self.client, self.token, self.endpoint, "dashboard", "dashboards")
 
+    def data_sources(self):
+        from dbacademy.dbrest.permissions.sql_permissions_client import SqlPermissionsClient
+        return SqlPermissionsClient(self.client, self.token, self.endpoint, "data_source", "data_sources")
 
 class PermissionsClient():
     def __init__(self, client: DBAcademyRestClient, token: str, endpoint: str):
