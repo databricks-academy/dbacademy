@@ -24,8 +24,8 @@ class SqlEndpointsClient:
         return self.client.execute_get_json(f"{self.base_uri}/{id}")
 
     def update(self, id, what, value, permission_level):
-        _validate_what(what)
-        _validate_permission_level(permission_level)
+        self._validate_what(what)
+        self._validate_permission_level(permission_level)
         params = {
             "access_control_list": [
                 {
