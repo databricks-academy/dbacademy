@@ -17,3 +17,7 @@ class PermissionsClient():
     def sql_queries(self):
         from dbacademy.dbrest.permissions.sql_permissions_client import SqlPermissionsClient
         return SqlPermissionsClient(self.client, self.token, self.endpoint, "query", "queries")
+
+    def sql_dashboards(self):
+        from dbacademy.dbrest.permissions.sql_permissions_client import SqlPermissionsClient
+        return SqlPermissionsClient(self.client, self.token, self.endpoint, "query", "queries")
