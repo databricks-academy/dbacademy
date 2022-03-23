@@ -41,7 +41,7 @@ class ScimUsersClient:
             ]
         }
         url = f"{self.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
-        return self.client.execute_post_json(url, payload)    
+        return self.client.execute_patch_json(url, payload)    
 
     def remove_entitlement(self, user_id, entitlement):
         payload = {
@@ -59,4 +59,4 @@ class ScimUsersClient:
             ]
         }
         url = f"{self.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
-        return self.client.execute_post_json(url, payload)
+        return self.client.execute_patch_json(url, payload)
