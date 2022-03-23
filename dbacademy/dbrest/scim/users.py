@@ -14,6 +14,13 @@ class ScimUsersClient:
         assert len(users) == int(totalResults), f"The totalResults ({totalResults}) does not match the number of records ({len(users)}) returned"
         return users
 
-    def get(self, user_id):
+    def get_by_id(self, user_id):
         url = f"{self.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
         return self.client.execute_get_json(url)
+
+    def get_by_name(self, username):
+        for user in self.list():
+            if username == user.get("userName"):
+                return user
+                
+        return None
