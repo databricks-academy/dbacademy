@@ -24,6 +24,28 @@ class ScimUsersClient:
                 return user
 
         return None
+
+    def to_users_list(self, users):
+        if users is None:
+            users = self.list()
+        elif type(users) == str or type(users) == dict:
+            users = [users] # Convert single argument users to a list
+        else:
+            assert type(users) == list, f"Expected the parameter \"users\" to be a list, found {type(users)}"
+
+        new_users = list()
+
+        for user in users:
+            if type(user) == dict:
+                new_users.append(user)
+
+            elif type(user) == str:
+                if "@" in user:
+                    new_users.append(self.client.scim().users().get_by_username(user))
+                else:
+                    new_users.append(self.client.scim().users().get_by_id(user))
+
+        return new_users
     
     def add_entitlement(self, user_id, entitlement):
         payload = {
