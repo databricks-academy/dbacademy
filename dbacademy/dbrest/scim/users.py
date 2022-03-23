@@ -27,7 +27,7 @@ class ScimUsersClient:
     
     def add_entitlement(self, user_id, entitlement):
         payload = {
-            # "schemas": [ "urn:ietf:params:scim:api:messages:2.0:PatchOp" ],
+            "schemas": [ "urn:ietf:params:scim:api:messages:2.0:PatchOp" ],
             "Operations": [
                 {
                     "op": "add",
