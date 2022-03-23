@@ -206,7 +206,7 @@ class SqlEndpointsClient:
         active = user.get("active")
         
         if not active:
-            print(f"Skipping creation of endpoint for the user \"{username}\":\n - Inactive user")
+            print(f"Skipping creation of endpoint for the user \"{username}\":\n - Inactive user\n")
             return
         
         # entitlements = user.get("entitlements")
@@ -214,14 +214,14 @@ class SqlEndpointsClient:
         
         # entitlements = [u.get("value") for u in entitlements]
         # if "databricks-sql-access" not in entitlements:
-        #     print(f"Skipping creation of endpoint for the user \"{username}\":\n - Missing the databricks-sql-access entitlement, found {entitlements}")
+        #     print(f"Skipping creation of endpoint for the user \"{username}\":\n - Missing the databricks-sql-access entitlement, found {entitlements}\n")
         #     return
 
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
         for endpoint in self.client.sql().endpoints().list():
             if endpoint.get("name") == endpoint_name:
-                print(f"Skipping creation of the endpoint \"{endpoint_name}\" for the user \"{username}\":\n - The endpoint already exists")
+                print(f"Skipping creation of the endpoint \"{endpoint_name}\" for the user \"{username}\":\n - The endpoint already exists\n")
                 return
 
         print(f"Creating the endpoint \"{endpoint_name}\" for the user \"{username}\"")
@@ -251,7 +251,7 @@ class SqlEndpointsClient:
                 self.delete(endpoint.get("id"))
                 return
 
-        print(f"Skipping deletion of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found")
+        print(f"Skipping deletion of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found\n")
 
     def start_user_endpoints(self, naming_template:str, naming_params:dict):
         for user in self.client.scim().users().list():
@@ -267,7 +267,7 @@ class SqlEndpointsClient:
                 self.start(endpoint.get("id"))
                 return
 
-        print(f"Skipping start of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found")
+        print(f"Skipping start of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found\n")
 
     def stop_user_endpoints(self, naming_template:str, naming_params:dict):
         for user in self.client.scim().users().list():
@@ -283,4 +283,4 @@ class SqlEndpointsClient:
                 self.stop(endpoint.get("id"))
                 return
 
-        print(f"Skipping stop of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found")
+        print(f"Skipping stop of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found\n")
