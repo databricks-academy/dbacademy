@@ -183,19 +183,19 @@ class SqlEndpointsClient:
                                     tags:dict = dict(),
                                     users:list = None):
         """Creates one SQL endpoint per user in the current workspace. The list of users can be limited to a subset of users with the "users" parameter.
-            Parameters: 
-                naming_template (str): The template used to name each user's endpoint.
-                naming_params (str): The parameters used in completing the template.
-                cluster_size (str): The size of the cluster - see CLUSTER_SIZES for the list of valid values.
-                enable_serverless_compute (bool): Set to True to employ serverless compute, otherwise classic compute.
-                min_num_clusters (int = 1): The minimum number of clusters for this endpoint.
-                max_num_clusters (int = 1): The maximum number of clusters for this endpoint.
-                auto_stop_mins (int = 45): The number of minutes after which idle endpoints will be shut down.
-                enable_photon (bool = True): Set to True to employ the Photon runtime otherwise classic runtime.
-                spot_instance_policy (str = RELIABILITY_OPTIMIZED): The spot instance policy - see SPOT_POLICIES for the list of valid values.
-                channel (str = CHANNEL_NAME_CURRENT): The endpoint's channel - see CHANNELS for the list of valid values.
-                tags (dict = dict()): The list of tags expressed as key-value pairs.
-                users (list[str or dict] = None, str): unlike other parameters, this value is eventually converted to a list of user objects but may be specified as a list or single value (which is converted to a list). String values are assumed to be the user's username if it includes the @ symbole and the user's ID otherwise.
+    Parameters: 
+        naming_template (str): The template used to name each user's endpoint.
+        naming_params (str): The parameters used in completing the template.
+        cluster_size (str): The size of the cluster - see CLUSTER_SIZES for the list of valid values.
+        enable_serverless_compute (bool): Set to True to employ serverless compute, otherwise classic compute.
+        min_num_clusters (int = 1): The minimum number of clusters for this endpoint.
+        max_num_clusters (int = 1): The maximum number of clusters for this endpoint.
+        auto_stop_mins (int = 45): The number of minutes after which idle endpoints will be shut down.
+        enable_photon (bool = True): Set to True to employ the Photon runtime otherwise classic runtime.
+        spot_instance_policy (str = RELIABILITY_OPTIMIZED): The spot instance policy - see SPOT_POLICIES for the list of valid values.
+        channel (str = CHANNEL_NAME_CURRENT): The endpoint's channel - see CHANNELS for the list of valid values.
+        tags (dict = dict()): The list of tags expressed as key-value pairs.
+        users (list[str or dict] = None, str): unlike other parameters, this value is eventually converted to a list of user objects but may be specified as a list or single value (which is converted to a list). String values are assumed to be the user's username if it includes the @ symbole and the user's ID otherwise.
         """
 
 
