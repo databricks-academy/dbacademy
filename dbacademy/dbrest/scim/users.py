@@ -18,7 +18,7 @@ class ScimUsersClient:
         url = f"{self.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
         return self.client.execute_get_json(url)
 
-    def get_by_name(self, username):
+    def get_by_username(self, username):
         for user in self.list():
             if username == user.get("userName"):
                 return user

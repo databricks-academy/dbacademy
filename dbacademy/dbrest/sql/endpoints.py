@@ -164,6 +164,28 @@ class SqlEndpointsClient:
         naming_params["da_name"] = username.split("@")[0]
         return naming_template.format(**naming_params)
 
+    def to_users_list(self, users):
+        if users is None:
+            users = self.client.scim().users().list()
+        elif type(users) == str or type(users) == dict:
+            users = [users] # Convert single argument users to a list
+        else:
+            assert type(users) == list, f"Expected the parameter \"users\" to be a list, found {type(users)}"
+
+        new_users = list()
+
+        for user in users:
+            if type(user) == dict:
+                new_users.append(user)
+
+            elif type(user) == str:
+                if "@" in user:
+                    new_users.append(self.client.scim().users().get_by_username(user))
+                else:
+                    new_users.append(self.client.scim().users().get_by_id(user))
+
+        return new_users
+
     def create_user_endpoints(self, naming_template:str, 
                                     naming_params:dict,
                                     cluster_size:str,
@@ -174,9 +196,10 @@ class SqlEndpointsClient:
                                     enable_photon:bool = True,
                                     spot_instance_policy:str = RELIABILITY_OPTIMIZED,
                                     channel:str = CHANNEL_NAME_CURRENT,
-                                    tags:dict = dict()):
+                                    tags:dict = dict(),
+                                    users:list = None):
 
-        for user in self.client.scim().users().list():
+        for user in to_users_list(users):
             self.create_user_endpoint(user=user, 
                                       naming_template=naming_template, 
                                       naming_params=naming_params,
@@ -209,14 +232,6 @@ class SqlEndpointsClient:
             print(f"Skipping creation of endpoint for the user \"{username}\":\n - Inactive user\n")
             return
         
-        # entitlements = user.get("entitlements")
-        # if entitlements is None: entitlements = []
-        
-        # entitlements = [u.get("value") for u in entitlements]
-        # if "databricks-sql-access" not in entitlements:
-        #     print(f"Skipping creation of endpoint for the user \"{username}\":\n - Missing the databricks-sql-access entitlement, found {entitlements}\n")
-        #     return
-
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
         for endpoint in self.client.sql().endpoints().list():
@@ -237,8 +252,8 @@ class SqlEndpointsClient:
                     channel=channel,
                     tags=tags)
 
-    def delete_user_endpoints(self, naming_template:str, naming_params:dict):
-        for user in self.client.scim().users().list():
+    def delete_user_endpoints(self, naming_template:str, naming_params:dict, users:list=None):
+        for user in to_users_list(users):
             self.delete_user_endpoint(user=user, naming_template=naming_template, naming_params=naming_params)
 
     def delete_user_endpoint(self, user, naming_template:str, naming_params:dict):
@@ -253,8 +268,8 @@ class SqlEndpointsClient:
 
         print(f"Skipping deletion of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found\n")
 
-    def start_user_endpoints(self, naming_template:str, naming_params:dict):
-        for user in self.client.scim().users().list():
+    def start_user_endpoints(self, naming_template:str, naming_params:dict, users:list=None):
+        for user in to_users_list(users):
             self.start_user_endpoint(user=user, naming_template=naming_template, naming_params=naming_params)
 
     def start_user_endpoint(self, user, naming_template:str, naming_params:dict):
@@ -269,11 +284,11 @@ class SqlEndpointsClient:
 
         print(f"Skipping start of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found\n")
 
-    def stop_user_endpoints(self, naming_template:str, naming_params:dict):
-        for user in self.client.scim().users().list():
+    def stop_user_endpoints(self, naming_template:str, naming_params:dict, users:list=None):
+        for user in to_users_list(users):
             self.stop_user_endpoint(user=user, naming_template=naming_template, naming_params=naming_params)
 
-    def stop_user_endpoint(self, user, naming_template:str, naming_params:dict):
+    def stop_user_endpoint(self, user, naming_template:str, naming_params:dict, users:list=None):
         username = user.get("userName")
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
