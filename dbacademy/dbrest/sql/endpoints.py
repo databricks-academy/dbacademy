@@ -209,13 +209,13 @@ class SqlEndpointsClient:
             print(f"Skipping creation of endpoint for the user \"{username}\":\n - Inactive user")
             return
         
-        entitlements = user.get("entitlements")
-        if entitlements is None: entitlements = []
+        # entitlements = user.get("entitlements")
+        # if entitlements is None: entitlements = []
         
-        entitlements = [u.get("value") for u in entitlements]
-        if "databricks-sql-access" not in entitlements:
-            print(f"Skipping creation of endpoint for the user \"{username}\":\n - Missing the databricks-sql-access entitlement, found {entitlements}")
-            return
+        # entitlements = [u.get("value") for u in entitlements]
+        # if "databricks-sql-access" not in entitlements:
+        #     print(f"Skipping creation of endpoint for the user \"{username}\":\n - Missing the databricks-sql-access entitlement, found {entitlements}")
+        #     return
 
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
