@@ -41,8 +41,14 @@ class SqlEndpointsClient:
     def stop(self, endpoint_id):
         return self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints/{endpoint_id}/stop", {})
 
-    def get(self, endpoint_id):
+    def get_by_id(self, endpoint_id):
         return self.client.execute_get_json(f"{self.endpoint}/api/2.0/sql/endpoints/{endpoint_id}")
+
+    def get_by_name(self, name):
+        for endpoint in self.list():
+            if name == endpoint.get("name"):
+                return endpoint
+        return None
 
     def delete(self, endpoint_id):
         return self.client.execute_delete_json(f"{self.endpoint}/api/2.0/sql/endpoints/{endpoint_id}")
@@ -150,7 +156,7 @@ class SqlEndpointsClient:
                 })
 
         self.client.execute_post_json(f"{self.endpoint}/api/2.0/sql/endpoints/{endpoint_id}/edit", params)
-        return self.get(endpoint_id)
+        return self.get_by_id(endpoint_id)
 
     def to_endpoint_name(self, user, naming_template:str, naming_params:dict):
         username = user.get("userName")
