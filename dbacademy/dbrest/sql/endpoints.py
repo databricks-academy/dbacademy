@@ -235,6 +235,8 @@ class SqlEndpointsClient:
                                spot_instance_policy=spot_instance_policy,
                                channel=channel,
                                tags=tags)
+
+        # Give the user CAN_MANAGE to their new endpoint
         endpoint_id = endpoint.get("id")
         self.client.permissions().sql().endpoints().update_user(endpoint_id, username, "CAN_MANAGE")
 
