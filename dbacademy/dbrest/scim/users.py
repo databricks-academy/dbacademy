@@ -25,6 +25,16 @@ class ScimUsersClient:
 
         return None
 
+    def create(self, username):
+        payload = {
+            "schemas": [ "urn:ietf:params:scim:schemas:core:2.0:User" ],
+            "userName": username,
+            "groups": [],
+            "entitlements":[]
+        }
+        url = f"{self.endpoint}/api/2.0/preview/scim/v2/Users"
+        return self.client.execute_post_json(url, payload)
+
     def to_users_list(self, users):
         if users is None:
             users = self.list()
