@@ -33,7 +33,7 @@ class ScimUsersClient:
             "entitlements":[]
         }
         url = f"{self.endpoint}/api/2.0/preview/scim/v2/Users"
-        return self.client.execute_post_json(url, payload, expects=[200,201])
+        return self.client.execute_post_json(url, payload, expected=[200,201])
 
     def to_users_list(self, users):
         if users is None:
