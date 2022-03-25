@@ -187,7 +187,7 @@ class NotebookDef:
             return
             
         self.validate_single_tick(i, command)
-        self.validate_md_link(i, command)
+        self.validate_md_link(i, command, other_notebooks)
         self.validate_html_link(i, command)
 
     def create_resource_bundle(self, lang:str, source_dir:str, target_dir:str) -> None:
