@@ -133,7 +133,7 @@ class NotebookDef:
 
         self.test_notebook_exists(i, "%run", link, link, other_notebooks)
     
-    def validate_single_tick(i, command):
+    def validate_single_tick(self, i, command):
         "Test for usage of single-ticks that should also be bolded"
         import re
         total = 0
@@ -145,7 +145,7 @@ class NotebookDef:
         if total > 0: 
             print(f"Validated {total} single-tick blocks")
 
-    def validate_md_link(i, command):
+    def validate_md_link(self, i, command):
         "Test for MD links to be replaced with html links"
         import re
         total = 0
@@ -166,7 +166,7 @@ class NotebookDef:
         if total > 0:
             print(f"Validated {total} MD links")
 
-    def validate_html_link(i, command):
+    def validate_html_link(self, i, command):
         "Test all HTML links to ensure they have a target set to _blank"
         total = 0
 
