@@ -150,7 +150,7 @@ class NotebookDef:
             self.warn(None, f"Found a single-tick block in command #{i+1}, expected the **`xx`** pattern: \"{result}\"")
 
         # Test for MD links to be replaced with html links
-        for link in re.findall(r"\[[^\]]*?\]\([^\]]*?\)", command):
+        for link in re.findall(r"(?<!!)\[.*?\]\(.*?\)", command):
             # If this is a relative link, we can ignore it.
             match = re.search(f"\(\$.*\)", link)
             if not match:
