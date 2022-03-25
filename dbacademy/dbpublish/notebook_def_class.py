@@ -168,6 +168,7 @@ class NotebookDef:
 
     def validate_html_link(self, i, command):
         "Test all HTML links to ensure they have a target set to _blank"
+        import re
         total = 0
 
         for link in re.findall(r"<a .*<\/a>", command):
