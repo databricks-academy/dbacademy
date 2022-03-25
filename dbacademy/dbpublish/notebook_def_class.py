@@ -142,8 +142,8 @@ class NotebookDef:
             total += 1
             self.warn(None, f"Found a single-tick block in command #{i+1}, expected the **`xx`** pattern: \"{result}\"")
         
-        if total > 0: 
-            print(f"Validated {total} single-tick blocks in command #{i+1}")
+        # if total > 0: 
+        #     print(f"Validated {total} single-tick blocks in command #{i+1}")
 
     def validate_md_link(self, i, command, other_notebooks):
         "Test for MD links to be replaced with html links"
@@ -163,8 +163,8 @@ class NotebookDef:
                 target = original_target[1:]
                 self.test_notebook_exists(i, "MD link", original_target, target, other_notebooks)
 
-        if total > 0:
-            print(f"Validated {total} MD links in command #{i+1}")
+        # if total > 0:
+        #     print(f"Validated {total} MD links in command #{i+1}")
 
     def validate_html_link(self, i, command):
         "Test all HTML links to ensure they have a target set to _blank"
@@ -175,8 +175,8 @@ class NotebookDef:
             if "target=\"_blank\"" not in link:
                 self.warn(None, f"Found HTML link in command #{i+1} without the required target=\"_blank\": \"{link}\"")
 
-        if total > 0:
-            print(f"Validated {total} HTML links in command #{i+1}")
+        # if total > 0:
+        #     print(f"Validated {total} HTML links in command #{i+1}")
 
     def test_md_cells(self, language, command, i, other_notebooks):
         import re
