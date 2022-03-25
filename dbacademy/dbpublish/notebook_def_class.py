@@ -145,7 +145,7 @@ class NotebookDef:
         if total > 0: 
             print(f"Validated {total} single-tick blocks")
 
-    def validate_md_link(self, i, command):
+    def validate_md_link(self, i, command, other_notebooks):
         "Test for MD links to be replaced with html links"
         import re
         total = 0
