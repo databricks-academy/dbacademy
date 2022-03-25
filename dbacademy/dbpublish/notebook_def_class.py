@@ -133,6 +133,50 @@ class NotebookDef:
 
         self.test_notebook_exists(i, "%run", link, link, other_notebooks)
     
+    def validate_single_tick(i, command):
+        "Test for usage of single-ticks that should also be bolded"
+        import re
+        total = 0
+
+        for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
+            total += 1
+            self.warn(None, f"Found a single-tick block in command #{i+1}, expected the **`xx`** pattern: \"{result}\"")
+        
+        if total > 0: 
+            print(f"Validated {total} single-tick blocks")
+
+    def validate_md_link(i, command):
+        "Test for MD links to be replaced with html links"
+        import re
+        total = 0
+
+        for link in re.findall(r"(?<!!)\[.*?\]\(.*?\)", command):
+            total += 1
+
+            # If this is a relative link, we can ignore it.
+            match = re.search(f"\(\$.*\)", link)
+
+            if not match:
+                self.warn(None, f"Found a MD link in command #{i+1}, expected HTML link: \"{link}\"")
+            else:
+                original_target = match.group()[1:-1]
+                target = original_target[1:]
+                self.test_notebook_exists(i, "MD link", original_target, target, other_notebooks)
+
+        if total > 0:
+            print(f"Validated {total} MD links")
+
+    def validate_html_link(i, command):
+        "Test all HTML links to ensure they have a target set to _blank"
+        total = 0
+
+        for link in re.findall(r"<a .*<\/a>", command):
+            if "target=\"_blank\"" not in link:
+                self.warn(None, f"Found HTML link in command #{i+1} without the required target=\"_blank\": \"{link}\"")
+
+        if total > 0:
+            print(f"Validated {total} HTML links")
+
     def test_md_cells(self, language, command, i, other_notebooks):
         import re
 
@@ -141,31 +185,9 @@ class NotebookDef:
         if not command.startswith(f"%md") and not command.startswith(f"{cm} MAGIC %md"):
             return
             
-        # Test for usage of single-ticks that should also be bolded
-        total = 0
-        for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
-            self.warn(None, f"Found a single-tick block in command #{i+1}, expected the **`xx`** pattern: \"{result}\"")
-        if total > 0: print(f"Validated {total} single-tick blocks")
-
-        # Test for MD links to be replaced with html links
-        total = 0
-        for link in re.findall(r"(?<!!)\[.*?\]\(.*?\)", command):
-            # If this is a relative link, we can ignore it.
-            match = re.search(f"\(\$.*\)", link)
-            if not match:
-                self.warn(None, f"Found a MD link in command #{i+1}, expected HTML link: \"{link}\"")
-            else:
-                original_target = match.group()[1:-1]
-                target = original_target[1:]
-                self.test_notebook_exists(i, "MD link", original_target, target, other_notebooks)
-        if total > 0: print(f"Validated {total} MD links")
-
-        # Test all HTML links to ensure they have a target to _blank
-        total = 0
-        for link in re.findall(r"<a .*<\/a>", command):
-            if "target=\"_blank\"" not in link:
-                self.warn(None, f"Found HTML link in command #{i+1} without the required target=\"_blank\": \"{link}\"")
-        if total > 0: print(f"Validated {total} HTML links")
+        self.validate_single_tick(i, command)
+        self.validate_md_link(i, command)
+        self.validate_html_link(i, command)
 
     def create_resource_bundle(self, lang:str, source_dir:str, target_dir:str) -> None:
         from dbacademy.dbpublish.notebook_def_class import NotebookDef
