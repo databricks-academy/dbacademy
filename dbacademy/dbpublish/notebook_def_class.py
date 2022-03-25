@@ -171,7 +171,7 @@ class NotebookDef:
         import re
         total = 0
 
-        for link in re.findall(r"<a .*<\/a>", command):
+        for link in re.findall(r"<a .*?<\/a>", command):
             if "target=\"_blank\"" not in link:
                 self.warn(None, f"Found HTML link in command #{i+1} without the required target=\"_blank\": \"{link}\"")
 
