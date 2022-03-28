@@ -65,7 +65,7 @@ class Publisher:
         # Backup the version info in case we are just testing
         try:
             print()
-            version_info_target = f"{version_info_notebook.target_dir}/{version_info_notebook.path}"
+            version_info_target = f"{self.target_dir}/{version_info_notebook.path}"
             version_info_source = self.client.workspace().export_notebook(version_info_target)
             if verbose: print("-"*80)
             if verbose: print(f"Backed up .../{version_info_notebook.path}")
