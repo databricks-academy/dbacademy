@@ -64,13 +64,11 @@ class Publisher:
 
         # Backup the version info in case we are just testing
         try:
-            print()
             version_info_target = f"{self.target_dir}/{version_info_notebook.path}"
             version_info_source = self.client.workspace().export_notebook(version_info_target)
             if verbose: print("-"*80)
             if verbose: print(f"Backed up .../{version_info_notebook.path}")
-        except Exception as e:
-            if verbose: print(e)
+        except Exception:
             if verbose: print("-"*80)
             if verbose: print(f"An existing copy of .../{version_info_notebook.path} was not found to backup")
             version_info_source = None  # It's OK if the published version of this notebook doesn't exist
