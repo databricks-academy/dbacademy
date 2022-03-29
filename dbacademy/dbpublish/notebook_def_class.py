@@ -60,6 +60,7 @@ class NotebookDef:
             for warning in self.warnings:
                 print("-" * 80)
                 print(warning.message)
+            print()
 
     def assert_no_errors(self) -> None:
         if len(self.errors) > 0:
@@ -238,7 +239,6 @@ class NotebookDef:
         self.errors = list()
         self.warnings = list()
 
-        print()
         print("=" * 80)
         print(f".../{self.path}")
 
