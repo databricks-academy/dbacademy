@@ -60,8 +60,6 @@ class NotebookDef:
             for warning in self.warnings:
                 print("-" * 80)
                 print(warning.message)
-            print("="*80)
-            print()
 
     def assert_no_errors(self) -> None:
         if len(self.errors) > 0:
@@ -70,8 +68,6 @@ class NotebookDef:
             for error in self.errors:
                 print("-" * 80)
                 print(error.message)
-            print("="*80)
-            print()
             raise Exception("Publish aborted - see previous errors for more information")
 
     def test_notebook_exists(self, i, what, original_target, target, other_notebooks):
@@ -242,7 +238,8 @@ class NotebookDef:
         self.errors = list()
         self.warnings = list()
 
-        print("-" * 80)
+        print()
+        print("=" * 80)
         print(f".../{self.path}")
 
         source_notebook_path = f"{source_dir}/{self.path}"
