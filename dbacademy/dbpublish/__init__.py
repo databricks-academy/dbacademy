@@ -2,9 +2,9 @@ from dbacademy.dbpublish.publisher_class import Publisher
 
 
 def help_html():
-    from dbpublish.notebook_def_class import D_TODO, D_ANSWER, D_SOURCE_ONLY, D_DUMMY
-    from dbpublish.notebook_def_class import SUPPORTED_DIRECTIVES
-    from dbpublish.notebook_def_class import D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE
+    from dbacademy.dbpublish.notebook_def_class import D_TODO, D_ANSWER, D_SOURCE_ONLY, D_DUMMY
+    from dbacademy.dbpublish.notebook_def_class import SUPPORTED_DIRECTIVES
+    from dbacademy.dbpublish.notebook_def_class import D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE
 
     docs = {
         D_SOURCE_ONLY: f"Indicates that this cell is used in the source notebook only and is not to be included in the published version.",
