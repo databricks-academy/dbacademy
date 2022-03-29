@@ -409,7 +409,8 @@ class TestSuite:
             "test_type": self.test_config.test_type
         })
 
-        response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
+        # response = requests.put("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/tests/smoke-tests", data=json.dumps({
+        response = requests.put("https://bcx1xpc7pc.execute-api.us-west-2.amazonaws.com/test/tests/smoke-tests", data=json.dumps({
             "suite_id": self.test_config.suite_id,
             "test_id": test_id,
             "name": self.test_config.name,
@@ -448,6 +449,7 @@ class TestSuite:
             "thread_ts": self.slack_thread_ts
         }
 
-        response = requests.post("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/slack/client", data=json.dumps(payload))
+        # response = requests.post("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/slack/client", data=json.dumps(payload))
+        response = requests.post("https://bcx1xpc7pc.execute-api.us-west-2.amazonaws.com/test/slack/client", data=json.dumps(payload))
         assert response.status_code == 200, f"({response.status_code}): {response.text}"
         self.slack_thread_ts = response.json()["data"]["thread_ts"]
