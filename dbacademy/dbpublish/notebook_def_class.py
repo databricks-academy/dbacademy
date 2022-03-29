@@ -55,11 +55,8 @@ class NotebookDef:
 
     def assert_no_warnings(self) -> None:
         if len(self.warnings) > 0:
-            print()
-            print()
-            print("="*80)
             what = "warning was" if len(self.warnings) == 1 else "warnings were"
-            print(f"CAUTION: {len(self.warnings)} {what} found while publishing\n.../{self.path}")
+            print(f"CAUTION: {len(self.warnings)} {what} found while publishing")
             for warning in self.warnings:
                 print("-" * 80)
                 print(warning.message)
@@ -68,11 +65,8 @@ class NotebookDef:
 
     def assert_no_errors(self) -> None:
         if len(self.errors) > 0:
-            print()
-            print()
-            print("="*80)
             what = "error was" if len(self.errors) == 1 else "errors were"
-            print(f"ABORTING: {len(self.errors)} {what} found while publishing\n.../{self.path}")
+            print(f"ABORTING: {len(self.errors)} {what} found while publishing")
             for error in self.errors:
                 print("-" * 80)
                 print(error.message)
