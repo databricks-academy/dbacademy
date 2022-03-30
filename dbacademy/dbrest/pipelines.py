@@ -11,7 +11,17 @@ class PipelinesClient:
         self.base_uri = f"{self.endpoint}/api/2.0/pipelines"
 
     def list(self):
-        return self.client.execute_get_json(f"{self.base_uri}")
+        pipelines = []
+        response = self.client.execute_get_json(f"{self.base_uri}")
+        
+        next_page_token = response.get("next_page_token")
+        pipelines.extend(response.get("statuses"))
+
+        while next_page_token is not None:
+            next_page_token = response.get("next_page_token")
+            pipelines.extend(response.get("statuses"))
+
+        return pipelines
 
     # def list_events_by_id(self):
     #     return self.client.execute_get_json(f"{self.base_uri}/{pipeline_id}/events")
