@@ -46,7 +46,7 @@ class PipelinesClient:
         assert type(clusters) == list, f"Expected clusters to be of type list, found {type(clusters)}"
         if len(clusters) == 0:
             clusters.append({
-                "size": 1
+                "num_workers": 1
             })    
 
         assert type(libraries) == list, f"Expected libraries to be of type list, found {type(libraries)}"
