@@ -25,7 +25,7 @@ class PipelinesClient:
     # def get_updates_by_id(self, pipeline_id, update_id):
     #     return self.client.execute_get_json(f"{self.base_uri}/{pipeline_id}/updates/{update_id}")
 
-    def delete_by_id(self, pipelines):
+    def delete_by_id(self, pipeline_id):
         return self.client.execute_delete_json(f"{self.base_uri}/{pipeline_id}")
 
     def existing_to_create(self, pipeline):
