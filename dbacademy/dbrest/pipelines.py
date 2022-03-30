@@ -38,8 +38,8 @@ class PipelinesClient:
                 return pipeline
         return None
 
-    # def get_updates_by_id(self, pipeline_id, update_id):
-    #     return self.client.execute_get_json(f"{self.base_uri}/{pipeline_id}/updates/{update_id}")
+    def get_update_by_id(self, pipeline_id, update_id):
+        return self.client.execute_get_json(f"{self.base_uri}/{pipeline_id}/updates/{update_id}")
 
     def delete_by_id(self, pipeline_id):
         return self.client.execute_delete_json(f"{self.base_uri}/{pipeline_id}")
