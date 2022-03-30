@@ -47,7 +47,7 @@ class PipelinesClient:
     def delete_by_name(self, pipeline_name):
         pipeline = self.get_by_name(pipeline_name)
         if pipeline is not None:
-            return self.delete_by_id(pipeline.get("id"))
+            return self.delete_by_id(pipeline.get("pipeline_id"))
 
     def existing_to_create(self, pipeline):
         assert type(pipeline) == dict, f"Expected the \"pipeline\" parameter to be of type dict, found {type(pipeline)}"
