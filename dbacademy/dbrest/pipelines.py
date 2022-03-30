@@ -45,9 +45,15 @@ class PipelinesClient:
         return self.client.execute_delete_json(f"{self.base_uri}/{pipeline_id}")
 
     def delete_by_name(self, pipeline_name):
+        import time
         pipeline = self.get_by_name(pipeline_name)
         if pipeline is not None:
-            return self.delete_by_id(pipeline.get("pipeline_id"))
+            response = self.delete_by_id(pipeline.get("pipeline_id"))
+
+        while self.get_by_name(pipeline_name) is not None:
+            time.sleep(5) # keep blocking until it's gone.
+
+        return response
 
     def existing_to_create(self, pipeline):
         assert type(pipeline) == dict, f"Expected the \"pipeline\" parameter to be of type dict, found {type(pipeline)}"
