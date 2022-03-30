@@ -47,8 +47,7 @@ class PipelinesClient:
     def delete_by_name(self, pipeline_name):
         import time
         pipeline = self.get_by_name(pipeline_name)
-        if pipeline is not None:
-            response = self.delete_by_id(pipeline.get("pipeline_id"))
+        response = None if pipeline is None else self.delete_by_id(pipeline.get("pipeline_id"))
 
         while self.get_by_name(pipeline_name) is not None:
             time.sleep(5) # keep blocking until it's gone.
