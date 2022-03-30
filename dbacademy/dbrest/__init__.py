@@ -60,6 +60,10 @@ class DBAcademyRestClient:
         from dbacademy.dbrest.permissions import PermissionsClient
         return PermissionsClient(self, self.token, self.endpoint)
 
+    def pipelines(self):
+        from dbacademy.dbrest.pipelines import PipelinesClient
+        return PipelinesClient(self, self.token, self.endpoint)
+
     def repos(self):
         from dbacademy.dbrest.repos import ReposClient
         return ReposClient(self, self.token, self.endpoint)
