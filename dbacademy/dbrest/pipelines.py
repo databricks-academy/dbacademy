@@ -108,3 +108,6 @@ class PipelinesClient:
         params["development"] = development
 
         return self.create_from_dict(params)
+
+    def start_by_id(self, pipeline_id:str):
+        return self.client.execute_post_json(f"{self.base_uri}/{pipeline_id}/updates", dict())
