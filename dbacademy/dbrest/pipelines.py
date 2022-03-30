@@ -28,14 +28,13 @@ class PipelinesClient:
     def delete_by_id(self, pipelines):
         return self.client.execute_delete_json(f"{self.base_uri}/{pipeline_id}")
 
-    def existing_to_create(self, pipeline:dict):
+    def existing_to_create(self, pipeline):
         assert type(pipeline) == dict, f"Expected the \"pipeline\" parameter to be of type dict, found {type(pipeline)}"
 
-        # for key in list(query.keys()):
-        #     if key not in ["query", "name", "description", "schedule", "options"]:
-        #         del query[key]
-
-        # return query
+        spec = pipeline.get("spec")
+        del spec["id"]
+        
+        return spec
 
     def create_from_dict(self, params:dict):
         return self.client.execute_post_json(f"{self.base_uri}", params)
