@@ -22,11 +22,22 @@ class PipelinesClient:
     def get_by_id(self, pipeline_id):
         return self.client.execute_get_json(f"{self.base_uri}/{pipeline_id}")
 
+    def get_by_name(self, pipeline_name):
+        for pipeline in self.list():
+            if pipeline.get("name") == pipeline_name:
+                return pipeline
+        return None
+
     # def get_updates_by_id(self, pipeline_id, update_id):
     #     return self.client.execute_get_json(f"{self.base_uri}/{pipeline_id}/updates/{update_id}")
 
     def delete_by_id(self, pipeline_id):
         return self.client.execute_delete_json(f"{self.base_uri}/{pipeline_id}")
+
+    def delete_by_name(self, pipeline_name):
+        pipeline = self.get_by_name(pipeline_name)
+        if pipeline is not None:
+            return self.delete_by_id(pipeline.get("id"))
 
     def existing_to_create(self, pipeline):
         assert type(pipeline) == dict, f"Expected the \"pipeline\" parameter to be of type dict, found {type(pipeline)}"
