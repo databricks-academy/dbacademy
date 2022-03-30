@@ -11,4 +11,7 @@ class PipelinesClient:
         self.base_uri = f"{self.endpoint}/api/2.0/pipelines"
 
     def get_by_id(self, pipelines):
-        return self.client.execute_get_json(base_uri)
+        return self.client.execute_get_json(self.base_uri)
+
+    def delete_by_id(self, pipelines):
+        return self.client.execute_delete_json(self.base_uri)
