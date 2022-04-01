@@ -3,9 +3,9 @@ from requests.sessions import default_headers
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
 
-print("="*100)
+print("== DEPRECATION WARNING ")
+print("="*77)
 print("""
-** DEPRECATION WARNING **
 The DBGems API found in https://github.com/databricks-academy has been deprecated.
 Please use https://github.com/databricks-academy/dbacademy-gems instead.
 If you see this message or if you have any questions, please reach out to Jacob Parr via Slack.
