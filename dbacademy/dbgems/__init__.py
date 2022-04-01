@@ -3,6 +3,9 @@ from requests.sessions import default_headers
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
 
+print("="*80)
+print("DEPRECATION WARNING: This API has been deprecated.\nPlease use https://github.com/databricks-academy/dbacademy-gems instead.\nIf you see this message or if you have any questions, please reach out to Jacob Parr via Slack.")
+print("="*80)
 
 def init_locals():
 
