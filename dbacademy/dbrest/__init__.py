@@ -2,6 +2,14 @@
 import configparser
 import os
 
+print(f"""== DEPRECATION WARNING {"="*77}""")
+print("""
+The DBRest API found in https://github.com/databricks-academy has been deprecated.
+Please use https://github.com/databricks-academy/dbacademy-rest instead.
+If you see this message or if you have any questions, please reach out to Jacob Parr via Slack.
+""".strip())
+print("="*100)
+
 class DBAcademyRestClient:
   
     def __init__(self, local=False, config_file=None, profile="DEFAULT", throttle=0, endpoint=None):
