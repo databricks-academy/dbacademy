@@ -114,3 +114,20 @@ class Publisher:
                                           other_notebooks=self.notebooks)
         print("-"*80)
         print("All done!")
+
+    def create_publish_message(self, name, version, source_repo, target_dir, domain="curriculum-dev.cloud.databricks.com", workspace_id="3551974319838082"):
+        message = f"""
+        @channel Published {name}, v{version}
+
+        Release Notes:
+        * UPDATE FROM CHANGE LOG
+
+        Release notes, course-specific requirements, issue-tracking, and testing-results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{source_repo.split("/")[-1]}
+
+        Please feel free to reach out to me (via Slack) or anyone on the curriculum team should you have any questions.""".strip()
+
+        return f"""
+        <body>
+            <p><a href="https://{domain}/?o={workspace_id}#workspace{target_dir}/Version Info" target="_blank">Published Version</a></p>
+            <textarea style="width:100%" rows=11> \n{message}</textarea>
+        </body>"""
