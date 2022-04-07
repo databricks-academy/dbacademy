@@ -122,7 +122,8 @@ class Publisher:
 Release Notes:
 * UPDATE FROM CHANGE LOG
 
-Release notes, course-specific requirements, issue-tracking, and testing-results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{source_repo.split("/")[-1]}
+Release notes, course-specific requirements, issue-tracking, and testing-results for this course can be found
+in the course's GitHub repository at https://github.com/databricks-academy/{source_repo.split("/")[-1]}
 
 Please feel free to reach out to me (via Slack) or anyone on the curriculum team should you have any questions.""".strip()
 
