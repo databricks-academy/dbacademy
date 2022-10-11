@@ -1,9 +1,11 @@
 from typing import Union, List, Dict
 from dbacademy.dbrest import DBAcademyRestClient
 
+
 def print_if(condition, text):
     if condition:
         print(text)
+
 
 def clean_target_dir(client, target_dir: str, verbose):
     from dbacademy_courseware.dbpublish.publisher_class import Publisher
@@ -14,6 +16,7 @@ def clean_target_dir(client, target_dir: str, verbose):
     for path in [p.get("path") for p in client.workspace.ls(target_dir) if p.get("path") not in keepers]:
         if verbose: print(f"...{path}")
         client.workspace().delete_path(path)
+
 
 # noinspection PyUnusedLocal
 def write_file(*, data: bytearray, target_file: str, overwrite: bool, target_name):
@@ -36,6 +39,7 @@ def write_file(*, data: bytearray, target_file: str, overwrite: bool, target_nam
     with open(target_file, "wb") as f:
         # print(f"Writing data: {target_file}")
         f.write(data)
+
 
 def reset_git_repo(*, client: DBAcademyRestClient, directory: str, repo_url: str, branch: str, which: Union[str, None]):
 
@@ -67,6 +71,7 @@ def reset_git_repo(*, client: DBAcademyRestClient, directory: str, repo_url: str
 
     assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"
 
+
 def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, repo_url: str, directory: str, ignored: List[str]):
     repo_dir = f"/Repos/Temp/{build_name}-diff"
 
@@ -85,15 +90,18 @@ def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, re
 
     return compare_results(index_a, index_b)
 
+
 def __ends_with(test_path: str, values: List[str]):
     for ext in values:
         if test_path.endswith(ext): return True
     return False
 
+
 def __starts_with(test_path: str, values: List[str]):
     for ext in values:
         if test_path.startswith(ext): return True
     return False
+
 
 def index_repo_dir(*, client: DBAcademyRestClient, repo_dir: str, ignored: List[str]) -> Dict[str, Dict[str, str]]:
     import os
@@ -116,6 +124,7 @@ def index_repo_dir(*, client: DBAcademyRestClient, repo_dir: str, ignored: List[
                 }
 
     return load_sources(client=client, results=results)
+
 
 def load_sources(*, client: DBAcademyRestClient, results: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, str]]:
     for path in results:

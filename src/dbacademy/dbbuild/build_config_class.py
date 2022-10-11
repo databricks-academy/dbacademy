@@ -1,6 +1,6 @@
 from typing import Type, List, Dict, Union
 from dbacademy_courseware import validate_type
-from dbacademy_gems import dbgems
+from dbacademy import dbgems
 
 
 class BuildConfig:
