@@ -1,5 +1,12 @@
-pytest
-urllib3
+dbx
+py4j
+mlflow
 requests
-pyspark
-IPython
+pyspark==3.3.*
+
+# setuptools~=59.0.1
+# requests~=2.27.1
+# simplejson~=3.17.6
+# urllib3~=1.25.11
+# overrides~=6.1.0
+# Deprecated~=1.2.13

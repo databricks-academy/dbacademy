@@ -1,9 +1,11 @@
-# Databricks notebook source
 import setuptools
 from setuptools import find_packages
 
 setuptools.setup(
     name="dbacademy",
-    version="0.1",
-    packages=find_packages(),
+    author="Databricks, Inc",
+    maintainer="Databricks Academy",
+    version="v0.0.0",
+    package_dir={"": "src"},
+    packages=find_packages(where="src")
 )
