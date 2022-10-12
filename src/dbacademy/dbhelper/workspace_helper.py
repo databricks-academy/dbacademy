@@ -1,19 +1,22 @@
-from dbacademy_gems import dbgems
-from dbacademy_helper import DBAcademyHelper
 from typing import Callable, List, TypeVar
-T = TypeVar("T")
 
-ALL_USERS = "All Users"
-MISSING_USERS_ONLY = "Missing Users Only"
-CURRENT_USER_ONLY = "Current User Only"
+from dbacademy import dbgems
+
+from .dbacademy_helper_class import DBAcademyHelper
 
 
 class WorkspaceHelper:
 
+    T = TypeVar("T")
+
+    ALL_USERS = "All Users"
+    MISSING_USERS_ONLY = "Missing Users Only"
+    CURRENT_USER_ONLY = "Current User Only"
+
     def __init__(self, da: DBAcademyHelper):
-        from dbacademy_helper.warehouses_helper import WarehousesHelper
-        from dbacademy_helper.databases_helper import DatabasesHelper
-        from dbacademy_helper.clusters_helper import ClustersHelper
+        from .warehouses_helper import WarehousesHelper
+        from .databases_helper import DatabasesHelper
+        from .clusters_helper import ClustersHelper
 
         self.da = da
         self.client = da.client
@@ -24,7 +27,7 @@ class WorkspaceHelper:
         self._usernames = None
         self._existing_databases = None
 
-        self.configure_for_options = ["", ALL_USERS, MISSING_USERS_ONLY, CURRENT_USER_ONLY]
+        self.configure_for_options = ["", WorkspaceHelper.ALL_USERS, WorkspaceHelper.MISSING_USERS_ONLY, WorkspaceHelper.CURRENT_USER_ONLY]
         self.valid_configure_for_options = self.configure_for_options[1:]  # all but empty-string
 
     def add_entitlement_allow_instance_pool_create(self):
@@ -74,7 +77,7 @@ class WorkspaceHelper:
     @property
     def configure_for(self):
         # Under test, we are always configured for the current user only
-        configure_for = CURRENT_USER_ONLY if self.da.is_smoke_test() else dbgems.get_parameter("configure_for")
+        configure_for = WorkspaceHelper.CURRENT_USER_ONLY if self.da.is_smoke_test() else dbgems.get_parameter("configure_for")
         assert configure_for in self.valid_configure_for_options, f"Who the workspace is being configured for must be specified, found \"{configure_for}\". Options include {self.valid_configure_for_options}"
         return configure_for
 
@@ -85,11 +88,11 @@ class WorkspaceHelper:
             self._usernames = [r.get("userName") for r in users]
             self._usernames.sort()
 
-        if self.configure_for == CURRENT_USER_ONLY:
+        if self.configure_for == WorkspaceHelper.CURRENT_USER_ONLY:
             # Override for the current user only
             return [self.da.username]
 
-        elif self.configure_for == MISSING_USERS_ONLY:
+        elif self.configure_for == WorkspaceHelper.MISSING_USERS_ONLY:
             # The presumption here is that if the user doesn't have their own
             # database, then they are also missing the rest of their config.
             missing_users = []

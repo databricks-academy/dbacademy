@@ -1,10 +1,13 @@
-from dbacademy_helper import DBAcademyHelper
-from dbacademy_helper.workspace_helper import WorkspaceHelper
 from typing import TypeVar
-T = TypeVar("T")
+
+from .dbacademy_helper_class import DBAcademyHelper
+from .workspace_helper import WorkspaceHelper
 
 
 class ClustersHelper:
+
+    T = TypeVar("T")
+
     def __init__(self, workspace: WorkspaceHelper, da: DBAcademyHelper):
         self.da = da
         self.client = da.client

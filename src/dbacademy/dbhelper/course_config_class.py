@@ -1,4 +1,5 @@
 from typing import List
+from dbacademy import dbgems
 
 
 class CourseConfig:
@@ -60,7 +61,6 @@ class CourseConfig:
 
     @supported_dbrs.setter
     def supported_dbrs(self, supported_dbrs: List[str]):
-        from dbacademy_gems import dbgems
 
         assert type(supported_dbrs) == list, f"Expected the parameter \"supported_dbrs\" to be of type \"list\", found \"{type(supported_dbrs)}\"."
         self.__supported_dbrs = [str(d) for d in supported_dbrs]

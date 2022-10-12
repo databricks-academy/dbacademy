@@ -1,6 +1,10 @@
+from typing import Dict
+from dbacademy import dbgems
+
+from .test_result_class import TestResult
+
+
 class __TestResultsAggregator(object):
-    from typing import Dict
-    from dbacademy_helper.tests.test_result_class import TestResult
 
     test_results: Dict[str, TestResult] = dict()
 
@@ -25,8 +29,7 @@ class __TestResultsAggregator(object):
         return self.percentage == 100
 
     def display_results(self):
-        from dbacademy_gems import dbgems
-        from dbacademy_helper.tests import _TEST_RESULTS_STYLE
+        from dbacademy.dbhelper.tests import _TEST_RESULTS_STYLE
         dbgems.display_html(_TEST_RESULTS_STYLE + f"""
     <table class='results'>
       <tr><th colspan="2">Test Summary</th></tr>

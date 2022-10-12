@@ -1,11 +1,15 @@
-from dbacademy_gems import dbgems
-from dbacademy_helper import DBAcademyHelper
-from dbacademy_helper.workspace_helper import WorkspaceHelper
 from typing import Callable, TypeVar
-T = TypeVar("T")
+
+from dbacademy import dbgems
+
+from .dbacademy_helper_class import DBAcademyHelper
+from .workspace_helper import WorkspaceHelper
 
 
 class DatabasesHelper:
+
+    T = TypeVar("T")
+
     def __init__(self, workspace: WorkspaceHelper, da: DBAcademyHelper):
         self.da = da
         self.client = da.client

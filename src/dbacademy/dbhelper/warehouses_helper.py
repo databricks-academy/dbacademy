@@ -1,6 +1,7 @@
 from typing import Union
-from dbacademy_helper import DBAcademyHelper
-from dbacademy_helper.workspace_helper import WorkspaceHelper
+
+from .dbacademy_helper_class import DBAcademyHelper
+from .workspace_helper import WorkspaceHelper
 
 
 class WarehousesHelper:

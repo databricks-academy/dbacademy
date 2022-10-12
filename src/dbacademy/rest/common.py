@@ -29,6 +29,7 @@ class CachedStaticProperty:
 
 
 class ApiContainer(object):
+
     T = TypeVar('T')
 
     def __call__(self: T) -> T:

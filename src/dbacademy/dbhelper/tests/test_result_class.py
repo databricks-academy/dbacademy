@@ -1,5 +1,5 @@
 class TestResult(object):
-    from dbacademy_helper.tests.test_case_class import TestCase
+    from .test_case_class import TestCase
 
     __slots__ = ('test', 'skipped', 'passed', 'status', 'points', 'exception', 'message')
 

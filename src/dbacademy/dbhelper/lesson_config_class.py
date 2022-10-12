@@ -1,3 +1,6 @@
+from dbacademy import dbgems
+
+
 class LessonConfig:
     def __init__(self, *,
                  name: str,
@@ -6,8 +9,6 @@ class LessonConfig:
                  requires_uc: bool,
                  installing_datasets: bool,
                  enable_streaming_support: bool):
-
-        from dbacademy_gems import dbgems
 
         self.name = name
 
@@ -40,7 +41,6 @@ class LessonConfig:
         Helper method to indentify when we are running as a smoke test
         :return: Returns true if the notebook is running as a smoke test.
         """
-        from dbacademy_gems import dbgems
         from .dbacademy_helper_class import DBAcademyHelper
         return dbgems.spark.conf.get(DBAcademyHelper.SMOKE_TEST_KEY, "false").lower() == "true"
 

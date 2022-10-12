@@ -1,11 +1,18 @@
-from dbacademy_gems import dbgems
+from typing import Union
+
+import pyspark
+from dbacademy import dbgems
+from dbacademy.dbrest import DBAcademyRestClient
+
+from .paths_class import Paths
 from .lesson_config_class import LessonConfig
 from .course_config_class import CourseConfig
+from .workspace_helper import WorkspaceHelper
+from .dev_helper import DevHelper
+from .tests.test_helper_class import TestHelper
 
 
 class DBAcademyHelper:
-    import pyspark
-    from typing import Union
 
     DEFAULT_SCHEMA = "default"
     INFORMATION_SCHEMA = "information_schema"
@@ -22,12 +29,6 @@ class DBAcademyHelper:
                  course_config: CourseConfig,
                  lesson_config: LessonConfig,
                  debug: bool = False):
-
-        from dbacademy_helper.paths_class import Paths
-        from dbacademy.dbrest import DBAcademyRestClient
-        from .workspace_helper import WorkspaceHelper
-        from .dev_helper import DevHelper
-        from .tests import TestHelper
 
         assert lesson_config is not None, f"The parameter lesson_config:LessonConfig must be specified."
         self.__lesson_config = lesson_config
@@ -410,8 +411,6 @@ class DBAcademyHelper:
                         self.__drop_database(f"{catalog_name}.{schema_name}")
 
     def __reset_working_dir(self):
-        from dbacademy_helper.paths_class import Paths
-
         # noinspection PyProtectedMember
         working_dir_root = self.paths._working_dir_root
 
@@ -420,8 +419,6 @@ class DBAcademyHelper:
             dbgems.dbutils.fs.rm(working_dir_root, True)
 
     def __reset_datasets(self):
-        from dbacademy_helper.paths_class import Paths
-
         if Paths.exists(self.paths.datasets):
             print(f"Deleting datasets \"{self.paths.datasets}\".")
             dbgems.dbutils.fs.rm(self.paths.datasets, True)
@@ -546,10 +543,8 @@ class DBAcademyHelper:
         This ensures that data and compute are in the same region which subsequently mitigates performance issues
         when the storage and compute are, for example, on opposite sides of the world.
         """
-        from dbacademy_helper.paths_class import Paths
-
         # if not repairing_dataset: print(f"\nThe source for the datasets is\n{self.data_source_uri}/")
-#        if not repairing_dataset: print(f"\nYour local dataset directory is {self.paths.datasets}")
+        # if not repairing_dataset: print(f"\nYour local dataset directory is {self.paths.datasets}")
 
         if Paths.exists(self.paths.datasets):
             # It's already installed...

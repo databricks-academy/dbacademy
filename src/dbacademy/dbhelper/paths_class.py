@@ -1,3 +1,6 @@
+from dbacademy import dbgems
+
+
 class Paths:
     from .lesson_config_class import LessonConfig
 
@@ -27,9 +30,6 @@ class Paths:
     # noinspection PyGlobalUndefined
     @staticmethod
     def exists(path):
-        global dbutils
-        from dbacademy_gems import dbgems
-
         """
         Returns true if the specified path exists else false.
         """
