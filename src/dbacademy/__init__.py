@@ -1,5 +1,5 @@
 def validate_dependencies():
-    import dbgems
+    from dbacademy import dbgems
     dbgems.validate_dependencies("dbacademy")
 
 
