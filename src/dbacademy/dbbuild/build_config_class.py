@@ -1,6 +1,5 @@
 from typing import Type, List, Dict, Union
 from dbacademy import dbgems
-from dbacademy.dbbuild import BuildUtils, NotebookDef, ResourceDiff, Translator, Publisher, TestSuite
 
 
 class BuildConfig:
@@ -18,6 +17,7 @@ class BuildConfig:
     @staticmethod
     def load(file: str, *, version: str):
         import json
+        from dbacademy.dbbuild import BuildUtils
 
         BuildUtils.validate_type(file, "file", str)
         BuildUtils.validate_type(version, "version", str)
@@ -189,6 +189,8 @@ class BuildConfig:
     #     return distribution_name.replace(" ", "-").replace(" ", "-").replace(" ", "-")
 
     def create_notebooks(self, *, include_solutions: bool, fail_fast: bool):
+        from dbacademy.dbbuild import NotebookDef
+
         assert self.source_dir is not None, "BuildConfig.source_dir must be specified"
 
         self.notebooks = dict()
@@ -399,21 +401,26 @@ class BuildConfig:
                         print("      }")
 
     def to_resource_diff(self):
+        from dbacademy.dbbuild import ResourceDiff
         assert self.validated, f"Cannot diff until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed."
 
         return ResourceDiff(self)
 
     def to_translator(self):
+        from dbacademy.dbbuild import Translator
         assert self.validated, f"Cannot translate until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
         return Translator(self)
 
     def to_publisher(self):
+        from dbacademy.dbbuild import Publisher
         assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
         return Publisher(self)
 
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
+        from dbacademy.dbbuild import TestSuite
+
         assert self.validated, f"Cannot test until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
         return TestSuite(build_config=self,
