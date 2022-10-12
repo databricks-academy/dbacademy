@@ -2,20 +2,6 @@ from typing import Callable, Union, List
 from ..build_utils_class import BuildUtils
 
 
-D_TODO = "TODO"
-D_ANSWER = "ANSWER"
-D_SOURCE_ONLY = "SOURCE_ONLY"
-D_DUMMY = "DUMMY"
-
-D_INCLUDE_HEADER_TRUE = "INCLUDE_HEADER_TRUE"
-D_INCLUDE_HEADER_FALSE = "INCLUDE_HEADER_FALSE"
-D_INCLUDE_FOOTER_TRUE = "INCLUDE_FOOTER_TRUE"
-D_INCLUDE_FOOTER_FALSE = "INCLUDE_FOOTER_FALSE"
-
-SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY,
-                        D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
-
-
 class NotebookError:
     def __init__(self, message):
         self.message = message
@@ -29,6 +15,19 @@ class NotebookError:
 
 class NotebookDef:
     from dbacademy.dbbuild import BuildConfig
+
+    D_TODO = "TODO"
+    D_ANSWER = "ANSWER"
+    D_SOURCE_ONLY = "SOURCE_ONLY"
+    D_DUMMY = "DUMMY"
+
+    D_INCLUDE_HEADER_TRUE = "INCLUDE_HEADER_TRUE"
+    D_INCLUDE_HEADER_FALSE = "INCLUDE_HEADER_FALSE"
+    D_INCLUDE_FOOTER_TRUE = "INCLUDE_FOOTER_TRUE"
+    D_INCLUDE_FOOTER_FALSE = "INCLUDE_FOOTER_FALSE"
+
+    SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY,
+                            D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
 
     def __init__(self,
                  *,
@@ -591,40 +590,40 @@ class NotebookDef:
                     print("   |-NO DIRECTIVES --" + ("-" * 59))
 
             # Update flags to indicate if we found the required header and footer directives
-            include_header = True if D_INCLUDE_HEADER_TRUE in directives else include_header
-            found_header_directive = True if D_INCLUDE_HEADER_TRUE in directives or D_INCLUDE_HEADER_FALSE in directives else found_header_directive
+            include_header = True if NotebookDef.D_INCLUDE_HEADER_TRUE in directives else include_header
+            found_header_directive = True if NotebookDef.D_INCLUDE_HEADER_TRUE in directives or NotebookDef.D_INCLUDE_HEADER_FALSE in directives else found_header_directive
 
-            include_footer = True if D_INCLUDE_FOOTER_TRUE in directives else include_footer
-            found_footer_directive = True if D_INCLUDE_FOOTER_TRUE in directives or D_INCLUDE_FOOTER_FALSE in directives else found_footer_directive
+            include_footer = True if NotebookDef.D_INCLUDE_FOOTER_TRUE in directives else include_footer
+            found_footer_directive = True if NotebookDef.D_INCLUDE_FOOTER_TRUE in directives or NotebookDef.D_INCLUDE_FOOTER_FALSE in directives else found_footer_directive
 
             # Make sure we have one and only one directive in this command (ignoring the header directives)
             directive_count = 0
             for directive in directives:
-                if directive not in [D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
+                if directive not in [NotebookDef.D_INCLUDE_HEADER_TRUE, NotebookDef.D_INCLUDE_HEADER_FALSE, NotebookDef.D_INCLUDE_FOOTER_TRUE, NotebookDef.D_INCLUDE_FOOTER_FALSE]:
                     directive_count += 1
             self.test(lambda: directive_count <= 1, f"Cmd #{i+1} | Found multiple directives ({directive_count}): {directives}")
 
             # Process the various directives
             if command.strip() == "":
                 skipped += self.skipping(i, "Empty Cell")
-            elif D_SOURCE_ONLY in directives:          skipped += self.skipping(i, None)
-            elif D_INCLUDE_HEADER_TRUE in directives:  skipped += self.skipping(i, None)
-            elif D_INCLUDE_HEADER_FALSE in directives: skipped += self.skipping(i, None)
-            elif D_INCLUDE_FOOTER_TRUE in directives:  skipped += self.skipping(i, None)
-            elif D_INCLUDE_FOOTER_FALSE in directives: skipped += self.skipping(i, None)
+            elif NotebookDef.D_SOURCE_ONLY in directives:          skipped += self.skipping(i, None)
+            elif NotebookDef.D_INCLUDE_HEADER_TRUE in directives:  skipped += self.skipping(i, None)
+            elif NotebookDef.D_INCLUDE_HEADER_FALSE in directives: skipped += self.skipping(i, None)
+            elif NotebookDef.D_INCLUDE_FOOTER_TRUE in directives:  skipped += self.skipping(i, None)
+            elif NotebookDef.D_INCLUDE_FOOTER_FALSE in directives: skipped += self.skipping(i, None)
 
-            elif D_TODO in directives:
+            elif NotebookDef.D_TODO in directives:
                 # This is a TO-DO cell, exclude from solution notebooks
                 todo_count += 1
                 command = self.clean_todo_cell(language, command, i)
                 students_commands.append(command)
 
-            elif D_ANSWER in directives:
+            elif NotebookDef.D_ANSWER in directives:
                 # This is an ANSWER cell, exclude from lab notebooks
                 answer_count += 1
                 solutions_commands.append(command)
 
-            elif D_DUMMY in directives:
+            elif NotebookDef.D_DUMMY in directives:
                 students_commands.append(command)
                 solutions_commands.append(command.replace("DUMMY",
                                                           "DUMMY: Ya, that wasn't too smart. Then again, this is just a dummy-directive"))
@@ -667,9 +666,9 @@ class NotebookDef:
                 tag = f"{year} Databricks, Inc"
                 self.test(lambda: tag not in command, f"""Cmd #{i+1} | Found copyright ({tag}) """)
 
-        self.test(lambda: found_header_directive, f"One of the two header directives ({D_INCLUDE_HEADER_TRUE} or {D_INCLUDE_HEADER_FALSE}) were not found.")
-        self.test(lambda: found_footer_directive, f"One of the two footer directives ({D_INCLUDE_FOOTER_TRUE} or {D_INCLUDE_FOOTER_FALSE}) were not found.")
-        self.test(lambda: answer_count >= todo_count, f"Found more {D_TODO} commands ({todo_count}) than {D_ANSWER} commands ({answer_count})")
+        self.test(lambda: found_header_directive, f"One of the two header directives ({NotebookDef.D_INCLUDE_HEADER_TRUE} or {NotebookDef.D_INCLUDE_HEADER_FALSE}) were not found.")
+        self.test(lambda: found_footer_directive, f"One of the two footer directives ({NotebookDef.D_INCLUDE_FOOTER_TRUE} or {NotebookDef.D_INCLUDE_FOOTER_FALSE}) were not found.")
+        self.test(lambda: answer_count >= todo_count, f"Found more {NotebookDef.D_TODO} commands ({todo_count}) than {NotebookDef.D_ANSWER} commands ({answer_count})")
 
         if include_header is True:
             students_commands.insert(0, self.get_header_cell(language))
@@ -769,13 +768,13 @@ class NotebookDef:
                 # This is the first line, but the first is a magic command
                 new_command += line
 
-            elif (index == first) and line.strip() not in [f"{prefix} {D_TODO}"]:
-                self.test(lambda: False, f"""Cmd #{i + 1} | Expected line #{index + 1} to be the "{D_TODO}" directive: "{line}" """)
+            elif (index == first) and line.strip() not in [f"{prefix} {NotebookDef.D_TODO}"]:
+                self.test(lambda: False, f"""Cmd #{i + 1} | Expected line #{index + 1} to be the "{NotebookDef.D_TODO}" directive: "{line}" """)
 
             elif not line.startswith(prefix) and line.strip() != "" and line.strip() != f"{source_m} MAGIC":
                 self.test(lambda: False, f"""Cmd #{i + 1} | Expected line #{index + 1} to be commented out: "{line}" with prefix "{prefix}" """)
 
-            elif line.strip().startswith(f"{prefix} {D_TODO}"):
+            elif line.strip().startswith(f"{prefix} {NotebookDef.D_TODO}"):
                 # Add as-is
                 new_command += line
 
@@ -922,26 +921,30 @@ class NotebookDef:
                 if directive in ["SELECT", "FROM", "AS", "AND"]:
                     pass  # not a real directive, but flagged as one because of its SQL syntax
 
-                elif directive in [D_TODO, D_ANSWER, D_SOURCE_ONLY,
-                                   D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE,
-                                   D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE]:
+                elif directive in [NotebookDef.D_TODO,
+                                   NotebookDef.D_ANSWER,
+                                   NotebookDef.D_SOURCE_ONLY,
+                                   NotebookDef.D_INCLUDE_HEADER_TRUE,
+                                   NotebookDef.D_INCLUDE_HEADER_FALSE,
+                                   NotebookDef.D_INCLUDE_FOOTER_TRUE,
+                                   NotebookDef.D_INCLUDE_FOOTER_FALSE]:
                     directives.append(line)
 
                 elif "FILL-IN" in directive or "FILL_IN" in directive:
                     pass  # Not a directive, just a random chance
 
                 elif directive != mod_directive:
-                    if mod_directive in [f"__{D_TODO}", f"___{D_TODO}"]:
+                    if mod_directive in [f"__{NotebookDef.D_TODO}", f"___{NotebookDef.D_TODO}"]:
                         self.test(lambda: False, f"Cmd #{i+1} | Found double-comment of TODO directive")
 
                     # print(f"Skipping directive: {directive} vs {mod_directive}")
                     pass  # Number and symbols are not used in directives
 
                 else:
-                    reslut_a = self.warn(lambda: " " not in directive, f"""Cmd #{i+1} | Whitespace found in directive "{directive}": {line}""")
-                    reslut_b = self.warn(lambda: "-" not in directive, f"""Cmd #{i+1} | Hyphen found in directive "{directive}": {line}""")
-                    reslut_c = self.warn(lambda: directive in SUPPORTED_DIRECTIVES, f"""Cmd #{i+1} | Unsupported directive "{directive}", see dbacademy.dbpublish.help_html() for more information.""")
-                    if reslut_a and reslut_b and reslut_c:
+                    result_a = self.warn(lambda: " " not in directive, f"""Cmd #{i+1} | Whitespace found in directive "{directive}": {line}""")
+                    result_b = self.warn(lambda: "-" not in directive, f"""Cmd #{i+1} | Hyphen found in directive "{directive}": {line}""")
+                    result_c = self.warn(lambda: directive in NotebookDef.SUPPORTED_DIRECTIVES, f"""Cmd #{i+1} | Unsupported directive "{directive}", see dbacademy.dbpublish.help_html() for more information.""")
+                    if result_a and result_b and result_c:
                         directives.append(line)
 
         return directives
