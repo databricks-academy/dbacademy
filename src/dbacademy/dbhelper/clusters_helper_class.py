@@ -12,7 +12,7 @@ class ClustersHelper:
         self.client = da.client
         self.workspace = workspace
 
-    def create_instance_pools(self, min_idle_instances: int = 0, idle_instance_autotermination_minutes: int = 15):
+    def create_instance_pool(self, min_idle_instances: int = 0, idle_instance_autotermination_minutes: int = 15):
         tags = [
             ("dbacademy.event_name", self.da.clean_string(self.workspace.event_name)),
             ("dbacademy.students_count", self.da.clean_string(self.workspace.student_count)),

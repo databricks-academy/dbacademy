@@ -4,3 +4,5 @@ from .course_config_class import CourseConfig
 from .paths_class import Paths
 
 from .tests.test_suite_class import TestSuite
+
+from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
