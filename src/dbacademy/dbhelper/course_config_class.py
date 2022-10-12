@@ -27,7 +27,7 @@ class CourseConfig:
         self.supported_dbrs = supported_dbrs
         if expected_dbrs != "{{supported_dbrs}}":
             # This value is filled in at build time and ignored otherwise.
-            expected_dbrs = expected_dbrs.split(",")
+            expected_dbrs = [e.strip() for e in  expected_dbrs.split(",")]
             assert len(supported_dbrs) == len(expected_dbrs), f"The run-time and build-time list of supported DBRs does not match: {supported_dbrs} vs {expected_dbrs}"
             for dbr in supported_dbrs: assert dbr in expected_dbrs, f"The run-time DBR \"{dbr}\" was not find in the list of expected dbrs: {expected_dbrs}"
             for dbr in expected_dbrs: assert dbr in supported_dbrs, f"The build-time DBR \"{dbr}\" was not find in the list of supported dbrs: {supported_dbrs}"
