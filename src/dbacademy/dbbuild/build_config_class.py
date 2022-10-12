@@ -92,7 +92,7 @@ class BuildConfig:
                  *,
                  name: str,
                  version: str = 0,
-                 required_dbrs: List[str] = None,
+                 supported_dbrs: List[str] = None,
                  spark_version: str = None,
                  cloud: str = None,
                  instance_pool: str = None,
@@ -119,7 +119,7 @@ class BuildConfig:
         try: self.username = dbgems.sql("SELECT current_user()").first()[0]
         except: self.username = "mickey.mouse@disney.com"  # When unit testing
 
-        self.required_dbrs = required_dbrs or []
+        self.supported_dbrs = supported_dbrs or []
 
         self.language_options = None
         self.ignoring = [] if ignoring is None else ignoring
@@ -227,7 +227,7 @@ class BuildConfig:
                 has_wip = True
                 print(f"""** WARNING ** The notebook "{path}" is excluded from the build as a work in progress (WIP)""")
             else:
-                replacements = {"required_dbrs": ", ".join(self.required_dbrs)}
+                replacements = {"supported_dbrs": ", ".join(self.supported_dbrs)}
 
                 # Add our notebook to the set of notebooks to be tested.
                 self.notebooks[path] = NotebookDef(build_config=self,
@@ -260,7 +260,7 @@ class BuildConfig:
         print(f"libraries:         {self.libraries}")
         print(f"source_repo:       {self.source_repo}")
         print(f"source_dir:        {self.source_dir}")
-        print(f"required_dbrs:     " + ", ".join(self.required_dbrs))
+        print(f"supported_dbrs:    " + ", ".join(self.supported_dbrs))
         print(f"i18n:              {self.i18n}")
         print(f"i18n_language:     " + (self.i18n_language if self.i18n_language else "None (English)"))
 

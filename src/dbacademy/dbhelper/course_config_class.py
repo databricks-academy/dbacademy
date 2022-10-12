@@ -11,7 +11,8 @@ class CourseConfig:
                  install_min_time: str,       # The minimum amount of time to install the datasets (e.g. from Oregon)
                  install_max_time: str,       # The maximum amount of time to install the datasets (e.g. from India)
                  remote_files: List[str],     # The enumerated list of files in the datasets
-                 supported_dbrs: List[str]):  # The enumerated list of DBRs supported by this course
+                 supported_dbrs: List[str],   # The enumerated list of DBRs supported by this course
+                 expected_dbrs: str):         # The expected DBRs as specified at build-time.
 
         self.__course_code = course_code
 
@@ -24,6 +25,12 @@ class CourseConfig:
         self.__remote_files = remote_files
 
         self.supported_dbrs = supported_dbrs
+        if expected_dbrs != "{{supported_dbrs}}":
+            # This value is filled in at build time and ignored otherwise.
+            expected_dbrs = expected_dbrs.split(",")
+            assert len(supported_dbrs) == len(expected_dbrs), f"The run-time and build-time list of supported DBRs does not match: {supported_dbrs} vs {expected_dbrs}"
+            for dbr in supported_dbrs: assert dbr in expected_dbrs, f"The run-time DBR \"{dbr}\" was not find in the list of expected dbrs: {supported_dbrs}"
+            for dbr in expected_dbrs: assert dbr in supported_dbrs, f"The build-time DBR \"{dbr}\" was not find in the list of supported dbrs: {supported_dbrs}"
 
     @property
     def course_code(self) -> str:
