@@ -179,6 +179,7 @@ class Publisher:
 
         print("-"*80)
         print(f"All done!")
+        print()
         print(f"Found {warnings} warnings")
         print(f"Found {errors} errors")
 
