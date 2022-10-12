@@ -10,10 +10,11 @@ reqs = [
 ]
 
 setuptools.setup(
-    name="",
+    name="dbacademy",
     author="Databricks, Inc",
     maintainer="Databricks Academy",
     version="v0.0.0",
     install_requires=reqs,
+    package_dir={"": "src"},
     packages=find_packages(where="src")
 )
