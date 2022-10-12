@@ -1,4 +1,4 @@
-from typing import TypeVar
+from typing import TypeVar, Union
 
 
 class ClustersHelper:
@@ -35,7 +35,7 @@ class ClustersHelper:
         print(f"Created the pool \"{name}\" ({instance_pool_id})")
         return instance_pool_id
 
-    def _create_cluster_policy(self, instance_pool_id: str, name: str, definition):
+    def __create_cluster_policy(self, instance_pool_id: Union[None, str], name: str, definition: dict) -> str:
         if instance_pool_id is not None:
             definition["instance_pool_id"] = {
                 "type": "fixed",
@@ -60,8 +60,8 @@ class ClustersHelper:
         print(f"Created policy \"{name}\" ({policy_id})")
         return policy_id
 
-    def create_all_purpose_policy(self, instance_pool_id: str):
-        return self._create_cluster_policy(instance_pool_id, "DBAcademy All-Purpose Policy", {
+    def create_all_purpose_policy(self, instance_pool_id: str) -> str:
+        return self.__create_cluster_policy(instance_pool_id, "DBAcademy All-Purpose Policy", {
             "cluster_type": {
                 "type": "fixed",
                 "value": "all-purpose"
@@ -75,16 +75,16 @@ class ClustersHelper:
             },
         })
 
-    def create_jobs_policy(self, instance_pool_id: str):
-        return self._create_cluster_policy(instance_pool_id, "DBAcademy Jobs-Only Policy", {
+    def create_jobs_policy(self, instance_pool_id: str) -> str:
+        return self.__create_cluster_policy(instance_pool_id, "DBAcademy Jobs-Only Policy", {
             "cluster_type": {
                 "type": "fixed",
                 "value": "job"
             },
         })
 
-    def create_dlt_policy(self, instance_pool_id: str):
-        return self._create_cluster_policy(instance_pool_id, "DBAcademy DLT-Only Policy", {
+    def create_dlt_policy(self) -> str:
+        return self.__create_cluster_policy(None, "DBAcademy DLT-Only Policy", {
             "cluster_type": {
                 "type": "fixed",
                 "value": "dlt"
@@ -112,11 +112,6 @@ class ClustersHelper:
             "custom_tags.dbacademy.course": {
                 "type": "fixed",
                 "value": self.da.clean_string(self.da.course_config.course_name),
-                "hidden": False
-            },
-            "custom_tags.dbacademy.source": {
-                "type": "fixed",
-                "value": self.da.clean_string("Smoke-Test" if self.da.is_smoke_test() else self.da.course_config.course_name),
                 "hidden": False
             },
         })
