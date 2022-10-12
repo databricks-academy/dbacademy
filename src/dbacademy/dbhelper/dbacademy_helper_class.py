@@ -195,7 +195,7 @@ class DBAcademyHelper:
         local_part = username.split("@")[0]
         username_hash = dbgems.stable_hash(username, length=4)
         course_code = self.course_config.course_code
-        return DBAcademyHelper.clean_string(f"da-{local_part}-{username_hash}-{course_code}").lower()
+        return DBAcademyHelper.clean_string(f"{local_part}-{username_hash}-dbacademy-{course_code}").lower()
 
     @property
     def schema_name(self):
