@@ -10,7 +10,7 @@ reqs = [
 ]
 
 setuptools.setup(
-    name="dbacademy",
+    name="",
     author="Databricks, Inc",
     maintainer="Databricks Academy",
     version="v0.0.0",
