@@ -1,6 +1,10 @@
 def validate_dependencies():
-    from dbacademy import dbgems
-    dbgems.validate_dependencies("dbacademy")
+    try:
+        assert validate_dependencies_already
+    except NameError:
+        from dbacademy import dbgems
+        dbgems.validate_dependencies("dbacademy")
+        validate_dependencies_already = True
 
 
 validate_dependencies()
