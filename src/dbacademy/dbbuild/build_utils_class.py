@@ -1,6 +1,5 @@
 from typing import Union, List, Dict
 from dbacademy.dbrest import DBAcademyRestClient
-from dbacademy.dbbuild import Publisher
 
 
 class BuildUtils:
@@ -44,6 +43,7 @@ class BuildUtils:
 
     @staticmethod
     def clean_target_dir(client, target_dir: str, verbose):
+        from dbacademy.dbbuild import Publisher
 
         if verbose: print(f"Cleaning {target_dir}...")
 
