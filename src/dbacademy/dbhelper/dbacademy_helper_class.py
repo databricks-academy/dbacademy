@@ -5,14 +5,11 @@ from dbacademy import dbgems
 from dbacademy.dbrest import DBAcademyRestClient
 
 from .paths_class import Paths
-from .lesson_config_class import LessonConfig
-from .course_config_class import CourseConfig
-from .workspace_helper_class import WorkspaceHelper
-from .dev_helper_class import DevHelper
-from .tests.test_helper_class import TestHelper
 
 
 class DBAcademyHelper:
+    from .lesson_config_class import LessonConfig
+    from .course_config_class import CourseConfig
 
     DEFAULT_SCHEMA = "default"
     INFORMATION_SCHEMA = "information_schema"
@@ -29,6 +26,10 @@ class DBAcademyHelper:
                  course_config: CourseConfig,
                  lesson_config: LessonConfig,
                  debug: bool = False):
+
+        from .workspace_helper_class import WorkspaceHelper
+        from .dev_helper_class import DevHelper
+        from .tests.test_helper_class import TestHelper
 
         assert lesson_config is not None, f"The parameter lesson_config:LessonConfig must be specified."
         self.__lesson_config = lesson_config

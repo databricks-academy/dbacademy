@@ -1,9 +1,8 @@
 from dbacademy import dbgems
 
-from .dbacademy_helper_class import DBAcademyHelper
-
 
 class DevHelper:
+    from .dbacademy_helper_class import DBAcademyHelper
 
     def __init__(self, da: DBAcademyHelper):
 

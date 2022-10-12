@@ -3,7 +3,6 @@ import pyspark
 
 from .test_case_class import TestCase
 from .test_result_class import TestResult
-from .test_results_aggregator_class import TestResultsAggregator
 
 
 class TestSuite(object):
@@ -19,6 +18,7 @@ class TestSuite(object):
         return self.run_tests()
 
     def run_tests(self) -> List[TestResult]:
+        from .test_results_aggregator_class import TestResultsAggregator
 
         failed_tests = set()
         test_results = list()

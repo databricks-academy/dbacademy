@@ -1,7 +1,5 @@
-from ..dbacademy_helper_class import DBAcademyHelper
-
-
 class TestHelper:
+    from ..dbacademy_helper_class import DBAcademyHelper
 
     def __init__(self, da: DBAcademyHelper):
 

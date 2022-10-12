@@ -1,10 +1,9 @@
 from typing import Dict
 from dbacademy import dbgems
 
-from .test_result_class import TestResult
-
 
 class __TestResultsAggregator(object):
+    from .test_result_class import TestResult
 
     test_results: Dict[str, TestResult] = dict()
 

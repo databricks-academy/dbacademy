@@ -2,10 +2,9 @@ from typing import Callable, List, TypeVar
 
 from dbacademy import dbgems
 
-from .dbacademy_helper_class import DBAcademyHelper
-
 
 class WorkspaceHelper:
+    from .dbacademy_helper_class import DBAcademyHelper
 
     T = TypeVar("T")
 

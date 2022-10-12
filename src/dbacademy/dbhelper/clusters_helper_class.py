@@ -1,10 +1,9 @@
 from typing import TypeVar
 
-from .dbacademy_helper_class import DBAcademyHelper
-from .workspace_helper_class import WorkspaceHelper
-
 
 class ClustersHelper:
+    from .dbacademy_helper_class import DBAcademyHelper
+    from .workspace_helper_class import WorkspaceHelper
 
     T = TypeVar("T")
 

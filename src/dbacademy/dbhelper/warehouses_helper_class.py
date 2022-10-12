@@ -1,10 +1,10 @@
 from typing import Union
 
-from .dbacademy_helper_class import DBAcademyHelper
-from .workspace_helper_class import WorkspaceHelper
-
 
 class WarehousesHelper:
+    from .dbacademy_helper_class import DBAcademyHelper
+    from .workspace_helper_class import WorkspaceHelper
+
     def __init__(self, workspace: WorkspaceHelper, da: DBAcademyHelper):
         self.da = da
         self.client = da.client
