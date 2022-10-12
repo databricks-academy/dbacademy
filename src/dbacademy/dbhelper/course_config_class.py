@@ -14,7 +14,9 @@ class CourseConfig:
                  supported_dbrs: List[str]):  # The enumerated list of DBRs supported by this course
 
         self.__course_code = course_code
-        self.__course_name = course_name
+
+        self.course_name = course_name
+
         self.__data_source_name = data_source_name
         self.__data_source_version = data_source_version
         self.__install_min_time = install_min_time
@@ -30,6 +32,19 @@ class CourseConfig:
     @property
     def course_name(self) -> str:
         return self.__course_name
+
+    @course_name.setter
+    def course_name(self, course_name):
+        import re
+        self.__course_name = course_name
+
+        self.__build_name = re.sub(r"[^a-zA-Z\d]", "-", course_name)
+        while "--" in self.__build_name:
+            self.__build_name = self.__build_name.replace("--", "-")
+
+    @property
+    def build_name(self) -> str:
+        return self.__build_name
 
     @property
     def data_source_name(self) -> str:
