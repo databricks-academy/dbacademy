@@ -7,8 +7,8 @@ from dbacademy.dbrest import DBAcademyRestClient
 from .paths_class import Paths
 from .lesson_config_class import LessonConfig
 from .course_config_class import CourseConfig
-from .workspace_helper import WorkspaceHelper
-from .dev_helper import DevHelper
+from .workspace_helper_class import WorkspaceHelper
+from .dev_helper_class import DevHelper
 from .tests.test_helper_class import TestHelper
 
 

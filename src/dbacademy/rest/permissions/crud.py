@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Literal
 
 from dbacademy.rest.common import *
 
+
 __all__ = ["PermissionsCrud"]
 
 valid_whats = ("user_name", "group_name", "service_principal_name")
@@ -54,13 +55,13 @@ class PermissionsCrud(ApiContainer):
             raise ValueError(f"Expected 'permission_level' to be one of {self.valid_permissions},"
                              f" found '{permission_level}'")
 
-    def get_levels(self, id: ItemId) -> PermissionLevelList:
-        return self.client.api("GET", f"{self.path}/{id}/permissionLevels")["permission_levels"]
+    def get_levels(self, id_value: ItemId) -> PermissionLevelList:
+        return self.client.api("GET", f"{self.path}/{id_value}/permissionLevels")["permission_levels"]
 
-    def get(self, id: ItemId) -> ACL:
-        return self.client.api("GET", f"{self.path}/{id}")
+    def get(self, id_value: ItemId) -> ACL:
+        return self.client.api("GET", f"{self.path}/{id_value}")
 
-    def update(self, id, what: What, value: str, permission_level: PermissionLevel):
+    def update(self, id_value, what: What, value: str, permission_level: PermissionLevel):
         self._validate_what(what)
         self._validate_permission_level(permission_level)
         acl = [
@@ -69,16 +70,16 @@ class PermissionsCrud(ApiContainer):
                     "permission_level": permission_level
                 }
             ]
-        return self.client.api_simple("PATCH", f"{self.path}/{id}", access_control_list=acl)
+        return self.client.api_simple("PATCH", f"{self.path}/{id_value}", access_control_list=acl)
 
-    def replace(self, id, acl: ACL):
-        return self.client.api_simple("PUT", f"{self.path}/{id}", access_control_list=acl)
+    def replace(self, id_value: str, acl: ACL):
+        return self.client.api_simple("PUT", f"{self.path}/{id_value}", access_control_list=acl)
 
-    def update_user(self, id, username, permission_level):
-        return self.update(id, "user_name", username, permission_level)
+    def update_user(self, id_value: str, username, permission_level):
+        return self.update(id_value, "user_name", username, permission_level)
 
-    def update_group(self, id, group_name, permission_level):
-        return self.update(id, "group_name", group_name, permission_level)
+    def update_group(self, id_value: str, group_name, permission_level):
+        return self.update(id_value, "group_name", group_name, permission_level)
 
-    def update_service_principal(self, id, service_principal_name, permission_level):
-        return self.update(id, "service_principal_name", service_principal_name, permission_level)
+    def update_service_principal(self, id_value: str, service_principal_name, permission_level):
+        return self.update(id_value, "service_principal_name", service_principal_name, permission_level)

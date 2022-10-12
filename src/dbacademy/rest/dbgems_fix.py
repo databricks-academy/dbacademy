@@ -2,7 +2,7 @@
 Hack to work around module import problems.
 """
 
-__all__=["dbgems"]
+__all__ = ["dbgems"]
 
 
 def _load_dbgems():

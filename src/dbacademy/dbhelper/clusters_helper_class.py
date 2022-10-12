@@ -1,7 +1,7 @@
 from typing import TypeVar
 
 from .dbacademy_helper_class import DBAcademyHelper
-from .workspace_helper import WorkspaceHelper
+from .workspace_helper_class import WorkspaceHelper
 
 
 class ClustersHelper:

@@ -14,9 +14,9 @@ class WorkspaceHelper:
     CURRENT_USER_ONLY = "Current User Only"
 
     def __init__(self, da: DBAcademyHelper):
-        from .warehouses_helper import WarehousesHelper
-        from .databases_helper import DatabasesHelper
-        from .clusters_helper import ClustersHelper
+        from .warehouses_helper_class import WarehousesHelper
+        from .databases_helper_class import DatabasesHelper
+        from .clusters_helper_class import ClustersHelper
 
         self.da = da
         self.client = da.client

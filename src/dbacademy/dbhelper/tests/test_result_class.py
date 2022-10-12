@@ -1,5 +1,7 @@
+from .test_case_class import TestCase
+
+
 class TestResult(object):
-    from .test_case_class import TestCase
 
     __slots__ = ('test', 'skipped', 'passed', 'status', 'points', 'exception', 'message')
 

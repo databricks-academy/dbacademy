@@ -24,4 +24,3 @@ class TokenManagementClient(ApiContainer):
 
     def get_by_id(self, token_id):
         return self.client.execute_get_json(url=f"{self.base_url}/tokens/{token_id}")
-
