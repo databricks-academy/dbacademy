@@ -1,6 +1,5 @@
 from typing import Union
 from dbacademy import dbgems
-from dbacademy.dbbuild import BuildUtils
 
 
 class PublisherValidator:
@@ -37,7 +36,6 @@ class PublisherValidator:
         return self.__validate_distribution_dbc(as_latest)
 
     def __validate_distribution_dbc(self, as_latest: bool):
-        from dbacademy import dbgems
 
         label = "vLatest" if as_latest else self.version
         file_name = f"vLATEST/notebooks.dbc" if as_latest else f"v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
@@ -97,6 +95,7 @@ class PublisherValidator:
         self.__validate_git_branch(branch=branch, version=version)
 
     def __validate_git_branch(self, *, branch: str, version: Union[str, None]):
+        from ..build_utils_class import BuildUtils
 
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 

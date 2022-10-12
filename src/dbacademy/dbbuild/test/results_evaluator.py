@@ -1,6 +1,6 @@
 import typing
 from dbacademy import dbgems
-from dbacademy.dbbuild import BuildUtils
+from ..build_utils_class import BuildUtils
 
 
 class ResultsEvaluator:

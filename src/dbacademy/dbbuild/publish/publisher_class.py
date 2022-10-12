@@ -1,15 +1,17 @@
 from typing import List
 from dbacademy import dbgems
-from dbacademy.dbbuild import BuildConfig, BuildUtils, NotebookDef, TestSuite, PublisherValidator
+from ..build_utils_class import BuildUtils
 
 
 class Publisher:
+    from dbacademy.dbbuild import BuildConfig
 
     VERSION_INFO_NOTEBOOK = "Version Info"
 
     KEEPERS = [".gitignore", "README.md", "LICENSE", "docs"]
 
     def __init__(self, build_config: BuildConfig):
+        from dbacademy.dbbuild import BuildConfig, BuildUtils
 
         self.__validated = False              # By default, we are not validated
         self.__validated_repo_reset = True    # By default repo is valid (unless invoked)
@@ -53,6 +55,7 @@ class Publisher:
 
     def _init_notebooks(self, notebooks):
         from datetime import datetime
+        from dbacademy.dbbuild import NotebookDef
 
         for notebook in notebooks:
             assert type(notebook) == NotebookDef, f"Expected the parameter \"notebook\" to be of type \"NotebookDef\", found \"{type(notebook)}\"."
@@ -89,8 +92,6 @@ class Publisher:
     #             </body>"""
 
     def create_resource_bundle(self, folder_name: str = None, target_dir: str = None):
-        from dbacademy import dbgems
-
         if self.i18n_language is not None:
             print(f"Print skipping generation of resource bundle for non-english release, {self.i18n_language}")
             return False
@@ -107,7 +108,7 @@ class Publisher:
         return True
 
     def publish_notebooks(self, *, verbose=False, debugging=False, **kwargs):
-        from dbacademy import dbgems
+        from ..publish.notebook_def_class import NotebookDef
 
         assert self.validated, f"Cannot publish notebooks until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
 
@@ -185,7 +186,6 @@ class Publisher:
 
     def create_published_message(self):
         import urllib.parse
-        from dbacademy import dbgems
 
         name = self.build_config.name
         version = self.build_config.version
@@ -269,7 +269,6 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
     def publish_docs(self):
         import os, shutil
-        from dbacademy import dbgems
 
         source_docs_path = f"{self.source_repo}/docs"
         target_docs_path = f"{self.target_dir}/docs/v{self.build_config.version}"
@@ -293,6 +292,8 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         dbgems.display_html(html)
 
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
+        from dbacademy.dbbuild import TestSuite
+
         return TestSuite(build_config=self.build_config,
                          test_dir=self.target_dir,
                          test_type=test_type,
@@ -300,7 +301,6 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
     def _generate_html(self, notebook):
         import time
-        from dbacademy import dbgems
 
         if notebook.test_round < 2:
             return  # Skip for rounds 0 & 1
@@ -330,8 +330,6 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         return self.create_dbcs()
 
     def create_dbcs(self):
-        from dbacademy import dbgems
-
         assert self.validated, f"Cannot create DBCs until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
@@ -356,6 +354,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
 
     def get_validator(self):
+        from dbacademy.dbbuild import PublisherValidator
         return PublisherValidator(self)
 
     def assert_no_changes_in_source_repo(self):

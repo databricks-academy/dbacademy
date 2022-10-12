@@ -1,8 +1,9 @@
 from dbacademy import dbgems
-from dbacademy.dbbuild import BuildConfig, BuildUtils, TestInstance
+from ..build_utils_class import BuildUtils
 
 
 class TestSuite:
+    from dbacademy.dbbuild import BuildConfig
 
     TEST_TYPE_INTERACTIVE = "interactive"
     TEST_TYPE_STOCK = "stock"
@@ -11,7 +12,7 @@ class TestSuite:
     TEST_TYPES = [TEST_TYPE_INTERACTIVE, TEST_TYPE_STOCK, TEST_TYPE_PHOTON, TEST_TYPE_ML]
 
     def __init__(self, *, build_config: BuildConfig, test_dir: str, test_type: str, keep_success: bool = False):
-        from dbacademy import dbgems
+        from dbacademy.dbbuild import TestInstance
 
         self.test_dir = test_dir
         self.build_config = build_config
@@ -127,7 +128,6 @@ class TestSuite:
         return json_response["job_id"]
 
     def test_all_synchronously(self, test_round, fail_fast=True, service_principal: str = None, policy_id: str = None) -> bool:
-        from dbacademy import dbgems
 
         if test_round not in self.test_rounds:
             print(f"** WARNING ** There are no notebooks in round #{test_round}")
@@ -178,7 +178,6 @@ class TestSuite:
         return passed
 
     def test_all_asynchronously(self, test_round: int, service_principal: str = None, policy_id: str = None) -> bool:
-        from dbacademy import dbgems
 
         tests = self.test_rounds[test_round]
 

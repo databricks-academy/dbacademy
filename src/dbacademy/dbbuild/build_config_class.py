@@ -1,5 +1,6 @@
 from typing import Type, List, Dict, Union
 from dbacademy import dbgems
+from .build_utils_class import BuildUtils
 
 
 class BuildConfig:
@@ -17,7 +18,6 @@ class BuildConfig:
     @staticmethod
     def load(file: str, *, version: str):
         import json
-        from dbacademy.dbbuild import BuildUtils
 
         BuildUtils.validate_type(file, "file", str)
         BuildUtils.validate_type(version, "version", str)
@@ -111,8 +111,7 @@ class BuildConfig:
                  publishing_info: dict = None):
 
         import uuid, time, re
-        from dbacademy import dbrest
-        from dbacademy import dbgems
+        from dbacademy.dbrest import DBAcademyRestClient
         from .publish.notebook_def_class import NotebookDef
 
         self.__validated = False
@@ -131,7 +130,7 @@ class BuildConfig:
 
         self.test_type = None
         self.notebooks: Union[None, Dict[str, NotebookDef]] = None
-        self.client = dbrest.DBAcademyRestClient() if client is None else client
+        self.client = DBAcademyRestClient() if client is None else client
 
         # The instance of this test run
         self.suite_id = str(time.time()) + "-" + str(uuid.uuid1())
@@ -430,8 +429,6 @@ class BuildConfig:
 
     @dbgems.deprecated(reason="Corresponding logic has been moved to the class Translator and its related capabilities")
     def select_i18n_language(self):
-        from dbacademy import dbgems
-
         resources_folder = f"{self.source_repo}/Resources"
 
         resources = self.client.workspace().ls(resources_folder)

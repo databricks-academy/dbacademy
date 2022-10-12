@@ -1,10 +1,13 @@
 from dbacademy import dbgems
-from dbacademy.dbbuild import BuildConfig, BuildUtils, Publisher, NotebookDef
+from ..build_utils_class import BuildUtils
 
 
 class Translator:
+    from dbacademy.dbbuild import BuildConfig
 
     def __init__(self, build_config: BuildConfig):
+        from dbacademy.dbbuild import BuildConfig, BuildUtils
+
         self.__validated = False  # By default, we are not validated
 
         self.build_config = BuildUtils.validate_type(build_config, "build_config", BuildConfig)
@@ -35,7 +38,6 @@ class Translator:
         self._select_i18n_language(build_config.source_repo)
 
     def _select_i18n_language(self, source_repo: str):
-        from dbacademy import dbgems
 
         self.resources_folder = f"{source_repo}/Resources"
 
@@ -68,7 +70,6 @@ class Translator:
         self.common_language = self.i18n_language.split("-")[0]
 
     def __reset_source_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None):
-
         self.source_branch = source_branch or f"published-v{self.core_version}"
         self.source_dir = source_dir or f"/Repos/Temp/{self.username}-{self.build_name}-english_{self.source_branch}"
         self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
@@ -119,6 +120,7 @@ class Translator:
     # noinspection PyMethodMayBeStatic
     def _load_i18n_guid_map(self, path: str, i18n_source: str):
         import re
+        from dbacademy.dbbuild import NotebookDef
 
         if i18n_source is None:
             return dict()
@@ -159,6 +161,8 @@ class Translator:
 
     def publish_notebooks(self):
         from datetime import datetime
+        from ..publish.notebook_def_class import NotebookDef
+        from ..publish.publisher_class import Publisher
 
         assert self.validated, f"Cannot publish until the validator's configuration passes validation. Ensure that Translator.validate() was called and that all assignments passed"
 
@@ -249,7 +253,6 @@ class Translator:
         dbgems.display_html(html)
 
     def create_dbcs(self):
-        from dbacademy import dbgems
 
         assert self.validated, f"Cannot create DBCs until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
 

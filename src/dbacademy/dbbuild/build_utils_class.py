@@ -1,5 +1,6 @@
 from typing import Union, List, Dict
 from dbacademy.dbrest import DBAcademyRestClient
+from dbacademy import dbgems
 
 
 class BuildUtils:
@@ -9,7 +10,6 @@ class BuildUtils:
 
     @staticmethod
     def get_workspace_url():
-        from dbacademy import dbgems
 
         workspaces = {
             "3551974319838082": "https://curriculum-dev.cloud.databricks.com/?o=3551974319838082",
