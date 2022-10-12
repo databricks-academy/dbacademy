@@ -40,21 +40,6 @@ def deprecated(reason=None):
     return decorator
 
 
-@deprecated(reason="Use dbgems.dbutils instead.")
-def get_dbutils():  # -> dbruntime.dbutils.DBUtils:
-    return dbgems_module.dbutils
-
-
-@deprecated(reason="Use dbgems.spark instead.")
-def get_spark_session() -> pyspark.sql.SparkSession:
-    return dbgems_module.spark
-
-
-@deprecated(reason="Use dbgems.sc instead.")
-def get_session_context() -> pyspark.context.SparkContext:
-    return dbgems_module.sc
-
-
 def sql(query):
     return spark.sql(query)
 
@@ -242,11 +227,8 @@ def proof_of_life(expected_get_username,
                   expected_get_notebook_path,
                   expected_get_notebook_name,
                   expected_get_notebook_dir,
-                  expected_get_notebooks_api_endpoint,
-                  expected_get_current_spark_version,
-                  expected_get_current_instance_pool_id,
-                  expected_get_current_node_type_id):
-    """Because it is too difficult to validate this from the command line, this functio simply invokes all the functions as proof of life"""
+                  expected_get_notebooks_api_endpoint):
+    """Because it is too difficult to validate this from the command line, this function simply invokes all the functions as proof of life"""
 
     import dbruntime
     from py4j.java_collections import JavaMap
