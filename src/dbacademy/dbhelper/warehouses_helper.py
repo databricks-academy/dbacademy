@@ -18,8 +18,7 @@ class WarehousesHelper:
         return 1 if self.da.is_smoke_test() else 20  # math.ceil(self.students_count / 5)
 
     def delete_sql_warehouses_for(self, username):
-        name = DBAcademyHelper.to_schema_name(username=username,
-                                              course=self.da.course_config)
+        name = self.da.to_schema_name(username)
         self.client.sql.endpoints.delete_by_name(name=name)
 
     def delete_sql_warehouses(self):
@@ -34,7 +33,7 @@ class WarehousesHelper:
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
     def create_sql_warehouse_for(self, username, auto_stop_mins=120, enable_serverless_compute=False):
         return self._create_sql_warehouse(username=username,
-                                          name=DBAcademyHelper.to_schema_name(username=username, course=self.da.course_config),
+                                          name=self.da.to_schema_name(username),
                                           auto_stop_mins=auto_stop_mins,
                                           min_num_clusters=1,
                                           max_num_clusters=1,

@@ -1,5 +1,7 @@
 import typing
-from dbacademy_gems import dbgems
+from dbacademy import dbgems
+from dbacademy.dbbuild import BuildUtils
+
 
 class ResultsEvaluator:
     def __init__(self, results: typing.List[dict], keep_success):
@@ -8,7 +10,7 @@ class ResultsEvaluator:
 
         results.sort(key=lambda r: r.get("notebook_path"))
 
-        self.failed_set =  [r for r in results if r.get("result_state") == "FAILED"]   # df.filter("status == 'FAILED'").orderBy("notebook_path").collect()
+        self.failed_set = [r for r in results if r.get("result_state") == "FAILED"]   # df.filter("status == 'FAILED'").orderBy("notebook_path").collect()
         self.ignored_set = [r for r in results if r.get("result_state") == "IGNORED"]  # df.filter("status == 'IGNORED'").orderBy("notebook_path").collect()
         self.success_set = [r for r in results if r.get("result_state") == "SUCCESS"]  # df.filter("status == 'SUCCESS'").orderBy("notebook_path").collect()
 
@@ -56,8 +58,7 @@ class ResultsEvaluator:
 
     @staticmethod
     def to_job_link(*, job_id, run_id, label):
-        from dbacademy_courseware import to_job_url
-        url = to_job_url(job_id=job_id, run_id=run_id)
+        url = BuildUtils.to_job_url(job_id=job_id, run_id=run_id)
         return f"""<a href="{url}" target="_blank">{label}</a>"""
 
     def add_section(self, title, rows, print_links=True):

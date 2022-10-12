@@ -19,9 +19,7 @@ class DatabasesHelper:
         self.workspace._existing_databases = None
 
     def _drop_databases_for(self, username: str):
-        from .lesson_config_class import LessonConfig
-
-        db_name = LessonConfig.to_schema_name(username=username, course=self.da.course_config.course_code)
+        db_name = self.da.to_schema_name(username=username)
         if db_name in self.workspace.existing_databases:
             print(f"Dropping the database \"{db_name}\" for {username}")
             dbgems.spark.sql(f"DROP DATABASE {db_name} CASCADE;")
@@ -29,31 +27,30 @@ class DatabasesHelper:
             print(f"Skipping database drop for {username}")
 
     def create_databases(self, drop_existing: bool, post_create: Callable[[], None] = None):
-        self.workspace.do_for_all_users(lambda username: self._create_database_for(username=username,
-                                                                                   drop_existing=drop_existing,
-                                                                                   post_create=post_create))
+        self.workspace.do_for_all_users(lambda username: self.__create_database_for(username=username,
+                                                                                    drop_existing=drop_existing,
+                                                                                    post_create=post_create))
         # Clear the list of databases (and derived users) to force a refresh
         self.workspace._usernames = None
         self.workspace._existing_databases = None
 
-    def _create_database_for(self, username: str, drop_existing: bool, post_create: Callable[[str], None] = None):
-        from .lesson_config_class import LessonConfig
-
-        db_name = LessonConfig.to_schema_name(username=username, course=self.da.course_config.course_code)
+    def __create_database_for(self, username: str, drop_existing: bool, post_create: Callable[[str], None] = None):
+        db_name = self.da.to_schema_name(username=username)
         db_path = f"dbfs:/mnt/dbacademy-users/{username}/{self.da.course_config.course_name}/database.db"
 
-        if db_name in self.da.workspace.existing_databases and drop_existing:
-            print(f"Dropping the database \"{db_name}\" for {username}")
-            dbgems.spark.sql(f"DROP DATABASE {db_name} CASCADE;")
+        if db_name in self.da.workspace.existing_databases:
+            # The database already exists.
 
-        print(f"Creating database \"{db_name}\" for {username}")
+            if drop_existing: dbgems.spark.sql(f"DROP DATABASE IF EXISTS {db_name} CASCADE;")
+            else: return print(f"Skipping existing schema \"{db_name}\" for {username}")
+
         dbgems.sql(f"CREATE DATABASE IF NOT EXISTS {db_name} LOCATION '{db_path}';")
 
         if post_create:
             # Call the post-create init function if defined
             post_create(db_name)
 
-        return f"Created database {db_name}"
+        return print(f"Created schema \"{db_name}\" for {username}, dropped existing: {drop_existing}")
 
     def configure_permissions(self, notebook_name, spark_version="10.4.x-scala2.12"):
 

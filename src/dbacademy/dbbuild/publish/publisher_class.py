@@ -1,9 +1,6 @@
 from typing import List
-from dbacademy_gems import dbgems
-from dbacademy_courseware import validate_type
-from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef
-from dbacademy_courseware.dbbuild import BuildConfig
-from dbacademy_courseware.dbbuild import common
+from dbacademy import dbgems
+from dbacademy.dbbuild import BuildConfig, BuildUtils, NotebookDef, TestSuite, PublisherValidator
 
 
 class Publisher:
@@ -19,7 +16,7 @@ class Publisher:
         self.__changes_in_source_repo = None  # Will be set once we test for changes
         self.__changes_in_target_repo = None  # Will be set once we test for changes
 
-        self.build_config = validate_type(build_config, "build_config", BuildConfig)
+        self.build_config = BuildUtils.validate_type(build_config, "build_config", BuildConfig)
 
         self.client = build_config.client
         self.version = build_config.version
@@ -92,7 +89,7 @@ class Publisher:
     #             </body>"""
 
     def create_resource_bundle(self, folder_name: str = None, target_dir: str = None):
-        from dbacademy_gems import dbgems
+        from dbacademy import dbgems
 
         if self.i18n_language is not None:
             print(f"Print skipping generation of resource bundle for non-english release, {self.i18n_language}")
@@ -110,11 +107,9 @@ class Publisher:
         return True
 
     def publish_notebooks(self, *, verbose=False, debugging=False, **kwargs):
+        from dbacademy import dbgems
 
         assert self.validated, f"Cannot publish notebooks until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
-
-        from dbacademy_gems import dbgems
-        from dbacademy_courseware import get_workspace_url
 
         if "mode" in kwargs:
             dbgems.print_warning(title="DEPRECATION WARNING", message=f"The parameter \"mode\" has been deprecated.\nPlease remove the parameter.")
@@ -155,8 +150,8 @@ class Publisher:
         # Now that we backed up the version-info, we can delete everything.
         target_status = self.client.workspace().get_status(self.target_dir)
         if target_status is not None:
-            common.print_if(verbose, "-" * 80)
-            common.clean_target_dir(self.client, self.target_dir, verbose)
+            BuildUtils.print_if(verbose, "-" * 80)
+            BuildUtils.clean_target_dir(self.client, self.target_dir, verbose)
 
         for notebook in main_notebooks:
             notebook.publish(source_dir=self.source_dir,
@@ -170,7 +165,7 @@ class Publisher:
         errors = 0
 
         html = f"""<html><body style="font-size:16px">
-                         <div><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>"""
+                         <div><a href="{BuildUtils.get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>"""
         for notebook in main_notebooks:
             errors += len(notebook.errors)
             warnings += len(notebook.warnings)
@@ -190,7 +185,7 @@ class Publisher:
 
     def create_published_message(self):
         import urllib.parse
-        from dbacademy_gems import dbgems
+        from dbacademy import dbgems
 
         name = self.build_config.name
         version = self.build_config.version
@@ -265,17 +260,16 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             dbgems.print_warning(title="DEPRECATION WARNING", message=f"The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")
             target_repo_url = kwargs.get("target_url")
 
-        self.target_dir = validate_type(target_dir, "target_dir", str)
-        self.target_repo_url = validate_type(target_repo_url, "target_repo_url", str)
+        self.target_dir = BuildUtils.validate_type(target_dir, "target_dir", str)
+        self.target_repo_url = BuildUtils.validate_type(target_repo_url, "target_repo_url", str)
 
-        common.reset_git_repo(client=self.client, directory=self.target_dir, repo_url=self.target_repo_url, branch=branch, which=None)
+        BuildUtils.reset_git_repo(client=self.client, directory=self.target_dir, repo_url=self.target_repo_url, branch=branch, which=None)
 
         self.__validated_repo_reset = True
 
     def publish_docs(self):
         import os, shutil
-        from dbacademy_gems import dbgems
-        from dbacademy_courseware import get_workspace_url
+        from dbacademy import dbgems
 
         source_docs_path = f"{self.source_repo}/docs"
         target_docs_path = f"{self.target_dir}/docs/v{self.build_config.version}"
@@ -294,12 +288,11 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             print(file)
 
         html = f"""<html><body style="font-size:16px">
-                         <div><a href="{get_workspace_url()}#workspace{target_docs_path}/index.html" target="_blank">See Published Version</a></div>
+                         <div><a href="{BuildUtils.get_workspace_url()}#workspace{target_docs_path}/index.html" target="_blank">See Published Version</a></div>
                    </body></html>"""
         dbgems.display_html(html)
 
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
-        from dbacademy_courseware.dbtest import TestSuite
         return TestSuite(build_config=self.build_config,
                          test_dir=self.target_dir,
                          test_type=test_type,
@@ -307,7 +300,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
 
     def _generate_html(self, notebook):
         import time
-        from dbacademy_gems import dbgems
+        from dbacademy import dbgems
 
         if notebook.test_round < 2:
             return  # Skip for rounds 0 & 1
@@ -337,34 +330,33 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         return self.create_dbcs()
 
     def create_dbcs(self):
-        from dbacademy_gems import dbgems
+        from dbacademy import dbgems
 
         assert self.validated, f"Cannot create DBCs until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
         data = self.build_config.client.workspace.export_dbc(self.target_dir)
 
-        common.write_file(data=data,
-                          overwrite=False,
-                          target_name="Distributions system (versioned)",
-                          target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
+        BuildUtils.write_file(data=data,
+                              overwrite=False,
+                              target_name="Distributions system (versioned)",
+                              target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
 
-        common.write_file(data=data,
-                          overwrite=False,
-                          target_name="Distributions system (latest)",
-                          target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/vLATEST/notebooks.dbc")
+        BuildUtils.write_file(data=data,
+                              overwrite=False,
+                              target_name="Distributions system (latest)",
+                              target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/vLATEST/notebooks.dbc")
 
-        common.write_file(data=data,
-                          overwrite=True,
-                          target_name="workspace-local FileStore",
-                          target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
+        BuildUtils.write_file(data=data,
+                              overwrite=True,
+                              target_name="workspace-local FileStore",
+                              target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
 
         url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
 
     def get_validator(self):
-        from .validator import Validator
-        return Validator(self)
+        return PublisherValidator(self)
 
     def assert_no_changes_in_source_repo(self):
         method = "Publisher.validate_no_changes_in_source_repo()"
@@ -393,12 +385,11 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
         self.assert_no_changes_in_target_repo()
 
     def __validate_no_changes_in_repo(self, repo_url: str, directory: str) -> List[str]:
-        from dbacademy_courseware.dbbuild import common
-        results = common.validate_not_uncommitted(client=self.client,
-                                                  build_name=self.build_name,
-                                                  repo_url=repo_url,
-                                                  directory=directory,
-                                                  ignored=["/Published/", "/Build-Scripts/"])
+        results = BuildUtils.validate_not_uncommitted(client=self.client,
+                                                      build_name=self.build_name,
+                                                      repo_url=repo_url,
+                                                      directory=directory,
+                                                      ignored=["/Published/", "/Build-Scripts/"])
         if len(results) != 0:
             print()
             for result in results:

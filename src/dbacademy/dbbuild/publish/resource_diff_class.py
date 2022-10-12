@@ -1,9 +1,8 @@
 from typing import Union
+from dbacademy.dbbuild import BuildConfig
 
 
 class ResourceDiff:
-    from dbacademy_courseware.dbbuild import BuildConfig
-
     def __init__(self, build_config: BuildConfig, *, resources_folder: str = None, old_resource: str = None, new_resource: str = None):
         import os
 
@@ -20,7 +19,7 @@ class ResourceDiff:
         self.new_resource = new_resource
         self.old_resource = old_resource
 
-        self.new_dir =   f"{self.resources_folder}/{self.new_resource}"
+        self.new_dir = f"{self.resources_folder}/{self.new_resource}"
         self.old_dir = f"{self.resources_folder}/{self.old_resource}"
 
         self.files_a = None

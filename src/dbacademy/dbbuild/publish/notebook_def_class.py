@@ -1,5 +1,5 @@
 from typing import Callable, Union, List
-from dbacademy_courseware.dbbuild import common
+from dbacademy.dbbuild import BuildConfig, BuildUtils
 
 D_TODO = "TODO"
 D_ANSWER = "ANSWER"
@@ -27,7 +27,6 @@ class NotebookError:
 
 
 class NotebookDef:
-    from dbacademy_courseware.dbbuild import BuildConfig
 
     def __init__(self,
                  *,
@@ -42,7 +41,6 @@ class NotebookDef:
                  i18n_language: Union[None, str],
                  ignoring: list,
                  version: str):
-        from dbacademy_courseware.dbbuild import BuildConfig
 
         assert type(build_config) == BuildConfig, f"""Expected the parameter "build_config" to be of type "BuildConfig", found "{type(build_config)}" """
         assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
@@ -181,7 +179,6 @@ class NotebookDef:
         return version
 
     def update_git_commit(self, command: str, url: str) -> str:
-        from dbacademy_courseware.dbbuild import BuildConfig
         if url not in command: return command
         else:
             if f"{url}@v" in command:
@@ -505,6 +502,7 @@ class NotebookDef:
         return guid, value
 
     def publish(self, source_dir: str, target_dir: str, i18n_resources_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
+
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
         assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
         assert type(i18n_resources_dir) == str, f"""Expected the parameter "resources_dir" to be of type "str", found "{type(i18n_resources_dir)}" """
@@ -683,15 +681,15 @@ class NotebookDef:
 
         # Create the student's notebooks
         students_notebook_path = f"{target_dir}/{self.path}"
-        common.print_if(verbose, students_notebook_path)
-        common.print_if(verbose, f"...publishing {len(students_commands)} commands")
+        BuildUtils.print_if(verbose, students_notebook_path)
+        BuildUtils.print_if(verbose, f"...publishing {len(students_commands)} commands")
         self.publish_notebook(language, students_commands, students_notebook_path, print_warnings=True)
 
         # Create the solutions notebooks
         if self.include_solution:
             solutions_notebook_path = f"{target_dir}/Solutions/{self.path}"
-            common.print_if(verbose, solutions_notebook_path)
-            common.print_if(verbose, f"...publishing {len(solutions_commands)} commands")
+            BuildUtils.print_if(verbose, solutions_notebook_path)
+            BuildUtils.print_if(verbose, f"...publishing {len(solutions_commands)} commands")
             self.publish_notebook(language, solutions_commands, solutions_notebook_path, print_warnings=False)
 
     def publish_resource(self, language: str, md_commands: list, target_dir: str, natural_language: str) -> None:

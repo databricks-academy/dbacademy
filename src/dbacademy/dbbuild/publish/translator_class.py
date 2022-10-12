@@ -1,16 +1,13 @@
-from dbacademy_gems import dbgems
-from dbacademy_courseware import validate_type
-from dbacademy_courseware.dbbuild import common
+from dbacademy import dbgems
+from dbacademy.dbbuild import BuildConfig, BuildUtils, Publisher, NotebookDef
+
 
 class Translator:
-    from dbacademy_courseware.dbbuild import BuildConfig
 
     def __init__(self, build_config: BuildConfig):
-        from dbacademy_courseware.dbbuild import BuildConfig
-
         self.__validated = False  # By default, we are not validated
 
-        self.build_config = validate_type(build_config, "build_config", BuildConfig)
+        self.build_config = BuildUtils.validate_type(build_config, "build_config", BuildConfig)
         # Copied from build_config
         self.username = build_config.username
         self.client = build_config.client
@@ -38,7 +35,7 @@ class Translator:
         self._select_i18n_language(build_config.source_repo)
 
     def _select_i18n_language(self, source_repo: str):
-        from dbacademy_gems import dbgems
+        from dbacademy import dbgems
 
         self.resources_folder = f"{source_repo}/Resources"
 
@@ -76,11 +73,11 @@ class Translator:
         self.source_dir = source_dir or f"/Repos/Temp/{self.username}-{self.build_name}-english_{self.source_branch}"
         self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
 
-        common.reset_git_repo(client=self.client,
-                              directory=self.source_dir,
-                              repo_url=self.source_repo_url,
-                              branch=self.source_branch,
-                              which="source")
+        BuildUtils.reset_git_repo(client=self.client,
+                                  directory=self.source_dir,
+                                  repo_url=self.source_repo_url,
+                                  branch=self.source_branch,
+                                  which="source")
 
     def __reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = None):
 
@@ -88,11 +85,11 @@ class Translator:
         self.target_dir = target_dir or f"/Repos/Temp/{self.build_name}"
         self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
 
-        common.reset_git_repo(client=self.client,
-                              directory=self.target_dir,
-                              repo_url=self.target_repo_url,
-                              branch=self.target_branch,
-                              which="target")
+        BuildUtils.reset_git_repo(client=self.client,
+                                  directory=self.target_dir,
+                                  repo_url=self.target_repo_url,
+                                  branch=self.target_branch,
+                                  which="target")
 
     def validate(self):
         self.__reset_source_repo()
@@ -122,7 +119,6 @@ class Translator:
     # noinspection PyMethodMayBeStatic
     def _load_i18n_guid_map(self, path: str, i18n_source: str):
         import re
-        from dbacademy_courseware.dbpublish import NotebookDef
 
         if i18n_source is None:
             return dict()
@@ -163,14 +159,12 @@ class Translator:
 
     def publish_notebooks(self):
         from datetime import datetime
-        from dbacademy_courseware.dbpublish import Publisher, NotebookDef
-        from dbacademy_courseware import get_workspace_url
 
         assert self.validated, f"Cannot publish until the validator's configuration passes validation. Ensure that Translator.validate() was called and that all assignments passed"
 
         print(f"Publishing translated version of {self.build_name}, {self.version}")
         print(f"...Removing files from target directories")
-        common.clean_target_dir(self.client, self.target_dir, verbose=False)
+        BuildUtils.clean_target_dir(self.client, self.target_dir, verbose=False)
 
         prefix = len(self.source_dir) + 1
         source_files = [f.get("path")[prefix:] for f in self.client.workspace.ls(self.source_dir, recursive=True)]
@@ -249,33 +243,33 @@ class Translator:
                                                   overwrite=True)
 
         html = f"""<html><body style="font-size:16px">
-                     <div><a href="{get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>
+                     <div><a href="{BuildUtils.get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>
                    </body></html>"""
 
         dbgems.display_html(html)
 
     def create_dbcs(self):
-        from dbacademy_gems import dbgems
+        from dbacademy import dbgems
 
         assert self.validated, f"Cannot create DBCs until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
         data = self.client.workspace.export_dbc(self.target_dir)
 
-        common.write_file(data=data,
-                          overwrite=False,
-                          target_name="Distributions system (versioned)",
-                          target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc")
+        BuildUtils.write_file(data=data,
+                              overwrite=False,
+                              target_name="Distributions system (versioned)",
+                              target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc")
 
-        common.write_file(data=data,
-                          overwrite=False,
-                          target_name="Distributions system (latest)",
-                          target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/vLATEST-{self.lang_code}/notebooks.dbc")
+        BuildUtils.write_file(data=data,
+                              overwrite=False,
+                              target_name="Distributions system (latest)",
+                              target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/vLATEST-{self.lang_code}/notebooks.dbc")
 
-        common.write_file(data=data,
-                          overwrite=True,
-                          target_name="workspace-local FileStore",
-                          target_file=f"dbfs:/FileStore/tmp/{self.build_name}-v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc")
+        BuildUtils.write_file(data=data,
+                              overwrite=True,
+                              target_name="workspace-local FileStore",
+                              target_file=f"dbfs:/FileStore/tmp/{self.build_name}-v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc")
 
         url = f"/files/tmp/{self.build_name}-v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")

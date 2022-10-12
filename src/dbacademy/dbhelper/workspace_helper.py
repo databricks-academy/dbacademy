@@ -93,10 +93,10 @@ class WorkspaceHelper:
             # The presumption here is that if the user doesn't have their own
             # database, then they are also missing the rest of their config.
             missing_users = []
-            for user in self._usernames:
-                db_name = self.da.get_database_name()
-                if db_name not in self.existing_databases:
-                    missing_users.append(user)
+            for username in self._usernames:
+                schema_name = self.da.to_schema_name(username)
+                if schema_name not in self.existing_databases:
+                    missing_users.append(username)
 
             missing_users.sort()
             return missing_users

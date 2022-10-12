@@ -1,9 +1,9 @@
 import unittest
 import typing
-from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef, NotebookError
+from dbacademy.dbpublish.notebook_def_class import NotebookDef, NotebookError
 
 class MyTestCase(unittest.TestCase):
-    from dbacademy_gems import dbgems
+    from dbacademy import dbgems
 
     def __init__(self, method_name):
         super().__init__(method_name)
@@ -27,7 +27,7 @@ class MyTestCase(unittest.TestCase):
 
     @staticmethod
     def create_notebook():
-        from dbacademy_courseware.dbbuild import BuildConfig
+        from dbacademy.dbbuild import BuildConfig
         version = "1.2.3"
         config = {
             "name": "Unit Test"

@@ -1,26 +1,34 @@
-from typing import Union
-from dbacademy_gems import dbgems
-
-
 class Paths:
+    from .lesson_config_class import LessonConfig
 
-    def __init__(self, working_dir_root: str, working_dir: str, datasets: str, user_db: Union[str, None], enable_streaming_support: bool):
-
-        self.datasets = datasets
-        self.user_db = user_db
-        self.working_dir = working_dir
+    def __init__(self, *, lesson_config: LessonConfig, working_dir_root: str, datasets: str, enable_streaming_support: bool):
 
         self._working_dir_root = working_dir_root
+
+        if lesson_config.name is None:
+            self.working_dir = working_dir_root
+        else:
+            self.working_dir = f"{self._working_dir_root}/{lesson_config.name}"
+
+        if lesson_config.created_catalog:
+            # A little hacky, but if we created the catalog, we don't have a user_db_path
+            # because UC will be managing the database location for us
+            self.user_db = None
+        else:
+            self.user_db = f"{self.working_dir}/database.db"
+
+        self.datasets = datasets
 
         # When working with streams, it helps to put all checkpoints in their
         # own directory relative the previously defined working_dir
         if enable_streaming_support:
-            self.checkpoints = f"{working_dir}/_checkpoints"
+            self.checkpoints = f"{self.working_dir}/_checkpoints"
 
     # noinspection PyGlobalUndefined
     @staticmethod
     def exists(path):
         global dbutils
+        from dbacademy_gems import dbgems
 
         """
         Returns true if the specified path exists else false.

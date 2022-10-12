@@ -2,13 +2,18 @@ import sys, pyspark
 from typing import List, Union, Any
 from .mock_dbutils_class import MockDBUtils
 
-sc: Union[None, pyspark.SparkContext] = None
-spark: Union[None, pyspark.sql.SparkSession] = None
-dbutils: Union[None, MockDBUtils] = None
 dbgems_module = sys.modules[globals()['__name__']]
+spark: Union[None, pyspark.sql.SparkSession] = None
+sc: Union[None, pyspark.SparkContext] = None
+dbutils: Union[None, MockDBUtils] = None
 
 
-def print_warning(title: str, message: str, length: int = 100) -> None:
+def is_deprecation_logging_enabled():
+    status = spark.conf.get("dbacademy.deprecation.logging", None)
+    return status is not None and str(status).lower() == "enabled"
+
+
+def print_warning(title: str, message: str, length: int = 100):
     title_len = length - len(title) - 3
     print(f"""* {title.upper()} {("*"*title_len)}""")
     for line in message.split("\n"):
@@ -16,45 +21,38 @@ def print_warning(title: str, message: str, length: int = 100) -> None:
     print("*"*length)
 
 
-def find_global(target: str) -> Any:
-    import inspect
-    caller_frame = inspect.currentframe().f_back
-
-    while caller_frame is not None:
-        caller_globals = caller_frame.f_globals
-        what = caller_globals.get(target)
-        if what:
-            return what
-        caller_frame = caller_frame.f_back
-
-    print_warning(title="DEPENDENCY ERROR", message=f"Global attribute {target} not found in any caller frames.")
-    return None
-
-
-def deprecation_logging_enabled() -> bool:
-    status = spark.conf.get("dbacademy.deprecation.logging", None)
-    return status is not None and status.lower() == "enabled"
-
-
 def deprecated(reason=None):
     def decorator(inner_function):
         def wrapper(*args, **kwargs):
-            if deprecation_logging_enabled():
+            if is_deprecation_logging_enabled():
                 assert reason is not None, f"The deprecated reason must be specified."
                 try:
                     import inspect
                     function_name = str(inner_function.__name__) + str(inspect.signature(inner_function))
-                    final_reason = f"From: {reason}\n{function_name}"
-                except:
-                    final_reason = reason  # just in case
+                    final_reason = f"{reason}\n{function_name}"
+                except: final_reason = reason  # just in case
 
                 print_warning(title="DEPRECATED", message=final_reason)
 
             return inner_function(*args, **kwargs)
 
         return wrapper
-
     return decorator
+
+
+@deprecated(reason="Use dbgems.dbutils instead.")
+def get_dbutils():  # -> dbruntime.dbutils.DBUtils:
+    return dbgems_module.dbutils
+
+
+@deprecated(reason="Use dbgems.spark instead.")
+def get_spark_session() -> pyspark.sql.SparkSession:
+    return dbgems_module.spark
+
+
+@deprecated(reason="Use dbgems.sc instead.")
+def get_session_context() -> pyspark.context.SparkContext:
+    return dbgems_module.sc
 
 
 def sql(query):
@@ -361,6 +359,20 @@ def stable_hash(*args, length: int) -> str:
         result += numerals[value % 36]
         value //= 36
     return "".join(result)
+
+
+def find_global(target):
+    import inspect
+    caller_frame = inspect.currentframe().f_back
+
+    while caller_frame is not None:
+        caller_globals = caller_frame.f_globals
+        what = caller_globals.get(target)
+        if what:
+            return what
+        caller_frame = caller_frame.f_back
+
+    return None
 
 
 dbgems_module.sc = find_global("sc")

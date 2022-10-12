@@ -4,7 +4,7 @@ import unittest
 class MyTestCase(unittest.TestCase):
 
     def test_load(self):
-        from dbacademy_courseware.dbbuild.build_config_class import BuildConfig
+        from dbacademy.dbbuild.build_config_class import BuildConfig
         config = {
             "name": "Test Suite",
             "notebook_config": {},

@@ -1,26 +1,8 @@
-from dbacademy_gems import dbgems
-
-class TestInstance:
-    def __init__(self, build_config, notebook, test_dir, test_type):
-        import hashlib
-
-        self.notebook = notebook
-        self.job_id = 0
-        self.run_id = 0
-        self.test_type = test_type
-
-        if notebook.include_solution:
-            self.notebook_path = f"{test_dir}/Solutions/{notebook.path}"
-        else:
-            self.notebook_path = f"{test_dir}/{notebook.path}"
-
-        hash_code = hashlib.sha256(self.notebook_path.encode()).hexdigest()
-        test_name = build_config.name.lower().replace(" ", "-")
-        self.job_name = f"[TEST] {test_name} | {test_type} | {hash_code}"
+from dbacademy import dbgems
+from dbacademy.dbbuild import BuildConfig, BuildUtils, TestInstance
 
 
 class TestSuite:
-    from dbacademy_courseware.dbbuild import BuildConfig
 
     TEST_TYPE_INTERACTIVE = "interactive"
     TEST_TYPE_STOCK = "stock"
@@ -29,7 +11,7 @@ class TestSuite:
     TEST_TYPES = [TEST_TYPE_INTERACTIVE, TEST_TYPE_STOCK, TEST_TYPE_PHOTON, TEST_TYPE_ML]
 
     def __init__(self, *, build_config: BuildConfig, test_dir: str, test_type: str, keep_success: bool = False):
-        from dbacademy_gems import dbgems
+        from dbacademy import dbgems
 
         self.test_dir = test_dir
         self.build_config = build_config
@@ -65,6 +47,9 @@ class TestSuite:
 
                 if self.client.workspace().get_status(test_instance.notebook_path) is None:
                     raise Exception(f"Notebook not found: {test_instance.notebook_path}")
+
+        url = f"https://{dbgems.get_browser_host_name()}/?o={dbgems.get_workspace_id()}#job/list/search/dbacademy.course:{build_config.build_name}?offset=0"
+        print(f"Test Suite: {url}")
 
     def get_all_job_names(self):
         job_names = list()
@@ -142,7 +127,7 @@ class TestSuite:
         return json_response["job_id"]
 
     def test_all_synchronously(self, test_round, fail_fast=True, service_principal: str = None, policy_id: str = None) -> bool:
-        from dbacademy_gems import dbgems
+        from dbacademy import dbgems
 
         if test_round not in self.test_rounds:
             print(f"** WARNING ** There are no notebooks in round #{test_round}")
@@ -193,7 +178,7 @@ class TestSuite:
         return passed
 
     def test_all_asynchronously(self, test_round: int, service_principal: str = None, policy_id: str = None) -> bool:
-        from dbacademy_gems import dbgems
+        from dbacademy import dbgems
 
         tests = self.test_rounds[test_round]
 
@@ -255,7 +240,6 @@ class TestSuite:
 
     def log_run(self, test, response):
         import time, uuid, requests, json
-        from dbacademy_courseware import to_job_url
 
         job_id = response.get("job_id", 0)
         run_id = response.get("run_id", 0)
@@ -300,7 +284,7 @@ class TestSuite:
             message_type = "warn"
         else:
             message_type = "info"
-        url = to_job_url(job_id=job_id, run_id=run_id)
+        url = BuildUtils.to_job_url(job_id=job_id, run_id=run_id)
         self.send_status_update(message_type, f"*`{result_state}` /{test.notebook.path}*\n\n{url}")
 
     def send_first_message(self):

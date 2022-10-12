@@ -17,5 +17,3 @@ class MockDBUtils:
 
     # noinspection PyPep8Naming
     def display(self, **kwargs): pass
-
-

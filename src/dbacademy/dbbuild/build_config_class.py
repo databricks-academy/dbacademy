@@ -1,6 +1,6 @@
 from typing import Type, List, Dict, Union
-from dbacademy_courseware import validate_type
 from dbacademy import dbgems
+from dbacademy.dbbuild import BuildUtils, NotebookDef, ResourceDiff, Translator, Publisher, TestSuite
 
 
 class BuildConfig:
@@ -19,8 +19,8 @@ class BuildConfig:
     def load(file: str, *, version: str):
         import json
 
-        validate_type(file, "file", str)
-        validate_type(version, "version", str)
+        BuildUtils.validate_type(file, "file", str)
+        BuildUtils.validate_type(version, "version", str)
 
         with open(file) as f:
             return BuildConfig.load_config(config=json.load(f), version=version)
@@ -112,8 +112,8 @@ class BuildConfig:
 
         import uuid, time, re
         from dbacademy import dbrest
-        from dbacademy_gems import dbgems
-        from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef
+        from dbacademy import dbgems
+        from .publish.notebook_def_class import NotebookDef
 
         self.__validated = False
 
@@ -189,8 +189,6 @@ class BuildConfig:
     #     return distribution_name.replace(" ", "-").replace(" ", "-").replace(" ", "-")
 
     def create_notebooks(self, *, include_solutions: bool, fail_fast: bool):
-        from ..dbpublish.notebook_def_class import NotebookDef
-
         assert self.source_dir is not None, "BuildConfig.source_dir must be specified"
 
         self.notebooks = dict()
@@ -403,25 +401,21 @@ class BuildConfig:
     def to_resource_diff(self):
         assert self.validated, f"Cannot diff until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed."
 
-        from dbacademy_courseware.dbpublish import ResourceDiff
         return ResourceDiff(self)
 
     def to_translator(self):
         assert self.validated, f"Cannot translate until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
-        from dbacademy_courseware.dbpublish import Translator
         return Translator(self)
 
     def to_publisher(self):
         assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
-        from dbacademy_courseware.dbpublish import Publisher
         return Publisher(self)
 
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
         assert self.validated, f"Cannot test until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
-        from dbacademy_courseware.dbtest import TestSuite
         return TestSuite(build_config=self,
                          test_dir=self.source_dir,
                          test_type=test_type,
@@ -429,7 +423,7 @@ class BuildConfig:
 
     @dbgems.deprecated(reason="Corresponding logic has been moved to the class Translator and its related capabilities")
     def select_i18n_language(self):
-        from dbacademy_gems import dbgems
+        from dbacademy import dbgems
 
         resources_folder = f"{self.source_repo}/Resources"
 

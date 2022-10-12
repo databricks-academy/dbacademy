@@ -2,7 +2,7 @@ import unittest
 
 
 class MyTestCase(unittest.TestCase):
-    from dbacademy_gems import dbgems
+    from dbacademy import dbgems
 
     @dbgems.deprecated(reason="Because I'm bored")
     def add(self, value_a, value_b):

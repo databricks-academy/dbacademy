@@ -12,7 +12,7 @@ class MyTestCase(unittest.TestCase):
         # return None
 
     def test_dbpublish(self):
-        from dbacademy_courseware.dbpublish.notebook_def_class import NotebookDef
+        from dbacademy.dbpublish.notebook_def_class import NotebookDef
         notebook = NotebookDef(build_config=None,
                                version="Unknown",
                                path="Agenda",

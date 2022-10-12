@@ -1,8 +1,9 @@
-from dbacademy_gems import dbgems
 from typing import Union
-from dbacademy_courseware.dbbuild import common
+from dbacademy import dbgems
+from dbacademy.dbbuild import BuildUtils
 
-class Validator:
+
+class PublisherValidator:
     from .publisher_class import Publisher
 
     def __init__(self, publisher: Publisher):
@@ -36,7 +37,7 @@ class Validator:
         return self.__validate_distribution_dbc(as_latest)
 
     def __validate_distribution_dbc(self, as_latest: bool):
-        from dbacademy_gems import dbgems
+        from dbacademy import dbgems
 
         label = "vLatest" if as_latest else self.version
         file_name = f"vLATEST/notebooks.dbc" if as_latest else f"v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
@@ -100,11 +101,10 @@ class Validator:
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 
         target_dir = f"{self.temp_repo_dir}/{self.username}-{self.build_name}-{branch}"
-        common.reset_git_repo(client=self.client,
-                              directory=target_dir,
-                              repo_url=f"https://github.com/databricks-academy/{self.build_name}.git",
-                              branch=branch,
-                              which=None)
+        BuildUtils.reset_git_repo(client=self.client,
+                                  directory=target_dir,
+                                  repo_url=f"https://github.com/databricks-academy/{self.build_name}.git",
+                                  branch=branch,
+                                  which=None)
         print()
         self.__validate_version_info(version=version, dbc_dir=target_dir)
-

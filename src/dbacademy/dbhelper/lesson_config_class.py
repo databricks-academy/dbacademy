@@ -1,7 +1,3 @@
-from typing import Union
-from .course_config_class import CourseConfig
-
-
 class LessonConfig:
     def __init__(self, *,
                  name: str,
@@ -13,7 +9,8 @@ class LessonConfig:
 
         from dbacademy_gems import dbgems
 
-        self.__name = name
+        self.name = name
+
         self.__installing_datasets = installing_datasets
         self.__requires_uc = requires_uc
         self.__enable_streaming_support = enable_streaming_support
@@ -37,16 +34,6 @@ class LessonConfig:
             assert self.is_uc_enabled_workspace, f"Cannot create a catalog, UC is not enabled for this workspace/cluster."
             assert not create_schema, f"Cannot create a user-specific schema when creating UC catalogs"
 
-        if self.is_uc_enabled_workspace:
-            from .dbacademy_helper_class import DBAcademyHelper
-
-            # By default, the catalog name will be the same as the default.
-            self.__catalog_name = DBAcademyHelper.CATALOG_UC_DEFAULT
-
-            # If we are creating a catalog, we will use a user-specific catalog
-            if create_catalog:
-                self.__catalog_name = self.to_catalog_name(self.username)
-
     @staticmethod
     def is_smoke_test():
         """
@@ -67,7 +54,19 @@ class LessonConfig:
 
     @name.setter
     def name(self, name: str):
+        import re
         self.__name = name
+
+        if name is None:
+            self.__clean_name = None
+        else:
+            value = re.sub(r"[^a-zA-Z\d]", "_", str(name))
+            while "__" in value: value = value.replace("__", "_")
+            self.__clean_name = name
+
+    @property
+    def clean_name(self) -> str:
+        return self.__clean_name
 
     @property
     def enable_streaming_support(self) -> bool:
@@ -76,10 +75,6 @@ class LessonConfig:
     @property
     def requires_uc(self) -> bool:
         return self.__requires_uc
-
-    @property
-    def catalog_name(self) -> str:
-        return self.__catalog_name
 
     @property
     def is_uc_enabled_workspace(self) -> bool:
@@ -110,35 +105,3 @@ class LessonConfig:
     @property
     def created_schema(self) -> bool:
         return self.__created_schema
-
-    @staticmethod
-    def to_catalog_name(username) -> str:
-        import re, hashlib
-        from .dbacademy_helper_class import DBAcademyHelper
-
-        local_part = username.split("@")[0]  # Split the username, dropping the domain
-        value = hashlib.sha3_512(username.encode('utf-8')).hexdigest()
-        username_hash = abs(int(re.sub(r"[a-z]", "", value))) & 10000
-        return DBAcademyHelper.clean_string(f"{local_part}-{username_hash}-dbacademy").lower()
-
-    @staticmethod
-    def to_schema_name(username: str, course: Union[CourseConfig, str]) -> str:
-        """
-        Given the specified username and course_code, creates a database name that follows the pattern "da-name_prefix@hash-course_code"
-        where name_prefix is the right hand of an email as in "john.doe" given "john.doe@example.com", hash is truncated hash based on
-        the full email address and course code.
-        :param username: The full username (e.g. email address) to compose the database name from.
-        :param course: The abbreviated version of the course's name or the CourseConfig object
-        :return: Returns the name of the database for the given user and course.
-        """
-        import re
-        from .dbacademy_helper_class import DBAcademyHelper
-
-        assert course is not None, f"The course parameter must be specified."
-        course_code = course.course_code if type(course) == CourseConfig else course
-
-        schema_name, da_hash = DBAcademyHelper.to_username_hash(username, course_code)
-        schema_name = f"da-{schema_name}@{da_hash}-{course_code}"                # Composite all the values to create the "dirty" database name
-        schema_name = re.sub(r"[^a-zA-Z\d]", "_", schema_name)                   # Replace all special characters with underscores (not digit or alpha)
-        while "__" in schema_name: schema_name = schema_name.replace("__", "_")  # Replace all double underscores with single underscores
-        return schema_name

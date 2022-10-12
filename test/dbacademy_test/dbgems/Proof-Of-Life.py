@@ -5,10 +5,7 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install \
-# MAGIC git+https://github.com/databricks-academy/dbacademy-gems@dev \
-# MAGIC git+https://github.com/databricks-academy/dbacademy-rest \
-# MAGIC --quiet --disable-pip-version-check
+# MAGIC %pip install git+https://github.com/databricks-academy/dbacademy --quiet --disable-pip-version-check
 
 # COMMAND ----------
 
