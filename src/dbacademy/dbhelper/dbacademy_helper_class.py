@@ -33,11 +33,9 @@ class DBAcademyHelper:
 
         assert lesson_config is not None, f"The parameter lesson_config:LessonConfig must be specified."
         self.__lesson_config = lesson_config
-        self.__lesson_config.lock_mutations()
 
         assert course_config is not None, f"The parameter course_config:CourseConfig must be specified."
         self.__course_config = course_config
-        self.__course_config.lock_mutations()
 
         self.__debug = debug
         self.__start = self.clock_start()
@@ -112,6 +110,9 @@ class DBAcademyHelper:
                            working_dir_root=self.working_dir_root,
                            datasets=datasets_path,
                            enable_streaming_support=lesson_config.enable_streaming_support)
+
+        self.__lesson_config.lock_mutations()
+        self.__course_config.lock_mutations()
 
     @property
     def current_dbr(self):
