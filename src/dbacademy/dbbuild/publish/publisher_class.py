@@ -166,7 +166,7 @@ class Publisher:
         errors = 0
 
         html = f"""<html><body style="font-size:16px">
-                         <div><a href="{BuildUtils.get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>"""
+                         <div><a href="{dbgems.get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>"""
         for notebook in main_notebooks:
             errors += len(notebook.errors)
             warnings += len(notebook.warnings)
@@ -288,7 +288,7 @@ Please feel free to reach out to me (via Slack) or anyone on the curriculum team
             print(file)
 
         html = f"""<html><body style="font-size:16px">
-                         <div><a href="{BuildUtils.get_workspace_url()}#workspace{target_docs_path}/index.html" target="_blank">See Published Version</a></div>
+                         <div><a href="{dbgems.get_workspace_url()}#workspace{target_docs_path}/index.html" target="_blank">See Published Version</a></div>
                    </body></html>"""
         dbgems.display_html(html)
 

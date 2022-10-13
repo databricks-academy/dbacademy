@@ -247,7 +247,7 @@ class Translator:
                                                   overwrite=True)
 
         html = f"""<html><body style="font-size:16px">
-                     <div><a href="{BuildUtils.get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>
+                     <div><a href="{dbgems.get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>
                    </body></html>"""
 
         dbgems.display_html(html)

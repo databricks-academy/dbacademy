@@ -219,6 +219,24 @@ def validate_dependencies(module: str, curriculum_workspaces_only=True) -> bool:
     return False
 
 
+def get_workspace_url():
+
+    workspaces = {
+        "3551974319838082": "https://curriculum-dev.cloud.databricks.com/?o=3551974319838082",
+        "8422030046858219": "https://8422030046858219.9.gcp.databricks.com/?o=8422030046858219",
+        "2472203627577334": "https://westus2.azuredatabricks.net/?o=2472203627577334"
+    }
+
+    if get_browser_host_name() is not None:
+        return f"https://{get_browser_host_name()}/?o={get_workspace_id()}"
+
+    elif get_workspace_id() in workspaces:
+        return workspaces.get(get_workspace_id())
+
+    else:
+        return f"https://{get_notebooks_api_token()}/?o={get_workspace_id()}"
+
+
 # noinspection PyUnresolvedReferences
 def proof_of_life(expected_get_username,
                   expected_get_tag,
