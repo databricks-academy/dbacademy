@@ -10,6 +10,8 @@ class LessonConfig:
                  installing_datasets: bool,
                  enable_streaming_support: bool):
 
+        self.__mutable = True
+
         self.name = name
 
         self.__installing_datasets = installing_datasets
@@ -17,8 +19,8 @@ class LessonConfig:
         self.__enable_streaming_support = enable_streaming_support
 
         # Will be unconditionally True
-        self.__created_schema = create_schema
-        self.__created_catalog = create_catalog
+        self.create_schema = create_schema
+        self.create_catalog = create_catalog
 
         try:
             row = dbgems.sql("SELECT current_user() as username, current_catalog() as catalog, current_database() as schema").first()
@@ -34,6 +36,12 @@ class LessonConfig:
             assert requires_uc, f"Inconsistent configuration: The parameter \"create_catalog\" was True and \"requires_uc\" was False."
             assert self.is_uc_enabled_workspace, f"Cannot create a catalog, UC is not enabled for this workspace/cluster."
             assert not create_schema, f"Cannot create a user-specific schema when creating UC catalogs"
+
+    def lock_mutations(self):
+        self.__mutable = False
+
+    def __assert_mutable(self):
+        assert self.__mutable, f"LessonConfig is no longer mutable; DBAcademyHelper has already been initialized."
 
     @staticmethod
     def is_smoke_test():
@@ -55,6 +63,7 @@ class LessonConfig:
     @name.setter
     def name(self, name: str):
         import re
+        self.__assert_mutable()
         self.__name = name
 
         if name is None:
@@ -99,9 +108,19 @@ class LessonConfig:
         return self.__username
 
     @property
-    def created_catalog(self) -> bool:
-        return self.__created_catalog
+    def create_catalog(self) -> bool:
+        return self.__create_catalog
+
+    @create_catalog.setter
+    def create_catalog(self, create_catalog: bool) -> None:
+        self.__assert_mutable()
+        self.__create_catalog = create_catalog
 
     @property
-    def created_schema(self) -> bool:
-        return self.__created_schema
+    def create_schema(self) -> bool:
+        return self.__create_schema
+
+    @create_schema.setter
+    def create_schema(self, create_schema: bool) -> None:
+        self.__assert_mutable()
+        self.__create_schema = create_schema

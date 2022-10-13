@@ -13,7 +13,7 @@ class Paths:
         else:
             self.working_dir = f"{self._working_dir_root}/{lesson_config.name}"
 
-        if lesson_config.created_catalog:
+        if lesson_config.create_catalog:
             # A little hacky, but if we created the catalog, we don't have a user_db_path
             # because UC will be managing the database location for us
             self.user_db = None

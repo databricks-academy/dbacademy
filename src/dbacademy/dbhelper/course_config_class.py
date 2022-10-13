@@ -14,6 +14,8 @@ class CourseConfig:
                  supported_dbrs: List[str],   # The enumerated list of DBRs supported by this course
                  expected_dbrs: str):         # The expected DBRs as specified at build-time.
 
+        self.__mutable = True
+
         self.__course_code = course_code
 
         self.course_name = course_name
@@ -27,10 +29,16 @@ class CourseConfig:
         self.supported_dbrs = supported_dbrs
         if expected_dbrs != "{{supported_dbrs}}":
             # This value is filled in at build time and ignored otherwise.
-            expected_dbrs = [e.strip() for e in  expected_dbrs.split(",")]
+            expected_dbrs = [e.strip() for e in expected_dbrs.split(",")]
             assert len(supported_dbrs) == len(expected_dbrs), f"The run-time and build-time list of supported DBRs does not match: {supported_dbrs} vs {expected_dbrs}"
             for dbr in supported_dbrs: assert dbr in expected_dbrs, f"The run-time DBR \"{dbr}\" was not find in the list of expected dbrs: {expected_dbrs}"
             for dbr in expected_dbrs: assert dbr in supported_dbrs, f"The build-time DBR \"{dbr}\" was not find in the list of supported dbrs: {supported_dbrs}"
+
+    def lock_mutations(self):
+        self.__mutable = False
+
+    def __assert_mutable(self):
+        assert self.__mutable, f"CourseConfig is no longer mutable; DBAcademyHelper has already been initialized."
 
     @property
     def course_code(self) -> str:
@@ -43,6 +51,7 @@ class CourseConfig:
     @course_name.setter
     def course_name(self, course_name):
         import re
+        self.__assert_mutable()
         self.__course_name = course_name
 
         self.__build_name = re.sub(r"[^a-zA-Z\d]", "-", course_name)
@@ -75,6 +84,7 @@ class CourseConfig:
 
     @remote_files.setter
     def remote_files(self, remote_fies: List[str]):
+        self.__assert_mutable()
         self.__remote_files = remote_fies
 
     @property
@@ -83,6 +93,7 @@ class CourseConfig:
 
     @supported_dbrs.setter
     def supported_dbrs(self, supported_dbrs: List[str]):
+        self.__assert_mutable()
 
         assert type(supported_dbrs) == list, f"Expected the parameter \"supported_dbrs\" to be of type \"list\", found \"{type(supported_dbrs)}\"."
         self.__supported_dbrs = [str(d) for d in supported_dbrs]
