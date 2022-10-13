@@ -15,8 +15,8 @@ class LessonConfig:
         self.name = name
 
         self.installing_datasets = installing_datasets
-        self.__requires_uc = requires_uc
-        self.__enable_streaming_support = enable_streaming_support
+        self.requires_uc = requires_uc
+        self.enable_streaming_support = enable_streaming_support
 
         # Will be unconditionally True
         self.create_schema = create_schema
@@ -86,9 +86,19 @@ class LessonConfig:
     def enable_streaming_support(self) -> bool:
         return self.__enable_streaming_support
 
+    @enable_streaming_support.setter
+    def enable_streaming_support(self, enable_streaming_support) -> None:
+        self.__assert_mutable()
+        self.__enable_streaming_support = enable_streaming_support
+
     @property
     def requires_uc(self) -> bool:
         return self.__requires_uc
+
+    @requires_uc.setter
+    def requires_uc(self, requires_uc) -> None:
+        self.__assert_mutable()
+        self.__requires_uc = requires_uc
 
     @property
     def is_uc_enabled_workspace(self) -> bool:
