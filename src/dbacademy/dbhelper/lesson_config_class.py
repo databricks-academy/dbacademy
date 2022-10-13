@@ -14,7 +14,7 @@ class LessonConfig:
 
         self.name = name
 
-        self.__installing_datasets = installing_datasets
+        self.installing_datasets = installing_datasets
         self.__requires_uc = requires_uc
         self.__enable_streaming_support = enable_streaming_support
 
@@ -53,8 +53,13 @@ class LessonConfig:
         return dbgems.spark.conf.get(DBAcademyHelper.SMOKE_TEST_KEY, "false").lower() == "true"
 
     @property
-    def installing_datasets(self):
+    def installing_datasets(self) -> bool:
         return self.__installing_datasets
+
+    @installing_datasets.setter
+    def installing_datasets(self, installing_datasets: bool):
+        self.__assert_mutable()
+        self.__installing_datasets = installing_datasets
 
     @property
     def name(self) -> str:
