@@ -22,7 +22,7 @@ class DBAcademyHelper:
 
     REQUIREMENTS = []
 
-    def __init__(self, *,
+    def __init__(self,
                  course_config: CourseConfig,
                  lesson_config: LessonConfig,
                  debug: bool = False):
