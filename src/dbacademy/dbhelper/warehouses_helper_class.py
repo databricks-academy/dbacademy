@@ -40,7 +40,7 @@ class WarehousesHelper:
                                           max_num_clusters=1,
                                           enable_serverless_compute=enable_serverless_compute)
 
-    def create_shared_sql_warehouse(self, name: str = "DBAcademy Warehouse", auto_stop_mins=120, enable_serverless_compute=False):
+    def create_shared_sql_warehouse(self, name: str, auto_stop_mins=120, enable_serverless_compute=False):
         return self._create_sql_warehouse(username=None,
                                           name=name,
                                           auto_stop_mins=auto_stop_mins,
