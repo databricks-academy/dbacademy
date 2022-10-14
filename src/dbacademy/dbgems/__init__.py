@@ -227,7 +227,12 @@ def get_workspace_url():
         "2472203627577334": "https://westus2.azuredatabricks.net/?o=2472203627577334"
     }
 
-    if get_browser_host_name() is not None:
+    workspace_url = sc.getConf().get("spark.databricks.workspaceUrl", defaultValue=None)
+
+    if workspace_url is not None:
+        return f"https://{workspace_url}/?o={get_workspace_id()}"
+
+    elif get_browser_host_name() is not None:
         return f"https://{get_browser_host_name()}/?o={get_workspace_id()}"
 
     elif get_workspace_id() in workspaces:
