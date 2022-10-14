@@ -27,6 +27,7 @@ class DBAcademyHelper:
                  lesson_config: LessonConfig,
                  debug: bool = False):
 
+        import py4j
         from .workspace_helper_class import WorkspaceHelper
         from .dev_helper_class import DevHelper
         from .tests.test_helper_class import TestHelper
@@ -55,8 +56,15 @@ class DBAcademyHelper:
         self.tests = TestHelper(self)
 
         # With requirements initialized, we can assert our spark versions.
-        self.__current_dbr = self.client.clusters.get_current_spark_version()
-        assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\".", "Spark Version")
+        # noinspection PyUnresolvedReferences
+        try:
+            self.__current_dbr = self.client.clusters.get_current_spark_version()
+            assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\".", "Spark Version")
+        except py4j.protocol.Py4JError as e:
+            if "CommandContext.tags() is not whitelisted" not in str(e):
+                raise e  # This error arises when running under a secured server
+                # where access to tags are restricted. In this one case, we can
+                # forgo validating the current spark version and move on.
 
         # Are we running under test? If so we can "optimize" for parallel execution
         # without affecting the student's runtime-experience. As in the student can
