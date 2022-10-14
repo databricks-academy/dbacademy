@@ -29,7 +29,7 @@ class DatabasesHelper:
         else:
             print(f"Skipping database drop for {username}")
 
-    def create_databases(self, drop_existing: bool, post_create: Callable[[], None] = None):
+    def create_databases(self, drop_existing: bool, post_create: Callable[[str, str], None] = None):
         self.workspace.do_for_all_users(lambda username: self.__create_database_for(username=username,
                                                                                     drop_existing=drop_existing,
                                                                                     post_create=post_create))
@@ -37,7 +37,7 @@ class DatabasesHelper:
         self.workspace._usernames = None
         self.workspace._existing_databases = None
 
-    def __create_database_for(self, username: str, drop_existing: bool, post_create: Callable[[str], None] = None):
+    def __create_database_for(self, username: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
         db_name = self.da.to_schema_name(username=username)
         db_path = f"dbfs:/mnt/dbacademy-users/{username}/{self.da.course_config.course_name}/database.db"
 
@@ -49,11 +49,16 @@ class DatabasesHelper:
 
         dbgems.sql(f"CREATE DATABASE IF NOT EXISTS {db_name} LOCATION '{db_path}';")
 
+        msg = f"Created schema \"{db_name}\" for {username}, dropped existing: {drop_existing}"
+
         if post_create:
             # Call the post-create init function if defined
-            post_create(db_name)
+            response = post_create(username, db_name)
+            if response is not None:
+                msg += "\n"
+                msg += str(response)
 
-        return print(f"Created schema \"{db_name}\" for {username}, dropped existing: {drop_existing}")
+        return print(msg)
 
     def configure_permissions(self, notebook_name, spark_version="10.4.x-scala2.12"):
 
