@@ -17,9 +17,8 @@ class TestCase(object):
                  points: int,
                  hint):
 
-        # Because I cannot figure out how to resolve circular references
-        expected_type = "<class 'dbacademy_helper.tests.test_suite_class.TestSuite'>"
-        assert str(type(suite)) == expected_type, f"Expected the parameter \"suite\" to be of type TestSuite, found {type(suite)}."
+        from dbacademy.dbhelper import TestSuite
+        assert str(type(suite)) == TestSuite, f"Expected the parameter \"suite\" to be of type TestSuite, found {type(suite)}."
 
         assert type(description) == str, f"Expected the parameter \"description\" to be of type str, found {type(description)}."
 
