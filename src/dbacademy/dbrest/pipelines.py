@@ -30,12 +30,13 @@ class PipelinesClient(ApiContainer):
     #     return self.client.execute_get_json(f"{self.base_uri}/{pipeline_id}/events")
 
     def get_by_id(self, pipeline_id):
-        return self.client.execute_get_json(f"{self.base_uri}/{pipeline_id}")
+        return self.client.execute_get_json(f"{self.base_uri}/{pipeline_id}", expected=[200, 404])
 
     def get_by_name(self, pipeline_name):
         for pipeline in self.list():
             if pipeline.get("name") == pipeline_name:
-                return self.get_by_id(pipeline.get("pipeline_id"))
+                pipeline_id = pipeline.get("pipeline_id")
+                return self.get_by_id(pipeline_id)
         return None
 
     def get_update_by_id(self, pipeline_id, update_id):
