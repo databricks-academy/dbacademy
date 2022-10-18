@@ -1,4 +1,4 @@
-from typing import List, Callable, Iterable, Any
+from typing import List, Callable, Iterable, Any, Sized
 import pyspark
 
 from .test_case_class import TestCase
@@ -107,7 +107,7 @@ class TestSuite(object):
         self.ids.add(test_case.test_case_id)
         return self
 
-    def test(self, test_function: Callable[[], Any], actual_value: Any, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+    def test(self, test_function: Callable[[], Any], actual_value: Callable[[], Any], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
 
         return self.add_test(TestCase(suite=self,
                                       test_case_id=test_case_id,
@@ -119,7 +119,7 @@ class TestSuite(object):
                                       hint=hint,
                                       test_function=test_function))
 
-    def test_equals(self, actual_value, expected_value, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+    def test_equals(self, actual_value: Callable[[], Any], expected_value: Any, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
 
         return self.add_test(TestCase(suite=self,
                                       test_case_id=test_case_id,
@@ -129,21 +129,9 @@ class TestSuite(object):
                                       escape_html=escape_html,
                                       points=points,
                                       hint=hint,
-                                      test_function=lambda: actual_value == expected_value))
+                                      test_function=lambda: actual_value() == expected_value))
 
-    def test_true(self, actual_value: bool, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
-
-        return self.add_test(TestCase(suite=self,
-                                      test_case_id=test_case_id,
-                                      description=description,
-                                      actual_value=actual_value,
-                                      depends_on=depends_on,
-                                      escape_html=escape_html,
-                                      points=points,
-                                      hint=hint,
-                                      test_function=lambda: actual_value is True))
-
-    def test_false(self, actual_value: bool, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+    def test_true(self, actual_value: Callable[[], bool], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
 
         return self.add_test(TestCase(suite=self,
                                       test_case_id=test_case_id,
@@ -153,21 +141,9 @@ class TestSuite(object):
                                       escape_html=escape_html,
                                       points=points,
                                       hint=hint,
-                                      test_function=lambda: actual_value is False))
+                                      test_function=lambda: actual_value() is True))
 
-    def test_is_none(self, actual_value: Any, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
-
-        return self.add_test(TestCase(suite=self,
-                                      test_case_id=test_case_id,
-                                      description=description,
-                                      actual_value=actual_value,
-                                      depends_on=depends_on,
-                                      escape_html=escape_html,
-                                      points=points,
-                                      hint=hint,
-                                      test_function=lambda: actual_value is None))
-
-    def test_not_none(self, actual_value: Any, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+    def test_false(self, actual_value: Callable[[], bool], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
 
         return self.add_test(TestCase(suite=self,
                                       test_case_id=test_case_id,
@@ -177,11 +153,9 @@ class TestSuite(object):
                                       escape_html=escape_html,
                                       points=points,
                                       hint=hint,
-                                      test_function=lambda: actual_value is not None))
+                                      test_function=lambda: actual_value() is False))
 
-    def test_length(self, actual_value: Any, expected_length: int, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
-
-        enumerations = [str, bytes, list, dict, tuple, range, set, frozenset]
+    def test_is_none(self, actual_value: Callable[[], Any], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
 
         return self.add_test(TestCase(suite=self,
                                       test_case_id=test_case_id,
@@ -191,7 +165,31 @@ class TestSuite(object):
                                       escape_html=escape_html,
                                       points=points,
                                       hint=hint,
-                                      test_function=lambda: type(actual_value) in enumerations and len(actual_value) == expected_length))
+                                      test_function=lambda: actual_value() is None))
+
+    def test_not_none(self, actual_value: Callable[[], Any], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+
+        return self.add_test(TestCase(suite=self,
+                                      test_case_id=test_case_id,
+                                      description=description,
+                                      actual_value=actual_value,
+                                      depends_on=depends_on,
+                                      escape_html=escape_html,
+                                      points=points,
+                                      hint=hint,
+                                      test_function=lambda: actual_value() is not None))
+
+    def test_length(self, actual_value: Callable[[], Sized], expected_length: int, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+
+        return self.add_test(TestCase(suite=self,
+                                      test_case_id=test_case_id,
+                                      description=description,
+                                      actual_value=actual_value,
+                                      depends_on=depends_on,
+                                      escape_html=escape_html,
+                                      points=points,
+                                      hint=hint,
+                                      test_function=lambda: len(actual_value()) == expected_length))
 
     def fail_pre_req(self, *, test_case_id: str, e: Exception, depends_on: Iterable[str] = None):
         self.fail(test_case_id=test_case_id,
@@ -205,14 +203,14 @@ class TestSuite(object):
         return self.add_test(TestCase(suite=self,
                                       test_case_id=test_case_id,
                                       description=description,
-                                      actual_value=False,
+                                      actual_value=lambda: False,
                                       depends_on=depends_on,
                                       escape_html=escape_html,
                                       points=points,
                                       hint=hint,
                                       test_function=lambda: False))
 
-    def test_floats(self, actual_value, expected_value, description: str, *, test_case_id: str = None, tolerance=0.01, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+    def test_floats(self, actual_value: Callable[[], float], expected_value: Any, description: str, *, test_case_id: str = None, tolerance=0.01, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
 
         return self.add_test(TestCase(suite=self,
                                       test_case_id=test_case_id,
@@ -222,21 +220,9 @@ class TestSuite(object):
                                       escape_html=escape_html,
                                       points=points,
                                       hint=hint,
-                                      test_function=lambda: self.compare_floats(actual_value, expected_value, tolerance)))
+                                      test_function=lambda: self.compare_floats(actual_value(), expected_value, tolerance)))
 
-    def test_rows(self, actual_value: pyspark.sql.Row, expected_value: pyspark.sql.Row, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
-
-        return self.add_test(TestCase(suite=self,
-                                      test_case_id=test_case_id,
-                                      description=description,
-                                      actual_value=actual_value,
-                                      depends_on=depends_on,
-                                      escape_html=escape_html,
-                                      points=points,
-                                      hint=hint,
-                                      test_function=lambda: self.compare_rows(actual_value, expected_value)))
-
-    def test_data_frames(self, actual_value: pyspark.sql.DataFrame, expected_value: pyspark.sql.DataFrame, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+    def test_rows(self, actual_value: Callable[[], pyspark.sql.Row], expected_value: pyspark.sql.Row, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
 
         return self.add_test(TestCase(suite=self,
                                       test_case_id=test_case_id,
@@ -246,21 +232,9 @@ class TestSuite(object):
                                       escape_html=escape_html,
                                       points=points,
                                       hint=hint,
-                                      test_function=lambda: self.compare_data_frames(actual_value, expected_value)))
+                                      test_function=lambda: self.compare_rows(actual_value(), expected_value)))
 
-    def test_contains(self, actual_value: Any, list_of_values: List[Any], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
-
-        return self.add_test(TestCase(suite=self,
-                                      test_case_id=test_case_id,
-                                      description=description,
-                                      actual_value=actual_value,
-                                      depends_on=depends_on,
-                                      escape_html=escape_html,
-                                      points=points,
-                                      hint=hint,
-                                      test_function=lambda: actual_value in list_of_values))
-
-    def test_sequence(self, actual_value: list, expected_value: list, test_column_order: bool, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+    def test_data_frames(self, actual_value: Callable[[], pyspark.sql.DataFrame], expected_value: pyspark.sql.DataFrame, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
 
         return self.add_test(TestCase(suite=self,
                                       test_case_id=test_case_id,
@@ -270,17 +244,56 @@ class TestSuite(object):
                                       escape_html=escape_html,
                                       points=points,
                                       hint=hint,
-                                      test_function=lambda: self.compare_lists(actual_value, expected_value, test_column_order=test_column_order)))
+                                      test_function=lambda: self.compare_data_frames(actual_value(), expected_value)))
 
-    def test_struct_field(self, schema: pyspark.sql.types.StructType, expected_name: str, expected_type: str, expected_nullable: str, *, description: str = None, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+    def test_contains(self, actual_value: Callable[[], Any], expected_values: Iterable[Any], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
 
-        fields = [f for f in schema.fields if f.name == expected_name]
-        field = None if len(fields) == 0 else fields[0]
+        return self.add_test(TestCase(suite=self,
+                                      test_case_id=test_case_id,
+                                      description=description,
+                                      actual_value=actual_value,
+                                      depends_on=depends_on,
+                                      escape_html=escape_html,
+                                      points=points,
+                                      hint=hint,
+                                      test_function=lambda: actual_value() in expected_values))
 
-        full_expected_type = f"<class 'pyspark.sql.types.{expected_type}'>"
-        actual_value = None if field is None else ", ".join([str(field.name),
-                                                            str(type(field.dataType)).replace("<class 'pyspark.sql.types.", "").replace("'>", ""),
-                                                            str(field.nullable)])
+    def test_sequence(self, actual_value: Callable[[], list], expected_value: list, test_column_order: bool, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+
+        return self.add_test(TestCase(suite=self,
+                                      test_case_id=test_case_id,
+                                      description=description,
+                                      actual_value=actual_value,
+                                      depends_on=depends_on,
+                                      escape_html=escape_html,
+                                      points=points,
+                                      hint=hint,
+                                      test_function=lambda: self.compare_lists(actual_value(), expected_value, test_column_order=test_column_order)))
+
+    def test_struct_field_in_struct_type(self,
+                                         struct_type: Callable[[], pyspark.sql.types.StructType],
+                                         expected_name: str,
+                                         expected_type: str,
+                                         expected_nullable: str,
+                                         *,
+                                         description: str = None, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+
+        def actual_value() -> str:
+            schema = struct_type()
+            fields = [f for f in schema.fields if f.name == expected_name]
+            field = None if len(fields) == 0 else fields[0]
+
+            return None if field is None else ", ".join([str(field.name),
+                                                         str(type(field.dataType)).replace("<class 'pyspark.sql.types.", "").replace("'>", ""),
+                                                         str(field.nullable)])
+
+        def test_schema() -> bool:
+            schema = struct_type()
+            fields = [f for f in schema.fields if f.name == expected_name]
+            field = None if len(fields) == 0 else fields[0]
+
+            return field is not None and field.name == expected_name and str(type(field.dataType)) == f"<class 'pyspark.sql.types.{expected_type}'>" and (expected_nullable is None or field.nullable == expected_nullable)
+
         return self.add_test(TestCase(suite=self,
                                       test_case_id=test_case_id,
                                       description=description or f"Schema contains \"{expected_name}\" of type {expected_type} (nullable={expected_nullable})",
@@ -289,7 +302,10 @@ class TestSuite(object):
                                       escape_html=escape_html,
                                       points=points,
                                       hint=hint or "Found [[ACTUAL_VALUE]]",
-                                      test_function=lambda: field is not None and field.name == expected_name and str(type(field.dataType)) == full_expected_type and (expected_nullable is None or field.nullable == expected_nullable)))
+                                      test_function=test_schema))
+
+    def testing(self):
+        pass
 
     @staticmethod
     def compare_lists(value_a: list, value_b: list, test_column_order: bool):

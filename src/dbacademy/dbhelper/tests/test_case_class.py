@@ -9,8 +9,8 @@ class TestCase(object):
                  *,
                  suite,
                  test_function: Callable[[], Any],
+                 actual_value: Callable[[], Any],
                  description: str,
-                 actual_value: Any,
                  test_case_id: str,
                  depends_on: List[str],
                  escape_html: bool,
@@ -41,8 +41,17 @@ class TestCase(object):
     def update_hint(self):
         from html import escape
         if self.hint is not None:
-            self.hint = self.hint.replace("[[ACTUAL_VALUE]]", escape(str(self.actual_value)))
             try:
-                self.hint = self.hint.replace("[[LEN_ACTUAL_VALUE]]", str(len(self.actual_value)))
+                actual_value = self.actual_value()
             except:
-                self.hint = self.hint.replace("[[LEN_ACTUAL_VALUE]]", escape(str(self.actual_value)))
+                actual_value = "actual_value() call failed"
+
+            # Set the hint's ACTUAL_VALUE to the actual value.
+            self.hint = self.hint.replace("[[ACTUAL_VALUE]]", escape(str(actual_value)))
+
+            try:
+                # Set the hint's LEN_ACTUAL_VALUE to the length of the actual value.
+                self.hint = self.hint.replace("[[LEN_ACTUAL_VALUE]]", str(len(actual_value)))
+            except:
+                # If that failed (e.g. length() cannot be used on the object), use a default rendering
+                self.hint = self.hint.replace("[[LEN_ACTUAL_VALUE]]", escape(str(actual_value)))
