@@ -7,6 +7,12 @@ class ClustersHelper:
 
     T = TypeVar("T")
 
+    POLICY_ALL_PURPOSE = "DBAcademy All-Purpose Policy"
+    POLICY_JOBS_ONLY = "DBAcademy Jobs-Only Policy"
+    POLICY_DLT_ONLY = "DBAcademy DLT-Only Policy"
+
+    POOLS_DEFAULT = "DBAcademy Pool"
+
     def __init__(self, workspace: WorkspaceHelper, da: DBAcademyHelper):
         self.da = da
         self.client = da.client
@@ -22,7 +28,7 @@ class ClustersHelper:
             ("dbacademy.source", self.da.clean_string("Smoke-Test" if self.da.is_smoke_test() else self.da.course_config.course_name))
         ]
 
-        name = "DBAcademy Pool"
+        name = ClustersHelper.POOLS_DEFAULT
         pool = self.client.instance_pools.create_or_update(instance_pool_name=name,
                                                            idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
                                                            min_idle_instances=min_idle_instances,
@@ -61,7 +67,7 @@ class ClustersHelper:
         return policy_id
 
     def create_all_purpose_policy(self, instance_pool_id: str) -> str:
-        return self.__create_cluster_policy(instance_pool_id, "DBAcademy All-Purpose Policy", {
+        return self.__create_cluster_policy(instance_pool_id, ClustersHelper.POLICY_ALL_PURPOSE, {
             "cluster_type": {
                 "type": "fixed",
                 "value": "all-purpose"
@@ -76,7 +82,7 @@ class ClustersHelper:
         })
 
     def create_jobs_policy(self, instance_pool_id: str) -> str:
-        return self.__create_cluster_policy(instance_pool_id, "DBAcademy Jobs-Only Policy", {
+        return self.__create_cluster_policy(instance_pool_id, ClustersHelper.POLICY_JOBS_ONLY, {
             "cluster_type": {
                 "type": "fixed",
                 "value": "job"
@@ -84,7 +90,7 @@ class ClustersHelper:
         })
 
     def create_dlt_policy(self) -> str:
-        return self.__create_cluster_policy(None, "DBAcademy DLT-Only Policy", {
+        return self.__create_cluster_policy(None, ClustersHelper.POLICY_DLT_ONLY, {
             "cluster_type": {
                 "type": "fixed",
                 "value": "dlt"
