@@ -2,9 +2,9 @@ import setuptools
 from setuptools import find_packages
 
 reqs = [
-    "setuptools",
-    "requests",
-    "urllib3",
+    # "setuptools",  # Provided dependency
+    # "requests",    # Provided dependency
+    # "urllib3",     # Provided dependency
     "overrides",
     "Deprecated",
 ]
