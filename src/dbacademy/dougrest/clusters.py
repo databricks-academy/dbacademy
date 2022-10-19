@@ -1,6 +1,6 @@
 from typing import Dict
 
-from dbacademy.dougrest.cluster_policies import ClustersPolicyClient
+from dbacademy.dbrest.cluster_policies import ClustersPolicyClient
 from dbacademy.rest.common import ApiContainer
 
 

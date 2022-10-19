@@ -103,30 +103,14 @@ class WorkspaceClient(ApiContainer):
         return self.client.execute_post_json(f"{self.client.endpoint}/api/2.0/workspace/import", payload)
 
     def export_notebook(self, path: str) -> str:
-        from urllib.parse import urlencode
-        params = urlencode({
-            "path": path,
-            "direct_download": "true"
-        })
-        return self.client.execute_get(f"{self.client.endpoint}/api/2.0/workspace/export?{params}").text
+        return self.client.simple_get("2.0/workspace/export", path=path, format="SOURCE", direct_download=True)
 
     def export_dbc(self, path):
-        from urllib.parse import urlencode
-        params = urlencode({
+        return self.client.api_raw("GET", "2.0/workspace/export", {
             "path": path,
             "format": "DBC",
-            "direct_download": "true"
-        })
-        return self.client.execute_get(f"{self.client.endpoint}/api/2.0/workspace/export?{params}").content
+            "direct_download": True,
+        }).content
 
-    def get_status(self, path) -> Union[None, dict]:
-        from urllib.parse import urlencode
-        params = urlencode({
-            "path": path
-        })
-        response = self.client.execute_get(f"{self.client.endpoint}/api/2.0/workspace/get-status?{params}", expected=[200, 404])
-        if response.status_code == 404:
-            return None
-        else:
-            assert response.status_code == 200, f"({response.status_code}): {response.text}"
-            return response.json()
+    def get_status(self, path: str) -> Union[None, dict]:
+        return self.client.simple_get("2.0/workspace/get-status", path=path, expected=[200, 404])

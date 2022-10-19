@@ -1,12 +1,14 @@
 from typing import Any, Dict, List, Literal
-
 from dbacademy.rest.common import *
 
 
 __all__ = ["PermissionsCrud"]
 
 valid_whats = ("user_name", "group_name", "service_principal_name")
+
+# noinspection PyTypeHints
 What = Literal[valid_whats]
+
 PermissionLevel = str
 ACL = Dict[str, Any]
 PermissionLevelList = List[Dict[str, str]]
@@ -14,6 +16,8 @@ PermissionLevelList = List[Dict[str, str]]
 
 class PermissionsCrud(ApiContainer):
     valid_permissions = ()
+
+    # noinspection PyTypeHints
     PermissionLevel = Literal[valid_permissions]
 
     def __init__(self,
@@ -61,7 +65,7 @@ class PermissionsCrud(ApiContainer):
     def get(self, id_value: ItemId) -> ACL:
         return self.client.api("GET", f"{self.path}/{id_value}")
 
-    def update(self, id_value, what: What, value: str, permission_level: PermissionLevel):
+    def update(self, id_value: ItemId, what: What, value: str, permission_level: PermissionLevel):
         self._validate_what(what)
         self._validate_permission_level(permission_level)
         acl = [
@@ -72,14 +76,14 @@ class PermissionsCrud(ApiContainer):
             ]
         return self.client.api_simple("PATCH", f"{self.path}/{id_value}", access_control_list=acl)
 
-    def replace(self, id_value: str, acl: ACL):
+    def replace(self, id_value: ItemId, acl: ACL):
         return self.client.api_simple("PUT", f"{self.path}/{id_value}", access_control_list=acl)
 
-    def update_user(self, id_value: str, username, permission_level):
+    def update_user(self, id_value: ItemId, username, permission_level):
         return self.update(id_value, "user_name", username, permission_level)
 
-    def update_group(self, id_value: str, group_name, permission_level):
+    def update_group(self, id_value: ItemId, group_name, permission_level):
         return self.update(id_value, "group_name", group_name, permission_level)
 
-    def update_service_principal(self, id_value: str, service_principal_name, permission_level):
+    def update_service_principal(self, id_value: ItemId, service_principal_name, permission_level):
         return self.update(id_value, "service_principal_name", service_principal_name, permission_level)

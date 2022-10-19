@@ -1,11 +1,11 @@
 from dbacademy.dbrest import DBAcademyRestClient
-from dbacademy.rest.common import ApiContainer
+from dbacademy.rest.common import ApiContainer, ApiClient
 
 
 class ClustersPolicyClient(ApiContainer):
-    def __init__(self, client: DBAcademyRestClient):
+    def __init__(self, client: ApiClient):
         self.client = client
-        self.base_uri = f"{self.client.endpoint}/api/2.0/policies/clusters"
+        self.base_uri = f"{self.client.url}/2.0/policies/clusters"
 
     def get_by_id(self, policy_id):
         return self.client.execute_get_json(f"{self.base_uri}/get?policy_id={policy_id}")
