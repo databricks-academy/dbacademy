@@ -715,7 +715,7 @@ class DBAcademyHelper:
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
                 print(f"({self.clock_stopped(start)} seconds)")
 
-        print(f"... completed ({self.clock_stopped(validation_start)} seconds)\n")
+        print(f"...completed {self.clock_stopped(validation_start)}\n")
 
     def run_high_availability_job(self, job_name, notebook_path):
 
