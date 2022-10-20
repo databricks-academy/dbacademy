@@ -536,7 +536,7 @@ class DBAcademyHelper:
         print("\nPredefined paths variables:")
         self.paths.print(self_name="DA.")
 
-        print(f"\nSetup completed in {self.clock_stopped(self.__start)} seconds")
+        print(f"\nSetup completed {self.clock_stopped(self.__start)}")
 
     def install_datasets(self, reinstall_datasets=False):
         """
@@ -583,11 +583,11 @@ class DBAcademyHelper:
             target_path = f"{self.paths.datasets}/{f.name}"
 
             dbgems.dbutils.fs.cp(source_path, target_path, True)
-            print(f"({self.clock_stopped(start)} seconds)")
+            print(self.clock_stopped(start))
 
         self.validate_datasets(repaired_dataset=False)
 
-        print(f"""\nThe install of the datasets completed successfully in {self.clock_stopped(install_start)} seconds.""")
+        print(f"""\nThe install of the datasets completed successfully {self.clock_stopped(install_start)}""")
 
     def print_copyrights(self, mappings: dict = None):
         if mappings is None:
@@ -658,7 +658,7 @@ class DBAcademyHelper:
         print("...listing local files", end="...")
         start = self.clock_start()
         local_files = self.list_r(self.paths.datasets)
-        print(f"({self.clock_stopped(start)} seconds)")
+        print(self.clock_stopped(start))
 
         ############################################################
         # Repair directories first, this will pick up the majority
@@ -674,7 +674,7 @@ class DBAcademyHelper:
                 repaired_paths.append(file)
                 print(f"...removing extra path: {file}", end="...")
                 dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
-                print(f"({self.clock_stopped(start)} seconds)")
+                print(self.clock_stopped(start))
 
         # Add extra directories (cascade effect vs one file at a time)
         for file in self.course_config.remote_files:
@@ -685,7 +685,7 @@ class DBAcademyHelper:
                 source_file = f"{self.data_source_uri}/{file[1:]}"
                 target_file = f"{self.paths.datasets}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
-                print(f"({self.clock_stopped(start)} seconds)")
+                print(self.clock_stopped(start))
 
         ############################################################
         # Repair only straggling files
@@ -703,7 +703,7 @@ class DBAcademyHelper:
                 start = self.clock_start()
                 print(f"...removing extra file: {file}", end="...")
                 dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
-                print(f"({self.clock_stopped(start)} seconds)")
+                print(self.clock_stopped(start))
 
         # Add one file at a time (picking up what was not covered by processing directories)
         for file in self.course_config.remote_files:
@@ -713,7 +713,7 @@ class DBAcademyHelper:
                 source_file = f"{self.data_source_uri}/{file[1:]}"
                 target_file = f"{self.paths.datasets}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
-                print(f"({self.clock_stopped(start)} seconds)")
+                print(self.clock_stopped(start))
 
         print(f"...completed {self.clock_stopped(validation_start)}\n")
 
