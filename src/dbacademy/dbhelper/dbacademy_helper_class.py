@@ -631,7 +631,7 @@ class DBAcademyHelper:
         results.sort()
         return results
 
-    def validate_datasets(self, *, repaired_dataset: bool):
+    def validate_datasets(self, *, repaired_dataset: bool) -> None:
         """
         Validates the "install" of the datasets by recursively listing all files in the remote data repository as well as the local data repository, validating that each file exists but DOES NOT validate file size or checksum.
         """
@@ -658,27 +658,60 @@ class DBAcademyHelper:
         local_files = self.list_r(self.paths.datasets)
         print(f"({self.clock_start() - start} seconds)")
 
-        start = self.clock_start()
-        errors = []
+        ############################################################
+        # Repair directories first, this will pick up the majority
+        # of the issues by addressing the larger sets.
+        ############################################################
 
+        repaired_paths = []
+
+        # Remove extra directories (cascade effect vs one file at a time)
         for file in local_files:
-            if file not in self.course_config.remote_files:
-                what = "path" if file.endswith("/") else "file"
-                errors.append(f"...extra {what}: {file}")
+            if file not in self.course_config.remote_files and file.endswith("/"):
+                start = self.clock_start()
+                repaired_paths.append(file)
+                print(f"...removing extra path: {file}", end="...")
+                dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
+                print(f"({self.clock_start() - start} seconds)")
 
+        # Add extra directories (cascade effect vs one file at a time)
         for file in self.course_config.remote_files:
-            if file not in local_files:
-                what = "path" if file.endswith("/") else "file"
-                errors.append(f"...missing {what}: {file}")
+            if file not in local_files and file.endswith("/"):
+                start = self.clock_start()
+                repaired_paths.append(file)
+                print(f"...repairing missing path: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
                 target_file = f"{self.paths.datasets}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
+                print(f"({self.clock_start() - start} seconds)")
 
-        print(f"({self.clock_start() - start} seconds)")
-        for error in errors:
-            print(error)
+        ############################################################
+        # Repair only straggling files
+        ############################################################
 
-        return len(errors) == 0
+        def not_fixed(test_file: str):
+            for repaired_path in repaired_paths:
+                if test_file.startswith(repaired_path):
+                    return False
+            return True
+
+        # Remove one file at a time (picking up what was not covered by processing directories)
+        for file in local_files:
+            if file not in self.course_config.remote_files and not file.endswith("/") and (not_fixed(file)):
+                start = self.clock_start()
+                print(f"...removing extra file: {file}", end="...")
+                dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
+                print(f"({self.clock_start() - start} seconds)")
+
+        # Add one file at a time (picking up what was not covered by processing directories)
+        for file in self.course_config.remote_files:
+            if file not in local_files and not file.endswith("/") and (not_fixed(file)):
+                start = self.clock_start()
+                print(f"...repairing missing file: {file}", end="...")
+                source_file = f"{self.data_source_uri}/{file[1:]}"
+                target_file = f"{self.paths.datasets}/{file[1:]}"
+                dbgems.dbutils.fs.cp(source_file, target_file, True)
+                print(f"({self.clock_start() - start} seconds)")
 
     def run_high_availability_job(self, job_name, notebook_path):
 
