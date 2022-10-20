@@ -27,7 +27,6 @@ class DBAcademyHelper:
                  lesson_config: LessonConfig,
                  debug: bool = False):
 
-        import py4j
         from .workspace_helper_class import WorkspaceHelper
         from .dev_helper_class import DevHelper
         from .tests.test_helper_class import TestHelper
@@ -55,16 +54,11 @@ class DBAcademyHelper:
         self.dev = DevHelper(self)
         self.tests = TestHelper(self)
 
-        # With requirements initialized, we can assert our spark versions.
-        # noinspection PyUnresolvedReferences
-        try:
-            self.__current_dbr = self.client.clusters.get_current_spark_version()
-            assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\".", "Spark Version")
-        except py4j.protocol.Py4JError as e:
-            if "CommandContext.tags() is not whitelisted" not in str(e):
-                raise e  # This error arises when running under a secured server
-                # where access to tags are restricted. In this one case, we can
-                # forgo validating the current spark version and move on.
+        # With requirements initialized, we can
+        # test various assertions about our environment
+        self.__validate_spark_version()
+        self.__validate_dbfs_writes("/dbfs/mnt/dbacademy-users")
+        self.__validate_dbfs_writes("/dbfs/mnt/dbacademy-datasets")
 
         # Are we running under test? If so we can "optimize" for parallel execution
         # without affecting the student's runtime-experience. As in the student can
@@ -630,6 +624,44 @@ class DBAcademyHelper:
 
         results.sort()
         return results
+
+    def __validate_spark_version(self):
+        # noinspection PyUnresolvedReferences
+        try:
+            self.__current_dbr = self.client.clusters.get_current_spark_version()
+            assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\".", "Spark Version")
+        except py4j.protocol.Py4JError as e:
+            if "CommandContext.tags() is not whitelisted" not in str(e):
+                raise e  # This error arises when running under a secured server
+                # where access to tags are restricted. In this one case, we can
+                # forgo validating the current spark version and move on.
+
+    def __validate_dbfs_writes(self, test_dir):
+        import os
+        from contextlib import redirect_stdout
+
+        try:
+            dbgems.dbutils.widgets.get("skip-validation")
+            return print("Skipping validation of DBFS Writes")
+
+        except:
+            file = f"{test_dir}/test.txt"
+            try:
+                with redirect_stdout(None):
+                    parent_dir = "/".join(test_dir.split("/")[:-1])
+
+                    if not os.path.exists(parent_dir): os.mkdir(parent_dir)
+                    if not os.path.exists(test_dir): os.mkdir(test_dir)
+                    if os.path.exists(file): os.remove(file)
+
+                    with open(file, "w") as f:
+                        f.write("Please delete this file")
+                    with open(file, "r") as f:
+                        f.read()
+                    os.remove(file)
+
+            except Exception as e:
+                raise AssertionError(self.__troubleshoot_error(f"Unable to write to {file}.", "Cannot Write to DBFS")) from e
 
     def validate_datasets(self, fail_fast: bool) -> None:
         """
