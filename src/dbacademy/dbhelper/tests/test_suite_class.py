@@ -296,9 +296,13 @@ class TestSuite(object):
 
             return field is not None and field.name == expected_name and str(type(field.dataType)) == f"<class 'pyspark.sql.types.{expected_type}'>" and (expected_nullable is None or field.nullable == expected_nullable)
 
+        if description is None:
+            if expected_nullable is None: description = f"Schema contains \"{expected_name}\" of type {expected_type}"
+            else: description = f"Schema contains \"{expected_name}\" of type {expected_type} (nullable={expected_nullable})"
+
         return self.add_test(TestCase(suite=self,
                                       test_case_id=test_case_id,
-                                      description=description or f"Schema contains \"{expected_name}\" of type {expected_type} (nullable={expected_nullable})",
+                                      description=description,
                                       actual_value=actual_value,
                                       depends_on=depends_on,
                                       escape_html=escape_html,
