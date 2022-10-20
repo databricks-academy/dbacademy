@@ -645,9 +645,9 @@ class DBAcademyHelper:
             print(self.clock_stopped(start))
 
         if repaired_dataset:
-            print(f"\nRevalidating the locally installed datasets")
+            print(f"\nRevalidating the locally installed datasets:")
         else:
-            print(f"\nValidating the locally installed datasets")
+            print(f"\nValidating the locally installed datasets:")
 
         ############################################################
         # Proceed with the actual validation and repair if possible
@@ -658,21 +658,18 @@ class DBAcademyHelper:
         local_files = self.list_r(self.paths.datasets)
         print(f"({self.clock_start() - start} seconds)")
 
-        print("...comparing local files to the expected set of files", end="...")
         start = self.clock_start()
         errors = []
 
         for file in local_files:
             if file not in self.course_config.remote_files:
                 what = "path" if file.endswith("/") else "file"
-                errors.append(f"...Extra {what}: {file}")
-                break
+                errors.append(f"...extra {what}: {file}")
 
         for file in self.course_config.remote_files:
             if file not in local_files:
                 what = "path" if file.endswith("/") else "file"
-                errors.append(f"...Missing {what}: {file}")
-                break
+                errors.append(f"...missing {what}: {file}")
 
         print(f"({self.clock_start() - start} seconds)")
         for error in errors:
