@@ -1,4 +1,4 @@
-from typing import List, Callable, Iterable, Any, Sized, Self
+from typing import List, Callable, Iterable, Any, Sized
 import pyspark
 
 from .test_case_class import TestCase
@@ -69,9 +69,8 @@ class TestSuite(object):
         html = "\n".join(lines)
         dbgems.display_html(html)
 
-    def display_results(self) -> Self:
+    def display_results(self) -> None:
         self._display("results")
-        return self
 
     def grade(self) -> int:
         self._display("grade")
