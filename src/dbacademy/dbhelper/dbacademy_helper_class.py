@@ -226,9 +226,9 @@ class DBAcademyHelper:
         return int(time.time())
 
     # noinspection PyMethodMayBeStatic
-    def clock_stopped(self, start):
+    def clock_stopped(self, start, end=""):
         import time
-        return f"({int(time.time()) - start} seconds)"
+        return f"({int(time.time()) - start} seconds{end})"
 
     # noinspection PyMethodMayBeStatic
     def __troubleshoot_error(self, error, section):
@@ -715,7 +715,7 @@ class DBAcademyHelper:
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
                 print(self.clock_stopped(start))
 
-        print(f"...completed {self.clock_stopped(validation_start)}\n")
+        print(f"""...completed {self.clock_stopped(validation_start, " total")}\n""")
 
     def run_high_availability_job(self, job_name, notebook_path):
 
