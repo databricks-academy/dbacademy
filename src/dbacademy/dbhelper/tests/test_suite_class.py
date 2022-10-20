@@ -1,4 +1,4 @@
-from typing import List, Callable, Iterable, Any, Sized
+from typing import List, Callable, Iterable, Any, Sized, Self
 import pyspark
 
 from .test_case_class import TestCase
@@ -69,8 +69,9 @@ class TestSuite(object):
         html = "\n".join(lines)
         dbgems.display_html(html)
 
-    def display_results(self) -> None:
+    def display_results(self) -> Self:
         self._display("results")
+        return self
 
     def grade(self) -> int:
         self._display("grade")
@@ -270,22 +271,24 @@ class TestSuite(object):
                                       hint=hint,
                                       test_function=lambda: self.compare_lists(actual_value(), expected_value, test_column_order=test_column_order)))
 
-    def test_struct_field_in_struct_type(self,
-                                         struct_type: Callable[[], pyspark.sql.types.StructType],
-                                         expected_name: str,
-                                         expected_type: str,
-                                         expected_nullable: str,
-                                         *,
-                                         description: str = None, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+    def test_schema_field(self,
+                          struct_type: Callable[[], pyspark.sql.types.StructType],
+                          expected_name: str,
+                          expected_type: str,
+                          expected_nullable: str = None,
+                          *,
+                          description: str = None, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
 
         def actual_value() -> str:
             schema = struct_type()
             fields = [f for f in schema.fields if f.name == expected_name]
             field = None if len(fields) == 0 else fields[0]
 
-            return None if field is None else ", ".join([str(field.name),
-                                                         str(type(field.dataType)).replace("<class 'pyspark.sql.types.", "").replace("'>", ""),
-                                                         str(field.nullable)])
+            type_value = str(type(field.dataType)).replace("<class 'pyspark.sql.types.", "").replace("'>", "")
+            if expected_nullable is None:
+                return None if field is None else ", ".join([str(field.name), type_value, str(field.nullable)])
+            else:
+                return None if field is None else ", ".join([str(field.name), type_value])
 
         def test_schema() -> bool:
             schema = struct_type()

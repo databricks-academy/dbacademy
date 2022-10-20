@@ -1,5 +1,6 @@
 class TestHelper:
     from ..dbacademy_helper_class import DBAcademyHelper
+    from .test_suite_class import TestSuite
 
     def __init__(self, da: DBAcademyHelper):
 
@@ -7,8 +8,8 @@ class TestHelper:
         self.client = da.client
 
     # noinspection PyMethodMayBeStatic
-    def new(self, name):
-        from dbacademy.dbhelper import TestSuite
+    def new(self, name) -> TestSuite:
+        from .test_suite_class import TestSuite
         return TestSuite(name)
 
     @staticmethod
