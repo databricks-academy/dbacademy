@@ -645,9 +645,9 @@ class DBAcademyHelper:
             print(self.clock_stopped(start))
 
         if repaired_dataset:
-            print(f"\nRevalidating the locally installed datasets", end="...")
+            print(f"\nRevalidating the locally installed datasets")
         else:
-            print(f"\nValidating the locally installed datasets", end="...")
+            print(f"\nValidating the locally installed datasets")
 
         ############################################################
         # Proceed with the actual validation and repair if possible
