@@ -675,7 +675,7 @@ class DBAcademyHelper:
 
         # Remove extra directories (cascade effect vs one file at a time)
         for file in local_files:
-            if file not in self.course_config.remote_files and file.endswith("/"):
+            if file not in self.course_config.remote_files and file.endswith("/") and not_fixed(file):
                 start = self.clock_start()
                 repaired_paths.append(file)
                 print(f"...removing extra path: {file}", end="...")
@@ -684,7 +684,7 @@ class DBAcademyHelper:
 
         # Add extra directories (cascade effect vs one file at a time)
         for file in self.course_config.remote_files:
-            if file not in local_files and file.endswith("/") and (not_fixed(file)):
+            if file not in local_files and file.endswith("/") and not_fixed(file):
                 start = self.clock_start()
                 repaired_paths.append(file)
                 print(f"...repairing missing path: {file}", end="...")
@@ -699,7 +699,7 @@ class DBAcademyHelper:
 
         # Remove one file at a time (picking up what was not covered by processing directories)
         for file in local_files:
-            if file not in self.course_config.remote_files and not file.endswith("/") and (not_fixed(file)):
+            if file not in self.course_config.remote_files and not file.endswith("/") and not_fixed(file):
                 start = self.clock_start()
                 print(f"...removing extra file: {file}", end="...")
                 dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
@@ -707,7 +707,7 @@ class DBAcademyHelper:
 
         # Add one file at a time (picking up what was not covered by processing directories)
         for file in self.course_config.remote_files:
-            if file not in local_files and not file.endswith("/") and (not_fixed(file)):
+            if file not in local_files and not file.endswith("/") and not_fixed(file):
                 start = self.clock_start()
                 print(f"...repairing missing file: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
