@@ -655,7 +655,7 @@ class DBAcademyHelper:
         # Proceed with the actual validation and repair if possible
         ############################################################
 
-        print("...listing local files", end="...")
+        print(" * listing local files", end="...")
         start = self.clock_start()
         local_files = self.list_r(self.paths.datasets)
         print(self.clock_stopped(start))
@@ -665,6 +665,7 @@ class DBAcademyHelper:
         # of the issues by addressing the larger sets.
         ############################################################
 
+        fixes = 0
         repaired_paths = []
 
         def not_fixed(test_file: str):
@@ -676,18 +677,20 @@ class DBAcademyHelper:
         # Remove extra directories (cascade effect vs one file at a time)
         for file in local_files:
             if file not in self.course_config.remote_files and file.endswith("/") and not_fixed(file):
+                fixes += 1
                 start = self.clock_start()
                 repaired_paths.append(file)
-                print(f"...removing extra path: {file}", end="...")
+                print(f" * removing extra path: {file}", end="...")
                 dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
                 print(self.clock_stopped(start))
 
         # Add extra directories (cascade effect vs one file at a time)
         for file in self.course_config.remote_files:
             if file not in local_files and file.endswith("/") and not_fixed(file):
+                fixes += 1
                 start = self.clock_start()
                 repaired_paths.append(file)
-                print(f"...repairing missing path: {file}", end="...")
+                print(f" * repairing missing path: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
                 target_file = f"{self.paths.datasets}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
@@ -700,22 +703,28 @@ class DBAcademyHelper:
         # Remove one file at a time (picking up what was not covered by processing directories)
         for file in local_files:
             if file not in self.course_config.remote_files and not file.endswith("/") and not_fixed(file):
+                fixes += 1
                 start = self.clock_start()
-                print(f"...removing extra file: {file}", end="...")
+                print(f" * removing extra file: {file}", end="...")
                 dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
                 print(self.clock_stopped(start))
 
         # Add one file at a time (picking up what was not covered by processing directories)
         for file in self.course_config.remote_files:
             if file not in local_files and not file.endswith("/") and not_fixed(file):
+                fixes += 1
                 start = self.clock_start()
-                print(f"...repairing missing file: {file}", end="...")
+                print(f" * repairing missing file: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
                 target_file = f"{self.paths.datasets}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
                 print(self.clock_stopped(start))
 
-        print(f"""...completed {self.clock_stopped(validation_start, " total")}\n""")
+        if fixes == 1: print(f" * Fixed {fixes} issues", end="")
+        elif fixes > 0: print(f" * Fixed {fixes} issues", end="")
+        else: print(f" * completed", end="")
+        print(self.clock_stopped(validation_start, " total"))
+        print()
 
     def run_high_availability_job(self, job_name, notebook_path):
 
