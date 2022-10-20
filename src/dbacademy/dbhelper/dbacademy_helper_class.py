@@ -330,7 +330,7 @@ class DBAcademyHelper:
 
         if validate_datasets:
             # The last step is to make sure the datasets are still intact and repair if necessary
-            self.validate_datasets(repaired_dataset=False)
+            self.validate_datasets(fail_fast=True)
 
     def __cleanup_working_dir(self):
         start = self.clock_start()
@@ -556,7 +556,7 @@ class DBAcademyHelper:
 
             if not reinstall_datasets:
                 print(f"\nSkipping install of existing datasets to \"{self.paths.datasets}\"")
-                self.validate_datasets(repaired_dataset=False)
+                self.validate_datasets(fail_fast=False)
                 return
 
         print(f"\nInstalling datasets...")
@@ -585,7 +585,7 @@ class DBAcademyHelper:
             dbgems.dbutils.fs.cp(source_path, target_path, True)
             print(self.clock_stopped(start))
 
-        self.validate_datasets(repaired_dataset=False)
+        self.validate_datasets(fail_fast=False)
 
         print(f"""\nThe install of the datasets completed successfully {self.clock_stopped(install_start)}""")
 
@@ -631,7 +631,7 @@ class DBAcademyHelper:
         results.sort()
         return results
 
-    def validate_datasets(self, *, repaired_dataset: bool) -> None:
+    def validate_datasets(self, fail_fast: bool) -> None:
         """
         Validates the "install" of the datasets by recursively listing all files in the remote data repository as well as the local data repository, validating that each file exists but DOES NOT validate file size or checksum.
         """
@@ -646,10 +646,7 @@ class DBAcademyHelper:
             self.course_config.remote_files = self.list_r(self.staging_source_uri)
             print(self.clock_stopped(start))
 
-        if repaired_dataset:
-            print(f"\nRevalidating the locally installed datasets:")
-        else:
-            print(f"\nValidating the locally installed datasets:")
+        print(f"\nValidating the locally installed datasets:")
 
         ############################################################
         # Proceed with the actual validation and repair if possible
@@ -725,6 +722,8 @@ class DBAcademyHelper:
         else: print(f" * completed", end=" ")
         print(self.clock_stopped(validation_start, " total"))
         print()
+
+        if fail_fast: assert fixes == 0, f"Unexpected modifications to source datasets."
 
     def run_high_availability_job(self, job_name, notebook_path):
 
