@@ -62,7 +62,7 @@ class DatabasesHelper:
 
     def configure_permissions(self, notebook_name, spark_version="10.4.x-scala2.12"):
 
-        job_name = f"""DA-{self.da.course_config.course_code.upper()}-{notebook_name.split("/")[-1]}"""
+        job_name = f"""DBAcademy-{self.da.course_config.course_code.upper()}-{notebook_name.split("/")[-1]}"""
         print(f"Starting job \"{job_name}\" to update catalog and schema specific permissions")
 
         self.client.jobs().delete_by_name(job_name, success_only=False)
