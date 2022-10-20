@@ -670,6 +670,9 @@ class DBAcademyHelper:
             if file not in local_files:
                 what = "path" if file.endswith("/") else "file"
                 errors.append(f"...missing {what}: {file}")
+                source_file = f"{self.data_source_uri}/{file[1:]}"
+                target_file = f"{self.paths.datasets}/{file[1:]}"
+                dbgems.dbutils.fs.cp(source_file, target_file, True)
 
         print(f"({self.clock_start() - start} seconds)")
         for error in errors:
