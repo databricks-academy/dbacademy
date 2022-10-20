@@ -720,9 +720,9 @@ class DBAcademyHelper:
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
                 print(self.clock_stopped(start))
 
-        if fixes == 1: print(f" * Fixed {fixes} issues", end="")
-        elif fixes > 0: print(f" * Fixed {fixes} issues", end="")
-        else: print(f" * completed", end="")
+        if fixes == 1: print(f" * Fixed 1 issue", end=" ")
+        elif fixes > 0: print(f" * Fixed {fixes} issues", end=" ")
+        else: print(f" * completed", end=" ")
         print(self.clock_stopped(validation_start, " total"))
         print()
 
