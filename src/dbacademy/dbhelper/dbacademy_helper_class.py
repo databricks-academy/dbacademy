@@ -330,7 +330,7 @@ class DBAcademyHelper:
 
         if validate_datasets:
             # The last step is to make sure the datasets are still intact and repair if necessary
-            self.validate_datasets(fail_fast=False, repairing_dataset=False)
+            self.validate_datasets(repaired_dataset=False)
 
     def __cleanup_working_dir(self):
         start = self.clock_start()
@@ -538,7 +538,7 @@ class DBAcademyHelper:
 
         print(f"\nSetup completed in {self.clock_start() - self.__start} seconds")
 
-    def install_datasets(self, reinstall_datasets=False, repairing_dataset=False):
+    def install_datasets(self, reinstall_datasets=False):
         """
         Install the datasets used by this course to DBFS.
 
@@ -551,12 +551,12 @@ class DBAcademyHelper:
         if Paths.exists(self.paths.datasets):
             # It's already installed...
             if reinstall_datasets:
-                if not repairing_dataset: print(f"\nRemoving previously installed datasets")
+                print(f"\nRemoving previously installed datasets")
                 dbgems.dbutils.fs.rm(self.paths.datasets, True)
 
             if not reinstall_datasets:
                 print(f"\nSkipping install of existing datasets to \"{self.paths.datasets}\"")
-                self.validate_datasets(fail_fast=False, repairing_dataset=False)
+                self.validate_datasets(repaired_dataset=False)
                 return
 
         print(f"\nInstalling datasets...")
@@ -585,7 +585,7 @@ class DBAcademyHelper:
             dbgems.dbutils.fs.cp(source_path, target_path, True)
             print(f"({self.clock_start() - start} seconds)")
 
-        self.validate_datasets(fail_fast=True, repairing_dataset=repairing_dataset)
+        self.validate_datasets(repaired_dataset=False)
 
         print(f"""\nThe install of the datasets completed successfully in {self.clock_start() - install_start} seconds.""")
 
@@ -631,13 +631,35 @@ class DBAcademyHelper:
         results.sort()
         return results
 
-    def do_validate(self):
+    def validate_datasets(self, *, repaired_dataset: bool):
         """
-        Utility method to compare local datasets to the registered list of remote files.
+        Validates the "install" of the datasets by recursively listing all files in the remote data repository as well as the local data repository, validating that each file exists but DOES NOT validate file size or checksum.
         """
+
+        if self.staging_source_uri == self.data_source_uri:
+            # When working with staging data, we need to enumerate what is in there
+            # and use it as a definitive source to the complete enumeration of our files
+            start = self.clock_start()
+            print("\nEnumerating staged files for validation", end="...")
+            self.course_config.remote_files = self.list_r(self.staging_source_uri)
+            print(self.clock_stopped(start))
+
+        if repaired_dataset:
+            print(f"\nRevalidating the locally installed datasets", end="...")
+        else:
+            print(f"\nValidating the locally installed datasets", end="...")
+
+        ############################################################
+        # Proceed with the actual validation and repair if possible
+        ############################################################
+
+        print("...listing local files", end="...")
         start = self.clock_start()
         local_files = self.list_r(self.paths.datasets)
+        print(f"({self.clock_start() - start} seconds)")
 
+        print("...comparing local files to the expected set of files", end="...")
+        start = self.clock_start()
         errors = []
 
         for file in local_files:
@@ -657,31 +679,6 @@ class DBAcademyHelper:
             print(error)
 
         return len(errors) == 0
-
-    def validate_datasets(self, fail_fast: bool, repairing_dataset: bool):
-        """
-        Validates the "install" of the datasets by recursively listing all files in the remote data repository as well as the local data repository, validating that each file exists but DOES NOT validate file size or checksum.
-        """
-
-        if self.staging_source_uri == self.data_source_uri:
-            start = self.clock_start()
-            print("\nEnumerating staged files for validation", end="...")
-            self.course_config.remote_files = self.list_r(self.staging_source_uri)
-            print(self.clock_stopped(start))
-
-        if repairing_dataset:
-            print(f"\nRevalidating the locally installed datasets", end="...")
-        else:
-            print(f"\nValidating the locally installed datasets", end="...")
-
-        result = self.do_validate()
-
-        if not result:
-            if fail_fast:
-                raise Exception("Validation failed - see previous messages for more information.")
-            else:
-                print("...Attempting to repair locally installed dataset")
-                self.install_datasets(reinstall_datasets=True, repairing_dataset=True)
 
     def run_high_availability_job(self, job_name, notebook_path):
 
