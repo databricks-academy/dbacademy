@@ -692,7 +692,8 @@ class DBAcademyHelper:
                 repaired_paths.append(file)
                 print(f" * restoring missing path: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
-                dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
+                target_file = f"{self.paths.datasets}/{file[1:]}"
+                dbgems.dbutils.fs.cp(source_file, target_file, True)
                 print(self.clock_stopped(start))
 
         ############################################################
