@@ -713,6 +713,8 @@ class DBAcademyHelper:
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
                 print(f"({self.clock_start() - start} seconds)")
 
+        print()
+
     def run_high_availability_job(self, job_name, notebook_path):
 
         # job_name = f"DA-{self.course_name}-Configure-Permissions"
