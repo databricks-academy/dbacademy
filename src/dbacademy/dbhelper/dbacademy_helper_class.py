@@ -690,10 +690,9 @@ class DBAcademyHelper:
                 fixes += 1
                 start = self.clock_start()
                 repaired_paths.append(file)
-                print(f" * repairing missing path: {file}", end="...")
+                print(f" * restoring missing path: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
-                target_file = f"{self.paths.datasets}/{file[1:]}"
-                dbgems.dbutils.fs.cp(source_file, target_file, True)
+                dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
                 print(self.clock_stopped(start))
 
         ############################################################
@@ -714,7 +713,7 @@ class DBAcademyHelper:
             if file not in local_files and not file.endswith("/") and not_fixed(file):
                 fixes += 1
                 start = self.clock_start()
-                print(f" * repairing missing file: {file}", end="...")
+                print(f" * restoring missing file: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
                 target_file = f"{self.paths.datasets}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
