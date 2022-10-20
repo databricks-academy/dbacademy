@@ -385,15 +385,18 @@ class BuildConfig:
                     replacements = notebook.replacements.copy()  # Take a deep copy to minimize noise
                     if "required_dbrs" in replacements: del replacements["required_dbrs"]
 
-                    if len(replacements.keys()) == 0:
-                        print(f"  {notebook.order: >3}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={replacements}")
+                    replacements_copy = replacements.copy()
+                    if "supported_dbrs" in replacements_copy: del replacements_copy["supported_dbrs"]
+
+                    if len(replacements_copy) == 0:
+                        print(f"  {notebook.order: >3}: {path}   ignored={ignored}   include_solution={include_solution}   replacements=None")
                     else:
                         print(f"  {notebook.order: >3}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={{")
                         max_key_length = 0
-                        for key in replacements: max_key_length = len(key) if len(key) > max_key_length else max_key_length
+                        for key in replacements_copy: max_key_length = len(key) if len(key) > max_key_length else max_key_length
 
-                        for key in replacements:
-                            value = replacements[key]
+                        for key in replacements_copy:
+                            value = replacements_copy.get(key)
                             print(f"        {key}", end="")
                             print(" " * (max_key_length - len(key)), end="")
                             print(f": {value}")
