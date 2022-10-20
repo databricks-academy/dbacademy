@@ -667,6 +667,12 @@ class DBAcademyHelper:
 
         repaired_paths = []
 
+        def not_fixed(test_file: str):
+            for repaired_path in repaired_paths:
+                if test_file.startswith(repaired_path):
+                    return False
+            return True
+
         # Remove extra directories (cascade effect vs one file at a time)
         for file in local_files:
             if file not in self.course_config.remote_files and file.endswith("/"):
@@ -678,7 +684,7 @@ class DBAcademyHelper:
 
         # Add extra directories (cascade effect vs one file at a time)
         for file in self.course_config.remote_files:
-            if file not in local_files and file.endswith("/"):
+            if file not in local_files and file.endswith("/") and (not_fixed(file)):
                 start = self.clock_start()
                 repaired_paths.append(file)
                 print(f"...repairing missing path: {file}", end="...")
@@ -690,12 +696,6 @@ class DBAcademyHelper:
         ############################################################
         # Repair only straggling files
         ############################################################
-
-        def not_fixed(test_file: str):
-            for repaired_path in repaired_paths:
-                if test_file.startswith(repaired_path):
-                    return False
-            return True
 
         # Remove one file at a time (picking up what was not covered by processing directories)
         for file in local_files:
