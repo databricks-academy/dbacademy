@@ -87,6 +87,7 @@ class DatabasesHelper:
                     "notebook_task": {
                         "notebook_path": notebook_path,
                         "base_parameters": {
+                            "skip-validation": "true",
                             "configure_for": self.workspace.configure_for
                         }
                     },
