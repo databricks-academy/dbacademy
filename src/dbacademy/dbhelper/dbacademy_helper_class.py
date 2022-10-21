@@ -555,7 +555,7 @@ class DBAcademyHelper:
 
         print(f"\nInstalling datasets:")
         print(f"  |from \"{self.data_source_uri}\"")
-        print(f"* to \"{self.paths.datasets}\"")
+        print(f"  |to \"{self.paths.datasets}\"")
         print()
         print(f"NOTE: The datasets that we are installing are located in Washington, USA - depending on the")
         print(f"      region that your workspace is in, this operation can take as little as {self.course_config.install_min_time} and")
@@ -571,7 +571,7 @@ class DBAcademyHelper:
         install_start = self.clock_start()
         for f in files:
             start = self.clock_start()
-            print(f"* copying /{f.name[:-1]}", end="...")
+            print(f"  |copying /{f.name[:-1]}", end="...")
 
             source_path = f"{self.data_source_uri}/{f.name}"
             target_path = f"{self.paths.datasets}/{f.name}"
@@ -685,7 +685,7 @@ class DBAcademyHelper:
         # Proceed with the actual validation and repair if possible
         ############################################################
 
-        print("* listing local files", end="...")
+        print("  |listing local files", end="...")
         start = self.clock_start()
         local_files = self.list_r(self.paths.datasets)
         print(self.clock_stopped(start))
