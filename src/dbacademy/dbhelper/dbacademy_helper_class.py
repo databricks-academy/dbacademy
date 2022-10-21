@@ -645,7 +645,7 @@ class DBAcademyHelper:
             return print("Skipping validation of DBFS Writes")
         except:
             file_name = self.clean_string(f"{self.course_config.course_code}-{dbgems.get_notebook_path()}")
-            file = f"{test_dir}/test-{file_name}.txt"
+            file = f"{test_dir}/dbacademy-{file_name}.txt"
             print(file)
             try:
                 with redirect_stdout(None):
