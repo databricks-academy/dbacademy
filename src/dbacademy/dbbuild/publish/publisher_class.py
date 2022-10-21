@@ -198,7 +198,7 @@ class Publisher:
         core_message += f"""
 Release notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{self.source_repo.split("/")[-1]}
 
-Please feel free to reach out to me (via Slack) or anyone on the curriculum team should you have any questions."""
+Please contact me (via Slack), or anyone on the curriculum team should you have any questions."""
 
         email_body = urllib.parse.quote(core_message, safe="")
         slack_message = f"""@channel Published {name}, v{version}\n\n{core_message.strip()}"""
