@@ -328,7 +328,7 @@ class DBAcademyHelper:
 
     def __cleanup_working_dir(self):
         start = self.clock_start()
-        print(f"  |removing the working directory \"{self.paths.working_dir}\"", end="...")
+        print(f"| removing the working directory \"{self.paths.working_dir}\"", end="...")
 
         dbgems.dbutils.fs.rm(self.paths.working_dir, True)
 
@@ -350,7 +350,7 @@ class DBAcademyHelper:
     def __drop_schema(self):
 
         start = self.clock_start()
-        print(f"  |dropping the schema \"{self.schema_name}\"", end="...")
+        print(f"| dropping the schema \"{self.schema_name}\"", end="...")
 
         self.__drop_database(self.schema_name)
 
@@ -360,7 +360,7 @@ class DBAcademyHelper:
         from pyspark.sql.utils import AnalysisException
 
         start = self.clock_start()
-        print(f"  |dropping the catalog \"{self.catalog_name}\"", end="...")
+        print(f"| dropping the catalog \"{self.catalog_name}\"", end="...")
 
         try: self.__spark.sql(f"DROP CATALOG IF EXISTS {self.catalog_name} CASCADE")
         except AnalysisException: pass  # Ignore this concurrency error
@@ -370,7 +370,7 @@ class DBAcademyHelper:
     def __cleanup_stop_all_streams(self):
         for stream in self.__spark.streams.active:
             start = self.clock_start()
-            print(f"  |stopping the stream \"{stream.name}\"", end="...")
+            print(f"| stopping the stream \"{stream.name}\"", end="...")
             stream.stop()
             try: stream.awaitTermination()
             except: pass  # Bury any exceptions
@@ -554,8 +554,8 @@ class DBAcademyHelper:
                 return
 
         print(f"\nInstalling datasets:")
-        print(f"  |from \"{self.data_source_uri}\"")
-        print(f"  |to \"{self.paths.datasets}\"")
+        print(f"| from \"{self.data_source_uri}\"")
+        print(f"| to \"{self.paths.datasets}\"")
         print()
         print(f"NOTE: The datasets that we are installing are located in Washington, USA - depending on the")
         print(f"      region that your workspace is in, this operation can take as little as {self.course_config.install_min_time} and")
@@ -571,7 +571,7 @@ class DBAcademyHelper:
         install_start = self.clock_start()
         for f in files:
             start = self.clock_start()
-            print(f"  |copying /{f.name[:-1]}", end="...")
+            print(f"| copying /{f.name[:-1]}", end="...")
 
             source_path = f"{self.data_source_uri}/{f.name}"
             target_path = f"{self.paths.datasets}/{f.name}"
@@ -685,7 +685,7 @@ class DBAcademyHelper:
         # Proceed with the actual validation and repair if possible
         ############################################################
 
-        print("  |listing local files", end="...")
+        print("| listing local files", end="...")
         start = self.clock_start()
         local_files = self.list_r(self.paths.datasets)
         print(self.clock_stopped(start))
@@ -710,7 +710,7 @@ class DBAcademyHelper:
                 fixes += 1
                 start = self.clock_start()
                 repaired_paths.append(file)
-                print(f"  |removing extra path: {file}", end="...")
+                print(f"| removing extra path: {file}", end="...")
                 dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
                 print(self.clock_stopped(start))
 
@@ -720,7 +720,7 @@ class DBAcademyHelper:
                 fixes += 1
                 start = self.clock_start()
                 repaired_paths.append(file)
-                print(f"  |restoring missing path: {file}", end="...")
+                print(f"| restoring missing path: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
                 target_file = f"{self.paths.datasets}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
@@ -735,7 +735,7 @@ class DBAcademyHelper:
             if file not in self.course_config.remote_files and not file.endswith("/") and not_fixed(file):
                 fixes += 1
                 start = self.clock_start()
-                print(f"  |removing extra file: {file}", end="...")
+                print(f"| removing extra file: {file}", end="...")
                 dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
                 print(self.clock_stopped(start))
 
@@ -744,15 +744,15 @@ class DBAcademyHelper:
             if file not in local_files and not file.endswith("/") and not_fixed(file):
                 fixes += 1
                 start = self.clock_start()
-                print(f"  |restoring missing file: {file}", end="...")
+                print(f"| restoring missing file: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
                 target_file = f"{self.paths.datasets}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
                 print(self.clock_stopped(start))
 
-        if fixes == 1: print(f"  |fixed 1 issue", end=" ")
-        elif fixes > 0: print(f"  |fixed {fixes} issues", end=" ")
-        else: print(f"  |completed", end=" ")
+        if fixes == 1: print(f"| fixed 1 issue", end=" ")
+        elif fixes > 0: print(f"| fixed {fixes} issues", end=" ")
+        else: print(f"| completed", end=" ")
         print(self.clock_stopped(validation_start, " total"))
         print()
 
