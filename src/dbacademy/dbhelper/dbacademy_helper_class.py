@@ -632,7 +632,6 @@ class DBAcademyHelper:
             assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(msg, "Spark Version")
 
     def __validate_dbfs_writes(self, test_dir):
-        import os
         from contextlib import redirect_stdout
 
         if not dbgems.spark.conf.get(DBAcademyHelper.PROTECTED_EXECUTION, None):
