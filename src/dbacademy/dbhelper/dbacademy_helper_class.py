@@ -643,25 +643,26 @@ class DBAcademyHelper:
         try:
             dbgems.dbutils.widgets.get("skip-validation")
             return print("Skipping validation of DBFS Writes")
-        except: pass  # OK to continue one.
+        except:
+            file_name = self.clean_string(f"{self.course_config.course_code}-{dbgems.get_notebook_path()}")
+            file = f"{test_dir}/test-{file_name}.txt"
+            print(file)
+            try:
+                with redirect_stdout(None):
+                    parent_dir = "/".join(test_dir.split("/")[:-1])
 
-        file = f"{test_dir}/test.txt"
-        try:
-            with redirect_stdout(None):
-                parent_dir = "/".join(test_dir.split("/")[:-1])
+                    if not os.path.exists(parent_dir): os.mkdir(parent_dir)
+                    if not os.path.exists(test_dir): os.mkdir(test_dir)
+                    if os.path.exists(file): os.remove(file)
 
-                if not os.path.exists(parent_dir): os.mkdir(parent_dir)
-                if not os.path.exists(test_dir): os.mkdir(test_dir)
-                if os.path.exists(file): os.remove(file)
+                    with open(file, "w") as f:
+                        f.write("Please delete this file")
+                    with open(file, "r") as f:
+                        f.read()
+                    os.remove(file)
 
-                with open(file, "w") as f:
-                    f.write("Please delete this file")
-                with open(file, "r") as f:
-                    f.read()
-                os.remove(file)
-
-        except Exception as e:
-            raise AssertionError(self.__troubleshoot_error(f"Unable to write to {file}.", "Cannot Write to DBFS")) from e
+            except Exception as e:
+                raise AssertionError(self.__troubleshoot_error(f"Unable to write to {file}.", "Cannot Write to DBFS")) from e
 
     def validate_datasets(self, fail_fast: bool) -> None:
         """
