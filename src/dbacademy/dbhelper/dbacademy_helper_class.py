@@ -626,7 +626,7 @@ class DBAcademyHelper:
         return results
 
     def __validate_spark_version(self):
-        if not dbgems.spark.conf.get(DBAcademyHelper.PROTECTED_EXECUTION, False):
+        if not dbgems.spark.conf.get(DBAcademyHelper.PROTECTED_EXECUTION, None):
             self.__current_dbr = self.client.clusters.get_current_spark_version()
             msg = f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\".", "Spark Version"
             assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(msg)
@@ -635,7 +635,7 @@ class DBAcademyHelper:
         import os
         from contextlib import redirect_stdout
 
-        if not dbgems.spark.conf.get(DBAcademyHelper.PROTECTED_EXECUTION, False):
+        if not dbgems.spark.conf.get(DBAcademyHelper.PROTECTED_EXECUTION, None):
             file_name = self.clean_string(f"{self.course_config.course_code}-{dbgems.get_notebook_path()}")
             file = f"{test_dir}/dbacademy-{file_name}.txt"
             try:
