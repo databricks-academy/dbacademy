@@ -354,6 +354,14 @@ def stable_hash(*args, length: int) -> str:
     return "".join(result)
 
 
+def clean_string(value, replacement: str = "_"):
+    import re
+    replacement_2x = replacement+replacement
+    value = re.sub(r"[^a-zA-Z\d]", replacement, str(value))
+    while replacement_2x in value: value = value.replace(replacement_2x, replacement)
+    return value
+
+
 def find_global(target):
     import inspect
     caller_frame = inspect.currentframe().f_back

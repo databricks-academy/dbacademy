@@ -19,13 +19,14 @@ class ClustersHelper:
         self.workspace = workspace
 
     def create_instance_pool(self, min_idle_instances: int = 0, idle_instance_autotermination_minutes: int = 15):
+        from dbacademy import dbgems
         tags = [
-            ("dbacademy.event_name", self.da.clean_string(self.workspace.event_name)),
-            ("dbacademy.students_count", self.da.clean_string(self.workspace.student_count)),
-            ("dbacademy.workspace", self.da.clean_string(self.workspace.workspace_name)),
-            ("dbacademy.org_id", self.da.clean_string(self.workspace.org_id)),
-            ("dbacademy.course", self.da.clean_string(self.da.course_config.course_name)),
-            ("dbacademy.source", self.da.clean_string("Smoke-Test" if self.da.is_smoke_test() else self.da.course_config.course_name))
+            ("dbacademy.event_name", dbgems.clean_string(self.workspace.event_name)),
+            ("dbacademy.students_count", dbgems.clean_string(self.workspace.student_count)),
+            ("dbacademy.workspace", dbgems.clean_string(self.workspace.workspace_name)),
+            ("dbacademy.org_id", dbgems.clean_string(self.workspace.org_id)),
+            ("dbacademy.course", dbgems.clean_string(self.da.course_config.course_name)),
+            ("dbacademy.source", dbgems.clean_string("Smoke-Test" if self.da.is_smoke_test() else self.da.course_config.course_name))
         ]
 
         name = ClustersHelper.POOLS_DEFAULT
@@ -90,6 +91,8 @@ class ClustersHelper:
         })
 
     def create_dlt_policy(self) -> str:
+        from dbacademy import dbgems
+
         return self.__create_cluster_policy(None, ClustersHelper.POLICY_DLT_ONLY, {
             "cluster_type": {
                 "type": "fixed",
@@ -97,27 +100,27 @@ class ClustersHelper:
             },
             "custom_tags.dbacademy.event_name": {
                 "type": "fixed",
-                "value": self.da.clean_string(self.workspace.event_name),
+                "value": dbgems.clean_string(self.workspace.event_name),
                 "hidden": False
             },
             "custom_tags.dbacademy.students_count": {
                 "type": "fixed",
-                "value": self.da.clean_string(self.workspace.student_count),
+                "value": dbgems.clean_string(self.workspace.student_count),
                 "hidden": False
             },
             "custom_tags.dbacademy.workspace": {
                 "type": "fixed",
-                "value": self.da.clean_string(self.workspace.workspace_name),
+                "value": dbgems.clean_string(self.workspace.workspace_name),
                 "hidden": False
             },
             "custom_tags.dbacademy.org_id": {
                 "type": "fixed",
-                "value": self.da.clean_string(self.workspace.org_id),
+                "value": dbgems.clean_string(self.workspace.org_id),
                 "hidden": False
             },
             "custom_tags.dbacademy.course": {
                 "type": "fixed",
-                "value": self.da.clean_string(self.da.course_config.course_name),
+                "value": dbgems.clean_string(self.da.course_config.course_name),
                 "hidden": False
             },
         })

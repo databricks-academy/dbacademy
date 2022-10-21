@@ -55,12 +55,6 @@ class DBAcademyHelper:
         self.dev = DevHelper(self)
         self.tests = TestHelper(self)
 
-        # With requirements initialized, we can
-        # test various assertions about our environment
-        self.__validate_spark_version()
-        self.__validate_dbfs_writes("/dbfs/mnt/dbacademy-users")
-        self.__validate_dbfs_writes("/dbfs/mnt/dbacademy-datasets")
-
         # Are we running under test? If so we can "optimize" for parallel execution
         # without affecting the student's runtime-experience. As in the student can
         # use one working directory and one database, but under test, we can use many
@@ -114,6 +108,12 @@ class DBAcademyHelper:
 
         self.__lesson_config.lock_mutations()
 
+        # With requirements initialized, we can
+        # test various assertions about our environment
+        self.__validate_spark_version()
+        self.__validate_dbfs_writes(f"/dbfs/mnt/dbacademy-users")
+        self.__validate_dbfs_writes(f"/dbfs/mnt/dbacademy-datasets")
+
     @property
     def current_dbr(self):
         return self.__current_dbr
@@ -155,7 +155,7 @@ class DBAcademyHelper:
         local_part = username.split("@")[0]
         username_hash = dbgems.stable_hash(username, length=4)
         course_code = self.course_config.course_code
-        return DBAcademyHelper.clean_string(f"{local_part}-{username_hash}-dbacademy-{course_code}").lower()
+        return dbgems.clean_string(f"{local_part}-{username_hash}-dbacademy-{course_code}").lower()
 
     @property
     def catalog_name(self):
@@ -180,7 +180,7 @@ class DBAcademyHelper:
             return catalog_name_prefix
         else:
             # Append the lesson name to the catalog name
-            return DBAcademyHelper.clean_string(f"{catalog_name_prefix}-{self.lesson_config.clean_name}").lower()
+            return dbgems.clean_string(f"{catalog_name_prefix}-{self.lesson_config.clean_name}").lower()
 
     @property
     def schema_name_prefix(self):
@@ -193,7 +193,7 @@ class DBAcademyHelper:
         local_part = username.split("@")[0]
         username_hash = dbgems.stable_hash(username, length=4)
         course_code = self.course_config.course_code
-        return DBAcademyHelper.clean_string(f"{local_part}-{username_hash}-dbacademy-{course_code}").lower()
+        return dbgems.clean_string(f"{local_part}-{username_hash}-dbacademy-{course_code}").lower()
 
     @property
     def schema_name(self):
@@ -226,7 +226,7 @@ class DBAcademyHelper:
         return f"({int(time.time()) - start} seconds{end})"
 
     # noinspection PyMethodMayBeStatic
-    def _troubleshoot_error(self, error, section):
+    def __troubleshoot_error(self, error, section):
         return DBAcademyHelper.TROUBLESHOOT_ERROR_TEMPLATE.format(error, section)
 
     @property
@@ -628,16 +628,17 @@ class DBAcademyHelper:
     def __validate_spark_version(self):
         if not dbgems.spark.conf.get(DBAcademyHelper.PROTECTED_EXECUTION, None):
             self.__current_dbr = self.client.clusters.get_current_spark_version()
-            msg = f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\".", "Spark Version"
-            assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(msg)
+            msg = f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\"."
+            assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(msg, "Spark Version")
 
     def __validate_dbfs_writes(self, test_dir):
         import os
         from contextlib import redirect_stdout
 
         if not dbgems.spark.conf.get(DBAcademyHelper.PROTECTED_EXECUTION, None):
-            file_name = self.clean_string(f"{self.course_config.course_code}-{dbgems.get_notebook_path()}")
-            file = f"{test_dir}/dbacademy-{file_name}.txt"
+            notebook_path = dbgems.clean_string(dbgems.get_notebook_path())
+            username = dbgems.clean_string(self.username)
+            file = f"{test_dir}/temp/dbacademy-{self.course_config.course_code}-{username}-{notebook_path}.txt"
             try:
                 with redirect_stdout(None):
                     parent_dir = "/".join(test_dir.split("/")[:-1])
@@ -825,14 +826,6 @@ class DBAcademyHelper:
 
         if dbgems.get_job_id():
             mlflow.set_experiment(f"/Curriculum/Test Results/{self.unique_name}-{dbgems.get_job_id()}")
-
-    @staticmethod
-    def clean_string(value, replacement: str = "_"):
-        import re
-        replacement_2x = replacement+replacement
-        value = re.sub(r"[^a-zA-Z\d]", replacement, str(value))
-        while replacement_2x in value: value = value.replace(replacement_2x, replacement)
-        return value
 
     @staticmethod
     def block_until_stream_is_ready(query: Union[str, pyspark.sql.streaming.StreamingQuery], min_batches: int = 2, delay_seconds: int = 5):

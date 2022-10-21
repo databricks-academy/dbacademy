@@ -73,8 +73,8 @@ class DatabasesHelper:
         params = {
             "name": job_name,
             "tags": {
-                "dbacademy.course": self.da.clean_string(self.da.course_config.course_name, replacement="-"),
-                "dbacademy.source": self.da.clean_string("Smoke-Test" if self.da.is_smoke_test() else self.da.course_config.course_name, replacement="-")
+                "dbacademy.course": dbgems.clean_string(self.da.course_config.course_name, replacement="-"),
+                "dbacademy.source": dbgems.clean_string("Smoke-Test" if self.da.is_smoke_test() else self.da.course_config.course_name, replacement="-")
             },
             "email_notifications": {},
             "timeout_seconds": 7200,

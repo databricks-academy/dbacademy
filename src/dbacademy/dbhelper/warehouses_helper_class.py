@@ -50,6 +50,7 @@ class WarehousesHelper:
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
     def _create_sql_warehouse(self, username: Union[str, None], name: str, auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool):
+        from dbacademy import dbgems
         from dbacademy.dbrest.sql.endpoints import RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT, CLUSTER_SIZE_2X_SMALL
 
         warehouse = self.client.sql.endpoints.create_or_update(
@@ -63,12 +64,12 @@ class WarehousesHelper:
             spot_instance_policy=RELIABILITY_OPTIMIZED,
             channel=CHANNEL_NAME_CURRENT,
             tags={
-                "dbacademy.event_name": self.da.clean_string(self.workspace.event_name),
-                "dbacademy.students_count": self.da.clean_string(self.workspace.student_count),
-                "dbacademy.workspace": self.da.clean_string(self.workspace.workspace_name),
-                "dbacademy.org_id": self.da.clean_string(self.workspace.org_id),
-                "dbacademy.course": self.da.clean_string(self.da.course_config.course_name),  # Tag the name of the course
-                "dbacademy.source": self.da.clean_string("Smoke-Test" if self.da.is_smoke_test() else self.da.course_config.course_name),
+                "dbacademy.event_name": dbgems.clean_string(self.workspace.event_name),
+                "dbacademy.students_count": dbgems.clean_string(self.workspace.student_count),
+                "dbacademy.workspace": dbgems.clean_string(self.workspace.workspace_name),
+                "dbacademy.org_id": dbgems.clean_string(self.workspace.org_id),
+                "dbacademy.course": dbgems.clean_string(self.da.course_config.course_name),  # Tag the name of the course
+                "dbacademy.source": dbgems.clean_string("Smoke-Test" if self.da.is_smoke_test() else self.da.course_config.course_name),
             })
         warehouse_id = warehouse.get("id")
 
