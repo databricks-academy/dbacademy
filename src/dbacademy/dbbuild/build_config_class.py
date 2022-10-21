@@ -245,8 +245,8 @@ class BuildConfig:
 
     def validate(self, validate_version: bool = True, validate_readme: bool = True):
 
-        if validate_version: self._validate_version()
-        if validate_readme: self._validate_readme()
+        if validate_version: self.__validate_version()
+        if validate_readme: self.__validate_readme()
 
         print("Build Configuration")
         print(f"suite_id:          {self.suite_id}")
@@ -268,7 +268,7 @@ class BuildConfig:
             print(f"notebooks:         none")
         else:
             print(f"notebooks:         {len(self.notebooks)}")
-            self._index_notebooks()
+            self.__index_notebooks()
 
         self.__validated = True
 
@@ -276,7 +276,7 @@ class BuildConfig:
     def validated(self) -> bool:
         return self.__validated
 
-    def _validate_readme(self):
+    def __validate_readme(self) -> None:
         import os
         from datetime import datetime
 
@@ -339,11 +339,11 @@ class BuildConfig:
                 print("\nChange Log:")
                 for entry in self.change_log:
                     print(f"  {entry}")
-                return
+                return print()
 
         assert len(self.change_log) > 0, f"The Change Log section was not found in {readme_path}"
 
-    def _validate_version(self):
+    def __validate_version(self):
         if self.version not in BuildConfig.VERSIONS_LIST:
             msg = f"The version parameter must be one of {BuildConfig.VERSIONS_LIST} or of the form \"N.N.N\" or \"N.N.N-AA\" where \"N\" is an integral value and \"A\" a two-character language code, found \"{self.version}\"."
             self.version.split(".")
@@ -357,7 +357,7 @@ class BuildConfig:
             assert bug.isnumeric(), msg
             assert len(lang) == 2 and lang.upper() == lang, msg
 
-    def _index_notebooks(self):
+    def __index_notebooks(self):
         max_name_length = 0
         for path in self.notebooks: max_name_length = len(path) if len(path) > max_name_length else max_name_length
 
