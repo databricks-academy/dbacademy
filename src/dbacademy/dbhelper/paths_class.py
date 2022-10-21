@@ -38,7 +38,7 @@ class Paths:
         except Exception:
             return False
 
-    def print(self, padding="  ", self_name="self."):
+    def print(self, padding="| ", self_name="self."):
         """
         Prints all the paths attached to this instance of Paths
         """
@@ -51,7 +51,7 @@ class Paths:
             if not key.startswith("_"):
                 label = f"{padding}{self_name}paths.{key}: "
                 if self.__dict__[key] is not None:
-                    print("|" + label.ljust(max_key_len + 13) + self.__dict__[key])
+                    print(label.ljust(max_key_len + 13) + self.__dict__[key])
 
     def __repr__(self):
         return self.__dict__.__repr__().replace(", ", ",\n").replace("{", "").replace("}", "").replace("'", "")
