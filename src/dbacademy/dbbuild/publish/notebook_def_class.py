@@ -690,6 +690,7 @@ For more current information, please see <a href="https://files.training.databri
                 solutions_commands.append(command.replace("DUMMY", "DUMMY: Ya, that wasn't too smart. Then again, this is just a dummy-directive"))
 
             elif NotebookDef.D_VALIDATE_LIBRARIES in directives:
+                template = DBAcademyHelper.TROUBLESHOOT_ERROR_TEMPLATE.replace("\"", "\\\"")
                 self.append_both(students_commands, solutions_commands, f"""
 def __validate_libraries():
     import requests
@@ -703,11 +704,11 @@ def __validate_libraries():
         try:
             response = requests.get(site)
             error = f"Unable to access GitHub or PyPi resources (HTTP {{response.status_code}} for {{site}})."
-            assert response.status_code == 200, "{DBAcademyHelper.TROUBLESHOOT_ERROR_TEMPLATE}".format(error=error, section="Cannot Install Libraries")
+            assert response.status_code == 200, "{template}".format(error=error, section="Cannot Install Libraries")
         except Exception as e:
             if type(e) is AssertionError: raise e
             error = f"Unable to access GitHub or PyPi resources ({{site}})."
-            raise AssertionError("{DBAcademyHelper.TROUBLESHOOT_ERROR_TEMPLATE}".format(error=error, section="Cannot Install Libraries")) from e
+            raise AssertionError("{template}".format(error=error, section="Cannot Install Libraries")) from e
             
 __validate_libraries()""".strip())
 
