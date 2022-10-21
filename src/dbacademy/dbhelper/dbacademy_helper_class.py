@@ -111,8 +111,8 @@ class DBAcademyHelper:
         # With requirements initialized, we can
         # test various assertions about our environment
         self.__validate_spark_version()
-        self.__validate_dbfs_writes(f"/dbfs/mnt/dbacademy-users")
-        self.__validate_dbfs_writes(f"/dbfs/mnt/dbacademy-datasets")
+        self.__validate_dbfs_writes(f"dbfs:/mnt/dbacademy-users")
+        self.__validate_dbfs_writes(f"dbfs:/mnt/dbacademy-datasets")
 
     @property
     def current_dbr(self):
@@ -641,17 +641,8 @@ class DBAcademyHelper:
             file = f"{test_dir}/temp/dbacademy-{self.course_config.course_code}-{username}-{notebook_path}.txt"
             try:
                 with redirect_stdout(None):
-                    parent_dir = "/".join(test_dir.split("/")[:-1])
-
-                    if not os.path.exists(parent_dir): os.mkdir(parent_dir)
-                    if not os.path.exists(test_dir): os.mkdir(test_dir)
-                    if os.path.exists(file): os.remove(file)
-
-                    with open(file, "w") as f:
-                        f.write("Please delete this file")
-                    with open(file, "r") as f:
-                        f.read()
-                    os.remove(file)
+                    dbgems.dbutils.fs.put(file, "Please delete this file", True)
+                    dbgems.dbutils.fs.rm(file, True)
 
             except Exception as e:
                 raise AssertionError(self.__troubleshoot_error(f"Unable to write to {file}.", "Cannot Write to DBFS")) from e
