@@ -507,8 +507,8 @@ class DBAcademyHelper:
                 # We have a catalog and presumably a default schema
                 print(f"Predefined tables in \"{self.catalog_name}.{schema}\":")
                 tables = self.__spark.sql(f"SHOW TABLES IN {self.catalog_name}.{schema}").filter("isTemporary == false").select("tableName").collect()
-                if len(tables) == 0: print("  -none-")
-                for row in tables: print(f"  {row[0]}")
+                if len(tables) == 0: print("| -none-")
+                for row in tables: print(f"| {row[0]}")
 
             elif self.__requires_uc:
                 # We require UC, but we didn't create the catalog.
@@ -520,8 +520,8 @@ class DBAcademyHelper:
 
                 print(f"Predefined tables in \"{schema}\":")
                 tables = self.__spark.sql(f"SHOW TABLES IN {schema}").filter("isTemporary == false").select("tableName").collect()
-                if len(tables) == 0: print("  -none-")
-                for row in tables: print(f"  {row[0]}")
+                if len(tables) == 0: print("| -none-")
+                for row in tables: print(f"| {row[0]}")
 
             else:
                 # Not UC, didn't create the database
