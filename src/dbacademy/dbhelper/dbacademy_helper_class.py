@@ -227,7 +227,7 @@ class DBAcademyHelper:
 
     # noinspection PyMethodMayBeStatic
     def __troubleshoot_error(self, error, section):
-        return DBAcademyHelper.TROUBLESHOOT_ERROR_TEMPLATE.format(error, section)
+        return DBAcademyHelper.TROUBLESHOOT_ERROR_TEMPLATE.format(error=error, section=section)
 
     @property
     def __requires_uc(self):
