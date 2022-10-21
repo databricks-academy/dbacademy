@@ -20,7 +20,7 @@ class DBAcademyHelper:
     CATALOG_SPARK_DEFAULT = "spark_catalog"
     CATALOG_UC_DEFAULT = "hive_metastore"
 
-    REQUIREMENTS = []
+    PROTECTED_EXECUTION = "dbacademy.protected-execution"
 
     def __init__(self,
                  course_config: CourseConfig,
@@ -625,24 +625,16 @@ class DBAcademyHelper:
         return results
 
     def __validate_spark_version(self):
-        # noinspection PyUnresolvedReferences
-        try:
+        if not dbgems.spark.conf.get(DBAcademyHelper.PROTECTED_EXECUTION, False):
             self.__current_dbr = self.client.clusters.get_current_spark_version()
-            assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\".", "Spark Version")
-        except py4j.protocol.Py4JError as e:
-            if "CommandContext.tags() is not whitelisted" not in str(e):
-                raise e  # This error arises when running under a secured server
-                # where access to tags are restricted. In this one case, we can
-                # forgo validating the current spark version and move on.
+            msg = f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\".", "Spark Version"
+            assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(msg)
 
     def __validate_dbfs_writes(self, test_dir):
         import os
         from contextlib import redirect_stdout
 
-        try:
-            dbgems.dbutils.widgets.get("skip-validation")
-            return print("Skipping validation of DBFS Writes")
-        except:
+        if not dbgems.spark.conf.get(DBAcademyHelper.PROTECTED_EXECUTION, False):
             file_name = self.clean_string(f"{self.course_config.course_code}-{dbgems.get_notebook_path()}")
             file = f"{test_dir}/dbacademy-{file_name}.txt"
             try:
