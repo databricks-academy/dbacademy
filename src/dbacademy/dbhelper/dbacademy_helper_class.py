@@ -21,6 +21,7 @@ class DBAcademyHelper:
     CATALOG_UC_DEFAULT = "hive_metastore"
 
     PROTECTED_EXECUTION = "dbacademy.protected-execution"
+    TROUBLESHOOT_ERROR_TEMPLATE = "{error} Please see the \"Troubleshooting | {section}\" section of the \"Version Info\" notebook for more information."
 
     def __init__(self,
                  course_config: CourseConfig,
@@ -225,8 +226,8 @@ class DBAcademyHelper:
         return f"({int(time.time()) - start} seconds{end})"
 
     # noinspection PyMethodMayBeStatic
-    def __troubleshoot_error(self, error, section):
-        return f"{error} Please see the \"Troubleshooting | {section}\" section of the \"Version Info\" notebook for more information."
+    def _troubleshoot_error(self, error, section):
+        return DBAcademyHelper.TROUBLESHOOT_ERROR_TEMPLATE.format(error, section)
 
     @property
     def __requires_uc(self):
