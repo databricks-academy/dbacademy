@@ -1,7 +1,7 @@
 import unittest
 
 
-class MyTestCase(unittest.TestCase):
+class TestModuleAlias(unittest.TestCase):
 
     def test_module(self):
         pass
@@ -12,8 +12,8 @@ class MyTestCase(unittest.TestCase):
         # return None
 
     def test_dbpublish(self):
-        from dbacademy.dbpublish.notebook_def_class import NotebookDef
-        notebook = NotebookDef(build_config=None,
+        from dbacademy.dbbuild import NotebookDef, BuildConfig
+        notebook = NotebookDef(build_config=BuildConfig(name="TestBuildConfig"),
                                version="Unknown",
                                path="Agenda",
                                replacements={},
@@ -27,7 +27,7 @@ class MyTestCase(unittest.TestCase):
         self.assertIsNotNone(notebook)
 
     def test_dbtest(self):
-        from dbacademy_courseware.dbtest.results_evaluator import ResultsEvaluator
+        from dbacademy.dbbuild import ResultsEvaluator
         results_evaluator = ResultsEvaluator([], False)
         self.assertIsNotNone(results_evaluator)
 

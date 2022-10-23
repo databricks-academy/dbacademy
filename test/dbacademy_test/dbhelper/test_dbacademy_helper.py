@@ -1,7 +1,8 @@
 import unittest
-from dbacademy_helper import DBAcademyHelper
+from dbacademy.dbhelper import DBAcademyHelper
 
-class MyTestCase(unittest.TestCase):
+
+class TestDBAcademyHelper(unittest.TestCase):
 
     def test_to_username_hash(self):
         username = "mickey.mouse@disney.com"

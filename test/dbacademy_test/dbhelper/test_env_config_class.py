@@ -1,7 +1,8 @@
 import unittest
-from dbacademy_helper.lesson_config_class import LessonConfig
+from dbacademy.dbhelper.lesson_config_class import LessonConfig
 
-class MyTestCase(unittest.TestCase):
+
+class TestLessonConfig(unittest.TestCase):
 
     def test_to_catalog_name(self):
         catalog_name = LessonConfig.to_catalog_name("mickey.mouse@disney.com")

@@ -1,8 +1,8 @@
 import unittest
-from dbacademy_helper.tests.test_suite_class import TestSuite
+from dbacademy.dbhelper.tests.test_suite_class import TestSuite
 
 
-class MyTestCase(unittest.TestCase):
+class TestTesting(unittest.TestCase):
 
     DESCRIPTION = "Testing 123."
     SUITE_NAME = "Whatever"
@@ -27,7 +27,7 @@ class MyTestCase(unittest.TestCase):
         for actual_value, expected_passed in [(None, True), ("Bananas", False)]:
 
             suite = TestSuite(self.SUITE_NAME)
-            suite.test_is_none(actual_value,
+            suite.test_is_none(lambda: actual_value,
                                hint=f"Found, [[ACTUAL_VALUE]]",
                                description=f"Testing 123.")
 
@@ -39,7 +39,7 @@ class MyTestCase(unittest.TestCase):
         for actual_value, expected_passed in [(None, False), ("Bananas", True)]:
 
             suite = TestSuite(self.SUITE_NAME)
-            suite.test_not_none(actual_value,
+            suite.test_not_none(lambda: actual_value,
                                 hint=f"Found, [[ACTUAL_VALUE]]",
                                 description=f"Testing 123.")
 

@@ -1,8 +1,10 @@
 import unittest
 import typing
-from dbacademy.dbpublish.notebook_def_class import NotebookDef, NotebookError
 
-class MyTestCase(unittest.TestCase):
+from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef, NotebookError
+
+
+class TestNotebookDef(unittest.TestCase):
     from dbacademy import dbgems
 
     def __init__(self, method_name):

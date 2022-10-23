@@ -1,7 +1,7 @@
 import unittest
 
 
-class MyTestCase(unittest.TestCase):
+class TestBuildConfig(unittest.TestCase):
 
     def test_load(self):
         from dbacademy.dbbuild.build_config_class import BuildConfig

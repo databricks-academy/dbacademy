@@ -10,7 +10,7 @@ import unittest
 from dbacademy.dougrest import databricks
 
 
-class TestHighLevelFeatures(unittest.TestCase):
+class TestDatabricksApiClient(unittest.TestCase):
     """
     General test of API connectivity for each of the main Databricks Workspace Rest APIs.
     """
@@ -70,7 +70,7 @@ class TestHighLevelFeatures(unittest.TestCase):
 
 def main():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestHighLevelFeatures))
+    suite.addTest(unittest.makeSuite(TestDatabricksApiClient))
     runner = unittest.TextTestRunner()
     runner.run(suite)
 
