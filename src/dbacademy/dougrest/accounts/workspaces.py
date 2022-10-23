@@ -31,10 +31,10 @@ class Workspace(DatabricksApi):
                 time.sleep(15)
 
     @overrides
-    def api(self, http_method: str, endpoint_path: str, data=None, *,
-            expected: Union[int, Container[int]] = None) -> Union[str, Dict]:
+    def api(self, _http_method: str, _endpoint_path: str, _data=None, *,
+            _expected: Union[int, Container[int]] = None) -> Union[str, Dict]:
         self.wait_until_ready()
-        return super().api(http_method, endpoint_path, data)
+        return super().api(_http_method, _endpoint_path, _data)
 
 
 class Workspaces(AccountsCRUD):

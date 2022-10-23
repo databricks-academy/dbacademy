@@ -45,27 +45,27 @@ class CRUD(ApiContainer, metaclass=ABCMeta):
                 m.__doc__ = m.__doc__.format(**self.__dict__)
 
     @abstractmethod
-    def _list(self, *, expected: HttpErrorCodes = None) -> List[Item]:
+    def _list(self, *, _expected: HttpStatusCodes = None) -> List[Item]:
         """Perform API call"""
         pass
 
     @abstractmethod
-    def _get(self, item_id: ItemId, *, expected: HttpErrorCodes = None) -> Item:
+    def _get(self, item_id: ItemId, *, _expected: HttpStatusCodes = None) -> Item:
         """Perform API call"""
         pass
 
     @abstractmethod
-    def _create(self, item: Item, *, expected: HttpErrorCodes = None) -> ItemOrId:
+    def _create(self, item: Item, *, _expected: HttpStatusCodes = None) -> ItemOrId:
         """Perform API call"""
         pass
 
     @abstractmethod
-    def _update(self, item: Item, *, expected: HttpErrorCodes = None) -> ItemOrId:
+    def _update(self, item: Item, *, _expected: HttpStatusCodes = None) -> ItemOrId:
         """Perform API call"""
         pass
 
     @abstractmethod
-    def _delete(self, item_id, *, expected: HttpErrorCodes = None):
+    def _delete(self, item_id, *, _expected: HttpStatusCodes = None):
         """Perform API call"""
         pass
 
@@ -149,7 +149,7 @@ class CRUD(ApiContainer, metaclass=ABCMeta):
             expected = None
         else:
             raise ValueError("if_not_exists must be 'ignore' or 'error'")
-        item = self._get(item_id, expected=expected)
+        item = self._get(item_id, _expected=expected)
         return self._refresh(item)
 
     def get_by_name(self, item_name: str, if_not_exists: IfNotExists = "error") -> Item:
@@ -289,7 +289,7 @@ class CRUD(ApiContainer, metaclass=ABCMeta):
             expected = None
         else:
             raise ValueError("if_not_exists must be 'ignore' or 'error'")
-        result = self._update(item, expected=expected)
+        result = self._update(item, _expected=expected)
         if isinstance(str, dict):
             return self._refresh(result, fetch)
         else:
@@ -317,7 +317,7 @@ class CRUD(ApiContainer, metaclass=ABCMeta):
             expected = None
         else:
             raise ValueError("if_not_exists must be 'ignore' or 'error'")
-        result = self._delete(item_id, expected=expected)
+        result = self._delete(item_id, _expected=expected)
         return result is not None
 
     def delete_by_name(self, item_name, if_not_exists: IfNotExists = "error"):

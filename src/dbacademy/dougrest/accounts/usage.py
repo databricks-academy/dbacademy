@@ -7,7 +7,7 @@ class Usage(ApiContainer):
         self.accounts = accounts
 
     def download(self, start_month, end_month, personal_data=False):
-        return self.accounts.api("GET", "/usage/download", data={
+        return self.accounts.api("GET", "/usage/download", _data={
             "start_month": start_month,
             "end_month": end_month,
             "personal_data": personal_data,

@@ -1,7 +1,7 @@
 from typing import Dict, List
 
 from dbacademy.dougrest import DatabricksApi
-from dbacademy.rest.common import HttpErrorCodes, Item, ItemId, ApiClient
+from dbacademy.rest.common import HttpStatusCodes, Item, ItemId, ApiClient
 from dbacademy.rest.crud import CRUD
 
 
@@ -10,23 +10,23 @@ class Pools(CRUD):
         super().__init__(databricks, "2.0/instance-pools", "instance_pool")
         self.databricks = databricks
 
-    def _list(self, *, expected: HttpErrorCodes = None) -> List[Item]:
+    def _list(self, *, _expected: HttpStatusCodes = None) -> List[Item]:
         result = self.databricks.simple_get(f"{self.path}/list")
         return result.get("instance_pools", [])
 
-    def _get(self, item_id: ItemId, *, expected: HttpErrorCodes = None) -> Item:
+    def _get(self, item_id: ItemId, *, _expected: HttpStatusCodes = None) -> Item:
         result = self.databricks.simple_get(f"{self.path}/get?{self.id_key}={item_id}")
         return result
 
-    def _create(self, item: Item, *, expected: HttpErrorCodes = None) -> ItemId:
+    def _create(self, item: Item, *, _expected: HttpStatusCodes = None) -> ItemId:
         result = self.databricks.simple_post(f"{self.path}/create", **item)
         return result["instance_pool_id"]
 
-    def _update(self, item: Item, *, expected: HttpErrorCodes = None) -> ItemId:
+    def _update(self, item: Item, *, _expected: HttpStatusCodes = None) -> ItemId:
         result = self.databricks.simple_post(f"{self.path}/edit", **item)
         return result["instance_pool_id"]
 
-    def _delete(self, item_id, *, expected: HttpErrorCodes = None):
+    def _delete(self, item_id, *, _expected: HttpStatusCodes = None):
         result = self.databricks.simple_post(f"{self.path}/delete", instance_pool_id=item_id)
         return result
 

@@ -10,7 +10,7 @@ class Clusters(ApiContainer):
         self.policies = ClustersPolicyClient(databricks)
 
     def get(self, id):
-        return self.databricks.api("GET", "2.0/clusters/get", data={"cluster_id": id})
+        return self.databricks.api("GET", "2.0/clusters/get", _data={"cluster_id": id})
 
     def list(self):
         response = self.databricks.api("GET", "2.0/clusters/list")

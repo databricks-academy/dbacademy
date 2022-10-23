@@ -26,7 +26,7 @@ class Users(ApiContainer):
 
     def overwrite(self, user: dict):
         id = user["id"]
-        return self.databricks.api("PUT", f"2.0/preview/scim/v2/Users/{id}", data=user)
+        return self.databricks.api("PUT", f"2.0/preview/scim/v2/Users/{id}", _data=user)
 
     def patch(self, user: dict, operations: List[Dict]):
         id = user["id"]
@@ -34,7 +34,7 @@ class Users(ApiContainer):
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
             "Operations": operations
         }
-        return self.databricks.api("PATCH", f"2.0/preview/scim/v2/Users/{id}", data=data)
+        return self.databricks.api("PATCH", f"2.0/preview/scim/v2/Users/{id}", _data=data)
 
     def set_entitlements(self, user: dict, entitlements: Dict[str, bool]):
         adds = []
@@ -81,7 +81,7 @@ class Users(ApiContainer):
             "userName": username,
             "entitlements": entitlements
         }
-        return self.databricks.api("POST", "2.0/preview/scim/v2/Users", data=data)
+        return self.databricks.api("POST", "2.0/preview/scim/v2/Users", _data=data)
 
     def delete_by_id(self, id):
         return self.databricks.api("DELETE", f"2.0/preview/scim/v2/Users/{id}")
