@@ -1,7 +1,6 @@
 from typing import Union, List
 
-from overrides import overrides
-
+from dbacademy.common import overrides
 from dbacademy.rest.common import *
 from dbacademy.rest.crud import CRUD
 

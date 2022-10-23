@@ -1,5 +1,7 @@
-import sys, pyspark
 from typing import List, Union, Any
+import sys
+import pyspark
+import dbacademy.common
 from .mock_dbutils_class import MockDBUtils
 
 dbgems_module = sys.modules[globals()['__name__']]
@@ -8,36 +10,12 @@ sc: Union[None, pyspark.SparkContext] = None
 dbutils: Union[None, MockDBUtils] = None
 
 
-def is_deprecation_logging_enabled():
+def check_deprecation_logging_enabled():
+    if spark is None:
+        return
     status = spark.conf.get("dbacademy.deprecation.logging", None)
-    return status is not None and str(status).lower() == "enabled"
-
-
-def print_warning(title: str, message: str, length: int = 100):
-    title_len = length - len(title) - 3
-    print(f"""* {title.upper()} {("*"*title_len)}""")
-    for line in message.split("\n"):
-        print(f"* {line}")
-    print("*"*length)
-
-
-def deprecated(reason=None):
-    def decorator(inner_function):
-        def wrapper(*args, **kwargs):
-            if is_deprecation_logging_enabled():
-                assert reason is not None, f"The deprecated reason must be specified."
-                try:
-                    import inspect
-                    function_name = str(inner_function.__name__) + str(inspect.signature(inner_function))
-                    final_reason = f"{reason}\n{function_name}"
-                except: final_reason = reason  # just in case
-
-                print_warning(title="DEPRECATED", message=final_reason)
-
-            return inner_function(*args, **kwargs)
-
-        return wrapper
-    return decorator
+    enabled = status is not None and str(status).lower() == "enabled"
+    dbacademy.common.set_deprecation_logging_enabled(enabled)
 
 
 def sql(query):
@@ -379,3 +357,5 @@ def find_global(target):
 dbgems_module.sc = find_global("sc")
 dbgems_module.spark = find_global("spark")
 dbgems_module.dbutils = find_global("dbutils")
+check_deprecation_logging_enabled()
+

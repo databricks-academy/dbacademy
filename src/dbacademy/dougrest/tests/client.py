@@ -21,7 +21,7 @@ class TestApiClient(unittest.TestCase):
         self.assertIsNotNone(results)
 
     def testExpected404(self):
-        results = databricks.api_simple("GET", "/2.0/workspace/list", path="/does-not-exist", expected=404)
+        results = databricks.api_simple("GET", "/2.0/workspace/list", path="/does-not-exist", _expected=404)
         self.assertIsNone(results)
 
     def testSelfCallable(self):

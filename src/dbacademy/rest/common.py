@@ -1,24 +1,24 @@
 from __future__ import annotations
-from typing import Container, Dict, Literal, TypeVar, Union, List, TypeAlias, Any, Type
-
-from deprecated.classic import deprecated
+from typing import Any, Container, Dict, List, Literal, Type, TypeVar, Union, Callable
 from pprint import pformat
 from requests import HTTPError, Response
+from dbacademy.common import deprecated
 
 __all__ = ["CachedStaticProperty", "ApiContainer", "ApiClient", "DatabricksApiException",
-           "HttpStatusCodes", "IfNotExists", "IfExists", "Item", "ItemId", "ItemOrId"]
+           "HttpStatusCodes", "HttpMethod", "HttpReturnType", "IfNotExists", "IfExists",
+           "Item", "ItemId", "ItemOrId"]
 
-HttpStatusCode: TypeAlias = int
-HttpStatusCodes: TypeAlias = Union[HttpStatusCode, Container[HttpStatusCode]]
-HttpMethod: TypeAlias = Literal["GET", "PUT", "POST", "DELETE", "PATCH", "HEAD", "OPTIONS"]
-HttpReturnType: TypeVar = TypeVar("HttpReturnType", bound=Union[dict, str, bytes, Response, HttpStatusCode, None])
+HttpStatusCode = int
+HttpStatusCodes = Union[HttpStatusCode, Container[HttpStatusCode]]
+HttpMethod = Literal["GET", "PUT", "POST", "DELETE", "PATCH", "HEAD", "OPTIONS"]
+HttpReturnType = TypeVar("HttpReturnType", bound=Union[dict, str, bytes, Response, HttpStatusCode, None])
 
-IfNotExists: TypeAlias = Literal["error", "ignore"]
-IfExists: TypeAlias = Literal["create", "error", "ignore", "overwrite", "update"]
+IfNotExists = Literal["error", "ignore"]
+IfExists = Literal["create", "error", "ignore", "overwrite", "update"]
 
-Item: TypeAlias = Dict
-ItemId: TypeAlias = Union[int, str]
-ItemOrId: TypeAlias = Union[int, str, Dict]
+Item = Dict
+ItemId = Union[int, str]
+ItemOrId = Union[int, str, Dict]
 
 
 class CachedStaticProperty:
@@ -273,7 +273,6 @@ class ApiClient(ApiContainer):
         """
         if 200 <= response.status_code < 300:
             return
-
         if expected is None:
             expected = ()
         elif type(expected) == str:
