@@ -2,20 +2,11 @@
 Common libraries that do not depend on other libraries.
 This was moved out of dbgems because dbgems has a dependency on pyspark.
 """
-__all__ = ["deprecated", "overrides"]
+__all__ = ["deprecated", "overrides", "print_warning"]
 
 from typing import Callable
 
-_deprecation_logging_enabled = False
-
-
-def set_deprecation_logging_enabled(enabled: bool) -> None:
-    global _deprecation_logging_enabled
-    _deprecation_logging_enabled = enabled
-
-
-def is_deprecation_logging_enabled() -> bool:
-    return _deprecation_logging_enabled
+deprecation_logging_enabled = False
 
 
 def print_warning(title: str, message: str, length: int = 100) -> None:
@@ -33,7 +24,7 @@ def deprecated(reason=None, action=None) -> Callable:
     def decorator(inner_function):
         @wraps(inner_function)
         def wrapper(*args, **kwargs):
-            if is_deprecation_logging_enabled():
+            if deprecation_logging_enabled:
                 assert reason is not None, f"The deprecated reason must be specified."
                 try:
                     import inspect

@@ -15,7 +15,7 @@ def check_deprecation_logging_enabled():
         return
     status = spark.conf.get("dbacademy.deprecation.logging", None)
     enabled = status is not None and str(status).lower() == "enabled"
-    dbacademy.common.set_deprecation_logging_enabled(enabled)
+    dbacademy.common.deprecation_logging_enabled = enabled
 
 
 def sql(query):

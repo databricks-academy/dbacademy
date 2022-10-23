@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Any, Container, Dict, List, Literal, Type, TypeVar, Union, Callable
 from pprint import pformat
 from requests import HTTPError, Response
-from dbacademy.common import deprecated
+from dbacademy.common import deprecated, print_warning
 
 __all__ = ["CachedStaticProperty", "ApiContainer", "ApiClient", "DatabricksApiException",
            "HttpStatusCodes", "HttpMethod", "HttpReturnType", "IfNotExists", "IfExists",
@@ -124,7 +124,7 @@ class ApiClient(ApiContainer):
 
         if throttle_seconds > 0:
             s = "" if throttle_seconds == 1 else "s"
-            print(f"** WARNING ** Requests are being throttled by {throttle_seconds} second{s} per request.")
+            print_warning("WARNING", f"Requests are being throttled by {throttle_seconds} second{s} per request.")
 
         self.url = url
         self.user = user

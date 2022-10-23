@@ -7,6 +7,7 @@
 
 import unittest
 
+from dbacademy.common import print_warning
 from dbacademy.rest.common import ApiClient
 from dbacademy.dougrest import databricks, DatabricksApiException
 
@@ -66,7 +67,7 @@ class TestApiClient(unittest.TestCase):
             self.assertIn(e.http_code, (401, 403))
 
     def testThrottle(self):
-        print("** WARNING ** Ignore the next throttle warning.  It is intentionally being testing.")
+        print_warning("WARNING", "Ignore the next throttle warning.  It is intentionally being testing.")
         client = ApiClient(databricks.url,
                            authorization_header=databricks.session.headers["Authorization"],
                            throttle_seconds=2
