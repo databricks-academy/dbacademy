@@ -2,9 +2,11 @@
 Common libraries that do not depend on other libraries.
 This was moved out of dbgems because dbgems has a dependency on pyspark.
 """
-__all__ = ["deprecated", "overrides", "print_warning"]
+from __future__ import annotations
 
 from typing import Callable
+
+__all__ = ["deprecated", "overrides", "print_warning", "CachedStaticProperty"]
 
 deprecation_logging_enabled = False
 
@@ -44,3 +46,15 @@ def overrides(func: Callable = None, check_signature: bool = True) -> Callable:
         return func
     else:
         return lambda f: f
+
+
+class CachedStaticProperty:
+    """Works like @property and @staticmethod combined"""
+
+    def __init__(self, func):
+        self.func = func
+
+    def __get__(self, inst, owner):
+        result = self.func()
+        setattr(owner, self.func.__name__, result)
+        return result

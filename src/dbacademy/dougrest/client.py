@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Dict
 
+from dbacademy.common import CachedStaticProperty
 from dbacademy.rest.common import *
 
 __all__ = ["DatabricksApi", "DatabricksApiException"]

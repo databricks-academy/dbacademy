@@ -1,10 +1,10 @@
 from __future__ import annotations
-from typing import Any, Container, Dict, List, Literal, Type, TypeVar, Union, Callable
+from typing import Any, Container, Dict, List, Literal, Type, TypeVar, Union
 from pprint import pformat
 from requests import HTTPError, Response
 from dbacademy.common import deprecated, print_warning
 
-__all__ = ["CachedStaticProperty", "ApiContainer", "ApiClient", "DatabricksApiException",
+__all__ = ["ApiContainer", "ApiClient", "DatabricksApiException",
            "HttpStatusCodes", "HttpMethod", "HttpReturnType", "IfNotExists", "IfExists",
            "Item", "ItemId", "ItemOrId"]
 
@@ -19,18 +19,6 @@ IfExists = Literal["create", "error", "ignore", "overwrite", "update"]
 Item = Dict
 ItemId = Union[int, str]
 ItemOrId = Union[int, str, Dict]
-
-
-class CachedStaticProperty:
-    """Works like @property and @staticmethod combined"""
-
-    def __init__(self, func):
-        self.func = func
-
-    def __get__(self, inst, owner):
-        result = self.func()
-        setattr(owner, self.func.__name__, result)
-        return result
 
 
 class ApiContainer(object):

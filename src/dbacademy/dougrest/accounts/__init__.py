@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Dict
 
+from dbacademy.common import CachedStaticProperty
 from dbacademy.dougrest.accounts.budgets import Budgets
 from dbacademy.dougrest.accounts.credentials import Credentials
 from dbacademy.dougrest.accounts.keys import CustomerManagedKeys
