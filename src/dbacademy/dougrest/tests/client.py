@@ -66,6 +66,7 @@ class TestApiClient(unittest.TestCase):
             self.assertIn(e.http_code, (401, 403))
 
     def testThrottle(self):
+        print("** WARNING ** Ignore the next throttle warning.  It is intentionally being testing.")
         client = ApiClient(databricks.url,
                            authorization_header=databricks.session.headers["Authorization"],
                            throttle_seconds=2
