@@ -28,7 +28,7 @@ class ScimGroupsClient(ApiContainer):
 
     def delete_by_id(self, id):
         url = f"{self.base_uri}/{id}"
-        return self.client.execute_delete(url, expected=204)
+        return self.client.execute_delete_json(url, expected=204)
 
     def delete_by_name(self, name):
         for group in self.list():

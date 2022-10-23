@@ -25,7 +25,12 @@ class TestHighLevelFeatures(unittest.TestCase):
 
     def testJobs(self):
         result = databricks.jobs.list()
-        self.assertIsInstance(result, list)
+        result = list(result)
+        if not result:
+            return
+        job = result[0]
+        job_id = job.get("job_id", "DoesNotExist")
+        self.assertIsInstance(job_id, int)
 
     def testRepos(self):
         result = databricks.repos.list()

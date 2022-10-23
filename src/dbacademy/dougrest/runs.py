@@ -76,22 +76,19 @@ class Runs(ApiContainer):
             except DatabricksApiException as e:
                 raise e
 
-    def delete_all(self, runs: List[Union[int, dict]] = None) -> list:
-        if runs is None:
-            if_not_exists = "ignore"
-            runs = self.list()
+    def delete_all(self, job_id: int = None) -> list:
+        runs = self.list(job_id=job_id)
         if not runs:
             return []
         from multiprocessing.pool import ThreadPool
         with ThreadPool(min(len(runs), 500)) as pool:
             pool.map(lambda run: self.delete(run, if_not_exists="ignore"), runs)
 
-    def cancel_all(self, runs: List[Union[int, dict]] = None) -> list:
-        if runs is None:
-            if_not_exists = "ignore"
-            runs = self.list()
+    def cancel_all(self, job_id: int = None) -> list:
+        runs = self.list(job_id=job_id)
         if not runs:
             return []
+
         from multiprocessing.pool import ThreadPool
         with ThreadPool(min(len(runs), 500)) as pool:
             pool.map(lambda run: self.cancel(run, if_not_exists="ignore"), runs)

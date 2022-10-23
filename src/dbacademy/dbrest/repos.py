@@ -24,4 +24,4 @@ class ReposClient(ApiContainer):
         })
 
     def delete(self, repo_id):
-        return self.client.execute_delete(f"{self.client.endpoint}/api/2.0/repos/{repo_id}")
+        return self.client.execute_delete_json(f"{self.client.endpoint}/api/2.0/repos/{repo_id}")
