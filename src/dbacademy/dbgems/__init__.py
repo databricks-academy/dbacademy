@@ -156,6 +156,8 @@ def lookup_current_module_version(module: str, dist_version: str = "0.0.0", defa
 
 
 def is_curriculum_workspace() -> bool:
+    if dbutils is None:
+        return False
     host_name = get_browser_host_name(default_value="unknown")
     return host_name.startswith("curriculum-") and host_name.endswith(".cloud.databricks.com")
 
