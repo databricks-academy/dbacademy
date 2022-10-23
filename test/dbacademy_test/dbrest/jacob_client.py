@@ -7,10 +7,31 @@
 
 import unittest
 
-from dbacademy.dbrest.tests import databricks
+
+def create_client():
+    from dbacademy.dbrest import DBAcademyRestClient
+    import os
+    import configparser
+
+    for path in ('.databrickscfg', '~/.databrickscfg'):
+        path = os.path.expanduser(path)
+        if not os.path.exists(path):
+            continue
+        config = configparser.ConfigParser()
+        config.read(path)
+        if 'DEFAULT' not in config:
+            print('No Default')
+            continue
+        host = config['DEFAULT']['host'].rstrip("/")
+        token = config['DEFAULT']['token']
+        return DBAcademyRestClient(token, host)
+    return DBAcademyRestClient()
 
 
-class TestHighLevelFeatures(unittest.TestCase):
+databricks = create_client()
+
+
+class TestDBAcademyRestClient(unittest.TestCase):
     """
     General test of API connectivity for each of the main Databricks Workspace Rest APIs.
     """
@@ -107,7 +128,7 @@ class TestHighLevelFeatures(unittest.TestCase):
 
 def main():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestHighLevelFeatures))
+    suite.addTest(unittest.makeSuite(TestDBAcademyRestClient))
     runner = unittest.TextTestRunner()
     runner.run(suite)
 

@@ -2,11 +2,11 @@
 
 def main():
     import unittest
-    from dbacademy.dbrest.tests.highlevel import TestHighLevelFeatures as TestDBRest
-    from dbacademy.dougrest.tests.highlevel import TestHighLevelFeatures
-    from dbacademy.dougrest.tests.client import TestApiClient
-    from dbacademy.dougrest.tests.accounts import TestAccountsApi
-    from dbacademy.dougrest.tests.permissions import TestPermissionsApi
+    from dbacademy_test.dbrest.jacob_client import TestDBAcademyRestClient as TestDBRest
+    from dbacademy_test.dbrest.highlevel import TestHighLevelFeatures
+    from dbacademy_test.dbrest.api_client import TestApiClient
+    from dbacademy_test.dbrest.accounts import TestAccountsApi
+    from dbacademy_test.dbrest.permissions import TestPermissionsApi
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestDBRest))
     suite.addTest(unittest.makeSuite(TestHighLevelFeatures))
