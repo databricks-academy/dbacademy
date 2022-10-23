@@ -1,8 +1,41 @@
+from __future__ import annotations
+
+from typing import Dict
+
+from dbacademy.common import CachedStaticProperty
 from dbacademy.rest.common import ApiClient
 
 
 class DBAcademyRestClient(ApiClient):
     """Databricks Academy REST API client."""
+
+    @CachedStaticProperty  # Ignore warning about missing "self"
+    def default_client() -> DBAcademyRestClient:
+        result = DBAcademyRestClient.known_clients.get("DEFAULT")
+        if result is None:
+            result = DBAcademyRestClient()
+        return result
+
+    @CachedStaticProperty  # Ignore warning about missing "self"
+    def known_clients() -> Dict[str, DBAcademyRestClient]:
+        clients = {}
+        import os
+        import configparser
+        for path in ('.databrickscfg', '~/.databrickscfg'):
+            path = os.path.expanduser(path)
+            if not os.path.exists(path):
+                continue
+            config = configparser.ConfigParser()
+            config.read(path)
+            for section_name, section in config.items():
+                api_type = section.get('api_type', 'workspace')
+                if api_type != 'workspace':
+                    continue
+                endpoint = section['host']
+                token = section['token']
+                clients[section_name] = DBAcademyRestClient(token, endpoint)
+        return clients
+
     def __init__(self,
                  token: str = None,
                  endpoint: str = None,

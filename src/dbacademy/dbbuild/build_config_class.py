@@ -130,7 +130,7 @@ class BuildConfig:
 
         self.test_type = None
         self.notebooks: Union[None, Dict[str, NotebookDef]] = None
-        self.client = DBAcademyRestClient() if client is None else client
+        self.client = DBAcademyRestClient.default_client if client is None else client
 
         # The instance of this test run
         self.suite_id = str(time.time()) + "-" + str(uuid.uuid1())
