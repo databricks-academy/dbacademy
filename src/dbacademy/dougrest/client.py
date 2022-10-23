@@ -44,7 +44,7 @@ class DatabricksApi(dict, ApiClient):
 
     def __init__(self, hostname=None, *, token=None, user=None, password=None, authorization_header=None, cloud="AWS",
                  deployment_name=None):
-        from dbacademy.rest.dbgems_fix import dbgems
+        from dbacademy import dbgems
         if hostname:
             url = f'https://{hostname}/api/'
         else:
