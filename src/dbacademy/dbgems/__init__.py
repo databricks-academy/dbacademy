@@ -230,19 +230,17 @@ def proof_of_life(expected_get_username,
                   expected_get_notebook_name,
                   expected_get_notebook_dir,
                   expected_get_notebooks_api_endpoint):
-    """Because it is too difficult to validate this from the command line, this function simply invokes all the functions as proof of life"""
+    """
+    Because it is too difficult to validate this from the command line, this function
+    simply invokes all the functions as proof of life
+    """
 
     import dbruntime
     from py4j.java_collections import JavaMap
 
-    value = dbgems_module.dbutils
-    assert isinstance(value, dbruntime.dbutils.DBUtils), f"Expected {dbruntime.dbutils.DBUtils}, found {type(value)}"
-
-    value = dbgems_module.spark
-    assert isinstance(value, pyspark.sql.SparkSession), f"Expected {pyspark.sql.SparkSession}, found {type(value)}"
-
-    value = dbgems_module.sc
-    assert isinstance(value, pyspark.context.SparkContext), f"Expected {pyspark.context.SparkContext}, found {type(value)}"
+    assert isinstance(dbutils, dbruntime.dbutils.DBUtils), f"Expected {dbruntime.dbutils.DBUtils}, found {type(value)}"
+    assert isinstance(sparm, pyspark.sql.SparkSession), f"Expected {pyspark.sql.SparkSession}, found {type(value)}"
+    assert isinstance(sc, pyspark.context.SparkContext), f"Expected {pyspark.context.SparkContext}, found {type(value)}"
 
     value = get_parameter("some_widget", default_value="undefined")
     assert value == "undefined", f"Expected \"undefined\", found \"{value}\"."
@@ -355,8 +353,8 @@ def find_global(target):
     return None
 
 
-dbgems_module.sc = find_global("sc")
-dbgems_module.spark = find_global("spark")
-dbgems_module.dbutils = find_global("dbutils")
+sc = find_global("sc")
+spark = find_global("spark")
+dbutils = find_global("dbutils")
 check_deprecation_logging_enabled()
 
