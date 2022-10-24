@@ -1,12 +1,9 @@
 from typing import List, Union, Any
-import sys
 import pyspark
 import dbacademy.common
+from dbacademy.common import deprecated, print_warning
 from .mock_dbutils_class import MockDBUtils
 
-deprecated = dbacademy.common.deprecated
-print_warning = dbacademy.common.print_warning
-dbgems_module = sys.modules[globals()['__name__']]
 spark: Union[None, pyspark.sql.SparkSession] = None
 sc: Union[None, pyspark.SparkContext] = None
 dbutils: Union[None, MockDBUtils] = None
