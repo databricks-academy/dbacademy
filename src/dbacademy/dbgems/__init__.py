@@ -1,12 +1,8 @@
 from typing import List, Union, Any
 import pyspark
 import dbacademy.common
-from dbacademy.common import deprecated, print_warning
+from dbacademy.common import print_warning
 from .mock_dbutils_class import MockDBUtils
-
-spark: Union[None, pyspark.sql.SparkSession] = None
-sc: Union[None, pyspark.SparkContext] = None
-dbutils: Union[None, MockDBUtils] = None
 
 
 def check_deprecation_logging_enabled():
@@ -115,7 +111,7 @@ def get_notebooks_api_token() -> str:
 
 
 def jprint(value: dict, indent: int = 4):
-    assert type(value) == dict or type(value) == list, f"Expected value to be of type \"dict\" or \"list\", found \"{type(value)}\"."
+    assert type(value) == dict or type(value) == list, f"Expected value to be of type \"dict\" or \"list\", found \"{type(value)}\". "
 
     import json
     print(json.dumps(value, indent=indent))
@@ -238,9 +234,9 @@ def proof_of_life(expected_get_username,
     import dbruntime
     from py4j.java_collections import JavaMap
 
-    assert isinstance(dbutils, dbruntime.dbutils.DBUtils), f"Expected {dbruntime.dbutils.DBUtils}, found {type(value)}"
-    assert isinstance(sparm, pyspark.sql.SparkSession), f"Expected {pyspark.sql.SparkSession}, found {type(value)}"
-    assert isinstance(sc, pyspark.context.SparkContext), f"Expected {pyspark.context.SparkContext}, found {type(value)}"
+    assert isinstance(dbutils, dbruntime.dbutils.DBUtils), f"Expected {dbruntime.dbutils.DBUtils}, found {type(dbutils)}"
+    assert isinstance(spark, pyspark.sql.SparkSession), f"Expected {pyspark.sql.SparkSession}, found {type(spark)}"
+    assert isinstance(sc, pyspark.context.SparkContext), f"Expected {pyspark.context.SparkContext}, found {type(sc)}"
 
     value = get_parameter("some_widget", default_value="undefined")
     assert value == "undefined", f"Expected \"undefined\", found \"{value}\"."
@@ -353,8 +349,8 @@ def find_global(target):
     return None
 
 
-sc = find_global("sc")
-spark = find_global("spark")
-dbutils = find_global("dbutils")
-check_deprecation_logging_enabled()
+spark: Union[None, "pyspark.sql.SparkSession"] = find_global("spark")
+sc: Union[None, "pyspark.SparkContext"] = find_global("sc")
+dbutils: Union[MockDBUtils, None] = find_global("dbutils")
 
+check_deprecation_logging_enabled()

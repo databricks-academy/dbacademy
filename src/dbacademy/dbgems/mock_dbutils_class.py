@@ -10,6 +10,7 @@ class MockDBUtils:
         self.fs = None
         self.widgets = None
         self.notebook = None
+        self.secrets = None
         self.entry_point = Stub()
 
     # noinspection PyPep8Naming
