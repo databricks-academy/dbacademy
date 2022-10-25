@@ -5,8 +5,6 @@ reqs = [
     # "setuptools",  # Provided dependency
     # "requests",    # Provided dependency
     # "urllib3",     # Provided dependency
-    "overrides",
-    "Deprecated",
 ]
 
 setuptools.setup(
