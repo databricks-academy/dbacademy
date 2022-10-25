@@ -8,7 +8,7 @@ class InstancePoolsClient(ApiContainer):
         self.base_uri = f"{self.client.endpoint}/api/2.0/instance-pools"
 
     def get_by_id(self, instance_pool_id):
-        return self.client.execute_get_json(f"{self.base_uri}/get?instance_pool_id={instance_pool_id}")
+        return self.client.api("GET", f"{self.base_uri}/get?instance_pool_id={instance_pool_id}")
 
     def get_by_name(self, name):
         pools = self.list()
@@ -19,7 +19,7 @@ class InstancePoolsClient(ApiContainer):
 
     def list(self):
         # Does not support pagination
-        return self.client.execute_get_json(f"{self.base_uri}/list").get("instance_pools", [])
+        return self.client.api("GET", f"{self.base_uri}/list").get("instance_pools", [])
 
     def create_or_update(self, instance_pool_name: str, idle_instance_autotermination_minutes: int, min_idle_instances: int = 0, max_capacity: int = None, tags: dict = None):
 
@@ -79,7 +79,7 @@ class InstancePoolsClient(ApiContainer):
         else:
             raise Exception(f"The cloud {dbgems.get_cloud()} is not supported.")
 
-        pool = self.client.execute_post_json(f"{self.base_uri}/create", params=definition)
+        pool = self.client.api("POST", f"{self.base_uri}/create", definition)
         return self.get_by_id(pool.get("instance_pool_id"))
 
     def update_by_name(self, instance_pool_name: str, min_idle_instances: int = None, max_capacity: int = None, idle_instance_autotermination_minutes: int = None):
@@ -113,11 +113,11 @@ class InstancePoolsClient(ApiContainer):
         if min_idle_instances is not None: params["min_idle_instances"] = min_idle_instances
         if idle_instance_autotermination_minutes is not None: params["idle_instance_autotermination_minutes"] = idle_instance_autotermination_minutes
 
-        self.client.execute_post_json(f"{self.base_uri}/edit", params=params)
+        self.client.api("POST", f"{self.base_uri}/edit", params)
         return self.get_by_id(instance_pool_id)
 
     def delete_by_id(self, instance_pool_id):
-        self.client.execute_post_json(f"{self.base_uri}/delete", params={"instance_pool_id": instance_pool_id}, expected=[200, 404])
+        self.client.api("POST", f"{self.base_uri}/delete", instance_pool_id=instance_pool_id, _expected=(200, 404))
         return None
 
     def delete_by_name(self, name):

@@ -9,7 +9,7 @@ class MLflowClient(ApiContainer):
 
     def get_endpoint_status(self, model_name):
         url = f"{self.base_uri}/endpoints/get-status?registered_model_name={model_name}"
-        return self.client.execute_get_json(url).get("endpoint_status")
+        return self.client.api("GET", url).get("endpoint_status")
 
     def wait_for_endpoint(self, model_name, delay_seconds=10):
         import time
@@ -29,7 +29,7 @@ class MLflowClient(ApiContainer):
         if model_name is not None:
             url += f"?registered_model_name={model_name}"
 
-        return self.client.execute_get_json(url).get("endpoint_versions", [])
+        return self.client.api("GET", url).get("endpoint_versions", [])
 
     def wait_for_endpoint_version(self, model_name, version_name, delay_seconds=10):
         import time

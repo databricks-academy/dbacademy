@@ -117,6 +117,7 @@ class ApiClient(ApiContainer):
         self.session.mount('http://', HTTPAdapter(max_retries=retry))
         self.session.mount('https://', HTTPAdapter(max_retries=retry))
 
+    @deprecated(reason="Use ApiClient.api", action="warn")
     def api_simple(self, _http_method: HttpMethod, _endpoint_path: str, *,
                    _expected: HttpStatusCodes = None, **data) -> Union[str, Dict]:
         """
@@ -124,6 +125,7 @@ class ApiClient(ApiContainer):
         """
         return self.api(_http_method, _endpoint_path, _expected=_expected, **data)
 
+    @deprecated(reason="Use ApiClient.api", action="error")
     def api_raw(self, _http_method: HttpMethod, _endpoint_path: str, _data=None, *,
                 _expected: HttpStatusCodes = None) -> requests.Response:
         """
@@ -293,47 +295,47 @@ class ApiClient(ApiContainer):
     def simple_patch(self, url: str, expected=200, **data) -> dict:
         return self.api("PATCH", url, _data=data, _expected=expected)
 
-    @deprecated(reason="Use ApiClient.simple_patch", action="ignore")
+    @deprecated(reason="Use ApiClient.api", action="warn")
     def execute_patch_json(self, url: str, params: dict, expected=200) -> dict:
         return self.api("PATCH", url, params, _expected=expected)
 
-    @deprecated(reason="Use ApiClient.simple_patch", action="error")
+    @deprecated(reason="Use ApiClient.api", action="error")
     def execute_patch(self, url: str, params: dict, expected=200):
         return self.api(_http_method="PATCH", _endpoint_path=url, _data=params,
                         _expected=expected, _result_type=requests.Response)
 
-    @deprecated(reason="Use ApiClient.simple_post", action="ignore")
+    @deprecated(reason="Use ApiClient.api", action="warn")
     def execute_post_json(self, url: str, params: dict, expected=200) -> dict:
         return self.api("POST", url, params, _expected=expected)
 
-    @deprecated(reason="Use ApiClient.simple_post", action="error")
+    @deprecated(reason="Use ApiClient.api", action="error")
     def execute_post(self, url: str, params: dict, expected=200):
         return self.api(_http_method="POST", _endpoint_path=url, _data=params,
                         _expected=expected, _result_type=requests.Response)
 
-    @deprecated(reason="Use ApiClient.simple_put", action="ignore")
+    @deprecated(reason="Use ApiClient.api", action="warn")
     def execute_put_json(self, url: str, params: dict, expected=200) -> dict:
         return self.api("PUT", url, params, _expected=expected)
 
-    @deprecated(reason="Use ApiClient.simple_put", action="error")
+    @deprecated(reason="Use ApiClient.api", action="error")
     def execute_put(self, url: str, params: dict, expected=200):
         return self.api(_http_method="PUT", _endpoint_path=url, _data=params,
                         _expected=expected, _result_type=requests.Response)
 
-    @deprecated(reason="Use ApiClient.simple_get", action="ignore")
+    @deprecated(reason="Use ApiClient.api", action="warn")
     def execute_get_json(self, url: str, expected=200) -> Union[dict, None]:
         return self.api("GET", url, _expected=expected)
 
-    @deprecated(reason="Use ApiClient.simple_get", action="error")
+    @deprecated(reason="Use ApiClient.api", action="warn")
     def execute_get(self, url: str, expected=200):
         return self.api(_http_method="GET", _endpoint_path=url, _data=None,
                         _expected=expected, _result_type=requests.Response)
 
-    @deprecated(reason="Use ApiClient.simple_delete", action="ignore")
+    @deprecated(reason="Use ApiClient.api", action="warn")
     def execute_delete_json(self, url: str, expected=(200, 404)) -> dict:
         return self.api("DELETE", url, _expected=expected)
 
-    @deprecated(reason="Use ApiClient.simple_delete", action="error")
+    @deprecated(reason="Use ApiClient.api", action="error")
     def execute_delete(self, url: str, expected=(200, 404)):
         return self.api(_http_method="DELETE", _endpoint_path=url, _data=None,
                         _expected=expected, _result_type=requests.Response)

@@ -8,7 +8,7 @@ class ClustersPolicyClient(ApiContainer):
         self.base_uri = f"{self.client.url}/2.0/policies/clusters"
 
     def get_by_id(self, policy_id):
-        return self.client.execute_get_json(f"{self.base_uri}/get?policy_id={policy_id}")
+        return self.client.api("GET", f"{self.base_uri}/get?policy_id={policy_id}")
 
     def get_by_name(self, name):
         policies = self.list()
@@ -19,7 +19,7 @@ class ClustersPolicyClient(ApiContainer):
 
     def list(self):
         # Does not support pagination
-        return self.client.execute_get_json(f"{self.base_uri}/list").get("policies", [])
+        return self.client.api("GET", f"{self.base_uri}/list").get("policies", [])
 
     def create(self, name: str, definition: dict):
         import json
@@ -30,7 +30,7 @@ class ClustersPolicyClient(ApiContainer):
             "name": name,
             "definition": json.dumps(definition)
         }
-        response = self.client.execute_post_json(f"{self.base_uri}/create", params=params)
+        response = self.client.api("POST", f"{self.base_uri}/create", params)
         policy_id = response.get("policy_id")
         return self.get_by_id(policy_id)
 
@@ -53,7 +53,7 @@ class ClustersPolicyClient(ApiContainer):
             "name": name,
             "definition": json.dumps(definition)
         }
-        self.client.execute_post_json(f"{self.base_uri}/edit", params=params)
+        self.client.api("POST", f"{self.base_uri}/edit", params)
         return self.get_by_id(policy_id)
 
     def create_or_update(self, name, definition):
@@ -66,7 +66,7 @@ class ClustersPolicyClient(ApiContainer):
             return self.update_by_id(policy_id, name, definition)
 
     def delete_by_id(self, policy_id):
-        return self.client.execute_post_json(f"{self.base_uri}/delete", params={"policy_id": policy_id})
+        return self.client.api("POST", f"{self.base_uri}/delete", policy_id=policy_id)
 
     def delete_by_name(self, name):
         policy = self.get_by_name(name)
