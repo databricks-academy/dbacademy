@@ -18,37 +18,32 @@ class TestApiClient(unittest.TestCase):
     """
 
     def testApiSimple(self):
-        results = databricks.api_simple("GET", "/2.0/workspace/list", path="/")
+        results = databricks.api("GET", "/2.0/workspace/list", path="/")
         self.assertIsNotNone(results)
 
     def testExpected404(self):
-        results = databricks.api_simple("GET", "/2.0/workspace/list", path="/does-not-exist", _expected=404)
+        results = databricks.api("GET", "/2.0/workspace/list", path="/does-not-exist", _expected=404)
         self.assertIsNone(results)
 
     def testSelfCallable(self):
         self.assertEqual(databricks, databricks())
 
-    def testExecuteGetJson(self):
-        url = "2.0/workspace/list?path=/"
-        results = databricks.execute_get_json(url)
-        self.assertIsNotNone(results)
-
-    def testExecuteGetJsonWithHostname(self):
+    def testWithHostname(self):
         # We intentionally pass in a full URL as part of testing for legacy compatibility.
         url = databricks.url + "2.0/workspace/list?path=/"
-        results = databricks.execute_get_json(url)
+        results = databricks.api("GET", url)
 
-    def testExecuteGetJsonWithHttp(self):
+    def testWithHttps(self):
         url = "https://unknown.domain.com/api/2.0/workspace/list?path=/"
         try:
-            databricks.execute_get_json(url)
+            databricks.api("GET", url)
             self.fail("Expected ValueError due to 'https:' in URL.")
         except ValueError:
             pass
 
     def testExecuteGetJsonExpected404(self):
         url = "2.0/workspace/list?path=/does-not-exist"
-        results = databricks.execute_get_json(url, expected=[200, 404])
+        results = databricks.api("GET", url, _expected=404)
         self.assertIsNone(results)
 
     def testNotFound(self):

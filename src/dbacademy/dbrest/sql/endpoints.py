@@ -37,13 +37,13 @@ class SqlEndpointsClient(ApiContainer):
         self.base_uri = f"{self.client.endpoint}/api/2.0/sql/warehouses"
 
     def start(self, endpoint_id):
-        return self.client.execute_post_json(f"{self.base_uri}/{endpoint_id}/start", {})
+        return self.client.api("POST", f"{self.base_uri}/{endpoint_id}/start")
 
     def stop(self, endpoint_id):
-        return self.client.execute_post_json(f"{self.base_uri}/{endpoint_id}/stop", {})
+        return self.client.api("POST", f"{self.base_uri}/{endpoint_id}/stop")
 
     def get_by_id(self, endpoint_id):
-        return self.client.execute_get_json(f"{self.base_uri}/{endpoint_id}")
+        return self.client.api("GET", f"{self.base_uri}/{endpoint_id}")
 
     def get_by_name(self, name):
         for endpoint in self.list():
@@ -52,7 +52,7 @@ class SqlEndpointsClient(ApiContainer):
         return None
 
     def delete_by_id(self, endpoint_id):
-        self.client.execute_delete_json(f"{self.base_uri}/{endpoint_id}")
+        self.client.api("DELETE", f"{self.base_uri}/{endpoint_id}", _expected=(200, 404))
         return None
 
     def delete_by_name(self, name):
@@ -63,7 +63,7 @@ class SqlEndpointsClient(ApiContainer):
         return None
 
     def list(self):
-        result = self.client.execute_get_json(self.base_uri)
+        result = self.client.api("GET", self.base_uri)
         return result.get("warehouses", [])
 
     def create_or_update(self,
@@ -147,7 +147,7 @@ class SqlEndpointsClient(ApiContainer):
                 "value": item[1]
             })
 
-        result = self.client.execute_post_json(f"{self.base_uri}", params)
+        result = self.client.api("POST", f"{self.base_uri}", params)
         return self.get_by_id(result.get("id"))
 
     def edit(self, endpoint_id: str, name: str = None, cluster_size: str = None, enable_serverless_compute: bool = None, min_num_clusters: int = None, max_num_clusters: int = None, auto_stop_mins: int = None, enable_photon: bool = None, spot_instance_policy: str = None, channel: str = None, tags: dict = None):
@@ -211,7 +211,7 @@ class SqlEndpointsClient(ApiContainer):
                     "value": value
                 })
 
-        self.client.execute_post_json(f"{self.base_uri}/{endpoint_id}/edit", params)
+        self.client.api("POST", f"{self.base_uri}/{endpoint_id}/edit", params)
         return self.get_by_id(endpoint_id)
 
     @staticmethod

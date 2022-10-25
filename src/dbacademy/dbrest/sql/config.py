@@ -11,7 +11,7 @@ class SqlConfigClient(ApiContainer):
         self.client = client
 
     def get(self):
-        return self.client.execute_get_json(f"{self.client.endpoint}/api/2.0/sql/config/endpoints")
+        return self.client.api("GET", f"{self.client.endpoint}/api/2.0/sql/config/endpoints")
 
     def edit(self, security_policy:str, instance_profile_arn:str, data_access_config:dict, sql_configuration_parameters:dict):
 
@@ -38,4 +38,4 @@ class SqlConfigClient(ApiContainer):
                 "value": value
             })
 
-        return self.client.execute_post_json(f"{self.client.endpoint}/api/2.0/sql/config/endpoints")
+        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/sql/config/endpoints", params1)

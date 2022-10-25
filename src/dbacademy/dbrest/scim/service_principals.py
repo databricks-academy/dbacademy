@@ -9,12 +9,12 @@ class ScimServicePrincipalsClient(ApiContainer):
         self.base_url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/ServicePrincipals"
 
     def list(self):
-        response = self.client.execute_get_json(f"{self.base_url}")
+        response = self.client.api("GET", f"{self.base_url}")
         all_items = response.get("Resources", [])
 
         total = response.get("totalResults")
         while len(all_items) != total:
-            response = self.client.execute_get_json(f"{self.base_url}")
+            response = self.client.api("GET", f"{self.base_url}")
             total = response.get("totalResults")
             items = response.get("Resources", [])
             all_items.extend(items)
@@ -22,7 +22,7 @@ class ScimServicePrincipalsClient(ApiContainer):
         return all_items
 
     def get_by_id(self, service_principle_id: str):
-        return self.client.execute_get_json(f"{self.base_url}/{service_principle_id}")
+        return self.client.api("GET", f"{self.base_url}/{service_principle_id}")
 
     def get_by_name(self, display_name):
         all_items = self.list()
@@ -50,4 +50,4 @@ class ScimServicePrincipalsClient(ApiContainer):
             value = {"value": entitlement}
             params["entitlements"].append(value)
 
-        return self.client.execute_post_json(f"{self.base_url}", params, expected=201)
+        return self.client.api("POST", f"{self.base_url}", params, _expected=201)

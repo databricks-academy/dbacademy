@@ -8,15 +8,16 @@ class ScimUsersClient(ApiContainer):
         self.client = client      # Client API exposing other operations to this class
 
     def list(self):
-        response = self.client.execute_get_json(f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users")
+        response = self.client.api("GET", f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users")
         users = response.get("Resources", list())
         total_results = response.get("totalResults")
-        assert len(users) == int(total_results), f"The totalResults ({total_results}) does not match the number of records ({len(users)}) returned"
+        assert len(users) == int(total_results),\
+            f"The totalResults ({total_results}) does not match the number of records ({len(users)}) returned"
         return users
 
     def get_by_id(self, user_id):
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
-        return self.client.execute_get_json(url)
+        return self.client.api("GET", url)
 
     def get_by_username(self, username):
         return self.get_by_name(username)
@@ -30,7 +31,7 @@ class ScimUsersClient(ApiContainer):
 
     def delete_by_id(self, user_id):
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
-        return self.client.execute_delete_json(url, expected=204)
+        return self.client.api("DELETE", url, _expected=204)
 
     def delete_by_username(self, username):
         for user in self.list():
@@ -47,7 +48,7 @@ class ScimUsersClient(ApiContainer):
             "entitlements": []
         }
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users"
-        return self.client.execute_post_json(url, payload, expected=[200, 201])
+        return self.client.api("POST", url, payload, _expected=(200, 201))
 
     def to_users_list(self, users):
 
@@ -95,7 +96,7 @@ class ScimUsersClient(ApiContainer):
             ]
         }
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
-        return self.client.execute_patch_json(url, payload)    
+        return self.client.api("PATCH", url, payload)
 
     def remove_entitlement(self, user_id, entitlement):
         payload = {
@@ -113,4 +114,4 @@ class ScimUsersClient(ApiContainer):
             ]
         }
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
-        return self.client.execute_patch_json(url, payload)
+        return self.client.api("PATCH", url, payload)

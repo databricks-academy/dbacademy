@@ -3,4 +3,4 @@ from dbacademy.dougrest.client import *
 
 __all__ = ["AccountsApi", "DatabricksApi", "DatabricksApiException", "databricks"]
 
-databricks = DatabricksApi.default_client
+databricks: DatabricksApi = DatabricksApi.default_client

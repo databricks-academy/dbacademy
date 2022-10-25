@@ -13,14 +13,14 @@ class TokenManagementClient(ApiContainer):
             "comment": comment,
             "lifetime_seconds": lifetime_seconds
         }
-        return self.client.execute_post_json(f"{self.base_url}/on-behalf-of/tokens", params=params)
+        return self.client.api("POST", f"{self.base_url}/on-behalf-of/tokens", params)
 
     def list(self):
-        results = self.client.execute_get_json(url=f"{self.base_url}/tokens")
+        results = self.client.api("GET", f"{self.base_url}/tokens")
         return results.get("token_infos", [])
 
     def delete_by_id(self, token_id):
-        return self.client.execute_delete_json(url=f"{self.base_url}/tokens/{token_id}")
+        return self.client.api("DELETE", f"{self.base_url}/tokens/{token_id}", _expected=(200, 404))
 
     def get_by_id(self, token_id):
-        return self.client.execute_get_json(url=f"{self.base_url}/tokens/{token_id}")
+        return self.client.api("GET", f"{self.base_url}/tokens/{token_id}")
