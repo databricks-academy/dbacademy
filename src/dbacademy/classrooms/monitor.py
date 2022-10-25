@@ -671,6 +671,123 @@ class Commands(object):
                 return result
             sleep(60)  # seconds
 
+    @staticmethod
+    def policiesCreate(workspace):
+        import re
+        workspace_hostname = re.match(r"^https://([^/]+)/.*$", workspace.url)[1]
+        event_name = "Partner-Class"
+        machine_type = "i3.xlarge"
+        autotermination = 40
+        spark_versions = ["10.4.x-cpu-ml-scala2.12", "10.4.x-scala2.12"]
+        spark_version = spark_versions[0]
+
+        tags = {
+            "dbacademy.event_name": event_name,
+            "dbacademy.workspace": workspace_hostname
+        }
+
+        instance_pool_name = f"{machine_type} Pool"
+        instance_pool_spec = {
+            'instance_pool_name': instance_pool_name,
+            'min_idle_instances': 0,
+            #       "aws_attributes": {
+            #           "first_on_demand": 1,
+            #           "availability": "SPOT_WITH_FALLBACK"
+            #       },
+            'node_type_id': machine_type,
+            'custom_tags': {k.replace("dbacademy", "dbacademy.pool"): v for k, v in tags.items()},
+            'idle_instance_autotermination_minutes': 5,
+            'preloaded_spark_versions': [spark_version],
+        }
+
+        instance_pool = workspace.pools.get_by_name(instance_pool_name, if_not_exists="ignore")
+        if not instance_pool:
+            instance_pool = workspace.api("POST", "2.0/instance-pools/create", instance_pool_spec)
+            instance_pool_id = instance_pool["instance_pool_id"]
+        else:
+            instance_pool_id = instance_pool["instance_pool_id"]
+        workspace.permissions.pools.update_group(instance_pool_id, "users", "CAN_ATTACH_TO")
+        instance_pool_id
+
+        tags_policy = {
+            f"custom_tags.{tag_name}": {
+                "type": "fixed",
+                "value": tag_value,
+                "hidden": False,
+            }
+            for tag_name, tag_value in tags.items()
+        }
+
+        cluster_policy = {
+            "spark_conf.spark.databricks.cluster.profile": {
+                "type": "fixed",
+                "value": "singleNode",
+                "hidden": False,
+            },
+            "spark_version": {
+                "type": "allowlist",
+                "values": spark_versions,
+                "defaultValue": spark_version,
+                "isOptional": True
+            },
+            "num_workers": {
+                "type": "fixed",
+                "value": 0,
+                "hidden": False,
+            },
+            "instance_pool_id": {
+                "type": "fixed",
+                "value": instance_pool_id,
+                "hidden": False,
+            }
+        }
+        cluster_policy.update(tags_policy)
+
+        all_purpose_policy = {
+            "cluster_type": {
+                "type": "fixed",
+                "value": "all-purpose"
+            },
+            "autotermination_minutes": {
+                "type": "range",
+                "minValue": 1,
+                "maxValue": autotermination,
+                "defaultValue": autotermination,
+            },
+        }
+        all_purpose_policy.update(cluster_policy)
+        all_purpose_policy = workspace.clusters.policies.create_or_update("All-Purpose Cluster Policy",
+                                                                          all_purpose_policy)
+        all_purpose_policy_id = all_purpose_policy.get("policy_id")
+        workspace.permissions.clusters.policies.update(all_purpose_policy_id, "group_name", "users", "CAN_USE")
+
+        jobs_policy = {
+            "cluster_type": {
+                "type": "fixed",
+                "value": "job"
+            },
+        }
+        jobs_policy.update(cluster_policy)
+        jobs_policy = workspace.clusters.policies.create_or_update("Jobs Cluster Policy", jobs_policy)
+        jobs_policy_id = jobs_policy.get("policy_id")
+        workspace.permissions.clusters.policies.update(jobs_policy_id, "group_name", "users", "CAN_USE")
+        None
+        dlt_policy = {
+            "cluster_type": {
+                "type": "fixed",
+                "value": "dlt"
+            },
+            "num_workers": {
+                "type": "fixed",
+                "value": 0,
+                "hidden": False,
+            },
+        }
+        dlt_policy.update(tags_policy)
+        dlt_policy = workspace.clusters.policies.create_or_update("DLT Cluster Policy", dlt_policy)
+        dlt_policy_id = dlt_policy.get("policy_id")
+        workspace.permissions.clusters.policies.update(dlt_policy_id, "group_name", "users", "CAN_USE")
+
 
 def getWorkspace(workspaces, *, name=None, url=None):
     if name:
