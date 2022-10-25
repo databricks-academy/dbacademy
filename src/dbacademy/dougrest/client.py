@@ -57,7 +57,7 @@ class DatabricksApi(dict, ApiClient):
         self["deployment_name"] = deployment_name
         self.cloud = cloud
         self.default_machine_type = DatabricksApi.default_machine_types[self.cloud]
-        self.default_preloaded_versions = ["10.4.x-cpu-ml-scala2.12", "10.4.x-cpu-scala2.12"]
+        self.default_preloaded_versions = ["11.3.x-cpu-ml-scala2.12", "11.3.x-cpu-scala2.12"]
         self.default_spark_version = self.default_preloaded_versions[0]
         from dbacademy.dougrest.clusters import Clusters
         self.clusters = Clusters(self)
