@@ -1,17 +1,16 @@
 from __future__ import annotations
 from typing import Any, Container, Dict, List, Literal, Type, TypeVar, Union
 from pprint import pformat
-from requests import HTTPError, Response
 from dbacademy.common import deprecated, print_warning
+import requests
 
 __all__ = ["ApiContainer", "ApiClient", "DatabricksApiException",
            "HttpStatusCodes", "HttpMethod", "HttpReturnType", "IfNotExists", "IfExists",
            "Item", "ItemId", "ItemOrId"]
 
-HttpStatusCode = int
-HttpStatusCodes = Union[HttpStatusCode, Container[HttpStatusCode]]
+HttpStatusCodes = Union[int, Container[int]]
 HttpMethod = Literal["GET", "PUT", "POST", "DELETE", "PATCH", "HEAD", "OPTIONS"]
-HttpReturnType = TypeVar("HttpReturnType", bound=Union[dict, str, bytes, Response, HttpStatusCode, None])
+HttpReturnType = TypeVar("HttpReturnType", bound=Union[dict, str, bytes, requests.Response, None])
 
 IfNotExists = Literal["error", "ignore"]
 IfExists = Literal["create", "error", "ignore", "overwrite", "update"]
@@ -41,19 +40,6 @@ class ApiContainer(object):
                 pass
             elif callable(member):
                 print(f"{member_name}()")
-
-    def _register_api(self, client, **modules: str) -> None:
-        """
-        Convenience method to add APIs to an API Container
-
-        >>> self._register_api("budgets", "dbacademy.dougrest.accounts.budgets:Budgets")
-        >>> self.budgets
-        """
-        import importlib
-        for name, spec in modules.items():
-            module_name, class_name = spec.split(":")
-            cls = getattr(importlib.import_module(module_name), class_name)
-            self.__dict__[name] = cls(client)
 
 
 class ApiClient(ApiContainer):
@@ -123,8 +109,6 @@ class ApiClient(ApiContainer):
         self.verbose = verbose
 
         backoff_factor = self.connect_timeout
-
-        # retry = Retry(connect=0, backoff_factor=backoff_factor)
         retry = Retry(connect=Retry.BACKOFF_MAX / backoff_factor, backoff_factor=backoff_factor)
 
         self.session = requests.Session()
@@ -133,27 +117,17 @@ class ApiClient(ApiContainer):
         self.session.mount('http://', HTTPAdapter(max_retries=retry))
         self.session.mount('https://', HTTPAdapter(max_retries=retry))
 
-    def api_simple(self, _http_method: str, _endpoint_path: str, *,
+    def api_simple(self, _http_method: HttpMethod, _endpoint_path: str, *,
                    _expected: HttpStatusCodes = None, **data) -> Union[str, Dict]:
         """
-        Invoke the Databricks REST API.
-
-        Args:
-            _http_method: 'GET', 'PUT', 'POST', or 'DELETE'
-            _endpoint_path: The path to append to the URL for the API endpoint, excluding the leading '/'.
-                For example: path="2.0/secrets/put"
-            _expected: HTTP error codes to treat as expected rather than as an error.
-            **data: Payload to attach to the HTTP request.  GET requests encode as params, all others as json.
-
-        Returns:
-            The return value of the API call as parsed JSON.  If the result is invalid JSON then the
-            result will be returned as plain text.
-
-        Raises:
-            DatabricksApiException: If the API returns a 4xx error an error and on_error='raise'.
-            requests.HTTPError: If the API returns any other error and on_error='raise'.
+        DEPRECATED: Use DatabricksApi.api instead.
         """
         return self.api(_http_method, _endpoint_path, data, _expected=_expected)
+
+    def api_raw(self, _http_method: HttpMethod, _endpoint_path: str, _data=None, *,
+                _expected: HttpStatusCodes = None) -> requests.Response:
+        return self.api(_http_method=_http_method, _endpoint_path=_endpoint_path, _data=_data,
+                        _expected=_expected, _return_type=requests.Response)
 
     def api(self, _http_method: HttpMethod, _endpoint_path: str, _data: dict = None, *,
             _expected: HttpStatusCodes = None, _return_type: Type[HttpReturnType] = dict,
@@ -172,7 +146,6 @@ class ApiClient(ApiContainer):
                dict: Parse the body as json and return a dict.
                bytes: Return the body as binary data.
                requests.Response: Return the HTTP response object.
-               HttpStatusCode|int: Return the HTTP response status code (range 100-599).
                None: Return None.
             **data: Any kwargs are appended to the _data payload.  Values here take priority over values
                specified in _data.
@@ -183,45 +156,20 @@ class ApiClient(ApiContainer):
         Raises:
             requests.HTTPError: If the API returns an error and on_error='raise'.
         """
-        response = self.api_raw(_http_method, _endpoint_path, _data, _expected=_expected)
-        if not (200 <= response.status_code < 300):
-            return None
-        try:
-            return response.json()
-        except ValueError:
-            return response.text
-
-    def api_raw(self, _http_method: str, _endpoint_path: str, _data=None, *,
-                _expected: HttpStatusCodes = None) -> Response:
-        """
-        Invoke the Databricks REST API.
-
-        Args:
-            _http_method: 'GET', 'PUT', 'POST', or 'DELETE'
-            _endpoint_path: The path to append to the URL for the API endpoint, excluding the leading '/'.
-                For example: path="2.0/secrets/put"
-            _data: Payload to attach to the HTTP request.  GET requests encode as params, all others as json.
-            _expected: HTTP error codes to treat as expected rather than as an error.
-
-        Returns:
-            The return value of the API call as parsed JSON.  If the result is invalid JSON then the
-            result will be returned as plain text.
-
-        Raises:
-            requests.HTTPError: If the API returns an error and on_error='raise'.
-        """
         import json
         if _data is None:
             _data = {}
+        if data:
+            _data = _data.copy()
+            _data.update(data)
         self._verify_hostname()
         self._throttle_calls()
         if _endpoint_path.startswith(self.url):
             _endpoint_path = _endpoint_path[len(self.url):]
         elif _endpoint_path.startswith("http"):
-            raise ValueError(f"endpoint_path must be relative url, not {_endpoint_path!r}.")
+            raise ValueError(f"endpoint_path must be relative url, not {_endpoint_path !r}.")
         url = self.url + _endpoint_path.lstrip("/")
         timeout = (self.connect_timeout, self.read_timeout)
-        response: Response
         if _http_method in ('GET', 'HEAD', 'OPTIONS'):
             params = {k: str(v).lower() if isinstance(v, bool) else v for k, v in _data.items()}
             response = self.session.request(_http_method, url, params=params, timeout=timeout)
@@ -229,7 +177,25 @@ class ApiClient(ApiContainer):
             # if self.verbose: print(json.dumps(data, indent=4))
             response = self.session.request(_http_method, url, data=json.dumps(_data), timeout=timeout)
         self._raise_for_status(response, _expected)
-        return response
+        # TODO: Should we really return None on errors?  Kept for now for backwards compatibility.
+        if not (200 <= response.status_code < 300):
+            return None
+        if _return_type == requests.Response:
+            return response
+        elif _return_type == str:
+            return response.text
+        elif _return_type == bytes:
+            return response.content
+        elif _return_type is None:
+            return None
+        elif _return_type == dict:
+            try:
+                return response.json()
+            except ValueError:
+                return {
+                    "_status": response.text,
+                    "_response": response.text
+                }
 
     def _verify_hostname(self):
         """Verify the host for the url-endpoint exists.  Throws socket.gaierror if it does not."""
@@ -254,7 +220,7 @@ class ApiClient(ApiContainer):
         self._last_request_timestamp = time.time()
 
     @staticmethod
-    def _raise_for_status(response: Response, expected: Union[int, Container[int]] = None) -> None:
+    def _raise_for_status(response: requests.Response, expected: Union[int, Container[int]] = None) -> None:
         """
         If response.status_code is `2xx` or in `expected`, do nothing.
         Raises :class:`DatabricksApiException` for 4xx Client Error, :class:`HTTPError`, for all other status codes.
@@ -299,7 +265,7 @@ class ApiClient(ApiContainer):
 
         http_error_msg = f'{response.status_code} {error_type}: {reason} for url: {response.url}'
         http_error_msg += '\n Response from server: \n {}'.format(body)
-        e = HTTPError(http_error_msg, response=response)
+        e = requests.HTTPError(http_error_msg, response=response)
         if 400 <= response.status_code < 500:
             e = DatabricksApiException(http_exception=e)
         raise e

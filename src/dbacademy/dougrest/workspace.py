@@ -195,4 +195,7 @@ class Workspace(ApiContainer):
             "path": workspace_path,
             "format": format,
         }
-        return self.databricks.api("GET", "2.0/workspace/export", data)
+        if format == "DBC":
+            return self.databricks.api("GET", "2.0/workspace/export", data, _return_type=bytes)
+        else:
+            return self.databricks.api("GET", "2.0/workspace/export", data, _return_type=str)
