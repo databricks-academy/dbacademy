@@ -104,11 +104,11 @@ class WorkspaceClient(ApiContainer):
 
     def export_notebook(self, path: str) -> str:
         return self.client.api("GET", "2.0/workspace/export", path=path, format="SOURCE",
-                               direct_download=True, _return_type=str)
+                               direct_download=True, _result_type=str)
 
     def export_dbc(self, path):
         return self.client.api("GET", "2.0/workspace/export", path=path, format="DBC",
-                               direct_download=True, _return_type=bytes)
+                               direct_download=True, _result_type=bytes)
 
     def get_status(self, path: str) -> Union[None, dict]:
         return self.client.simple_get("2.0/workspace/get-status", path=path, expected=[200, 404])

@@ -120,17 +120,20 @@ class ApiClient(ApiContainer):
     def api_simple(self, _http_method: HttpMethod, _endpoint_path: str, *,
                    _expected: HttpStatusCodes = None, **data) -> Union[str, Dict]:
         """
-        DEPRECATED: Use DatabricksApi.api instead.
+        DEPRECATED: Use DatabricksApi.api()
         """
-        return self.api(_http_method, _endpoint_path, data, _expected=_expected)
+        return self.api(_http_method, _endpoint_path, _expected=_expected, **data)
 
     def api_raw(self, _http_method: HttpMethod, _endpoint_path: str, _data=None, *,
                 _expected: HttpStatusCodes = None) -> requests.Response:
+        """
+        DEPRECATED: Use DatabricksApi.api(_result_type=requests.Response)
+        """
         return self.api(_http_method=_http_method, _endpoint_path=_endpoint_path, _data=_data,
-                        _expected=_expected, _return_type=requests.Response)
+                        _expected=_expected, _result_type=requests.Response)
 
     def api(self, _http_method: HttpMethod, _endpoint_path: str, _data: dict = None, *,
-            _expected: HttpStatusCodes = None, _return_type: Type[HttpReturnType] = dict,
+            _expected: HttpStatusCodes = None, _result_type: Type[HttpReturnType] = dict,
             **data: Any) -> HttpReturnType:
         """
         Invoke the Databricks REST API.
@@ -141,7 +144,7 @@ class ApiClient(ApiContainer):
                 For example: path="2.0/secrets/put"
             _data: Payload to attach to the HTTP request.  GET requests encode as params, all others as json.
             _expected: HTTP response status codes to treat as expected rather than as an error.
-            _return_type: Determines what type of result is returned.  It may be any of the following:
+            _result_type: Determines what type of result is returned.  It may be any of the following:
                str: Return the body as a text str.
                dict: Parse the body as json and return a dict.
                bytes: Return the body as binary data.
@@ -180,15 +183,15 @@ class ApiClient(ApiContainer):
         # TODO: Should we really return None on errors?  Kept for now for backwards compatibility.
         if not (200 <= response.status_code < 300):
             return None
-        if _return_type == requests.Response:
+        if _result_type == requests.Response:
             return response
-        elif _return_type == str:
+        elif _result_type == str:
             return response.text
-        elif _return_type == bytes:
+        elif _result_type == bytes:
             return response.content
-        elif _return_type is None:
+        elif _result_type is None:
             return None
-        elif _return_type == dict:
+        elif _result_type == dict:
             try:
                 return response.json()
             except ValueError:
@@ -298,7 +301,8 @@ class ApiClient(ApiContainer):
 
     @deprecated(reason="Use ApiClient.simple_patch", action="error")
     def execute_patch(self, url: str, params: dict, expected=200):
-        return self.api_raw("PATCH", url, params, _expected=expected)
+        return self.api(_http_method="PATCH", _endpoint_path=url, _data=params,
+                        _expected=expected, _result_type=requests.Response)
 
     @deprecated(reason="Use ApiClient.simple_post", action="ignore")
     def execute_post_json(self, url: str, params: dict, expected=200) -> dict:
@@ -306,7 +310,8 @@ class ApiClient(ApiContainer):
 
     @deprecated(reason="Use ApiClient.simple_post", action="error")
     def execute_post(self, url: str, params: dict, expected=200):
-        return self.api_raw("POST", url, params, _expected=expected)
+        return self.api(_http_method="POST", _endpoint_path=url, _data=params,
+                        _expected=expected, _result_type=requests.Response)
 
     @deprecated(reason="Use ApiClient.simple_put", action="ignore")
     def execute_put_json(self, url: str, params: dict, expected=200) -> dict:
@@ -314,7 +319,8 @@ class ApiClient(ApiContainer):
 
     @deprecated(reason="Use ApiClient.simple_put", action="error")
     def execute_put(self, url: str, params: dict, expected=200):
-        return self.api_raw("PUT", url, params, _expected=expected)
+        return self.api(_http_method="PUT", _endpoint_path=url, _data=params,
+                        _expected=expected, _result_type=requests.Response)
 
     @deprecated(reason="Use ApiClient.simple_get", action="ignore")
     def execute_get_json(self, url: str, expected=200) -> Union[dict, None]:
@@ -322,7 +328,8 @@ class ApiClient(ApiContainer):
 
     @deprecated(reason="Use ApiClient.simple_get", action="error")
     def execute_get(self, url: str, expected=200):
-        return self.api_raw("GET", url, _expected=expected)
+        return self.api(_http_method="GET", _endpoint_path=url, _data=None,
+                        _expected=expected, _result_type=requests.Response)
 
     @deprecated(reason="Use ApiClient.simple_delete", action="ignore")
     def execute_delete_json(self, url: str, expected=(200, 404)) -> dict:
@@ -330,7 +337,8 @@ class ApiClient(ApiContainer):
 
     @deprecated(reason="Use ApiClient.simple_delete", action="error")
     def execute_delete(self, url: str, expected=(200, 404)):
-        return self.api_raw("DELETE", url, _expected=expected)
+        return self.api(_http_method="DELETE", _endpoint_path=url, _data=None,
+                        _expected=expected, _result_type=requests.Response)
 
 
 class DatabricksApiException(Exception):
