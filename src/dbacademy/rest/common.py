@@ -273,25 +273,23 @@ class ApiClient(ApiContainer):
             e = DatabricksApiException(http_exception=e)
         raise e
 
+    @deprecated(reason="Use ApiClient.api", action="error")
     def simple_get(self, url: str, expected: Union[int, List[int]] = 200, **data) -> Union[None, str, Dict]:
-        """
-        :param url:
-        :param expected: either a single HTTP status code or a list of status codes
-        :param data:
-        :return: None when expected includes 404, str when the content
-        type is text and a dictionary when the content type is JSON
-        """
         return self.api("GET", url, _data=data, _expected=expected)
 
+    @deprecated(reason="Use ApiClient.api", action="error")
     def simple_post(self, url: str, expected=200, **data) -> dict:
         return self.api("POST", url, _data=data, _expected=expected)
 
+    @deprecated(reason="Use ApiClient.api", action="error")
     def simple_put(self, url: str, expected=200, **data) -> dict:
         return self.api("PUT", url, _data=data, _expected=expected)
 
+    @deprecated(reason="Use ApiClient.api", action="error")
     def simple_delete(self, url: str, expected=200, **data) -> dict:
         return self.api("DELETE", url, _data=data, _expected=expected)
 
+    @deprecated(reason="Use ApiClient.api", action="error")
     def simple_patch(self, url: str, expected=200, **data) -> dict:
         return self.api("PATCH", url, _data=data, _expected=expected)
 

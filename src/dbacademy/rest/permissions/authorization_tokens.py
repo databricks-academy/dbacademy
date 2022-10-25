@@ -21,4 +21,4 @@ class Tokens(ApiContainer):
     #                 "permission_level": permission_level
     #             }
     #         ]
-    #     return self.client.api_simple("PATCH", f"{self.path}", access_control_list=acl)
+    #     return self.client.api("PATCH", f"{self.path}", access_control_list=acl)

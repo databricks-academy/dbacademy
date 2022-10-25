@@ -11,23 +11,23 @@ class Pools(CRUD):
         self.databricks = databricks
 
     def _list(self, *, _expected: HttpStatusCodes = None) -> List[Item]:
-        result = self.databricks.simple_get(f"{self.path}/list")
+        result = self.databricks.api("GET", f"{self.path}/list")
         return result.get("instance_pools", [])
 
     def _get(self, item_id: ItemId, *, _expected: HttpStatusCodes = None) -> Item:
-        result = self.databricks.simple_get(f"{self.path}/get?{self.id_key}={item_id}")
+        result = self.databricks.api("GET", f"{self.path}/get?{self.id_key}={item_id}")
         return result
 
     def _create(self, item: Item, *, _expected: HttpStatusCodes = None) -> ItemId:
-        result = self.databricks.simple_post(f"{self.path}/create", **item)
+        result = self.databricks.api("POST", f"{self.path}/create", **item)
         return result["instance_pool_id"]
 
     def _update(self, item: Item, *, _expected: HttpStatusCodes = None) -> ItemId:
-        result = self.databricks.simple_post(f"{self.path}/edit", **item)
+        result = self.databricks.api("POST", f"{self.path}/edit", **item)
         return result["instance_pool_id"]
 
     def _delete(self, item_id, *, _expected: HttpStatusCodes = None):
-        result = self.databricks.simple_post(f"{self.path}/delete", instance_pool_id=item_id)
+        result = self.databricks.api("POST", f"{self.path}/delete", instance_pool_id=item_id)
         return result
 
     def create(self, name, machine_type=None, min_idle=3):
@@ -41,7 +41,7 @@ class Pools(CRUD):
             'enable_elastic_disk': True,
             'preloaded_spark_versions': [self.databricks.default_preloaded_versions],
         }
-        response = self.databricks.simple_post("2.0/instance-pools/create", **data)
+        response = self.databricks.api("POST", "2.0/instance-pools/create", data)
         return response["instance_pool_id"]
 
     def edit(self, pool, min_idle):
@@ -51,7 +51,7 @@ class Pools(CRUD):
                       'node_type_id', 'idle_instance_autotermination_minutes']
         data = {key: pool[key] for key in valid_keys}
         data["min_idle_instances"] = min_idle
-        response = self.databricks.simple_post("2.0/instance-pools/edit", **data)
+        response = self.databricks.api("POST", "2.0/instance-pools/edit", **data)
         return pool["instance_pool_id"]
 
     def edit_by_name(self, name, min_idle):
@@ -83,8 +83,7 @@ class Pools(CRUD):
                                        } for group_name, permission in group_permissions.items()
                                    ]
         }
-        return self.databricks.simple_put(
-            f"2.0/preview/permissions/instance-pools/{instance_pool_id}", **data)
+        return self.databricks.api("PUT", f"2.0/preview/permissions/instance-pools/{instance_pool_id}", data)
 
     def add_to_acl(self, instance_pool_id,
                    user_permissions: Dict[str, str] = {},
@@ -102,5 +101,4 @@ class Pools(CRUD):
                                        } for name, permission in group_permissions.items()
                                    ]
         }
-        return self.databricks.simple_patch(
-            f"2.0/preview/permissions/instance-pools/{instance_pool_id}", **data)
+        return self.databricks.api("PATCH", f"2.0/preview/permissions/instance-pools/{instance_pool_id}", data)
