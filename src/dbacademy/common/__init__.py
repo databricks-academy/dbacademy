@@ -8,7 +8,7 @@ from typing import Callable
 
 __all__ = ["deprecated", "overrides", "print_warning", "CachedStaticProperty"]
 
-deprecation_logging_enabled = False
+deprecation_log_level = "error"
 
 
 def print_warning(title: str, message: str, length: int = 100) -> None:
@@ -19,21 +19,32 @@ def print_warning(title: str, message: str, length: int = 100) -> None:
     print("*"*length)
 
 
-def deprecated(reason=None, action=None) -> Callable:
+def deprecated(reason=None, action="warn") -> Callable:
     """Decorator to indicate that a function should no longer be used."""
     from functools import wraps
+    if not reason:
+        reason = "Replacement unknown"
+    if not action:
+        action = "ignore"
+    action = action.lower()
 
     def decorator(inner_function):
         @wraps(inner_function)
         def wrapper(*args, **kwargs):
-            if deprecation_logging_enabled:
-                assert reason is not None, f"The deprecated reason must be specified."
-                try:
-                    import inspect
-                    function_name = str(inner_function.__name__) + str(inspect.signature(inner_function))
-                    final_reason = f"{reason}\n{function_name}"
-                except: final_reason = reason  # just in case
-                print_warning(title="DEPRECATED", message=final_reason)
+            if deprecation_log_level in (None, "ignore") or action == "ignore":
+                return inner_function(*args, **kwargs)
+            try:
+                import inspect
+                signature = inspect.signature(inner_function)
+            except Exception:
+                # Just in case
+                signature = "(..)"
+            function_name = f"{inner_function.__module__}.{inner_function.__name__}{signature}"
+            message = f"{function_name}: {reason}"
+            if action == "error" or deprecation_log_level == "error":
+                raise DeprecationWarning(message)
+            else:
+                print_warning(title="DEPRECATED", message=message)
             return inner_function(*args, **kwargs)
         return wrapper
 

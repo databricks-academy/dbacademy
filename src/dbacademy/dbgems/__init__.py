@@ -1,7 +1,7 @@
 from typing import List, Union, Any
 import pyspark
 import dbacademy.common
-from dbacademy.common import print_warning
+from dbacademy.common import print_warning, deprecated
 from .mock_dbutils_class import MockDBUtils
 
 
@@ -9,8 +9,12 @@ def check_deprecation_logging_enabled():
     if spark is None:
         return
     status = spark.conf.get("dbacademy.deprecation.logging", None)
-    enabled = status is not None and str(status).lower() == "enabled"
-    dbacademy.common.deprecation_logging_enabled = enabled
+    if status is None:
+        dbacademy.common.deprecation_log_level = "ignore"
+    elif status.lower() == "enabled":
+        dbacademy.common.deprecation_log_level = "warn"
+    else:
+        dbacademy.common.deprecation_log_level = status.lower()
 
 
 def sql(query):
