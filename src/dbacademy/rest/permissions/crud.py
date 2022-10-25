@@ -74,10 +74,10 @@ class PermissionsCrud(ApiContainer):
                     "permission_level": permission_level
                 }
             ]
-        return self.client.api_simple("PATCH", f"{self.path}/{id_value}", access_control_list=acl)
+        return self.client.api("PATCH", f"{self.path}/{id_value}", access_control_list=acl)
 
     def replace(self, id_value: ItemId, acl: ACL):
-        return self.client.api_simple("PUT", f"{self.path}/{id_value}", access_control_list=acl)
+        return self.client.api("PUT", f"{self.path}/{id_value}", access_control_list=acl)
 
     def update_user(self, id_value: ItemId, username, permission_level):
         return self.update(id_value, "user_name", username, permission_level)

@@ -269,7 +269,7 @@ class Commands(object):
         results = []
         page_token = ""
         while True:
-            response = workspace.api_simple("GET", "2.0/pipelines", page_token=page_token)
+            response = workspace.api("GET", "2.0/pipelines", page_token=page_token)
             for pipe in response.get("statuses", {}):
                 if pipe["state"] == "IDLE":
                     continue

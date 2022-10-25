@@ -75,9 +75,9 @@ class TestApiClient(unittest.TestCase):
                            )
         import time
         t1 = time.time()
-        client.api_simple("GET", "2.0/clusters/list-node-types")
+        client.api("GET", "2.0/clusters/list-node-types")
         t2 = time.time()
-        client.api_simple("GET", "2.0/clusters/list-node-types")
+        client.api("GET", "2.0/clusters/list-node-types")
         t3 = time.time()
         self.assertLess(t2-t1, 1)
         self.assertGreater(t3-t2, 1)

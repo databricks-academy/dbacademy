@@ -69,7 +69,7 @@ class Jobs(ApiContainer):
     def list(self):
         offset=0
         while True:
-            response = self.databricks.api_simple("GET", "2.1/jobs/list", limit=25, offset=offset)
+            response = self.databricks.api("GET", "2.1/jobs/list", limit=25, offset=offset)
             jobs = response.get('jobs', [])
             yield from jobs
             offset += len(jobs)
