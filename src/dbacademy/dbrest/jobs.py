@@ -19,10 +19,10 @@ class JobsClient(ApiContainer):
             return self.create_2_1(params)
 
     def create_2_0(self, params):
-        return self.client.execute_post_json(f"{self.client.endpoint}/api/2.0/jobs/create", params)
+        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/create", params)
 
     def create_2_1(self, params):
-        return self.client.execute_post_json(f"{self.client.endpoint}/api/2.1/jobs/create", params)
+        return self.client.api("POST", f"{self.client.endpoint}/api/2.1/jobs/create", params)
 
     def run_now(self, job_id: str, notebook_params: dict = None):
         payload = {
@@ -31,13 +31,13 @@ class JobsClient(ApiContainer):
         if notebook_params is not None:
             payload["notebook_params"] = notebook_params
 
-        return self.client.execute_post_json(f"{self.client.endpoint}/api/2.0/jobs/run-now", payload)
+        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/run-now", payload)
 
     def get(self, job_id):
         return self.get_by_id(job_id)
 
     def get_by_id(self, job_id):
-        return self.client.execute_get_json(f"{self.client.endpoint}/api/2.0/jobs/get?job_id={job_id}")
+        return self.client.api("GET", f"{self.client.endpoint}/api/2.0/jobs/get?job_id={job_id}")
 
     def get_by_name(self, name: str):
         offset = 0  # Start with zero
@@ -48,7 +48,7 @@ class JobsClient(ApiContainer):
             return (False, None) if len(job_ids) == 0 else (True, self.get_by_id(job_ids[0]))
 
         target_url = f"{self.client.endpoint}/api/2.1/jobs/list?limit={limit}"
-        response = self.client.execute_get_json(target_url)
+        response = self.client.api("GET", target_url)
         jobs = response.get("jobs", list())
 
         found, job = search(jobs)
@@ -56,7 +56,7 @@ class JobsClient(ApiContainer):
 
         while response.get("has_more", False):
             offset += limit
-            response = self.client.execute_get_json(f"{target_url}&offset={offset}")
+            response = self.client.api("GET", f"{target_url}&offset={offset}")
             jobs = response.get("jobs", list())
 
             found, job = search(jobs)
@@ -69,7 +69,7 @@ class JobsClient(ApiContainer):
         offset = max(0, offset)
 
         target_url = f"{self.client.endpoint}/api/2.1/jobs/list?offset={offset}&limit={limit}&expand_tasks={expand_tasks}"
-        response = self.client.execute_get_json(target_url)
+        response = self.client.api("GET", target_url)
         return response.get("jobs", list())
 
     def list(self, expand_tasks: bool = False):
@@ -77,12 +77,12 @@ class JobsClient(ApiContainer):
         limit = 25  # Default maximum
 
         target_url = f"{self.client.endpoint}/api/2.1/jobs/list?limit={limit}&expand_tasks={expand_tasks}"
-        response = self.client.execute_get_json(target_url)
+        response = self.client.api("GET", target_url)
         all_jobs = response.get("jobs", list())
 
         while response.get("has_more", False):
             offset += limit
-            response = self.client.execute_get_json(f"{target_url}&offset={offset}")
+            response = self.client.api("GET", f"{target_url}&offset={offset}")
             all_jobs.extend(response.get("jobs", list()))
 
         return all_jobs
@@ -95,7 +95,7 @@ class JobsClient(ApiContainer):
         self.delete_by_id(job_id)
 
     def delete_by_id(self, job_id):
-        self.client.execute_post_json(f"{self.client.endpoint}/api/2.0/jobs/delete", {"job_id": job_id})
+        self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/delete", job_id=job_id)
 
     def delete_by_name(self, job_names, success_only: bool):
         if type(job_names) == dict:

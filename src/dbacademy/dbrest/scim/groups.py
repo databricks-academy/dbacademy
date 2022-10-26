@@ -9,7 +9,7 @@ class ScimGroupsClient(ApiContainer):
         self.base_uri = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Groups"
 
     def list(self):
-        response = self.client.execute_get_json(f"{self.base_uri}")
+        response = self.client.api("GET", f"{self.base_uri}")
         users = response.get("Resources", list())
         total_results = response.get("totalResults")
         assert len(users) == int(total_results), f"The totalResults ({total_results}) does not match the number of records ({len(users)}) returned"
@@ -17,7 +17,7 @@ class ScimGroupsClient(ApiContainer):
 
     def get_by_id(self, id):
         url = f"{self.base_uri}/{id}"
-        return self.client.execute_get_json(url)
+        return self.client.api("GET", url)
 
     def get_by_name(self, name):
         for group in self.list():
@@ -28,7 +28,7 @@ class ScimGroupsClient(ApiContainer):
 
     def delete_by_id(self, id):
         url = f"{self.base_uri}/{id}"
-        return self.client.execute_delete_json(url, expected=204)
+        return self.client.api("DELETE", url, _expected=204)
 
     def delete_by_name(self, name):
         for group in self.list():
@@ -53,7 +53,7 @@ class ScimGroupsClient(ApiContainer):
                     }
                   ]
                }
-        self.client.execute_patch_json(f"{self.base_uri}/{group_id}", params=data)
+        self.client.api("PATCH", f"{self.base_uri}/{group_id}", data)
 
     # def create(self, name):
     #     payload = {
@@ -81,7 +81,7 @@ class ScimGroupsClient(ApiContainer):
             ]
         }
         url = f"{self.base_uri}/{group_id}"
-        return self.client.execute_patch_json(url, payload)
+        return self.client.api("PATCH", url, payload)
 
     def remove_entitlement(self, group_id, entitlement):
         payload = {
@@ -99,4 +99,4 @@ class ScimGroupsClient(ApiContainer):
             ]
         }
         url = f"{self.base_uri}/{group_id}"
-        return self.client.execute_patch_json(url, payload)
+        return self.client.api("PATCH", url, payload)
