@@ -13,7 +13,8 @@ class WorkspaceClient(ApiContainer):
 
         if not recursive:
             try:
-                results = self.client.execute_get_json(f"{self.client.endpoint}/api/2.0/workspace/list?path={path}", expected=[200, 404])
+                results = self.client.api("GET", f"{self.client.endpoint}/api/2.0/workspace/list?path={path}",
+                                          _expected=(200, 404))
                 if results is None:
                     return None
                 else:
@@ -40,11 +41,13 @@ class WorkspaceClient(ApiContainer):
             return entities
 
     def mkdirs(self, path) -> dict:
-        return self.client.execute_post_json(f"{self.client.endpoint}/api/2.0/workspace/mkdirs", {"path": path})
+        params = {"path": path}
+        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/mkdirs", params)
 
     def delete_path(self, path) -> dict:
         payload = {"path": path, "recursive": True}
-        return self.client.execute_post_json(f"{self.client.endpoint}/api/2.0/workspace/delete", payload, expected=[200, 404])
+        expected = [200, 404]
+        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/delete", payload, _expected=expected)
 
     def import_html_file(self, html_path: str, content: str, overwrite=True) -> dict:
         import base64
@@ -56,7 +59,7 @@ class WorkspaceClient(ApiContainer):
             "overwrite": overwrite,
             "format": "SOURCE",
         }
-        return self.client.execute_post_json(f"{self.client.endpoint}/api/2.0/workspace/import", payload)
+        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/import", payload)
 
     def import_dbc_files(self, target_path, source_url=None, overwrite=True, local_file_path=None):
         import os, base64, urllib
@@ -88,7 +91,7 @@ class WorkspaceClient(ApiContainer):
             "overwrite": False,
             "format": "DBC",
         }
-        return self.client.execute_post_json(f"{self.client.endpoint}/api/2.0/workspace/import", payload)
+        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/import", payload)
 
     def import_notebook(self, language: str, notebook_path: str, content: str, overwrite=True) -> dict:
         import base64
@@ -100,7 +103,7 @@ class WorkspaceClient(ApiContainer):
             "overwrite": overwrite,
             "format": "SOURCE",
         }
-        return self.client.execute_post_json(f"{self.client.endpoint}/api/2.0/workspace/import", payload)
+        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/import", payload)
 
     def export_notebook(self, path: str) -> str:
         return self.client.api("GET", "2.0/workspace/export", path=path, format="SOURCE",

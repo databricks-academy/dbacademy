@@ -7,10 +7,10 @@ class ClustersClient(ApiContainer):
         self.client = client
 
     def list(self):
-        return self.client.execute_get_json(f"{self.client.endpoint}/api/2.0/clusters/list")
+        return self.client.api("GET", f"{self.client.endpoint}/api/2.0/clusters/list")
 
     def get(self, cluster_id):
-        return self.client.execute_get_json(f"{self.client.endpoint}/api/2.0/clusters/get?cluster_id={cluster_id}")
+        return self.client.api("GET", f"{self.client.endpoint}/api/2.0/clusters/get?cluster_id={cluster_id}")
 
     def get_current_spark_version(self):
         from dbacademy import dbgems

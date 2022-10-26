@@ -15,7 +15,7 @@ class SqlQueriesClient(ApiContainer):
         if queries is None: queries = builtins.list()
 
         url = f"{self.base_uri}?page_size={self.max_page_size}&page={page}"
-        json_response = self.client.execute_get_json(url)
+        json_response = self.client.api("GET", url)
 
         queries.extend(json_response.get("results", builtins.list()))
 
@@ -23,19 +23,19 @@ class SqlQueriesClient(ApiContainer):
         else: return self.list(queries=queries, page=page+1)
 
     def get_by_id(self, query_id):
-        return self.client.execute_get_json(f"{self.base_uri}/{query_id}")
+        return self.client.api("GET", f"{self.base_uri}/{query_id}")
 
     def delete_by_id(self, query_id):
-        return self.client.execute_delete_json(f"{self.base_uri}/{query_id}")
+        return self.client.api("DELETE", f"{self.base_uri}/{query_id}", _expected=(200, 404))
 
     def undelete_by_id(self, query_id):
-        return self.client.execute_post_json(f"{self.base_uri}/trash/{query_id}", params=None)
+        return self.client.api("POST", f"{self.base_uri}/trash/{query_id}")
 
     def get_by_name(self, query_name, queries=None, page=1):
         if queries is None: queries = builtins.list()
 
         url = f"{self.base_uri}?page_size={self.max_page_size}&page={page}"
-        json_response = self.client.execute_get_json(url)
+        json_response = self.client.api("GET", url)
 
         queries.extend(json_response.get("results", builtins.list()))
 
@@ -62,7 +62,7 @@ class SqlQueriesClient(ApiContainer):
         return query
 
     def create_from_dict(self, params:dict):
-        return self.client.execute_post_json(f"{self.base_uri}", params)
+        return self.client.api("POST", f"{self.base_uri}", params)
 
     def create(self, name:str, query:str, description:str=None, schedule:dict=None, options:dict=None, data_source_id=None):
         params = dict()
@@ -76,8 +76,7 @@ class SqlQueriesClient(ApiContainer):
 
     def update_from_dict(self, id:str, params:dict):
         assert len(params.keys()) > 0, "Expected at least one parameter."
-        
-        return self.client.execute_post_json(f"{self.base_uri}/{id}", params)
+        return self.client.api("POST", f"{self.base_uri}/{id}", params)
 
     def update(self, id:str, name:str=None, query:str=None, description:str=None, schedule:dict=None, options:dict=None, data_source_id=None):
         params = dict()

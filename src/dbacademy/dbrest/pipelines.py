@@ -12,14 +12,14 @@ class PipelinesClient(ApiContainer):
 
     def list(self, max_results=100):
         pipelines = []
-        response = self.client.execute_get_json(f"{self.base_uri}?max_results={max_results}")
+        response = self.client.api("GET", f"{self.base_uri}?max_results={max_results}")
 
         while True:
             pipelines.extend(response.get("statuses", builtins.list()))
             next_page_token = response.get("next_page_token")
             if next_page_token is None:
                 break
-            response = self.client.execute_get_json(f"{self.base_uri}?max_results={max_results}&page_token={next_page_token}")
+            response = self.client.api("GET", f"{self.base_uri}?max_results={max_results}&page_token={next_page_token}")
 
         return pipelines
 
@@ -30,7 +30,7 @@ class PipelinesClient(ApiContainer):
     #     return self.client.execute_get_json(f"{self.base_uri}/{pipeline_id}/events")
 
     def get_by_id(self, pipeline_id):
-        return self.client.execute_get_json(f"{self.base_uri}/{pipeline_id}", expected=[200, 404])
+        return self.client.api("GET", f"{self.base_uri}/{pipeline_id}", _expected=(200, 404))
 
     def get_by_name(self, pipeline_name):
         for pipeline in self.list():
@@ -40,10 +40,10 @@ class PipelinesClient(ApiContainer):
         return None
 
     def get_update_by_id(self, pipeline_id, update_id):
-        return self.client.execute_get_json(f"{self.base_uri}/{pipeline_id}/updates/{update_id}")
+        return self.client.api("GET", f"{self.base_uri}/{pipeline_id}/updates/{update_id}")
 
     def delete_by_id(self, pipeline_id):
-        return self.client.execute_delete_json(f"{self.base_uri}/{pipeline_id}")
+        return self.client.api("DELETE", f"{self.base_uri}/{pipeline_id}", _expected=(200, 404))
 
     def delete_by_name(self, pipeline_name):
         import time
@@ -65,10 +65,10 @@ class PipelinesClient(ApiContainer):
         return spec
 
     def update_from_dict(self, pipeline_id: str, params: dict):
-        return self.client.execute_put_json(f"{self.base_uri}/{pipeline_id}", params)
+        return self.client.api("PUT", f"{self.base_uri}/{pipeline_id}", params)
 
     def create_from_dict(self, params: dict):
-        return self.client.execute_post_json(f"{self.base_uri}", params)
+        return self.client.api("POST", f"{self.base_uri}", params)
 
     def create_or_update(self, name: str, storage: str, target: str, continuous: bool = False, development: bool = True, configuration: dict = None, notebooks: list = None, libraries: list = None, clusters: list = None, min_workers: int = 0, max_workers: int = 0, photon: bool = True, pipeline_id: Union[str, None] = None):
 
@@ -185,7 +185,7 @@ class PipelinesClient(ApiContainer):
         return params
 
     def start_by_id(self, pipeline_id: str):
-        return self.client.execute_post_json(f"{self.base_uri}/{pipeline_id}/updates", dict())
+        return self.client.api("POST", f"{self.base_uri}/{pipeline_id}/updates")
 
     def start_by_name(self, name: str):
         pipeline_id = self.get_by_name(name).get("pipeline_id")
