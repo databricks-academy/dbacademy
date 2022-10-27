@@ -49,7 +49,7 @@ class DatabasesHelper:
 
         dbgems.sql(f"CREATE DATABASE IF NOT EXISTS {db_name} LOCATION '{db_path}';")
 
-        msg = f"Created schema \"{db_name}\" for {username}, dropped existing: {drop_existing}"
+        msg = f"Created schema \"{db_name}\" for \"{username}\", dropped existing: {drop_existing}"
 
         if post_create:
             # Call the post-create init function if defined
@@ -122,6 +122,8 @@ class DatabasesHelper:
 
         run_response = self.client.jobs().run_now(job_id)
         run_id = run_response.get("run_id")
+
+        print(f"| See {dbgems.get_workspace_url()}#job/{job_id}/run/{run_id}")
 
         final_response = self.client.runs().wait_for(run_id)
 
