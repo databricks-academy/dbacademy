@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 
 import pyspark
 from dbacademy import dbgems
@@ -197,15 +197,20 @@ class DBAcademyHelper:
 
     @property
     def schema_name(self):
-        return self.to_schema_name(self.username)
+        return self.to_schema_name(self.username, lesson_name=self.lesson_config.name)
 
-    def to_schema_name(self, username: str) -> str:
-        if self.lesson_config.name is None:
+    def to_schema_name(self, username: str, lesson_name: Optional[str]) -> str:
+        import re
+
+        if lesson_name is None:
             # No lesson, database name is the same as prefix
             return self.to_schema_name_prefix(username)
         else:
             # Schema name includes the lesson name
-            return f"{self.to_schema_name_prefix(username)}_{self.lesson_config.clean_name}"
+            clean_name = re.sub(r"[^a-zA-Z\d]", "_", str(lesson_name))
+            while "__" in clean_name: clean_name = clean_name.replace("__", "_")
+
+            return f"{self.to_schema_name_prefix(username)}_{clean_name}"
 
     @staticmethod
     def is_smoke_test():
