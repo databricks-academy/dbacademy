@@ -92,11 +92,12 @@ class WorkspaceHelper:
             return [self.da.username]
 
         elif self.configure_for == WorkspaceHelper.MISSING_USERS_ONLY:
+            # TODO - This isn't going to hold up long-term, maybe track per-user properties in this respect.
             # The presumption here is that if the user doesn't have their own
             # database, then they are also missing the rest of their config.
             missing_users = []
             for username in self._usernames:
-                schema_name = self.da.to_schema_name(username)
+                schema_name = self.da.to_schema_name(username=username, lesson_name=None)
                 if schema_name not in self.existing_databases:
                     missing_users.append(username)
 
