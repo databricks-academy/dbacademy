@@ -60,7 +60,7 @@ class Translator:
         assert self.i18n_language is not None, f"The i18n language must be specified."
         assert self.i18n_language in self.language_options, f"The selected version must be one of {self.language_options}, found \"{self.i18n_language}\"."
 
-        for notebook in self.notebooks.values():
+        for notebook in self.notebooks:
             notebook.i18n_language = self.i18n_language
 
         # Include the i18n code in the version.
