@@ -359,7 +359,7 @@ class BuildConfig:
         return Publisher(self)
 
     def to_translator(self):
-        return self.to_publisher().validate().to_translator()
+        return self.to_publisher().validate(silent=True).to_translator()
 
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
         from dbacademy.dbbuild import TestSuite
