@@ -270,6 +270,7 @@ class BuildUtils:
 
                 if target_version is None: version_index = i                  # Use the first one we find.
                 elif target_version == change_log.version: version_index = i  # We found the target version.
+                else: continue
 
                 change_log.date = parts[3]
                 assert change_log.date.startswith("(") and change_log.date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\" or \"(TBD)\", found \"{change_log.date}\" for version \"{change_log.version}\"."

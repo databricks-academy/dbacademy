@@ -102,10 +102,15 @@ class Translator:
                                   which="target")
 
     def create_published_message(self):
+
+        change_log = self.build_config.change_log
+        # if self.build_config.change_log is None:
+        #     # Expected to be None for translations.
+
         return BuildUtils.create_published_message(source_repo=self.source_repo,
                                                    name=self.build_config.name,
                                                    version=self.build_config.version,
-                                                   change_log=self.build_config.change_log,
+                                                   change_log=change_log,
                                                    publishing_info=self.build_config.publishing_info)
 
     def to_validator(self):
