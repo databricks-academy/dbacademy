@@ -3,19 +3,21 @@ from ..build_utils_class import BuildUtils
 
 
 class Translator:
-    from dbacademy.dbbuild import BuildConfig
+    from dbacademy.dbbuild import Publisher
 
-    def __init__(self, build_config: BuildConfig):
-        from dbacademy.dbbuild import BuildConfig, BuildUtils
+    # def __init__(self, build_config: BuildConfig):
+    def __init__(self, publisher: Publisher):
+        from dbacademy.dbbuild import Publisher, BuildUtils
 
         self.__validated = False  # By default, we are not validated
 
-        self.build_config = BuildUtils.validate_type(build_config, "build_config", BuildConfig)
+        self.publisher = BuildUtils.validate_type(publisher, "publisher", Publisher)
+
         # Copied from build_config
-        self.username = build_config.username
-        self.client = build_config.client
-        self.notebooks = build_config.notebooks
-        self.build_name = build_config.build_name
+        self.username = publisher.username
+        self.client = publisher.client
+        self.notebooks = publisher.notebooks
+        self.build_name = publisher.build_name
 
         # Defined in select_language
         self.lang_code = None
@@ -34,11 +36,11 @@ class Translator:
         self.target_repo_url = None
 
         self.temp_repo_dir = f"/Repos/Temp"
-        self.temp_work_dir = f"/Workspace/Users/{build_config.username}/Temp"
+        self.temp_work_dir = f"/Workspace/Users/{self.username}/Temp"
 
         self.errors = []
         self.warnings = []
-        self._select_i18n_language(build_config.source_repo)
+        self._select_i18n_language(publisher.source_repo)
 
     def _select_i18n_language(self, source_repo: str):
 
