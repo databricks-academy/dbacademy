@@ -107,6 +107,7 @@ class Translator:
         print(f"core_version:     {self.core_version}")
         print(f"common_language:  {self.common_language}")
         print(f"resources_folder: {self.resources_folder}")
+        print()
 
         self.__reset_source_repo()
         self.__reset_target_repo()
@@ -163,10 +164,9 @@ class Translator:
         assert self.__changes_in_target_repo == 0, f"Found {self.__changes_in_target_repo} changes(s) in the target repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
     def validate_no_changes_in_target_repo(self):
-        repo_name = f"{self.build_name}.git"
         results = BuildUtils.validate_no_changes_in_repo(client=self.client,
                                                          build_name=self.build_name,
-                                                         repo_url=f"https://github.com/databricks-academy/{repo_name}",
+                                                         repo_url=self.target_repo_url,
                                                          directory=self.target_dir)
         self.__changes_in_target_repo = len(results)
         self.assert_no_changes_in_target_repo()
