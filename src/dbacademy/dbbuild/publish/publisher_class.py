@@ -292,6 +292,12 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
                    </body></html>"""
         dbgems.display_html(html)
 
+    def to_translator(self):
+        from dbacademy.dbbuild import Translator
+        assert self.validated, f"Cannot translate until the publisher's configuration passes validation. Ensure that Publisher.validate() was called and that all assignments passed"
+
+        return Translator(self)
+
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
         from dbacademy.dbbuild import TestSuite
 

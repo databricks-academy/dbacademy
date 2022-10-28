@@ -408,12 +408,6 @@ class BuildConfig:
 
         return ResourceDiff(self)
 
-    def to_translator(self):
-        from dbacademy.dbbuild import Translator
-        assert self.validated, f"Cannot translate until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
-
-        return Translator(self)
-
     def to_publisher(self):
         from dbacademy.dbbuild import Publisher
         assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
