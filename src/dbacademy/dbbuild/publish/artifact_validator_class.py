@@ -51,10 +51,6 @@ class ArtifactValidator:
         print("-" * 80)
         self.__validate_git_branch(branch=f"published-v{self.core_version}", version=None)
 
-    @common.deprecated(reason="Validator.validate_distribution_dbc() was deprecated, see Validator.validate_publishing_processes() instead")
-    def validate_distribution_dbc(self, as_latest: bool):
-        return self.__validate_distribution_dbc(as_latest)
-
     def __validate_distribution_dbc(self, as_latest: bool):
 
         if not as_latest:
@@ -76,10 +72,6 @@ class ArtifactValidator:
 
         print(f"PASSED:  v{file_name} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/\".")
         print(f"UNKNOWN: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/{file_name}\".")
-
-    @common.deprecated(reason="Validator.validate_distribution_dbc() was deprecated, see Validator.validate_publishing_processes() instead")
-    def validate_git_releases_dbc(self, version=None):
-        return self.__validate_git_releases_dbc(version)
 
     def __validate_git_releases_dbc(self, version=None):
         print("Validating the DBC in GitHub's Releases page\n")
@@ -118,10 +110,6 @@ class ArtifactValidator:
         source = self.client.workspace.export_notebook(version_info_path)
         assert f"**{version}**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{version}\""
         print(f"PASSED: v{version} found in \"{version_info_path}\"")
-
-    @common.deprecated(reason="Validator.validate_git_branch() was deprecated, see Validator.validate_publishing_processes() instead")
-    def validate_git_branch(self, branch="published", version=None):
-        self.__validate_git_branch(branch=branch, version=version)
 
     def __validate_git_branch(self, *, branch: str, version: Union[str, None]):
         from ..build_utils_class import BuildUtils

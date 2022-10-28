@@ -237,11 +237,6 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
         # Both have to be true to be considered validated.
         return self.__validated and self.__validated_repo_reset
 
-    @common.deprecated(reason="Use Publisher.configure_target_repo() instead()")
-    def reset_repo(self, target_dir: str, target_repo_url: str = None, branch: str = "published", **kwargs):
-
-        return self.configure_target_repo(target_dir, target_repo_url, branch, **kwargs)
-
     def configure_target_repo(self, target_dir: str = None, target_repo_url: str = None, branch: str = "published", **kwargs):
         # Assume for now that we have failed. This overrides the default
         # of True meaning we have to succeed here to continue
@@ -332,10 +327,6 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
             for notebook in self.build_config.notebooks.values():
                 self._generate_html(notebook)
 
-    @common.deprecated(reason="This method as been deprecated, please use Publisher.create_dbcs() instead.")
-    def create_dbc(self):
-        return self.create_dbcs()
-
     def create_dbcs(self):
         assert self.validated, f"Cannot create DBCs until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
 
@@ -359,10 +350,6 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
 
         url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
-
-    @common.deprecated(reason="Use to_validator() instead.")
-    def get_validator(self):
-        return self.to_validator()
 
     def to_validator(self):
         from dbacademy.dbbuild import ArtifactValidator
