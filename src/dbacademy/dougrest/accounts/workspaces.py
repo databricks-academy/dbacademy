@@ -1,10 +1,10 @@
-from typing import Union, Container, Dict
+from typing import Any, Type
 import time
 
 from dbacademy.common import overrides
 from dbacademy.dougrest.accounts.crud import AccountsCRUD, IfNotExists, IfExists
 from dbacademy.dougrest.client import DatabricksApi, DatabricksApiException
-from dbacademy.rest.common import HttpMethod
+from dbacademy.rest.common import HttpMethod, HttpReturnType, HttpStatusCodes
 
 
 class Workspace(DatabricksApi):
@@ -30,10 +30,12 @@ class Workspace(DatabricksApi):
                 time.sleep(15)
 
     @overrides
-    def api(self, _http_method: HttpMethod, _endpoint_path: str, _data=None, *,
-            _expected: Union[int, Container[int]] = None) -> Union[str, Dict]:
+    def api(self, _http_method: HttpMethod, _endpoint_path: str, _data: dict = None, *,
+            _expected: HttpStatusCodes = None, _result_type: Type[HttpReturnType] = dict,
+            **data: Any) -> HttpReturnType:
         self.wait_until_ready()
-        return super().api(_http_method, _endpoint_path, _data)
+        return super().api(_http_method, _endpoint_path, _data,
+                           _expected=_expected, _result_type=_result_type, **data)
 
 
 class Workspaces(AccountsCRUD):
