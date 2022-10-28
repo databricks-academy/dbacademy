@@ -12,9 +12,6 @@ class BuildConfig:
     VERSION_TRANSLATION = "Translation"
     VERSIONS_LIST = [VERSION_BUILD, VERSION_TEST, VERSION_TRANSLATION]
 
-    CHANGE_LOG_TAG = "## Change Log"
-    CHANGE_LOG_VERSION = "### Version "
-
     @staticmethod
     def load(file: str, *, version: str):
         import json
@@ -180,7 +177,7 @@ class BuildConfig:
         self.white_list = None
         self.black_list = None
 
-        self.change_log = []
+        self.change_log = None
         self.publishing_info = publishing_info or {}
 
     # def get_distribution_name(self, version):
@@ -277,7 +274,6 @@ class BuildConfig:
         return self.__validated
 
     def __validate_readme(self) -> None:
-        import os
         from datetime import datetime
 
         if self.version in BuildConfig.VERSIONS_LIST:
@@ -285,64 +281,11 @@ class BuildConfig:
         elif self.i18n_language is not None:
             return  # We are building a translation, presumably days to weeks later, this is not expected to match
 
-        readme_path = f"/Workspace/{self.source_repo}/README.md"
-        assert os.path.exists(readme_path), f"The README.md file was not found at {readme_path}"
+        self.change_log = BuildUtils.load_change_log(self.source_repo, target_version=None)
+        assert self.change_log.version == self.core_version, f"The change log entry's version is not \"{self.core_version}\", found \"{self.change_log.version}\"."
 
-        with open(readme_path, "r") as f:
-            lines = f.readlines()
-
-        change_log_index: Union[None, int] = None
-        version_index: Union[None, int] = None
-
-        for i, line in enumerate(lines):
-            line = line.strip()
-            if line == BuildConfig.CHANGE_LOG_TAG:
-                change_log_index = i
-            elif change_log_index and i > change_log_index and line == "":
-                pass  # Just an empty line
-            elif change_log_index and i > change_log_index and not version_index:
-
-                version_index = i
-                assert line.startswith(BuildConfig.CHANGE_LOG_VERSION), f"The next change log entry ({BuildConfig.CHANGE_LOG_VERSION}...) was not found at {readme_path}:{i + 1}\n{line}"
-
-                parts = line.split(" ")  # "### Version 1.0.2 (01-21-2022)"
-                assert len(parts) == 4, f"Expected the change log entry to contain 4 parts and of the form \"### Version vN.N.N (M-D-YYYY)\", found \"{line}\"."
-                assert parts[0] == "###", f"Part 1 of the change long entry is not \"###\", found \"{parts[0]}\""
-                assert parts[1] == "Version", f"Part 2 of the change long entry is not \"Version\", found \"{parts[1]}\""
-
-                version = parts[2]
-                v_parts = version.split(".")
-                assert len(v_parts) == 3, f"The change long entry's version field is not of the form \"vN.N.N\" where \"N\" is an integral value, found {len(v_parts)} parts: \"{version}\"."
-                assert v_parts[0].isnumeric(), f"The change long entry's Major version field is not an integral value, found \"{version}\"."
-                assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{version}\"."
-                assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{version}\"."
-
-                assert version == self.core_version, f"The change log entry's version is not \"{self.core_version}\", found \"{version}\"."
-
-                date = parts[3]
-                assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\", found \"{date}\"."
-
-                date = date[1:-1]
-                d_parts = date.split("-")
-                assert len(d_parts) == 3, f"The change long entry's date field is not of the form \"(M-D-YYYY)\", found {date}\"."
-                assert d_parts[0].isnumeric(), f"The change long entry's month field is not an integral value, found \"{date}\"."
-                assert d_parts[1].isnumeric(), f"The change long entry's day field is not an integral value, found \"{date}\"."
-                assert d_parts[2].isnumeric(), f"The change long entry's year field is not an integral value, found \"{date}\"."
-
-                current_date = datetime.today().strftime("%-m-%-d-%Y")
-                assert date == f"{current_date}", f"The change log entry's date is not \"{current_date}\", found \"{date}\"."
-
-            elif version_index and i > version_index and not line.startswith("#"):
-                self.change_log.append(line)
-
-            elif version_index and i > version_index and line.startswith("#"):
-                print("\nChange Log:")
-                for entry in self.change_log:
-                    print(f"  {entry}")
-
-                return print()
-
-        assert len(self.change_log) > 0, f"The Change Log section was not found in {readme_path}"
+        current_date = datetime.today().strftime("%-m-%-d-%Y")
+        assert self.change_log.date == f"{current_date}", f"The change log entry's date is not \"{current_date}\", found \"{self.change_log.date}\"."
 
     def __validate_version(self):
         if self.version not in BuildConfig.VERSIONS_LIST:
