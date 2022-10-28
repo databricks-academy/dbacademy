@@ -388,7 +388,7 @@ class BuildConfig:
                     if "required_dbrs" in replacements: del replacements["required_dbrs"]
 
                     replacements_copy = replacements.copy()
-                    # if "supported_dbrs" in replacements_copy: del replacements_copy["supported_dbrs"]
+                    if "supported_dbrs" in replacements_copy: del replacements_copy["supported_dbrs"]
 
                     if len(replacements_copy) == 0:
                         print(f"| {notebook.order: >3}: {path}   ignored={ignored}   include_solution={include_solution}   replacements=None")
