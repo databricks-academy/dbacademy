@@ -12,11 +12,11 @@ class WarehousesHelper:
 
     @property
     def autoscale_min(self):
-        return 1 if self.da.is_smoke_test() else 2  # math.ceil(self.students_count / 20)
+        return 1 if self.da.is_smoke_test() else 2
 
     @property
     def autoscale_max(self):
-        return 1 if self.da.is_smoke_test() else 20  # math.ceil(self.students_count / 5)
+        return 1 if self.da.is_smoke_test() else 20
 
     def delete_sql_warehouses_for(self, username):
         name = self.da.to_unique_name(username)
@@ -51,6 +51,7 @@ class WarehousesHelper:
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
     def _create_sql_warehouse(self, username: Union[str, None], name: str, auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool):
         from dbacademy import dbgems
+        from dbacademy.dbhelper import WorkspaceHelper
         from dbacademy.dbrest.sql.endpoints import RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT, CLUSTER_SIZE_2X_SMALL
 
         warehouse = self.client.sql.endpoints.create_or_update(
@@ -64,12 +65,12 @@ class WarehousesHelper:
             spot_instance_policy=RELIABILITY_OPTIMIZED,
             channel=CHANNEL_NAME_CURRENT,
             tags={
-                "dbacademy.event_name": dbgems.clean_string(self.workspace.event_name),
-                "dbacademy.students_count": dbgems.clean_string(self.workspace.student_count),
-                "dbacademy.workspace": dbgems.clean_string(self.workspace.workspace_name),
-                "dbacademy.org_id": dbgems.clean_string(self.workspace.org_id),
-                "dbacademy.course": dbgems.clean_string(self.da.course_config.course_name),  # Tag the name of the course
-                "dbacademy.source": dbgems.clean_string("Smoke-Test" if self.da.is_smoke_test() else self.da.course_config.course_name),
+                f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}": dbgems.clean_string(self.workspace.lab_id),
+                f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}": dbgems.clean_string(self.workspace.description),
+                f"dbacademy.workspace": dbgems.clean_string(self.workspace.workspace_name),
+                f"dbacademy.org_id": dbgems.clean_string(self.workspace.org_id),
+                f"dbacademy.course": dbgems.clean_string(self.da.course_config.course_name),  # Tag the name of the course
+                f"dbacademy.source": dbgems.clean_string("Smoke-Test" if self.da.is_smoke_test() else self.da.course_config.course_name),
             })
         warehouse_id = warehouse.get("id")
 
@@ -82,8 +83,8 @@ class WarehousesHelper:
             self.client.permissions.warehouses.update_user(warehouse_id, username, "CAN_USE")
 
         print(f"  Configured for:    {self.workspace.configure_for}")
-        print(f"  Event Name:        {self.workspace.event_name}")
-        print(f"  Student Count:     {self.workspace.student_count}")
+        print(f"  Lab ID:            {self.workspace.lab_id}")
+        print(f"  Description:       {self.workspace.description}")
         print(f"  Provisioning:      {len(self.workspace.usernames)}")
         print(f"  Autoscale minimum: {min_num_clusters}")
         print(f"  Autoscale maximum: {max_num_clusters}")

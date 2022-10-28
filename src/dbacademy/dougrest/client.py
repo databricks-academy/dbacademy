@@ -16,6 +16,7 @@ class DatabricksApi(dict, ApiClient):
         "GCP": "n1-standard-4",
     }
 
+    # noinspection PyMethodParameters
     @CachedStaticProperty
     def default_client() -> DatabricksApi:
         result = DatabricksApi.known_clients.get("DEFAULT")
@@ -23,6 +24,7 @@ class DatabricksApi(dict, ApiClient):
             result = DatabricksApi()
         return result
 
+    # noinspection PyMethodParameters
     @CachedStaticProperty
     def known_clients() -> Dict[str, DatabricksApi]:
         clients = {}
@@ -43,8 +45,7 @@ class DatabricksApi(dict, ApiClient):
                 clients[section_name] = DatabricksApi(host, token=token)
         return clients
 
-    def __init__(self, hostname=None, *, token=None, user=None, password=None, authorization_header=None, cloud="AWS",
-                 deployment_name=None):
+    def __init__(self, hostname=None, *, token=None, user=None, password=None, authorization_header=None, cloud="AWS", deployment_name=None):
         from dbacademy import dbgems
         if hostname:
             url = f'https://{hostname}/api/'

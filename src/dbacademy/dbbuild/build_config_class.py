@@ -1,5 +1,5 @@
 from typing import Type, List, Dict, Union
-from dbacademy import dbgems
+from dbacademy import dbgems, common
 from .build_utils_class import BuildUtils
 
 
@@ -135,7 +135,7 @@ class BuildConfig:
         # The instance of this test run
         self.suite_id = str(time.time()) + "-" + str(uuid.uuid1())
 
-        # The name of the cloud on which this tests was ran
+        # The name of the cloud on which these tests were run
         self.cloud = dbgems.get_cloud() if cloud is None else cloud
 
         # Course Name
@@ -208,7 +208,7 @@ class BuildConfig:
             order = i       # Start with the natural order
             test_round = 2  # Default test_round for all notebooks
             include_solution = include_solutions  # Initialize to the default value
-            path = entity["path"][len(self.source_dir) + 1:]  # Get the notebook's path relative too the source root
+            path = entity["path"][len(self.source_dir) + 1:]  # Get the notebook's path relative to the source root
 
             if "includes/" in path.lower():  # Any folder that ends in "includes/"
                 test_round = 0  # Never test notebooks in the "includes" folders
@@ -430,7 +430,7 @@ class BuildConfig:
                          test_type=test_type,
                          keep_success=keep_success)
 
-    @dbgems.deprecated(reason="Corresponding logic has been moved to the class Translator and its related capabilities")
+    @common.deprecated(reason="Corresponding logic has been moved to the class Translator and its related capabilities")
     def select_i18n_language(self):
         resources_folder = f"{self.source_repo}/Resources"
 

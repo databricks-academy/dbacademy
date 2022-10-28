@@ -15,8 +15,8 @@ class ScimGroupsClient(ApiContainer):
         assert len(users) == int(total_results), f"The totalResults ({total_results}) does not match the number of records ({len(users)}) returned"
         return users
 
-    def get_by_id(self, id):
-        url = f"{self.base_uri}/{id}"
+    def get_by_id(self, id_value):
+        url = f"{self.base_uri}/{id_value}"
         return self.client.api("GET", url)
 
     def get_by_name(self, name):
@@ -26,8 +26,8 @@ class ScimGroupsClient(ApiContainer):
 
         return None
 
-    def delete_by_id(self, id):
-        url = f"{self.base_uri}/{id}"
+    def delete_by_id(self, id_value):
+        url = f"{self.base_uri}/{id_value}"
         return self.client.api("DELETE", url, _expected=204)
 
     def delete_by_name(self, name):
@@ -37,7 +37,7 @@ class ScimGroupsClient(ApiContainer):
 
         return None
 
-    def add_member(self, group_id:str, member_id: str):
+    def add_member(self, group_id: str, member_id: str):
         data = {
                   "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
                   "Operations": [

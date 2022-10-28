@@ -1,7 +1,7 @@
 from typing import List, Union, Any
 import pyspark
 import dbacademy.common
-from dbacademy.common import print_warning, deprecated
+from dbacademy.common import print_warning
 from .mock_dbutils_class import MockDBUtils
 
 

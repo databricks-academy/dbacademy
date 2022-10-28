@@ -9,14 +9,16 @@ from dbacademy.rest.common import ApiClient
 class DBAcademyRestClient(ApiClient):
     """Databricks Academy REST API client."""
 
-    @CachedStaticProperty  # Ignore warning about missing "self"
+    # noinspection PyMethodParameters
+    @CachedStaticProperty
     def default_client() -> DBAcademyRestClient:
         result = DBAcademyRestClient.known_clients.get("DEFAULT")
         if result is None:
             result = DBAcademyRestClient()
         return result
 
-    @CachedStaticProperty  # Ignore warning about missing "self"
+    # noinspection PyMethodParameters
+    @CachedStaticProperty
     def known_clients() -> Dict[str, DBAcademyRestClient]:
         clients = {}
         import os

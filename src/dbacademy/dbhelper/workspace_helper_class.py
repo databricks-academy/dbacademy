@@ -8,9 +8,16 @@ class WorkspaceHelper:
 
     T = TypeVar("T")
 
-    ALL_USERS = "All Users"
-    MISSING_USERS_ONLY = "Missing Users Only"
-    CURRENT_USER_ONLY = "Current User Only"
+    PARAM_LAB_ID = "lab_id"
+    PARAM_DESCRIPTION = "description"
+    PARAM_CONFIGURE_FOR = "configure_for"
+
+    CONFIGURE_FOR_ALL_USERS = "All Users"
+    CONFIGURE_FOR_MISSING_USERS_ONLY = "Missing Users Only"
+    CONFIGURE_FOR_CURRENT_USER_ONLY = "Current User Only"
+
+    CONFIGURE_FOR_OPTIONS = ["", CONFIGURE_FOR_ALL_USERS, CONFIGURE_FOR_MISSING_USERS_ONLY, CONFIGURE_FOR_CURRENT_USER_ONLY]
+    CONFIGURE_FOR_VALID_OPTIONS = CONFIGURE_FOR_OPTIONS[1:]  # all but empty-string
 
     def __init__(self, da: DBAcademyHelper):
         from .warehouses_helper_class import WarehousesHelper
@@ -25,9 +32,6 @@ class WorkspaceHelper:
 
         self._usernames = None
         self._existing_databases = None
-
-        self.configure_for_options = ["", WorkspaceHelper.ALL_USERS, WorkspaceHelper.MISSING_USERS_ONLY, WorkspaceHelper.CURRENT_USER_ONLY]
-        self.valid_configure_for_options = self.configure_for_options[1:]  # all but empty-string
 
     def add_entitlement_allow_instance_pool_create(self):
         group = self.client.scim.groups.get_by_name("users")
@@ -76,8 +80,8 @@ class WorkspaceHelper:
     @property
     def configure_for(self):
         # Under test, we are always configured for the current user only
-        configure_for = WorkspaceHelper.CURRENT_USER_ONLY if self.da.is_smoke_test() else dbgems.get_parameter("configure_for")
-        assert configure_for in self.valid_configure_for_options, f"Who the workspace is being configured for must be specified, found \"{configure_for}\". Options include {self.valid_configure_for_options}"
+        configure_for = WorkspaceHelper.CONFIGURE_FOR_CURRENT_USER_ONLY if self.da.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_CONFIGURE_FOR)
+        assert configure_for in WorkspaceHelper.CONFIGURE_FOR_VALID_OPTIONS, f"Who the workspace is being configured for must be specified, found \"{configure_for}\". Options include {WorkspaceHelper.CONFIGURE_FOR_VALID_OPTIONS}"
         return configure_for
 
     @property
@@ -87,11 +91,11 @@ class WorkspaceHelper:
             self._usernames = [r.get("userName") for r in users]
             self._usernames.sort()
 
-        if self.configure_for == WorkspaceHelper.CURRENT_USER_ONLY:
+        if self.configure_for == WorkspaceHelper.CONFIGURE_FOR_CURRENT_USER_ONLY:
             # Override for the current user only
             return [self.da.username]
 
-        elif self.configure_for == WorkspaceHelper.MISSING_USERS_ONLY:
+        elif self.configure_for == WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY:
             # TODO - This isn't going to hold up long-term, maybe track per-user properties in this respect.
             # The presumption here is that if the user doesn't have their own
             # database, then they are also missing the rest of their config.
@@ -114,20 +118,11 @@ class WorkspaceHelper:
         return self._existing_databases
 
     @property
-    def event_name(self):
-        import re
-
-        event_name = "Smoke Test" if self.da.is_smoke_test() else dbgems.get_parameter("event_name")
-        assert event_name is not None and len(event_name) >= 3, f"The parameter event_name must be specified with min-length of 3, found \"{event_name}\"."
-
-        event_name = re.sub(r"[^a-zA-Z\d]", "_", event_name)
-        while "__" in event_name: event_name = event_name.replace("__", "_")
-
-        return event_name
+    def lab_id(self):
+        lab_id = "Smoke Test" if self.da.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_LAB_ID, None)
+        return None if lab_id is None else dbgems.clean_string(lab_id)
 
     @property
-    def student_count(self):
-        students_count = dbgems.get_parameter("students_count", "0").strip()
-        students_count = int(students_count) if students_count.isnumeric() else 0
-        students_count = max(students_count, len(self.usernames))
-        return students_count
+    def description(self):
+        description = "This is a smoke test" if self.da.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION, None)
+        return None if description is None else dbgems.clean_string(description)

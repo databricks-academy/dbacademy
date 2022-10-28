@@ -1,7 +1,7 @@
 from typing import Union, Optional
 
 import pyspark
-from dbacademy import dbgems
+from dbacademy import dbgems, common
 from dbacademy.dbrest import DBAcademyRestClient
 
 from .paths_class import Paths
@@ -292,7 +292,7 @@ class DBAcademyHelper:
         except Exception as e:
             raise AssertionError(self.__troubleshoot_error(f"Failed to create the schema \"{self.schema_name}\".", "Cannot Create Schema")) from e
 
-    @dbgems.deprecated(reason="Use DBAcademyHelper.reset_lesson() instead.")
+    @common.deprecated(reason="Use DBAcademyHelper.reset_lesson() instead.")
     def reset_environment(self):
         return self.reset_lesson()
 
@@ -827,17 +827,17 @@ class DBAcademyHelper:
         """
         A utility method used in streaming notebooks to block until the stream has processed n batches. This method serves one main purpose in two different use cases.
 
-        The purpose is to block the current command until the state of the stream is ready and thus allowing the next command to execute against the properly initialized stream.
-
         The first use case is in jobs where the stream is started in one cell but execution of subsequent cells start prematurely.
 
-        The second use case is to slow down students who likewise attempt to execute subsequent cells before the stream is in a valid state either by invoking subsequent cells directly or by execute the Run-All Command
+        The purpose is to block the current command until the state of the stream is ready and thus allowing the next command to execute against the properly initialized stream.
 
-        :param query: An instance of a query object or the name of the query
-        :param min_batches: The minimum number of batches to be processed before allowing execution to continue.
-        :param delay_seconds: The amount of delay in seconds between each test.
+        The second use case is to slow down students who likewise attempt to execute subsequent cells before the stream is in a valid state either by invoking subsequent cells directly or by execute the Run-All Command.
+        :param query:
+        :param min_batches:
+        :param delay_seconds:
         :return:
         """
+
         import time, pyspark
         assert query is not None and type(query) in [str, pyspark.sql.streaming.StreamingQuery], f"Expected the query parameter to be of type \"str\" or \"pyspark.sql.streaming.StreamingQuery\", found \"{type(query)}\"."
 
