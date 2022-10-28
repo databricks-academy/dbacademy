@@ -266,16 +266,16 @@ class BuildUtils:
                 if target_version is None: version_index = i                  # Use the first one we find.
                 elif target_version == change_log.version: version_index = i  # We found the target version.
 
-                date = parts[3]
-                assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\" or \"(TBD)\", found \"{date}\" for version \"{change_log.version}\"."
+                change_log.date = parts[3]
+                assert change_log.date.startswith("(") and change_log.date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\" or \"(TBD)\", found \"{change_log.date}\" for version \"{change_log.version}\"."
 
-                change_log.date = date[1:-1]
-                if date != "TBD":
-                    d_parts = date.split("-")
-                    assert len(d_parts) == 3, f"The change long entry's date field is not of the form \"(M-D-YYYY)\", found {date}\" for version \"{change_log.version}\"."
-                    assert d_parts[0].isnumeric(), f"The change long entry's month field is not an integral value, found \"{date}\" for version \"{change_log.version}\"."
-                    assert d_parts[1].isnumeric(), f"The change long entry's day field is not an integral value, found \"{date}\" for version \"{change_log.version}\"."
-                    assert d_parts[2].isnumeric(), f"The change long entry's year field is not an integral value, found \"{date}\" for version \"{change_log.version}\"."
+                change_log.date = change_log.date[1:-1]
+                if change_log.date != "TBD":
+                    d_parts = change_log.date.split("-")
+                    assert len(d_parts) == 3, f"The change long entry's date field is not of the form \"(M-D-YYYY)\", found {change_log.date}\" for version \"{change_log.version}\"."
+                    assert d_parts[0].isnumeric(), f"The change long entry's month field is not an integral value, found \"{change_log.date}\" for version \"{change_log.version}\"."
+                    assert d_parts[1].isnumeric(), f"The change long entry's day field is not an integral value, found \"{change_log.date}\" for version \"{change_log.version}\"."
+                    assert d_parts[2].isnumeric(), f"The change long entry's year field is not an integral value, found \"{change_log.date}\" for version \"{change_log.version}\"."
 
             elif version_index and i > version_index and not line.startswith("#"):
                 change_log.entries.append(line)
