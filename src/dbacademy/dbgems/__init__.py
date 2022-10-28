@@ -138,20 +138,20 @@ def lookup_all_module_versions(module: str, github_org: str = "databricks-academ
     return sort_semantic_versions(versions)
 
 
-def lookup_current_module_version(module: str, dist_version: str = "0.0.0", default: str = "v0.0.0") -> str:
+def lookup_current_module_version(module: str) -> str:
     import json, pkg_resources
 
-    name = module.replace("-", "_")
     distribution = pkg_resources.get_distribution(module)
-    path = f"{distribution.location}/{name}-{dist_version}.dist-info/direct_url.json"
+    name = distribution.project_name
+    version = distribution.version
 
-    with open(path) as f:
+    direct_url = f"{distribution.location}/{name}-{version}.dist-info/direct_url.json"
+
+    with open(direct_url) as f:
         data = json.load(f)
         requested_revision = data.get("vcs_info", {}).get("requested_revision", None)
         requested_revision = requested_revision or data.get("vcs_info", {}).get("commit_id", None)
-        requested_revision = requested_revision or default
-
-        return requested_revision
+        return requested_revision or f"v{version}"
 
 
 def is_curriculum_workspace() -> bool:
