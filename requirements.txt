@@ -3,4 +3,5 @@ py4j
 mlflow
 urllib3
 requests
+wheel
 pyspark==3.3.*
