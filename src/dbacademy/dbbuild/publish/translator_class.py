@@ -20,6 +20,9 @@ class Translator:
         self.notebooks = publisher.notebooks
         self.build_name = publisher.build_name
 
+        self.source_repo = publisher.source_repo
+        self.build_config = publisher.build_config
+
         # Defined in select_language
         self.lang_code = None
         self.version = None
@@ -97,6 +100,13 @@ class Translator:
                                   repo_url=self.target_repo_url,
                                   branch=self.target_branch,
                                   which="target")
+
+    def create_published_message(self):
+        return BuildUtils.create_published_message(source_repo=self.source_repo,
+                                                   name=self.build_config.name,
+                                                   version=self.build_config.version,
+                                                   change_log=self.build_config.change_log,
+                                                   publishing_info=self.build_config.publishing_info)
 
     def to_validator(self):
         from dbacademy.dbbuild import ArtifactValidator
