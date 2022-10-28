@@ -221,10 +221,7 @@ class BuildUtils:
     def create_published_message(*, name: str, version: str, change_log: ChangeLog, publishing_info: dict, source_repo: str):
         import urllib.parse
 
-        core_message = f"Change Log: v{change_log.version} ({change_log.date})"
-        for entry in change_log.entries:
-            core_message += f"  {entry}"
-
+        core_message = str(change_log)
         core_message += f"""
 Release notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{source_repo.split("/")[-1]}
 
