@@ -2,23 +2,43 @@ from typing import Union
 from dbacademy import dbgems, common
 
 
-class PublisherValidator:
+class ArtifactValidator:
     from .publisher_class import Publisher
+    from .translator_class import Translator
+    from dbacademy.dbrest import DBAcademyRestClient
 
-    def __init__(self, publisher: Publisher):
-        # self.i18n = publisher.i18n
-        self.common_language = publisher.common_language
+    @staticmethod
+    def from_publisher(publisher: Publisher):
+        return ArtifactValidator(build_name=publisher.build_name,
+                                 version=publisher.version,
+                                 core_version=publisher.core_version,
+                                 client=publisher.client,
+                                 target_repo_url=publisher.target_repo_url,
+                                 temp_repo_dir=publisher.temp_repo_dir,
+                                 temp_work_dir=publisher.temp_work_dir,
+                                 username=publisher.username)
 
-        self.build_name = publisher.build_name
-        self.version = publisher.version
-        self.core_version = publisher.core_version
-        self.build_name = publisher.build_name
-        self.client = publisher.client
+    @staticmethod
+    def from_translator(translator: Translator):
+        return ArtifactValidator(build_name=translator.build_name,
+                                 version=translator.version,
+                                 core_version=translator.core_version,
+                                 client=translator.client,
+                                 target_repo_url=translator.target_repo_url,
+                                 temp_repo_dir=translator.temp_repo_dir,
+                                 temp_work_dir=translator.temp_work_dir,
+                                 username=translator.username)
 
-        self.target_repo_url = publisher.target_repo_url
-        self.temp_repo_dir = publisher.temp_repo_dir
-        self.temp_work_dir = publisher.temp_work_dir
-        self.username = publisher.username
+    def __init__(self, *, build_name: str, version: str, core_version: str, client: DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str):
+        self.build_name = build_name
+        self.version = version
+        self.core_version = core_version
+        self.client = client
+
+        self.target_repo_url = target_repo_url
+        self.temp_repo_dir = temp_repo_dir
+        self.temp_work_dir = temp_work_dir
+        self.username = username
 
     def validate_publishing_processes(self):
         self.__validate_distribution_dbc(as_latest=True)

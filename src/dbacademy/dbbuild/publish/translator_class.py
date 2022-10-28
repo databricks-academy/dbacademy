@@ -33,6 +33,9 @@ class Translator:
         self.target_dir = None
         self.target_repo_url = None
 
+        self.temp_repo_dir = f"/Repos/Temp"
+        self.temp_work_dir = f"/Workspace/Users/{build_config.username}/Temp"
+
         self.errors = []
         self.warnings = []
         self._select_i18n_language(build_config.source_repo)
@@ -91,6 +94,10 @@ class Translator:
                                   repo_url=self.target_repo_url,
                                   branch=self.target_branch,
                                   which="target")
+
+    def to_validator(self):
+        from dbacademy.dbbuild import ArtifactValidator
+        return ArtifactValidator.from_translator(self)
 
     def validate(self):
         self.__reset_source_repo()
