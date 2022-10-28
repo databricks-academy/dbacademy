@@ -295,7 +295,7 @@ class Translator:
     def create_dbcs(self):
 
         assert self.validated, f"Cannot create DBCs until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
-        assert self.assert_no_changes_in_target_repo()
+        self.assert_no_changes_in_target_repo()
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
         data = self.client.workspace.export_dbc(self.target_dir)
