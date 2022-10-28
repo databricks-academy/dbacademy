@@ -339,9 +339,11 @@ class BuildConfig:
                 print("\nChange Log:")
                 for entry in self.change_log:
                     print(f"  {entry}")
+
                 return print()
 
         assert len(self.change_log) > 0, f"The Change Log section was not found in {readme_path}"
+        print(f"Found {len(self.change_log)} entries in the Change Log")
 
     def __validate_version(self):
         if self.version not in BuildConfig.VERSIONS_LIST:
