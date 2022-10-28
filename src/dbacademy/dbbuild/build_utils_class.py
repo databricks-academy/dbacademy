@@ -1,23 +1,10 @@
-from typing import Union, List, Dict, Optional
+from typing import Union, List, Dict
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy import dbgems
 
 
-class ChangeLog:
-    def __init__(self):
-        self.entries = []
-        self.version: Optional[str] = None
-        self.date: Optional[str] = None
-
-    def print(self):
-        print(f"Change Log: v{self.version} ({self.date})")
-        for entry in self.entries:
-            print(f"  {entry}")
-
-
 class BuildUtils:
-    CHANGE_LOG_TAG = "## Change Log"
-    CHANGE_LOG_VERSION = "### Version "
+    from .change_log_class import ChangeLog
 
     def __init__(self):
         pass
@@ -229,72 +216,6 @@ class BuildUtils:
                     results.append(f"Differences: {label:>20} {relative_path}")
 
         return results
-
-    @staticmethod
-    def load_change_log(source_repo: str, target_version: Optional[str]) -> ChangeLog:
-        import os
-
-        readme_path = f"/Workspace/{source_repo}/README.md"
-        assert os.path.exists(readme_path), f"The README.md file was not found at {readme_path}"
-
-        with open(readme_path, "r") as f:
-            lines = f.readlines()
-
-        change_log = ChangeLog()
-        change_log_index: Optional[int] = None
-        version_index: Optional[int] = None
-
-        for i, line in enumerate(lines):
-            line = line.strip()
-            if line == BuildUtils.CHANGE_LOG_TAG:
-                change_log_index = i
-
-            elif change_log_index and i > change_log_index and line == "":
-                pass  # Just an empty line
-
-            elif change_log_index and i > change_log_index and not version_index:
-                if line.strip().startswith("* "):
-                    continue
-
-                assert line.startswith(BuildUtils.CHANGE_LOG_VERSION), f"The next change log entry ({BuildUtils.CHANGE_LOG_VERSION}...) was not found at {readme_path}:{i + 1}\n{line}"
-
-                parts = line.split(" ")  # "### Version 1.0.2 (01-21-2022)"
-                assert len(parts) == 4, f"Expected the change log entry to contain 4 parts and of the form \"### Version vN.N.N (M-D-YYYY)\", found \"{line}\"."
-                assert parts[0] == "###", f"Part 1 of the change long entry is not \"###\", found \"{parts[0]}\""
-                assert parts[1] == "Version", f"Part 2 of the change long entry is not \"Version\", found \"{parts[1]}\""
-
-                change_log.version = parts[2]
-
-                v_parts = change_log.version.split(".")
-                assert len(v_parts) == 3, f"The change long entry's version field is not of the form \"vN.N.N\" where \"N\" is an integral value, found {len(v_parts)} parts: \"{change_log.version}\"."
-                assert v_parts[0].isnumeric(), f"The change long entry's Major version field is not an integral value, found \"{change_log.version}\"."
-                assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{change_log.version}\"."
-                assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{change_log.version}\"."
-
-                if target_version is None: version_index = i                  # Use the first one we find.
-                elif target_version == change_log.version: version_index = i  # We found the target version.
-                else: continue
-
-                change_log.date = parts[3]
-                assert change_log.date.startswith("(") and change_log.date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\" or \"(TBD)\", found \"{change_log.date}\" for version \"{change_log.version}\"."
-
-                change_log.date = change_log.date[1:-1]
-                if change_log.date != "TBD":
-                    d_parts = change_log.date.split("-")
-                    assert len(d_parts) == 3, f"The change long entry's date field is not of the form \"(M-D-YYYY)\", found {change_log.date}\" for version \"{change_log.version}\"."
-                    assert d_parts[0].isnumeric(), f"The change long entry's month field is not an integral value, found \"{change_log.date}\" for version \"{change_log.version}\"."
-                    assert d_parts[1].isnumeric(), f"The change long entry's day field is not an integral value, found \"{change_log.date}\" for version \"{change_log.version}\"."
-                    assert d_parts[2].isnumeric(), f"The change long entry's year field is not an integral value, found \"{change_log.date}\" for version \"{change_log.version}\"."
-
-            elif version_index and i > version_index and not line.startswith("#"):
-                change_log.entries.append(line)
-
-            elif version_index and i > version_index and line.startswith("#"):
-                change_log.print()
-                return change_log
-
-        assert len(change_log.entries) > 0, f"The Change Log section was not found in {readme_path}"
-        return change_log
 
     @staticmethod
     def create_published_message(*, name: str, version: str, change_log: ChangeLog, publishing_info: dict, source_repo: str):

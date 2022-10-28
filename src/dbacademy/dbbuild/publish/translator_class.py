@@ -102,11 +102,9 @@ class Translator:
                                   which="target")
 
     def create_published_message(self):
+        from dbacademy.dbbuild.change_log_class import ChangeLog
 
-        change_log = self.build_config.change_log
-        if self.build_config.change_log is None:
-            change_log = BuildUtils.load_change_log(source_repo=self.source_repo,
-                                                    target_version=self.core_version)
+        change_log = self.build_config.change_log or ChangeLog(source_repo=self.source_repo, target_version=self.core_version)
 
         return BuildUtils.create_published_message(source_repo=self.source_repo,
                                                    name=self.build_config.name,
