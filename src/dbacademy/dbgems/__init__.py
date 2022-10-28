@@ -339,6 +339,16 @@ def clean_string(value, replacement: str = "_"):
     return value
 
 
+def clock_start() -> int:
+    import time
+    return int(time.time())
+
+
+def clock_stopped(start: int, end: str = "") -> str:
+    import time
+    return f"({int(time.time()) - start} seconds{end})"
+
+
 def find_global(target):
     import inspect
     caller_frame = inspect.currentframe().f_back

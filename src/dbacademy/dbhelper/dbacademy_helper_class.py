@@ -220,15 +220,13 @@ class DBAcademyHelper:
         """
         return dbgems.spark.conf.get(DBAcademyHelper.SMOKE_TEST_KEY, "false").lower() == "true"
 
-    # noinspection PyMethodMayBeStatic
+    @common.deprecated("Use dbgems.clock_start() instead.")
     def clock_start(self):
-        import time
-        return int(time.time())
+        return dbgems.clock_start()
 
-    # noinspection PyMethodMayBeStatic
+    @common.deprecated("Use dbgems.clock_stopped() instead.")
     def clock_stopped(self, start, end=""):
-        import time
-        return f"({int(time.time()) - start} seconds{end})"
+        return dbgems.clock_stopped(start, end)
 
     # noinspection PyMethodMayBeStatic
     def __troubleshoot_error(self, error, section):

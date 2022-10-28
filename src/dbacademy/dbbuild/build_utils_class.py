@@ -16,7 +16,6 @@ class ChangeLog:
 
 
 class BuildUtils:
-
     CHANGE_LOG_TAG = "## Change Log"
     CHANGE_LOG_VERSION = "### Version "
 
@@ -154,7 +153,8 @@ class BuildUtils:
         import os
         from typing import Dict
 
-        print(f"...indexing \"{repo_dir}\"")
+        start = dbgems.clock_start()
+        print(f"Indexing \"{repo_dir}\"", end="...")
         notebooks = client.workspace().ls(repo_dir, recursive=True)
         assert notebooks is not None, f"No notebooks found for the path {repo_dir}"
 
@@ -170,7 +170,7 @@ class BuildUtils:
                         "full_path": full_path,
                         "contents": None
                     }
-
+        print(dbgems.clock_stopped(start))
         return BuildUtils.load_sources(client=client, results=results)
 
     @staticmethod
@@ -291,3 +291,37 @@ class BuildUtils:
 
         assert len(change_log.entries) > 0, f"The Change Log section was not found in {readme_path}"
         return change_log
+
+    @staticmethod
+    def create_published_message(*, name: str, version: str, change_log: ChangeLog, publishing_info: dict, source_repo: str):
+        import urllib.parse
+
+        core_message = f"Change Log: v{change_log.version} ({change_log.date})"
+        for entry in change_log.entries:
+            core_message += f"  {entry}"
+
+        core_message += f"""
+Release notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{source_repo.split("/")[-1]}
+
+Please contact me (via Slack), or anyone on the curriculum team should you have any questions."""
+
+        email_body = urllib.parse.quote(core_message, safe="")
+        slack_message = f"""@channel Published {name}, v{version}\n\n{core_message.strip()}"""
+
+        content = "<div>"
+        for group_name, group in publishing_info.items():
+            content += f"""<div style="margin-bottom:1em">"""
+            content += f"""<div style="font-size:16px;">{group_name}</div>"""
+            for link_name, url in group.items():
+                if url == "mailto:curriculum-announcements@databricks.com": url += f"?subject=Published {name}, v{version}&body={email_body}"
+                content += f"""<li><a href="{url}" target="_blank" style="font-size:16px">{link_name}</a></li>"""
+            content += "</div>"
+        content += "</div>"
+
+        rows = len(slack_message.split("\n"))+1
+        html = f"""
+        <body>
+            {content}
+            <textarea style="width:100%; padding:1em" rows={rows}>{slack_message}</textarea>
+        </body>"""
+        dbgems.display_html(html)

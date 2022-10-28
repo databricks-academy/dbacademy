@@ -186,41 +186,11 @@ class Publisher:
         dbgems.display_html(html)
 
     def create_published_message(self):
-        import urllib.parse
-
-        name = self.build_config.name
-        version = self.build_config.version
-
-        core_message = f"Change Log:\n"
-        for entry in self.build_config.change_log:
-            core_message += entry
-            core_message += "\n"
-
-        core_message += f"""
-Release notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{self.source_repo.split("/")[-1]}
-
-Please contact me (via Slack), or anyone on the curriculum team should you have any questions."""
-
-        email_body = urllib.parse.quote(core_message, safe="")
-        slack_message = f"""@channel Published {name}, v{version}\n\n{core_message.strip()}"""
-
-        content = "<div>"
-        for group_name, group in self.build_config.publishing_info.items():
-            content += f"""<div style="margin-bottom:1em">"""
-            content += f"""<div style="font-size:16px;">{group_name}</div>"""
-            for link_name, url in group.items():
-                if url == "mailto:curriculum-announcements@databricks.com": url += f"?subject=Published {name}, v{version}&body={email_body}"
-                content += f"""<li><a href="{url}" target="_blank" style="font-size:16px">{link_name}</a></li>"""
-            content += "</div>"
-        content += "</div>"
-
-        rows = len(slack_message.split("\n"))+1
-        html = f"""
-        <body>
-            {content}
-            <textarea style="width:100%; padding:1em" rows={rows}>{slack_message}</textarea>
-        </body>"""
-        dbgems.display_html(html)
+        return BuildUtils.create_published_message(source_repo=self.source_repo,
+                                                   name=self.build_config.name,
+                                                   version=self.build_config.version,
+                                                   change_log=self.build_config.change_log,
+                                                   publishing_info=self.build_config.publishing_info)
 
     def validate(self, silent: bool) -> "Publisher":
         if not silent:
