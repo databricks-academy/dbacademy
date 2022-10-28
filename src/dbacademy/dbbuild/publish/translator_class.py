@@ -108,7 +108,7 @@ class Translator:
 
         return BuildUtils.create_published_message(source_repo=self.source_repo,
                                                    name=self.build_config.name,
-                                                   version=self.build_config.version,
+                                                   version=self.version,
                                                    change_log=change_log,
                                                    publishing_info=self.build_config.publishing_info)
 
