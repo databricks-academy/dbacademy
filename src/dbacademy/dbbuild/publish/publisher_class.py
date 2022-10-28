@@ -226,7 +226,7 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
         print(f"Source: {self.source_dir}")
         print(f"Target: {self.target_dir}")
 
-        if self.i18n_language is None:
+        if self.build_config.change_log is not None:
             self.build_config.change_log.print()
             print()
 
