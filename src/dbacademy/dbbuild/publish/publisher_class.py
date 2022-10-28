@@ -1,5 +1,5 @@
 from typing import List
-from dbacademy import dbgems
+from dbacademy import dbgems, common
 from ..build_utils_class import BuildUtils
 
 
@@ -237,7 +237,7 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
         # Both have to be true to be considered validated.
         return self.__validated and self.__validated_repo_reset
 
-    @dbgems.deprecated(reason="Use Publisher.configure_target_repo() instead()")
+    @common.deprecated(reason="Use Publisher.configure_target_repo() instead()")
     def reset_repo(self, target_dir: str, target_repo_url: str = None, branch: str = "published", **kwargs):
 
         return self.configure_target_repo(target_dir, target_repo_url, branch, **kwargs)
@@ -326,7 +326,7 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
             for notebook in self.build_config.notebooks.values():
                 self._generate_html(notebook)
 
-    @dbgems.deprecated(reason="This method as been deprecated, please use Publisher.create_dbcs() instead.")
+    @common.deprecated(reason="This method as been deprecated, please use Publisher.create_dbcs() instead.")
     def create_dbc(self):
         return self.create_dbcs()
 

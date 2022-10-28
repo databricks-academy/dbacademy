@@ -47,12 +47,13 @@ class SqlQueriesClient(ApiContainer):
         if json_response.get("count") == len(queries): return None
         else: return self.get_by_name(query_name=query_name, queries=queries, page=page+1)
 
-    def clone(self, query:dict):
+    def clone(self, query: dict):
         create_def = self.existing_to_create(query)
         create_def["name"] = "Clone - "+create_def["name"]
         return self.create_from_dict(query)
 
-    def existing_to_create(self, query:dict):
+    @staticmethod
+    def existing_to_create(query: dict):
         assert type(query) == dict, f"Expected the \"query\" parameter to be of type dict, found {type(query)}"
 
         for key in list(query.keys()):
@@ -61,10 +62,10 @@ class SqlQueriesClient(ApiContainer):
 
         return query
 
-    def create_from_dict(self, params:dict):
+    def create_from_dict(self, params: dict):
         return self.client.api("POST", f"{self.base_uri}", params)
 
-    def create(self, name:str, query:str, description:str=None, schedule:dict=None, options:dict=None, data_source_id=None):
+    def create(self, name: str, query: str, description: str = None, schedule: dict = None, options: dict = None, data_source_id: str = None):
         params = dict()
         params["data_source_id"] = data_source_id
         params["query"] = query
@@ -74,11 +75,11 @@ class SqlQueriesClient(ApiContainer):
         params["options"] = builtins.dict() if options is None else options
         return self.create_from_dict(params)
 
-    def update_from_dict(self, id:str, params:dict):
+    def update_from_dict(self, id_value: str, params: dict):
         assert len(params.keys()) > 0, "Expected at least one parameter."
-        return self.client.api("POST", f"{self.base_uri}/{id}", params)
+        return self.client.api("POST", f"{self.base_uri}/{id_value}", params)
 
-    def update(self, id:str, name:str=None, query:str=None, description:str=None, schedule:dict=None, options:dict=None, data_source_id=None):
+    def update(self, id_value: str, name: str = None, query: str = None, description: str = None, schedule: dict = None, options: dict = None, data_source_id: str = None):
         params = dict()
 
         if name is not None: params["name"] = name
@@ -88,4 +89,4 @@ class SqlQueriesClient(ApiContainer):
         if options is not None: params["options"] = builtins.dict() if options is None else options
         if data_source_id is not None: params["data_source_id"] = data_source_id
         
-        return self.update_from_dict(id, params)
+        return self.update_from_dict(id_value, params)

@@ -253,7 +253,7 @@ class SqlEndpointsClient(ApiContainer):
         spot_instance_policy (str = RELIABILITY_OPTIMIZED): The spot instance policy - see SPOT_POLICIES for the list of valid values.
         channel (str = CHANNEL_NAME_CURRENT): The endpoint's channel - see CHANNELS for the list of valid values.
         tags (dict = dict()): The list of tags expressed as key-value pairs.
-        users (list[str or dict] = None, str): unlike other parameters, this value is eventually converted to a list of user objects but may be specified as a list or single value (which is converted to a list). String values are assumed to be the user's username if it includes the @ symbole and the user's ID otherwise.
+        users (list[str or dict] = None, str): unlike other parameters, this value is eventually converted to a list of user objects but may be specified as a list or single value (which is converted to a list). String values are assumed to be the user's username if it includes the @ symbol and the user's ID otherwise.
         """
 
         tags = dict() if tags is None else tags

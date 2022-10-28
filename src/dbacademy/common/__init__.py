@@ -51,6 +51,8 @@ def deprecated(reason=None, action="warn") -> Callable:
     return decorator
 
 
+# noinspection PyUnusedLocal
+# TODO remove or implement unused parameter
 def overrides(func: Callable = None, check_signature: bool = True) -> Callable:
     """Decorator to indicate that a function overrides a base-class function."""
     if callable(func):

@@ -13,7 +13,7 @@ class SqlConfigClient(ApiContainer):
     def get(self):
         return self.client.api("GET", f"{self.client.endpoint}/api/2.0/sql/config/endpoints")
 
-    def edit(self, security_policy:str, instance_profile_arn:str, data_access_config:dict, sql_configuration_parameters:dict):
+    def edit(self, security_policy: str, instance_profile_arn: str, data_access_config: dict, sql_configuration_parameters: dict):
 
         assert security_policy in SECURITY_POLICIES, f"Expected security_policy to be one of {SECURITY_POLICIES}, found {security_policy}"
 
@@ -38,4 +38,4 @@ class SqlConfigClient(ApiContainer):
                 "value": value
             })
 
-        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/sql/config/endpoints", params1)
+        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/sql/config/endpoints", params)

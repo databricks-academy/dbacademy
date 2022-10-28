@@ -579,6 +579,8 @@ class Commands(object):
 
     def workspace_setup(self, workspace: DatabricksApi):
         import requests as web
+        from dbacademy.dbhelper import WorkspaceHelper
+
         courseware_url = self.courseware_spec["repo"]
         response = web.get(courseware_url + "/blob/published/Includes/Workspace-Setup.py")
         if response.status_code != 200:  # If file exists
@@ -597,10 +599,10 @@ class Commands(object):
                 "notebook_task": {
                     "notebook_path": "Includes/Workspace-Setup",
                     "base_parameters": {
-                        "event_name": self.event["name"],
-                        "event_description": self.event["description"],
-                        # Or "configure_for": "All Users" if you need to reset all users.
-                        "configure_for": "Missing Users Only"
+                        WorkspaceHelper.PARAM_LAB_ID: self.event["name"],
+                        WorkspaceHelper.PARAM_DESCRIPTION: self.event["description"],
+                        # Or WorkspaceHelper.PARAM_CONFIGURE_FOR: "All Users" if you need to reset all users.
+                        WorkspaceHelper.PARAM_CONFIGURE_FOR: WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY
                     },
                     "source": "GIT"
                 },

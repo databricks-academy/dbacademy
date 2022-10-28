@@ -61,7 +61,7 @@ class DatabasesHelper:
         return print(msg)
 
     def configure_permissions(self, notebook_name, spark_version="10.4.x-scala2.12"):
-        from ..dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper import DBAcademyHelper, WorkspaceHelper
 
         job_name = f"""DBAcademy-{self.da.course_config.course_code.upper()}-{notebook_name.split("/")[-1]}"""
         print(f"Starting job \"{job_name}\" to update catalog and schema specific permissions")
@@ -88,7 +88,7 @@ class DatabasesHelper:
                     "notebook_task": {
                         "notebook_path": notebook_path,
                         "base_parameters": {
-                            "configure_for": self.workspace.configure_for
+                            WorkspaceHelper.PARAM_CONFIGURE_FOR: self.workspace.configure_for
                         }
                     },
                     "new_cluster": {

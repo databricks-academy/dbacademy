@@ -1,3 +1,4 @@
+from typing import List
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import ApiContainer
 
@@ -31,7 +32,10 @@ class ScimServicePrincipalsClient(ApiContainer):
                 return item
         return None
 
-    def create(self, display_name: str, group_ids: list = [], entitlements: list = []):
+    def create(self, display_name: str, group_ids: List = None, entitlements: List = None):
+        group_ids = group_ids or list()
+        entitlements = entitlements or list()
+
         params = {
             "displayName": display_name,
             "entitlements": [],

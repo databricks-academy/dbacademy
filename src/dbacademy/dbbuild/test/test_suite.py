@@ -1,4 +1,4 @@
-from dbacademy import dbgems
+from dbacademy import dbgems, common
 from ..build_utils_class import BuildUtils
 
 
@@ -59,7 +59,7 @@ class TestSuite:
 
         return job_names
 
-    @dbgems.deprecated(reason="This method has been deprecated, please use TestSuite.reset() instead.")
+    @common.deprecated(reason="This method has been deprecated, please use TestSuite.reset() instead.")
     def reset_test_suite(self):
         self.reset()
 
