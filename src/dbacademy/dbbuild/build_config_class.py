@@ -330,15 +330,15 @@ class BuildConfig:
                     if "supported_dbrs" in replacements_copy: del replacements_copy["supported_dbrs"]
 
                     if len(replacements_copy) == 0:
-                        print(f"| {notebook.order: >3}: {path}   ignored={ignored}   include_solution={include_solution}   replacements=None")
+                        print(f"{notebook.order: >3}: {path}   ignored={ignored}   include_solution={include_solution}   replacements=None")
                     else:
-                        print(f"| {notebook.order: >3}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={{")
+                        print(f"{notebook.order: >3}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={{")
                         max_key_length = 0
                         for key in replacements_copy: max_key_length = len(key) if len(key) > max_key_length else max_key_length
 
                         for key in replacements_copy:
                             value = replacements_copy.get(key)
-                            print(f"|       {key}", end="")
+                            print(f"    {key}", end="")
                             print(f" " * (max_key_length - len(key)), end="")
                             print(f": {value}")
                         print("|   }")
