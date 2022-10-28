@@ -1,4 +1,4 @@
-from dbacademy import dbgems, common
+from dbacademy import dbgems
 from ..build_utils_class import BuildUtils
 
 

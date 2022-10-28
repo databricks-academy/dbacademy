@@ -1,5 +1,5 @@
 from typing import Union
-from dbacademy import dbgems, common
+from dbacademy import dbgems
 
 
 class ArtifactValidator:

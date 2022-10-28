@@ -89,10 +89,14 @@ class BuildUtils:
         assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"
 
     @staticmethod
-    def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, repo_url: str, directory: str, ignored: List[str]):
-        from typing import Dict
-
+    def validate_no_changes_in_repo(*, client: DBAcademyRestClient, build_name: str, repo_url: str, directory: str) -> List[str]:
+        # results = BuildUtils.validate_not_uncommitted(client=client,
+        #                                               build_name=build_name,
+        #                                               repo_url=repo_url,
+        #                                               directory=directory,
+        #                                               ignored=["/Published/", "/Build-Scripts/"])
         repo_dir = f"/Repos/Temp/{build_name}-diff"
+        ignored = ["/Published/", "/Build-Scripts/"]
 
         print(f"Comparing {directory}")
         print(f"to        {repo_dir}")
@@ -107,7 +111,37 @@ class BuildUtils:
         index_a: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=repo_dir, ignored=ignored)
         index_b: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=directory, ignored=ignored)
 
-        return BuildUtils.compare_results(index_a, index_b)
+        results = BuildUtils.compare_results(index_a, index_b)
+
+        if len(results) != 0:
+            print()
+            for result in results:
+                print(result)
+        else:
+            print(f"\nPASSED: No changes were found!")
+
+        return results
+
+    # @staticmethod
+    # def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, repo_url: str, directory: str, ignored: List[str]):
+    #     from typing import Dict
+    #
+    #     repo_dir = f"/Repos/Temp/{build_name}-diff"
+    #
+    #     print(f"Comparing {directory}")
+    #     print(f"to        {repo_dir}")
+    #     print()
+    #
+    #     BuildUtils.reset_git_repo(client=client,
+    #                               directory=repo_dir,
+    #                               repo_url=repo_url,
+    #                               branch="published",
+    #                               which="fresh")
+    #
+    #     index_a: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=repo_dir, ignored=ignored)
+    #     index_b: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=directory, ignored=ignored)
+    #
+    #     return BuildUtils.compare_results(index_a, index_b)
 
     @staticmethod
     def __ends_with(test_path: str, values: List[str]):
