@@ -255,25 +255,27 @@ class BuildUtils:
                 assert parts[0] == "###", f"Part 1 of the change long entry is not \"###\", found \"{parts[0]}\""
                 assert parts[1] == "Version", f"Part 2 of the change long entry is not \"Version\", found \"{parts[1]}\""
 
-                version = parts[2]
-                v_parts = version.split(".")
-                assert len(v_parts) == 3, f"The change long entry's version field is not of the form \"vN.N.N\" where \"N\" is an integral value, found {len(v_parts)} parts: \"{version}\"."
-                assert v_parts[0].isnumeric(), f"The change long entry's Major version field is not an integral value, found \"{version}\"."
-                assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{version}\"."
-                assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{version}\"."
+                change_log.version = parts[2]
 
-                if target_version is None: version_index = i       # Use the first one we find.
-                elif target_version == version: version_index = i  # We found the target version.
+                v_parts = change_log.version.split(".")
+                assert len(v_parts) == 3, f"The change long entry's version field is not of the form \"vN.N.N\" where \"N\" is an integral value, found {len(v_parts)} parts: \"{change_log.version}\"."
+                assert v_parts[0].isnumeric(), f"The change long entry's Major version field is not an integral value, found \"{change_log.version}\"."
+                assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{change_log.version}\"."
+                assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{change_log.version}\"."
+
+                if target_version is None: version_index = i                  # Use the first one we find.
+                elif target_version == change_log.version: version_index = i  # We found the target version.
 
                 date = parts[3]
-                assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\", found \"{date}\" for version \"{version}\"."
+                assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\" or \"(TBD)\", found \"{date}\" for version \"{change_log.version}\"."
 
-                date = date[1:-1]
-                d_parts = date.split("-")
-                assert len(d_parts) == 3, f"The change long entry's date field is not of the form \"(M-D-YYYY)\", found {date}\" for version \"{version}\"."
-                assert d_parts[0].isnumeric(), f"The change long entry's month field is not an integral value, found \"{date}\" for version \"{version}\"."
-                assert d_parts[1].isnumeric(), f"The change long entry's day field is not an integral value, found \"{date}\" for version \"{version}\"."
-                assert d_parts[2].isnumeric(), f"The change long entry's year field is not an integral value, found \"{date}\" for version \"{version}\"."
+                change_log.date = date[1:-1]
+                if date != "TBD":
+                    d_parts = date.split("-")
+                    assert len(d_parts) == 3, f"The change long entry's date field is not of the form \"(M-D-YYYY)\", found {date}\" for version \"{change_log.version}\"."
+                    assert d_parts[0].isnumeric(), f"The change long entry's month field is not an integral value, found \"{date}\" for version \"{change_log.version}\"."
+                    assert d_parts[1].isnumeric(), f"The change long entry's day field is not an integral value, found \"{date}\" for version \"{change_log.version}\"."
+                    assert d_parts[2].isnumeric(), f"The change long entry's year field is not an integral value, found \"{date}\" for version \"{change_log.version}\"."
 
             elif version_index and i > version_index and not line.startswith("#"):
                 change_log.entries.append(line)
