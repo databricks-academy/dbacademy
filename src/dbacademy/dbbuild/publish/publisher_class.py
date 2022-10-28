@@ -195,6 +195,7 @@ class Publisher:
         for entry in self.build_config.change_log:
             core_message += entry
             core_message += "\n"
+
         core_message += f"""
 Release notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{self.source_repo.split("/")[-1]}
 
@@ -229,7 +230,7 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
         for entry in self.build_config.change_log:
             print(f"| {entry}")
 
-        if len(self.build_config.change_log):
+        if len(self.build_config.change_log) == 0:
             print(f"| -none-")
 
         print()
