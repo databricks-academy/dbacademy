@@ -103,12 +103,13 @@ class Translator:
         return ArtifactValidator.from_translator(self)
 
     def validate(self):
-        self.__reset_source_repo()
-        self.__reset_target_repo()
         print(f"version:          {self.version}")
         print(f"core_version:     {self.core_version}")
         print(f"common_language:  {self.common_language}")
         print(f"resources_folder: {self.resources_folder}")
+
+        self.__reset_source_repo()
+        self.__reset_target_repo()
 
         self.__validated = True
 
