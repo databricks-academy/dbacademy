@@ -59,10 +59,6 @@ class TestSuite:
 
         return job_names
 
-    @common.deprecated(reason="This method has been deprecated, please use TestSuite.reset() instead.")
-    def reset_test_suite(self):
-        self.reset()
-
     def reset(self):
         # Delete all jobs, even those that were successful
         self.client.jobs().delete_by_name(job_names=self.get_all_job_names(), success_only=False)

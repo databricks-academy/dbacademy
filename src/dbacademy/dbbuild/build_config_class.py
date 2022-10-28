@@ -423,32 +423,3 @@ class BuildConfig:
                          test_dir=self.source_dir,
                          test_type=test_type,
                          keep_success=keep_success)
-
-    @common.deprecated(reason="Corresponding logic has been moved to the class Translator and its related capabilities")
-    def select_i18n_language(self):
-        resources_folder = f"{self.source_repo}/Resources"
-
-        resources = self.client.workspace().ls(resources_folder)
-        self.language_options = [r.get("path").split("/")[-1] for r in resources]
-        self.language_options.sort()
-        self.language_options.insert(0, BuildConfig.LANGUAGE_OPTIONS_DEFAULT)
-
-        dbgems.dbutils.widgets.dropdown("i18n_language",
-                                        BuildConfig.LANGUAGE_OPTIONS_DEFAULT,
-                                        self.language_options,
-                                        "i18n Language")
-
-        self.i18n_language = dbgems.dbutils.widgets.get("i18n_language")
-        self.i18n_language = None if self.i18n_language == BuildConfig.LANGUAGE_OPTIONS_DEFAULT else self.i18n_language
-
-        assert self.i18n_language is None or self.i18n_language.endswith(self.version), f"The build version ({self.version}) and the selected language ({self.i18n_language}) do not correspond to each other."
-
-        for notebook in self.notebooks.values():
-            notebook.i18n_language = self.i18n_language
-
-        if self.i18n_language is not None:
-            # Include the i18n code in the version.
-            # This hack just happens to work for japanese and korean
-            code = self.i18n_language[0:2].upper()
-            self.version = f"{self.version}-{code}"
-            self.core_version = self.version if "-" not in self.version else self.version.split("-")[0]
