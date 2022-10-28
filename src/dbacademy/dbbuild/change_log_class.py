@@ -29,6 +29,7 @@ class ChangeLog:
         string = f"Change Log: v{self.version} ({self.date})"
         for entry in self.entries:
             string += f"\n  {entry}"
+        return string
 
     def print(self):
         print(self)
