@@ -222,7 +222,7 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
         </body>"""
         dbgems.display_html(html)
 
-    def validate(self):
+    def validate(self) -> "Publisher":
         print(f"Source: {self.source_dir}")
         print(f"Target: {self.target_dir}")
 
@@ -231,7 +231,7 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
             print()
 
         self.__validated = True
-        return
+        return self
 
     @property
     def validated(self) -> bool:
