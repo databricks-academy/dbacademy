@@ -207,16 +207,16 @@ class Translator:
         assert self.validated, f"Cannot publish until the validator's configuration passes validation. Ensure that Translator.validate() was called and that all assignments passed"
 
         print(f"Publishing translated version of {self.build_name}, {self.version}")
-        print(f"...Removing files from target directories")
+        print(f"| Removing files from target directories")
         BuildUtils.clean_target_dir(self.client, self.target_dir, verbose=False)
 
         prefix = len(self.source_dir) + 1
         source_files = [f.get("path")[prefix:] for f in self.client.workspace.ls(self.source_dir, recursive=True)]
-        print(f"...Processing {len(source_files)} files:")
+        print(f"| Processing {len(source_files)} files:")
 
         # We have to first create the directory before writing to it.
         # Processing them first, once and only once, avoids duplicate REST calls.
-        print(f"...Pre-creating directory structures")
+        print(f"| Pre-creating directory structures")
         processed_directory = []
         for file in source_files:
             target_notebook_path = f"{self.target_dir}/{file}"
@@ -295,6 +295,7 @@ class Translator:
     def create_dbcs(self):
 
         assert self.validated, f"Cannot create DBCs until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
+        assert self.assert_no_changes_in_target_repo()
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
         data = self.client.workspace.export_dbc(self.target_dir)

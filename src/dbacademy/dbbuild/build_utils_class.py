@@ -253,6 +253,9 @@ class BuildUtils:
                 pass  # Just an empty line
 
             elif change_log_index and i > change_log_index and not version_index:
+                if line.strip().startswith("* "):
+                    continue
+
                 assert line.startswith(BuildUtils.CHANGE_LOG_VERSION), f"The next change log entry ({BuildUtils.CHANGE_LOG_VERSION}...) was not found at {readme_path}:{i + 1}\n{line}"
 
                 parts = line.split(" ")  # "### Version 1.0.2 (01-21-2022)"
