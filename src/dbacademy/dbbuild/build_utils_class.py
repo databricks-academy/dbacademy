@@ -1,9 +1,19 @@
-from typing import Union, List, Dict
+from typing import Union, List, Dict, Optional
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy import dbgems
 
 
+class ChangeLog:
+    def __init__(self):
+        self.entries = []
+        self.version: Optional[str] = None
+        self.date: Optional[str] = None
+
+
 class BuildUtils:
+
+    CHANGE_LOG_TAG = "## Change Log"
+    CHANGE_LOG_VERSION = "### Version "
 
     def __init__(self):
         pass
@@ -106,7 +116,7 @@ class BuildUtils:
                                   directory=repo_dir,
                                   repo_url=repo_url,
                                   branch="published",
-                                  which="fresh")
+                                  which="diff")
 
         index_a: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=repo_dir, ignored=ignored)
         index_b: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=directory, ignored=ignored)
@@ -121,27 +131,6 @@ class BuildUtils:
             print(f"\nPASSED: No changes were found!")
 
         return results
-
-    # @staticmethod
-    # def validate_not_uncommitted(*, client: DBAcademyRestClient, build_name: str, repo_url: str, directory: str, ignored: List[str]):
-    #     from typing import Dict
-    #
-    #     repo_dir = f"/Repos/Temp/{build_name}-diff"
-    #
-    #     print(f"Comparing {directory}")
-    #     print(f"to        {repo_dir}")
-    #     print()
-    #
-    #     BuildUtils.reset_git_repo(client=client,
-    #                               directory=repo_dir,
-    #                               repo_url=repo_url,
-    #                               branch="published",
-    #                               which="fresh")
-    #
-    #     index_a: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=repo_dir, ignored=ignored)
-    #     index_b: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=directory, ignored=ignored)
-    #
-    #     return BuildUtils.compare_results(index_a, index_b)
 
     @staticmethod
     def __ends_with(test_path: str, values: List[str]):
@@ -235,3 +224,66 @@ class BuildUtils:
                     results.append(f"Differences: {label:>20} {relative_path}")
 
         return results
+
+    @staticmethod
+    def load_change_log(source_repo: str, target_version: Optional[str]) -> ChangeLog:
+        import os
+
+        readme_path = f"/Workspace/{source_repo}/README.md"
+        assert os.path.exists(readme_path), f"The README.md file was not found at {readme_path}"
+
+        with open(readme_path, "r") as f:
+            lines = f.readlines()
+
+        change_log = ChangeLog()
+        change_log_index: Optional[int] = None
+        version_index: Optional[int] = None
+
+        for i, line in enumerate(lines):
+            line = line.strip()
+            if line == BuildUtils.CHANGE_LOG_TAG:
+                change_log_index = i
+
+            elif change_log_index and i > change_log_index and line == "":
+                pass  # Just an empty line
+
+            elif change_log_index and i > change_log_index and not version_index:
+                assert line.startswith(BuildUtils.CHANGE_LOG_VERSION), f"The next change log entry ({BuildUtils.CHANGE_LOG_VERSION}...) was not found at {readme_path}:{i + 1}\n{line}"
+
+                parts = line.split(" ")  # "### Version 1.0.2 (01-21-2022)"
+                assert len(parts) == 4, f"Expected the change log entry to contain 4 parts and of the form \"### Version vN.N.N (M-D-YYYY)\", found \"{line}\"."
+                assert parts[0] == "###", f"Part 1 of the change long entry is not \"###\", found \"{parts[0]}\""
+                assert parts[1] == "Version", f"Part 2 of the change long entry is not \"Version\", found \"{parts[1]}\""
+
+                version = parts[2]
+                v_parts = version.split(".")
+                assert len(v_parts) == 3, f"The change long entry's version field is not of the form \"vN.N.N\" where \"N\" is an integral value, found {len(v_parts)} parts: \"{version}\"."
+                assert v_parts[0].isnumeric(), f"The change long entry's Major version field is not an integral value, found \"{version}\"."
+                assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{version}\"."
+                assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{version}\"."
+
+                if target_version is None: version_index = i       # Use the first one we find.
+                elif target_version == version: version_index = i  # We found the target version.
+
+                date = parts[3]
+                assert date.startswith("(") and date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\", found \"{date}\" for version \"{version}\"."
+
+                date = date[1:-1]
+                d_parts = date.split("-")
+                assert len(d_parts) == 3, f"The change long entry's date field is not of the form \"(M-D-YYYY)\", found {date}\" for version \"{version}\"."
+                assert d_parts[0].isnumeric(), f"The change long entry's month field is not an integral value, found \"{date}\" for version \"{version}\"."
+                assert d_parts[1].isnumeric(), f"The change long entry's day field is not an integral value, found \"{date}\" for version \"{version}\"."
+                assert d_parts[2].isnumeric(), f"The change long entry's year field is not an integral value, found \"{date}\" for version \"{version}\"."
+
+            elif version_index and i > version_index and not line.startswith("#"):
+                change_log.entries.append(line)
+
+            elif version_index and i > version_index and line.startswith("#"):
+                print("\nChange Log:")
+                for entry in change_log.entries:
+                    print(f"  {entry}")
+
+                return change_log
+
+        assert len(change_log.entries) > 0, f"The Change Log section was not found in {readme_path}"
+        return change_log
