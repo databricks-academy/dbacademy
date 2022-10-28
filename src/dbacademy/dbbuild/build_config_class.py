@@ -274,18 +274,15 @@ class BuildConfig:
         return self.__validated
 
     def __validate_readme(self) -> None:
-        from datetime import datetime
+        from dbacademy.dbbuild.change_log_class import ChangeLog
 
         if self.version in BuildConfig.VERSIONS_LIST:
             return  # Implies we have an actual version of the form N.N.N
         elif self.i18n_language is not None:
             return  # We are building a translation, presumably days to weeks later, this is not expected to match
 
-        self.change_log = BuildUtils.load_change_log(self.source_repo, target_version=None)
-        assert self.change_log.version == self.core_version, f"The change log entry's version is not \"{self.core_version}\", found \"{self.change_log.version}\"."
-
-        current_date = datetime.today().strftime("%-m-%-d-%Y")
-        assert self.change_log.date == f"{current_date}", f"The change log entry's date is not \"{current_date}\", found \"{self.change_log.date}\"."
+        self.change_log = ChangeLog(source_repo=self.source_repo, target_version=None)
+        self.change_log.validate(expected_version=self.core_version, date=None)
 
     def __validate_version(self):
         if self.version not in BuildConfig.VERSIONS_LIST:
