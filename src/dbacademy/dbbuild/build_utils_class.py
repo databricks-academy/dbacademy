@@ -222,6 +222,7 @@ class BuildUtils:
         import urllib.parse
 
         core_message = str(change_log)
+        core_message += "\n"
         core_message += f"""
 Release notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{source_repo.split("/")[-1]}
 
