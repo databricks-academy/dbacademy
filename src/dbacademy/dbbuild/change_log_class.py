@@ -25,10 +25,13 @@ class ChangeLog:
     def target_version(self):
         return self.__target_version
 
-    def print(self):
-        print(f"Change Log: v{self.version} ({self.date})")
+    def __str__(self):
+        string = f"Change Log: v{self.version} ({self.date})"
         for entry in self.entries:
-            print(f"  {entry}")
+            string += f"\n  {entry}"
+
+    def print(self):
+        print(self)
 
     def validate(self, expected_version: str, date: Optional[str]):
         from datetime import datetime
