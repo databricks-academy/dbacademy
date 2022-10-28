@@ -40,9 +40,9 @@ class Translator:
 
         self.errors = []
         self.warnings = []
-        self._select_i18n_language(publisher.source_repo)
+        self.__select_i18n_language(publisher.source_repo)
 
-    def _select_i18n_language(self, source_repo: str):
+    def __select_i18n_language(self, source_repo: str):
 
         self.resources_folder = f"{source_repo}/Resources"
 
