@@ -1,5 +1,5 @@
 from typing import List
-from dbacademy import dbgems, common
+from dbacademy import dbgems
 from ..build_utils_class import BuildUtils
 
 
@@ -227,8 +227,12 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
 
         print("\nChange Log:")
         for entry in self.build_config.change_log:
-            print(f"  {entry}")
+            print(f"| {entry}")
 
+        if len(self.build_config.change_log):
+            print(f"| -none-")
+
+        print()
         self.__validated = True
         return
 
@@ -360,11 +364,12 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
         assert self.__changes_in_source_repo is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
         assert self.__changes_in_source_repo == 0, f"Found {self.__changes_in_source_repo} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
-    def validate_no_changes_in_source_repo(self, repo_url: str = None, directory: str = None, repo_name: str = None):
-        repo_name = repo_name or f"{self.build_name}-source.git"
-        results = self.__validate_no_changes_in_repo(repo_url=repo_url or f"https://github.com/databricks-academy/{repo_name}",
-                                                     directory=directory or self.source_repo)
-
+    def validate_no_changes_in_source_repo(self):
+        repo_name = f"{self.build_name}-source.git"
+        results = BuildUtils.validate_no_changes_in_repo(client=self.client,
+                                                         build_name=self.build_name,
+                                                         repo_url=f"https://github.com/databricks-academy/{repo_name}",
+                                                         directory=self.source_repo)
         self.__changes_in_source_repo = len(results)
         self.assert_no_changes_in_source_repo()
 
@@ -373,25 +378,11 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
         assert self.__changes_in_target_repo is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
         assert self.__changes_in_target_repo == 0, f"Found {self.__changes_in_target_repo} changes(s) in the target repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
-    def validate_no_changes_in_target_repo(self, repo_url: str = None, directory: str = None, repo_name: str = None):
-        repo_name = repo_name or f"{self.build_name}.git"
-        results = self.__validate_no_changes_in_repo(repo_url=repo_url or f"https://github.com/databricks-academy/{repo_name}",
-                                                     directory=directory or self.target_dir)
-
+    def validate_no_changes_in_target_repo(self):
+        repo_name = f"{self.build_name}.git"
+        results = BuildUtils.validate_no_changes_in_repo(client=self.client,
+                                                         build_name=self.build_name,
+                                                         repo_url=f"https://github.com/databricks-academy/{repo_name}",
+                                                         directory=self.target_dir)
         self.__changes_in_target_repo = len(results)
         self.assert_no_changes_in_target_repo()
-
-    def __validate_no_changes_in_repo(self, repo_url: str, directory: str) -> List[str]:
-        results = BuildUtils.validate_not_uncommitted(client=self.client,
-                                                      build_name=self.build_name,
-                                                      repo_url=repo_url,
-                                                      directory=directory,
-                                                      ignored=["/Published/", "/Build-Scripts/"])
-        if len(results) != 0:
-            print()
-            for result in results:
-                print(result)
-        else:
-            print(f"\nPASSED: No changes were found!")
-
-        return results

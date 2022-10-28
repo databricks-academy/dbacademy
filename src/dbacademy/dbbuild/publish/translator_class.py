@@ -9,7 +9,8 @@ class Translator:
     def __init__(self, publisher: Publisher):
         from dbacademy.dbbuild import Publisher, BuildUtils
 
-        self.__validated = False  # By default, we are not validated
+        self.__validated = False              # By default, we are not validated
+        self.__changes_in_target_repo = None  # Will be set once we test for changes
 
         self.publisher = BuildUtils.validate_type(publisher, "publisher", Publisher)
 
@@ -154,6 +155,20 @@ class Translator:
     @property
     def validated(self):
         return self.__validated
+
+    def assert_no_changes_in_target_repo(self):
+        method = "Translator.validate_no_changes_in_target_repo()"
+        assert self.__changes_in_target_repo is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
+        assert self.__changes_in_target_repo == 0, f"Found {self.__changes_in_target_repo} changes(s) in the target repository. Please commit any changes before continuing and re-run {method} to update the build state."
+
+    def validate_no_changes_in_target_repo(self):
+        repo_name = f"{self.build_name}.git"
+        results = BuildUtils.validate_no_changes_in_repo(client=self.client,
+                                                         build_name=self.build_name,
+                                                         repo_url=f"https://github.com/databricks-academy/{repo_name}",
+                                                         directory=self.target_dir)
+        self.__changes_in_target_repo = len(results)
+        self.assert_no_changes_in_target_repo()
 
     # noinspection PyMethodMayBeStatic
     def __extract_i18n_guid(self, command):
