@@ -354,9 +354,13 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
         url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
 
+    @common.deprecated(reason="Use to_validator() instead.")
     def get_validator(self):
-        from dbacademy.dbbuild import PublisherValidator
-        return PublisherValidator(self)
+        return self.to_validator()
+
+    def to_validator(self):
+        from dbacademy.dbbuild import ArtifactValidator
+        return ArtifactValidator.from_publisher(self)
 
     def assert_no_changes_in_source_repo(self):
         method = "Publisher.validate_no_changes_in_source_repo()"

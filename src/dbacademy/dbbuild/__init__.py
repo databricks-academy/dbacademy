@@ -5,7 +5,7 @@ from .publish.notebook_def_class import NotebookDef
 from .publish.publisher_class import Publisher
 from .publish.resource_diff_class import ResourceDiff
 from .publish.translator_class import Translator
-from .publish.publisher_validator_class import PublisherValidator
+from .publish.artifact_validator_class import ArtifactValidator
 
 from .test.results_evaluator import ResultsEvaluator
 from .test.test_suite import TestSuite
