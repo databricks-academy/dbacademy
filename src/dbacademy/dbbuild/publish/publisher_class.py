@@ -222,13 +222,14 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
         </body>"""
         dbgems.display_html(html)
 
-    def validate(self) -> "Publisher":
-        print(f"Source: {self.source_dir}")
-        print(f"Target: {self.target_dir}")
+    def validate(self, silent: bool) -> "Publisher":
+        if not silent:
+            print(f"Source: {self.source_dir}")
+            print(f"Target: {self.target_dir}")
 
-        if self.build_config.change_log is not None:
-            self.build_config.change_log.print()
-            print()
+            if self.build_config.change_log is not None:
+                self.build_config.change_log.print()
+                print()
 
         self.__validated = True
         return self
