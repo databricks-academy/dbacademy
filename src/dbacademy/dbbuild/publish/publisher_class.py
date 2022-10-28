@@ -227,13 +227,7 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
         print(f"Target: {self.target_dir}")
 
         if self.i18n_language is None:
-            print("\nChange Log:")
-            for entry in self.build_config.change_log:
-                print(f"| {entry}")
-
-            if len(self.build_config.change_log) == 0:
-                print(f"| -none-")
-
+            self.build_config.change_log.print()
             print()
 
         self.__validated = True
