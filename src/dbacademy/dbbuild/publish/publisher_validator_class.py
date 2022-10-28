@@ -37,8 +37,16 @@ class PublisherValidator:
 
     def __validate_distribution_dbc(self, as_latest: bool):
 
-        label = "vLatest" if as_latest else self.version
-        file_name = f"vLATEST/notebooks.dbc" if as_latest else f"v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
+        if not as_latest:
+            label = self.version
+        else:
+            label = "vLATEST"
+            if "-" in self.version:
+                pos = self.version.find("-")
+                tail = self.version[pos:]
+                label += tail
+
+        file_name = f"{label}/notebooks.dbc" if as_latest else f"v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
 
         print(f"Validating the DBC in DBAcademy's distribution system ({label})\n")
 
@@ -46,7 +54,8 @@ class PublisherValidator:
         files = dbgems.dbutils.fs.ls(target_path)  # Generates an un-catchable exception
         assert len(files) == 1, f"The distribution DBC was not found at \"{target_path}\"."
 
-        print(f"PASSED: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/{file_name}\".")
+        print(f"PASSED:  v{file_name} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/\".")
+        print(f"UNKNOWN: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/{file_name}\".")
 
     @common.deprecated(reason="Validator.validate_distribution_dbc() was deprecated, see Validator.validate_publishing_processes() instead")
     def validate_git_releases_dbc(self, version=None):
