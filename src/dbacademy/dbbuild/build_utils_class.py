@@ -9,6 +9,11 @@ class ChangeLog:
         self.version: Optional[str] = None
         self.date: Optional[str] = None
 
+    def print(self):
+        print(f"Change Log: v{self.version} ({self.date})")
+        for entry in self.entries:
+            print(f"  {entry}")
+
 
 class BuildUtils:
 
@@ -281,10 +286,7 @@ class BuildUtils:
                 change_log.entries.append(line)
 
             elif version_index and i > version_index and line.startswith("#"):
-                print("\nChange Log:")
-                for entry in change_log.entries:
-                    print(f"  {entry}")
-
+                change_log.print()
                 return change_log
 
         assert len(change_log.entries) > 0, f"The Change Log section was not found in {readme_path}"
