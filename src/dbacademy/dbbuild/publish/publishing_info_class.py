@@ -1,13 +1,13 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List
 from dbacademy import common
 
 
 class PublishedDocs:
-    def __init__(self, language: str, published_folder: str, publishing_script: str, slide_decks: List[str]):
+    def __init__(self, language: str, published_folder: str, publishing_script: str, docs: List[str]):
         self.__language = language
         self.__published_folder = published_folder
         self.__publishing_script = publishing_script
-        self.__slide_decks = slide_decks
+        self.__docs = docs
 
     @property
     def language(self) -> str:
@@ -22,8 +22,8 @@ class PublishedDocs:
         return self.__publishing_script
 
     @property
-    def slide_decks(self) -> List[str]:
-        return self.__slide_decks
+    def docs(self) -> List[str]:
+        return self.__docs
 
 
 class SlackChannel:
