@@ -93,8 +93,9 @@ class ArtifactValidator:
 
         name = dbc_url.split("/")[-1]
         print(f"Importing {name}")
-        print(f" - Source: {dbc_url}")
-        print(f" - Target: {dbc_target_dir}")
+        print(f" - Source:    {dbc_url}")
+        print(f" - Target:    {dbc_target_dir}")
+        print(f" - Notebooks: {dbgems.get_workspace_url()}#{dbc_target_dir}")
 
         self.client.workspace.delete_path(dbc_target_dir)
         self.client.workspace.mkdirs(dbc_target_dir)
