@@ -1,4 +1,3 @@
-from .publish.publisher_class import Publisher
 from .publish.resource_diff_class import ResourceDiff
 from .publish.translator_class import Translator
 from .publish.artifact_validator_class import ArtifactValidator
