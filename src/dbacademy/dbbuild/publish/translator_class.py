@@ -1,5 +1,4 @@
 from dbacademy import dbgems, common
-from ..build_utils_class import BuildUtils
 
 
 class Translator:
@@ -85,6 +84,8 @@ class Translator:
         self.common_language = self.i18n_language.split("-")[0]
 
     def __reset_published_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None):
+        from ..build_utils_class import BuildUtils
+
         self.source_branch = source_branch or f"published-v{self.core_version}"
         self.source_dir = source_dir or f"/Repos/Temp/{self.username}-{self.build_name}-english_{self.source_branch}"
         self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
@@ -96,6 +97,7 @@ class Translator:
                                   which="published")
 
     def __reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = None):
+        from ..build_utils_class import BuildUtils
 
         self.target_branch = target_branch or "published"
         self.target_dir = target_dir or f"/Repos/Temp/{self.build_name}"
@@ -199,6 +201,8 @@ class Translator:
         assert self.__changes_in_source_repo == 0, f"Found {self.__changes_in_source_repo} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
     def validate_no_changes_in_source_repo(self):
+        from ..build_utils_class import BuildUtils
+
         self.assert_validated()
 
         repo_name = f"{self.publisher.build_name}-source.git"
@@ -217,6 +221,7 @@ class Translator:
         assert self.__changes_in_target_repo == 0, f"Found {self.__changes_in_target_repo} changes(s) in the target repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
     def validate_no_changes_in_target_repo(self):
+        from ..build_utils_class import BuildUtils
 
         self.assert_generated_notebooks()
 
@@ -248,6 +253,7 @@ class Translator:
 
     def generate_notebooks(self):
         from datetime import datetime
+        from ..build_utils_class import BuildUtils
         from ..publish.notebook_def_class import NotebookDef
         from ..publish.publisher_class import Publisher
 
@@ -385,6 +391,8 @@ class Translator:
         assert self.__created_dbcs, "The DBCs have not yet been created. See Translator.create_dbcs()"
 
     def create_dbcs(self):
+        from ..build_utils_class import BuildUtils
+        
         self.assert_no_changes_in_target_repo()
 
         print(f"Exporting DBC from \"{self.target_dir}\"")

@@ -1,7 +1,5 @@
 from typing import Callable, Union, List
 
-from ..build_utils_class import BuildUtils
-
 
 class NotebookError:
     def __init__(self, message):
@@ -565,6 +563,7 @@ This course will require you to create a catalog (typically in conjunction with 
 For more current information, please see <a href="https://files.training.databricks.com/static/troubleshooting.html#cannot-create-catalog" target="_blank">Troubleshooting Creating Catalogs</a>""".strip())
 
     def publish(self, source_dir: str, target_dir: str, i18n_resources_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
+        from ..build_utils_class import BuildUtils
         from dbacademy.dbhelper import DBAcademyHelper
 
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """

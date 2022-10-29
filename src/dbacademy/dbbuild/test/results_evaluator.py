@@ -1,6 +1,5 @@
 import typing
 from dbacademy import dbgems
-from ..build_utils_class import BuildUtils
 
 
 class ResultsEvaluator:
@@ -58,6 +57,8 @@ class ResultsEvaluator:
 
     @staticmethod
     def to_job_link(*, job_id, run_id, label):
+        from ..build_utils_class import BuildUtils
+
         url = BuildUtils.to_job_url(job_id=job_id, run_id=run_id)
         return f"""<a href="{url}" target="_blank">{label}</a>"""
 

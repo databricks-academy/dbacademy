@@ -1,6 +1,5 @@
 from typing import List
 from dbacademy import dbgems, common
-from ..build_utils_class import BuildUtils
 
 
 class Publisher:
@@ -110,6 +109,7 @@ class Publisher:
 
     def generate_notebooks(self, *, verbose=False, debugging=False, **kwargs):
         from ..publish.notebook_def_class import NotebookDef
+        from ..build_utils_class import BuildUtils
 
         assert self.validated, f"Cannot publish notebooks until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
 
@@ -217,6 +217,8 @@ class Publisher:
         return self.__validated and self.__validated_repo_reset
 
     def configure_target_repo(self, target_dir: str = None, target_repo_url: str = None, branch: str = "published", **kwargs):
+        from ..build_utils_class import BuildUtils
+
         # Assume for now that we have failed. This overrides the default
         # of True meaning we have to succeed here to continue
         self.__validated_repo_reset = False
@@ -307,6 +309,7 @@ class Publisher:
                 self._generate_html(notebook)
 
     def create_dbcs(self):
+        from ..build_utils_class import BuildUtils
 
         assert self.validated, f"Cannot create DBCs until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
         self.assert_no_changes_in_target_repo()
@@ -342,6 +345,8 @@ class Publisher:
         assert self.__changes_in_source_repo == 0, f"Found {self.__changes_in_source_repo} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
     def validate_no_changes_in_source_repo(self):
+        from ..build_utils_class import BuildUtils
+
         repo_name = f"{self.build_name}-source.git"
         results = BuildUtils.validate_no_changes_in_repo(client=self.client,
                                                          build_name=self.build_name,
@@ -356,6 +361,8 @@ class Publisher:
         assert self.__changes_in_target_repo == 0, f"Found {self.__changes_in_target_repo} changes(s) in the target repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
     def validate_no_changes_in_target_repo(self):
+        from ..build_utils_class import BuildUtils
+
         repo_name = f"{self.build_name}.git"
         results = BuildUtils.validate_no_changes_in_repo(client=self.client,
                                                          build_name=self.build_name,
