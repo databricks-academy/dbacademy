@@ -52,7 +52,7 @@ class ArtifactValidator:
         print("-" * 80)
         self.__validate_git_branch(branch="published", version=None)
         print("-" * 80)
-        self.__validate_git_branch(branch=f"published-v{self.core_version}", version=None)
+        self.__validate_git_branch(branch=f"published-v{self.version}", version=None)
 
     def __validate_distribution_dbc(self, as_latest: bool):
 
