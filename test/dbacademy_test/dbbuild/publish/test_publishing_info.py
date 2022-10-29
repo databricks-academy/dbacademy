@@ -27,16 +27,16 @@ class MyTestCase(unittest.TestCase):
         eng_doc = pi.docs.get("english")
         self.assertEqual("https://drive.google.com/drive/folders/1w5Y_iMapcF1M_u3pt6_xl4NtoQ9tO6e_", eng_doc.published_folder)
         self.assertEqual("https://script.google.com/home/projects/17JUWGbZ44ConZUc8J9kfozX59hVVNNX3W5r6MyH871RtFhLT_Um057ma/edit", eng_doc.publishing_script)
-        self.assertEqual(1, len(eng_doc.slide_decks))
-        self.assertEqual("https://docs.google.com/presentation/d/1f7cjBndkJjefN53lfq46zk7keNv91b2U7MeRMJ6mjfE/edit", eng_doc.slide_decks[0])
+        self.assertEqual(1, len(eng_doc.links))
+        self.assertEqual("https://docs.google.com/presentation/d/1f7cjBndkJjefN53lfq46zk7keNv91b2U7MeRMJ6mjfE/edit", eng_doc.links[0])
 
         self.assertTrue("japanese" in pi.docs)
         jap_doc = pi.docs.get("japanese")
         self.assertEqual("https://drive.google.com/drive/folders/1w5Y_iMapcF1M_u3pt6_xl4NtoQ9tO6e_", jap_doc.published_folder)
         self.assertEqual("https://script.google.com/home/projects/1MuuKrXvX3m7oB8m4SO_-xndiBmU9pcWw1UsJLQqeSxFizUnaAlxXAXmE/edit", jap_doc.publishing_script)
-        self.assertEqual(2, len(jap_doc.slide_decks))
-        self.assertEqual("https://docs.google.com/presentation/d/1KiA6p6N941dqgXoxxGestRr6bZZvjhBqz8auOKkJNjs/edit", jap_doc.slide_decks[0])
-        self.assertEqual("https://docs.google.com/presentation/d/jdlq34jrlq3j4rlq3jrlq3ijrl3r4jrlqjf4qli4jrfl/edit", jap_doc.slide_decks[1])
+        self.assertEqual(2, len(jap_doc.links))
+        self.assertEqual("https://docs.google.com/presentation/d/1KiA6p6N941dqgXoxxGestRr6bZZvjhBqz8auOKkJNjs/edit", jap_doc.links[0])
+        self.assertEqual("https://docs.google.com/presentation/d/jdlq34jrlq3j4rlq3jrlq3ijrl3r4jrlqjf4qli4jrfl/edit", jap_doc.links[1])
 
 
 if __name__ == '__main__':
