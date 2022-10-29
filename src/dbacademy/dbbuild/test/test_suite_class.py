@@ -12,7 +12,7 @@ class TestSuite:
     TEST_TYPES = [TEST_TYPE_INTERACTIVE, TEST_TYPE_STOCK, TEST_TYPE_PHOTON, TEST_TYPE_ML]
 
     def __init__(self, *, build_config: BuildConfig, test_dir: str, test_type: str, keep_success: bool = False):
-        from dbacademy.dbbuild import TestInstance
+        from dbacademy.dbbuild.test.test_instance_class import TestInstance
 
         self.test_dir = test_dir
         self.build_config = build_config
