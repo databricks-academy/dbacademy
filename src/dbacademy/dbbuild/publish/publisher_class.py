@@ -191,7 +191,8 @@ class Publisher:
                                 name=self.build_config.name,
                                 version=self.build_config.version,
                                 change_log=self.build_config.change_log,
-                                publishing_info=self.build_config.publishing_info)
+                                publishing_info=self.build_config.publishing_info,
+                                common_language=None)
         return advertiser.html
 
     def validate(self, silent: bool) -> "Publisher":

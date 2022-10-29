@@ -27,17 +27,17 @@ class PublishedDocs:
 
 
 class SlackChannel:
-    def __init__(self, name: str, link: str):
+    def __init__(self, name: str, url: str):
         self.__name = common.validate_type(name, "name", str)
-        self.__link = common.validate_type(link, "link", str)
+        self.__url = common.validate_type(url, "url", str)
 
     @property
     def name(self):
         return self.__name
 
     @property
-    def link(self):
-        return self.__link
+    def url(self):
+        return self.__url
 
 
 class Announcements:
