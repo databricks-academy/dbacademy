@@ -77,10 +77,10 @@ class ArtifactValidator:
         print("Validating the DBC in GitHub's Releases page\n")
 
         version = version or self.version
-        core_version = version.split("-")[0]
+        # core_version = version.split("-")[0]
 
         base_url = self.target_repo_url[:-4] if self.target_repo_url.endswith(".git") else self.target_repo_url
-        dbc_url = f"{base_url}/releases/download/v{core_version}/{self.build_name}-v{self.version}-notebooks.dbc"
+        dbc_url = f"{base_url}/releases/download/v{version}/{self.build_name}-v{self.version}-notebooks.dbc"
 
         return self.__validate_dbc(version=version,
                                    dbc_url=dbc_url)
