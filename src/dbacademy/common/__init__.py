@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Callable, Any, Iterable
 
-__all__ = ["deprecated", "overrides", "print_warning", "CachedStaticProperty"]
+__all__ = ["deprecated", "overrides", "print_warning", "CachedStaticProperty", "validate_type", "validate_enumeration_type"]
 
 deprecation_log_level = "error"
 

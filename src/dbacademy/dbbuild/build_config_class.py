@@ -1,6 +1,5 @@
 from typing import Type, List, Dict, Union
-from dbacademy import dbgems
-from .build_utils_class import BuildUtils
+from dbacademy import dbgems, common
 
 
 class BuildConfig:
@@ -16,8 +15,8 @@ class BuildConfig:
     def load(file: str, *, version: str):
         import json
 
-        BuildUtils.validate_type(file, "file", str)
-        BuildUtils.validate_type(version, "version", str)
+        common.validate_type(file, "file", str)
+        common.validate_type(version, "version", str)
 
         with open(file) as f:
             return BuildConfig.load_config(config=json.load(f), version=version)
