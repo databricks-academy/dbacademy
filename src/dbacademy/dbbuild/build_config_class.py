@@ -3,7 +3,8 @@ from dbacademy import dbgems, common
 
 
 class BuildConfig:
-    from dbacademy.dbbuild import TestSuite, Publisher, ResourceDiff, Translator
+    from dbacademy.dbbuild import TestSuite, ResourceDiff, Translator
+    from dbacademy.dbbuild.publish.publisher_class import Publisher
 
     LANGUAGE_OPTIONS_DEFAULT = "Default"
 
@@ -350,7 +351,7 @@ class BuildConfig:
         return ResourceDiff(self)
 
     def to_publisher(self) -> Publisher:
-        from dbacademy.dbbuild import Publisher
+        from dbacademy.dbbuild.publish.publisher_class import Publisher
         assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
         return Publisher(self)
