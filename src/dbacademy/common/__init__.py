@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Callable, Any, Iterable
 
-__all__ = ["deprecated", "overrides", "print_warning", "CachedStaticProperty", "validate_type", "validate_enumeration_type"]
+__all__ = ["deprecated", "overrides", "print_warning", "CachedStaticProperty", "validate_type", "validate_element_type"]
 
 deprecation_log_level = "error"
 
@@ -78,7 +78,7 @@ def validate_type(actual_value: Any, name: str, expected_type: Any):
     return actual_value
 
 
-def validate_enumeration_type(actual_values: Iterable[Any], name, expected_type):
+def validate_element_type(actual_values: Iterable[Any], name, expected_type):
     validate_type(actual_values, "actual_values", Iterable)
 
     for i, actual_value in enumerate(actual_values):
