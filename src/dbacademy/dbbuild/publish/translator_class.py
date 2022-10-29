@@ -224,7 +224,7 @@ class Translator:
 
         self.assert_validated()
 
-        print(f"Publishing translated version of {self.build_name}, {self.version}")
+        print(f"Publishing translated version of {self.build_config.name}, {self.version}")
 
         start = dbgems.clock_start()
         print(f"| Removing files from target directories", end="...")
