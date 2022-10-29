@@ -1,4 +1,3 @@
-from .publish.notebook_def_class import NotebookDef
 from .publish.publisher_class import Publisher
 from .publish.resource_diff_class import ResourceDiff
 from .publish.translator_class import Translator
