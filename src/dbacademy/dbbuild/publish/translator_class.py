@@ -12,7 +12,7 @@ class Translator:
         # By default, we are not validated
         self.__validated = False
         self.__changes_in_source_repo = None
-        self.__publish_notebooks = False
+        self.__generated_notebooks = False
         self.__changes_in_target_repo = None
         self.__created_dbcs = False
         self.__created_docs = False
@@ -218,7 +218,7 @@ class Translator:
 
     def validate_no_changes_in_target_repo(self):
 
-        self.assert_publish_notebooks()
+        self.assert_generated_notebooks()
 
         results = BuildUtils.validate_no_changes_in_repo(client=self.client,
                                                          build_name=self.build_name,
@@ -243,10 +243,10 @@ class Translator:
     def assert_validated(self):
         assert self.validated, f"Cannot publish until the validator's configuration passes validation. Ensure that Translator.validate() was called and that all assignments passed"
 
-    def assert_publish_notebooks(self):
-        assert self.__publish_notebooks, f"The notebooks have not been published. See Translator.publish_notebooks()"
+    def assert_generated_notebooks(self):
+        assert self.__generated_notebooks, f"The notebooks have not been published. See Translator.publish_notebooks()"
 
-    def publish_notebooks(self):
+    def generate_notebooks(self):
         from datetime import datetime
         from ..publish.notebook_def_class import NotebookDef
         from ..publish.publisher_class import Publisher
@@ -345,7 +345,7 @@ class Translator:
                    </body></html>"""
 
         dbgems.display_html(html)
-        self.__publish_notebooks = True
+        self.__generated_notebooks = True
 
     def assert_created_docs(self):
         assert self.__created_docs, "The docs have not yet been created. See Translator.create_docs()"
