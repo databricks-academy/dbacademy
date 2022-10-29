@@ -19,6 +19,7 @@ src/dbacademy/dbbuild/publish/advertiser.py
 src/dbacademy/dbbuild/publish/artifact_validator_class.py
 src/dbacademy/dbbuild/publish/notebook_def_class.py
 src/dbacademy/dbbuild/publish/publisher_class.py
+src/dbacademy/dbbuild/publish/publishing_info_class.py
 src/dbacademy/dbbuild/publish/resource_diff_class.py
 src/dbacademy/dbbuild/publish/translator_class.py
 src/dbacademy/dbbuild/test/__init__.py

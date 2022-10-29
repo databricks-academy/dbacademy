@@ -218,14 +218,14 @@ class Publisher:
         self.__validated_repo_reset = False
 
         new_target_dir = f"/Repos/Temp/{self.build_name}"
+        target_dir = target_dir or new_target_dir
         if target_dir == new_target_dir:
             dbgems.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_dir\" is the same as the default value.\nConsider removing the parameter.")
-        target_dir = target_dir or new_target_dir
 
         new_target_repo_url = f"https://github.com/databricks-academy/{self.build_name}.git"
+        target_repo_url = target_repo_url or new_target_repo_url
         if target_repo_url == new_target_repo_url:
             dbgems.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
-        target_repo_url = target_repo_url or new_target_repo_url
 
         if "target_url" in kwargs:
             dbgems.print_warning(title="DEPRECATION WARNING", message=f"The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")

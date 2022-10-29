@@ -355,14 +355,15 @@ class Translator:
         self.assert_created_dbcs()
 
         info = PublishingInfo(self.build_config.publishing_info)
+        translation = info.translations.get(self.common_language)
 
         html = f"""
         <html><body style="font-size:16px">
-            <li><a href="{info.docs[self.common_language].published_folder}" target="_blank">Published Folder</a></li>
-            <li><a href="{info.docs[self.common_language].publishing_script}" target="_blank">Publishing Script</a></li>
+            <li><a href="{translation.published_docs_folder}" target="_blank">Published Folder</a></li>
+            <li><a href="{translation.publishing_script}" target="_blank">Publishing Script</a></li>
         """
 
-        links = info.docs[self.common_language].links
+        links = translation.document_links
 
         if len(links) == 0:
             html += "<li>Documents: None</li>"
