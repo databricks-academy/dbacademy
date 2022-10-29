@@ -1,6 +1,3 @@
-from dbacademy.dbbuild.build_config_class import BuildConfig
-from dbacademy.dbbuild.build_utils_class import BuildUtils
-
 from .publish.notebook_def_class import NotebookDef
 from .publish.publisher_class import Publisher
 from .publish.resource_diff_class import ResourceDiff

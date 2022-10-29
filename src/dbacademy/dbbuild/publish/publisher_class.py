@@ -3,7 +3,7 @@ from dbacademy import dbgems, common
 
 
 class Publisher:
-    from dbacademy.dbbuild import BuildConfig
+    from dbacademy.dbbuild.build_config_class import BuildConfig
     from dbacademy.dbbuild import Translator
 
     VERSION_INFO_NOTEBOOK = "Version Info"
@@ -11,7 +11,7 @@ class Publisher:
     KEEPERS = [".gitignore", "README.md", "LICENSE", "docs"]
 
     def __init__(self, build_config: BuildConfig):
-        from dbacademy.dbbuild import BuildConfig
+        from dbacademy.dbbuild.build_config_class import BuildConfig
 
         self.__validated = False              # By default, we are not validated
         self.__validated_repo_reset = True    # By default repo is valid (unless invoked)
