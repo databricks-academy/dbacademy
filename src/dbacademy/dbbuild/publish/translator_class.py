@@ -1,4 +1,4 @@
-from dbacademy import dbgems
+from dbacademy import dbgems, common
 from ..build_utils_class import BuildUtils
 
 
@@ -7,7 +7,7 @@ class Translator:
 
     # def __init__(self, build_config: BuildConfig):
     def __init__(self, publisher: Publisher):
-        from dbacademy.dbbuild import Publisher, BuildUtils
+        from dbacademy.dbbuild import Publisher
 
         # By default, we are not validated
         self.__validated = False
@@ -18,7 +18,7 @@ class Translator:
         self.__created_docs = False
         self.__validated_artifacts = False
 
-        self.publisher = BuildUtils.validate_type(publisher, "publisher", Publisher)
+        self.publisher = common.validate_type(publisher, "publisher", Publisher)
 
         # Copied from build_config
         self.username = publisher.username

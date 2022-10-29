@@ -1,5 +1,5 @@
 from typing import List
-from dbacademy import dbgems
+from dbacademy import dbgems, common
 from ..build_utils_class import BuildUtils
 
 
@@ -11,14 +11,14 @@ class Publisher:
     KEEPERS = [".gitignore", "README.md", "LICENSE", "docs"]
 
     def __init__(self, build_config: BuildConfig):
-        from dbacademy.dbbuild import BuildConfig, BuildUtils
+        from dbacademy.dbbuild import BuildConfig
 
         self.__validated = False              # By default, we are not validated
         self.__validated_repo_reset = True    # By default repo is valid (unless invoked)
         self.__changes_in_source_repo = None  # Will be set once we test for changes
         self.__changes_in_target_repo = None  # Will be set once we test for changes
 
-        self.build_config = BuildUtils.validate_type(build_config, "build_config", BuildConfig)
+        self.build_config = common.validate_type(build_config, "build_config", BuildConfig)
 
         self.client = build_config.client
         self.version = build_config.version
@@ -231,8 +231,8 @@ class Publisher:
             dbgems.print_warning(title="DEPRECATION WARNING", message=f"The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")
             target_repo_url = kwargs.get("target_url")
 
-        self.target_dir = BuildUtils.validate_type(target_dir, "target_dir", str)
-        self.target_repo_url = BuildUtils.validate_type(target_repo_url, "target_repo_url", str)
+        self.target_dir = common.validate_type(target_dir, "target_dir", str)
+        self.target_repo_url = common.validate_type(target_repo_url, "target_repo_url", str)
 
         BuildUtils.reset_git_repo(client=self.client, directory=self.target_dir, repo_url=self.target_repo_url, branch=branch, which=None)
 
