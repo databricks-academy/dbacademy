@@ -110,6 +110,7 @@ class Translator:
     def create_published_message(self) -> str:
         from .advertiser import Advertiser
         from dbacademy.dbbuild.change_log_class import ChangeLog
+        from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
 
         self.assert_validated_artifacts()
 
@@ -119,9 +120,8 @@ class Translator:
                                 name=self.build_config.name,
                                 version=self.version,
                                 change_log=change_log,
-                                publishing_info=self.build_config.publishing_info,
+                                publishing_info=PublishingInfo(self.build_config.publishing_info),
                                 common_language=self.common_language)
-
         return advertiser.html
 
     def assert_validated_artifacts(self):
