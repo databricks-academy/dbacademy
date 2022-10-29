@@ -3,6 +3,7 @@ from dbacademy import dbgems, common
 
 
 class BuildConfig:
+    from dbacademy.dbbuild import TestSuite, Publisher, ResourceDiff, Translator
 
     LANGUAGE_OPTIONS_DEFAULT = "Default"
 
@@ -342,22 +343,24 @@ class BuildConfig:
                             print(f": {value}")
                         print("|   }")
 
-    def to_resource_diff(self):
+    def to_resource_diff(self) -> ResourceDiff:
         from dbacademy.dbbuild import ResourceDiff
         assert self.validated, f"Cannot diff until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed."
 
         return ResourceDiff(self)
 
-    def to_publisher(self):
+    def to_publisher(self) -> Publisher:
         from dbacademy.dbbuild import Publisher
         assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
         return Publisher(self)
 
-    def to_translator(self):
-        return self.to_publisher().validate(silent=True).to_translator()
+    def to_translator(self) -> Translator:
+        publisher = self.to_publisher()
+        publisher.validate(silent=True)
+        return publisher.to_translator()
 
-    def to_test_suite(self, test_type: str = None, keep_success: bool = False):
+    def to_test_suite(self, test_type: str = None, keep_success: bool = False) -> TestSuite:
         from dbacademy.dbbuild import TestSuite
 
         assert self.validated, f"Cannot test until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"

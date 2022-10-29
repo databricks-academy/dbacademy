@@ -5,6 +5,7 @@ from ..build_utils_class import BuildUtils
 
 class Publisher:
     from dbacademy.dbbuild import BuildConfig
+    from dbacademy.dbbuild import Translator
 
     VERSION_INFO_NOTEBOOK = "Version Info"
 
@@ -201,6 +202,7 @@ class Publisher:
         if not silent:
             print(f"Source: {self.source_dir}")
             print(f"Target: {self.target_dir}")
+            print()
 
             if self.build_config.change_log is not None:
                 self.build_config.change_log.print()
@@ -264,7 +266,7 @@ class Publisher:
                    </body></html>"""
         dbgems.display_html(html)
 
-    def to_translator(self):
+    def to_translator(self) -> Translator:
         from dbacademy.dbbuild import Translator
         assert self.validated, f"Cannot translate until the publisher's configuration passes validation. Ensure that Publisher.validate() was called and that all assignments passed"
 
