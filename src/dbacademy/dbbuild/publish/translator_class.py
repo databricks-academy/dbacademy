@@ -129,7 +129,7 @@ class Translator:
     def validate_artifacts(self):
         from dbacademy.dbbuild import ArtifactValidator
 
-        self.assert_created_dbcs()
+        self.assert_created_docs()
 
         ArtifactValidator.from_translator(self).validate_publishing_processes()
 
