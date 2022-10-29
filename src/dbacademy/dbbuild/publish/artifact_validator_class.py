@@ -16,7 +16,8 @@ class ArtifactValidator:
                                  target_repo_url=publisher.target_repo_url,
                                  temp_repo_dir=publisher.temp_repo_dir,
                                  temp_work_dir=publisher.temp_work_dir,
-                                 username=publisher.username)
+                                 username=publisher.username,
+                                 common_language=publisher.common_language)
 
     @staticmethod
     def from_translator(translator: Translator):
@@ -27,9 +28,10 @@ class ArtifactValidator:
                                  target_repo_url=translator.target_repo_url,
                                  temp_repo_dir=translator.temp_repo_dir,
                                  temp_work_dir=translator.temp_work_dir,
-                                 username=translator.username)
+                                 username=translator.username,
+                                 common_language=translator.common_language)
 
-    def __init__(self, *, build_name: str, version: str, core_version: str, client: DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str):
+    def __init__(self, *, build_name: str, version: str, core_version: str, client: DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str, common_language: str):
         self.build_name = build_name
         self.version = version
         self.core_version = core_version
@@ -39,6 +41,7 @@ class ArtifactValidator:
         self.temp_repo_dir = temp_repo_dir
         self.temp_work_dir = temp_work_dir
         self.username = username
+        self.common_language = common_language
 
     def validate_publishing_processes(self) -> None:
         self.__validate_distribution_dbc(as_latest=True)
@@ -119,7 +122,7 @@ class ArtifactValidator:
         target_dir = f"{self.temp_repo_dir}/{self.username}-{self.build_name}-{branch}"
         BuildUtils.reset_git_repo(client=self.client,
                                   directory=target_dir,
-                                  repo_url=f"https://github.com/databricks-academy/{self.build_name}.git",
+                                  repo_url=f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git",
                                   branch=branch,
                                   which=None)
         print()
