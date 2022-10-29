@@ -1,6 +1,7 @@
 from typing import Union, List, Dict
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy import dbgems
+from dbacademy import common
 
 
 class BuildUtils:
@@ -13,6 +14,7 @@ class BuildUtils:
         return f"{dbgems.get_workspace_url()}#job/{job_id}/run/{run_id}"
 
     @staticmethod
+    @common.deprecated(reason="Use common.validate_type() instead.")
     def validate_type(actual_value, name, expected_type):
         assert type(actual_value) == expected_type, f"Expected the parameter {name} to be of type {expected_type}, found {type(actual_value)}"
         return actual_value
