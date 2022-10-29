@@ -70,8 +70,8 @@ class ArtifactValidator:
         files = dbgems.dbutils.fs.ls(target_path)  # Generates an un-catchable exception
         assert len(files) == 1, f"The distribution DBC was not found at \"{target_path}\"."
 
-        print(f"PASSED:  v{file_name} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/\".")
-        print(f"UNKNOWN: v{self.version} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/{file_name}\".")
+        print(f"PASSED:  .../{file_name} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/\".")
+        print(f"UNKNOWN: \"v{self.version}\" found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/{file_name}\".")
 
     def __validate_git_releases_dbc(self, version=None):
         print("Validating the DBC in GitHub's Releases page\n")
