@@ -82,7 +82,7 @@ class Translator:
         # This hack just happens to work for japanese and korean
         self.common_language = self.i18n_language.split("-")[0]
 
-    def __reset_source_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None):
+    def __reset_published_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None):
         self.source_branch = source_branch or f"published-v{self.core_version}"
         self.source_dir = source_dir or f"/Repos/Temp/{self.username}-{self.build_name}-english_{self.source_branch}"
         self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
@@ -91,7 +91,7 @@ class Translator:
                                   directory=self.source_dir,
                                   repo_url=self.source_repo_url,
                                   branch=self.source_branch,
-                                  which="source")
+                                  which="published")
 
     def __reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = None):
 
@@ -140,7 +140,7 @@ class Translator:
         print(f"resources_folder: {self.resources_folder}")
         print()
 
-        self.__reset_source_repo()
+        self.__reset_published_repo()
         self.__reset_target_repo()
 
         self.__validated = True
