@@ -185,7 +185,7 @@ class BuildConfig:
     #     return distribution_name.replace(" ", "-").replace(" ", "-").replace(" ", "-")
 
     def create_notebooks(self, *, include_solutions: bool, fail_fast: bool):
-        from dbacademy.dbbuild import NotebookDef
+        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
 
         assert self.source_dir is not None, "BuildConfig.source_dir must be specified"
 

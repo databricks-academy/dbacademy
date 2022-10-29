@@ -55,7 +55,7 @@ class Publisher:
 
     def _init_notebooks(self, notebooks):
         from datetime import datetime
-        from dbacademy.dbbuild import NotebookDef
+        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
 
         for notebook in notebooks:
             assert type(notebook) == NotebookDef, f"Expected the parameter \"notebook\" to be of type \"NotebookDef\", found \"{type(notebook)}\"."

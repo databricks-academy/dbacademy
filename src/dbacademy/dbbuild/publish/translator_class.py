@@ -169,7 +169,7 @@ class Translator:
     # noinspection PyMethodMayBeStatic
     def _load_i18n_guid_map(self, path: str, i18n_source: str):
         import re
-        from dbacademy.dbbuild import NotebookDef
+        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
 
         if i18n_source is None:
             return dict()
