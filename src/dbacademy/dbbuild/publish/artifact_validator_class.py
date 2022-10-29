@@ -89,7 +89,7 @@ class ArtifactValidator:
         version = version or self.version
 
         self.client.workspace.mkdirs(self.temp_work_dir)
-        dbc_target_dir = f"{self.temp_work_dir}/{self.build_name}-v{version}"[10:]
+        dbc_target_dir = f"{self.temp_work_dir}/{self.build_name}-v{version}"[11:]
 
         name = dbc_url.split("/")[-1]
         print(f"Importing {name}")
