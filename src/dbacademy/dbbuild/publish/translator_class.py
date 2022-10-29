@@ -197,10 +197,13 @@ class Translator:
     def validate_no_changes_in_source_repo(self):
         self.assert_validated()
 
+        repo_name = f"{self.publisher.build_name}-source.git"
+        repo_url = f"https://github.com/databricks-academy/{repo_name}"
+
         results = BuildUtils.validate_no_changes_in_repo(client=self.client,
                                                          build_name=self.build_name,
-                                                         repo_url=self.source_repo_url,
-                                                         directory=self.source_dir)
+                                                         repo_url=repo_url,
+                                                         directory=self.publisher.source_repo)
         self.__changes_in_source_repo = len(results)
         self.assert_no_changes_in_source_repo()
 
