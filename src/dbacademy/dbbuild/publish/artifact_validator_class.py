@@ -130,5 +130,5 @@ class ArtifactValidator:
                                   repo_url=repo_url,
                                   branch=branch,
                                   which=None)
-        print()
+        
         self.__validate_version_info(version=version, dbc_dir=target_dir)
