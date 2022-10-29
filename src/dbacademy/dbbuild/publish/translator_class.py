@@ -11,6 +11,7 @@ class Translator:
 
         self.__validated = False              # By default, we are not validated
         self.__changes_in_target_repo = None  # Will be set once we test for changes
+        self.__created_dbcs = False           # Will be set after DBCs are created
 
         self.publisher = BuildUtils.validate_type(publisher, "publisher", Publisher)
 
@@ -104,6 +105,10 @@ class Translator:
     def create_published_message(self) -> str:
         from .advertiser import Advertiser
         from dbacademy.dbbuild.change_log_class import ChangeLog
+
+        self.assert_validated()
+        self.assert_no_changes_in_target_repo()
+        self.assert_created_dbcs()
 
         change_log = self.build_config.change_log or ChangeLog(source_repo=self.source_repo, target_version=self.core_version)
 
@@ -200,12 +205,15 @@ class Translator:
         guid = f"--i18n-{line_zero[pos_a+len(prefix):pos_b - 1]}"
         return guid, line_zero
 
+    def assert_validated(self):
+        assert self.validated, f"Cannot publish until the validator's configuration passes validation. Ensure that Translator.validate() was called and that all assignments passed"
+
     def publish_notebooks(self):
         from datetime import datetime
         from ..publish.notebook_def_class import NotebookDef
         from ..publish.publisher_class import Publisher
 
-        assert self.validated, f"Cannot publish until the validator's configuration passes validation. Ensure that Translator.validate() was called and that all assignments passed"
+        self.assert_validated()
 
         print(f"Publishing translated version of {self.build_name}, {self.version}")
         print(f"| Removing files from target directories")
@@ -293,9 +301,12 @@ class Translator:
 
         dbgems.display_html(html)
 
+    def assert_created_dbcs(self):
+        assert self.__created_dbcs, "The DBCs have not yet been created. See Translator.create_dbcs()"
+
     def create_dbcs(self):
 
-        assert self.validated, f"Cannot create DBCs until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
+        self.assert_validated()
         self.assert_no_changes_in_target_repo()
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
@@ -318,3 +329,5 @@ class Translator:
 
         url = f"/files/tmp/{self.build_name}-v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
+
+        self.__created_dbcs = True
