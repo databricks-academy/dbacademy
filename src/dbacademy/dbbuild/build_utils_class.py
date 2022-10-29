@@ -187,8 +187,9 @@ class BuildUtils:
         return results
 
     @staticmethod
-    def compare_results(index_a: Dict[str, Dict[str, str]], index_b: Dict[str, Dict[str, str]]):
-        results = []
+    def compare_results(index_a: Dict[str, Dict[str, str]],
+                        index_b: Dict[str, Dict[str, str]]) -> List[str]:
+        results: List[str] = []
 
         index_b_notebooks = list(index_b.keys())
 
