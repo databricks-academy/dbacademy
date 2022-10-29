@@ -8,7 +8,7 @@ reqs = [
 ]
 
 setuptools.setup(
-    version="v1.0.33",
+    version="v1.0.34",
     name="dbacademy",
     author="Databricks, Inc",
     maintainer="Databricks Academy",
