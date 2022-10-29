@@ -15,6 +15,7 @@ class Translator:
         self.__publish_notebooks = False
         self.__changes_in_target_repo = None
         self.__created_dbcs = False
+        self.__created_docs = False
         self.__validated_artifacts = False
 
         self.publisher = BuildUtils.validate_type(publisher, "publisher", Publisher)
@@ -343,6 +344,20 @@ class Translator:
 
         dbgems.display_html(html)
         self.__publish_notebooks = True
+
+    def assert_created_docs(self):
+        assert self.__created_docs, "The docs have not yet been created. See Translator.create_docs()"
+
+    def create_docs(self):
+        from .publishing_info_class import PublishingInfo
+
+        self.assert_created_dbcs()
+
+        info = PublishingInfo(self.build_config.publishing_info)
+        html = ""
+
+        self.__created_docs = True
+        return html
 
     def assert_created_dbcs(self):
         assert self.__created_dbcs, "The DBCs have not yet been created. See Translator.create_dbcs()"

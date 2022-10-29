@@ -4,7 +4,7 @@ This was moved out of dbgems because dbgems has a dependency on pyspark.
 """
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Any, Iterable
 
 __all__ = ["deprecated", "overrides", "print_warning", "CachedStaticProperty"]
 
@@ -71,3 +71,15 @@ class CachedStaticProperty:
         result = self.func()
         setattr(owner, self.func.__name__, result)
         return result
+
+
+def validate_type(actual_value: Any, name: str, expected_type: Any):
+    assert isinstance(actual_value, expected_type), f"Expected the parameter {name} to be of type {expected_type}, found {type(actual_value)}"
+    return actual_value
+
+
+def validate_enumeration_type(actual_values: Iterable[Any], name, expected_type):
+    validate_type(actual_values, "actual_values", Iterable)
+
+    for i, actual_value in enumerate(actual_values):
+        assert isinstance(actual_value, expected_type), f"Expected element {i} of {name} to be of type {expected_type}, found {type(actual_value)}"
