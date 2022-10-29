@@ -216,16 +216,22 @@ class Translator:
         self.assert_validated()
 
         print(f"Publishing translated version of {self.build_name}, {self.version}")
-        print(f"| Removing files from target directories")
-        BuildUtils.clean_target_dir(self.client, self.target_dir, verbose=False)
 
+        start = dbgems.clock_start()
+        print(f"| Removing files from target directories", end="...")
+        BuildUtils.clean_target_dir(self.client, self.target_dir, verbose=False)
+        print(dbgems.clock_stopped(start))
+
+        start = dbgems.clock_start()
+        print(f"| Enumerating files", end="...")
         prefix = len(self.source_dir) + 1
         source_files = [f.get("path")[prefix:] for f in self.client.workspace.ls(self.source_dir, recursive=True)]
-        print(f"| Processing {len(source_files)} files:")
+        print(dbgems.clock_stopped(start))
 
         # We have to first create the directory before writing to it.
         # Processing them first, once and only once, avoids duplicate REST calls.
-        print(f"| Pre-creating directory structures")
+        start = dbgems.clock_start()
+        print(f"| Pre-creating directory structures", end="...")
         processed_directory = []
         for file in source_files:
             target_notebook_path = f"{self.target_dir}/{file}"
@@ -233,8 +239,9 @@ class Translator:
                 processed_directory.append(target_notebook_path)
                 target_notebook_dir = "/".join(target_notebook_path.split("/")[:-1])
                 self.client.workspace.mkdirs(target_notebook_dir)
+        print(dbgems.clock_stopped(start))
 
-        print("\nProcessing notebooks:")
+        print(f"\nProcessing {len(source_files)} notebooks:")
         for file in source_files:
             print(f"   /{file}")
             source = self._load_i18n_source(file)
