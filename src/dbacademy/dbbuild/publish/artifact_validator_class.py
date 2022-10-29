@@ -40,7 +40,7 @@ class ArtifactValidator:
         self.temp_work_dir = temp_work_dir
         self.username = username
 
-    def validate_publishing_processes(self):
+    def validate_publishing_processes(self) -> None:
         self.__validate_distribution_dbc(as_latest=True)
         print("-" * 80)
         self.__validate_distribution_dbc(as_latest=False)
