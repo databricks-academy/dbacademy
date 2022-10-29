@@ -185,12 +185,14 @@ class Publisher:
 
         dbgems.display_html(html)
 
-    def create_published_message(self):
-        return BuildUtils.create_published_message(source_repo=self.source_repo,
-                                                   name=self.build_config.name,
-                                                   version=self.build_config.version,
-                                                   change_log=self.build_config.change_log,
-                                                   publishing_info=self.build_config.publishing_info)
+    def create_published_message(self) -> str:
+        from .advertiser import Advertiser
+        advertiser = Advertiser(source_repo=self.source_repo,
+                                name=self.build_config.name,
+                                version=self.build_config.version,
+                                change_log=self.build_config.change_log,
+                                publishing_info=self.build_config.publishing_info)
+        return advertiser.html
 
     def validate(self, silent: bool) -> "Publisher":
         if not silent:
