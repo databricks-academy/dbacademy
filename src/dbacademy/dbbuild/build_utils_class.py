@@ -132,7 +132,6 @@ class BuildUtils:
     @staticmethod
     def index_repo_dir(*, client: DBAcademyRestClient, repo_dir: str, ignored: List[str]) -> Dict[str, Dict[str, str]]:
         import os
-        from typing import Dict
 
         start = dbgems.clock_start()
         print(f"Indexing \"{repo_dir}\"", end="...")
