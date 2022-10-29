@@ -3,11 +3,6 @@ from dbacademy import dbgems, common
 
 
 class BuildConfig:
-    from dbacademy.dbbuild.publish.translator_class import Translator
-    from dbacademy.dbbuild.publish.publisher_class import Publisher
-    from dbacademy.dbbuild.publish.resource_diff_class import ResourceDiff
-    from dbacademy.dbbuild.test.test_suite_class import TestSuite
-
     LANGUAGE_OPTIONS_DEFAULT = "Default"
 
     VERSION_TEST = "Test"
@@ -346,29 +341,29 @@ class BuildConfig:
                             print(f": {value}")
                         print("|   }")
 
-    def to_resource_diff(self) -> ResourceDiff:
-        from dbacademy.dbbuild.publish.resource_diff_class import ResourceDiff
-        assert self.validated, f"Cannot diff until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed."
+    # def to_resource_diff(self) -> ResourceDiff:
+    #     from dbacademy.dbbuild.publish.resource_diff_class import ResourceDiff
+    #     assert self.validated, f"Cannot diff until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed."
+    #
+    #     return ResourceDiff(self)
 
-        return ResourceDiff(self)
+    # def to_publisher(self) -> Publisher:
+    #     from dbacademy.dbbuild.publish.publisher_class import Publisher
+    #     assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
+    #
+    #     return Publisher(self)
 
-    def to_publisher(self) -> Publisher:
-        from dbacademy.dbbuild.publish.publisher_class import Publisher
-        assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
+    # def to_translator(self) -> Translator:
+    #     publisher = self.to_publisher()
+    #     publisher.validate(silent=True)
+    #     return publisher.to_translator()
 
-        return Publisher(self)
-
-    def to_translator(self) -> Translator:
-        publisher = self.to_publisher()
-        publisher.validate(silent=True)
-        return publisher.to_translator()
-
-    def to_test_suite(self, test_type: str = None, keep_success: bool = False) -> TestSuite:
-        from dbacademy.dbbuild.test.test_suite_class import TestSuite
-
-        assert self.validated, f"Cannot test until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
-
-        return TestSuite(build_config=self,
-                         test_dir=self.source_dir,
-                         test_type=test_type,
-                         keep_success=keep_success)
+    # def to_test_suite(self, test_type: str = None, keep_success: bool = False) -> TestSuite:
+    #     from dbacademy.dbbuild.test.test_suite_class import TestSuite
+    #
+    #     assert self.validated, f"Cannot test until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
+    #
+    #     return TestSuite(build_config=self,
+    #                      test_dir=self.source_dir,
+    #                      test_type=test_type,
+    #                      keep_success=keep_success)
