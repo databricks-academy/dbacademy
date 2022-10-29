@@ -152,7 +152,7 @@ class BuildUtils:
                     }
 
         sources = BuildUtils.load_sources(client=client, results=results)
-        print(dbgems.clock_stopped(start))
+        print(dbgems.clock_stopped(start, f", {len(sources)} files"))
 
         return sources
 
