@@ -187,11 +187,13 @@ class Publisher:
 
     def create_published_message(self) -> str:
         from .advertiser import Advertiser
+        from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
+
         advertiser = Advertiser(source_repo=self.source_repo,
                                 name=self.build_config.name,
                                 version=self.build_config.version,
                                 change_log=self.build_config.change_log,
-                                publishing_info=self.build_config.publishing_info,
+                                publishing_info=PublishingInfo(self.build_config.publishing_info),
                                 common_language=None)
         return advertiser.html
 
