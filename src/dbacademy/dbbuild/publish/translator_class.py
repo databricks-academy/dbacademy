@@ -119,7 +119,8 @@ class Translator:
                                 name=self.build_config.name,
                                 version=self.version,
                                 change_log=change_log,
-                                publishing_info=self.build_config.publishing_info)
+                                publishing_info=self.build_config.publishing_info,
+                                common_language=self.common_language)
 
         return advertiser.html
 

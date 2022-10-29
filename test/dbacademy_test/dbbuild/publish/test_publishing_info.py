@@ -19,7 +19,7 @@ class MyTestCase(unittest.TestCase):
 
         self.assertEqual(1, len(pi.announcements.slack_channels))
         self.assertEqual("#curr-announcements", pi.announcements.slack_channels[0].name)
-        self.assertEqual("https://databricks.slack.com/archives/C047ZDDBK89", pi.announcements.slack_channels[0].link)
+        self.assertEqual("https://databricks.slack.com/archives/C047ZDDBK89", pi.announcements.slack_channels[0].url)
 
         self.assertEqual(2, len(pi.docs))
 

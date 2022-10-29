@@ -1,7 +1,8 @@
 class Advertiser:
     from dbacademy.dbbuild.change_log_class import ChangeLog
+    from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
 
-    def __init__(self, *, name: str, version: str, change_log: ChangeLog, publishing_info: dict, source_repo: str):
+    def __init__(self, *, name: str, version: str, change_log: ChangeLog, publishing_info: PublishingInfo, source_repo: str, common_language):
         import urllib.parse
 
         self.__name = name
@@ -9,6 +10,7 @@ class Advertiser:
         self.__change_log = change_log
         self.__publishing_info = publishing_info
         self.__source_repo = source_repo
+        self.__common_language = common_language
 
         self.__create_message()
 
@@ -33,18 +35,19 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
 
     def __create_html(self):
         content = "<div>"
-        for group_name, group in self.__publishing_info.items():
-            content += f"""<div style="margin-bottom:1em">"""
-            content += f"""<div style="font-size:16px;">{group_name}</div>"""
-            for link_name, url in group.items():
-                if url == "mailto:curriculum-announcements@databricks.com": url += f"?subject={self.__subject}&body={self.__email_body}"
-                content += f"""<li><a href="{url}" target="_blank" style="font-size:16px">{link_name}</a></li>"""
-            content += "</div>"
+
+        for address in self.__publishing_info.announcements.email_addresses:
+            url = f"mailto:{address}?subject={self.__subject}&body={self.__email_body}"
+            content += f"""<li><a href="{url}" target="_blank">{address}</a></li>"""
+
+        for channel in self.__publishing_info.announcements.slack_channels:
+            content += f"""<li><a href="{channel.url}" target="_blank">{channel.name}</a></li>"""
+
         content += "</div>"
 
         rows = len(self.__slack_message.split("\n")) + 1
         self.__html = f"""
-        <body>
+        <body style="font-size:16px">
             {content}
             <textarea style="width:100%; padding:1em" rows={rows}>{self.__slack_message}</textarea>
         </body>"""
