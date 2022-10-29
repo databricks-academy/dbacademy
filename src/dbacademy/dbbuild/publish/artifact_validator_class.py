@@ -88,14 +88,12 @@ class ArtifactValidator:
     def __validate_dbc(self, version=None, dbc_url=None):
         version = version or self.version
 
-        self.client.workspace.mkdirs(self.temp_work_dir)
         dbc_target_dir = f"{self.temp_work_dir}/{self.build_name}-v{version}"[10:]
 
         name = dbc_url.split("/")[-1]
         print(f"Importing {name}")
         print(f" - Source:    {dbc_url}")
         print(f" - Target:    {dbc_target_dir}")
-
         print(f" - Notebooks: {dbgems.get_workspace_url()}#workspace{dbc_target_dir}")
 
         self.client.workspace.delete_path(dbc_target_dir)
