@@ -16,7 +16,7 @@ class BuildConfig:
     VERSIONS_LIST = [VERSION_BUILD, VERSION_TEST, VERSION_TRANSLATION]
 
     @staticmethod
-    def load(file: str, *, version: str) -> "BuildConfig":
+    def load(file: str, *, version: str) -> Any:
         import json
 
         common.validate_type(file, "file", str)
@@ -26,7 +26,7 @@ class BuildConfig:
             return BuildConfig.load_config(config=json.load(f), version=version)
 
     @staticmethod
-    def load_config(config: dict, version: str) -> "BuildConfig":
+    def load_config(config: dict, version: str) -> Any:
 
         assert type(config) == dict, f"Expected the parameter \"config\" to be of type dict, found {config}."
         assert type(version) == str, f"Expected the parameter \"version\" to be of type str, found {version}."
