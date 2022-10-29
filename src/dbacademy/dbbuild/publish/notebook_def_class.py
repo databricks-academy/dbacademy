@@ -13,7 +13,7 @@ class NotebookError:
 
 
 class NotebookDef:
-    from dbacademy.dbbuild import BuildConfig
+    from dbacademy.dbbuild.build_config_class import BuildConfig
 
     D_TODO = "TODO"
     D_ANSWER = "ANSWER"
@@ -43,7 +43,7 @@ class NotebookDef:
                  i18n_language: Union[None, str],
                  ignoring: list,
                  version: str):
-        from dbacademy.dbbuild import BuildConfig
+        from dbacademy.dbbuild.build_config_class import BuildConfig
 
         assert type(build_config) == BuildConfig, f"""Expected the parameter "build_config" to be of type "BuildConfig", found "{type(build_config)}" """
         assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
@@ -182,7 +182,7 @@ class NotebookDef:
         return version
 
     def update_git_commit(self, command: str, url: str) -> str:
-        from dbacademy.dbbuild import BuildConfig
+        from dbacademy.dbbuild.build_config_class import BuildConfig
 
         if url not in command: return command
         else:

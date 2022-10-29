@@ -3,7 +3,7 @@ from ..build_utils_class import BuildUtils
 
 
 class TestSuite:
-    from dbacademy.dbbuild import BuildConfig
+    from dbacademy.dbbuild.build_config_class import BuildConfig
 
     TEST_TYPE_INTERACTIVE = "interactive"
     TEST_TYPE_STOCK = "stock"
