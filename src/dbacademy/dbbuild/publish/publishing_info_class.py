@@ -3,11 +3,11 @@ from dbacademy import common
 
 
 class PublishedDocs:
-    def __init__(self, language: str, published_folder: str, publishing_script: str, docs: List[str]):
+    def __init__(self, language: str, published_folder: str, publishing_script: str, links: List[str]):
         self.__language = language
         self.__published_folder = published_folder
         self.__publishing_script = publishing_script
-        self.__docs = docs
+        self.__links = links
 
     @property
     def language(self) -> str:
@@ -22,8 +22,8 @@ class PublishedDocs:
         return self.__publishing_script
 
     @property
-    def docs(self) -> List[str]:
-        return self.__docs
+    def links(self) -> List[str]:
+        return self.__links
 
 
 class SlackChannel:
