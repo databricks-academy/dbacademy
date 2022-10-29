@@ -90,26 +90,23 @@ class BuildUtils:
 
     @staticmethod
     def validate_no_changes_in_repo(*, client: DBAcademyRestClient, build_name: str, repo_url: str, directory: str) -> List[str]:
-        # results = BuildUtils.validate_not_uncommitted(client=client,
-        #                                               build_name=build_name,
-        #                                               repo_url=repo_url,
-        #                                               directory=directory,
-        #                                               ignored=["/Published/", "/Build-Scripts/"])
         repo_dir = f"/Repos/Temp/{build_name}-diff"
         ignored = ["/Published/", "/Build-Scripts/"]
-
-        print(f"Comparing {directory}")
-        print(f"to        {repo_dir}")
-        print()
 
         BuildUtils.reset_git_repo(client=client,
                                   directory=repo_dir,
                                   repo_url=repo_url,
                                   branch="published",
                                   which="diff")
+        print()
 
         index_a: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=repo_dir, ignored=ignored)
         index_b: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=directory, ignored=ignored)
+        print()
+
+        print(f"Comparing {directory}")
+        print(f"to        {repo_dir}")
+        print()
 
         results = BuildUtils.compare_results(index_a, index_b)
 
