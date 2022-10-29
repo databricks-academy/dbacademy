@@ -392,7 +392,7 @@ class Translator:
 
     def create_dbcs(self):
         from ..build_utils_class import BuildUtils
-        
+
         self.assert_no_changes_in_target_repo()
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
