@@ -28,7 +28,7 @@ class ResourceDiff:
         self.all_files = None
 
     def compare_and_save(self, target_file: str = None):
-        diff = self.build_config.to_resource_diff()
+        diff = ResourceDiff(self.build_config)
         html = diff.compare()
 
         if target_file is None:

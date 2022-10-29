@@ -4,7 +4,6 @@ from dbacademy import dbgems, common
 class Translator:
     from dbacademy.dbbuild.publish.publisher_class import Publisher
 
-    # def __init__(self, build_config: BuildConfig):
     def __init__(self, publisher: Publisher):
         from dbacademy.dbbuild.publish.publisher_class import Publisher
 
