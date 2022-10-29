@@ -137,10 +137,11 @@ class Translator:
         self.__validated_artifacts = True
 
     def validate(self):
-        print(f"version:          {self.version}")
-        print(f"core_version:     {self.core_version}")
-        print(f"common_language:  {self.common_language}")
-        print(f"resources_folder: {self.resources_folder}")
+        print("Translation Details:")
+        print(f"| Version:          {self.version}")
+        print(f"| Core_version:     {self.core_version}")
+        print(f"| Common_language:  {self.common_language}")
+        print(f"| Resources_folder: {self.resources_folder}")
         print()
 
         self.__reset_published_repo()

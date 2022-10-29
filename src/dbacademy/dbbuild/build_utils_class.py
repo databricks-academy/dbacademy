@@ -58,9 +58,9 @@ class BuildUtils:
         which = "" if which is None else f" ({which})"
 
         print(f"Resetting git repo{which}:")
-        print(f" - Branch:   \"{branch}\"")
-        print(f" - Directory: {directory}")
-        print(f" - Repo URL:  {repo_url}")
+        print(f"| Branch:   \"{branch}\"")
+        print(f"| Directory: {directory}")
+        print(f"| Repo URL:  {repo_url}")
         print()
 
         status = client.workspace().get_status(directory)
