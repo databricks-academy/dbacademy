@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Optional
 from dbacademy import dbgems
 
 
@@ -17,7 +17,7 @@ class ArtifactValidator:
                                  temp_repo_dir=publisher.temp_repo_dir,
                                  temp_work_dir=publisher.temp_work_dir,
                                  username=publisher.username,
-                                 common_language=publisher.common_language)
+                                 common_language=None)
 
     @staticmethod
     def from_translator(translator: Translator):
@@ -31,7 +31,7 @@ class ArtifactValidator:
                                  username=translator.username,
                                  common_language=translator.common_language)
 
-    def __init__(self, *, build_name: str, version: str, core_version: str, client: DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str, common_language: str):
+    def __init__(self, *, build_name: str, version: str, core_version: str, client: DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str, common_language: Optional[str]):
         self.build_name = build_name
         self.version = version
         self.core_version = core_version
@@ -114,15 +114,20 @@ class ArtifactValidator:
         assert f"**{version}**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{version}\""
         print(f"PASSED: v{version} found in \"{version_info_path}\"")
 
-    def __validate_git_branch(self, *, branch: str, version: Union[str, None]):
+    def __validate_git_branch(self, *, branch: str, version: Optional[str]):
         from ..build_utils_class import BuildUtils
 
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 
+        if self.common_language is None:
+            repo_url = f"https://github.com/databricks-academy/{self.build_name}.git"
+        else:
+            repo_url = f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
+
         target_dir = f"{self.temp_repo_dir}/{self.username}-{self.build_name}-{branch}"
         BuildUtils.reset_git_repo(client=self.client,
                                   directory=target_dir,
-                                  repo_url=f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git",
+                                  repo_url=repo_url,
                                   branch=branch,
                                   which=None)
         print()
