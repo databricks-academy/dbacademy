@@ -4,7 +4,7 @@ from dbacademy import dbgems, common
 
 class Publisher:
     from dbacademy.dbbuild.build_config_class import BuildConfig
-    from dbacademy.dbbuild import Translator
+    from dbacademy.dbbuild.publish.translator_class import Translator
 
     VERSION_INFO_NOTEBOOK = "Version Info"
 
@@ -269,13 +269,13 @@ class Publisher:
         dbgems.display_html(html)
 
     def to_translator(self) -> Translator:
-        from dbacademy.dbbuild import Translator
+        from dbacademy.dbbuild.publish.translator_class import Translator
         assert self.validated, f"Cannot translate until the publisher's configuration passes validation. Ensure that Publisher.validate() was called and that all assignments passed"
 
         return Translator(self)
 
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
-        from dbacademy.dbbuild import TestSuite
+        from dbacademy.dbbuild.test.test_suite_class import TestSuite
 
         return TestSuite(build_config=self.build_config,
                          test_dir=self.target_dir,
@@ -336,7 +336,7 @@ class Publisher:
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
 
     def to_validator(self):
-        from dbacademy.dbbuild import ArtifactValidator
+        from dbacademy.dbbuild.publish.artifact_validator_class import ArtifactValidator
         return ArtifactValidator.from_publisher(self)
 
     def assert_no_changes_in_source_repo(self):

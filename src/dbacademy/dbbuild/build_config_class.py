@@ -3,8 +3,10 @@ from dbacademy import dbgems, common
 
 
 class BuildConfig:
-    from dbacademy.dbbuild import TestSuite, ResourceDiff, Translator
+    from dbacademy.dbbuild.publish.translator_class import Translator
     from dbacademy.dbbuild.publish.publisher_class import Publisher
+    from dbacademy.dbbuild.publish.resource_diff_class import ResourceDiff
+    from dbacademy.dbbuild.test.test_suite_class import TestSuite
 
     LANGUAGE_OPTIONS_DEFAULT = "Default"
 
@@ -345,7 +347,7 @@ class BuildConfig:
                         print("|   }")
 
     def to_resource_diff(self) -> ResourceDiff:
-        from dbacademy.dbbuild import ResourceDiff
+        from dbacademy.dbbuild.publish.resource_diff_class import ResourceDiff
         assert self.validated, f"Cannot diff until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed."
 
         return ResourceDiff(self)
@@ -362,7 +364,7 @@ class BuildConfig:
         return publisher.to_translator()
 
     def to_test_suite(self, test_type: str = None, keep_success: bool = False) -> TestSuite:
-        from dbacademy.dbbuild import TestSuite
+        from dbacademy.dbbuild.test.test_suite_class import TestSuite
 
         assert self.validated, f"Cannot test until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 

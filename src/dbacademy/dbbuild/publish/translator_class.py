@@ -130,7 +130,7 @@ class Translator:
         assert self.__validated_artifacts, "The artifacts have not yet been validated. See Translator.validate_artifacts()"
 
     def validate_artifacts(self):
-        from dbacademy.dbbuild import ArtifactValidator
+        from dbacademy.dbbuild.publish.artifact_validator_class import ArtifactValidator
 
         self.assert_created_docs()
 
