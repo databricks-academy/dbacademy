@@ -11,6 +11,7 @@ class Translator:
 
         # By default, we are not validated
         self.__validated = False
+        self.__changes_in_source_repo = None
         self.__changes_in_target_repo = None
         self.__created_dbcs = False
         self.__validated_artifacts = False
@@ -188,6 +189,21 @@ class Translator:
     def validated(self):
         return self.__validated
 
+    def assert_no_changes_in_source_repo(self):
+        method = "Translator.validate_no_changes_in_source_repo()"
+        assert self.__changes_in_source_repo is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
+        assert self.__changes_in_source_repo == 0, f"Found {self.__changes_in_source_repo} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
+
+    def validate_no_changes_in_source_repo(self):
+        self.assert_validated()
+
+        results = BuildUtils.validate_no_changes_in_repo(client=self.client,
+                                                         build_name=self.build_name,
+                                                         repo_url=self.source_repo_url,
+                                                         directory=self.source_dir)
+        self.__changes_in_source_repo = len(results)
+        self.assert_no_changes_in_source_repo()
+
     def assert_no_changes_in_target_repo(self):
         method = "Translator.validate_no_changes_in_target_repo()"
         assert self.__changes_in_target_repo is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
@@ -201,8 +217,8 @@ class Translator:
         self.__changes_in_target_repo = len(results)
         self.assert_no_changes_in_target_repo()
 
-    # noinspection PyMethodMayBeStatic
-    def __extract_i18n_guid(self, command):
+    @staticmethod
+    def __extract_i18n_guid(command):
         line_zero = command.strip().split("\n")[0]
 
         prefix = "<i18n value=\""
@@ -222,7 +238,7 @@ class Translator:
         from ..publish.notebook_def_class import NotebookDef
         from ..publish.publisher_class import Publisher
 
-        self.assert_validated()
+        self.assert_no_changes_in_source_repo()
 
         print(f"Publishing translated version of {self.build_config.name}, {self.version}")
 
