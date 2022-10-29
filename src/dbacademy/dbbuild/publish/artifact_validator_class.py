@@ -96,8 +96,7 @@ class ArtifactValidator:
         print(f" - Source:    {dbc_url}")
         print(f" - Target:    {dbc_target_dir}")
 
-        notebooks_path = dbc_target_dir[:1].lower() + dbc_target_dir[2:]
-        print(f" - Notebooks: {dbgems.get_workspace_url()}#{notebooks_path}")
+        print(f" - Notebooks: {dbgems.get_workspace_url()}#workspace/{dbc_target_dir}")
 
         self.client.workspace.delete_path(dbc_target_dir)
         self.client.workspace.mkdirs(dbc_target_dir)
