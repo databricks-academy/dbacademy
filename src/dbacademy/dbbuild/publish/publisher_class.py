@@ -107,7 +107,7 @@ class Publisher:
 
         return True
 
-    def publish_notebooks(self, *, verbose=False, debugging=False, **kwargs):
+    def generate_notebooks(self, *, verbose=False, debugging=False, **kwargs):
         from ..publish.notebook_def_class import NotebookDef
 
         assert self.validated, f"Cannot publish notebooks until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
@@ -197,7 +197,7 @@ class Publisher:
                                 common_language=None)
         return advertiser.html
 
-    def validate(self, silent: bool) -> "Publisher":
+    def validate(self, silent: bool = False) -> "Publisher":
         if not silent:
             print(f"Source: {self.source_dir}")
             print(f"Target: {self.target_dir}")

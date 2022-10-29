@@ -34,7 +34,7 @@ Release notes, course-specific requirements, issue-tracking, and test results fo
 Please contact me (via Slack), or anyone on the curriculum team should you have any questions."""
 
     def __create_html(self):
-        content = "<div>"
+        content = """<div style="margin-bottom:1em>"""
 
         for address in self.__publishing_info.announcements.email_addresses:
             url = f"mailto:{address}?subject={self.__subject}&body={self.__email_body}"
