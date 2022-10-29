@@ -150,8 +150,11 @@ class BuildUtils:
                         "full_path": full_path,
                         "contents": None
                     }
+
+        sources = BuildUtils.load_sources(client=client, results=results)
         print(dbgems.clock_stopped(start))
-        return BuildUtils.load_sources(client=client, results=results)
+
+        return sources
 
     @staticmethod
     def load_sources(*, client: DBAcademyRestClient, results: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, str]]:
