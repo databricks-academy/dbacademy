@@ -106,10 +106,6 @@ class Translator:
         from .advertiser import Advertiser
         from dbacademy.dbbuild.change_log_class import ChangeLog
 
-        self.assert_validated()
-        self.assert_no_changes_in_target_repo()
-        self.assert_created_dbcs()
-
         change_log = self.build_config.change_log or ChangeLog(source_repo=self.source_repo, target_version=self.core_version)
 
         advertiser = Advertiser(source_repo=self.source_repo,
@@ -117,10 +113,14 @@ class Translator:
                                 version=self.version,
                                 change_log=change_log,
                                 publishing_info=self.build_config.publishing_info)
+
         return advertiser.html
 
     def to_validator(self):
         from dbacademy.dbbuild import ArtifactValidator
+
+        self.assert_created_dbcs()
+
         return ArtifactValidator.from_translator(self)
 
     def validate(self):
@@ -305,8 +305,6 @@ class Translator:
         assert self.__created_dbcs, "The DBCs have not yet been created. See Translator.create_dbcs()"
 
     def create_dbcs(self):
-
-        self.assert_validated()
         self.assert_no_changes_in_target_repo()
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
