@@ -1,9 +1,9 @@
-from typing import Type, List, Dict, Union
+from typing import Type, List, Dict, Union, Any
 from dbacademy import dbgems, common
 
 
 class BuildConfig:
-    from dbacademy.dbbuild import TestSuite, Publisher, ResourceDiff, Translator
+    from dbacademy.dbbuild import TestSuite, Publisher, ResourceDiff, Translator, BuildConfig
 
     LANGUAGE_OPTIONS_DEFAULT = "Default"
 
@@ -13,7 +13,7 @@ class BuildConfig:
     VERSIONS_LIST = [VERSION_BUILD, VERSION_TEST, VERSION_TRANSLATION]
 
     @staticmethod
-    def load(file: str, *, version: str):
+    def load(file: str, *, version: str) -> BuildConfig:
         import json
 
         common.validate_type(file, "file", str)
@@ -23,7 +23,7 @@ class BuildConfig:
             return BuildConfig.load_config(config=json.load(f), version=version)
 
     @staticmethod
-    def load_config(config: dict, version: str):
+    def load_config(config: dict, version: str) -> BuildConfig:
 
         assert type(config) == dict, f"Expected the parameter \"config\" to be of type dict, found {config}."
         assert type(version) == str, f"Expected the parameter \"version\" to be of type str, found {version}."
@@ -36,7 +36,7 @@ class BuildConfig:
 
         build_config = BuildConfig(version=version, **config)
 
-        def validate_code_type(key: str, expected_type: Type, actual_value):
+        def validate_code_type(key: str, expected_type: Type, actual_value: Any) -> Any:
             if expected_type == List[str]:
                 assert type(actual_value) == list, f"Expected the value for \"{key}\" to be of type \"List[str]\", found \"{type(actual_value)}\"."
                 for item in actual_value:
