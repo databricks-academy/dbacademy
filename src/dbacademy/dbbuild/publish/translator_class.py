@@ -9,9 +9,11 @@ class Translator:
     def __init__(self, publisher: Publisher):
         from dbacademy.dbbuild import Publisher, BuildUtils
 
-        self.__validated = False              # By default, we are not validated
-        self.__changes_in_target_repo = None  # Will be set once we test for changes
-        self.__created_dbcs = False           # Will be set after DBCs are created
+        # By default, we are not validated
+        self.__validated = False
+        self.__changes_in_target_repo = None
+        self.__created_dbcs = False
+        self.__validated_artifacts = False
 
         self.publisher = BuildUtils.validate_type(publisher, "publisher", Publisher)
 
@@ -106,6 +108,8 @@ class Translator:
         from .advertiser import Advertiser
         from dbacademy.dbbuild.change_log_class import ChangeLog
 
+        self.assert_validated_artifacts()
+
         change_log = self.build_config.change_log or ChangeLog(source_repo=self.source_repo, target_version=self.core_version)
 
         advertiser = Advertiser(source_repo=self.source_repo,
@@ -116,12 +120,17 @@ class Translator:
 
         return advertiser.html
 
-    def to_validator(self):
+    def assert_validated_artifacts(self):
+        assert self.__validated_artifacts, "The artifacts have not yet been validated. See Translator.validate_artifacts()"
+
+    def validate_artifacts(self):
         from dbacademy.dbbuild import ArtifactValidator
 
         self.assert_created_dbcs()
 
-        return ArtifactValidator.from_translator(self)
+        ArtifactValidator.from_translator(self).validate_publishing_processes()
+
+        self.__validated_artifacts = True
 
     def validate(self):
         print(f"version:          {self.version}")
