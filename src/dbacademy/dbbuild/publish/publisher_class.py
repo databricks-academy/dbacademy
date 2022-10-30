@@ -338,9 +338,32 @@ class Publisher:
         url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
 
-    def to_validator(self):
+    def create_docs(self) -> str:
+        from docs_publisher import DocsPublisher
+        from publishing_info_class import PublishingInfo
+
+        # self.assert_created_dbcs()
+
+        info = PublishingInfo(self.build_config.publishing_info)
+        translation = info.translations.get(self.common_language)
+        docs_publisher = DocsPublisher(translation)
+        html = docs_publisher.to_html()
+
+        # self.__created_docs = True
+        return html
+
+    # def to_validator(self):
+    #     from dbacademy.dbbuild.publish.artifact_validator_class import ArtifactValidator
+    #     return ArtifactValidator.from_publisher(self)
+
+    def validate_artifacts(self):
         from dbacademy.dbbuild.publish.artifact_validator_class import ArtifactValidator
-        return ArtifactValidator.from_publisher(self)
+
+        # self.assert_created_docs()
+
+        ArtifactValidator.from_translator(self).validate_publishing_processes()
+
+        # self.__validated_artifacts = True
 
     def assert_no_changes_in_source_repo(self):
         method = "Publisher.validate_no_changes_in_source_repo()"

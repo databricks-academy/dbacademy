@@ -356,33 +356,15 @@ class Translator:
         assert self.__created_docs, "The docs have not yet been created. See Translator.create_docs()"
 
     def create_docs(self) -> str:
-        from .publishing_info_class import PublishingInfo
-
+        from docs_publisher import DocsPublisher
+        from publishing_info_class import PublishingInfo
         self.assert_created_dbcs()
 
         info = PublishingInfo(self.build_config.publishing_info)
         translation = info.translations.get(self.common_language)
+        docs_publisher = DocsPublisher(translation)
+        html = docs_publisher.to_html()
 
-        html = f"""
-        <html><body style="font-size:16px">
-            <li><a href="{translation.published_docs_folder}" target="_blank">Published Folder</a></li>
-            <li><a href="{translation.publishing_script}" target="_blank">Publishing Script</a></li>
-        """
-
-        links = translation.document_links
-
-        if len(links) == 0:
-            html += "<li>Documents: None</li>"
-        elif len(links) == 1:
-            html += f"""<li><a href="{links[0]}" target="_blank">Document</a></li>"""
-        else:
-            html += """<li>Documents:</li>"""
-            html += """<ul style="margin:0">"""
-            for i, link in enumerate(links):
-                html += f"""<li><a href="{link}" target="_blank">Document #{i + 1}</a></li>"""
-            html += "</ul>"
-
-        html += """</body></html>"""
         self.__created_docs = True
         return html
 
