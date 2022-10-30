@@ -1,12 +1,8 @@
-import sys
 from typing import Type, List, Dict, Union, Any
 from dbacademy import dbgems, common
 
 
 class BuildConfig:
-    from dbacademy.dbbuild.publish.publisher_class import Publisher
-    from dbacademy.dbbuild.publish.resource_diff_class import ResourceDiff
-    from dbacademy.dbbuild.test.test_suite_class import TestSuite
 
     LANGUAGE_OPTIONS_DEFAULT = "Default"
 
@@ -347,27 +343,31 @@ class BuildConfig:
                         print("|   }")
 
     # Used by notebooks
-    def to_resource_diff(self) -> ResourceDiff:
+    # TODO Cannot define return type
+    def to_resource_diff(self):
         from dbacademy.dbbuild.publish.resource_diff_class import ResourceDiff
         assert self.validated, f"Cannot diff until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed."
 
         return ResourceDiff(self)
 
     # Used by notebooks
-    def to_publisher(self) -> Publisher:
+    # TODO Cannot define return type
+    def to_publisher(self):
         from dbacademy.dbbuild.publish.publisher_class import Publisher
         assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
         return Publisher(self)
 
     # Used by notebooks
-    def to_translator(self) -> sys.modules["dbacademy.dbbuild.publish.translator_class.Translator"]:
+    # TODO Cannot define return type
+    def to_translator(self):
         publisher = self.to_publisher()
         publisher.validate(silent=True)
         return publisher.to_translator()
 
     # Used by notebooks
-    def to_test_suite(self, test_type: str = None, keep_success: bool = False) -> TestSuite:
+    # TODO Cannot define return type
+    def to_test_suite(self, test_type: str = None, keep_success: bool = False):
         from dbacademy.dbbuild.test.test_suite_class import TestSuite
 
         assert self.validated, f"Cannot test until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
