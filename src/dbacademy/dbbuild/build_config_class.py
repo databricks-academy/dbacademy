@@ -2,10 +2,11 @@ from typing import Type, List, Dict, Union, Any
 from dbacademy import dbgems, common
 
 try:
-    # noinspection PyUnresolvedReferences
+    # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
     __build_config_defined
 
 except NameError:
+    __build_config_defined = True
 
     class BuildConfig:
         from dbacademy.dbbuild.publish.translator_class import Translator
