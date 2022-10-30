@@ -198,7 +198,7 @@ class Publisher:
                                 common_language=None)
         return advertiser.html
 
-    def validate(self, silent: bool = False) -> "Publisher":
+    def validate(self, silent: bool = False):
         if not silent:
             print(f"Source: {self.source_dir}")
             print(f"Target: {self.target_dir}")
@@ -209,7 +209,6 @@ class Publisher:
                 print()
 
         self.__validated = True
-        return self
 
     @property
     def validated(self) -> bool:
