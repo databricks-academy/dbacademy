@@ -15,6 +15,8 @@ class Advertiser:
         self.__create_message()
 
         self.__subject = f"Published {self.__name}, v{self.__version}"
+
+        self.__email_subject = urllib.parse.quote(self.__subject, safe="")
         self.__email_body = urllib.parse.quote(self.__message, safe="")
 
         self.__slack_message = f"@channel {self.__subject}\n\n{self.__message.strip()}"
@@ -34,10 +36,10 @@ Release notes, course-specific requirements, issue-tracking, and test results fo
 Please contact me (via Slack), or anyone on the curriculum team should you have any questions."""
 
     def __create_html(self):
-        content = """<div style="margin-bottom:1em>"""
+        content = """<div style="margin-bottom:1em">"""
 
         for address in self.__publishing_info.announcements.email_addresses:
-            url = f"mailto:{address}?subject={self.__subject}&body={self.__email_body}"
+            url = f"mailto:{address}?subject={self.__email_subject}&body={self.__email_body}"
             content += f"""<li><a href="{url}" target="_blank">{address}</a></li>"""
 
         for channel in self.__publishing_info.announcements.slack_channels:
