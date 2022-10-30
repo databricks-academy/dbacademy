@@ -339,8 +339,8 @@ class Publisher:
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
 
     def create_docs(self) -> str:
-        from docs_publisher import DocsPublisher
-        from publishing_info_class import PublishingInfo
+        from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
+        from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
 
         # self.assert_created_dbcs()
 
