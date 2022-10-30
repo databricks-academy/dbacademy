@@ -4,7 +4,7 @@ from dbacademy import dbgems, common
 
 class Publisher:
     from dbacademy.dbbuild.build_config_class import BuildConfig
-    from dbacademy.dbbuild.publish.translator_class import Translator
+    # from dbacademy.dbbuild.publish.translator_class import Translator
 
     VERSION_INFO_NOTEBOOK = "Version Info"
 
@@ -268,12 +268,16 @@ class Publisher:
                    </body></html>"""
         dbgems.display_html(html)
 
-    def to_translator(self) -> Translator:
+    # Used by notebooks
+    # TODO Cannot define return type
+    def to_translator(self):
         from dbacademy.dbbuild.publish.translator_class import Translator
         assert self.validated, f"Cannot translate until the publisher's configuration passes validation. Ensure that Publisher.validate() was called and that all assignments passed"
 
         return Translator(self)
 
+    # Used by notebooks
+    # TODO Cannot define return type
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
         from dbacademy.dbbuild.test.test_suite_class import TestSuite
 
@@ -282,7 +286,7 @@ class Publisher:
                          test_type=test_type,
                          keep_success=keep_success)
 
-    def _generate_html(self, notebook):
+    def __generate_html(self, notebook):
         import time
 
         if notebook.test_round < 2:
@@ -303,10 +307,10 @@ class Publisher:
 
         if asynchronous:
             with ThreadPool(len(self.build_config.notebooks)) as pool:
-                pool.map(self._generate_html, self.build_config.notebooks.values())
+                pool.map(self.__generate_html, self.build_config.notebooks.values())
         else:
             for notebook in self.build_config.notebooks.values():
-                self._generate_html(notebook)
+                self.__generate_html(notebook)
 
     def create_dbcs(self):
         from ..build_utils_class import BuildUtils
