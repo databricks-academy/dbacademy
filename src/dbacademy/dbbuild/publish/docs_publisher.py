@@ -1,5 +1,5 @@
 class DocsPublisher:
-    from publishing_info_class import Translation
+    from dbacademy.dbbuild.publish.publishing_info_class import Translation
 
     def __init__(self, translation: Translation):
         self.__translation = translation
