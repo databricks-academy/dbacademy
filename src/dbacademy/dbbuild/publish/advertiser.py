@@ -44,7 +44,7 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
 
         content += "</div>"
 
-        rows = len(self.__message.split("\n"))
+        rows = len(self.__message.split("\n")) + 1
         self.__html = f"""
         <body style="font-size:16px">
             {content}
