@@ -361,7 +361,7 @@ class Publisher:
 
         # self.assert_created_docs()
 
-        ArtifactValidator.from_translator(self).validate_publishing_processes()
+        ArtifactValidator.from_publisher(self).validate_publishing_processes()
 
         # self.__validated_artifacts = True
 
