@@ -48,6 +48,6 @@ Please contact me (via Slack), or anyone on the curriculum team should you have 
         self.__html = f"""
         <body style="font-size:16px">
             {content}
-            <div><input style="width:100%" type="text" value="{self.__subject}"></div>
+            <div><input style="width:100%; padding:1em" type="text" value="{self.__subject}"></div>
             <textarea style="width:100%; padding:1em" rows={rows}>{self.__message}</textarea>
         </body>"""
