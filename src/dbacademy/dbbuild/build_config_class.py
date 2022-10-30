@@ -5,7 +5,7 @@ try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
     __build_config_defined
 
-except NameError:
+except Exception:
     __build_config_defined = True
 
     class BuildConfig:
