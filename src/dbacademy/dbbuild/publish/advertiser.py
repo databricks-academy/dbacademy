@@ -21,12 +21,11 @@ class Advertiser:
         return self.__html
 
     def __create_message(self):
-        self.__message = str(self.__change_log)
-        self.__message += "\n"
-        self.__message += f"""
+        self.__message = f"""{self.__change_log}
+        
 Release notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{self.__source_repo.split("/")[-1]}
 
-Please contact me (via Slack), or anyone on the curriculum team should you have any questions.""".strip()
+Please contact me (via Slack), or anyone on the curriculum team should you have any questions."""
 
     def __create_html(self):
         import urllib.parse
