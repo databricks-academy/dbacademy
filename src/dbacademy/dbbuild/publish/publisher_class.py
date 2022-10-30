@@ -243,7 +243,7 @@ class Publisher:
 
         self.__validated_repo_reset = True
 
-    def publish_docs(self):
+    def generate_published_docs(self):
         import os, shutil
 
         source_docs_path = f"{self.source_repo}/docs"
@@ -301,7 +301,7 @@ class Publisher:
 
         print(f"Generated docs for \"{notebook.path}\"...({int(time.time()) - start} seconds)")
 
-    def generate_docs(self, asynchronous: bool = True):
+    def generate_source_docs(self, asynchronous: bool = True):
         from multiprocessing.pool import ThreadPool
 
         if asynchronous:
