@@ -1,3 +1,6 @@
+from dbacademy.dbbuild.build_config_class import BuildConfig
+
+
 def help_html():
     from .publish.notebook_def_class import NotebookDef
 
