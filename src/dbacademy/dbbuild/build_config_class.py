@@ -4,7 +4,6 @@ from dbacademy import dbgems, common
 
 
 class BuildConfig:
-    Translator = sys.modules["dbacademy.dbbuild.publish.translator_class.Translator"]
     from dbacademy.dbbuild.publish.publisher_class import Publisher
     from dbacademy.dbbuild.publish.resource_diff_class import ResourceDiff
     from dbacademy.dbbuild.test.test_suite_class import TestSuite
@@ -362,7 +361,7 @@ class BuildConfig:
         return Publisher(self)
 
     # Used by notebooks
-    def to_translator(self) -> Translator:
+    def to_translator(self) -> sys.modules["dbacademy.dbbuild.publish.translator_class.Translator"]:
         publisher = self.to_publisher()
         publisher.validate(silent=True)
         return publisher.to_translator()
