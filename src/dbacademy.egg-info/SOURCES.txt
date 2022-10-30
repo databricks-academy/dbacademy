@@ -17,6 +17,7 @@ src/dbacademy/dbbuild/change_log_class.py
 src/dbacademy/dbbuild/publish/__init__.py
 src/dbacademy/dbbuild/publish/advertiser.py
 src/dbacademy/dbbuild/publish/artifact_validator_class.py
+src/dbacademy/dbbuild/publish/docs_publisher.py
 src/dbacademy/dbbuild/publish/notebook_def_class.py
 src/dbacademy/dbbuild/publish/publisher_class.py
 src/dbacademy/dbbuild/publish/publishing_info_class.py
@@ -25,7 +26,7 @@ src/dbacademy/dbbuild/publish/translator_class.py
 src/dbacademy/dbbuild/test/__init__.py
 src/dbacademy/dbbuild/test/results_evaluator.py
 src/dbacademy/dbbuild/test/test_instance_class.py
-src/dbacademy/dbbuild/test/test_suite.py
+src/dbacademy/dbbuild/test/test_suite_class.py
 src/dbacademy/dbgems/__init__.py
 src/dbacademy/dbgems/mock_dbutils_class.py
 src/dbacademy/dbhelper/__init__.py
