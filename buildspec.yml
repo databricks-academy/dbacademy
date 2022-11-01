@@ -19,5 +19,5 @@ phases:
 reports:
   report:
     unit-tests:
-      files: "reports/unit-tests/*"
+      files: "reports/unit-tests/*.xml"
       file-format: "JUNITXML"
