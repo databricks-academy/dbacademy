@@ -479,8 +479,8 @@ class Commands(object):
                     c["driver_node_type_id"] = None
                 elif "driver_node_type_id" in c and "driver_instance_pool_id" in c:
                     c["driver_instance_pool_id"] = None
-                if "runtime_engine" in c:
-                    del c["runtime_engine"]
+                # if "runtime_engine" in c:
+                #     del c["runtime_engine"]
                 for k in list(c.get("aws_attributes", {})):
                     if k.startswith("ebs_"):
                         del c["aws_attributes"][k]
