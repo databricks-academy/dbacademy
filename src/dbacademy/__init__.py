@@ -1,11 +1,11 @@
 def validate_dependencies():
     try:
         # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
-        assert validate_dependencies_already
+        assert validated_dependencies
     except NameError:
         from dbacademy import dbgems
         dbgems.validate_dependencies("dbacademy")
-        validate_dependencies_already = True
+        validated_dependencies = True
 
 
 validate_dependencies()
