@@ -26,6 +26,9 @@ class TestAccountsApi(unittest.TestCase):
         result = ws.workspace.list("/")
         self.assertIsInstance(result, list)
 
+    def testListUsers(self):
+        accounts = AccountsApi.default_account
+        print(accounts.users.list(count=10))
 
 # COMMAND ----------
 
