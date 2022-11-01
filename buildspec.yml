@@ -6,19 +6,13 @@ phases:
       python: 3.9
   pre_build:
     commands:
-#      - apt-get install -y python3-venv
-#      - python3.6 -m venv test_venv
-#      - . test_venv/bin/activate
-#      - pip install --upgrade pip
-#      - pip install .
       - pip install -r requirements.txt
-      - rm -rf dspt
       - mkdir test-reports
   build:
     commands:
       - python -c "print('Hello Nurse!')"
-      # - cd src
-      # - python -m unittest discover -s ../test -t ../test
+      - cd src
+      - python -m unittest discover -s ../test -t ../test
   post_build:
     commands:
       - echo Build completed on `date`
