@@ -16,12 +16,13 @@ phases:
       - mkdir test-reports
   build:
     commands:
+      - cd src
       - python
         -m
         unittest
         discover
-        -s ./test
-        -t ./test in ./test
+        -s ../test
+        -t ../test
   post_build:
     commands:
       - echo Build completed on `date`
