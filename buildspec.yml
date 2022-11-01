@@ -7,7 +7,6 @@ phases:
   pre_build:
     commands:
       - pip install -r requirements.txt
-      - mkdir test-reports
   build:
     commands:
       - python -c "print('Hello Nurse!')"
@@ -17,17 +16,17 @@ phases:
     commands:
       - echo Build completed on `date`
 
-reports:
-  coverage:
-    files:
-      - "coverage/*"
-    base-directory: 'test-reports'
-    discard-paths: yes
-  report:
-    files:
-      - 'junit.xml'
-      - 'report.html'
-      - 'assets/*'
-    base-directory: 'test-reports'
-    discard-paths: yes
-    file-format: JunitXml
+#reports:
+#  coverage:
+#    files:
+#      - "coverage/*"
+#    base-directory: 'test-reports'
+#    discard-paths: yes
+#  report:
+#    files:
+#      - 'junit.xml'
+#      - 'report.html'
+#      - 'assets/*'
+#    base-directory: 'test-reports'
+#    discard-paths: yes
+#    file-format: JunitXml
