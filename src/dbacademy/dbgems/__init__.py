@@ -157,8 +157,16 @@ def lookup_current_module_version(module: str) -> str:
 def is_curriculum_workspace() -> bool:
     if dbutils is None:
         return False
+
+    # TODO Consider that this will return false when ran as a job. The net effect being that we would not, for example, get library warnings for smoke-tests.
     host_name = get_browser_host_name(default_value="unknown")
-    return host_name.startswith("curriculum-") and host_name.endswith(".cloud.databricks.com")
+
+    if host_name.endswith(".cloud.databricks.com"):
+        if host_name.startswith("curriculum-student"):
+            return False  # Exception for "student" workspaces - e.g. suppress warnings
+        else:
+            return host_name.startswith("curriculum-")
+    return False
 
 
 def validate_dependencies(module: str, curriculum_workspaces_only=True) -> bool:
