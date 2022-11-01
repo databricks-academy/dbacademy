@@ -16,16 +16,12 @@ phases:
       - mkdir test-reports
   build:
     commands:
-      - pytest 
-        --html=test-reports/report.html 
-        --self-contained-html
-        -s
-        -v
-        --cov=dspt 
-        --cov-report=html:test-reports/coverage 
-        --junitxml=test-reports/junit.xml 
-        --log-file=test-reports/logs.txt 
-        tests
+      - python
+        -m
+        unittest
+        discover
+        -s ./test
+        -t ./test in ./test
   post_build:
     commands:
       - echo Build completed on `date`
