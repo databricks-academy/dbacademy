@@ -10,6 +10,7 @@ from dbacademy.dougrest.accounts.logs import LogDeliveryConfigurations
 from dbacademy.dougrest.accounts.network import NetworkConfigurations
 from dbacademy.dougrest.accounts.private_access import PrivateAccessSettings
 from dbacademy.dougrest.accounts.storage import StorageConfigurations
+from dbacademy.dougrest.accounts.users import Users
 from dbacademy.dougrest.accounts.vpc import VpcEndpoints
 from dbacademy.dougrest.accounts.workspaces import Workspaces
 from dbacademy.rest.common import *
@@ -57,12 +58,13 @@ class AccountsApi(ApiClient):
         super().__init__(url, user=user, password=password)
         self.user = user
         self.account_id = account_id
+        self.budgets = Budgets(self)
         self.credentials = Credentials(self)
-        self.storage = StorageConfigurations(self)
-        self.networks = NetworkConfigurations(self)
         self.keys = CustomerManagedKeys(self)
         self.logs = LogDeliveryConfigurations(self)
-        self.vpc = VpcEndpoints(self)
-        self.budgets = Budgets(self)
-        self.workspaces = Workspaces(self)
+        self.networks = NetworkConfigurations(self)
         self.private_access = PrivateAccessSettings(self)
+        self.storage = StorageConfigurations(self)
+        self.users = Users(self)
+        self.vpc = VpcEndpoints(self)
+        self.workspaces = Workspaces(self)

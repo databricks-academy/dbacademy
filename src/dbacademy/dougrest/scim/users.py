@@ -1,14 +1,16 @@
 from typing import List, Dict
 
-from dbacademy.rest.common import ApiContainer
+from dbacademy.rest.common import ApiContainer, DatabricksApiException
 
 
 class Users(ApiContainer):
     def __init__(self, databricks):
         self.databricks = databricks
+        self.path = "2.0/preview"
 
-    def list(self):
-        return self.databricks.api("GET", "2.0/preview/scim/v2/Users").get("Resources", [])
+    def list(self, start=1, count=1000):
+        return self.databricks.api("GET", f"{self.path}/scim/v2/Users",
+                                   startIndex=start, count=count).get("Resources", [])
 
     def list_usernames(self):
         return sorted([u["userName"] for u in self.list()])
@@ -17,16 +19,18 @@ class Users(ApiContainer):
         return {u["userName"]: u for u in self.list()}
 
     def get_by_id(self, id):
-        return self.databricks.api("GET", f"2.0/preview/scim/v2/Users/{id}")
+        return self.databricks.api("GET", f"{self.path}/scim/v2/Users/{id}")
 
-    def get_by_username(self, username):
+    def get_by_username(self, username, if_not_exists="ignore"):
         for u in self.list():
             if u["userName"] == username:
                 return u
+        if if_not_exists == "error":
+            raise DatabricksApiException(f"User({username!r}) not found", 404)
 
     def overwrite(self, user: dict):
         id = user["id"]
-        return self.databricks.api("PUT", f"2.0/preview/scim/v2/Users/{id}", _data=user)
+        return self.databricks.api("PUT", f"{self.path}/scim/v2/Users/{id}", _data=user)
 
     def patch(self, user: dict, operations: List[Dict]):
         id = user["id"]
@@ -34,7 +38,7 @@ class Users(ApiContainer):
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
             "Operations": operations
         }
-        return self.databricks.api("PATCH", f"2.0/preview/scim/v2/Users/{id}", _data=data)
+        return self.databricks.api("PATCH", f"{self.path}/scim/v2/Users/{id}", _data=data)
 
     def set_entitlements(self, user: dict, entitlements: Dict[str, bool]):
         adds = []
@@ -81,10 +85,10 @@ class Users(ApiContainer):
             "userName": username,
             "entitlements": entitlements
         }
-        return self.databricks.api("POST", "2.0/preview/scim/v2/Users", _data=data)
+        return self.databricks.api("POST", f"{self.path}/scim/v2/Users", _data=data)
 
     def delete_by_id(self, id):
-        return self.databricks.api("DELETE", f"2.0/preview/scim/v2/Users/{id}")
+        return self.databricks.api("DELETE", f"{self.path}/scim/v2/Users/{id}")
 
     def delete_by_username(self, *usernames):
         user_id_map = {u['userName']: u['id'] for u in self.list()["Resources"]}
