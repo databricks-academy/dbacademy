@@ -11,22 +11,18 @@ phases:
     commands:
       - python -c "print('Hello Nurse!')"
       - cd src
-      - python -m unittest discover -s ../test -t ../test
+      - python -m xmlrunner discover -s ../test -t ../test --output ../reports/unit-tests
   post_build:
     commands:
       - echo Build completed on `date`
 
-#reports:
+reports:
 #  coverage:
 #    files:
 #      - "coverage/*"
 #    base-directory: 'test-reports'
 #    discard-paths: yes
-#  report:
-#    files:
-#      - 'junit.xml'
-#      - 'report.html'
-#      - 'assets/*'
-#    base-directory: 'test-reports'
-#    discard-paths: yes
-#    file-format: JunitXml
+report:
+  unit-tests:
+    files: "reports/unit-tests/*"
+    file-format: "JUNITXML"
