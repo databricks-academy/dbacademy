@@ -1,4 +1,4 @@
-from typing import Type, List, Dict, Union, Any
+from typing import Type, List, Dict, Union, Any, Optional
 from dbacademy import dbgems, common
 
 
@@ -111,6 +111,7 @@ class BuildConfig:
         from .publish.notebook_def_class import NotebookDef
 
         self.__validated = False
+        self.__passing_tests: Dict[str, bool] = dict()
 
         try: self.username = dbgems.sql("SELECT current_user()").first()[0]
         except: self.username = "mickey.mouse@disney.com"  # When unit testing
@@ -376,3 +377,20 @@ class BuildConfig:
                          test_dir=self.source_dir,
                          test_type=test_type,
                          keep_success=keep_success)
+
+    def assert_all_tests_passed(self, clouds: Optional[str] = None):
+        if self.version in BuildConfig.VERSIONS_LIST:
+            return  # This is Test, Build or Translation and as such does not need to be validated.
+
+        clouds = clouds or ["AWS", "MSA", "GCP"]
+        clouds = [c.upper() for c in clouds]
+
+        for cloud in clouds:
+            assert cloud in self.__passing_tests, f"The tests for the cloud {cloud} and version {self.version} were not found. Please run the corresponding smoke tests before proceeding."
+            assert self.__passing_tests.get(cloud), f"The tests for the cloud {cloud} and version {self.version} did not pass. Please address the test failures and run the corresponding smoke tests before proceeding."
+
+    def validate_all_tests_passed(self, cloud: str):
+        cloud = common.validate_type(cloud, "cloud", str).upper()
+
+        self.__passing_tests[cloud] = True
+        dbgems.print_warning("NOT IMPLEMENTED", f"This function has not yet been implemented for {cloud}.")
