@@ -338,10 +338,10 @@ class BuildConfig:
 
                         for key in replacements_copy:
                             value = replacements_copy.get(key)
-                            print(f"    {key}", end="")
+                            print(f"     {key}", end="")
                             print(f" " * (max_key_length - len(key)), end="")
                             print(f": {value}")
-                        print("|   }")
+                        print("     }")
 
     # Used by notebooks
     # TODO Cannot define return type
