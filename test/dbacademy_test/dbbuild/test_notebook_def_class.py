@@ -1,11 +1,11 @@
 import unittest
 import typing
+from dbacademy import common
 
 from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef, NotebookError
 
 
 class TestNotebookDef(unittest.TestCase):
-    from dbacademy import dbgems
 
     def __init__(self, method_name):
         super().__init__(method_name)
@@ -47,7 +47,7 @@ class TestNotebookDef(unittest.TestCase):
                            ignoring=[],
                            version=version)
 
-    @dbgems.deprecated(reason="Just because")
+    @common.deprecated(reason="Just because")
     def dummy(self, arg_1, arg_2, *args, **kwargs):
         pass
 
@@ -367,7 +367,7 @@ class TestNotebookDef(unittest.TestCase):
 
     @staticmethod
     def test_replacement():
-        command ="""# Databricks notebook source
+        command = """# Databricks notebook source
 # MAGIC %md --i18n-5f2cfc0b-1998-4182-966d-8efed6020eb2
 # MAGIC 
 # MAGIC 
