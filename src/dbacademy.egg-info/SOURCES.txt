@@ -88,6 +88,7 @@ src/dbacademy/dougrest/accounts/network.py
 src/dbacademy/dougrest/accounts/private_access.py
 src/dbacademy/dougrest/accounts/storage.py
 src/dbacademy/dougrest/accounts/usage.py
+src/dbacademy/dougrest/accounts/users.py
 src/dbacademy/dougrest/accounts/vpc.py
 src/dbacademy/dougrest/accounts/workspaces.py
 src/dbacademy/dougrest/mlflow/__init__.py
