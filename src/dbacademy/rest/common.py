@@ -137,7 +137,7 @@ class ApiClient(ApiContainer):
 
     def api(self, _http_method: HttpMethod, _endpoint_path: str, _data: dict = None, *,
             _expected: HttpStatusCodes = None, _result_type: Type[HttpReturnType] = dict,
-            **data: Any) -> HttpReturnType:
+            _base_url: str = None, **data: Any) -> HttpReturnType:
         """
         Invoke the Databricks REST API.
 
@@ -153,6 +153,7 @@ class ApiClient(ApiContainer):
                bytes: Return the body as binary data.
                requests.Response: Return the HTTP response object.
                None: Return None.
+            _base_url: Overrides self.url, allowing alternative URL paths.
             **data: Any kwargs are appended to the _data payload.  Values here take priority over values
                specified in _data.
 
@@ -163,18 +164,20 @@ class ApiClient(ApiContainer):
             requests.HTTPError: If the API returns an error and on_error='raise'.
         """
         import json
+        from urllib.parse import urljoin
         if _data is None:
             _data = {}
         if data:
             _data = _data.copy()
             _data.update(data)
-        self._verify_hostname()
+        _base_url = urljoin(self.url, _base_url)
+        self._verify_hostname(_base_url)
         self._throttle_calls()
-        if _endpoint_path.startswith(self.url):
-            _endpoint_path = _endpoint_path[len(self.url):]
+        if _endpoint_path.startswith(_base_url):
+            _endpoint_path = _endpoint_path[len(_base_url):]
         elif _endpoint_path.startswith("http"):
             raise ValueError(f"endpoint_path must be relative url, not {_endpoint_path !r}.")
-        url = self.url + _endpoint_path.lstrip("/")
+        url = _base_url + _endpoint_path.lstrip("/")
         timeout = (self.connect_timeout, self.read_timeout)
         if _http_method in ('GET', 'HEAD', 'OPTIONS'):
             params = {k: str(v).lower() if isinstance(v, bool) else v for k, v in _data.items()}
@@ -203,12 +206,13 @@ class ApiClient(ApiContainer):
                     "_response": response.text
                 }
 
-    def _verify_hostname(self):
+    @staticmethod
+    def _verify_hostname(url):
         """Verify the host for the url-endpoint exists.  Throws socket.gaierror if it does not."""
         from urllib.parse import urlparse
         from socket import gethostbyname, gaierror
         from requests.exceptions import ConnectionError
-        url = urlparse(self.url)
+        url = urlparse(url)
         try:
             gethostbyname(url.hostname)
         except gaierror as e:

@@ -32,15 +32,34 @@ class Workspace(DatabricksApi):
     @overrides
     def api(self, _http_method: HttpMethod, _endpoint_path: str, _data: dict = None, *,
             _expected: HttpStatusCodes = None, _result_type: Type[HttpReturnType] = dict,
-            **data: Any) -> HttpReturnType:
+            _base_url: str = None, **data: Any) -> HttpReturnType:
         self.wait_until_ready()
-        return super().api(_http_method, _endpoint_path, _data,
-                           _expected=_expected, _result_type=_result_type, **data)
+        try:
+            return super().api(_http_method, _endpoint_path, _data,
+                               _expected=_expected, _result_type=_result_type,
+                               _base_url=_base_url, **data)
+        except DatabricksApiException as e:
+            if e.http_code == 401 and self.user is not None:
+                try:
+                    self.add_as_admin(self.user)
+                except DatabricksApiException:
+                    raise e
+                return super().api(_http_method, _endpoint_path, _data,
+                                   _expected=_expected, _result_type=_result_type,
+                                   _base_url=_base_url, **data)
+            else:
+                raise e
+
+    def add_as_admin(self, username):
+        user = self.accounts.users.get_by_username(username, if_not_exists="error")
+        return self.accounts.api("PUT", f"workspaces/{self['workspace_id']}/roleassignments/principals/{user['id']}",
+                                 _base_url=f"/api/2.0/preview/accounts/{self.accounts.account_id}/", roles=["ADMIN"])
 
 
 class Workspaces(AccountsCRUD):
-    def __init__(self, client):
+    def __init__(self, client: "DatabricksApi"):
         super().__init__(client, "/workspaces", "workspace")
+        self.client = client
 
     @overrides
     def _wrap(self, item: dict) -> Workspace:
