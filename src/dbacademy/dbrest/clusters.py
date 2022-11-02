@@ -2,6 +2,7 @@ from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import ApiContainer
 from dbacademy import common
 
+
 class ClustersClient(ApiContainer):
     def __init__(self, client: DBAcademyRestClient):
         self.client = client
