@@ -13,6 +13,7 @@ phases:
       - echo 'export PATH="~/miniconda/bin:$PATH"' >> ~/.bashrc
       - source ~/.bashrc
       #- conda update conda
+      - conda update -n base -c defaults conda
 
       - conda create --yes -n dbacademy python=3.9
       - conda activate dbacademy
