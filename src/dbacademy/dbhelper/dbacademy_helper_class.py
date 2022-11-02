@@ -30,7 +30,7 @@ class DBAcademyHelper:
 
         from .workspace_helper_class import WorkspaceHelper
         from .dev_helper_class import DevHelper
-        from .tests.testing_helper_class import TestHelper
+        from .validations.validation_helper_class import ValidationHelper
 
         assert lesson_config is not None, f"The parameter lesson_config:LessonConfig must be specified."
         self.__lesson_config = lesson_config
@@ -53,7 +53,7 @@ class DBAcademyHelper:
         self.client = DBAcademyRestClient()
         self.workspace = WorkspaceHelper(self)
         self.dev = DevHelper(self)
-        self.tests = TestHelper(self)
+        self.tests = ValidationHelper(self)
 
         # Are we running under test? If so we can "optimize" for parallel execution
         # without affecting the student's runtime-experience. As in the student can
