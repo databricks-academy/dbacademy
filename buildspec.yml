@@ -9,14 +9,14 @@ phases:
       #- wget https://repo.continuum.io/archive/Anaconda3-4.2.0-Linux-x86_64.sh
       - wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
       - bash Miniconda3-latest-Linux-x86_64.sh -b -p ~/miniconda
-      # - rm Miniconda3-latest-Linux-x86_64.sh
+      #- rm Miniconda3-latest-Linux-x86_64.sh
       - echo 'export PATH="~/miniconda/bin:$PATH"' >> ~/.bashrc
       - source ~/.bashrc
-      - conda update conda
+      #- conda update conda
 
-      - conda create -n dbacademy python=3.9
+      - conda create --yes -n dbacademy python=3.9
       - conda activate dbacademy
-      - pip install -r requirements.txt
+      - pip -q install -r requirements.txt
   build:
     commands:
       - python -m pytest --junitxml=reports/unit-tests.xml
