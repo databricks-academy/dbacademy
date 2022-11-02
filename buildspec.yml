@@ -9,6 +9,7 @@ phases:
       - python -m venv test_env
       - . test_env/bin/activate
       - pip -q install --upgrade pip
+      - pip -q install .
       - pip -q install -r requirements.txt --use-pep517
   build:
     commands:
