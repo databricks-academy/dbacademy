@@ -16,18 +16,18 @@ class TestAccountsApi(unittest.TestCase):
     """
 
     def testListWorkspaces(self):
-        account = dougrest_factory.default_account
+        account = dougrest_factory.default_account()
         result = account.workspaces.list()
         self.assertIsInstance(result, list)
 
     def testWorkspaceAsDatabricksApi(self):
-        account = dougrest_factory.default_account
+        account = dougrest_factory.default_account()
         ws = account.workspaces.list()[0]
         result = ws.workspace.list("/")
         self.assertIsInstance(result, list)
 
     def testListUsers(self):
-        account = dougrest_factory.default_account
+        account = dougrest_factory.default_account()
         print(account.users.list(count=10))
 
 
