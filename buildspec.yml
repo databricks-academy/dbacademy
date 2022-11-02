@@ -9,7 +9,7 @@ phases:
       - pip install -r requirements.txt
   build:
     commands:
-      - python -m pytest --junitxml-/reports/unit-tests.xml
+      - python -m pytest --junitxml ./reports/unit-tests.xml
   post_build:
     commands:
       - echo Build completed on `date`
