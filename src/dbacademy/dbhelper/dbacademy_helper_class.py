@@ -30,7 +30,7 @@ class DBAcademyHelper:
 
         from .workspace_helper_class import WorkspaceHelper
         from .dev_helper_class import DevHelper
-        from .tests.test_helper_class import TestHelper
+        from .tests.testing_helper_class import TestHelper
 
         assert lesson_config is not None, f"The parameter lesson_config:LessonConfig must be specified."
         self.__lesson_config = lesson_config
