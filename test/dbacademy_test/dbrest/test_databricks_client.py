@@ -7,7 +7,7 @@
 
 import unittest
 
-from dbacademy.dougrest import databricks
+from dbacademy.rest.factory import dougrest_factory
 
 
 class TestDatabricksApiClient(unittest.TestCase):
@@ -16,15 +16,18 @@ class TestDatabricksApiClient(unittest.TestCase):
     """
 
     def testWorkspace(self):
-        result = databricks.workspace.list("/")
+        ws = dougrest_factory.default_client
+        result = ws.workspace.list("/")
         self.assertIsInstance(result, list)
 
     def testClusters(self):
-        result = databricks.clusters.list()
+        ws = dougrest_factory.default_client
+        result = ws.clusters.list()
         self.assertIsNotNone(result)
 
     def testJobs(self):
-        result = databricks.jobs.list()
+        ws = dougrest_factory.default_client
+        result = ws.jobs.list()
         result = list(result)
         if not result:
             return
@@ -33,37 +36,46 @@ class TestDatabricksApiClient(unittest.TestCase):
         self.assertIsInstance(job_id, int)
 
     def testRepos(self):
-        result = databricks.repos.list()
+        ws = dougrest_factory.default_client
+        result = ws.repos.list()
         self.assertIsNotNone(result)
 
     def testUsers(self):
-        result = databricks.users.list()
+        ws = dougrest_factory.default_client
+        result = ws.users.list()
         self.assertIsInstance(result, list)
 
     def testGroups(self):
-        result = databricks.scim.groups.list()
+        ws = dougrest_factory.default_client
+        result = ws.scim.groups.list()
         self.assertIsInstance(result, list)
 
     def testSqlWarehouses(self):
-        result = databricks.sql.endpoints.list()
+        ws = dougrest_factory.default_client
+        result = ws.sql.endpoints.list()
         self.assertIsInstance(result, list)
 
     def testScim(self):
-        result = databricks.scim.groups.list()
+        ws = dougrest_factory.default_client
+        result = ws.scim.groups.list()
         self.assertIsInstance(result, list)
 
     def testPools(self):
-        result = databricks.pools.list()
+        ws = dougrest_factory.default_client
+        result = ws.pools.list()
         self.assertIsInstance(result, list)
 
     def testMlFlow(self):
-        result = list(databricks.mlflow.registered_models.list())
+        ws = dougrest_factory.default_client
+        result = list(ws.mlflow.registered_models.list())
         self.assertIsInstance(result, list)
         self.assertTrue(result)
 
     def testPermissions(self):
-        pool_id = databricks.pools.list()[0]["instance_pool_id"]
-        databricks.permissions.pools.get_levels(pool_id)
+        ws = dougrest_factory.default_client
+        pool_id = ws.pools.list()[0]["instance_pool_id"]
+        result = ws.permissions.pools.get_levels(pool_id)
+        self.assertTrue(result)
 
 
 # COMMAND ----------
