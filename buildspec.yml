@@ -9,9 +9,6 @@ phases:
       - pip install -r requirements.txt
   build:
     commands:
-      - python -c "print('Hello Nurse!')"
-      # - cd src
-      # - python -m xmlrunner discover -s ../test -t ../test --output ../reports/unit-tests
       - python -m pytest --junitxml ./reports/unit-tests.xml
   post_build:
     commands:
