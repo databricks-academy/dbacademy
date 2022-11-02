@@ -1,6 +1,6 @@
 __all__ = ["dbrest_factory", "dougrest_factory"]
 
-from functools import cached_property
+from functools import cache
 from typing import Dict, Generic, Type, TypeVar, Union, Optional
 
 from dbacademy.dbrest.client import DBAcademyRestClient
@@ -14,9 +14,9 @@ class ApiClientFactory(Generic[ApiType]):
     def __init__(self, api_type: Type[ApiType]):
         self.api_type = api_type
 
-    @cached_property
+    @cache
     def default_client(self) -> ApiType:
-        result = self.known_clients.get("DEFAULT")
+        result = self.known_clients().get("DEFAULT")
         if result:
             return result
         result = self.current_workspace()
@@ -24,7 +24,7 @@ class ApiClientFactory(Generic[ApiType]):
             return result
         raise ValueError("Unable to determine the default_client hostname and token.")
 
-    @cached_property
+    @cache
     def current_workspace(self) -> Optional[ApiType]:
         """
         If run inside a Databricks workspace, return an ApiClient for the current workspace.
@@ -67,7 +67,7 @@ class ApiClientFactory(Generic[ApiType]):
         else:
             raise ValueError(f"Unknown ApiClient class: " + str(ApiType))
 
-    @cached_property
+    @cache
     def known_clients(self) -> Dict[str, ApiType]:
         clients = {}
         import os
@@ -87,14 +87,14 @@ class ApiClientFactory(Generic[ApiType]):
                 clients[section_name] = self.token_auth(host, token=token)
         return clients
 
-    @cached_property
+    @cache
     def default_account(self) -> AccountsApi:
-        result = self.known_accounts.get("DEFAULT")
+        result = self.known_accounts().get("DEFAULT")
         if result is not None:
             return result
         raise ValueError("No account entries found in .databricks_cfg")
 
-    @cached_property
+    @cache
     def known_accounts(self) -> Dict[str, AccountsApi]:
         clients = {}
         import os
