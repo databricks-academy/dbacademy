@@ -9,6 +9,17 @@ __all__ = ["DatabricksApi", "DatabricksApiException"]
 
 
 class DatabricksApi(dict, ApiClient):
+    from configparser import ConfigParser
+
+    PROFILE_DEFAULT = "DEFAULT"
+    PROFILE_ENVIRONMENT = "ENVIRONMENT"
+
+    ENV_DATABRICKS_HOST = "DATABRICKS_HOST"
+    ENV_DATABRICKS_TOKEN = "DATABRICKS_TOKEN"
+
+    SECTION_HOST = "host"
+    SECTION_TOKEN = "token"
+    SECTION_JOBS_API_VERSION = "jobs-api-version"
 
     default_machine_types = {
         "AWS": "i3.xlarge",
@@ -19,31 +30,58 @@ class DatabricksApi(dict, ApiClient):
     # noinspection PyMethodParameters
     @CachedStaticProperty
     def default_client() -> DatabricksApi:
-        result = DatabricksApi.known_clients.get("DEFAULT")
+
+        # Give precedence to config defined in the environment.
+        result = DatabricksApi.known_clients.get(DatabricksApi.PROFILE_ENVIRONMENT)
+        result = result or DatabricksApi.known_clients.get(DatabricksApi.PROFILE_DEFAULT)
+
         if result is None:
             result = DatabricksApi()
+
         return result
 
     # noinspection PyMethodParameters
     @CachedStaticProperty
     def known_clients() -> Dict[str, DatabricksApi]:
+        import os, configparser
+
         clients = {}
-        import os
-        import configparser
+
         for path in ('.databrickscfg', '~/.databrickscfg'):
             path = os.path.expanduser(path)
             if not os.path.exists(path):
                 continue
+
             config = configparser.ConfigParser()
             config.read(path)
+            DatabricksApi.read_env(config)
+
             for section_name, section in config.items():
                 api_type = section.get('api_type', 'workspace')
                 if api_type != 'workspace':
                     continue
-                host = section['host'].rstrip("/")[8:]
-                token = section['token']
+                host = section[DatabricksApi.SECTION_HOST].rstrip("/")[8:]
+                token = section[DatabricksApi.SECTION_TOKEN]
                 clients[section_name] = DatabricksApi(host, token=token)
+
         return clients
+
+    @staticmethod
+    def read_env(config: ConfigParser):
+        import os
+
+        host = os.getenv(DatabricksApi.ENV_DATABRICKS_HOST)
+        token = os.getenv(DatabricksApi.ENV_DATABRICKS_TOKEN)
+
+        # TODO We need to verify that we are actually getting Jobs 2.1. Then again, it may only be applicable to the CLI and we should figure that out.
+        if host and token:
+            config.read_dict({
+                DatabricksApi.PROFILE_ENVIRONMENT: {
+                    DatabricksApi.SECTION_HOST: host,
+                    DatabricksApi.SECTION_TOKEN: token,
+                    DatabricksApi.SECTION_JOBS_API_VERSION: "2.1",
+                }
+            })
 
     def __init__(self, hostname=None, *, token=None, user=None, password=None, authorization_header=None, cloud="AWS", deployment_name=None):
         from dbacademy import dbgems
