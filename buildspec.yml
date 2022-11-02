@@ -9,13 +9,13 @@ phases:
       - pip install -r requirements.txt
   build:
     commands:
-      - python -m pytest --junitxml ./reports/unit-tests.xml
+      - python -m pytest --junitxml-/reports/unit-tests.xml
   post_build:
     commands:
       - echo Build completed on `date`
 
 reports:
-  report:
-    unit-tests:
-      files: "reports/unit-tests.xml"
-      file-format: "JUNITXML"
+  unit-tests:
+    files: unit-tests.xml
+    base-directory: reports/
+    file-format: JUNITXML
