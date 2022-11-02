@@ -12,7 +12,7 @@ phases:
       - pip -q install -r requirements.txt --use-pep517
   build:
     commands:
-      - python -m pytest --junitxml=reports/unit-tests.xml
+      - python -m pytest --junit-xml=reports/unit-tests.xml --ignore=test
   post_build:
     commands:
       - echo Build completed on `date`
