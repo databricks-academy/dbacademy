@@ -105,8 +105,11 @@ def get_notebook_dir(offset=-1) -> str:
 
 
 def get_notebooks_api_endpoint() -> str:
-    # noinspection PyUnresolvedReferences
-    return dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiUrl().getOrElse(None)
+    if isinstance(dbutils, MockDBUtils):
+        raise Exception("This is a MockDBUtils")
+    else:
+        # noinspection PyUnresolvedReferences
+        return dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiUrl().getOrElse(None)
 
 
 def get_notebooks_api_token() -> str:
