@@ -91,7 +91,7 @@ class Commands(object):
 
     @staticmethod
     def endpointsRemoveStarter(workspace):
-        """Deletes the "Starter Warehouse."""
+        """Deletes the Starter Warehouse."""
         endpoints = workspace.sql.endpoints.list_by_name()
         for ep in endpoints.values():
             if ep['name'] in ["Starter Endpoint", "Starter Warehouse"]:
@@ -208,7 +208,7 @@ class Commands(object):
 
     @staticmethod
     def collapseACL(acl):
-        """Takes an ACL you read and turns it into a ACL you can write."""
+        """Takes an ACL you read and turns it into an ACL you can write."""
         results = []
         for ac in acl:
             for type, name in ac.items():
