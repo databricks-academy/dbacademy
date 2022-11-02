@@ -11,11 +11,11 @@ phases:
       #- rm Miniconda3-latest-Linux-x86_64.sh
       - echo 'export PATH="~/miniconda/bin:$PATH"' >> ~/.bashrc
       - source ~/.bashrc
-      - conda update -n base -c defaults conda
-      - conda init bash
+      - conda -q update -n base -c defaults conda
+      - conda -q init bash
 
-      - conda create --yes -n dbacademy python=3.9
-      - conda activate dbacademy
+      - conda -q create --yes -n dbacademy python=3.9
+      - conda -q activate dbacademy
       - pip -q install -r requirements.txt
   build:
     commands:
