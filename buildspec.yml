@@ -7,7 +7,7 @@ phases:
   pre_build:
     commands:
       - sudo dnf check-update --releasever=2022.0.20220928
-      - sudo yum install -y python3-venv
+      - sudo yum install -y python3-virtualenv
       - python3.6 -m venv test_env
       - . test_env/bin/activate
       - pip install --upgrade pip
