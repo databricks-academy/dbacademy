@@ -153,63 +153,63 @@ class NotebookDef:
         self.test(lambda: len(notebooks) != 0, message)
 
     @staticmethod
-    def get_latest_commit_id(repo_name):
+    def get_latest_commit_id(repo_name, branch_name="published"):
         import requests
-        repo_url = f"https://api.github.com/repos/databricks-academy/{repo_name}/commits/published"
+        repo_url = f"https://api.github.com/repos/databricks-academy/{repo_name}/commits/{branch_name}"
         response = requests.get(repo_url)
         assert response.status_code == 200, f"Expected 200, received {response.status_code}"
 
         return response.json().get("sha")
 
-    @staticmethod
-    def parse_version(command, url):
-        import sys
-        pos_a = command.find(url)
-        assert pos_a >= 0, f"Unable to find \"{url}\" in command string:\n{command}"
-        pos_a += len(url)
+    # @staticmethod
+    # def parse_version(command, url):
+    #     import sys
+    #     pos_a = command.find(url)
+    #     assert pos_a >= 0, f"Unable to find \"{url}\" in command string:\n{command}"
+    #     pos_a += len(url)
+    #
+    #     pos_x = command.find(" ", pos_a)
+    #     if pos_x < 0: pos_x = sys.maxsize
+    #
+    #     pos_y = command.find("\n", pos_a)
+    #     if pos_y < 0: pos_y = sys.maxsize
+    #
+    #     end = len(command)+1
+    #
+    #     pos_b = min(min(pos_x, pos_y), end)
+    #
+    #     version = command[pos_a:pos_b]
+    #     return version
 
-        pos_x = command.find(" ", pos_a)
-        if pos_x < 0: pos_x = sys.maxsize
-
-        pos_y = command.find("\n", pos_a)
-        if pos_y < 0: pos_y = sys.maxsize
-
-        end = len(command)+1
-
-        pos_b = min(min(pos_x, pos_y), end)
-
-        version = command[pos_a:pos_b]
-        return version
-
-    def update_git_commit(self, command: str, url: str) -> str:
-        from dbacademy.dbbuild.build_config_class import BuildConfig
-
-        if url not in command: return command
-        else:
-            if f"{url}@v" in command:
-                version = self.parse_version(command, f"{url}@v")
-                print(f"Publishing w/version v{version} for {url}")
-                return command  # This is a specific version and should be OK as-is
-
-            elif f"{url}@" in command:
-                # This is a pinned comment and generally not allowed.
-                version = self.parse_version(command, f"{url}@")
-                if self.version in BuildConfig.VERSIONS_LIST:
-                    print(f"Publishing w/version @{version} for {url}")
-                    self.warn(lambda: False, f"Building with named branch or commit id ({version}), not a released version, not head - this will prevent publishing.")
-                    return command  # Don't update, run with it as-is
-                else:
-                    # Fail the build here because we cannot publish this way.
-                    print(f"Failing publish of version @{version} for {url}")
-                    self.test(lambda: False, f"Cannot publish with libraries that specify a specific branch or commit id ({version}).")
-                    return command  # Return the value, will abort later
-            else:
-                # We are building from the head, so we need to lock in the version number.
-                name = url.split("/")[-1]
-                commit_id = NotebookDef.get_latest_commit_id(name)
-                new_url = f"{url}@{commit_id}"
-                print(f"Publishing w/commit \"{commit_id}\" for {url}")
-                return command.replace(url, new_url)
+    # def update_git_commit(self, command: str, url: str, branch_name: str) -> str:
+    #     from dbacademy.dbbuild.build_config_class import BuildConfig
+    #
+    #     if url not in command: return command
+    #     else:
+    #         if f"{url}@v" in command:
+    #             version = self.parse_version(command, f"{url}@v")
+    #             print(f"Publishing w/version v{version} for {url}")
+    #             return command  # This is a specific version and should be OK as-is
+    #
+    #         elif f"{url}@" in command:
+    #             # This is a pinned comment and generally not allowed.
+    #             version = self.parse_version(command, f"{url}@")
+    #             if self.version in BuildConfig.VERSIONS_LIST:
+    #                 print(f"Publishing w/version @{version} for {url}")
+    #                 self.warn(lambda: False, f"Building with named branch or commit id ({version}), not a released version, not head - this will prevent publishing.")
+    #                 return command  # Don't update, run with it as-is
+    #             else:
+    #                 # Fail the build here because we cannot publish this way.
+    #                 print(f"Failing publish of version @{version} for {url}")
+    #                 self.test(lambda: False, f"Cannot publish with libraries that specify a specific branch or commit id ({version}).")
+    #                 return command  # Return the value, will abort later
+    #         else:
+    #             # We are building from the head, so we need to lock in the version number.
+    #             repo_name = url.split("/")[-1]
+    #             commit_id = NotebookDef.get_latest_commit_id(repo_name=repo_name, branch_name=branch_name)
+    #             new_url = f"{url}@{commit_id}"
+    #             print(f"Publishing w/commit \"{commit_id}\" for {url}")
+    #             return command.replace(url, new_url)
 
     def test_pip_cells(self, language: str, command: str, i: int) -> str:
         """
@@ -219,7 +219,6 @@ class NotebookDef:
         :param i: The zero-based index to the command within the notebook
         :return: None
         """
-        import re
 
         # First verify that the specified command is a %pip cell
         cm = self.get_comment_marker(language)
@@ -227,23 +226,14 @@ class NotebookDef:
         if not command.startswith(prefix):
             return command
 
-        command = self.update_git_commit(command, "git+https://github.com/databricks-academy/dbacademy-gems")
-        command = self.update_git_commit(command, "git+https://github.com/databricks-academy/dbacademy-rest")
-        command = self.update_git_commit(command, "git+https://github.com/databricks-academy/dbacademy-helper")
+        # command = self.update_git_commit(command, "git+https://github.com/databricks-academy/dbacademy-gems", "published")
+        # command = self.update_git_commit(command, "git+https://github.com/databricks-academy/dbacademy-rest", "published")
+        # command = self.update_git_commit(command, "git+https://github.com/databricks-academy/dbacademy-helper", "published")
 
-        if "https://github.com/databricks-academy/dbacademy-helper" in command:
-            assert "https://github.com/databricks-academy/dbacademy-rest" in command, f"Cmd #{i + 1} | Using repo dbacademy-helper without including dbacademy-rest"
-            assert "https://github.com/databricks-academy/dbacademy-gems" in command, f"Cmd #{i + 1} | Using repo dbacademy-helper without including dbacademy-gems"
-        elif "https://github.com/databricks-academy/dbacademy-rest" in command:
-            assert "https://github.com/databricks-academy/dbacademy-gems" in command, f"Cmd #{i + 1} | Using repo dbacademy-rest without including dbacademy-gems"
-
-        # Assuming that %pip is a one-liner or at least should be
-        pattern = re.compile(r"^# MAGIC ", re.MULTILINE)
-        libraries = [r for r in pattern.sub("", command).replace("\n", " ").split(" ") if r.startswith("git+https://github.com/databricks-academy")]
-        for library in libraries:
-            # Not all libraries should be pinned, such as the build tools themselves.
-            if library != "git+https://github.com/databricks-academy/dbacademy-courseware":
-                self.test(lambda: "@" in library, f"Cmd #{i + 1} | The library is not pinned to a specific version: {library}\n{command}")
+        for repo in ["dbacademy-helper", "dbacademy-rest", "dbacademy-gems", "dbacademy-courseware"]:
+            full_repo = f"https://github.com/databricks-academy/{repo}"
+            message = f"Cmd #{i + 1} | Using unsupported repo, {full_repo} is no longer supported; please use https://github.com/databricks-academy/dbacademy instead."
+            self.test(lambda: full_repo not in command, message)
 
         return command
 

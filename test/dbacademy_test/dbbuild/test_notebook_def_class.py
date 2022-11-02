@@ -1,7 +1,6 @@
 import unittest
 import typing
 
-from dbacademy.common import deprecated
 from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef, NotebookError
 
 
@@ -47,82 +46,113 @@ class TestNotebookDef(unittest.TestCase):
                            ignoring=[],
                            version=version)
 
-    @deprecated(reason="Just because")
-    def dummy(self, arg_1, arg_2, *args, **kwargs):
-        pass
+    # def test_parse_version_no_version(self):
+    #     command = r"""
+    #     # MAGIC %pip install \
+    #     # MAGIC git+https://github.com/databricks-academy/dbacademy-gems \
+    #     # MAGIC git+https://github.com/databricks-academy/dbacademy-rest \
+    #     # MAGIC git+https://github.com/databricks-academy/dbacademy-helper \
+    #     # MAGIC --quiet --disable-pip-version-check""".strip()
+    #
+    #     version = NotebookDef.parse_version(command, "git+https://github.com/databricks-academy/dbacademy-rest")
+    #     self.assertEqual("", version)
 
-    def test_dummy(self):
-        self.dummy("apples", "blue", "red", happy=True)
+    # def test_parse_version_with_commit_hash(self):
+    #     command = r"""
+    #     # MAGIC %pip install \
+    #     # MAGIC git+https://github.com/databricks-academy/dbacademy-gems@123 \
+    #     # MAGIC git+https://github.com/databricks-academy/dbacademy-rest@123 \
+    #     # MAGIC git+https://github.com/databricks-academy/dbacademy-helper@123 \
+    #     # MAGIC --quiet --disable-pip-version-check""".strip()
+    #
+    #     version = NotebookDef.parse_version(command, "git+https://github.com/databricks-academy/dbacademy-rest@")
+    #     self.assertEqual("123", version)
 
-    def test_parse_version_no_version(self):
-        command = r"""
-        # MAGIC %pip install \
-        # MAGIC git+https://github.com/databricks-academy/dbacademy-gems \
-        # MAGIC git+https://github.com/databricks-academy/dbacademy-rest \
-        # MAGIC git+https://github.com/databricks-academy/dbacademy-helper \
-        # MAGIC --quiet --disable-pip-version-check""".strip()
+    # def test_parse_version_with_tagged_version(self):
+    #     command = r"""
+    #     # MAGIC %pip install \
+    #     # MAGIC git+https://github.com/databricks-academy/dbacademy-gems@v1.2.3 \
+    #     # MAGIC git+https://github.com/databricks-academy/dbacademy-rest@v4.5.6 \
+    #     # MAGIC git+https://github.com/databricks-academy/dbacademy-helper@v7.8.9 \
+    #     # MAGIC --quiet --disable-pip-version-check""".strip()
+    #
+    #     version = NotebookDef.parse_version(command, "git+https://github.com/databricks-academy/dbacademy-rest@")
+    #     self.assertEqual("v4.5.6", version)
 
-        version = NotebookDef.parse_version(command, "git+https://github.com/databricks-academy/dbacademy-rest")
-        self.assertEqual("", version)
+    # def test_parse_version_with_eof(self):
+    #     command = r"""
+    #     # MAGIC %pip install \
+    #     # MAGIC git+https://github.com/databricks-academy/dbacademy-gems@v1.2.3 \
+    #     # MAGIC git+https://github.com/databricks-academy/dbacademy-rest@v4.5.6""".strip()
+    #
+    #     version = NotebookDef.parse_version(command, "git+https://github.com/databricks-academy/dbacademy-rest@")
+    #     self.assertEqual("v4.5.6", version)
 
-    def test_parse_version_with_commit_hash(self):
-        command = r"""
-        # MAGIC %pip install \
-        # MAGIC git+https://github.com/databricks-academy/dbacademy-gems@123 \
-        # MAGIC git+https://github.com/databricks-academy/dbacademy-rest@123 \
-        # MAGIC git+https://github.com/databricks-academy/dbacademy-helper@123 \
-        # MAGIC --quiet --disable-pip-version-check""".strip()
+    def test_test_pip_cells(self):
 
-        version = NotebookDef.parse_version(command, "git+https://github.com/databricks-academy/dbacademy-rest@")
-        self.assertEqual("123", version)
-
-    def test_parse_version_with_tagged_version(self):
-        command = r"""
-        # MAGIC %pip install \
-        # MAGIC git+https://github.com/databricks-academy/dbacademy-gems@v1.2.3 \
-        # MAGIC git+https://github.com/databricks-academy/dbacademy-rest@v4.5.6 \
-        # MAGIC git+https://github.com/databricks-academy/dbacademy-helper@v7.8.9 \
-        # MAGIC --quiet --disable-pip-version-check""".strip()
-
-        version = NotebookDef.parse_version(command, "git+https://github.com/databricks-academy/dbacademy-rest@")
-        self.assertEqual("v4.5.6", version)
-
-    def test_parse_version_with_eof(self):
-        command = r"""
-        # MAGIC %pip install \
-        # MAGIC git+https://github.com/databricks-academy/dbacademy-gems@v1.2.3 \
-        # MAGIC git+https://github.com/databricks-academy/dbacademy-rest@v4.5.6""".strip()
-
-        version = NotebookDef.parse_version(command, "git+https://github.com/databricks-academy/dbacademy-rest@")
-        self.assertEqual("v4.5.6", version)
-
-    def test_test_pip_cells_pinned(self):
-        command = r"""
-# MAGIC %pip install \
-# MAGIC git+https://github.com/databricks-academy/dbacademy-gems@123 \
-# MAGIC git+https://github.com/databricks-academy/dbacademy-rest@123 \
-# MAGIC git+https://github.com/databricks-academy/dbacademy-helper@123 \
-# MAGIC --quiet --disable-pip-version-check""".strip()
-
+        command = r"# MAGIC %pip install git+https://github.com/databricks-academy/dbacademy"
         notebook = self.create_notebook()
         notebook.test_pip_cells(language="Python", command=command, i=3)
-
         self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
         self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
 
-    def test_test_pip_cells_not_pinned(self):
-        command = r"""
-            # MAGIC %pip install \
-            # MAGIC git+https://github.com/databricks-academy/dbacademy-moo \
-            # MAGIC --quiet --disable-pip-version-check""".strip()
-
+        command = r"# MAGIC %pip install git+https://github.com/databricks-academy/dbacademy-gems"
         notebook = self.create_notebook()
         notebook.test_pip_cells(language="Python", command=command, i=3)
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(1, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+        expected = "Cmd #4 | Using unsupported repo, https://github.com/databricks-academy/dbacademy-gems is no longer supported; please use https://github.com/databricks-academy/dbacademy instead."
+        self.assertEqual(expected, notebook.errors[0].message)
 
-        self.assert_n_warnings(0, notebook)
-        self.assert_n_errors(1, notebook)
+        command = r"# MAGIC %pip install git+https://github.com/databricks-academy/dbacademy-rest"
+        notebook = self.create_notebook()
+        notebook.test_pip_cells(language="Python", command=command, i=3)
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(1, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+        expected = "Cmd #4 | Using unsupported repo, https://github.com/databricks-academy/dbacademy-rest is no longer supported; please use https://github.com/databricks-academy/dbacademy instead."
+        self.assertEqual(expected, notebook.errors[0].message)
 
-        self.assertEqual("Cmd #4 | The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-moo", notebook.errors[0].message)
+        command = r"# MAGIC %pip install git+https://github.com/databricks-academy/dbacademy-helper"
+        notebook = self.create_notebook()
+        notebook.test_pip_cells(language="Python", command=command, i=3)
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(1, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+        expected = "Cmd #4 | Using unsupported repo, https://github.com/databricks-academy/dbacademy-helper is no longer supported; please use https://github.com/databricks-academy/dbacademy instead."
+        self.assertEqual(expected, notebook.errors[0].message)
+
+        command = r"# MAGIC %pip install git+https://github.com/databricks-academy/dbacademy-courseware"
+        notebook = self.create_notebook()
+        notebook.test_pip_cells(language="Python", command=command, i=3)
+        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
+        self.assertEqual(1, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+        expected = "Cmd #4 | Using unsupported repo, https://github.com/databricks-academy/dbacademy-courseware is no longer supported; please use https://github.com/databricks-academy/dbacademy instead."
+        self.assertEqual(expected, notebook.errors[0].message)
+
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-gems@4.5.6 \
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-@7.8.9 \
+        # MAGIC git+https://github.com/databricks-academy/dbacademy-@10.11.12 \
+        # MAGIC --quiet --disable-pip-version-check""".strip()
+
+#     def test_test_pip_cells_not_pinned(self):
+#         command = r"""
+# # MAGIC %pip install \
+# # MAGIC git+https://github.com/databricks-academy/dbacademy-moo \
+# # MAGIC --quiet --disable-pip-version-check""".strip()
+#
+#         notebook = self.create_notebook()
+#         notebook.test_pip_cells(language="Python", command=command, i=3)
+#
+#         self.assert_n_warnings(0, notebook)
+#         self.assert_n_errors(1, notebook)
+#
+#         actual_message = notebook.errors[0].message
+#         expected_message = r"""
+# Cmd #4 | The library is not pinned to a specific version: git+https://github.com/databricks-academy/dbacademy-moo
+# # MAGIC %pip install \
+# # MAGIC git+https://github.com/databricks-academy/dbacademy-moo \
+# # MAGIC --quiet --disable-pip-version-check
+# """.strip()
+#         self.assertEqual(expected_message, actual_message)
 
     def test_good_single_space_i18n(self):
         command = """
@@ -356,14 +386,8 @@ class TestNotebookDef(unittest.TestCase):
         self.assert_message(notebook.warnings, 0, "Cmd #4 | Found HTML link without the required target=\"_blank\": <a href=\"https://example.com\">some link</a>")
 
     def test_get_latest_commit_id(self):
-        commit_id = NotebookDef.get_latest_commit_id("dbacademy-gems")
+        commit_id = NotebookDef.get_latest_commit_id("dbacademy", "main")
         self.assertIsNotNone(commit_id, f"Expected non-None value for dbacademy-gems")
-
-        commit_id = NotebookDef.get_latest_commit_id("dbacademy-rest")
-        self.assertIsNotNone(commit_id, f"Expected non-None value for dbacademy-rest")
-
-        commit_id = NotebookDef.get_latest_commit_id("dbacademy-helper")
-        self.assertIsNotNone(commit_id, f"Expected non-None value for dbacademy-helper")
 
     @staticmethod
     def test_replacement():
