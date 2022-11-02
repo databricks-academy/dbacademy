@@ -8,9 +8,9 @@ class TestHelper:
         self.client = da.client
 
     # noinspection PyMethodMayBeStatic
-    def new(self, name) -> TestSuite:
-        from .testing_suite_class import TestSuite
-        return TestSuite(name)
+    def new(self, name) -> TestingSuite:
+        from .testing_suite_class import TestingSuite
+        return TestingSuite(name)
 
     @staticmethod
     def monkey_patch(function_ref, delete=True):
