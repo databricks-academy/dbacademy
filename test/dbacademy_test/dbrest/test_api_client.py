@@ -17,28 +17,28 @@ class TestApiClient(unittest.TestCase):
     """
 
     def testApiSimple(self):
-        ws = dougrest_factory.default_client
+        ws = dougrest_factory.default_client()
         results = ws.api("GET", "/2.0/workspace/list", path="/")
         self.assertIsNotNone(results)
 
     def testExpected404(self):
-        ws = dougrest_factory.default_client
+        ws = dougrest_factory.default_client()
         results = ws.api("GET", "/2.0/workspace/list", path="/does-not-exist", _expected=404)
         self.assertIsNone(results)
 
     def testSelfCallable(self):
-        ws = dougrest_factory.default_client
+        ws = dougrest_factory.default_client()
         self.assertEqual(ws, ws())
 
     def testWithHostname(self):
         # We intentionally pass in a full URL as part of testing for legacy compatibility.
-        ws = dougrest_factory.default_client
+        ws = dougrest_factory.default_client()
         url = ws.url + "2.0/workspace/list?path=/"
         results = ws.api("GET", url)
         self.assertIsNotNone(results)
 
     def testWithWrongHostname(self):
-        ws = dougrest_factory.default_client
+        ws = dougrest_factory.default_client()
         url = "https://unknown.domain.com/api/2.0/workspace/list?path=/"
         try:
             ws.api("GET", url)
@@ -47,13 +47,13 @@ class TestApiClient(unittest.TestCase):
             pass
 
     def testExecuteGetJsonExpected404(self):
-        ws = dougrest_factory.default_client
+        ws = dougrest_factory.default_client()
         url = "2.0/workspace/list?path=/does-not-exist"
         results = ws.api("GET", url, _expected=404)
         self.assertIsNone(results)
 
     def testNotFound(self):
-        ws = dougrest_factory.default_client
+        ws = dougrest_factory.default_client()
         try:
             ws.api("GET", "does-not-exist")
             self.fail("404 DatabricksApiException expected")
@@ -61,7 +61,7 @@ class TestApiClient(unittest.TestCase):
             self.assertEqual(e.http_code, 404)
 
     def testUnauthorized(self):
-        default_ws = dougrest_factory.default_client
+        default_ws = dougrest_factory.default_client()
         try:
             client = ApiClient(default_ws.url, token="INVALID")
             client.api("GET", "2.0/workspace/list")
@@ -72,7 +72,7 @@ class TestApiClient(unittest.TestCase):
     def testThrottle(self):
         print()
         print("Ignore the next throttle warning.  It is intentionally being testing.")
-        default_ws = dougrest_factory.default_client
+        default_ws = dougrest_factory.default_client()
         ws = ApiClient(default_ws.url,
                        authorization_header=default_ws.session.headers["Authorization"],
                        throttle_seconds=2)
