@@ -6,6 +6,16 @@ phases:
       python: 3.9
   pre_build:
     commands:
+      #- wget https://repo.continuum.io/archive/Anaconda3-4.2.0-Linux-x86_64.sh
+      - wget https://repo.anaconda.com/archive/Anaconda3-2022.10-Linux-x86_64.sh
+      - bash Anaconda3-2022.10-Linux-x86_64.sh -b -p ~/anaconda
+      # - rm Anaconda3-2022.10-Linux-x86_64.sh
+      - echo 'export PATH="~/anaconda/bin:$PATH"' >> ~/.bashrc
+      - source ~/.bashrc
+      - conda update conda
+
+      - conda create -n dbacademy python=3.9
+      - conda activate dbacademy
       - pip install -r requirements.txt
   build:
     commands:
