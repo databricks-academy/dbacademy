@@ -5,4 +5,4 @@ urllib3
 requests
 wheel
 pyspark==3.3.*
-unittest-xml-reporting
+pytest

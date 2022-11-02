@@ -10,8 +10,9 @@ phases:
   build:
     commands:
       - python -c "print('Hello Nurse!')"
-      - cd src
-      - python -m xmlrunner discover -s ../test -t ../test --output ../reports/unit-tests
+      # - cd src
+      # - python -m xmlrunner discover -s ../test -t ../test --output ../reports/unit-tests
+      - python -m pytest --junitxml ./reports/unit-tests.xml
   post_build:
     commands:
       - echo Build completed on `date`
@@ -19,5 +20,5 @@ phases:
 reports:
   report:
     unit-tests:
-      files: "reports/unit-tests/*.xml"
+      files: "reports/unit-tests.xml"
       file-format: "JUNITXML"
