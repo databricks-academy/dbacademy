@@ -6,7 +6,7 @@ phases:
       python: 3.9
   pre_build:
     commands:
-      - apt-get install -y python3-venv
+      - sudo yum install -y python3-venv
       - python3.6 -m venv test_env
       - . test_env/bin/activate
       - pip install --upgrade pip
