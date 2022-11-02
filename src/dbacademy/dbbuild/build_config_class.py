@@ -145,14 +145,14 @@ class BuildConfig:
         self.version = version
         self.core_version = version
 
-        # The runtime you wish to test against
-        self.spark_version = self.client.clusters().get_current_spark_version() if spark_version is None else spark_version
+        # The runtime you wish to test against - lazily evaluated via property
+        self.__spark_version = spark_version
 
         # We can use local-mode clusters here
         self.workers = 0 if workers is None else workers
 
-        # The instance pool from which to obtain VMs
-        self.instance_pool = self.client.clusters().get_current_instance_pool_id() if instance_pool is None else instance_pool
+        # The instance pool from which to obtain VMs - lazily evaluated via property
+        self.__instance_pool = instance_pool
 
         # Spark configuration parameters
         self.spark_conf = dict() if spark_conf is None else spark_conf
@@ -268,6 +268,20 @@ class BuildConfig:
             self.__index_notebooks()
 
         self.__validated = True
+
+    @property
+    def instance_pool(self):
+        if self.__instance_pool is None:  # This may have not be specified upon instantiation
+            self.__instance_pool = self.client.clusters().get_current_instance_pool_id()
+
+        return self.__instance_pool
+
+    @property
+    def spark_version(self) -> str:
+        if self.__spark_version is None:  # This may have not been specified upon instantiation
+            self.__spark_version = self.client.clusters().get_current_spark_version()
+
+        return self.__spark_version
 
     @property
     def validated(self) -> bool:
