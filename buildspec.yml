@@ -9,7 +9,6 @@ phases:
       - pip install -r requirements.txt
   build:
     commands:
-      - cd src
       - python -m pytest --junitxml ./reports/unit-tests.xml -s ./test
   post_build:
     commands:
