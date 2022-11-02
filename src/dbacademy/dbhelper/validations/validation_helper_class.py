@@ -1,6 +1,6 @@
-class TestHelper:
+class ValidationHelper:
     from ..dbacademy_helper_class import DBAcademyHelper
-    from .testing_suite_class import TestSuite
+    from .validation_suite_class import ValidationSuite
 
     def __init__(self, da: DBAcademyHelper):
 
@@ -8,9 +8,9 @@ class TestHelper:
         self.client = da.client
 
     # noinspection PyMethodMayBeStatic
-    def new(self, name) -> TestingSuite:
-        from .testing_suite_class import TestingSuite
-        return TestingSuite(name)
+    def new(self, name) -> ValidationSuite:
+        from .validation_suite_class import ValidationSuite
+        return ValidationSuite(name)
 
     @staticmethod
     def monkey_patch(function_ref, delete=True):
@@ -23,6 +23,6 @@ class TestHelper:
         signature = inspect.signature(function_ref)
         assert "self" in signature.parameters, f"""Missing the required parameter "self" in the function "{function_ref.__name__}()" """
 
-        setattr(TestHelper, function_ref.__name__, function_ref)
+        setattr(ValidationHelper, function_ref.__name__, function_ref)
 
         return None if delete else function_ref

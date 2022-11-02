@@ -2,12 +2,12 @@ from typing import Dict
 from dbacademy import dbgems
 
 
-class __TestResultsAggregator(object):
-    from .testing_result_class import TestResult
+class __ValidationResultsAggregator(object):
+    from .validation_result_class import ValidationResult
 
-    test_results: Dict[str, TestResult] = dict()
+    test_results: Dict[str, ValidationResult] = dict()
 
-    def update(self, result: TestResult):
+    def update(self, result: ValidationResult):
         self.test_results[result.test.test_case_id] = result
         return result
 
@@ -28,7 +28,7 @@ class __TestResultsAggregator(object):
         return self.percentage == 100
 
     def display_results(self):
-        from dbacademy.dbhelper.tests import _TEST_RESULTS_STYLE
+        from dbacademy.dbhelper.validations import _TEST_RESULTS_STYLE
         dbgems.display_html(_TEST_RESULTS_STYLE + f"""
     <table class='results'>
       <tr><th colspan="2">Test Summary</th></tr>
@@ -40,4 +40,4 @@ class __TestResultsAggregator(object):
 
 
 # Lazy-man's singleton
-TestResultsAggregator = __TestResultsAggregator()
+ValidationResultsAggregator = __ValidationResultsAggregator()
