@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict
-
-from dbacademy.common import CachedStaticProperty
 from dbacademy.dougrest.accounts.budgets import Budgets
 from dbacademy.dougrest.accounts.credentials import Credentials
 from dbacademy.dougrest.accounts.keys import CustomerManagedKeys
@@ -19,39 +16,6 @@ __all__ = ["AccountsApi"]
 
 
 class AccountsApi(ApiClient):
-
-    @CachedStaticProperty
-    def default_account() -> Dict[str, AccountsApi]:
-        result = AccountsApi.known_accounts.get("DEFAULT")
-        if result is not None:
-            return result
-        raise ValueError("No account entries found in .databricks_cfg")
-
-    @CachedStaticProperty
-    def known_accounts() -> Dict[str, AccountsApi]:
-        clients = {}
-        import os
-        import configparser
-        default = None
-        for path in ('.databrickscfg', '~/.databrickscfg'):
-            path = os.path.expanduser(path)
-            if not os.path.exists(path):
-                continue
-            config = configparser.ConfigParser()
-            config.read(path)
-            for section_name, section in config.items():
-                if not section_name.lower().startswith("e2:"):
-                    continue
-                section_name = section_name[3:]
-                account_id = section['id']
-                user = section['username']
-                password = section['password']
-                clients[section_name] = AccountsApi(account_id, user, password)
-                if default is None:
-                    default = clients[section_name]
-        if default is not None:
-            clients["DEFAULT"] = default
-        return clients
 
     def __init__(self, account_id: str, user: str, password: str) -> None:
         url = f'https://accounts.cloud.databricks.com/api/2.0/accounts/{account_id}'

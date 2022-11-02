@@ -114,7 +114,7 @@ def lookup_workspaces(lab):
         row = dict(zip(header, row))
         row["Workspace ID"] = row["Id"]
         del row["Id"]
-        row["API"] = DatabricksApi(hostname=row["Url"][8:], token=row["Token"], deployment_name=lab["Title"], cloud=lab["Cloud"])
+        row["API"] = DatabricksApi(hostname=row["Url"][8:], token=row["Token"], deployment_name=lab["Title"])
         row["Long Title"] = lab["Long Title"]
         row["Cloud"] = lab["Cloud"]
         workspaces.append(row)
