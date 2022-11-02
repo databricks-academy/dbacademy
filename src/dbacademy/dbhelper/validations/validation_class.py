@@ -1,4 +1,4 @@
-class ValidationCase(object):
+class Validation(object):
     from typing import Callable, Any, List
 
     __slots__ = ('description', 'test_function', 'test_case_id', 'unique_id', 'depends_on', 'escape_html', 'points', 'hint', "actual_value")
@@ -23,8 +23,8 @@ class ValidationCase(object):
         assert type(description) == str, f"Expected the parameter \"description\" to be of type str, found {type(description)}."
 
         if test_case_id is None:
-            ValidationCase._LAST_ID += 1
-            test_case_id = str(ValidationCase._LAST_ID)
+            Validation._LAST_ID += 1
+            test_case_id = str(Validation._LAST_ID)
 
         self.test_case_id = f"{suite.name}-{test_case_id}"
 
