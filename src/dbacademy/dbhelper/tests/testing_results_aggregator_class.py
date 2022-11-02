@@ -3,7 +3,7 @@ from dbacademy import dbgems
 
 
 class __TestResultsAggregator(object):
-    from .test_result_class import TestResult
+    from .testing_result_class import TestResult
 
     test_results: Dict[str, TestResult] = dict()
 
