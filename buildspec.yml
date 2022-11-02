@@ -6,14 +6,13 @@ phases:
       python: 3.9
   pre_build:
     commands:
-      #- wget https://repo.continuum.io/archive/Anaconda3-4.2.0-Linux-x86_64.sh
       - wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
       - bash Miniconda3-latest-Linux-x86_64.sh -b -p ~/miniconda
       #- rm Miniconda3-latest-Linux-x86_64.sh
       - echo 'export PATH="~/miniconda/bin:$PATH"' >> ~/.bashrc
       - source ~/.bashrc
-      #- conda update conda
       - conda update -n base -c defaults conda
+      - conda init bash
 
       - conda create --yes -n dbacademy python=3.9
       - conda activate dbacademy
