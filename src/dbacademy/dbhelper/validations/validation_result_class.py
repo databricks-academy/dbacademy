@@ -1,9 +1,9 @@
 class ValidationResult(object):
-    from .validation_case_class import ValidationCase
+    from .validation_class import Validation
 
     __slots__ = ('test', 'skipped', 'passed', 'status', 'points', 'exception', 'message')
 
-    def __init__(self, test: ValidationCase, skipped: bool = False):
+    def __init__(self, test: Validation, skipped: bool = False):
         try:
             self.test = test
             self.skipped = skipped
