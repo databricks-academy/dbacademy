@@ -408,7 +408,7 @@ class Commands(object):
     def clustersCreateMissing(self, w, fix=False):
         """Create user clusters matching the cluster spec above"""
         import re
-        pattern = re.compile("[^0-9]")
+        pattern = re.compile(r"\D")
         clusters = w.clusters.list()
         clusters = [c for c in clusters if c["cluster_name"][0:4] not in ("dlt-", "job-")]
         clusters_map = {pattern.subn("", c["cluster_name"])[0]: c for c in clusters}
@@ -440,7 +440,7 @@ class Commands(object):
         clusters = w.clusters.list()
         clusters = [c for c in clusters if
                     c["cluster_name"][0:4] not in ("dlt-", "job-") and c["cluster_name"] != "my_cluster"]
-        pattern = re.compile(r"[^0-9]")
+        pattern = re.compile(r"\D")
         clusters_map = {pattern.subn("", c["cluster_name"])[0]: c["cluster_id"] for c in clusters}
         if not clusters:
             return [{"cluster_name": " ", "error": "No cluster in workspace"}]

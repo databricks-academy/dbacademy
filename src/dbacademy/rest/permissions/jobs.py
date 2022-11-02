@@ -4,7 +4,7 @@ from dbacademy.rest.permissions.crud import PermissionsCrud
 __all__ = ["Jobs"]
 
 # noinspection PyProtectedMember
-from dbacademy.rest.permissions.crud import What, valid_whats, PermissionLevel
+from dbacademy.rest.permissions.crud import What
 
 
 class Jobs(PermissionsCrud):

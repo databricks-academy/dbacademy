@@ -33,6 +33,7 @@ class ApiClientFactory(Generic[ApiType]):
         from dbacademy import dbgems
         if dbgems.dbutils is None:
             return None
+
         token = dbgems.get_notebooks_api_token()
         endpoint = dbgems.get_notebooks_api_endpoint()
         return self.token_auth(endpoint, token)
@@ -60,9 +61,9 @@ class ApiClientFactory(Generic[ApiType]):
         hostname = ApiClientFactory.extract_hostname(hostname)
         endpoint = f"https://{hostname}"
         if self.api_type == DatabricksApi:
-            return DatabricksApi(hostname=hostname, username=username, password=password)
+            return DatabricksApi(hostname=hostname, user=username, password=password)
         elif self.api_type == DBAcademyRestClient:
-            return DBAcademyRestClient(endpoint=endpoint, username=username, password=password)
+            return DBAcademyRestClient(endpoint=endpoint, user=username, password=password)
         else:
             raise ValueError(f"Unknown ApiClient class: " + str(ApiType))
 
