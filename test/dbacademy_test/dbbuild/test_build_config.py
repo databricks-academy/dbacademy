@@ -1,10 +1,12 @@
 import unittest
+from dbacademy import dbgems
 
 
 class TestBuildConfig(unittest.TestCase):
 
     def test_load(self):
         from dbacademy.dbbuild.build_config_class import BuildConfig
+
         config = {
             "name": "Test Suite",
             "notebook_config": {},
