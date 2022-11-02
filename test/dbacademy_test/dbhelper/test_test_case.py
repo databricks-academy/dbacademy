@@ -1,5 +1,5 @@
 import unittest
-from dbacademy.dbhelper.tests.test_suite_class import TestSuite
+from dbacademy.dbhelper.tests.testing_suite_class import TestSuite
 
 
 class TestTesting(unittest.TestCase):
