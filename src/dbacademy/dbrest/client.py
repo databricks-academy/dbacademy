@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from dbacademy.rest.common import ApiClient
 
 
