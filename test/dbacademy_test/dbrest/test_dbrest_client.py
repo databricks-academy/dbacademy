@@ -112,8 +112,9 @@ class TestDBAcademyRestClient(unittest.TestCase):
             files = z.filelist
             self.assertEqual(files[0].filename, notebook_path)
             notebook_bytes = z.read(notebook_path)
+
         notebook_json = notebook_bytes.decode("UTF-8")
-        notebook_data = json.loads(notebook_bytes.decode("UTF-8"))
+        notebook_data = json.loads(notebook_json)
         self.assertEqual(notebook_data.get("name"), notebook_name)
         self.assertIsInstance(notebook_data.get("commands"), list, "Malformed Notebook JSON")
 

@@ -108,7 +108,6 @@ class BuildConfig:
                  publishing_info: dict = None):
 
         import uuid, time, re
-        from dbacademy.dbrest import DBAcademyRestClient
         from .publish.notebook_def_class import NotebookDef
 
         self.__validated = False

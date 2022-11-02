@@ -7,7 +7,6 @@ import re
 import urllib.parse
 from html.parser import HTMLParser
 from multiprocessing.pool import ThreadPool
-
 from dbacademy.dougrest import DatabricksApi
 
 
@@ -35,7 +34,7 @@ class MyHTMLParser(HTMLParser):
 
 web = requests.Session()
 
-web.headers['User-Agent']='Mozilla/5.0'
+web.headers['User-Agent'] = 'Mozilla/5.0'
 cookies = re.search("'Cookie: ([^']*)'", curl_login)[1].strip().split("; ")
 cookies = dict(c.split("=", maxsplit=1) for c in cookies)
 for key, value in cookies.items():
@@ -97,13 +96,13 @@ all_labs = [lab for group in labs.values() for lab in group.values()]
 
 def lookup_workspaces(lab):
     odl_id = lab["Id"]
-    response = web.put(f"https://cloudlabs-api-s1-cu.azurewebsites.net/api/Export/GetDatabricksWorkspace?eventId={odl_id}")
-    if '"Status":"Error"' in response.text:
-        lab["Workspaces"]=[]
+    put_response = web.put(f"https://cloudlabs-api-s1-cu.azurewebsites.net/api/Export/GetDatabricksWorkspace?eventId={odl_id}")
+    if '"Status":"Error"' in put_response.text:
+        lab["Workspaces"] = []
         return lab
     import csv
     from io import StringIO
-    rows=[line for line in csv.reader(StringIO(response.text))]
+    rows=[line for line in csv.reader(StringIO(put_response.text))]
     for i, row in enumerate(rows):
         for j, col in enumerate(row):
             row[j]=col.strip()
