@@ -40,7 +40,13 @@ def get_parameter(name: str, default_value: Any = "") -> Union[None, str]:
 
 
 def get_cloud():
-    with open("/databricks/common/conf/deploy.conf") as f:
+    import os
+
+    config_path = "/databricks/common/conf/deploy.conf"
+    if not os.path.exists(config_path):
+        return "UNK"
+
+    with open(config_path) as f:
         for line in f:
             if "databricks.instance.metadata.cloudProvider" in line and "\"GCP\"" in line:
                 return "GCP"
