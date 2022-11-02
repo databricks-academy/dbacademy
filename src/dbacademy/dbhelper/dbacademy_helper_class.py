@@ -629,10 +629,22 @@ class DBAcademyHelper:
         return results
 
     def __validate_spark_version(self):
-        if not dbgems.spark.conf.get(DBAcademyHelper.PROTECTED_EXECUTION, None):
-            self.__current_dbr = self.client.clusters.get_current_spark_version()
-            msg = f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\"."
-            assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(msg, "Spark Version")
+        self.__current_dbr = dbgems.get_tag("sparkVersion", None)
+
+        # In some random scenarios, the spark version will come back None because the tags are not yet initialized.
+        # In this case, we can query the cluster and ask it for its spark version instead.
+        if self.__current_dbr is None and not dbgems.spark.conf.get(DBAcademyHelper.PROTECTED_EXECUTION, None):
+            try:
+                self.__current_dbr = self.client.clusters.get_current_spark_version()
+            except:
+                warning = f"We are unable to obtain the Databricks Runtime value for your current session.\n" + \
+                          f"Please be aware that this courseware may not execute properly unless you are using\n" + \
+                          f"one of this course's supported DBRs:\n" + \
+                          f"{self.course_config.supported_dbrs}"
+                dbgems.print_warning("Spark Version", self.__troubleshoot_error(warning, "Spark Version"))
+
+        msg = f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\"."
+        assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(msg, "Spark Version")
 
     def __validate_dbfs_writes(self, test_dir):
         from contextlib import redirect_stdout

@@ -152,65 +152,6 @@ class NotebookDef:
         # self.test(lambda: len(notebooks) != 0, message)
         self.test(lambda: len(notebooks) != 0, message)
 
-    @staticmethod
-    def get_latest_commit_id(repo_name, branch_name="published"):
-        import requests
-        repo_url = f"https://api.github.com/repos/databricks-academy/{repo_name}/commits/{branch_name}"
-        response = requests.get(repo_url)
-        assert response.status_code == 200, f"Expected 200, received {response.status_code}"
-
-        return response.json().get("sha")
-
-    # @staticmethod
-    # def parse_version(command, url):
-    #     import sys
-    #     pos_a = command.find(url)
-    #     assert pos_a >= 0, f"Unable to find \"{url}\" in command string:\n{command}"
-    #     pos_a += len(url)
-    #
-    #     pos_x = command.find(" ", pos_a)
-    #     if pos_x < 0: pos_x = sys.maxsize
-    #
-    #     pos_y = command.find("\n", pos_a)
-    #     if pos_y < 0: pos_y = sys.maxsize
-    #
-    #     end = len(command)+1
-    #
-    #     pos_b = min(min(pos_x, pos_y), end)
-    #
-    #     version = command[pos_a:pos_b]
-    #     return version
-
-    # def update_git_commit(self, command: str, url: str, branch_name: str) -> str:
-    #     from dbacademy.dbbuild.build_config_class import BuildConfig
-    #
-    #     if url not in command: return command
-    #     else:
-    #         if f"{url}@v" in command:
-    #             version = self.parse_version(command, f"{url}@v")
-    #             print(f"Publishing w/version v{version} for {url}")
-    #             return command  # This is a specific version and should be OK as-is
-    #
-    #         elif f"{url}@" in command:
-    #             # This is a pinned comment and generally not allowed.
-    #             version = self.parse_version(command, f"{url}@")
-    #             if self.version in BuildConfig.VERSIONS_LIST:
-    #                 print(f"Publishing w/version @{version} for {url}")
-    #                 self.warn(lambda: False, f"Building with named branch or commit id ({version}), not a released version, not head - this will prevent publishing.")
-    #                 return command  # Don't update, run with it as-is
-    #             else:
-    #                 # Fail the build here because we cannot publish this way.
-    #                 print(f"Failing publish of version @{version} for {url}")
-    #                 self.test(lambda: False, f"Cannot publish with libraries that specify a specific branch or commit id ({version}).")
-    #                 return command  # Return the value, will abort later
-    #         else:
-    #             # We are building from the head, so we need to lock in the version number.
-    #             repo_name = url.split("/")[-1]
-    #             commit_id = NotebookDef.get_latest_commit_id(repo_name=repo_name, branch_name=branch_name)
-    #             new_url = f"{url}@{commit_id}"
-    #             print(f"Publishing w/commit \"{commit_id}\" for {url}")
-    #             return command.replace(url, new_url)
-
     def test_pip_cells(self, language: str, command: str, i: int) -> str:
         """
         Validates %pip cells, mostly to ensure that dbacademy-* resources are fixed to a specific version

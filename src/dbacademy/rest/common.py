@@ -92,7 +92,7 @@ class ApiClient(ApiContainer):
         elif client is not None:
             authorization_header = client.session.headers["Authorization"]
         else:
-            raise ValueError("Must specify one of token, password, or authorization_header")
+            pass  # This is an unauthenticated clients
 
         if not url.endswith("/"):
             url += "/"

@@ -1,5 +1,4 @@
 import unittest
-from dbacademy import dbgems
 
 
 class TestBuildConfig(unittest.TestCase):
