@@ -10,7 +10,7 @@ phases:
   build:
     commands:
       - cd src
-      - python -m pytest --junitxml ../reports/unit-tests.xml -s ../test
+      - python -m pytest --junitxml ./reports/unit-tests.xml -s ./test
   post_build:
     commands:
       - echo Build completed on `date`
