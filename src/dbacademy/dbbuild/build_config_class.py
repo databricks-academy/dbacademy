@@ -271,7 +271,7 @@ class BuildConfig:
 
     @property
     def instance_pool(self):
-        if self.__instance_pool is None:  # This may have not be specified upon instantiation
+        if self.__instance_pool is None:  # This may have not been specified upon instantiation
             self.__instance_pool = self.client.clusters().get_current_instance_pool_id()
 
         return self.__instance_pool
