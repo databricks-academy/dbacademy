@@ -14,6 +14,7 @@ class ApiClientFactory(Generic[ApiType]):
     def __init__(self, api_type: Type[ApiType]):
         self.api_type = api_type
 
+    # TODO rename to test_client
     @cache
     def default_client(self) -> ApiType:
         result = self.known_clients().get("DEFAULT")
@@ -31,7 +32,8 @@ class ApiClientFactory(Generic[ApiType]):
         Otherwise, return None.
         """
         from dbacademy import dbgems
-        if dbgems.dbutils is None:
+        from dbacademy.dbgems.mock_dbutils_class import MockDBUtils
+        if isinstance(dbgems.dbutils, MockDBUtils):
             return None
 
         token = dbgems.get_notebooks_api_token()

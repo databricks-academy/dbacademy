@@ -1,4 +1,4 @@
-from typing import List, Union, Any
+from typing import Union, Any
 import pyspark
 import dbacademy.common
 from dbacademy.common import print_warning
@@ -130,23 +130,6 @@ def jprint(value: dict, indent: int = 4):
     print(json.dumps(value, indent=indent))
 
 
-def sort_semantic_versions(versions: List[str]) -> List[str]:
-    versions.sort(key=lambda v: (int(v.split(".")[0]) * 10000) + (int(v.split(".")[1]) * 100) + int(v.split(".")[2]))
-    return versions
-
-
-def lookup_all_module_versions(module: str, github_org: str = "databricks-academy") -> List[str]:
-    import requests
-
-    response = requests.get(f"https://api.github.com/repos/{github_org}/{module}/tags", headers={"User-Agent": "Databricks Academy"})
-    if response.status_code == 403: return ["v0.0.0"]  # We are being rate limited.
-
-    assert response.status_code == 200, f"Expected HTTP 200, found {response.status_code}:\n{response.text}"
-
-    versions = [t.get("name")[1:] for t in response.json()]
-    return sort_semantic_versions(versions)
-
-
 def lookup_current_module_version(module: str) -> str:
     import json, pkg_resources
 
@@ -180,11 +163,13 @@ def is_curriculum_workspace() -> bool:
 
 def validate_dependencies(module: str, curriculum_workspaces_only=True) -> bool:
     # Don't do anything unless this is in one of the Curriculum Workspaces
+    from dbacademy import github
+
     testable = curriculum_workspaces_only is False or is_curriculum_workspace()
     try:
         if testable:
             current_version = lookup_current_module_version(module)
-            versions = lookup_all_module_versions(module)
+            versions = github.default_client.repo(module).list_all_tags()
 
             if len(versions) == 0:
                 print(f"** WARNING ** No versions found for {module}; Double check the spelling and try again.")
