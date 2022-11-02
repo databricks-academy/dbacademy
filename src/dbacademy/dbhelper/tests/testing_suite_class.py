@@ -5,7 +5,7 @@ from .testing_case_class import TestCase
 from .testing_result_class import TestResult
 
 
-class TestSuite(object):
+class TestingSuite(object):
     from dbacademy.dbhelper.tests import lazy_property
 
     def __init__(self, name) -> None:
@@ -379,7 +379,7 @@ class TestSuite(object):
             for k in kv1.keys():
                 d[k] = tuple(d[k] for d in kv12)
 
-            return reduce(lambda a, b: a and b, [TestSuite.compare_rows(rowTuple[0], rowTuple[1]) for rowTuple in d.values()])
+            return reduce(lambda a, b: a and b, [TestingSuite.compare_rows(rowTuple[0], rowTuple[1]) for rowTuple in d.values()])
 
     @staticmethod
     def compare_row(row_a: pyspark.sql.Row, row_b: pyspark.sql.Row):
