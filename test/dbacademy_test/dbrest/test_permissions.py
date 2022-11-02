@@ -7,7 +7,7 @@
 
 import unittest
 
-from dbacademy.dougrest import databricks
+from dbacademy.rest.factory import dougrest_factory
 
 
 class TestPermissionsApi(unittest.TestCase):
@@ -16,6 +16,7 @@ class TestPermissionsApi(unittest.TestCase):
     """
 
     def testClusterPolicyPermissions(self):
+        ws = dougrest_factory.default_client
         policy_spec = {
             "cluster_type": {
                 "type": "fixed",
@@ -27,13 +28,13 @@ class TestPermissionsApi(unittest.TestCase):
                 "hidden": False,
             },
         }
-        policy = databricks.clusters.policies.get_by_name("test-policy")
+        policy = ws.clusters.policies.get_by_name("test-policy")
         if policy is None:
-            policy = databricks.clusters.policies.create("test-policy", policy_spec)
+            policy = ws.clusters.policies.create("test-policy", policy_spec)
         policy_id = policy["policy_id"]
-        levels = databricks.permissions.clusters.policies.get_levels(policy_id)
-        databricks.permissions.clusters.policies.update(policy_id, "group_name", "users", "CAN_USE")
-        acl = databricks.permissions.clusters.policies.get(policy_id)["access_control_list"]
+        levels = ws.permissions.clusters.policies.get_levels(policy_id)
+        ws.permissions.clusters.policies.update(policy_id, "group_name", "users", "CAN_USE")
+        acl = ws.permissions.clusters.policies.get(policy_id)["access_control_list"]
         found = False
         for ac in acl:
             if ac.get("group_name") == "users":
@@ -41,7 +42,7 @@ class TestPermissionsApi(unittest.TestCase):
                     if perm["permission_level"] == "CAN_USE" and not perm["inherited"]:
                         found = True
         self.assertTrue(found)
-        databricks.clusters.policies.delete_by_id(policy_id)
+        ws.clusters.policies.delete_by_id(policy_id)
         self.assertIsInstance(levels, list)
 
 

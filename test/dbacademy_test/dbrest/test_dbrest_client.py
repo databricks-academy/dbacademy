@@ -7,28 +7,7 @@
 
 import unittest
 
-
-def create_client():
-    from dbacademy.dbrest import DBAcademyRestClient
-    import os
-    import configparser
-
-    for path in ('.databrickscfg', '~/.databrickscfg'):
-        path = os.path.expanduser(path)
-        if not os.path.exists(path):
-            continue
-        config = configparser.ConfigParser()
-        config.read(path)
-        if 'DEFAULT' not in config:
-            print('No Default')
-            continue
-        host = config['DEFAULT']['host'].rstrip("/")
-        token = config['DEFAULT']['token']
-        return DBAcademyRestClient(token, host)
-    return DBAcademyRestClient()
-
-
-databricks = create_client()
+from dbacademy.rest.factory import dbrest_factory
 
 
 class TestDBAcademyRestClient(unittest.TestCase):
@@ -37,68 +16,82 @@ class TestDBAcademyRestClient(unittest.TestCase):
     """
 
     def testParentheses(self):
-        result = databricks().workspace().ls("/")
+        ws = dbrest_factory.default_client
+        result = ws().workspace().ls("/")
         self.assertIsInstance(result, list)
 
     def testWorkspace(self):
-        result = databricks.workspace.ls("/")
+        ws = dbrest_factory.default_client
+        result = ws.workspace.ls("/")
         self.assertIsInstance(result, list)
 
     def testClusters(self):
-        result = databricks.clusters.list()
+        ws = dbrest_factory.default_client
+        result = ws.clusters.list()
         self.assertIsNotNone(result)
 
     def testJobs(self):
-        result = databricks.jobs.list()
+        ws = dbrest_factory.default_client
+        result = ws.jobs.list()
         self.assertIsInstance(result, list)
 
     def testPermissions(self):
-        jobs = databricks.jobs.list()
+        ws = dbrest_factory.default_client
+        jobs = ws.jobs.list()
         if not jobs:
             return
         job_id = jobs[0]["job_id"]
-        result = databricks.permissions.jobs.get(job_id)
+        result = ws.permissions.jobs.get(job_id)
         self.assertIsNotNone(result)
 
     def testPipelines(self):
-        result = databricks.pipelines.list()
+        ws = dbrest_factory.default_client
+        result = ws.pipelines.list()
         self.assertIsInstance(result, list)
 
     def testRepos(self):
-        result = databricks.repos.list()
+        ws = dbrest_factory.default_client
+        result = ws.repos.list()
         self.assertIsNotNone(result)
 
     def testRuns(self):
-        result = databricks.runs.list()
+        ws = dbrest_factory.default_client
+        result = ws.runs.list()
         self.assertIsInstance(result, list)
 
     def testUsers(self):
-        result = databricks.scim.users.list()
+        ws = dbrest_factory.default_client
+        result = ws.scim.users.list()
         self.assertIsInstance(result, list)
 
     def testGroups(self):
-        result = databricks.scim.groups.list()
+        ws = dbrest_factory.default_client
+        result = ws.scim.groups.list()
         self.assertIsInstance(result, list)
 
     def testSqlWarehouses(self):
-        result = databricks.sql.endpoints.list()
+        ws = dbrest_factory.default_client
+        result = ws.sql.endpoints.list()
         self.assertIsInstance(result, list)
 
     def testTokens(self):
-        result = databricks.tokens.list()
+        ws = dbrest_factory.default_client
+        result = ws.tokens.list()
         self.assertIsInstance(result, list)
 
     def testLegacyExecuteGet(self):
-        result = databricks.workspace.get_status("/")
+        ws = dbrest_factory.default_client
+        result = ws.workspace.get_status("/")
         self.assertIsNotNone(result)
         self.assertEqual(result.get("object_type"), "DIRECTORY")
-        result = databricks.workspace.get_status("/Does_Not_Exist")
+        result = ws.workspace.get_status("/Does_Not_Exist")
         self.assertIsNone(result)
 
     def testExportNotebook(self):
         # TODO: Upload a test notebook to a known test path.
         export_path = "/Users/doug.bateman@databricks.com/_Projects/API/Monitor-Classrooms"
-        notebook = databricks.workspace.export_notebook(export_path)
+        ws = dbrest_factory.default_client
+        notebook = ws.workspace.export_notebook(export_path)
         self.assertIsInstance(notebook, str)
         lines = notebook.split("\n")
         self.assertEqual(lines[0], "# Databricks notebook source")
@@ -110,7 +103,8 @@ class TestDBAcademyRestClient(unittest.TestCase):
         notebook_name = "Monitor-Classrooms"
         notebook_type = "python"
         notebook_path = f"{notebook_name}.{notebook_type}"
-        buffer = databricks.workspace.export_dbc(export_path)
+        ws = dbrest_factory.default_client
+        buffer = ws.workspace.export_dbc(export_path)
         self.assertIsInstance(buffer, bytes)
         from zipfile import ZipFile
         from io import BytesIO

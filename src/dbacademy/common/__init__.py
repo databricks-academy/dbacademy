@@ -74,12 +74,13 @@ class CachedStaticProperty:
 
 
 def validate_type(actual_value: Any, name: str, expected_type: Any):
-    assert isinstance(actual_value, expected_type), f"Expected the parameter {name} to be of type {expected_type}, found {type(actual_value)}"
+    msg = f"Expected the parameter {name} to be of type {expected_type}, found {type(actual_value)}"
+    assert isinstance(actual_value, expected_type), msg
     return actual_value
 
 
 def validate_element_type(actual_values: Iterable[Any], name, expected_type):
     validate_type(actual_values, "actual_values", Iterable)
-
     for i, actual_value in enumerate(actual_values):
-        assert isinstance(actual_value, expected_type), f"Expected element {i} of {name} to be of type {expected_type}, found {type(actual_value)}"
+        msg = f"Expected element {i} of {name} to be of type {expected_type}, found {type(actual_value)}"
+        assert isinstance(actual_value, expected_type), msg

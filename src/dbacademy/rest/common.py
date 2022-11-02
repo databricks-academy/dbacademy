@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import Any, Container, Dict, List, Literal, Type, TypeVar, Union
 from pprint import pformat
 from dbacademy.common import deprecated, print_warning
