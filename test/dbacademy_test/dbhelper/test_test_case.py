@@ -1,5 +1,5 @@
 import unittest
-from dbacademy.dbhelper.tests.testing_suite_class import TestingSuite
+from dbacademy.dbhelper.validations.validation_suite_class import ValidationSuite
 
 
 class TestTesting(unittest.TestCase):
@@ -8,7 +8,7 @@ class TestTesting(unittest.TestCase):
     SUITE_NAME = "Whatever"
 
     def test_suite(self):
-        suite = TestingSuite(self.SUITE_NAME)
+        suite = ValidationSuite(self.SUITE_NAME)
         self.validate_test_suite(suite, False, 0)
 
     def validate_test_suite(self, suite, expected_passed, test_cases_count):
@@ -26,7 +26,7 @@ class TestTesting(unittest.TestCase):
 
         for actual_value, expected_passed in [(None, True), ("Bananas", False)]:
 
-            suite = TestingSuite(self.SUITE_NAME)
+            suite = ValidationSuite(self.SUITE_NAME)
             suite.test_is_none(lambda: actual_value,
                                hint=f"Found, [[ACTUAL_VALUE]]",
                                description=f"Testing 123.")
@@ -38,7 +38,7 @@ class TestTesting(unittest.TestCase):
 
         for actual_value, expected_passed in [(None, False), ("Bananas", True)]:
 
-            suite = TestingSuite(self.SUITE_NAME)
+            suite = ValidationSuite(self.SUITE_NAME)
             suite.test_not_none(lambda: actual_value,
                                 hint=f"Found, [[ACTUAL_VALUE]]",
                                 description=f"Testing 123.")
