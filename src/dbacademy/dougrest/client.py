@@ -19,7 +19,6 @@ class DatabricksApi(dict, ApiClient):
 
     SECTION_HOST = "host"
     SECTION_TOKEN = "token"
-    SECTION_JOBS_API_VERSION = "jobs-api-version"
 
     default_machine_types = {
         "AWS": "i4.xlarge",
@@ -73,13 +72,11 @@ class DatabricksApi(dict, ApiClient):
         host = os.getenv(DatabricksApi.ENV_DATABRICKS_HOST)
         token = os.getenv(DatabricksApi.ENV_DATABRICKS_TOKEN)
 
-        # TODO We need to verify that we are actually getting Jobs 2.1. Then again, it may only be applicable to the CLI and we should figure that out.
         if host and token:
             config.read_dict({
                 DatabricksApi.PROFILE_ENVIRONMENT: {
                     DatabricksApi.SECTION_HOST: host,
-                    DatabricksApi.SECTION_TOKEN: token,
-                    DatabricksApi.SECTION_JOBS_API_VERSION: "2.1",
+                    DatabricksApi.SECTION_TOKEN: token
                 }
             })
 
