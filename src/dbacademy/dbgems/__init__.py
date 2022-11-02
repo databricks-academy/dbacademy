@@ -2,7 +2,7 @@ from typing import List, Union, Any
 import pyspark
 import dbacademy.common
 from dbacademy.common import print_warning
-# from .mock_dbutils_class import MockDBUtils
+from .mock_dbutils_class import MockDBUtils
 
 
 def check_deprecation_logging_enabled():
