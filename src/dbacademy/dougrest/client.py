@@ -11,41 +11,13 @@ __all__ = ["DatabricksApi", "DatabricksApiException"]
 class DatabricksApi(dict, ApiClient):
 
     default_machine_types = {
-        "AWS": "i3.xlarge",
-        "Azure": "Standard_DS3_v2",
+        "AWS": "i4.xlarge",
+        "Azure": "Standard_DS4_v5",
         "GCP": "n1-standard-4",
     }
 
-    # noinspection PyMethodParameters
-    @CachedStaticProperty
-    def default_client() -> DatabricksApi:
-        result = DatabricksApi.known_clients.get("DEFAULT")
-        if result is None:
-            result = DatabricksApi()
-        return result
-
-    # noinspection PyMethodParameters
-    @CachedStaticProperty
-    def known_clients() -> Dict[str, DatabricksApi]:
-        clients = {}
-        import os
-        import configparser
-        for path in ('.databrickscfg', '~/.databrickscfg'):
-            path = os.path.expanduser(path)
-            if not os.path.exists(path):
-                continue
-            config = configparser.ConfigParser()
-            config.read(path)
-            for section_name, section in config.items():
-                api_type = section.get('api_type', 'workspace')
-                if api_type != 'workspace':
-                    continue
-                host = section['host'].rstrip("/")[8:]
-                token = section['token']
-                clients[section_name] = DatabricksApi(host, token=token)
-        return clients
-
-    def __init__(self, hostname=None, *, token=None, user=None, password=None, authorization_header=None, cloud="AWS", deployment_name=None):
+    def __init__(self, hostname=None, *, token=None, user=None, password=None, authorization_header=None,
+                 deployment_name=None):
         from dbacademy import dbgems
         if hostname:
             url = f'https://{hostname}/api/'
@@ -55,8 +27,17 @@ class DatabricksApi(dict, ApiClient):
             token = dbgems.get_notebooks_api_token()
         super(dict, self).__init__(url, token=token, user=user, password=password,
                                    authorization_header=authorization_header)
+        if deployment_name is None:
+            deployment_name = hostname[0:hostname.find(".")]
         self["deployment_name"] = deployment_name
-        self.cloud = cloud
+        if hostname.endswith(".cloud.databricks.com"):
+            self.cloud = "AWS"
+        elif hostname.endswith(".gcp.databricks.com"):
+            self.cloud = "GCP"
+        elif hostname.endswith(".azuredatabricks.net"):
+            self.cloud = "Azure"
+        else:
+            raise ValueError(f"Unknown cloud for hostname: {hostname}")
         self.default_machine_type = DatabricksApi.default_machine_types[self.cloud]
         self.default_preloaded_versions = ["11.3.x-cpu-ml-scala2.12", "11.3.x-cpu-scala2.12"]
         self.default_spark_version = self.default_preloaded_versions[0]

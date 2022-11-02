@@ -57,7 +57,7 @@ class Workspace(DatabricksApi):
 
 
 class Workspaces(AccountsCRUD):
-    def __init__(self, client: "DatabricksApi"):
+    def __init__(self, client: "AccountsApi"):
         super().__init__(client, "/workspaces", "workspace")
         self.client = client
 

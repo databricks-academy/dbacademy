@@ -1,7 +1,7 @@
 import unittest
 import typing
-from dbacademy import common
 
+from dbacademy.common import deprecated
 from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef, NotebookError
 
 
@@ -47,7 +47,7 @@ class TestNotebookDef(unittest.TestCase):
                            ignoring=[],
                            version=version)
 
-    @common.deprecated(reason="Just because")
+    @deprecated(reason="Just because")
     def dummy(self, arg_1, arg_2, *args, **kwargs):
         pass
 

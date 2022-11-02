@@ -7,7 +7,7 @@
 
 import unittest
 
-from dbacademy.dougrest import AccountsApi
+from dbacademy.rest.factory import dougrest_factory
 
 
 class TestAccountsApi(unittest.TestCase):
@@ -16,19 +16,20 @@ class TestAccountsApi(unittest.TestCase):
     """
 
     def testListWorkspaces(self):
-        accounts = AccountsApi.default_account
-        result = accounts.workspaces.list()
+        account = dougrest_factory.default_account
+        result = account.workspaces.list()
         self.assertIsInstance(result, list)
 
     def testWorkspaceAsDatabricksApi(self):
-        accounts = AccountsApi.default_account
-        ws = accounts.workspaces.list()[0]
+        account = dougrest_factory.default_account
+        ws = account.workspaces.list()[0]
         result = ws.workspace.list("/")
         self.assertIsInstance(result, list)
 
     def testListUsers(self):
-        accounts = AccountsApi.default_account
-        print(accounts.users.list(count=10))
+        account = dougrest_factory.default_account
+        print(account.users.list(count=10))
+
 
 # COMMAND ----------
 

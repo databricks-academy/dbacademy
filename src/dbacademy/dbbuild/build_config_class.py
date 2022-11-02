@@ -1,5 +1,6 @@
 from typing import Type, List, Dict, Union, Any, Optional
 from dbacademy import dbgems, common
+from dbacademy.rest.factory import dbrest_factory
 
 
 class BuildConfig:
@@ -127,7 +128,7 @@ class BuildConfig:
 
         self.test_type = None
         self.notebooks: Union[None, Dict[str, NotebookDef]] = None
-        self.client = DBAcademyRestClient.default_client if client is None else client
+        self.client = dbrest_factory.default_client if client is None else client
 
         # The instance of this test run
         self.suite_id = str(time.time()) + "-" + str(uuid.uuid1())
