@@ -23,6 +23,18 @@ class DBAcademyHelper:
     PROTECTED_EXECUTION = "dbacademy.protected-execution"
     TROUBLESHOOT_ERROR_TEMPLATE = "{error} Please see the \"Troubleshooting | {section}\" section of the \"Version Info\" notebook for more information."
 
+    @staticmethod
+    def get_dbacademy_datasets_path():
+        return dbgems.spark.conf.get("dbacademy.paths.datasets", default="dbfs:/mnt/dbacademy-datasets")
+
+    @staticmethod
+    def get_dbacademy_users_path():
+        return dbgems.spark.conf.get("dbacademy.paths.users", default="dbfs:/mnt/dbacademy-users")
+
+    @staticmethod
+    def get_dbacademy_datasets_staging():
+        return "dbfs:/mnt/dbacademy-datasets-staging"
+
     def __init__(self,
                  course_config: CourseConfig,
                  lesson_config: LessonConfig,
@@ -78,7 +90,7 @@ class DBAcademyHelper:
         self.username = self.lesson_config.username
 
         # This is the location in our Azure data repository of the datasets for this lesson
-        self.staging_source_uri = f"dbfs:/mnt/dbacademy-datasets-staging/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
+        self.staging_source_uri = f"{DBAcademyHelper.get_dbacademy_datasets_staging()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
         self.data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
         try:
             files = dbgems.dbutils.fs.ls(self.staging_source_uri)
@@ -99,7 +111,7 @@ class DBAcademyHelper:
         ###########################################################################################
 
         # This is where the datasets will be downloaded to and should be treated as read-only for all practical purposes
-        datasets_path = f"dbfs:/mnt/dbacademy-datasets/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
+        datasets_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
 
         self.paths = Paths(lesson_config=self.lesson_config,
                            working_dir_root=self.working_dir_root,
@@ -111,8 +123,8 @@ class DBAcademyHelper:
         # With requirements initialized, we can
         # test various assertions about our environment
         self.__validate_spark_version()
-        self.__validate_dbfs_writes(f"dbfs:/mnt/dbacademy-users")
-        self.__validate_dbfs_writes(f"dbfs:/mnt/dbacademy-datasets")
+        self.__validate_dbfs_writes(DBAcademyHelper.get_dbacademy_users_path())
+        self.__validate_dbfs_writes(DBAcademyHelper.get_dbacademy_datasets_path())
 
     @property
     def current_dbr(self):
@@ -135,7 +147,7 @@ class DBAcademyHelper:
         # This is the common super-directory for each lesson, removal of which is designed to ensure
         # that all assets created by students is removed. As such, it is not attached to the path
         # object to hide it from students. Used almost exclusively in the Rest notebook.
-        return f"dbfs:/mnt/dbacademy-users/{self.username}/{self.course_config.course_name}"
+        return f"{DBAcademyHelper.get_dbacademy_users_path()}/{self.username}/{self.course_config.course_name}"
 
     @property
     def unique_name(self) -> str:
