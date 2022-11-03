@@ -430,8 +430,21 @@ class TestNotebookDef(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
 
-        expected_command = r"""
+        expected_command = """
+def __validate_libraries():
+    import requests
+    try:
+        site = "https://github.com/databricks-academy/dbacademy"
+        response = requests.get(site)
+        error = f"Unable to access GitHub or PyPi resources (HTTP {response.status_code} for {site})."
+        assert response.status_code == 200, "{error} Please see the \\"Troubleshooting | {section}\\" section of the \\"Version Info\\" notebook for more information.".format(error=error, section="Cannot Install Libraries")
+    except Exception as e:
+        if type(e) is AssertionError: raise e
+        error = f"Unable to access GitHub or PyPi resources ({site})."
+        raise AssertionError("{error} Please see the \\"Troubleshooting | {section}\\" section of the \\"Version Info\\" notebook for more information.".format(error=error, section="Cannot Install Libraries")) from e
+
 def __install_libraries():
+    global pip_command
     version = spark.conf.get("dbacademy.library.version", "v9.8.7")
 
     try:
@@ -453,9 +466,10 @@ def __install_libraries():
         pip_command = spark.conf.get("dbacademy.library.install", default_command)
 
         if pip_command != default_command:
-            print(f"WARNING: Using alternative library installation:
-| default: %pip {default_command}
-| current: %pip {pip_command}")
+            print(f"WARNING: Using alternative library installation:\\n| default: %pip {default_command}\\n| current: %pip {pip_command}")
+        else:
+            # We are using the default libraries; next we need to verify that we can reach those libraries.
+            __validate_libraries()
 
 __install_libraries()
     """.strip()
@@ -477,8 +491,21 @@ pip_command = f"install --quiet --disable-pip-version-check {library_url}"
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
 
-        expected_command = r"""
+        expected_command = """
+def __validate_libraries():
+    import requests
+    try:
+        site = "https://github.com/databricks-academy/dbacademy"
+        response = requests.get(site)
+        error = f"Unable to access GitHub or PyPi resources (HTTP {response.status_code} for {site})."
+        assert response.status_code == 200, "{error} Please see the \\"Troubleshooting | {section}\\" section of the \\"Version Info\\" notebook for more information.".format(error=error, section="Cannot Install Libraries")
+    except Exception as e:
+        if type(e) is AssertionError: raise e
+        error = f"Unable to access GitHub or PyPi resources ({site})."
+        raise AssertionError("{error} Please see the \\"Troubleshooting | {section}\\" section of the \\"Version Info\\" notebook for more information.".format(error=error, section="Cannot Install Libraries")) from e
+
 def __install_libraries():
+    global pip_command
     version = spark.conf.get("dbacademy.library.version", "v6.5.4")
 
     try:
@@ -500,9 +527,10 @@ def __install_libraries():
         pip_command = spark.conf.get("dbacademy.library.install", default_command)
 
         if pip_command != default_command:
-            print(f"WARNING: Using alternative library installation:
-| default: %pip {default_command}
-| current: %pip {pip_command}")
+            print(f"WARNING: Using alternative library installation:\\n| default: %pip {default_command}\\n| current: %pip {pip_command}")
+        else:
+            # We are using the default libraries; next we need to verify that we can reach those libraries.
+            __validate_libraries()
 
 __install_libraries()
 """.strip()

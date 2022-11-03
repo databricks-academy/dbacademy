@@ -20,7 +20,6 @@ class NotebookDef:
     D_SOURCE_ONLY = "SOURCE_ONLY"
     D_DUMMY = "DUMMY"
     D_TROUBLESHOOTING_CONTENT = "TROUBLESHOOTING_CONTENT"
-    D_VALIDATE_LIBRARIES = "VALIDATE_LIBRARIES"
     D_INSTALL_LIBRARIES = "INSTALL_LIBRARIES"
 
     D_INCLUDE_HEADER_TRUE = "INCLUDE_HEADER_TRUE"
@@ -28,7 +27,7 @@ class NotebookDef:
     D_INCLUDE_FOOTER_TRUE = "INCLUDE_FOOTER_TRUE"
     D_INCLUDE_FOOTER_FALSE = "INCLUDE_FOOTER_FALSE"
 
-    SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY, D_TROUBLESHOOTING_CONTENT, D_VALIDATE_LIBRARIES, D_INSTALL_LIBRARIES,
+    SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY, D_TROUBLESHOOTING_CONTENT, D_INSTALL_LIBRARIES,
                             D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
 
     def __init__(self,
@@ -495,6 +494,8 @@ This course will require you to create a catalog (typically in conjunction with 
 For more current information, please see <a href="https://files.training.databricks.com/static/troubleshooting.html#cannot-create-catalog" target="_blank">Troubleshooting Creating Catalogs</a>""".strip())
 
     def build_install_libraries_cell(self, command, i):
+        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+
         lines = [line for line in command.split("\n") if line.strip().startswith("version =") or line.strip().startswith("version=")]
         if self.test(lambda: len(lines) == 1, f"Expected one and only one line that starts with \"version =\", found {len(lines)}."):
             version_line = lines[0]
@@ -503,7 +504,8 @@ For more current information, please see <a href="https://files.training.databri
                 pos_b = version_line.find("\"", pos_a+1)
                 if self.test(lambda: pos_b >= 0, f"Cmd #{i+1} | Unable to parse the dbacademy library version for the INSTALL_LIBRARIES directive: {version_line}."):
                     version = version_line[pos_a+1:pos_b]
-                    source = NotebookDef.SOURCE_INSTALL_LIBRARIES.format(version=version)
+                    template = DBAcademyHelper.TROUBLESHOOT_ERROR_TEMPLATE.replace("\"", "\\\"")
+                    source = NotebookDef.SOURCE_INSTALL_LIBRARIES.format(template=template, version=version)
                     return source
 
         return command
@@ -637,11 +639,6 @@ For more current information, please see <a href="https://files.training.databri
                 new_command = self.build_install_libraries_cell(command, i)
                 students_commands.append(new_command)
                 solutions_commands.append(new_command)
-
-            elif NotebookDef.D_VALIDATE_LIBRARIES in directives:
-                template = DBAcademyHelper.TROUBLESHOOT_ERROR_TEMPLATE.replace("\"", "\\\"")
-                source = NotebookDef.SOURCE_VALIDATE_LIBRARIES.format(template=template)
-                self.append_both(students_commands, solutions_commands, source)
 
             elif NotebookDef.D_TROUBLESHOOTING_CONTENT in directives:
                 self.build_troubleshooting_cells(students_commands, solutions_commands)
@@ -996,7 +993,20 @@ For more current information, please see <a href="https://files.training.databri
     """.strip()
 
     SOURCE_INSTALL_LIBRARIES = """
+def __validate_libraries():
+    import requests
+    try:
+        site = "https://github.com/databricks-academy/dbacademy"
+        response = requests.get(site)
+        error = f"Unable to access GitHub or PyPi resources (HTTP {{response.status_code}} for {{site}})."
+        assert response.status_code == 200, "{template}".format(error=error, section="Cannot Install Libraries")
+    except Exception as e:
+        if type(e) is AssertionError: raise e
+        error = f"Unable to access GitHub or PyPi resources ({{site}})."
+        raise AssertionError("{template}".format(error=error, section="Cannot Install Libraries")) from e
+
 def __install_libraries():
+    global pip_command
     version = spark.conf.get("dbacademy.library.version", "{version}")
 
     try:
@@ -1019,27 +1029,9 @@ def __install_libraries():
 
         if pip_command != default_command:
             print(f"WARNING: Using alternative library installation:\\n| default: %pip {{default_command}}\\n| current: %pip {{pip_command}}")
+        else:
+            # We are using the default libraries; next we need to verify that we can reach those libraries.
+            __validate_libraries()
 
 __install_libraries()
 """.strip()
-
-    SOURCE_VALIDATE_LIBRARIES = """
-def __validate_libraries():
-    import requests
-    sites = [
-        "https://github.com/databricks-academy/dbacademy",
-        "https://pypi.org/simple/overrides",  # Slated for removal
-        "https://pypi.org/simple/deprecated", # Slated for removal
-        "https://pypi.org/simple/wrapt",      # Slated for removal
-    ]
-    for site in sites:
-        try:
-            response = requests.get(site)
-            error = f"Unable to access GitHub or PyPi resources (HTTP {{response.status_code}} for {{site}})."
-            assert response.status_code == 200, "{template}".format(error=error, section="Cannot Install Libraries")
-        except Exception as e:
-            if type(e) is AssertionError: raise e
-            error = f"Unable to access GitHub or PyPi resources ({{site}})."
-            raise AssertionError("{template}".format(error=error, section="Cannot Install Libraries")) from e
-
-__validate_libraries()""".strip()
