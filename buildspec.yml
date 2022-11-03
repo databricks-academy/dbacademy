@@ -24,10 +24,10 @@ reports:
     base-directory: reports/
     file-format: JUNITXML
 
-  coverage:
-    files: coverage.html
-    base-directory: reports/
-    file-format: HTML
-
 artifacts:
   files:
+    files:
+      - reports/**.*
+      - dist/*.whl
+
+
