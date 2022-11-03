@@ -20,13 +20,16 @@ phases:
 
 reports:
   unit-tests:
-    files: unit-tests.xml
-    base-directory: reports/
     file-format: JUNITXML
+    files:
+      - reports/unit-tests.xml
 
 artifacts:
+  name: "dbacademy-library"
+  discard-paths: no
   files:
-    - reports/**.*
-    - dist/*.whl
+    - reports/unit-tests.xml
+    - reports/coverage/*.*
+    - dist/dbacademy-*.whl
 
 
