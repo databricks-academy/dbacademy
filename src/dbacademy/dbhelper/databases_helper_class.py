@@ -38,8 +38,10 @@ class DatabasesHelper:
         self.workspace._existing_databases = None
 
     def __create_database_for(self, username: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
+        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+
         db_name = self.da.to_schema_name(username=username, lesson_name=None)
-        db_path = f"dbfs:/mnt/dbacademy-users/{username}/{self.da.course_config.course_name}/database.db"
+        db_path = f"{DBAcademyHelper.get_dbacademy_users_path()}/{username}/{self.da.course_config.course_name}/database.db"
 
         if db_name in self.da.workspace.existing_databases:
             # The database already exists.
