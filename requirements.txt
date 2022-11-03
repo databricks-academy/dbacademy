@@ -6,3 +6,4 @@ requests
 wheel
 pyspark==3.3.*
 pytest
+pytest-cov
