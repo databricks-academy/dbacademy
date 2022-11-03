@@ -29,11 +29,11 @@ class TestNotebookDef(unittest.TestCase):
     @staticmethod
     def create_notebook():
         from dbacademy.dbbuild import BuildConfig
+
         version = "1.2.3"
-        config = {
-            "name": "Unit Test"
-        }
-        build_config = BuildConfig.load_config(config, version)
+        build_config = BuildConfig(name="Unit Test",
+                                   version=version)
+
         return NotebookDef(build_config=build_config,
                            path="Agenda",
                            replacements={},
@@ -415,8 +415,8 @@ class TestNotebookDef(unittest.TestCase):
         result = command.replace(f"{m} MAGIC ", "")
         print(result)
 
-        def test_build_install_libraries_cell_v1(self):
-            command = r"""
+    def test_build_install_libraries_cell_v1(self):
+        command = r"""
     # INSTALL_LIBRARIES
     version = "v9.8.7"
     if not version.startswith("v"): library_url = f"git+https://github.com/databricks-academy/dbacademy@{version}"
@@ -424,43 +424,43 @@ class TestNotebookDef(unittest.TestCase):
     pip_command = f"install --quiet --disable-pip-version-check {library_url}"
     """.strip()
 
-            notebook = self.create_notebook()
-            actual_command = notebook.build_install_libraries_cell(command=command, i=3)
+        notebook = self.create_notebook()
+        actual_command = notebook.build_install_libraries_cell(command=command, i=3)
 
-            self.assert_n_warnings(0, notebook)
-            self.assert_n_errors(0, notebook)
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(0, notebook)
 
-            expected_command = r"""
-    def __install_libraries():
-        version = spark.conf.get("dbacademy.library.version", "v9.8.7")
+        expected_command = r"""
+def __install_libraries():
+    version = spark.conf.get("dbacademy.library.version", "v9.8.7")
 
-        try:
-            from dbacademy import dbgems  
-            installed_version = dbgems.lookup_current_module_version("dbacademy")
-            if installed_version == version:
-                pip_command = "list --quiet"  # Skipping pip install of pre-installed python library
-            else:
-                print(f"WARNING: The wrong version of dbacademy is attached to this cluster. Expected {version}, found {installed_version}.")
-                print(f"Installing the correct version.")
-                raise Exception("Forcing re-install")
+    try:
+        from dbacademy import dbgems  
+        installed_version = dbgems.lookup_current_module_version("dbacademy")
+        if installed_version == version:
+            pip_command = "list --quiet"  # Skipping pip install of pre-installed python library
+        else:
+            print(f"WARNING: The wrong version of dbacademy is attached to this cluster. Expected {version}, found {installed_version}.")
+            print(f"Installing the correct version.")
+            raise Exception("Forcing re-install")
 
-        except Exception as e:
-            # The import fails if library is not attached to cluster
-            if not version.startswith("v"): library_url = f"git+https://github.com/databricks-academy/dbacademy@{version}"
-            else: library_url = f"https://github.com/databricks-academy/dbacademy/releases/download/{version}/dbacademy-{version[1:]}-py3-none-any.whl"
+    except Exception as e:
+        # The import fails if library is not attached to cluster
+        if not version.startswith("v"): library_url = f"git+https://github.com/databricks-academy/dbacademy@{version}"
+        else: library_url = f"https://github.com/databricks-academy/dbacademy/releases/download/{version}/dbacademy-{version[1:]}-py3-none-any.whl"
 
-            default_command = f"install --quiet --disable-pip-version-check {library_url}"
-            pip_command = spark.conf.get("dbacademy.library.install", default_command)
+        default_command = f"install --quiet --disable-pip-version-check {library_url}"
+        pip_command = spark.conf.get("dbacademy.library.install", default_command)
 
-            if pip_command != default_command:
-                print(f"WARNING: Using alternative library installation:
-    | default: %pip {default_command}
-    | current: %pip {pip_command}")
+        if pip_command != default_command:
+            print(f"WARNING: Using alternative library installation:
+| default: %pip {default_command}
+| current: %pip {pip_command}")
 
-    __install_libraries()
+__install_libraries()
     """.strip()
-            self.maxDiff = None
-            self.assertEqual(expected_command, actual_command)
+        self.maxDiff = None
+        self.assertEqual(expected_command, actual_command)
 
     def test_build_install_libraries_cell_v2(self):
         command = r"""

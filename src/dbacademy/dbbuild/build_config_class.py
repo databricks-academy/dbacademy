@@ -35,6 +35,7 @@ class BuildConfig:
         if "publish_only" in config: del config["publish_only"]
 
         build_config = BuildConfig(version=version, **config)
+        build_config.__initialize_notebooks()
 
         def validate_code_type(key: str, expected_type: Type, actual_value: Any) -> Any:
             if expected_type == List[str]:
@@ -111,6 +112,7 @@ class BuildConfig:
         from .publish.notebook_def_class import NotebookDef
 
         self.__validated = False
+        self.__created_notebooks = False
         self.__passing_tests: Dict[str, bool] = dict()
 
         try: self.username = dbgems.sql("SELECT current_user()").first()[0]
@@ -177,8 +179,10 @@ class BuildConfig:
         self.change_log = None
         self.publishing_info = publishing_info or {}
 
-    def __create_notebooks(self):
+    def __initialize_notebooks(self):
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+
+        self.__created_notebooks = True
 
         assert self.source_dir is not None, "BuildConfig.source_dir must be specified"
 
@@ -233,7 +237,7 @@ class BuildConfig:
 
     def validate(self, validate_version: bool = True, validate_readme: bool = True):
 
-        self.__create_notebooks()
+        assert self.__created_notebooks, f"The notebooks have not yet been initialized; Please call BuildConfig.initialize_notebooks() before proceeding."
 
         if validate_version: self.__validate_version()
         if validate_readme: self.__validate_readme()
