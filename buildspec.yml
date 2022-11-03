@@ -13,6 +13,7 @@ phases:
       - pip -q install -r requirements.txt --use-pep517
   build:
     commands:
+      - python setup.py bdist_wheel
       - python -m pytest --junit-xml=reports/unit-tests.xml --cov=src/ --cov-report html:reports/coverage
   post_build:
     commands:
@@ -25,7 +26,6 @@ reports:
       - reports/unit-tests.xml
 
 artifacts:
-  name: "dbacademy-library"
   discard-paths: no
   files:
     - reports/unit-tests.xml
