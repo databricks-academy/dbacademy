@@ -157,7 +157,7 @@ class DBAcademyHelper:
         local_part = username.split("@")[0]
         username_hash = dbgems.stable_hash(username, length=4)
         course_code = self.course_config.course_code
-        return f"{local_part}-{username_hash}-dbacademy-{course_code}".lower()
+        return f"{local_part}-{username_hash}-da-{course_code}".lower()
 
     @property
     def catalog_name_prefix(self):
@@ -167,7 +167,7 @@ class DBAcademyHelper:
         local_part = username.split("@")[0]
         username_hash = dbgems.stable_hash(username, length=4)
         course_code = self.course_config.course_code
-        return dbgems.clean_string(f"{local_part}-{username_hash}-dbacademy-{course_code}").lower()
+        return dbgems.clean_string(f"{local_part}-{username_hash}-da-{course_code}").lower()
 
     @property
     def catalog_name(self):
@@ -205,7 +205,7 @@ class DBAcademyHelper:
         local_part = username.split("@")[0]
         username_hash = dbgems.stable_hash(username, length=4)
         course_code = self.course_config.course_code
-        return dbgems.clean_string(f"{local_part}-{username_hash}-dbacademy-{course_code}").lower()
+        return dbgems.clean_string(f"{local_part}-{username_hash}-da-{course_code}").lower()
 
     @property
     def schema_name(self):
