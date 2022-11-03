@@ -385,10 +385,6 @@ class TestNotebookDef(unittest.TestCase):
 
         self.assert_message(notebook.warnings, 0, "Cmd #4 | Found HTML link without the required target=\"_blank\": <a href=\"https://example.com\">some link</a>")
 
-    def test_get_latest_commit_id(self):
-        commit_id = NotebookDef.get_latest_commit_id("dbacademy", "main")
-        self.assertIsNotNone(commit_id, f"Expected non-None value for dbacademy-gems")
-
     @staticmethod
     def test_replacement():
         command = """# Databricks notebook source

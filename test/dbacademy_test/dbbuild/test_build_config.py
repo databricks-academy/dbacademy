@@ -9,11 +9,12 @@ class TestBuildConfig(unittest.TestCase):
         config = {
             "name": "Test Suite",
             "notebook_config": {},
-            "publish_only": {}
+            "publish_only": None
         }
         bc = BuildConfig.load_config(config, "1.2.3")
 
         self.assertIsNotNone(bc)
+        self.assertIsNotNone(self)
 
 
 if __name__ == '__main__':
