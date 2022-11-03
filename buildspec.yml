@@ -26,8 +26,7 @@ reports:
 
 artifacts:
   files:
-    files:
-      - reports/**.*
-      - dist/*.whl
+    - reports/**.*
+    - dist/*.whl
 
 
