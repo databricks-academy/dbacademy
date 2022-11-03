@@ -1018,7 +1018,7 @@ def __install_libraries():
         pip_command = spark.conf.get("dbacademy.library.install", default_command)
 
         if pip_command != default_command:
-            print(f"WARNING: Using alternative library installation:\n| default: %pip {{default_command}}\n| current: %pip {{pip_command}}")
+            print(f"WARNING: Using alternative library installation:\\n| default: %pip {{default_command}}\\n| current: %pip {{pip_command}}")
 
 __install_libraries()
 """.strip()
