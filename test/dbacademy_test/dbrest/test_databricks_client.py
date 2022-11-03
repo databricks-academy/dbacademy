@@ -16,17 +16,17 @@ class TestDatabricksApiClient(unittest.TestCase):
     """
 
     def testWorkspace(self):
-        ws = dougrest_factory.default_client()
+        ws = dougrest_factory.test_client()
         result = ws.workspace.list("/")
         self.assertIsInstance(result, list)
 
     def testClusters(self):
-        ws = dougrest_factory.default_client()
+        ws = dougrest_factory.test_client()
         result = ws.clusters.list()
         self.assertIsNotNone(result)
 
     def testJobs(self):
-        ws = dougrest_factory.default_client()
+        ws = dougrest_factory.test_client()
         result = ws.jobs.list()
         result = list(result)
         if not result:
@@ -36,43 +36,43 @@ class TestDatabricksApiClient(unittest.TestCase):
         self.assertIsInstance(job_id, int)
 
     def testRepos(self):
-        ws = dougrest_factory.default_client()
+        ws = dougrest_factory.test_client()
         result = ws.repos.list()
         self.assertIsNotNone(result)
 
     def testUsers(self):
-        ws = dougrest_factory.default_client()
+        ws = dougrest_factory.test_client()
         result = ws.users.list()
         self.assertIsInstance(result, list)
 
     def testGroups(self):
-        ws = dougrest_factory.default_client()
+        ws = dougrest_factory.test_client()
         result = ws.scim.groups.list()
         self.assertIsInstance(result, list)
 
     def testSqlWarehouses(self):
-        ws = dougrest_factory.default_client()
+        ws = dougrest_factory.test_client()
         result = ws.sql.endpoints.list()
         self.assertIsInstance(result, list)
 
     def testScim(self):
-        ws = dougrest_factory.default_client()
+        ws = dougrest_factory.test_client()
         result = ws.scim.groups.list()
         self.assertIsInstance(result, list)
 
     def testPools(self):
-        ws = dougrest_factory.default_client()
+        ws = dougrest_factory.test_client()
         result = ws.pools.list()
         self.assertIsInstance(result, list)
 
     def testMlFlow(self):
-        ws = dougrest_factory.default_client()
+        ws = dougrest_factory.test_client()
         result = list(ws.mlflow.registered_models.list())
         self.assertIsInstance(result, list)
         self.assertTrue(result)
 
     def testPermissions(self):
-        ws = dougrest_factory.default_client()
+        ws = dougrest_factory.test_client()
         pool_id = ws.pools.list()[0]["instance_pool_id"]
         result = ws.permissions.pools.get_levels(pool_id)
         self.assertTrue(result)

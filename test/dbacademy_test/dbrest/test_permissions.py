@@ -16,7 +16,7 @@ class TestPermissionsApi(unittest.TestCase):
     """
 
     def testClusterPolicyPermissions(self):
-        ws = dougrest_factory.default_client()
+        ws = dougrest_factory.test_client()
         policy_spec = {
             "cluster_type": {
                 "type": "fixed",
