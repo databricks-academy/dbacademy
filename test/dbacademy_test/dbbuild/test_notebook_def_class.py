@@ -171,9 +171,9 @@ class TestNotebookDef(unittest.TestCase):
 
     def test_good_double_spaced_i18n(self):
         command = """
-            # MAGIC %md  --i18n-TBD
-            # MAGIC 
-            # MAGIC # Build-Time Substitutions""".strip()
+# MAGIC %md  --i18n-TBD
+# MAGIC 
+# MAGIC # Build-Time Substitutions""".strip()
 
         notebook = self.create_notebook()
         notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
@@ -186,9 +186,9 @@ class TestNotebookDef(unittest.TestCase):
 
     def test_good_md_sandbox_i18n(self):
         command = """
-            # MAGIC %md-sandbox --i18n-TBD
-            # MAGIC 
-            # MAGIC # Build-Time Substitutions""".strip()
+# MAGIC %md-sandbox --i18n-TBD
+# MAGIC 
+# MAGIC # Build-Time Substitutions""".strip()
 
         notebook = self.create_notebook()
         notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
@@ -201,9 +201,9 @@ class TestNotebookDef(unittest.TestCase):
 
     def test_missing_i18n_multi(self):
         command = """
-            # MAGIC %md
-            # MAGIC 
-            # MAGIC # Build-Time Substitutions""".strip()
+# MAGIC %md
+# MAGIC 
+# MAGIC # Build-Time Substitutions""".strip()
 
         notebook = self.create_notebook()
         notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
@@ -214,8 +214,7 @@ class TestNotebookDef(unittest.TestCase):
         self.assertEqual("Cmd #4 | Missing the i18n directive: %md", notebook.errors[0].message)
 
     def test_missing_i18n_single(self):
-        command = """
-            # MAGIC %md | # Build-Time Substitutions""".strip()
+        command = "# MAGIC %md | # Build-Time Substitutions".strip()
 
         notebook = self.create_notebook()
         notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
@@ -227,9 +226,9 @@ class TestNotebookDef(unittest.TestCase):
 
     def test_extra_word_i18n(self):
         command = """
-            # MAGIC %md --i18n-TBD # Title
-            # MAGIC 
-            # MAGIC # Build-Time Substitutions""".strip()
+# MAGIC %md --i18n-TBD # Title
+# MAGIC 
+# MAGIC # Build-Time Substitutions""".strip()
 
         notebook = self.create_notebook()
         notebook.update_md_cells(language="Python", command=command, i=3, i18n_guid_map={"--i18n-TBD": "whatever"}, other_notebooks=[])
@@ -363,8 +362,8 @@ class TestNotebookDef(unittest.TestCase):
 
     def test_validate_html_link_with_target(self):
         command = """
-        # MAGIC %md --i18n-TBD
-        # MAGIC # <a href="https://example.com" target="_blank">some link</a>""".strip()
+# MAGIC %md --i18n-TBD
+# MAGIC # <a href="https://example.com" target="_blank">some link</a>""".strip()
 
         notebook = self.create_notebook()
         notebook.validate_html_link(3, command)
@@ -374,8 +373,8 @@ class TestNotebookDef(unittest.TestCase):
 
     def test_validate_html_link_no_target(self):
         command = """
-        # MAGIC %md --i18n-TBD
-        # MAGIC # <a href="https://example.com">some link</a>""".strip()
+# MAGIC %md --i18n-TBD
+# MAGIC # <a href="https://example.com">some link</a>""".strip()
 
         notebook = self.create_notebook()
         notebook.validate_html_link(3, command)
@@ -415,6 +414,146 @@ class TestNotebookDef(unittest.TestCase):
         m = "#"
         result = command.replace(f"{m} MAGIC ", "")
         print(result)
+
+        def test_build_install_libraries_cell_v1(self):
+            command = r"""
+    # INSTALL_LIBRARIES
+    version = "v9.8.7"
+    if not version.startswith("v"): library_url = f"git+https://github.com/databricks-academy/dbacademy@{version}"
+    else: library_url = f"https://github.com/databricks-academy/dbacademy/releases/download/{version}/dbacademy-{version[1:]}-py3-none-any.whl"
+    pip_command = f"install --quiet --disable-pip-version-check {library_url}"
+    """.strip()
+
+            notebook = self.create_notebook()
+            actual_command = notebook.build_install_libraries_cell(command=command, i=3)
+
+            self.assert_n_warnings(0, notebook)
+            self.assert_n_errors(0, notebook)
+
+            expected_command = r"""
+    def __install_libraries():
+        version = spark.conf.get("dbacademy.library.version", "v9.8.7")
+
+        try:
+            from dbacademy import dbgems  
+            installed_version = dbgems.lookup_current_module_version("dbacademy")
+            if installed_version == version:
+                pip_command = "list --quiet"  # Skipping pip install of pre-installed python library
+            else:
+                print(f"WARNING: The wrong version of dbacademy is attached to this cluster. Expected {version}, found {installed_version}.")
+                print(f"Installing the correct version.")
+                raise Exception("Forcing re-install")
+
+        except Exception as e:
+            # The import fails if library is not attached to cluster
+            if not version.startswith("v"): library_url = f"git+https://github.com/databricks-academy/dbacademy@{version}"
+            else: library_url = f"https://github.com/databricks-academy/dbacademy/releases/download/{version}/dbacademy-{version[1:]}-py3-none-any.whl"
+
+            default_command = f"install --quiet --disable-pip-version-check {library_url}"
+            pip_command = spark.conf.get("dbacademy.library.install", default_command)
+
+            if pip_command != default_command:
+                print(f"WARNING: Using alternative library installation:
+    | default: %pip {default_command}
+    | current: %pip {pip_command}")
+
+    __install_libraries()
+    """.strip()
+            self.maxDiff = None
+            self.assertEqual(expected_command, actual_command)
+
+    def test_build_install_libraries_cell_v2(self):
+        command = r"""
+# INSTALL_LIBRARIES
+version="v6.5.4"
+if not version.startswith("v"): library_url = f"git+https://github.com/databricks-academy/dbacademy@{version}"
+else: library_url = f"https://github.com/databricks-academy/dbacademy/releases/download/{version}/dbacademy-{version[1:]}-py3-none-any.whl"
+pip_command = f"install --quiet --disable-pip-version-check {library_url}"
+""".strip()
+
+        notebook = self.create_notebook()
+        actual_command = notebook.build_install_libraries_cell(command=command, i=3)
+
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(0, notebook)
+
+        expected_command = r"""
+def __install_libraries():
+    version = spark.conf.get("dbacademy.library.version", "v6.5.4")
+
+    try:
+        from dbacademy import dbgems  
+        installed_version = dbgems.lookup_current_module_version("dbacademy")
+        if installed_version == version:
+            pip_command = "list --quiet"  # Skipping pip install of pre-installed python library
+        else:
+            print(f"WARNING: The wrong version of dbacademy is attached to this cluster. Expected {version}, found {installed_version}.")
+            print(f"Installing the correct version.")
+            raise Exception("Forcing re-install")
+
+    except Exception as e:
+        # The import fails if library is not attached to cluster
+        if not version.startswith("v"): library_url = f"git+https://github.com/databricks-academy/dbacademy@{version}"
+        else: library_url = f"https://github.com/databricks-academy/dbacademy/releases/download/{version}/dbacademy-{version[1:]}-py3-none-any.whl"
+
+        default_command = f"install --quiet --disable-pip-version-check {library_url}"
+        pip_command = spark.conf.get("dbacademy.library.install", default_command)
+
+        if pip_command != default_command:
+            print(f"WARNING: Using alternative library installation:
+| default: %pip {default_command}
+| current: %pip {pip_command}")
+
+__install_libraries()
+""".strip()
+        self.maxDiff = None
+        self.assertEqual(expected_command, actual_command)
+
+    def test_build_install_libraries_cell_errors_v1(self):
+        command = r"myversion = \"v9.8.7\"".strip()
+
+        notebook = self.create_notebook()
+        notebook.build_install_libraries_cell(command=command, i=3)
+
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(1, notebook)
+        expected = """Expected one and only one line that starts with "version =", found 0."""
+        self.assertEqual(expected, notebook.errors[0].message)
+
+    def test_build_install_libraries_cell_errors_v2(self):
+        command = f"version = \"v9.8.7\"\nversion=\"v0.0.0\"".strip()
+
+        notebook = self.create_notebook()
+        notebook.build_install_libraries_cell(command=command, i=3)
+
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(1, notebook)
+        expected = """Expected one and only one line that starts with "version =", found 2."""
+        self.assertEqual(expected, notebook.errors[0].message)
+
+    def test_build_install_libraries_cell_errors_v3(self):
+        command = f"version = \"v9.8.7".strip()
+
+        notebook = self.create_notebook()
+        notebook.build_install_libraries_cell(command=command, i=3)
+
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(1, notebook)
+        expected = """Cmd #4 | Unable to parse the dbacademy library version for the INSTALL_LIBRARIES directive: version = "v9.8.7."""
+        actual = notebook.errors[0].message
+        self.assertEqual(expected, actual)
+
+    def test_build_install_libraries_cell_errors_v4(self):
+        command = f"version = v9.8.7\"".strip()
+
+        notebook = self.create_notebook()
+        notebook.build_install_libraries_cell(command=command, i=3)
+
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(1, notebook)
+        expected = """Cmd #4 | Unable to parse the dbacademy library version for the INSTALL_LIBRARIES directive: version = v9.8.7"."""
+        actual = notebook.errors[0].message
+        self.assertEqual(expected, actual)
 
 
 if __name__ == '__main__':
