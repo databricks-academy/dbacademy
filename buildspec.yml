@@ -13,7 +13,7 @@ phases:
       - pip -q install -r requirements.txt --use-pep517
   build:
     commands:
-      - python -m pytest --junit-xml=reports/unit-tests.xml
+      - python -m pytest --junit-xml=reports/unit-tests.xml --cov=src/ --cov-report html:reports/coverage
   post_build:
     commands:
       - echo Build completed on `date`
@@ -23,3 +23,11 @@ reports:
     files: unit-tests.xml
     base-directory: reports/
     file-format: JUNITXML
+
+  coverage:
+    files: coverage.html
+    base-directory: reports/
+    file-format: HTML
+
+artifacts:
+  files:
