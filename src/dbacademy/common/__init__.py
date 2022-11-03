@@ -17,6 +17,7 @@ def print_warning(title: str, message: str, length: int = 100) -> None:
     for line in message.split("\n"):
         print(f"* {line}")
     print("*"*length)
+    print()
 
 
 def deprecated(reason=None, action="warn") -> Callable:
