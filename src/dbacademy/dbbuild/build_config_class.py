@@ -167,12 +167,9 @@ class BuildConfig:
 
         self.source_repo = dbgems.get_notebook_dir(offset=-2) if source_repo is None else source_repo
         self.source_dir = f"{self.source_repo}/Source" if source_dir is None else source_dir
+        self.source_dir = source_dir or f"{self.source_repo}/Source"
 
-        # We don't want the following function to fail if we are using the "default" path which
-        # may or may not exist. The implication being that this will fail if called explicitly
         self.include_solutions = include_solutions
-        self.create_notebooks(include_solutions=include_solutions,
-                              fail_fast=source_dir is not None)
 
         self.white_list = None
         self.black_list = None
@@ -180,11 +177,7 @@ class BuildConfig:
         self.change_log = None
         self.publishing_info = publishing_info or {}
 
-    # def get_distribution_name(self, version):
-    #     distribution_name = f"{self.name}" if version is None else f"{self.name}-v{version}"
-    #     return distribution_name.replace(" ", "-").replace(" ", "-").replace(" ", "-")
-
-    def create_notebooks(self, *, include_solutions: bool, fail_fast: bool):
+    def __create_notebooks(self):
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
 
         assert self.source_dir is not None, "BuildConfig.source_dir must be specified"
@@ -192,10 +185,8 @@ class BuildConfig:
         self.notebooks = dict()
         entities = self.client.workspace().ls(self.source_dir, recursive=True)
 
-        if entities is None and fail_fast is False:
-            return  # The directory doesn't exist
-        elif entities is None and fail_fast is True:
-            raise Exception(f"The specified directory ({self.source_dir}) does not exist (fail_fast={fail_fast}).")
+        if entities is None:
+            raise Exception(f"The specified source directory ({self.source_dir}) does not exist.")
 
         entities.sort(key=lambda e: e["path"])
 
@@ -204,7 +195,7 @@ class BuildConfig:
             entity = entities[i]
             order = i       # Start with the natural order
             test_round = 2  # Default test_round for all notebooks
-            include_solution = include_solutions  # Initialize to the default value
+            include_solution = self.include_solutions  # Initialize to the default value
             path = entity["path"][len(self.source_dir) + 1:]  # Get the notebook's path relative to the source root
 
             if "includes/" in path.lower():  # Any folder that ends in "includes/"
@@ -241,6 +232,8 @@ class BuildConfig:
         if has_wip: print()
 
     def validate(self, validate_version: bool = True, validate_readme: bool = True):
+
+        self.__create_notebooks()
 
         if validate_version: self.__validate_version()
         if validate_readme: self.__validate_readme()
