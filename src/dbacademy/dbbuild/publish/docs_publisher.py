@@ -10,6 +10,7 @@ class DocsPublisher:
         self.__build_name = build_name
         self.__version = version
         self.__pdfs = dict()
+        self.__drive_service = self.__get_service("drive", "v3")
 
         try:
             import google
@@ -53,6 +54,10 @@ class DocsPublisher:
         scoped_credentials = credentials.with_scopes(scopes)
         return build(api_name, api_version, credentials=scoped_credentials)
 
+    @staticmethod
+    def __to_gdoc_id(gdoc_url):
+        return gdoc_url.split("/")[-2]
+
     def __download_doc(self, *, index: int, total: int, gdoc_id: str = None, gdoc_url: str = None):
         import os, io, shutil
         from googleapiclient.http import MediaIoBaseDownload
@@ -60,17 +65,15 @@ class DocsPublisher:
 
         assert gdoc_id or gdoc_url, f"One of the two parameters (gdoc_id or gdoc_url) must be specified."
         if not gdoc_id and gdoc_url:
-            gdoc_id = gdoc_url.split("/")[-2]
+            gdoc_id = self.__to_gdoc_id(gdoc_url)
 
-        drive_service = self.__get_service("drive", "v3")
-
-        file = drive_service.files().get(fileId=gdoc_id).execute()
+        file = self.__drive_service.files().get(fileId=gdoc_id).execute()
         name = file.get("name")
         file_name = f"{name}.pdf".replace(":", "-").replace(" ", "-").lower()
         while "--" in file_name: file_name = file_name.replace("--", "-")
         print(f"\nProcessing {index + 1} or {total}: {name}")
 
-        request = drive_service.files().export_media(fileId=gdoc_id, mimeType='application/pdf')
+        request = self.__drive_service.files().export_media(fileId=gdoc_id, mimeType='application/pdf')
 
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
@@ -113,9 +116,44 @@ class DocsPublisher:
             file_name, file_url = self.__download_doc(index=index, total=total, gdoc_url=link)
             self.__pdfs[file_name] = file_url
 
-    @staticmethod
-    def process_google_slides():
-        dbgems.print_warning("Not Implemented", "DocsPublisher.process_google_slides() has not yet been implemented")
+    def process_google_slides(self):
+        import json
+
+        parent_folder_id = self.translation.published_docs_folder.split("/")[-1]
+        files = self.__drive_service.files().list(q=f"'{parent_folder_id}' in parents").execute().get("files")
+        files = [f for f in files if f.get("name") == f"v{self.version}"]
+
+        if len(files) == 0:
+            folder_name = f"v{self.version}"
+            file_metadata = {
+                "name": folder_name,
+                "mimeType": "application/vnd.google-apps.folder",
+                "parents": [parent_folder_id]
+            }
+            folder = self.__drive_service.files().create(body=file_metadata).execute()
+            print(f"Created folder", end=" ")
+        else:
+            folder = files[0]
+            print(f"Existing folder", end=" ")
+
+        folder_id = folder.get("id")
+        folder_name = folder.get("name")
+        print(f"{folder_name} ({folder_id})")
+
+        total = len(self.translation.document_links)
+        for index, link in enumerate(self.translation.document_links):
+            gdoc_id = self.__to_gdoc_id(link)
+            file = self.__drive_service.files().get(fileId=gdoc_id).execute()
+            name = file.get("name")
+
+            print(f"Copying {index + 1} of {total}: {name}")
+
+            params = {
+                "parents": [folder_id],
+                "name": name
+            }
+            new_file = self.__drive_service.files().copy(fileId=gdoc_id, body=params).execute()
+            print(json.dumps(new_file, indent=4))
 
     def to_html(self):
         html = """<html><body style="font-size:16px">"""
