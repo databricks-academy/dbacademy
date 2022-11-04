@@ -155,7 +155,8 @@ class DBAcademyHelper:
 
     def to_unique_name(self, username):
         local_part = username.split("@")[0]
-        username_hash = dbgems.stable_hash(username, length=4)
+        hash_basis = f"{username}{dbgems.get_workspace_id()}"
+        username_hash = dbgems.stable_hash(hash_basis, length=4)
         course_code = self.course_config.course_code
         return f"{local_part}-{username_hash}-da-{course_code}".lower()
 
@@ -165,7 +166,8 @@ class DBAcademyHelper:
 
     def to_catalog_name_prefix(self, username):
         local_part = username.split("@")[0]
-        username_hash = dbgems.stable_hash(username, length=4)
+        hash_basis = f"{username}{dbgems.get_workspace_id()}"
+        username_hash = dbgems.stable_hash(hash_basis, length=4)
         course_code = self.course_config.course_code
         return dbgems.clean_string(f"{local_part}-{username_hash}-da-{course_code}").lower()
 
@@ -203,7 +205,8 @@ class DBAcademyHelper:
 
     def to_schema_name_prefix(self, username: str) -> str:
         local_part = username.split("@")[0]
-        username_hash = dbgems.stable_hash(username, length=4)
+        hash_basis = f"{username}{dbgems.get_workspace_id()}"
+        username_hash = dbgems.stable_hash(hash_basis, length=4)
         course_code = self.course_config.course_code
         return dbgems.clean_string(f"{local_part}-{username_hash}-da-{course_code}").lower()
 
