@@ -123,8 +123,8 @@ class ApiClientFactory(Generic[ApiType]):
     @cache
     def test_account(self) -> AccountsApi:
         known_accounts = self.known_accounts()  # Minimize file hits
-        result = known_accounts().get(ApiClientFactory.PROFILE_ENVIRONMENT)
-        result = result or known_accounts().get(ApiClientFactory.PROFILE_DEFAULT)
+        result = known_accounts.get(ApiClientFactory.PROFILE_ENVIRONMENT)
+        result = result or known_accounts.get(ApiClientFactory.PROFILE_DEFAULT)
 
         if result is not None:
             return result
