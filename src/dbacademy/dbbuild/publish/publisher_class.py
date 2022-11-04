@@ -366,29 +366,39 @@ class Publisher:
         assert self.__changes_in_source_repo is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
         assert self.__changes_in_source_repo == 0, f"Found {self.__changes_in_source_repo} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
-    def validate_no_changes_in_source_repo(self):
+    def validate_no_changes_in_source_repo(self, skip_validation=False):
         from ..build_utils_class import BuildUtils
 
-        repo_name = f"{self.build_name}-source.git"
-        results = BuildUtils.validate_no_changes_in_repo(client=self.client,
-                                                         build_name=self.build_name,
-                                                         repo_url=f"https://github.com/databricks-academy/{repo_name}",
-                                                         directory=self.source_repo)
-        self.__changes_in_source_repo = len(results)
-        self.assert_no_changes_in_source_repo()
+        if skip_validation:
+            dbgems.print_warning(f"SKIPPING VALIDATION", "The source directory is not being evaluated for pending changes")
+            self.__changes_in_source_repo = 0
+
+        else:
+            repo_name = f"{self.build_name}-source.git"
+            results = BuildUtils.validate_no_changes_in_repo(client=self.client,
+                                                             build_name=self.build_name,
+                                                             repo_url=f"https://github.com/databricks-academy/{repo_name}",
+                                                             directory=self.source_repo)
+            self.__changes_in_source_repo = len(results)
+            self.assert_no_changes_in_source_repo()
 
     def assert_no_changes_in_target_repo(self):
         method = "Publisher.validate_no_changes_in_target_repo()"
         assert self.__changes_in_target_repo is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
         assert self.__changes_in_target_repo == 0, f"Found {self.__changes_in_target_repo} changes(s) in the target repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
-    def validate_no_changes_in_target_repo(self):
+    def validate_no_changes_in_target_repo(self, skip_validation=False):
         from ..build_utils_class import BuildUtils
 
-        repo_name = f"{self.build_name}.git"
-        results = BuildUtils.validate_no_changes_in_repo(client=self.client,
-                                                         build_name=self.build_name,
-                                                         repo_url=f"https://github.com/databricks-academy/{repo_name}",
-                                                         directory=self.target_dir)
-        self.__changes_in_target_repo = len(results)
-        self.assert_no_changes_in_target_repo()
+        if skip_validation:
+            dbgems.print_warning(f"SKIPPING VALIDATION", "The target directory is not being evaluated for pending changes")
+            self.__changes_in_target_repo = 0
+
+        else:
+            repo_name = f"{self.build_name}.git"
+            results = BuildUtils.validate_no_changes_in_repo(client=self.client,
+                                                             build_name=self.build_name,
+                                                             repo_url=f"https://github.com/databricks-academy/{repo_name}",
+                                                             directory=self.target_dir)
+            self.__changes_in_target_repo = len(results)
+            self.assert_no_changes_in_target_repo()
