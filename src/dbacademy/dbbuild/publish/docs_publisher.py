@@ -117,8 +117,6 @@ class DocsPublisher:
             self.__pdfs[file_name] = file_url
 
     def process_google_slides(self):
-        import json
-
         parent_folder_id = self.translation.published_docs_folder.split("/")[-1]
         files = self.__drive_service.files().list(q=f"'{parent_folder_id}' in parents").execute().get("files")
         files = [f for f in files if f.get("name") == f"v{self.version}"]
@@ -152,8 +150,7 @@ class DocsPublisher:
                 "parents": [folder_id],
                 "name": name
             }
-            new_file = self.__drive_service.files().copy(fileId=gdoc_id, body=params).execute()
-            print(json.dumps(new_file, indent=4))
+            self.__drive_service.files().copy(fileId=gdoc_id, body=params).execute()
 
     def to_html(self):
         html = """<html><body style="font-size:16px">"""
