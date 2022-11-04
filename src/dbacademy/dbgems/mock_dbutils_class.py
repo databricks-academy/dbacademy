@@ -32,6 +32,10 @@ class MockNotebook:
     def getContext() -> "MockContext":
         return MockContext()
 
+    @staticmethod
+    def run(path: str, timeout_seconds: int, arguments: dict):
+        pass
+
 
 class MockContext:
     @staticmethod
@@ -60,6 +64,7 @@ class MockDBUtils:
         self.widgets = MockWidgets()
         self.secrets = MockSecrets()
         self.entry_point = MockEntryPoint()
+        self.notebook = MockNotebook()
 
     # noinspection PyPep8Naming
     def displayHTML(self, **kwargs):
@@ -68,6 +73,3 @@ class MockDBUtils:
     def display(self, **kwargs):
         pass
 
-    @staticmethod
-    def notebook() -> MockNotebook:
-        return MockNotebook()

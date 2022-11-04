@@ -358,11 +358,16 @@ class Translator:
     def create_docs(self) -> str:
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
         from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
+
         self.assert_created_dbcs()
 
         info = PublishingInfo(self.build_config.publishing_info)
         translation = info.translations.get(self.common_language)
-        docs_publisher = DocsPublisher(translation)
+        docs_publisher = DocsPublisher(build_name=self.build_config.build_name,
+                                       version=self.version,
+                                       translation=translation)
+        docs_publisher.process_pdfs()
+        docs_publisher.process_google_slides()
         html = docs_publisher.to_html()
 
         self.__created_docs = True

@@ -13,10 +13,13 @@ class Publisher:
     def __init__(self, build_config: BuildConfig):
         from dbacademy.dbbuild.build_config_class import BuildConfig
 
-        self.__validated = False              # By default, we are not validated
-        self.__validated_repo_reset = True    # By default repo is valid (unless invoked)
-        self.__changes_in_source_repo = None  # Will be set once we test for changes
-        self.__changes_in_target_repo = None  # Will be set once we test for changes
+        # Various validation steps
+        self.__validated = False
+        self.__validated_repo_reset = True
+        self.__changes_in_source_repo = None
+        self.__changes_in_target_repo = None
+        self.__created_docs = False
+        self.__created_dbcs = False
 
         self.build_config = common.validate_type(build_config, "build_config", BuildConfig)
 
@@ -307,6 +310,9 @@ class Publisher:
             for notebook in self.build_config.notebooks.values():
                 self.__generate_html(notebook)
 
+    def assert_created_dbcs(self):
+        assert self.__created_dbcs, "The DBCS have not yet been created. See Publisher.create_dbcs()"
+
     def create_dbcs(self):
         from ..build_utils_class import BuildUtils
 
@@ -332,20 +338,30 @@ class Publisher:
                               target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
 
         url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc"
-        dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
+
+        self.__created_dbcs = True
+
+        return f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>"""
+
+    def assert_created_docs(self):
+        assert self.__created_docs, "The docs have not yet been created. See Publisher.create_docs()"
 
     def create_docs(self) -> str:
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
         from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
 
-        # self.assert_created_dbcs()
+        self.assert_created_dbcs()
 
         info = PublishingInfo(self.build_config.publishing_info)
         translation = info.translations.get(self.common_language)
-        docs_publisher = DocsPublisher(translation)
+        docs_publisher = DocsPublisher(build_name=self.build_config.build_name,
+                                       version=self.version,
+                                       translation=translation)
+        docs_publisher.process_pdfs()
+        docs_publisher.process_google_slides()
         html = docs_publisher.to_html()
 
-        # self.__created_docs = True
+        self.__created_docs = True
         return html
 
     # def to_validator(self):
