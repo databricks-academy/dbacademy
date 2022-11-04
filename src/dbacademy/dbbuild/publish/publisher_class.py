@@ -106,7 +106,7 @@ class Publisher:
 
         return True
 
-    def generate_notebooks(self, *, verbose=False, debugging=False, **kwargs):
+    def generate_notebooks(self, *, verbose=False, debugging=False, **kwargs) -> str:
         from ..publish.notebook_def_class import NotebookDef
         from ..build_utils_class import BuildUtils
 
@@ -165,6 +165,12 @@ class Publisher:
         warnings = 0
         errors = 0
 
+        print("-"*80)
+        print(f"All done!")
+        print()
+        print(f"Found {warnings} warnings")
+        print(f"Found {errors} errors")
+
         html = f"""<html><body style="font-size:16px">
                          <div><a href="{dbgems.get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>"""
         for notebook in main_notebooks:
@@ -177,13 +183,7 @@ class Publisher:
                     html += f"""<div style="margin-top:1em; white-space: pre-wrap">{warning.message}</div>"""
         html += """</body></html>"""
 
-        print("-"*80)
-        print(f"All done!")
-        print()
-        print(f"Found {warnings} warnings")
-        print(f"Found {errors} errors")
-
-        dbgems.display_html(html)
+        return html
 
     def create_published_message(self) -> str:
         from .advertiser import Advertiser

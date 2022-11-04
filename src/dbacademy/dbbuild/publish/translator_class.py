@@ -250,7 +250,7 @@ class Translator:
     def assert_generated_notebooks(self):
         assert self.__generated_notebooks, f"The notebooks have not been published. See Translator.publish_notebooks()"
 
-    def generate_notebooks(self):
+    def generate_notebooks(self) -> str:
         from datetime import datetime
         from ..build_utils_class import BuildUtils
         from ..publish.notebook_def_class import NotebookDef
@@ -345,12 +345,11 @@ class Translator:
                                                   content=new_source,
                                                   overwrite=True)
 
-        html = f"""<html><body style="font-size:16px">
+        self.__generated_notebooks = True
+
+        return f"""<html><body style="font-size:16px">
                      <div><a href="{dbgems.get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>
                    </body></html>"""
-
-        dbgems.display_html(html)
-        self.__generated_notebooks = True
 
     def assert_created_docs(self):
         assert self.__created_docs, "The docs have not yet been created. See Translator.create_docs()"
