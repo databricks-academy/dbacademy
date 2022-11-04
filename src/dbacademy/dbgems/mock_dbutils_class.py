@@ -12,32 +12,8 @@ class MockFileSystem:
         pass
 
 
-class MockEntryPoint:
-    # noinspection PyPep8Naming
-    @staticmethod
-    def getDbutils() -> "MockDBUtils":
-        # tags = dbutils.entry_point.getDbutils().notebook().getContext().tags()
-        return MockDBUtils()
+class MockEntryPointContext:
 
-
-class MockWidgets:
-    def __init__(self):
-        pass
-
-
-class MockNotebook:
-    # tags = dbutils.entry_point.getDbutils().notebook().getContext().tags()
-    # noinspection PyPep8Naming
-    @staticmethod
-    def getContext() -> "MockContext":
-        return MockContext()
-
-    @staticmethod
-    def run(path: str, timeout_seconds: int, arguments: dict):
-        pass
-
-
-class MockContext:
     @staticmethod
     def tags():
         return {
@@ -53,6 +29,38 @@ class MockContext:
         return MockOptional(path)
 
 
+class MockEntryPointNotebook:
+    # noinspection PyPep8Naming
+    @staticmethod
+    def getContext():
+        return MockEntryPointContext()
+
+
+class MockEntryPointDBUtils:
+    @staticmethod
+    def notebook():
+        return MockEntryPointNotebook()
+
+
+class MockEntryPoint:
+    # noinspection PyPep8Naming
+    @staticmethod
+    def getDbutils() -> "MockEntryPointDBUtils":
+        # tags = dbutils.entry_point.getDbutils().notebook().getContext().tags()
+        return MockEntryPointDBUtils()
+
+
+class MockWidgets:
+    def __init__(self):
+        pass
+
+
+class MockNotebook:
+    @staticmethod
+    def run(path: str, timeout_seconds: int, arguments: dict):
+        pass
+
+
 class MockSecrets:
     def __init__(self):
         pass
@@ -64,6 +72,8 @@ class MockDBUtils:
         self.widgets = MockWidgets()
         self.secrets = MockSecrets()
         self.entry_point = MockEntryPoint()
+
+        # Supports dbutils.notebook
         self.notebook = MockNotebook()
 
     # noinspection PyPep8Naming
@@ -72,4 +82,3 @@ class MockDBUtils:
 
     def display(self, **kwargs):
         pass
-
