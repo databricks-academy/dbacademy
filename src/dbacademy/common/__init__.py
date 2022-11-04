@@ -13,6 +13,7 @@ deprecation_log_level = "error"
 
 def print_warning(title: str, message: str, length: int = 100) -> None:
     title_len = length - len(title) - 3
+    print()
     print(f"""* {title.upper()} {("*"*title_len)}""")
     for line in message.split("\n"):
         print(f"* {line}")
