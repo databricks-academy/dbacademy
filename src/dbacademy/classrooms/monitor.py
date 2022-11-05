@@ -171,6 +171,11 @@ class Commands(object):
         return Commands.listJobs(w, stop=True)
 
     @staticmethod
+    def listScheduledQueries(w):
+        """List scheduled queries.  This may fail due to permissions issues."""
+        return [q for q in w.api("GET", "2.0/preview/sql/queries").get("results", []) if q.get("schedule")]
+
+    @staticmethod
     def stopQueries(w):
         """Attempts to unschedule any scheduled SQL Query Refresh Schedules.  This may fail due to permissions issues."""
         count = 0
