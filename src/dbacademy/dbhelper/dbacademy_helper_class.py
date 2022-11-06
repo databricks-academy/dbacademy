@@ -51,7 +51,7 @@ class DBAcademyHelper:
         self.__course_config = course_config
 
         self.__debug = debug
-        self.__start = self.clock_start()
+        self.__start = dbgems.clock_start()
         self.__spark = dbgems.spark
 
         # Initialized in the call to init()
@@ -279,7 +279,7 @@ class DBAcademyHelper:
 
     def __create_catalog(self):
         try:
-            start = self.clock_start()
+            start = dbgems.clock_start()
             print(f"Creating & using the catalog \"{self.catalog_name}\"", end="...")
             dbgems.sql(f"CREATE CATALOG IF NOT EXISTS {self.catalog_name}")
             dbgems.sql(f"USE CATALOG {self.catalog_name}")
@@ -287,20 +287,20 @@ class DBAcademyHelper:
             dbgems.sql(f"CREATE DATABASE IF NOT EXISTS default")
             dbgems.sql(f"USE default")
 
-            print(self.clock_stopped(start))
+            print(dbgems.clock_stopped(start))
 
         except Exception as e:
             raise AssertionError(self.__troubleshoot_error(f"Failed to create the catalog \"{self.catalog_name}\".", "Cannot Create Catalog")) from e
 
     def __create_schema(self):
-        start = self.clock_start()
+        start = dbgems.clock_start()
         # self.created_db = True
 
         try:
             print(f"Creating & using the schema \"{self.schema_name}\"", end="...")
             dbgems.sql(f"CREATE DATABASE IF NOT EXISTS {self.schema_name} LOCATION '{self.paths.user_db}'")
             dbgems.sql(f"USE {self.schema_name}")
-            print(self.clock_stopped(start))
+            print(dbgems.clock_stopped(start))
 
         except Exception as e:
             raise AssertionError(self.__troubleshoot_error(f"Failed to create the schema \"{self.schema_name}\".", "Cannot Create Schema")) from e
@@ -346,12 +346,12 @@ class DBAcademyHelper:
             self.validate_datasets(fail_fast=True)
 
     def __cleanup_working_dir(self):
-        start = self.clock_start()
+        start = dbgems.clock_start()
         print(f"| removing the working directory \"{self.paths.working_dir}\"", end="...")
 
         dbgems.dbutils.fs.rm(self.paths.working_dir, True)
 
-        print(self.clock_stopped(start))
+        print(dbgems.clock_stopped(start))
 
     @staticmethod
     def __drop_database(schema_name):
@@ -368,40 +368,40 @@ class DBAcademyHelper:
 
     def __drop_schema(self):
 
-        start = self.clock_start()
+        start = dbgems.clock_start()
         print(f"| dropping the schema \"{self.schema_name}\"", end="...")
 
         self.__drop_database(self.schema_name)
 
-        print(self.clock_stopped(start))
+        print(dbgems.clock_stopped(start))
 
     def __drop_catalog(self):
         from pyspark.sql.utils import AnalysisException
 
-        start = self.clock_start()
+        start = dbgems.clock_start()
         print(f"| dropping the catalog \"{self.catalog_name}\"", end="...")
 
         try: self.__spark.sql(f"DROP CATALOG IF EXISTS {self.catalog_name} CASCADE")
         except AnalysisException: pass  # Ignore this concurrency error
 
-        print(self.clock_stopped(start))
+        print(dbgems.clock_stopped(start))
 
     def __cleanup_stop_all_streams(self):
         for stream in self.__spark.streams.active:
-            start = self.clock_start()
+            start = dbgems.clock_start()
             print(f"| stopping the stream \"{stream.name}\"", end="...")
             stream.stop()
             try: stream.awaitTermination()
             except: pass  # Bury any exceptions
-            print(self.clock_stopped(start))
+            print(dbgems.clock_stopped(start))
 
     def reset_learning_environment(self):
-        start = self.clock_start()
+        start = dbgems.clock_start()
         print("Resetting the learning environment:")
         self.__reset_databases()
         self.__reset_datasets()
         self.__reset_working_dir()
-        print(f"\nThe learning environment was successfully reset {self.clock_stopped(start)}.")
+        print(f"\nThe learning environment was successfully reset {dbgems.clock_stopped(start)}.")
 
     def __reset_databases(self):
         from pyspark.sql.utils import AnalysisException
@@ -549,7 +549,7 @@ class DBAcademyHelper:
         print("\nPredefined paths variables:")
         self.paths.print(self_name="DA.")
 
-        print(f"\nSetup completed {self.clock_stopped(self.__start)}")
+        print(f"\nSetup completed {dbgems.clock_stopped(self.__start)}")
 
     def install_datasets(self, reinstall_datasets=False):
         """
@@ -586,20 +586,20 @@ class DBAcademyHelper:
         what = "dataset" if len(files) == 1 else "datasets"
         print(f"\nInstalling {len(files)} {what}: ")
 
-        install_start = self.clock_start()
+        install_start = dbgems.clock_start()
         for f in files:
-            start = self.clock_start()
+            start = dbgems.clock_start()
             print(f"| copying /{f.name[:-1]}", end="...")
 
             source_path = f"{self.data_source_uri}/{f.name}"
             target_path = f"{self.paths.datasets}/{f.name}"
 
             dbgems.dbutils.fs.cp(source_path, target_path, True)
-            print(self.clock_stopped(start))
+            print(dbgems.clock_stopped(start))
 
         self.validate_datasets(fail_fast=False)
 
-        print(f"""\nThe install of the datasets completed successfully {self.clock_stopped(install_start)}""")
+        print(f"""\nThe install of the datasets completed successfully {dbgems.clock_stopped(install_start)}""")
 
     def print_copyrights(self, mappings: dict = None):
         if mappings is None:
@@ -684,15 +684,15 @@ class DBAcademyHelper:
         Validates the "install" of the datasets by recursively listing all files in the remote data repository as well as the local data repository, validating that each file exists but DOES NOT validate file size or checksum.
         """
 
-        validation_start = self.clock_start()
+        validation_start = dbgems.clock_start()
 
         if self.staging_source_uri == self.data_source_uri:
             # When working with staging data, we need to enumerate what is in there
             # and use it as a definitive source to the complete enumeration of our files
-            start = self.clock_start()
+            start = dbgems.clock_start()
             print("\nEnumerating staged files for validation", end="...")
             self.course_config.remote_files = self.list_r(self.staging_source_uri)
-            print(self.clock_stopped(start))
+            print(dbgems.clock_stopped(start))
             print()
 
         print(f"\nValidating the locally installed datasets:")
@@ -702,9 +702,9 @@ class DBAcademyHelper:
         ############################################################
 
         print("| listing local files", end="...")
-        start = self.clock_start()
+        start = dbgems.clock_start()
         local_files = self.list_r(self.paths.datasets)
-        print(self.clock_stopped(start))
+        print(dbgems.clock_stopped(start))
 
         ############################################################
         # Repair directories first, this will pick up the majority
@@ -724,23 +724,23 @@ class DBAcademyHelper:
         for file in local_files:
             if file not in self.course_config.remote_files and file.endswith("/") and not_fixed(file):
                 fixes += 1
-                start = self.clock_start()
+                start = dbgems.clock_start()
                 repaired_paths.append(file)
                 print(f"| removing extra path: {file}", end="...")
                 dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
-                print(self.clock_stopped(start))
+                print(dbgems.clock_stopped(start))
 
         # Add extra directories (cascade effect vs one file at a time)
         for file in self.course_config.remote_files:
             if file not in local_files and file.endswith("/") and not_fixed(file):
                 fixes += 1
-                start = self.clock_start()
+                start = dbgems.clock_start()
                 repaired_paths.append(file)
                 print(f"| restoring missing path: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
                 target_file = f"{self.paths.datasets}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
-                print(self.clock_stopped(start))
+                print(dbgems.clock_stopped(start))
 
         ############################################################
         # Repair only straggling files
@@ -750,26 +750,26 @@ class DBAcademyHelper:
         for file in local_files:
             if file not in self.course_config.remote_files and not file.endswith("/") and not_fixed(file):
                 fixes += 1
-                start = self.clock_start()
+                start = dbgems.clock_start()
                 print(f"| removing extra file: {file}", end="...")
                 dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
-                print(self.clock_stopped(start))
+                print(dbgems.clock_stopped(start))
 
         # Add one file at a time (picking up what was not covered by processing directories)
         for file in self.course_config.remote_files:
             if file not in local_files and not file.endswith("/") and not_fixed(file):
                 fixes += 1
-                start = self.clock_start()
+                start = dbgems.clock_start()
                 print(f"| restoring missing file: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
                 target_file = f"{self.paths.datasets}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
-                print(self.clock_stopped(start))
+                print(dbgems.clock_stopped(start))
 
         if fixes == 1: print(f"| fixed 1 issue", end=" ")
         elif fixes > 0: print(f"| fixed {fixes} issues", end=" ")
         else: print(f"| completed", end=" ")
-        print(self.clock_stopped(validation_start, " total"))
+        print(dbgems.clock_stopped(validation_start, " total"))
         print()
 
         if fail_fast: assert fixes == 0, f"Unexpected modifications to source datasets."
