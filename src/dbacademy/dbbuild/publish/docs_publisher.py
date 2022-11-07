@@ -156,7 +156,7 @@ class DocsPublisher:
 
             except googleapiclient.errors.HttpError as e:
                 if e.resp.get("content-type", "").startswith('application/json'):
-                    reason = json.loads(e.content).get('error').get('errors')[0]
+                    reason = json.loads(e.content).get('error', []).get('errors', [{"message": str(e)}])[0].get("message")
                     dbgems.print_warning("SKIPPING DOWNLOAD / TOO LARGE", str(reason))
                 else:
                     error_message += "\n{type(e)} {e}"
