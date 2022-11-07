@@ -58,7 +58,7 @@ class DocsPublisher:
     def __to_gdoc_id(gdoc_url):
         return gdoc_url.split("/")[-2]
 
-    def __download_doc(self, *, index: int, total: int, gdoc_id: str = None, gdoc_url: str = None):
+    def __download_doc(self, *, index: int, total: int, gdoc_id: str = None, gdoc_url: str = None) -> (str, str):
         import os, io, shutil
         from googleapiclient.http import MediaIoBaseDownload
         from dbacademy import dbgems
@@ -113,8 +113,12 @@ class DocsPublisher:
         total = len(self.translation.document_links)
 
         for index, link in enumerate(self.translation.document_links):
-            file_name, file_url = self.__download_doc(index=index, total=total, gdoc_url=link)
-            self.__pdfs[file_name] = file_url
+            try:
+                file_name, file_url = self.__download_doc(index=index, total=total, gdoc_url=link)
+                self.__pdfs[file_name] = file_url
+            except Exception as e:
+                dbgems.print_warning("SKIPPING - CANNOT DOWNLOAD", f"Document {index+1} of {total} ({link}) cannot be downloaded and the publishing of this doc is being skipped.")
+                print(e)
 
     def process_google_slides(self):
         parent_folder_id = self.translation.published_docs_folder.split("/")[-1]
