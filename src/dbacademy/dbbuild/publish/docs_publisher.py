@@ -139,17 +139,24 @@ class DocsPublisher:
 
     def process_pdfs(self) -> None:
         import traceback
+        import socket
 
         total = len(self.translation.document_links)
 
         for index, link in enumerate(self.translation.document_links):
+            error_message = f"Document {index + 1} of {total} cannot be downloaded; publishing of this doc is being skipped.\n{link}"
+
             try:
                 file_name, file_url = self.__download_doc(index=index, total=total, gdoc_url=link)
                 self.__pdfs[file_name] = file_url
+
+            except socket.timeout:
+                dbgems.print_warning("SKIPPING DOWNLOAD / TIMEOUT", error_message)
+
             except Exception as e:
-                dbgems.print_warning("SKIPPING - CANNOT DOWNLOAD", f"Document {index+1} of {total} cannot be downloaded; publishing of this doc is being skipped.\n{link}")
-                print(type(e))
-                print(e)
+                error_message += "\n"
+                error_message += f"{type(e)} {e}"
+                dbgems.print_warning("SKIPPING - CANNOT DOWNLOAD", error_message)
 
     def process_google_slides(self) -> None:
         parent_folder_id = self.translation.published_docs_folder.split("/")[-1]
