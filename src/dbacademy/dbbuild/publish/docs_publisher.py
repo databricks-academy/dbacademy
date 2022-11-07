@@ -140,7 +140,7 @@ class DocsPublisher:
         # noinspection PyPackageRequirements
         import googleapiclient.errors
 
-        print("Exporting DBCs")
+        print("Exporting DBCs:")
         total = len(self.translation.document_links)
 
         for index, link in enumerate(self.translation.document_links):
@@ -170,7 +170,7 @@ class DocsPublisher:
 
     def process_google_slides(self) -> None:
 
-        print("Publishing Google Docs")
+        print("Publishing Google Docs:")
 
         parent_folder_id = self.translation.published_docs_folder.split("/")[-1]
         files = self.__drive_service.files().list(q=f"'{parent_folder_id}' in parents").execute().get("files")
