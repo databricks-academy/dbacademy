@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from dbacademy import dbgems, common
 
 
@@ -18,6 +18,7 @@ class Publisher:
         self.__validated = False
         self.__validated_repo_reset = True
         self.__changes_in_source_repo = None
+        self.__notebooks_generated = False
         self.__changes_in_target_repo = None
         self.__created_docs = False
         self.__created_dbcs = False
@@ -104,11 +105,19 @@ class Publisher:
             <p><a href="/#workspace{target_dir}/{folder_name}/{Publisher.VERSION_INFO_NOTEBOOK}.md" target="_blank">Resource Bundle: {folder_name}</a></p>
         </body></html>"""
 
-    def generate_notebooks(self, *, verbose=False, debugging=False, **kwargs) -> str:
+    def assert_notebooks_generated(self):
+        assert self.__notebooks_generated, "The notebooks have not yet been generated. See Publisher.generate_notebooks()"
+
+    def generate_notebooks(self, *, skip_generation: bool = False, verbose=False, debugging=False, **kwargs) -> Optional[str]:
         from ..publish.notebook_def_class import NotebookDef
         from ..build_utils_class import BuildUtils
 
-        assert self.validated, f"Cannot publish notebooks until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
+        self.assert_no_changes_in_source_repo()
+
+        if skip_generation:
+            self.__notebooks_generated = True
+            dbgems.print_warning(f"SKIPPING GENERATION", "Skipping the generation of notebooks")
+            return None
 
         if "mode" in kwargs:
             dbgems.print_warning(title="DEPRECATION WARNING", message=f"The parameter \"mode\" has been deprecated.\nPlease remove the parameter.")
@@ -181,6 +190,7 @@ class Publisher:
                     html += f"""<div style="margin-top:1em; white-space: pre-wrap">{warning.message}</div>"""
         html += """</body></html>"""
 
+        self.__notebooks_generated = True
         return html
 
     def create_published_message(self) -> str:
