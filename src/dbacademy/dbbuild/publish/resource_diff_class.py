@@ -35,8 +35,6 @@ class ResourceDiff:
             # Write the file to the docs folder
             target_file = f"/Workspace{self.build_config.source_repo}/docs/{diff.old_resource}_vs_{diff.new_resource}.html"
 
-        file_name = target_file.split("/")[-1]
-
         with open(target_file, "w") as file:
             file.write(html)
 

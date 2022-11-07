@@ -1,7 +1,7 @@
+from typing import Dict
 from dbacademy import dbgems
 
 
-# noinspection PyPackageRequirements
 class DocsPublisher:
     from dbacademy.dbbuild.publish.publishing_info_class import Translation
 
@@ -13,29 +13,33 @@ class DocsPublisher:
         self.__drive_service = self.__get_service("drive", "v3")
 
         try:
+            # noinspection PyPackageRequirements
             import google
+            # noinspection PyPackageRequirements
             import googleapiclient
         except ModuleNotFoundError:
             raise Exception("The following libraries are required, runtime-dependencies not bundled with the dbacademy library: google-api-python-client google-auth-httplib2 google-auth-oauthlib")
 
     @property
-    def translation(self):
+    def translation(self) -> Translation:
         return self.__translation
 
     @property
-    def build_name(self):
+    def build_name(self) -> str:
         return self.__build_name
 
     @property
-    def version(self):
+    def version(self) -> str:
         return self.__version
 
     @staticmethod
     def __get_service(api_name, api_version):
         import json
 
+        # noinspection PyPackageRequirements
         from google.oauth2 import service_account
-        from googleapiclient.discovery import build
+        # noinspection PyPackageRequirements
+        import googleapiclient.discovery
 
         scopes = ["https://www.googleapis.com/auth/drive",
                   "https://www.googleapis.com/auth/drive.file",
@@ -52,25 +56,43 @@ class DocsPublisher:
 
         credentials = service_account.Credentials.from_service_account_info(service_account_info)
         scoped_credentials = credentials.with_scopes(scopes)
-        return build(api_name, api_version, credentials=scoped_credentials)
+        return googleapiclient.discovery.build(api_name, api_version, credentials=scoped_credentials)
 
     @staticmethod
     def __to_gdoc_id(gdoc_url):
         return gdoc_url.split("/")[-2]
 
-    def __download_doc(self, *, index: int, total: int, gdoc_id: str = None, gdoc_url: str = None) -> (str, str):
-        import os, io, shutil
-        from googleapiclient.http import MediaIoBaseDownload
-        from dbacademy import dbgems
+    def get_file(self, gdoc_id: str = None, gdoc_url: str = None) -> Dict[str, str]:
 
         assert gdoc_id or gdoc_url, f"One of the two parameters (gdoc_id or gdoc_url) must be specified."
+
         if not gdoc_id and gdoc_url:
             gdoc_id = self.__to_gdoc_id(gdoc_url)
 
-        file = self.__drive_service.files().get(fileId=gdoc_id).execute()
+        return self.__drive_service.files().get(fileId=gdoc_id).execute()
+
+    @staticmethod
+    def to_file_name(file: Dict[str, str]) -> str:
         name = file.get("name")
         file_name = f"{name}.pdf".replace(":", "-").replace(" ", "-").lower()
         while "--" in file_name: file_name = file_name.replace("--", "-")
+
+        return file_name
+
+    def get_distribution_path(self, file: Dict[str, str]) -> str:
+        file_name = self.to_file_name(file)
+        return f"/dbfs/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/{file_name}"
+
+    def __download_doc(self, *, index: int, total: int, gdoc_id: str = None, gdoc_url: str = None) -> (str, str):
+        import os, io, shutil
+        # noinspection PyPackageRequirements
+        from googleapiclient.http import MediaIoBaseDownload
+        from dbacademy import dbgems
+
+        file = self.get_file(gdoc_id, gdoc_url)
+        name = file.get("name")
+        file_name = self.to_file_name(file)
+
         print(f"\nProcessing {index + 1} or {total}: {name}")
 
         request = self.__drive_service.files().export_media(fileId=gdoc_id, mimeType='application/pdf')
@@ -87,7 +109,7 @@ class DocsPublisher:
 
         target_dir = "/dbfs/FileStore/tmp"
         temp_path = f"{target_dir}/{file_name}"
-        dist_path = f"/dbfs/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/{file_name}"
+        dist_path = self.get_distribution_path(file)
 
         if os.path.exists(temp_path): os.remove(temp_path)
         if not os.path.exists(target_dir): os.mkdir(target_dir)
@@ -108,7 +130,7 @@ class DocsPublisher:
 
         return file_name, f"{workspace_url}/files/tmp/{file_name}"
 
-    def process_pdfs(self):
+    def process_pdfs(self) -> None:
 
         total = len(self.translation.document_links)
 
@@ -120,7 +142,7 @@ class DocsPublisher:
                 dbgems.print_warning("SKIPPING - CANNOT DOWNLOAD", f"Document {index+1} of {total} ({link}) cannot be downloaded and the publishing of this doc is being skipped.")
                 print(e)
 
-    def process_google_slides(self):
+    def process_google_slides(self) -> None:
         parent_folder_id = self.translation.published_docs_folder.split("/")[-1]
         files = self.__drive_service.files().list(q=f"'{parent_folder_id}' in parents").execute().get("files")
         files = [f for f in files if f.get("name") == f"v{self.version}"]
@@ -156,7 +178,7 @@ class DocsPublisher:
             }
             self.__drive_service.files().copy(fileId=gdoc_id, body=params).execute()
 
-    def to_html(self):
+    def to_html(self) -> str:
         html = """<html><body style="font-size:16px">"""
 
         html += "\nDownloads<ul>"
