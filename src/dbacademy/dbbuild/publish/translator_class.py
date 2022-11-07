@@ -25,6 +25,7 @@ class Translator:
         self.notebooks = publisher.notebooks
         self.build_name = publisher.build_name
 
+        self.i18n = publisher.i18n
         self.source_repo = publisher.source_repo
         self.build_config = publisher.build_config
 
