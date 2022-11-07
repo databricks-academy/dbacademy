@@ -148,7 +148,7 @@ class DocsPublisher:
                 self.__pdfs[file_name] = file_url
             except Exception as e:
                 dbgems.print_warning("SKIPPING - CANNOT DOWNLOAD", f"Document {index+1} of {total} cannot be downloaded; publishing of this doc is being skipped.\n{link}")
-                traceback.print_exception(e)
+                print(traceback.format_exc())
 
     def process_google_slides(self) -> None:
         parent_folder_id = self.translation.published_docs_folder.split("/")[-1]
