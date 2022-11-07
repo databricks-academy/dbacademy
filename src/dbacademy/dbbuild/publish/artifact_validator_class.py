@@ -91,7 +91,12 @@ class ArtifactValidator:
         print("-" * 80)
         print()
 
-        self.__validate_published_docs()
+        self.__validate_published_docs(version=self.version)
+        print()
+        print("-" * 80)
+        print()
+
+        self.__validate_published_docs(version="LATEST")
         print()
         print("-" * 80)
         print()
@@ -175,16 +180,21 @@ class ArtifactValidator:
 
         self.__validate_version_info(version=version, dbc_dir=target_dir)
 
-    def __validate_published_docs(self) -> None:
+    def __validate_published_docs(self, version: str) -> None:
         import os
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
+
+        print("Validating google docs")
 
         docs_publisher = DocsPublisher(build_name=self.build_name, version=self.version, translation=self.translation)
 
         for link in self.translation.document_links:
             file = docs_publisher.get_file(gdoc_url=link)
             name = file.get("name")
+            folder_id = file.get("id")
+            print(f"| {name} (https://drive.google.com/drive/folders/{folder_id})")
 
-            for version in [self.version, "LATEST"]:
-                distribution_path = docs_publisher.get_distribution_path(version=version, file=file)
-                assert os.path.exists(distribution_path), f"The document {name} was not found at \"{distribution_path}\""
+            distribution_path = docs_publisher.get_distribution_path(version=version, file=file)
+            assert os.path.exists(distribution_path), f"The document {name} was not found at \"{distribution_path}\""
+
+        print(f"| PASSED: All documents exported to the distribution system")
