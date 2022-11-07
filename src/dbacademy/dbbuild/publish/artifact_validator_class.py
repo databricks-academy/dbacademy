@@ -140,7 +140,7 @@ class ArtifactValidator:
         dbc_target_dir = f"{self.temp_work_dir}/{self.build_name}-v{version}"[10:]
 
         name = dbc_url.split("/")[-1]
-        print(f"| Importing \"{name}\"")
+        print(f"| Importing: {name}")
         print(f"| Source:    {dbc_url}")
         print(f"| Target:    {dbc_target_dir}")
         print(f"| Notebooks: {dbgems.get_workspace_url()}#workspace{dbc_target_dir}")
@@ -175,7 +175,8 @@ class ArtifactValidator:
                                   directory=target_dir,
                                   repo_url=repo_url,
                                   branch=branch,
-                                  which=None)
+                                  which=None,
+                                  prefix="| ")
 
         self.__validate_version_info(version=version, dbc_dir=target_dir)
 

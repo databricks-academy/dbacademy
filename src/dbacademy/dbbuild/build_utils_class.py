@@ -53,15 +53,14 @@ class BuildUtils:
             f.write(data)
 
     @staticmethod
-    def reset_git_repo(*, client: DBAcademyRestClient, directory: str, repo_url: str, branch: str, which: Union[str, None]):
+    def reset_git_repo(*, client: DBAcademyRestClient, directory: str, repo_url: str, branch: str, which: Union[str, None], prefix=""):
 
         which = "" if which is None else f" ({which})"
 
-        print(f"Resetting git repo{which}:")
-        print(f"| Branch:   \"{branch}\"")
-        print(f"| Directory: {directory}")
-        print(f"| Repo URL:  {repo_url}")
-        print()
+        print(f"{prefix}Resetting git repo{which}:")
+        print(f"{prefix}| Branch:   \"{branch}\"")
+        print(f"{prefix}| Directory: {directory}")
+        print(f"{prefix}| Repo URL:  {repo_url}")
 
         status = client.workspace().get_status(directory)
 
