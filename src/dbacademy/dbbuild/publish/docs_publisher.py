@@ -67,9 +67,7 @@ class DocsPublisher:
 
         assert gdoc_id or gdoc_url, f"One of the two parameters (gdoc_id or gdoc_url) must be specified."
 
-        if not gdoc_id and gdoc_url:
-            gdoc_id = self.__to_gdoc_id(gdoc_url)
-
+        if not gdoc_id and gdoc_url: gdoc_id = self.__to_gdoc_id(gdoc_url)
         return self.__drive_service.files().get(fileId=gdoc_id).execute()
 
     @staticmethod
@@ -89,6 +87,9 @@ class DocsPublisher:
         # noinspection PyPackageRequirements
         from googleapiclient.http import MediaIoBaseDownload
         from dbacademy import dbgems
+
+        assert gdoc_id or gdoc_url, f"One of the two parameters (gdoc_id or gdoc_url) must be specified."
+        if not gdoc_id and gdoc_url: gdoc_id = self.__to_gdoc_id(gdoc_url)
 
         file = self.get_file(gdoc_id, gdoc_url)
         name = file.get("name")
