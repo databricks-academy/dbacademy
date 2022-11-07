@@ -155,10 +155,9 @@ class DocsPublisher:
                 dbgems.print_warning("SKIPPING DOWNLOAD / TIMEOUT", error_message)
 
             except googleapiclient.errors.HttpError as e:
-                dbgems.print_warning("SKIPPING DOWNLOAD / TOO LARGE", error_message)
                 if e.resp.get("content-type", "").startswith('application/json'):
-                    reason = json.loads(e.content).get('error').get('errors')[0].get('reason')
-                    dbgems.print_warning("SKIPPING DOWNLOAD / TOO LARGE", reason)
+                    reason = json.loads(e.content).get('error').get('errors')[0]
+                    dbgems.print_warning("SKIPPING DOWNLOAD / TOO LARGE", str(reason))
                 else:
                     error_message += "\n{type(e)} {e}"
                     dbgems.print_warning("SKIPPING - CANNOT DOWNLOAD", error_message)
