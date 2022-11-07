@@ -144,7 +144,7 @@ class DocsPublisher:
         total = len(self.translation.document_links)
 
         for index, link in enumerate(self.translation.document_links):
-            error_message = f"| Document {index + 1} of {total} cannot be downloaded; publishing of this doc is being skipped.\n{link}"
+            error_message = f"Document {index + 1} of {total} cannot be downloaded; publishing of this doc is being skipped.\n{link}"
 
             try:
                 file_name, file_url = self.__download_doc(index=index, total=total, gdoc_url=link)
