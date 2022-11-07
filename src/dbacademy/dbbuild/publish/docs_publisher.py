@@ -174,14 +174,11 @@ class DocsPublisher:
         files = self.__drive_service.files().list(q=f"'{parent_folder_id}' in parents").execute().get("files")
         files = [f for f in files if f.get("name") == f"v{self.version}"]
 
-        assert len(files) <= 1, f"Too many version directories found in the publishing folder: {self.translation.published_docs_folder}"
-
-        if len(files) == 1:
-            folder = files[0]
+        for folder in files:
             folder_id = folder.get("id")
             folder_name = folder.get("name")
             self.__drive_service.files().delete(fileId=folder_id)
-            print(f"Deleting existing published folder {folder_name} ({folder_id})")
+            print(f"Deleted existing published folder {folder_name} ({folder_id})")
 
         file_metadata = {
             "name": f"v{self.version}",
