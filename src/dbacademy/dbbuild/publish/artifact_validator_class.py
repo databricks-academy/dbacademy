@@ -180,5 +180,7 @@ class ArtifactValidator:
         for link in self.translation.document_links:
             file = docs_publisher.get_file(gdoc_url=link)
             name = file.get("name")
-            distribution_path = docs_publisher.get_distribution_path(file)
-            assert os.path.exists(distribution_path), f"The document {name} was not found at \"{distribution_path}\""
+
+            for version in [self.version, "LATEST"]:
+                distribution_path = docs_publisher.get_distribution_path(version=version, file=file)
+                assert os.path.exists(distribution_path), f"The document {name} was not found at \"{distribution_path}\""
