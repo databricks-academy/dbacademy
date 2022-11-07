@@ -25,7 +25,7 @@ class MockEntryPointContext:
     @staticmethod
     def notebookPath() -> MockOptional:
         # dbutils.entry_point.getDbutils().notebook().getContext().notebookPath().getOrElse(None)
-        path = "/Repos/Temp/mock-course-source/Source/Version Info"
+        path = "/Repos/Examples/example-course-source/Source/Version Info"
         return MockOptional(path)
 
 
