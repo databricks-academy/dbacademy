@@ -44,7 +44,7 @@ class ChangeLog:
     def __load(self):
         import os
 
-        readme_path = f"/Workspace/{self.__source_repo}/README.md"
+        readme_path = f"/Workspace{self.source_repo}/README.md"
         assert os.path.exists(readme_path), f"The README.md file was not found at {readme_path}"
 
         with open(readme_path, "r") as f:
