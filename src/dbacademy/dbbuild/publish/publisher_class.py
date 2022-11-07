@@ -18,7 +18,7 @@ class Publisher:
         self.__validated = False
         self.__validated_repo_reset = True
         self.__changes_in_source_repo = None
-        self.__notebooks_generated = False
+        self.__generated_notebooks = False
         self.__changes_in_target_repo = None
         self.__created_docs = False
         self.__created_dbcs = False
@@ -106,7 +106,7 @@ class Publisher:
         </body></html>"""
 
     def assert_notebooks_generated(self):
-        assert self.__notebooks_generated, "The notebooks have not yet been generated. See Publisher.generate_notebooks()"
+        assert self.__generated_notebooks, "The notebooks have not yet been generated. See Publisher.generate_notebooks()"
 
     def generate_notebooks(self, *, skip_generation: bool = False, verbose=False, debugging=False, **kwargs) -> Optional[str]:
         from ..publish.notebook_def_class import NotebookDef
@@ -115,7 +115,7 @@ class Publisher:
         self.assert_no_changes_in_source_repo()
 
         if skip_generation:
-            self.__notebooks_generated = True
+            self.__generated_notebooks = True
             dbgems.print_warning(f"SKIPPING GENERATION", "Skipping the generation of notebooks")
             return None
 
@@ -190,7 +190,7 @@ class Publisher:
                     html += f"""<div style="margin-top:1em; white-space: pre-wrap">{warning.message}</div>"""
         html += """</body></html>"""
 
-        self.__notebooks_generated = True
+        self.__generated_notebooks = True
         return html
 
     def create_published_message(self) -> str:
