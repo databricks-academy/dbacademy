@@ -170,6 +170,8 @@ class DocsPublisher:
                 dbgems.print_warning("SKIPPING / CANNOT DOWNLOAD", error_message)
 
     def process_google_slides(self) -> None:
+        import googleapiclient.http
+
         parent_folder_id = self.translation.published_docs_folder.split("/")[-1]
         files = self.__drive_service.files().list(q=f"'{parent_folder_id}' in parents").execute().get("files")
         files = [f for f in files if f.get("name") == f"v{self.version}"]
@@ -177,9 +179,8 @@ class DocsPublisher:
         for folder in files:
             folder_id = folder.get("id")
             folder_name = folder.get("name")
-            results = self.__drive_service.files().delete(fileId=folder_id)
+            googleapiclient.http.HttpRequest = self.__drive_service.files().delete(fileId=folder_id).execute()
             print(f"Deleted existing published folder {folder_name} (https://drive.google.com/drive/folders/{folder_id})")
-            print(results)
 
         file_metadata = {
             "name": f"v{self.version}",
