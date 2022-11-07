@@ -156,15 +156,17 @@ class DocsPublisher:
 
             except googleapiclient.errors.HttpError as e:
                 if e.resp.get("content-type", "").startswith('application/json'):
-                    reason = json.loads(e.content).get('error', []).get('errors', [{"message": str(e)}])[0].get("message")
-                    dbgems.print_warning("SKIPPING DOWNLOAD / TOO LARGE", str(reason))
+                    errors = json.loads(e.content).get("error", {}).get("errors")
+                    first_error = errors[0] if len(errors) > 0 else [{"message": str(e)}]
+                    reason = first_error.get("message")
+                    dbgems.print_warning(f"SKIPPING DOWNLOAD / {e.status_code}", str(reason))
                 else:
-                    error_message += "\n{type(e)} {e}"
-                    dbgems.print_warning("SKIPPING - CANNOT DOWNLOAD", error_message)
+                    error_message += f"\n{type(e)} {e}"
+                    dbgems.print_warning("SKIPPING / CANNOT DOWNLOAD", error_message)
 
             except Exception as e:
                 error_message += "\n{type(e)} {e}"
-                dbgems.print_warning("SKIPPING - CANNOT DOWNLOAD", error_message)
+                dbgems.print_warning("SKIPPING / CANNOT DOWNLOAD", error_message)
 
     def process_google_slides(self) -> None:
         parent_folder_id = self.translation.published_docs_folder.split("/")[-1]
