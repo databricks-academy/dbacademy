@@ -178,7 +178,7 @@ class DocsPublisher:
             folder_id = folder.get("id")
             folder_name = folder.get("name")
             self.__drive_service.files().delete(fileId=folder_id)
-            print(f"Deleted existing published folder {folder_name} ({folder_id})")
+            print(f"Deleted existing published folder {folder_name} (https://drive.google.com/drive/folders/{folder_id})")
 
         file_metadata = {
             "name": f"v{self.version}",
@@ -188,7 +188,7 @@ class DocsPublisher:
         folder = self.__drive_service.files().create(body=file_metadata).execute()
         folder_id = folder.get("id")
         folder_name = folder.get("name")
-        print(f"Created new published folder {folder_name} ({folder_id})")
+        print(f"Created new published folder {folder_name} (https://drive.google.com/drive/folders/{folder_id})")
 
         total = len(self.translation.document_links)
         for index, link in enumerate(self.translation.document_links):
