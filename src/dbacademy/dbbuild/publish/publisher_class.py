@@ -113,7 +113,6 @@ class Publisher:
         from ..build_utils_class import BuildUtils
 
         self.assert_no_changes_in_source_repo()
-        dbgems.print_warning("moo", "This is a test")
 
         if skip_generation:
             self.__generated_notebooks = True
