@@ -171,10 +171,10 @@ class DocsPublisher:
                 "parents": [parent_folder_id]
             }
             folder = self.__drive_service.files().create(body=file_metadata).execute()
-            print(f"Created folder", end=" ")
+            print(f"Created published folder", end=" ")
         else:
             folder = files[0]
-            print(f"Existing folder", end=" ")
+            print(f"Existing published folder", end=" ")
 
         folder_id = folder.get("id")
         folder_name = folder.get("name")
