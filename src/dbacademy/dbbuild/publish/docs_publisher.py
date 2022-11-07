@@ -159,7 +159,8 @@ class DocsPublisher:
                     errors = json.loads(e.content).get("error", {}).get("errors")
                     first_error = errors[0] if len(errors) > 0 else [{"message": str(e)}]
                     reason = first_error.get("message")
-                    dbgems.print_warning(f"SKIPPING DOWNLOAD / {e.status_code}", str(reason))
+                    message = f"{str(reason)}\n{link}"
+                    dbgems.print_warning(f"SKIPPING DOWNLOAD / {e.status_code}", message)
                 else:
                     error_message += f"\n{type(e)} {e}"
                     dbgems.print_warning("SKIPPING / CANNOT DOWNLOAD", error_message)
