@@ -166,7 +166,8 @@ class ArtifactValidator:
         else:
             repo_url = f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
 
-        target_dir = f"{self.temp_repo_dir}/{self.username}-{self.build_name}-{branch}"
+        name = dbgems.clean_string(self.username)
+        target_dir = f"{self.temp_repo_dir}/{name}-{self.build_name}-{branch}"
         BuildUtils.reset_git_repo(client=self.client,
                                   directory=target_dir,
                                   repo_url=repo_url,
