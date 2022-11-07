@@ -11,6 +11,8 @@ ApiType = TypeVar('ApiType', bound=Union[DatabricksApi, DBAcademyRestClient])
 
 class ApiClientFactory(Generic[ApiType]):
 
+    PROFILE_TEST = "TEST"
+    PROFILE_ENVIRONMENT_TEST = "TEST_ENVIRONMENT"
     PROFILE_DEFAULT = "DEFAULT"
     PROFILE_ENVIRONMENT = "ENVIRONMENT"
 
@@ -19,6 +21,12 @@ class ApiClientFactory(Generic[ApiType]):
     ENV_DATABRICKS_ACCOUNT_ID = "DATABRICKS_ACCOUNT_ID"
     ENV_DATABRICKS_ACCOUNT_NAME = "DATABRICKS_ACCOUNT_NAME"
     ENV_DATABRICKS_ACCOUNT_PASS = "DATABRICKS_ACCOUNT_PASS"
+
+    ENV_DATABRICKS_HOST_TEST = "DATABRICKS_HOST_TEST"
+    ENV_DATABRICKS_TOKEN_TEST = "DATABRICKS_TOKEN_TEST"
+    ENV_DATABRICKS_ACCOUNT_ID_TEST = "DATABRICKS_ACCOUNT_ID_TEST"
+    ENV_DATABRICKS_ACCOUNT_NAME_TEST = "DATABRICKS_ACCOUNT_NAME_TEST"
+    ENV_DATABRICKS_ACCOUNT_PASS_TEST = "DATABRICKS_ACCOUNT_PASS_TEST"
 
     SECTION_HOST = "host"
     SECTION_TOKEN = "token"
@@ -29,18 +37,13 @@ class ApiClientFactory(Generic[ApiType]):
     @cache
     def test_client(self) -> ApiType:
         know_clients = self.known_clients()  # Minimize file hits
-        result = know_clients.get(ApiClientFactory.PROFILE_ENVIRONMENT)
-        result = result or know_clients.get(ApiClientFactory.PROFILE_DEFAULT)
+        result = know_clients.get(ApiClientFactory.PROFILE_ENVIRONMENT_TEST)
+        result = result or know_clients.get(ApiClientFactory.PROFILE_TEST)
 
         if result:
             return result
 
-        result = self.current_workspace()
-
-        if result:
-            return result
-
-        raise ValueError("Unable to determine the default_client hostname and token.")
+        raise ValueError(f"Unable to determine the test_client() hostname and token; Please configure the [TEST] section of the databricks config file or specify the {ApiClientFactory.ENV_DATABRICKS_HOST_TEST} and {ApiClientFactory.ENV_DATABRICKS_TOKEN_TEST} environment variables.")
 
     @cache
     def current_workspace(self) -> Optional[ApiType]:
@@ -52,7 +55,7 @@ class ApiClientFactory(Generic[ApiType]):
         from dbacademy.dbgems.mock_dbutils_class import MockDBUtils
 
         if isinstance(dbgems.dbutils, MockDBUtils):
-            return None
+            return self.test_client()
 
         token = dbgems.get_notebooks_api_token()
         endpoint = dbgems.get_notebooks_api_endpoint()
@@ -94,10 +97,15 @@ class ApiClientFactory(Generic[ApiType]):
 
         clients = {}
 
-        host = os.getenv(ApiClientFactory.ENV_DATABRICKS_HOST)
-        token = os.getenv(ApiClientFactory.ENV_DATABRICKS_TOKEN)
-        if host and token:
-            clients[ApiClientFactory.PROFILE_ENVIRONMENT] = self.token_auth(hostname=host, token=token)
+        self.__load_env_config(clients=clients,
+                               profile=ApiClientFactory.PROFILE_ENVIRONMENT,
+                               host_key=ApiClientFactory.ENV_DATABRICKS_HOST,
+                               token_key=ApiClientFactory.ENV_DATABRICKS_TOKEN)
+
+        self.__load_env_config(clients=clients,
+                               profile=ApiClientFactory.PROFILE_ENVIRONMENT_TEST,
+                               host_key=ApiClientFactory.ENV_DATABRICKS_HOST_TEST,
+                               token_key=ApiClientFactory.ENV_DATABRICKS_TOKEN_TEST)
 
         for path in ('~/.databrickscfg', '.databrickscfg'):
             path = os.path.expanduser(path)
@@ -118,6 +126,14 @@ class ApiClientFactory(Generic[ApiType]):
                 clients[section_name] = self.token_auth(hostname=host, token=token)
 
         return clients
+
+    def __load_env_config(self, *, clients: Dict[str, str], profile: str, host_key: str, token_key: str):
+        import os
+        host = os.getenv(host_key)
+        token = os.getenv(token_key)
+
+        if host and token:
+            clients[profile] = self.token_auth(hostname=host, token=token)
 
     # TODO Refactor to avoid hitting the file system att all by hinting that we want ENV over CFG
     @cache
