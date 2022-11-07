@@ -162,7 +162,7 @@ class ArtifactValidator:
     def __validate_git_branch(self, *, branch: str, version: Optional[str]) -> None:
         from ..build_utils_class import BuildUtils
 
-        print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
+        print(f"Validating the \"{branch}\" branch in the public, student-facing repo:")
 
         if not self.i18n:
             repo_url = f"https://github.com/databricks-academy/{self.build_name}.git"
@@ -184,15 +184,16 @@ class ArtifactValidator:
         import os
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
 
-        print("Validating google docs")
+        print("Validating export of Google docs")
 
         docs_publisher = DocsPublisher(build_name=self.build_name, version=self.version, translation=self.translation)
 
-        for link in self.translation.document_links:
+        total = len(self.translation.document_links)
+        for i, link in enumerate(self.translation.document_links):
             file = docs_publisher.get_file(gdoc_url=link)
             name = file.get("name")
             folder_id = file.get("id")
-            print(f"| {name} (https://drive.google.com/drive/folders/{folder_id})")
+            print(f"| {i+1} of {total}: {name} (https://drive.google.com/drive/folders/{folder_id})")
 
             distribution_path = docs_publisher.get_distribution_path(version=version, file=file)
             assert os.path.exists(distribution_path), f"The document {name} was not found at \"{distribution_path}\""
