@@ -231,13 +231,13 @@ class Publisher:
         # of True meaning we have to succeed here to continue
         self.__validated_repo_reset = False
 
-        new_target_dir = f"/Repos/Temp/{self.build_name}" if not self.common_language else f"/Repos/Temp/{self.build_name}-{self.common_language}"
+        new_target_dir = f"/Repos/Temp/{self.build_name}" if not self.i18n else f"/Repos/Temp/{self.build_name}-{self.common_language}"
         if target_dir == new_target_dir:
             dbgems.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_dir\" is the same as the default value.\nConsider removing the parameter.")
         target_dir = target_dir or new_target_dir
 
         prefix = "https://github.com/databricks-academy"
-        new_target_repo_url = f"{prefix}/{self.build_name}.git" if not self.common_language else f"{prefix}/{self.build_name}-{self.common_language}.git"
+        new_target_repo_url = f"{prefix}/{self.build_name}.git" if not self.i18n else f"{prefix}/{self.build_name}-{self.common_language}.git"
         if target_repo_url == new_target_repo_url:
             dbgems.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
         target_repo_url = target_repo_url or new_target_repo_url
