@@ -5,6 +5,7 @@ from dbacademy import dbgems, common
 class Publisher:
     from dbacademy.dbbuild.build_config_class import BuildConfig
     # from dbacademy.dbbuild.publish.translator_class import Translator
+    from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
 
     VERSION_INFO_NOTEBOOK = "Version Info"
 
@@ -51,13 +52,13 @@ class Publisher:
             self.common_language = build_config.i18n_language.split("-")[0]
 
         self.notebooks = []
-        self._init_notebooks(build_config.notebooks.values())
+        self.__init_notebooks(build_config.notebooks.values())
 
         self.white_list = build_config.white_list
         self.black_list = build_config.black_list
-        self._validate_white_black_list()
+        self.__validate_white_black_list()
 
-    def _init_notebooks(self, notebooks):
+    def __init_notebooks(self, notebooks) -> None:
         from datetime import datetime
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
 
@@ -70,7 +71,7 @@ class Publisher:
 
             self.notebooks.append(notebook)
 
-    def _validate_white_black_list(self):
+    def __validate_white_black_list(self) -> None:
         if self.white_list or self.black_list:
             assert self.white_list is not None, "The white_list must be specified when specifying a black_list"
             assert self.black_list is not None, "The black_list must be specified when specifying a white_list"
@@ -99,10 +100,9 @@ class Publisher:
         for notebook in self.notebooks:
             notebook.create_resource_bundle(folder_name, self.source_dir, target_dir)
 
-        html = f"""<html><body style="font-size:16px">
+        return f"""<html><body style="font-size:16px">
             <p><a href="/#workspace{target_dir}/{folder_name}/{Publisher.VERSION_INFO_NOTEBOOK}.md" target="_blank">Resource Bundle: {folder_name}</a></p>
         </body></html>"""
-        return html
 
     def generate_notebooks(self, *, verbose=False, debugging=False, **kwargs) -> str:
         from ..publish.notebook_def_class import NotebookDef
@@ -197,7 +197,7 @@ class Publisher:
                                 common_language=None)
         return advertiser.html
 
-    def validate(self, silent: bool = False):
+    def validate(self, silent: bool = False) -> None:
         if not silent:
             print(f"Source: {self.source_dir}")
             print(f"Target: {self.target_dir}")
@@ -214,7 +214,7 @@ class Publisher:
         # Both have to be true to be considered validated.
         return self.__validated and self.__validated_repo_reset
 
-    def configure_target_repo(self, target_dir: str = None, target_repo_url: str = None, branch: str = "published", **kwargs):
+    def configure_target_repo(self, target_dir: str = None, target_repo_url: str = None, branch: str = "published", **kwargs) -> None:
         from ..build_utils_class import BuildUtils
 
         # Assume for now that we have failed. This overrides the default
@@ -242,7 +242,7 @@ class Publisher:
 
         self.__validated_repo_reset = True
 
-    def generate_published_docs(self):
+    def generate_published_docs(self) -> str:
         import os, shutil
 
         source_docs_path = f"{self.source_repo}/docs"
@@ -264,10 +264,10 @@ class Publisher:
         html = f"""<html><body style="font-size:16px">
                          <div><a href="{dbgems.get_workspace_url()}#workspace{target_docs_path}/index.html" target="_blank">See Published Version</a></div>
                    </body></html>"""
-        dbgems.display_html(html)
+        return html
 
     # Used by notebooks
-    # TODO Cannot define return type
+    # TODO Cannot define return type without circular dependencies
     def to_translator(self):
         from dbacademy.dbbuild.publish.translator_class import Translator
         assert self.validated, f"Cannot translate until the publisher's configuration passes validation. Ensure that Publisher.validate() was called and that all assignments passed"
@@ -275,7 +275,7 @@ class Publisher:
         return Translator(self)
 
     # Used by notebooks
-    # TODO Cannot define return type
+    # TODO Cannot define return type without circular dependencies
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
         from dbacademy.dbbuild.test.test_suite_class import TestSuite
 
@@ -284,7 +284,7 @@ class Publisher:
                          test_type=test_type,
                          keep_success=keep_success)
 
-    def __generate_html(self, notebook):
+    def __generate_html(self, notebook: NotebookDef) -> None:
         import time
 
         if notebook.test_round < 2:
@@ -300,7 +300,7 @@ class Publisher:
 
         print(f"Generated docs for \"{notebook.path}\"...({int(time.time()) - start} seconds)")
 
-    def generate_source_docs(self, asynchronous: bool = True):
+    def generate_source_docs(self, asynchronous: bool = True) -> None:
         from multiprocessing.pool import ThreadPool
 
         if asynchronous:
@@ -310,10 +310,10 @@ class Publisher:
             for notebook in self.build_config.notebooks.values():
                 self.__generate_html(notebook)
 
-    def assert_created_dbcs(self):
+    def assert_created_dbcs(self) -> None:
         assert self.__created_dbcs, "The DBCS have not yet been created. See Publisher.create_dbcs()"
 
-    def create_dbcs(self):
+    def create_dbcs(self) -> str:
         from ..build_utils_class import BuildUtils
 
         assert self.validated, f"Cannot create DBCs until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
@@ -343,7 +343,7 @@ class Publisher:
 
         return f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>"""
 
-    def assert_created_docs(self):
+    def assert_created_docs(self) -> None:
         assert self.__created_docs, "The docs have not yet been created. See Publisher.create_docs()"
 
     def create_docs(self) -> str:
@@ -367,10 +367,10 @@ class Publisher:
         self.__created_docs = True
         return html
 
-    def assert_validate_artifacts(self):
+    def assert_validate_artifacts(self) -> None:
         assert self.__validated_artifacts, "The published artifacts have not been verified. See Publisher.validate_artifacts()"
 
-    def validate_artifacts(self):
+    def validate_artifacts(self) -> None:
         from dbacademy.dbbuild.publish.artifact_validator_class import ArtifactValidator
 
         self.assert_created_docs()
@@ -379,12 +379,12 @@ class Publisher:
 
         self.__validated_artifacts = True
 
-    def assert_no_changes_in_source_repo(self):
+    def assert_no_changes_in_source_repo(self) -> None:
         method = "Publisher.validate_no_changes_in_source_repo()"
         assert self.__changes_in_source_repo is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
         assert self.__changes_in_source_repo == 0, f"Found {self.__changes_in_source_repo} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
-    def validate_no_changes_in_source_repo(self, skip_validation=False):
+    def validate_no_changes_in_source_repo(self, skip_validation=False) -> None:
         from ..build_utils_class import BuildUtils
 
         if skip_validation:
@@ -400,12 +400,12 @@ class Publisher:
             self.__changes_in_source_repo = len(results)
             self.assert_no_changes_in_source_repo()
 
-    def assert_no_changes_in_target_repo(self):
+    def assert_no_changes_in_target_repo(self) -> None:
         method = "Publisher.validate_no_changes_in_target_repo()"
         assert self.__changes_in_target_repo is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
         assert self.__changes_in_target_repo == 0, f"Found {self.__changes_in_target_repo} changes(s) in the target repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
-    def validate_no_changes_in_target_repo(self, skip_validation=False):
+    def validate_no_changes_in_target_repo(self, skip_validation=False) -> None:
         from ..build_utils_class import BuildUtils
 
         if skip_validation:
