@@ -3,6 +3,7 @@ from dbacademy import dbgems
 
 
 class DocsPublisher:
+    import io
     from dbacademy.dbbuild.publish.publishing_info_class import Translation
 
     def __init__(self, build_name: str, version: str, translation: Translation):
@@ -79,12 +80,12 @@ class DocsPublisher:
 
         return file_name
 
-    def get_distribution_path(self, file: Dict[str, str]) -> str:
+    def get_distribution_path(self, *, version: str, file: Dict[str, str]) -> str:
         file_name = self.to_file_name(file)
-        return f"/dbfs/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/{file_name}"
+        return f"/dbfs/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{version}/{file_name}"
 
     def __download_doc(self, *, index: int, total: int, gdoc_id: str = None, gdoc_url: str = None) -> (str, str):
-        import os, io, shutil
+        import io
         # noinspection PyPackageRequirements
         from googleapiclient.http import MediaIoBaseDownload
         from dbacademy import dbgems
@@ -97,8 +98,8 @@ class DocsPublisher:
 
         request = self.__drive_service.files().export_media(fileId=gdoc_id, mimeType='application/pdf')
 
-        fh = io.BytesIO()
-        downloader = MediaIoBaseDownload(fh, request)
+        file_bytes = io.BytesIO()
+        downloader = MediaIoBaseDownload(file_bytes, request)
 
         done = False
         while done is False:
@@ -107,28 +108,33 @@ class DocsPublisher:
             print(f"| download {percent}%.")
         print("| download 100%.")
 
-        target_dir = "/dbfs/FileStore/tmp"
-        temp_path = f"{target_dir}/{file_name}"
-        dist_path = self.get_distribution_path(file)
+        temp_path = f"/dbfs/FileStore/tmp/{file_name}"
 
-        if os.path.exists(temp_path): os.remove(temp_path)
-        if not os.path.exists(target_dir): os.mkdir(target_dir)
-
-        fh.seek(0)
-        with open(temp_path, "wb") as f:
-            print(f"| writing {temp_path}")
-            shutil.copyfileobj(fh, f)
-
-        fh.seek(0)
-        with open(dist_path, "wb") as f:
-            print(f"| writing {dist_path}")
-            shutil.copyfileobj(fh, f)
+        self.__save_pdfs(file_bytes, temp_path)
+        self.__save_pdfs(file_bytes, self.get_distribution_path(version="LATEST", file=file))
+        self.__save_pdfs(file_bytes, self.get_distribution_path(version=self.version, file=file))
 
         parts = dbgems.get_workspace_url().split("/")
         del parts[-1]
         workspace_url = "/".join(parts)
 
         return file_name, f"{workspace_url}/files/tmp/{file_name}"
+
+    @staticmethod
+    def __save_pdfs(file_bytes: io.BytesIO, path: str):
+        import os, shutil
+
+        if os.path.exists(path):
+            os.remove(path)
+
+        target_dir = "/".join(path.split("/")[:-1])
+        if not os.path.exists(target_dir):
+            os.mkdir(target_dir)
+
+        file_bytes.seek(0)
+        with open(path, "wb") as f:
+            print(f"| writing {path}")
+            shutil.copyfileobj(file_bytes, f)
 
     def process_pdfs(self) -> None:
 
