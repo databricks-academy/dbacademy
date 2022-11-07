@@ -95,7 +95,7 @@ class DocsPublisher:
         name = file.get("name")
         file_name = self.to_file_name(file)
 
-        print(f"\nProcessing {index + 1} or {total}: {name}")
+        print(f"| Processing {index + 1} or {total}: {name}")
 
         request = self.__drive_service.files().export_media(fileId=gdoc_id, mimeType='application/pdf')
 
@@ -104,10 +104,8 @@ class DocsPublisher:
 
         done = False
         while done is False:
-            status, done = downloader.next_chunk(num_retries=3)
+            status, done = downloader.next_chunk()
             percent = int(status.progress() * 100)
-            print(f"| download {percent}%.")
-        print("| download 100%.")
 
         temp_path = f"/dbfs/FileStore/tmp/{file_name}"
 
@@ -142,10 +140,11 @@ class DocsPublisher:
         # noinspection PyPackageRequirements
         import googleapiclient.errors
 
+        print("Exporting DBCs")
         total = len(self.translation.document_links)
 
         for index, link in enumerate(self.translation.document_links):
-            error_message = f"Document {index + 1} of {total} cannot be downloaded; publishing of this doc is being skipped.\n{link}"
+            error_message = f"| Document {index + 1} of {total} cannot be downloaded; publishing of this doc is being skipped.\n{link}"
 
             try:
                 file_name, file_url = self.__download_doc(index=index, total=total, gdoc_url=link)
@@ -170,7 +169,8 @@ class DocsPublisher:
                 dbgems.print_warning("SKIPPING / CANNOT DOWNLOAD", error_message)
 
     def process_google_slides(self) -> None:
-        import googleapiclient.http
+
+        print("Publishing Google Docs")
 
         parent_folder_id = self.translation.published_docs_folder.split("/")[-1]
         files = self.__drive_service.files().list(q=f"'{parent_folder_id}' in parents").execute().get("files")
@@ -179,8 +179,8 @@ class DocsPublisher:
         for folder in files:
             folder_id = folder.get("id")
             folder_name = folder.get("name")
-            googleapiclient.http.HttpRequest = self.__drive_service.files().delete(fileId=folder_id).execute()
-            print(f"Deleted existing published folder {folder_name} (https://drive.google.com/drive/folders/{folder_id})")
+            self.__drive_service.files().delete(fileId=folder_id).execute()
+            print(f"| Deleted existing published folder {folder_name} (https://drive.google.com/drive/folders/{folder_id})")
 
         file_metadata = {
             "name": f"v{self.version}",
@@ -190,7 +190,7 @@ class DocsPublisher:
         folder = self.__drive_service.files().create(body=file_metadata).execute()
         folder_id = folder.get("id")
         folder_name = folder.get("name")
-        print(f"Created new published folder {folder_name} (https://drive.google.com/drive/folders/{folder_id})")
+        print(f"| Created new published folder {folder_name} (https://drive.google.com/drive/folders/{folder_id})")
 
         total = len(self.translation.document_links)
         for index, link in enumerate(self.translation.document_links):
@@ -198,7 +198,7 @@ class DocsPublisher:
             file = self.__drive_service.files().get(fileId=gdoc_id).execute()
             name = file.get("name")
 
-            print(f"Copying {index + 1} of {total}: {name}")
+            print(f"| Copying {index + 1} of {total}: {name}")
 
             params = {
                 "parents": [folder_id],
