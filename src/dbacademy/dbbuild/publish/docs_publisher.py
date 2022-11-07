@@ -138,8 +138,9 @@ class DocsPublisher:
             shutil.copyfileobj(file_bytes, f)
 
     def process_pdfs(self) -> None:
-        import traceback
-        import socket
+        import json, socket
+        # noinspection PyPackageRequirements
+        import googleapiclient.errors
 
         total = len(self.translation.document_links)
 
@@ -153,9 +154,17 @@ class DocsPublisher:
             except socket.timeout:
                 dbgems.print_warning("SKIPPING DOWNLOAD / TIMEOUT", error_message)
 
+            except googleapiclient.errors.HttpError as e:
+                dbgems.print_warning("SKIPPING DOWNLOAD / TOO LARGE", error_message)
+                if e.resp.get("content-type", "").startswith('application/json'):
+                    reason = json.loads(e.content).get('error').get('errors')[0].get('reason')
+                    dbgems.print_warning("SKIPPING DOWNLOAD / TOO LARGE", reason)
+                else:
+                    error_message += "\n{type(e)} {e}"
+                    dbgems.print_warning("SKIPPING - CANNOT DOWNLOAD", error_message)
+
             except Exception as e:
-                error_message += "\n"
-                error_message += f"{type(e)} {e}"
+                error_message += "\n{type(e)} {e}"
                 dbgems.print_warning("SKIPPING - CANNOT DOWNLOAD", error_message)
 
     def process_google_slides(self) -> None:
