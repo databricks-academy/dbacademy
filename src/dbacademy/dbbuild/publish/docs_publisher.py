@@ -138,6 +138,7 @@ class DocsPublisher:
             shutil.copyfileobj(file_bytes, f)
 
     def process_pdfs(self) -> None:
+        import traceback
 
         total = len(self.translation.document_links)
 
@@ -147,7 +148,7 @@ class DocsPublisher:
                 self.__pdfs[file_name] = file_url
             except Exception as e:
                 dbgems.print_warning("SKIPPING - CANNOT DOWNLOAD", f"Document {index+1} of {total} cannot be downloaded; publishing of this doc is being skipped.\n{link}")
-                print(e)
+                traceback.print_exception(e)
 
     def process_google_slides(self) -> None:
         parent_folder_id = self.translation.published_docs_folder.split("/")[-1]
