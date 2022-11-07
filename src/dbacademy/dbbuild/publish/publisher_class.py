@@ -88,10 +88,9 @@ class Publisher:
             for path in notebook_paths:
                 assert path in self.white_list or path in self.black_list, f"The notebook \"{path}\" was not found in either the white-list or black-list."
 
-    def create_resource_bundle(self, folder_name: str = None, target_dir: str = None):
-        if self.i18n_language is not None:
-            print(f"Print skipping generation of resource bundle for non-english release, {self.i18n_language}")
-            return False
+    def create_resource_bundle(self, folder_name: str = None, target_dir: str = None) -> str:
+
+        assert self.i18n_language is None, f"Resource bundles are created for the English translations only, found {self.i18n_language}"
 
         folder_name = folder_name or f"english-v{self.build_config.version}"
         target_dir = target_dir or f"{self.source_repo}/Resources"
@@ -102,9 +101,7 @@ class Publisher:
         html = f"""<html><body style="font-size:16px">
             <p><a href="/#workspace{target_dir}/{folder_name}/{Publisher.VERSION_INFO_NOTEBOOK}.md" target="_blank">Resource Bundle: {folder_name}</a></p>
         </body></html>"""
-        dbgems.display_html(html)
-
-        return True
+        return html
 
     def generate_notebooks(self, *, verbose=False, debugging=False, **kwargs) -> str:
         from ..publish.notebook_def_class import NotebookDef
