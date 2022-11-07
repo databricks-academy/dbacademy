@@ -25,7 +25,8 @@ class ArtifactValidator:
                                  temp_work_dir=publisher.temp_work_dir,
                                  username=publisher.username,
                                  translation=translation,
-                                 common_language=None,)
+                                 i18n_language=publisher.i18n_language,
+                                 common_language=publisher.common_language,)
 
     @staticmethod
     def from_translator(translator: Translator) -> "ArtifactValidator":
@@ -43,9 +44,10 @@ class ArtifactValidator:
                                  temp_work_dir=translator.temp_work_dir,
                                  username=translator.username,
                                  translation=translation,
+                                 i18n_language=translator.i18n_language,
                                  common_language=translator.common_language)
 
-    def __init__(self, *, build_name: str, version: str, core_version: str, client: DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str, translation: Translation, common_language: Optional[str]) -> None:
+    def __init__(self, *, build_name: str, version: str, core_version: str, client: DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str, translation: Translation, i18n_language: str, common_language: str) -> None:
         from dbacademy.dbbuild.publish.publishing_info_class import Translation
 
         self.build_name = build_name
@@ -57,6 +59,8 @@ class ArtifactValidator:
         self.temp_repo_dir = temp_repo_dir
         self.temp_work_dir = temp_work_dir
         self.username = username
+
+        self.i18n_language = i18n_language
         self.common_language = common_language
 
         self.translation = common.validate_type(translation, "translation", Translation)
@@ -157,7 +161,7 @@ class ArtifactValidator:
 
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo.\n")
 
-        if self.common_language is None:
+        if self.i18n_language is None:
             repo_url = f"https://github.com/databricks-academy/{self.build_name}.git"
         else:
             repo_url = f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
