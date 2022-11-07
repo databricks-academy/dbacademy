@@ -177,8 +177,9 @@ class DocsPublisher:
         for folder in files:
             folder_id = folder.get("id")
             folder_name = folder.get("name")
-            self.__drive_service.files().delete(fileId=folder_id)
+            results = self.__drive_service.files().delete(fileId=folder_id)
             print(f"Deleted existing published folder {folder_name} (https://drive.google.com/drive/folders/{folder_id})")
+            print(results)
 
         file_metadata = {
             "name": f"v{self.version}",
