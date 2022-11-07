@@ -140,7 +140,7 @@ class DocsPublisher:
         # noinspection PyPackageRequirements
         import googleapiclient.errors
 
-        print("Exporting DBCs:")
+        print("Exporting Google Docs as PDFs:")
         total = len(self.translation.document_links)
 
         for index, link in enumerate(self.translation.document_links):
