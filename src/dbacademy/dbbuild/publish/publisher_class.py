@@ -20,6 +20,7 @@ class Publisher:
         self.__changes_in_target_repo = None
         self.__created_docs = False
         self.__created_dbcs = False
+        self.__validated_artifacts = False
 
         self.build_config = common.validate_type(build_config, "build_config", BuildConfig)
 
@@ -185,6 +186,8 @@ class Publisher:
     def create_published_message(self) -> str:
         from .advertiser import Advertiser
         from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
+
+        self.assert_validate_artifacts()
 
         advertiser = Advertiser(source_repo=self.source_repo,
                                 name=self.build_config.name,
@@ -364,18 +367,17 @@ class Publisher:
         self.__created_docs = True
         return html
 
-    # def to_validator(self):
-    #     from dbacademy.dbbuild.publish.artifact_validator_class import ArtifactValidator
-    #     return ArtifactValidator.from_publisher(self)
+    def assert_validate_artifacts(self):
+        assert self.__validated_artifacts, "The published artifacts have not been verified. See Publisher.validate_artifacts()"
 
     def validate_artifacts(self):
         from dbacademy.dbbuild.publish.artifact_validator_class import ArtifactValidator
 
-        # self.assert_created_docs()
+        self.assert_created_docs()
 
         ArtifactValidator.from_publisher(self).validate_publishing_processes()
 
-        # self.__validated_artifacts = True
+        self.__validated_artifacts = True
 
     def assert_no_changes_in_source_repo(self):
         method = "Publisher.validate_no_changes_in_source_repo()"
