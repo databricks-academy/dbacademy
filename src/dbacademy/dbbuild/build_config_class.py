@@ -23,10 +23,10 @@ class BuildConfig:
             return BuildConfig.load_config(config=json.load(f), version=version)
 
     @staticmethod
-    def load_config(config: dict, version: str) -> Any:
+    def load_config(config: Dict, version: str) -> Any:
 
-        assert type(config) == dict, f"Expected the parameter \"config\" to be of type dict, found {config}."
-        assert type(version) == str, f"Expected the parameter \"version\" to be of type str, found {version}."
+        common.validate_type(config, "config", Dict)
+        common.validate_type(version, "version", str)
 
         configurations = config.get("notebook_config", dict())
         if "notebook_config" in config: del config["notebook_config"]
@@ -402,6 +402,8 @@ class BuildConfig:
 
     def validate_all_tests_passed(self, cloud: str):
         cloud = common.validate_type(cloud, "cloud", str).upper()
+
+        assert self.validated, f"Cannot validate smoke-tests until the build configuration passes validation. See BuildConfig.validate()"
 
         self.__passing_tests[cloud] = True
         dbgems.print_warning("NOT IMPLEMENTED", f"This function has not yet been implemented for {cloud}.")
