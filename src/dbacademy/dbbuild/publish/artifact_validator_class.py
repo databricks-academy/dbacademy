@@ -68,37 +68,36 @@ class ArtifactValidator:
     def validate_publishing_processes(self) -> None:
         self.__validate_distribution_dbc(as_latest=True)
         print()
-        print("-" * 80)
         print()
 
+        print("-" * 80)
         self.__validate_distribution_dbc(as_latest=False)
         print()
-        print("-" * 80)
         print()
 
+        print("-" * 80)
         self.__validate_git_releases_dbc()
         print()
-        print("-" * 80)
         print()
 
+        print("-" * 80)
         self.__validate_git_branch(branch="published", version=None)
         print()
-        print("-" * 80)
         print()
 
+        print("-" * 80)
         self.__validate_git_branch(branch=f"published-v{self.version}", version=None)
         print()
-        print("-" * 80)
         print()
 
+        print("-" * 80)
         self.__validate_published_docs(version=self.version)
         print()
-        print("-" * 80)
         print()
 
+        print("-" * 80)
         self.__validate_published_docs(version="LATEST")
         print()
-        print("-" * 80)
         print()
 
     def __validate_distribution_dbc(self, as_latest: bool) -> None:
