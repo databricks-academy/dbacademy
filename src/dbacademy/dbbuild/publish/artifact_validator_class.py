@@ -109,17 +109,17 @@ class ArtifactValidator:
 
         file_name = f"{label}/notebooks.dbc" if as_latest else f"v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
 
-        print(f"Validating the DBC in DBAcademy's distribution system ({label})\n")
+        print(f"Validating the DBC in DBAcademy's distribution system ({label}):")
 
         target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/{file_name}"
         files = dbgems.dbutils.fs.ls(target_path)  # Generates an un-catchable exception
         assert len(files) == 1, f"The distribution DBC was not found at \"{target_path}\"."
 
-        print(f"PASSED:  .../{file_name} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/\".")
-        print(f"UNKNOWN: \"v{self.version}\" found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/{file_name}\".")
+        print(f"| PASSED:  .../{file_name} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/\".")
+        print(f"| UNKNOWN: \"v{self.version}\" found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/{file_name}\".")
 
     def __validate_git_releases_dbc(self, version=None) -> None:
-        print("Validating the DBC in GitHub's Releases page\n")
+        print("Validating the DBC in GitHub's Releases page:")
 
         version = version or self.version
         # core_version = version.split("-")[0]
@@ -136,7 +136,7 @@ class ArtifactValidator:
         dbc_target_dir = f"{self.temp_work_dir}/{self.build_name}-v{version}"[10:]
 
         name = dbc_url.split("/")[-1]
-        print(f"Importing {name}")
+        print(f"| Importing \"{name}\"")
         print(f"| Source:    {dbc_url}")
         print(f"| Target:    {dbc_target_dir}")
         print(f"| Notebooks: {dbgems.get_workspace_url()}#workspace{dbc_target_dir}")
@@ -145,7 +145,6 @@ class ArtifactValidator:
         self.client.workspace.mkdirs(dbc_target_dir)
         self.client.workspace.import_dbc_files(dbc_target_dir, source_url=dbc_url)
 
-        print()
         self.__validate_version_info(version=version, dbc_dir=dbc_target_dir)
 
     def __validate_version_info(self, *, version: str, dbc_dir: str) -> None:
@@ -154,7 +153,7 @@ class ArtifactValidator:
         version_info_path = f"{dbc_dir}/Version Info"
         source = self.client.workspace.export_notebook(version_info_path)
         assert f"**{version}**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{version}\""
-        print(f"PASSED: v{version} found in \"{version_info_path}\"")
+        print(f"| PASSED: v{version} found in \"{version_info_path}\"")
 
     def __validate_git_branch(self, *, branch: str, version: Optional[str]) -> None:
         from ..build_utils_class import BuildUtils
