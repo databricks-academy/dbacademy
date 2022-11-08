@@ -183,14 +183,17 @@ class ArtifactValidator:
     def __validate_published_docs(self, version: str) -> None:
         import os
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
+        from dbacademy.google.google_client_class import GoogleClient
 
         print(f"Validating export of Google docs ({version})")
 
+        google_client = GoogleClient()
         docs_publisher = DocsPublisher(build_name=self.build_name, version=self.version, translation=self.translation)
 
         total = len(self.translation.document_links)
         for i, link in enumerate(self.translation.document_links):
-            file = docs_publisher.get_file(gdoc_url=link)
+            file_id = google_client.to_gdoc_id(gdoc_url=link)
+            file = google_client.file_get(file_id)
             name = file.get("name")
             folder_id = file.get("id")
             print(f"| {i+1} of {total}: {name} (https://drive.google.com/drive/folders/{folder_id})")
