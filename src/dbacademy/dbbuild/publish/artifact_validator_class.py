@@ -131,8 +131,7 @@ class ArtifactValidator:
         base_url = self.target_repo_url[:-4] if self.target_repo_url.endswith(".git") else self.target_repo_url
         dbc_url = f"{base_url}/releases/download/v{version}/{self.build_name}-v{self.version}-notebooks.dbc"
 
-        return self.__validate_dbc(version=version,
-                                   dbc_url=dbc_url)
+        return self.__validate_dbc(version=version, dbc_url=dbc_url)
 
     def __validate_dbc(self, version=None, dbc_url=None) -> None:
         version = version or self.version
@@ -157,6 +156,7 @@ class ArtifactValidator:
         version_info_path = f"{dbc_dir}/Version Info"
         source = self.client.workspace.export_notebook(version_info_path)
         assert f"**{version}**" in source, f"Expected the notebook \"Version Info\" at \"{version_info_path}\" to contain the version \"{version}\""
+        print(f"|")
         print(f"| PASSED: v{version} found in \"{version_info_path}\"")
 
     def __validate_git_branch(self, *, branch: str, version: Optional[str]) -> None:
@@ -184,7 +184,7 @@ class ArtifactValidator:
         import os
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
 
-        print("Validating export of Google docs")
+        print(f"Validating export of Google docs ({version})")
 
         docs_publisher = DocsPublisher(build_name=self.build_name, version=self.version, translation=self.translation)
 
@@ -198,4 +198,5 @@ class ArtifactValidator:
             distribution_path = docs_publisher.get_distribution_path(version=version, file=file)
             assert os.path.exists(distribution_path), f"The document {name} was not found at \"{distribution_path}\""
 
+        print(f"|")
         print(f"| PASSED: All documents exported to the distribution system")
