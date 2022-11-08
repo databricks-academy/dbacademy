@@ -66,41 +66,17 @@ class ArtifactValidator:
         self.translation = common.validate_type(translation, "translation", Translation)
 
     def validate_publishing_processes(self) -> None:
-        self.__validate_distribution_dbc(as_latest=True)
-        print()
-        print()
+        from dbacademy.dbhelper.validations.validation_suite_class import ValidationSuite
+        suite = ValidationSuite(name="Distribution")
+        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=True), description="Validate DBC in Distribution System (LATEST)")
+        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=False), description=f"Validate DBC in Distribution System ({self.version})")
+        suite.test_true(actual_value=lambda: self.__validate_git_releases_dbc(), description=f"Validate DBC in GitHub ({self.version})")
+        suite.test_true(actual_value=lambda: self.__validate_git_branch(branch="published", version=None), description=f"Validate GitHub Branch (published)")
+        suite.test_true(actual_value=lambda: self.__validate_git_branch(branch=f"published-v{self.version}", version=None), description=f"Validate GitHub Branch (published-v{self.version})")
+        suite.test_true(actual_value=lambda: self.__validate_published_docs(version="LATEST"), description=f"Validate Published Docs (LATEST)")
+        suite.test_true(actual_value=lambda: self.__validate_published_docs(version=self.version), description=f"Validate Published Docs ({self.version})")
 
-        print("-" * 80)
-        self.__validate_distribution_dbc(as_latest=False)
-        print()
-        print()
-
-        print("-" * 80)
-        self.__validate_git_releases_dbc()
-        print()
-        print()
-
-        print("-" * 80)
-        self.__validate_git_branch(branch="published", version=None)
-        print()
-        print()
-
-        print("-" * 80)
-        self.__validate_git_branch(branch=f"published-v{self.version}", version=None)
-        print()
-        print()
-
-        print("-" * 80)
-        self.__validate_published_docs(version=self.version)
-        print()
-        print()
-
-        print("-" * 80)
-        self.__validate_published_docs(version="LATEST")
-        print()
-        print()
-
-    def __validate_distribution_dbc(self, as_latest: bool) -> None:
+    def __validate_distribution_dbc(self, as_latest: bool) -> True:
 
         if not as_latest:
             label = self.version
@@ -122,7 +98,9 @@ class ArtifactValidator:
         print(f"| PASSED:  .../{file_name} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/\".")
         print(f"| UNKNOWN: \"v{self.version}\" found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/{file_name}\".")
 
-    def __validate_git_releases_dbc(self, version=None) -> None:
+        return True
+
+    def __validate_git_releases_dbc(self, version=None) -> bool:
         print("Validating the DBC in GitHub's Releases page:")
 
         version = version or self.version
@@ -133,7 +111,7 @@ class ArtifactValidator:
 
         return self.__validate_dbc(version=version, dbc_url=dbc_url)
 
-    def __validate_dbc(self, version=None, dbc_url=None) -> None:
+    def __validate_dbc(self, version=None, dbc_url=None) -> bool:
         version = version or self.version
 
         dbc_target_dir = f"{self.temp_work_dir}/{self.build_name}-v{version}"[10:]
@@ -148,9 +126,9 @@ class ArtifactValidator:
         self.client.workspace.mkdirs(dbc_target_dir)
         self.client.workspace.import_dbc_files(dbc_target_dir, source_url=dbc_url)
 
-        self.__validate_version_info(version=version, dbc_dir=dbc_target_dir)
+        return self.__validate_version_info(version=version, dbc_dir=dbc_target_dir)
 
-    def __validate_version_info(self, *, version: str, dbc_dir: str) -> None:
+    def __validate_version_info(self, *, version: str, dbc_dir: str) -> bool:
         version = version or self.version
 
         version_info_path = f"{dbc_dir}/Version Info"
@@ -159,7 +137,9 @@ class ArtifactValidator:
         print(f"|")
         print(f"| PASSED: v{version} found in \"{version_info_path}\"")
 
-    def __validate_git_branch(self, *, branch: str, version: Optional[str]) -> None:
+        return True
+
+    def __validate_git_branch(self, *, branch: str, version: Optional[str]) -> bool:
         from ..build_utils_class import BuildUtils
 
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo:")
@@ -178,9 +158,9 @@ class ArtifactValidator:
                                   which=None,
                                   prefix="| ")
 
-        self.__validate_version_info(version=version, dbc_dir=target_dir)
+        return self.__validate_version_info(version=version, dbc_dir=target_dir)
 
-    def __validate_published_docs(self, version: str) -> None:
+    def __validate_published_docs(self, version: str) -> bool:
         import os
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
         from dbacademy.google.google_client_class import GoogleClient
@@ -203,3 +183,5 @@ class ArtifactValidator:
 
         print(f"|")
         print(f"| PASSED: All documents exported to the distribution system")
+
+        return True
