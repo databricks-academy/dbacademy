@@ -68,13 +68,13 @@ class ArtifactValidator:
     def validate_publishing_processes(self) -> None:
         from dbacademy.dbhelper.validations.validation_suite_class import ValidationSuite
         suite = ValidationSuite(name="Distribution")
-        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=True), description="Validate DBC in Distribution System (LATEST)")
-        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=False), description=f"Validate DBC in Distribution System ({self.version})")
-        suite.test_true(actual_value=lambda: self.__validate_git_releases_dbc(), description=f"Validate DBC in GitHub ({self.version})")
-        suite.test_true(actual_value=lambda: self.__validate_git_branch(branch="published", version=None), description=f"Validate GitHub Branch (published)")
-        suite.test_true(actual_value=lambda: self.__validate_git_branch(branch=f"published-v{self.version}", version=None), description=f"Validate GitHub Branch (published-v{self.version})")
-        suite.test_true(actual_value=lambda: self.__validate_published_docs(version="LATEST"), description=f"Validate Published Docs (LATEST)")
-        suite.test_true(actual_value=lambda: self.__validate_published_docs(version=self.version), description=f"Validate Published Docs ({self.version})")
+        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=True), description="DBC in Distribution System (LATEST)")
+        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=False), description=f"DBC in Distribution System ({self.version})")
+        suite.test_true(actual_value=lambda: self.__validate_git_releases_dbc(), description=f"Version Info in DBC from GitHub ({self.version})")
+        suite.test_true(actual_value=lambda: self.__validate_git_branch(branch="published", version=None), description=f"Version Info in GitHub Repo (published)")
+        suite.test_true(actual_value=lambda: self.__validate_git_branch(branch=f"published-v{self.version}", version=None), description=f"Version Info in GitHub Repo (published-v{self.version})")
+        suite.test_true(actual_value=lambda: self.__validate_published_docs(version="LATEST"), description=f"Docs Published as PDF (LATEST)")
+        suite.test_true(actual_value=lambda: self.__validate_published_docs(version=self.version), description=f"Docs Published as PDF ({self.version})")
 
         suite.display_results()
 
