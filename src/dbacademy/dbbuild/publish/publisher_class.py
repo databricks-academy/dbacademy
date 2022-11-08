@@ -109,10 +109,14 @@ class Publisher:
         assert self.__generated_notebooks, "The notebooks have not yet been generated. See Publisher.generate_notebooks()"
 
     def generate_notebooks(self, *, skip_generation: bool = False, verbose=False, debugging=False, **kwargs) -> Optional[str]:
-        from ..publish.notebook_def_class import NotebookDef
-        from ..build_utils_class import BuildUtils
+        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild import BuildConfig
 
-        self.assert_no_changes_in_source_repo()
+        if self.version in BuildConfig.VERSIONS_LIST:
+            self.assert_validated_config()
+        else:
+            self.assert_no_changes_in_source_repo()
 
         if skip_generation:
             self.__generated_notebooks = True
@@ -219,10 +223,9 @@ class Publisher:
 
         self.__validated = True
 
-    @property
-    def validated(self) -> bool:
-        # Both have to be true to be considered validated.
-        return self.__validated and self.__validated_repo_reset
+    def assert_validated_config(self) -> None:
+        assert self.__validated, f"The publisher's configuration has not yet been validated. See Publisher.validate()"
+        assert self.__validated_repo_reset, f"Failed to configure target repo. See Publisher.configure_target_repo()"
 
     def configure_target_repo(self, target_dir: str = None, target_repo_url: str = None, branch: str = "published", **kwargs) -> None:
         from ..build_utils_class import BuildUtils
@@ -281,7 +284,7 @@ class Publisher:
     # TODO Cannot define return type without circular dependencies
     def to_translator(self):
         from dbacademy.dbbuild.publish.translator_class import Translator
-        assert self.validated, f"Cannot translate until the publisher's configuration passes validation. Ensure that Publisher.validate() was called and that all assignments passed"
+        assert self.assert_validated_config()
 
         return Translator(self)
 
@@ -327,7 +330,6 @@ class Publisher:
     def create_dbcs(self) -> str:
         from ..build_utils_class import BuildUtils
 
-        assert self.validated, f"Cannot create DBCs until the publisher passes validation. Ensure that Publisher.validate() was called and that all assignments passed."
         self.assert_no_changes_in_target_repo()
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
