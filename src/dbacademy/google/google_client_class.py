@@ -67,17 +67,26 @@ class GoogleClient:
 
     def file_export(self, file_id: str) -> io.BytesIO:
         import io
+        drive_service = self.drive_service
 
-        request = self.drive_service.files().export_media(fileId=file_id, mimeType='application/pdf')
+        class DownloadRequest:
+            def __init__(self):
+                self.file_bytes = None
 
-        file_bytes = io.BytesIO()
-        downloader = MediaIoBaseDownload(file_bytes, request)
+            def execute(self):
+                export_request = drive_service.files().export_media(fileId=file_id, mimeType='application/pdf')
 
-        done = False
-        while done is False:
-            status, done = downloader.next_chunk()
+                self.file_bytes = io.BytesIO()
+                downloader = MediaIoBaseDownload(self.file_bytes, export_request)
 
-        return file_bytes
+                done = False
+                while done is False:
+                    status, done = downloader.next_chunk()
+
+        request = DownloadRequest()
+        self.execute(request)
+
+        return request.file_bytes
 
     def file_copy(self, *, file_id: str, name: str, parent_folder_id: str) -> Dict[str, Any]:
         params = {
