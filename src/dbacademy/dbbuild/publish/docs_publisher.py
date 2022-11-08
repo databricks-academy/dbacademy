@@ -75,37 +75,18 @@ class DocsPublisher:
             shutil.copyfileobj(file_bytes, f)
 
     def process_pdfs(self) -> None:
-        import json, socket
-        # noinspection PyPackageRequirements
-        import googleapiclient.errors
+        from dbacademy.google.google_client_class import GoogleClientException
 
         print("Exporting Google Docs as PDFs:")
         total = len(self.translation.document_links)
 
         for index, link in enumerate(self.translation.document_links):
             error_message = f"Document {index + 1} of {total} cannot be downloaded; publishing of this doc is being skipped.\n{link}"
-
             try:
                 file_name, file_url = self.__download_google_doc(index=index, total=total, gdoc_url=link)
                 self.__pdfs[file_name] = file_url
-
-            except socket.timeout:
-                dbgems.print_warning("SKIPPING DOWNLOAD / TIMEOUT", error_message)
-
-            except googleapiclient.errors.HttpError as e:
-                if e.resp.get("content-type", "").startswith('application/json'):
-                    errors = json.loads(e.content).get("error", {}).get("errors")
-                    first_error = errors[0] if len(errors) > 0 else [{"message": str(e)}]
-                    reason = first_error.get("message")
-                    message = f"{str(reason)}\n{link}"
-                    dbgems.print_warning(f"SKIPPING DOWNLOAD / {e.status_code}", message)
-                else:
-                    error_message += f"\n{type(e)} {e}"
-                    dbgems.print_warning("SKIPPING / CANNOT DOWNLOAD", error_message)
-
-            except Exception as e:
-                error_message += f"\n{type(e)} {e}"
-                dbgems.print_warning("SKIPPING / CANNOT DOWNLOAD", error_message)
+            except GoogleClientException as e:
+                dbgems.print_warning("SKIPPING DOWNLOAD", f"{error_message}\n{e.message}")
 
     def process_google_slides(self) -> None:
 
@@ -113,16 +94,13 @@ class DocsPublisher:
 
         parent_folder_id = self.translation.published_docs_folder.split("/")[-1]
         files = self.__google_client.folder_list(folder_id=parent_folder_id)
-        files = [f for f in files if f.get("name") == f"v{self.version}"]
+        folders = [f for f in files if f.get("name") == f"v{self.version}"]
 
-        for folder in files:
+        for folder in folders:
             folder_id = folder.get("id")
             folder_name = folder.get("name")
-            try:
-                self.__google_client.file_delete(folder_id)
-                print(f"| Deleted existing published folder {folder_name} (https://drive.google.com/drive/folders/{folder_id})")
-            except Exception as e:
-                raise Exception(f"Failed to delete {folder_name} (https://drive.google.com/drive/folders/{folder_id})") from e
+            self.__google_client.folder_delete(folder_id)
+            print(f"| Deleted existing published folder {folder_name} (https://drive.google.com/drive/folders/{folder_id})")
 
         folder = self.__google_client.folder_create(parent_folder_id=parent_folder_id, folder_name=f"v{self.version}")
 
