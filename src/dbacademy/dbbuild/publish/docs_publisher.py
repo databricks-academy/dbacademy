@@ -179,8 +179,11 @@ class DocsPublisher:
         for folder in files:
             folder_id = folder.get("id")
             folder_name = folder.get("name")
-            self.__drive_service.files().delete(fileId=folder_id).execute()
-            print(f"| Deleted existing published folder {folder_name} (https://drive.google.com/drive/folders/{folder_id})")
+            try:
+                self.__drive_service.files().delete(fileId=folder_id).execute()
+                print(f"| Deleted existing published folder {folder_name} (https://drive.google.com/drive/folders/{folder_id})")
+            except Exception as e:
+                raise Exception(f"Failed to delete {folder_name} (https://drive.google.com/drive/folders/{folder_id})") from e
 
         file_metadata = {
             "name": f"v{self.version}",
