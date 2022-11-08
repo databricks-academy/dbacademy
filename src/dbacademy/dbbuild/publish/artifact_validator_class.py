@@ -91,6 +91,7 @@ class ArtifactValidator:
 
         file_name = f"{label}/notebooks.dbc" if as_latest else f"v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
 
+        print()
         print(f"Validating the DBC in DBAcademy's distribution system ({label}):")
 
         target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/{file_name}"
@@ -103,6 +104,7 @@ class ArtifactValidator:
         return True
 
     def __validate_git_releases_dbc(self, version=None) -> bool:
+        print()
         print("Validating the DBC in GitHub's Releases page:")
 
         version = version or self.version
@@ -144,6 +146,7 @@ class ArtifactValidator:
     def __validate_git_branch(self, *, branch: str, version: Optional[str]) -> bool:
         from ..build_utils_class import BuildUtils
 
+        print()
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo:")
 
         if not self.i18n:
@@ -167,6 +170,7 @@ class ArtifactValidator:
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
         from dbacademy.google.google_client_class import GoogleClient
 
+        print()
         print(f"Validating export of Google docs ({version})")
 
         google_client = GoogleClient()
