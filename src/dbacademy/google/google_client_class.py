@@ -92,7 +92,7 @@ class GoogleClient:
             request = self.drive_service.files().delete(fileId=file_id)
             self.execute(request)
         except GoogleClientException as e:
-            raise GoogleClientException(f"Failed to delete Google Drive resource (https://drive.google.com/drive/folders/{file_id})\n{e.message}") from e
+            raise GoogleClientException(0, f"Failed to delete Google Drive resource (https://drive.google.com/drive/folders/{file_id})\n{e.message}") from e
 
     def folder_delete(self, folder_id: str) -> None:
         return self.file_delete(folder_id)
