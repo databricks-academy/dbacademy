@@ -68,15 +68,16 @@ class ArtifactValidator:
     def validate_publishing_processes(self) -> None:
         from dbacademy.dbhelper.validations.validation_suite_class import ValidationSuite
         suite = ValidationSuite(name="Distribution")
-        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=True), description="DBC in Distribution System (LATEST)")
-        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=False), description=f"DBC in Distribution System ({self.version})")
-        suite.test_true(actual_value=lambda: self.__validate_git_releases_dbc(), description=f"Version Info in DBC from GitHub ({self.version})")
-        suite.test_true(actual_value=lambda: self.__validate_git_branch(branch="published", version=None), description=f"Version Info in GitHub Repo (published)")
-        suite.test_true(actual_value=lambda: self.__validate_git_branch(branch=f"published-v{self.version}", version=None), description=f"Version Info in GitHub Repo (published-v{self.version})")
-        suite.test_true(actual_value=lambda: self.__validate_published_docs(version="LATEST"), description=f"Docs Published as PDF (LATEST)")
-        suite.test_true(actual_value=lambda: self.__validate_published_docs(version=self.version), description=f"Docs Published as PDF ({self.version})")
+        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=True), description="DBC in Distribution System (LATEST)", depends_on=[])
+        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=False), description=f"DBC in Distribution System ({self.version})", depends_on=[])
+        suite.test_true(actual_value=lambda: self.__validate_git_releases_dbc(), description=f"Version Info in DBC from GitHub ({self.version})", depends_on=[])
+        suite.test_true(actual_value=lambda: self.__validate_git_branch(branch="published", version=None), description=f"Version Info in GitHub Repo (published)", depends_on=[])
+        suite.test_true(actual_value=lambda: self.__validate_git_branch(branch=f"published-v{self.version}", version=None), description=f"Version Info in GitHub Repo (published-v{self.version})", depends_on=[])
+        suite.test_true(actual_value=lambda: self.__validate_published_docs(version="LATEST"), description=f"Docs Published as PDF (LATEST)", depends_on=[])
+        suite.test_true(actual_value=lambda: self.__validate_published_docs(version=self.version), description=f"Docs Published as PDF ({self.version})", depends_on=[])
 
         suite.display_results()
+        assert suite.passed, f"One or more problems were found."
 
     def __validate_distribution_dbc(self, as_latest: bool) -> True:
 

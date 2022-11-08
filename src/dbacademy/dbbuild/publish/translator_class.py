@@ -374,8 +374,6 @@ class Translator:
                                        translation=translation)
         docs_publisher.process_pdfs()
         print()
-        print("-"*80)
-        print()
         docs_publisher.process_google_slides()
         html = docs_publisher.to_html()
 
