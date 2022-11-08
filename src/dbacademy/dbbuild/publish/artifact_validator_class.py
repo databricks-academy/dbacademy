@@ -76,6 +76,8 @@ class ArtifactValidator:
         suite.test_true(actual_value=lambda: self.__validate_published_docs(version="LATEST"), description=f"Validate Published Docs (LATEST)")
         suite.test_true(actual_value=lambda: self.__validate_published_docs(version=self.version), description=f"Validate Published Docs ({self.version})")
 
+        suite.display_results()
+
     def __validate_distribution_dbc(self, as_latest: bool) -> True:
 
         if not as_latest:
