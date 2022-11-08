@@ -10,6 +10,9 @@ import googleapiclient.discovery
 # noinspection PyPackageRequirements
 from googleapiclient.http import MediaIoBaseDownload
 
+# noinspection PyPackageRequirements
+import googleapiclient.errors
+
 
 class GoogleClient:
     import io
@@ -59,12 +62,13 @@ class GoogleClient:
         return gdoc_id
 
     def file_get(self, file_id: str) -> Dict[str, Any]:
-        return self.__drive_service.files().get(fileId=file_id).execute()
+        request = self.drive_service.files().get(fileId=file_id)
+        return self.execute(request)
 
     def file_export(self, file_id: str) -> io.BytesIO:
         import io
 
-        request = self.__drive_service.files().export_media(fileId=file_id, mimeType='application/pdf')
+        request = self.drive_service.files().export_media(fileId=file_id, mimeType='application/pdf')
 
         file_bytes = io.BytesIO()
         downloader = MediaIoBaseDownload(file_bytes, request)
@@ -75,18 +79,27 @@ class GoogleClient:
 
         return file_bytes
 
-    def file_delete(self, folder_id: str) -> None:
-        self.__drive_service.files().delete(fileId=folder_id).execute()
-
     def file_copy(self, *, file_id: str, name: str, parent_folder_id: str) -> Dict[str, Any]:
         params = {
             "parents": [parent_folder_id],
             "name": name
         }
-        return self.__drive_service.files().copy(fileId=file_id, body=params).execute()
+        request = self.drive_service.files().copy(fileId=file_id, body=params)
+        return self.execute(request)
+
+    def file_delete(self, file_id: str) -> None:
+        try:
+            request = self.drive_service.files().delete(fileId=file_id)
+            self.execute(request)
+        except Exception as e:
+            raise Exception(f"Failed to delete Google Drive resource (https://drive.google.com/drive/folders/{file_id})") from e
+
+    def folder_delete(self, folder_id: str) -> None:
+        return self.file_delete(folder_id)
 
     def folder_list(self, folder_id):
-        response = self.drive_service.files().list(q=f"'{folder_id}' in parents").execute()
+        request = self.drive_service.files().list(q=f"'{folder_id}' in parents")
+        response = self.execute(request)
         return response.get("files")
 
     def folder_create(self, parent_folder_id: str, folder_name: str) -> Dict[str, Any]:
@@ -95,4 +108,42 @@ class GoogleClient:
             "mimeType": "application/vnd.google-apps.folder",
             "parents": [parent_folder_id]
         }
-        return self.__drive_service.files().create(body=file_metadata).execute()
+        request = self.drive_service.files().create(body=file_metadata)
+        return self.execute(request)
+
+    @staticmethod
+    def execute(request) -> Dict[str, Any]:
+        import json, socket
+
+        try:
+            return request.execute()
+
+        except socket.timeout:
+            raise GoogleClientException(0, f"The request has timed out")
+
+        except googleapiclient.errors.HttpError as e:
+            if e.resp.get("content-type", "").startswith('application/json'):
+                errors = json.loads(e.content).get("error", {}).get("errors")
+                first_error = errors[0] if len(errors) > 0 else [{"message": str(e)}]
+                reason = first_error.get("message")
+                message = str(reason)
+                raise GoogleClientException(e.status_code, message)
+            else:
+                raise GoogleClientException(e.status_code, f"{type(e)} {e}")
+
+        except Exception as e:
+            raise GoogleClientException(0, f"{type(e)} {e}")
+
+
+class GoogleClientException(Exception):
+    def __init__(self, status_code: int, message: str):
+        self.__message = message
+        self.__status_code = status_code
+
+    @property
+    def message(self) -> str:
+        return self.__message
+
+    @property
+    def status_code(self) -> int:
+        return self.__status_code
