@@ -114,7 +114,7 @@ class DocsPublisher:
             file = self.google_client.file_get(file_id=gdoc_id)
             name = file.get("name")
 
-            print(f"| Copying {index + 1} of {total}: {name}")
+            print(f"| Copying {index + 1} of {total}: {name} ({link})")
             self.google_client.file_copy(file_id=gdoc_id, name=name, parent_folder_id=folder_id)
 
     def to_html(self) -> str:
