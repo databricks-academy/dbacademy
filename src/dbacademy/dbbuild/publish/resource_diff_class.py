@@ -27,13 +27,12 @@ class ResourceDiff:
         self.files_b = None
         self.all_files = None
 
-    def compare_and_save(self, target_file: str = None) -> str:
+    def compare_and_save(self, docs_url: str) -> str:
         diff = ResourceDiff(self.build_config)
-        html = diff.compare()
+        file_name = f"{diff.old_resource}_vs_{diff.new_resource}.html"
+        html = diff.compare(docs_url, file_name)
 
-        if target_file is None:
-            # Write the file to the docs folder
-            target_file = f"/Workspace{self.build_config.source_repo}/docs/{diff.old_resource}_vs_{diff.new_resource}.html"
+        target_file = f"/Workspace{self.build_config.source_repo}/docs/{file_name}"
 
         with open(target_file, "w") as file:
             file.write(html)
@@ -41,7 +40,7 @@ class ResourceDiff:
         print(f"Wrote report to \"{target_file}\"")
         return html
 
-    def compare(self):
+    def compare(self, docs_url: str, file_name: str):
         import os
 
         print(f"Comparing {self.old_resource} to {self.new_resource}")
@@ -65,6 +64,7 @@ class ResourceDiff:
         </style>
         </head>
         <body style="font-size:16px">
+            <p><a href="{docs_url}/{file_name}" target="_blank">See Report: {file_name}</a></p>
             <table style="border-collapse: collapse; border-spacing:0">
                 <tr><td>Original:&nbsp;</td><td><b>{self.old_resource}</b></td></tr>
                 <tr><td>Latest:&nbsp;</td><td><b>{self.new_resource}</b></td></tr>
