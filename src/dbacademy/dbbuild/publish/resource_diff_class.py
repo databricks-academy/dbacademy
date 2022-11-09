@@ -65,7 +65,7 @@ class ResourceDiff:
         </head>
         <body style="font-size:16px">
             <div><a href="{docs_url}/{file_name}" target="_blank">See Report: {file_name}</a></div>
-            <div style="font-size:smaller>Note: this link is not valid until the report is committed.</div>
+            <div style="font-size:smaller; margin-bottom:1em">Note: this link is not valid until the report is committed.</div>
             <table style="border-collapse: collapse; border-spacing:0">
                 <tr><td>Original:&nbsp;</td><td><b>{self.old_resource}</b></td></tr>
                 <tr><td>Latest:&nbsp;</td><td><b>{self.new_resource}</b></td></tr>
