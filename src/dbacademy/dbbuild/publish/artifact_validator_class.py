@@ -63,7 +63,7 @@ class ArtifactValidator:
         self.i18n = i18n
         self.common_language = common_language
 
-        self.translation = common.validate_type(translation, "translation", Translation)
+        self.translation = None if translation is None else common.validate_type(translation, "translation", Translation)
 
     def validate_publishing_processes(self) -> None:
         from dbacademy.dbhelper.validations.validation_suite_class import ValidationSuite
@@ -170,6 +170,10 @@ class ArtifactValidator:
         import os
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
         from dbacademy.google.google_client_class import GoogleClient
+
+        if self.translation is None:
+            print(f"| PASSED: No documents to validate")
+            return True
 
         print()
         print(f"Validating export of Google docs ({version})")
