@@ -367,16 +367,19 @@ class Publisher:
 
         info = PublishingInfo(self.build_config.publishing_info)
         translation = info.translations.get(self.common_language)
-        docs_publisher = DocsPublisher(build_name=self.build_config.build_name,
-                                       version=self.version,
-                                       translation=translation)
-        docs_publisher.process_pdfs()
-        print()
-        docs_publisher.process_google_slides()
-        html = docs_publisher.to_html()
+        if translation is None:
+            return f"""<html><body style="font-size:16px">No documents to produce.</body></html>"""
+        else:
+            docs_publisher = DocsPublisher(build_name=self.build_config.build_name,
+                                           version=self.version,
+                                           translation=translation)
+            docs_publisher.process_pdfs()
+            print()
+            docs_publisher.process_google_slides()
+            html = docs_publisher.to_html()
 
-        self.__created_docs = True
-        return html
+            self.__created_docs = True
+            return html
 
     def assert_validate_artifacts(self) -> None:
         assert self.__validated_artifacts, "The published artifacts have not been verified. See Publisher.validate_artifacts()"

@@ -369,16 +369,19 @@ class Translator:
 
         info = PublishingInfo(self.build_config.publishing_info)
         translation = info.translations.get(self.common_language)
-        docs_publisher = DocsPublisher(build_name=self.build_config.build_name,
-                                       version=self.version,
-                                       translation=translation)
-        docs_publisher.process_pdfs()
-        print()
-        docs_publisher.process_google_slides()
-        html = docs_publisher.to_html()
+        if translation is None:
+            return f"""<html><body style="font-size:16px">No documents to produce.</body></html>"""
+        else:
+            docs_publisher = DocsPublisher(build_name=self.build_config.build_name,
+                                           version=self.version,
+                                           translation=translation)
+            docs_publisher.process_pdfs()
+            print()
+            docs_publisher.process_google_slides()
+            html = docs_publisher.to_html()
 
-        self.__created_docs = True
-        return html
+            self.__created_docs = True
+            return html
 
     def assert_created_dbcs(self):
         assert self.__created_dbcs, "The DBCs have not yet been created. See Translator.create_dbcs()"
