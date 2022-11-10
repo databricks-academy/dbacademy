@@ -370,6 +370,7 @@ class Translator:
         info = PublishingInfo(self.build_config.publishing_info)
         translation = info.translations.get(self.common_language)
         if translation is None:
+            self.__created_docs = True
             return f"""<html><body style="font-size:16px">No documents to produce.</body></html>"""
         else:
             docs_publisher = DocsPublisher(build_name=self.build_config.build_name,
