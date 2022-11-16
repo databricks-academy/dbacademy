@@ -215,6 +215,7 @@ class Translator:
                                                          build_name=self.build_name,
                                                          repo_url=repo_url,
                                                          directory=self.publisher.source_repo)
+        print()
         self.__changes_in_source_repo = len(results)
         self.assert_no_changes_in_source_repo()
 
