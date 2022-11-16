@@ -16,10 +16,32 @@
 		</div>
 		<div style="width: 600px; margin-left:auto; margin-right: auto">
 			<h1>Troubleshooting</h1>
-			
+
+			<h2 id="training-workspace">Training Workspace</h2>
+			<p>The concept of a "training" workspace will be referenced throughout this document as a possible solution to a number of different problems.</p>
+
+			This refers to the idea of creating a workspace that is dedicated to training and seperated from other business operations. In such a
+			workspace, users would access to all features (except possibly the Account Admin Console), there would be little to no restrictions, and where
+			each user is potentially an admin in the workspace. When configured properly, users have the freedom to explore the different concepts presented
+			through Databricks Academy's various courses without mingling those activities with those associated to production activities.
+
+			<h2 id="requires-unity-catalog">Requires Unity Catalog</h2>
+			There are generally two reasons for this error:
+			<ol>
+				<li>The first possible reason would be that you are <b>not</b> using an enterprise version of Databricks that supports Unity Catalog.
+					In this case a new workspace would need to be provisioned under an E2 Account and then optionally migrate the contents
+					of the "classic" workspace to the "E2" workspace. We generally recommend setting up a <a href="#training-workspace">training-workspace</a> separate
+					form any production workspaces which address other security concerns but also eliminates the need to perform any type of migration.
+				</li>
+				<li>
+					The second possible reason is that you <b>are</b> using an enterprise version of Databricks that <b>does</b> support Unity Catalog
+					but Unity Catalog is not enabled.
+				</li>
+			</ol>
+
 			<h2 id="cannot-create-catalog">Cannot Create Catalog</h2>
-			<p>Coming soon...</p>
-			
+			There are generally N reasons why an individual is not able to create catalog:
+
 			<h2 id="cannot-create-schema">Cannot Create Schema</h2>
 			<p>Coming soon...</p>
 			
@@ -28,10 +50,7 @@
 			
 			<h2 id="cannot-write-to-dbfs">Cannot Write to DBFS</h2>
 			<p>Coming soon...</p>
-			
-			<h2 id="requires-unity-catalog">Requires Unity Catalog</h2>
-			<p>Coming soon...</p>
-			
+
 			<h2 id="spark-version">Spark Version</h2>
 			<p>Coming soon...</p>
 			
