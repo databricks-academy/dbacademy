@@ -252,7 +252,7 @@ class Translator:
     def assert_generated_notebooks(self):
         assert self.__generated_notebooks, f"The notebooks have not been published. See Translator.publish_notebooks()"
 
-    def generate_notebooks(self, skip_generation: bool) -> Optional[str]:
+    def generate_notebooks(self, skip_generation: bool = False) -> Optional[str]:
         from datetime import datetime
         from ..build_utils_class import BuildUtils
         from ..publish.notebook_def_class import NotebookDef
