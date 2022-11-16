@@ -92,7 +92,7 @@ class BuildUtils:
                                   repo_url=repo_url,
                                   branch="published",
                                   which="diff")
-
+        print()
         index_a: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=repo_dir, ignored=ignored)
         index_b: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=directory, ignored=ignored)
         print()
