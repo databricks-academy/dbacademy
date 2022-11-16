@@ -88,7 +88,7 @@ class Translator:
 
         username = dbgems.clean_string(self.username, "_")
         self.source_branch = source_branch or f"published-v{self.core_version}"
-        self.source_dir = source_dir or f"/Repos/Temp/{username}-{self.build_name}-english_{self.source_branch}"
+        self.source_dir = source_dir or f"/Repos/Temp/{username}-{self.build_name}-english-{self.source_branch}"
         self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
 
         BuildUtils.reset_git_repo(client=self.client,
@@ -100,8 +100,9 @@ class Translator:
     def __reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = None):
         from ..build_utils_class import BuildUtils
 
+        username = dbgems.clean_string(self.username, "_")
         self.target_branch = target_branch or "published"
-        self.target_dir = target_dir or f"/Repos/Temp/{self.build_name}"
+        self.target_dir = target_dir or f"/Repos/Temp/{username}-{self.build_name}-{self.common_language}"
         self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
 
         BuildUtils.reset_git_repo(client=self.client,
