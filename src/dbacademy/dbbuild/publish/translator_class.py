@@ -45,6 +45,7 @@ class Translator:
         self.target_dir = None
         self.target_repo_url = None
 
+        self.temp_repo_dir = f"/Repos/Temp"
         self.temp_work_dir = f"/Workspace/Users/{self.username}/Temp"
 
         self.errors = []
