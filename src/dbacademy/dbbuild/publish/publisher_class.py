@@ -284,7 +284,7 @@ class Publisher:
     # TODO Cannot define return type without circular dependencies
     def to_translator(self):
         from dbacademy.dbbuild.publish.translator_class import Translator
-        assert self.assert_validated_config()
+        self.assert_validated_config()
 
         return Translator(self)
 
