@@ -320,13 +320,14 @@ class Translator:
                                                       notebook_path=target_notebook_path,
                                                       content=raw_source,
                                                       overwrite=True)
+                print("| skipping\n")
                 continue
 
             commands = source.split(cmd_delim)
             new_commands = [commands.pop(0)]
 
             for i, command in enumerate(commands):
-                print("Command #1: ", end="...")
+                print(f"| command #{i+1}: ", end="...")
                 command = command.strip()
                 guid, line_zero = self.__extract_i18n_guid(command)
                 if guid is None:
@@ -343,6 +344,8 @@ class Translator:
 
                     new_command = "\n".join(lines)                          # Combine all the lines into a new command
                     new_commands.append(new_command.strip())                # Append the new command to set of commands
+
+            print()
 
             new_source = f"{header}\n"                           # Add the Databricks Notebook Header
             new_source += f"\n{cmd_delim}\n".join(new_commands)  # Join all the new_commands into one
