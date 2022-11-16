@@ -341,6 +341,7 @@ class NotebookDef:
         self.validate_html_link(i, command)
 
         if not self.i18n:
+            self.test(lambda: "--i18n-" not in command, f"Found the \"--i18n-\" marker but i18n processing is disabled.")
             return command
         else:
             return self.replace_guid(cm=cm,
