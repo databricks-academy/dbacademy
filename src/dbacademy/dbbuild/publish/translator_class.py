@@ -148,6 +148,7 @@ class Translator:
         print()
 
         self.__reset_published_repo()
+        print()
         self.__reset_target_repo()
 
         self.__validated = True
