@@ -154,7 +154,7 @@ class DBAcademyHelper:
         return self.to_unique_name(self.username)
 
     def to_unique_name(self, username):
-        local_part = username.split("@")[0]
+        local_part = dbgems.clean_string(username.split("@")[0], "-")
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
         username_hash = dbgems.stable_hash(hash_basis, length=4)
         course_code = self.course_config.course_code
