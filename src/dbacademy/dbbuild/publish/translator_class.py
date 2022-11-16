@@ -320,22 +320,22 @@ class Translator:
                                                       notebook_path=target_notebook_path,
                                                       content=raw_source,
                                                       overwrite=True)
-                print("| skipping\n")
+                # print("| skipping\n")
                 continue
 
             commands = source.split(cmd_delim)
             new_commands = [commands.pop(0)]
 
             for i, command in enumerate(commands):
-                print(f"| command #{i+1}: ", end="...")
+                # print(f"| command #{i+1}: ", end="...")
                 command = command.strip()
                 guid, line_zero = self.__extract_i18n_guid(command)
                 if guid is None:
                     new_commands.append(command)                            # No GUID, it's %python or other type of command, not MD
-                    print(f"processed as-is.")
+                    # print(f"processed as-is.")
                 else:
                     assert guid in i18n_guid_map, f"The GUID \"{guid}\" was not found in \"{file}\"."
-                    print(f"processed {guid}.")
+                    # print(f"processed {guid}.")
                     replacements = i18n_guid_map[guid].strip().split("\n")  # Get the replacement text for the specified GUID
                     cmd_lines = [f"{cm} MAGIC {x}" for x in replacements]   # Prefix the magic command to each line
 
@@ -345,7 +345,7 @@ class Translator:
                     new_command = "\n".join(lines)                          # Combine all the lines into a new command
                     new_commands.append(new_command.strip())                # Append the new command to set of commands
 
-            print()
+            # print()
 
             new_source = f"{header}\n"                           # Add the Databricks Notebook Header
             new_source += f"\n{cmd_delim}\n".join(new_commands)  # Join all the new_commands into one
