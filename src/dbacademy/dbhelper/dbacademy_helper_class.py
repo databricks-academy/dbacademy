@@ -277,6 +277,9 @@ class DBAcademyHelper:
 
     def init(self):
 
+        if self.lesson_config.create_catalog:
+            assert not self.lesson_config.create_schema, f"Creation of the schema (LessonConfig.create_schema=True) is not supported while creating the catalog (LessonConfig.create_catalog=True)"
+
         if self.lesson_config.installing_datasets:
             self.install_datasets()               # Install the data
 
