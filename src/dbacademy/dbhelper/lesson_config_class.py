@@ -1,3 +1,4 @@
+from typing import Optional
 from dbacademy import dbgems
 
 
@@ -37,14 +38,14 @@ class LessonConfig:
             assert self.is_uc_enabled_workspace, f"Cannot create a catalog, UC is not enabled for this workspace/cluster."
             assert not create_schema, f"Cannot create a user-specific schema when creating UC catalogs"
 
-    def lock_mutations(self):
+    def lock_mutations(self) -> None:
         self.__mutable = False
 
-    def __assert_mutable(self):
+    def __assert_mutable(self) -> None:
         assert self.__mutable, f"LessonConfig is no longer mutable; DBAcademyHelper has already been initialized."
 
     @staticmethod
-    def is_smoke_test():
+    def is_smoke_test() -> bool:
         """
         Helper method to indentify when we are running as a smoke test
         :return: Returns true if the notebook is running as a smoke test.
@@ -57,26 +58,30 @@ class LessonConfig:
         return self.__installing_datasets
 
     @installing_datasets.setter
-    def installing_datasets(self, installing_datasets: bool):
+    def installing_datasets(self, installing_datasets: bool) -> None:
         self.__assert_mutable()
         self.__installing_datasets = installing_datasets
 
     @property
-    def name(self) -> str:
+    def name(self) -> Optional[str]:
         return self.__name
 
     @name.setter
-    def name(self, name: str):
-        import re
+    def name(self, name: Optional[str]) -> None:
         self.__assert_mutable()
         self.__name = name
+        self.__clean_name = self.to_clean_lesson_name(name)
+
+    @staticmethod
+    def to_clean_lesson_name(name: Optional[str]) -> Optional[str]:
+        import re
 
         if name is None:
-            self.__clean_name = None
-        else:
-            value = re.sub(r"[^a-zA-Z\d]", "_", str(name))
-            while "__" in value: value = value.replace("__", "_")
-            self.__clean_name = name
+            return None
+
+        value = re.sub(r"[^a-zA-Z\d]", "_", str(name))
+        while "__" in value: value = value.replace("__", "_")
+        return value
 
     @property
     def clean_name(self) -> str:
@@ -108,7 +113,11 @@ class LessonConfig:
         :return: True if this is a UC environment
         """
         from .dbacademy_helper_class import DBAcademyHelper
-        return self.initial_catalog == DBAcademyHelper.CATALOG_UC_DEFAULT
+
+        # We need to check the prefix for those rare cases when a notebook is re-ran and while
+        # the programming namespace is reset via the call to pip-install, the current catalog and current schema are not.
+        prefix = DBAcademyHelper.to_catalog_name_prefix(username=self.username)
+        return self.initial_catalog.startswith(prefix) or self.initial_catalog == DBAcademyHelper.CATALOG_UC_DEFAULT
 
     @property
     def initial_catalog(self) -> str:
