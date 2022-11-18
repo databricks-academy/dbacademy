@@ -22,9 +22,6 @@ class LessonConfig:
         self.create_schema = create_schema
         self.create_catalog = create_catalog
 
-        if create_catalog: 
-            assert not create_schema, f"Creation of the schema (create_schema=True) is not supported while creating the catalog (create_catalog=True)"
-
         try:
             row = dbgems.sql("SELECT current_user() as username, current_catalog() as catalog, current_database() as schema").first()
             self.__username = row["username"]
