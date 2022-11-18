@@ -191,7 +191,7 @@ class DBAcademyHelper:
 
     @staticmethod
     def to_catalog_name(*, username: str, lesson_name: str) -> str:
-        from lesson_config_class import LessonConfig
+        from dbacademy.dbhelper.lesson_config_class import LessonConfig
 
         catalog_name_prefix = DBAcademyHelper.to_catalog_name_prefix(username=username)
 
