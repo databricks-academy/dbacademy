@@ -71,7 +71,7 @@ class CourseConfig:
         return self.__remote_files
 
     @remote_files.setter
-    def remote_files(self, remote_fies: List[str]):
+    def remote_files(self, remote_fies: List[str]) -> None:
         self.__remote_files = remote_fies
 
     @property
