@@ -1,4 +1,4 @@
-from typing import Union, Optional
+from typing import Union, Optional, Dict, List
 
 import pyspark
 from dbacademy import dbgems, common
@@ -24,15 +24,15 @@ class DBAcademyHelper:
     TROUBLESHOOT_ERROR_TEMPLATE = "{error} Please see the \"Troubleshooting | {section}\" section of the \"Version Info\" notebook for more information."
 
     @staticmethod
-    def get_dbacademy_datasets_path():
+    def get_dbacademy_datasets_path() -> str:
         return dbgems.spark.conf.get("dbacademy.paths.datasets", default="dbfs:/mnt/dbacademy-datasets")
 
     @staticmethod
-    def get_dbacademy_users_path():
+    def get_dbacademy_users_path() -> str:
         return dbgems.spark.conf.get("dbacademy.paths.users", default="dbfs:/mnt/dbacademy-users")
 
     @staticmethod
-    def get_dbacademy_datasets_staging():
+    def get_dbacademy_datasets_staging() -> str:
         return "dbfs:/mnt/dbacademy-datasets-staging"
 
     def __init__(self,
@@ -127,7 +127,7 @@ class DBAcademyHelper:
         self.__validate_dbfs_writes(DBAcademyHelper.get_dbacademy_datasets_path())
 
     @property
-    def current_dbr(self):
+    def current_dbr(self) -> str:
         return self.__current_dbr
 
     @property
@@ -138,7 +138,7 @@ class DBAcademyHelper:
     def lesson_config(self) -> LessonConfig:
         return self.__lesson_config
 
-    def dprint(self, message):
+    def dprint(self, message: str) -> None:
         if self.__debug:
             print(f"DEBUG: {message}")
 
@@ -151,28 +151,30 @@ class DBAcademyHelper:
 
     @property
     def unique_name(self) -> str:
-        return self.to_unique_name(self.username)
+        return self.to_unique_name(username=self.username,
+                                   course_code=self.course_config.course_code)
 
-    def to_unique_name(self, username):
+    @staticmethod
+    def to_unique_name(*, username: str, course_code: str) -> str:
         local_part = dbgems.clean_string(username.split("@")[0], "-")
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
         username_hash = dbgems.stable_hash(hash_basis, length=4)
-        course_code = self.course_config.course_code
         return f"{local_part}-{username_hash}-da-{course_code}".lower()
 
     @property
-    def catalog_name_prefix(self):
-        return self.to_catalog_name_prefix(self.username)
+    def catalog_name_prefix(self) -> str:
+        return self.to_catalog_name_prefix(username=self.username)
 
-    def to_catalog_name_prefix(self, username):
+    @staticmethod
+    def to_catalog_name_prefix(*, username: str) -> str:
         local_part = username.split("@")[0]
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
         username_hash = dbgems.stable_hash(hash_basis, length=4)
-        course_code = self.course_config.course_code
-        return dbgems.clean_string(f"{local_part}-{username_hash}-da-{course_code}").lower()
+
+        return dbgems.clean_string(f"{local_part}-{username_hash}-da").lower()
 
     @property
-    def catalog_name(self):
+    def catalog_name(self) -> str:
 
         if not self.lesson_config.is_uc_enabled_workspace:
             # If this is not a UC workspace, then we use the default for spark
@@ -184,62 +186,74 @@ class DBAcademyHelper:
 
         else:
             # If we are creating a catalog, we will use a user-specific catalog
-            return self.to_catalog_name(self.username)
+            return self.to_catalog_name(username=self.username,
+                                        lesson_name=self.lesson_config.name)
 
-    def to_catalog_name(self, username: str) -> str:
-        catalog_name_prefix = self.to_catalog_name_prefix(username)
+    @staticmethod
+    def to_catalog_name(*, username: str, lesson_name: str) -> str:
+        from lesson_config_class import LessonConfig
 
-        if self.lesson_config.name is None:
+        catalog_name_prefix = DBAcademyHelper.to_catalog_name_prefix(username=username)
+
+        if lesson_name is None:
             # With no lesson, catalog and prefix are the same.
             return catalog_name_prefix
         else:
             # Append the lesson name to the catalog name
-            return dbgems.clean_string(f"{catalog_name_prefix}-{self.lesson_config.clean_name}").lower()
+            clean_name = LessonConfig.to_clean_lesson_name(lesson_name)
+            return dbgems.clean_string(f"{catalog_name_prefix}-{clean_name}").lower()
 
     @property
-    def current_catalog(self):
+    def current_catalog(self) -> str:
         return dbgems.spark.sql("SELECT current_catalog()").first()[0]
 
     @property
-    def schema_name_prefix(self):
+    def schema_name_prefix(self) -> str:
         if self.lesson_config.create_catalog:
             return "default"
         else:
-            return self.to_schema_name_prefix(username=self.username)
+            return self.to_schema_name_prefix(username=self.username,
+                                              course_code=self.course_config.course_code)
 
-    def to_schema_name_prefix(self, username: str) -> str:
+    @staticmethod
+    def to_schema_name_prefix(*, username: str, course_code: str) -> str:
         local_part = username.split("@")[0]
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
         username_hash = dbgems.stable_hash(hash_basis, length=4)
-        course_code = self.course_config.course_code
         return dbgems.clean_string(f"{local_part}-{username_hash}-da-{course_code}").lower()
 
     @property
-    def schema_name(self):
+    def schema_name(self) -> str:
         if self.lesson_config.create_catalog:
             return "default"
         else:
-            return self.to_schema_name(self.username, lesson_name=self.lesson_config.name)
+            return self.to_schema_name(username=self.username,
+                                       course_code=self.course_config.course_code,
+                                       lesson_name=self.lesson_config.name)
 
-    def to_schema_name(self, username: str, lesson_name: Optional[str]) -> str:
+    @staticmethod
+    def to_schema_name(*, username: str, course_code: str, lesson_name: Optional[str]) -> str:
         import re
 
         if lesson_name is None:
             # No lesson, database name is the same as prefix
-            return self.to_schema_name_prefix(username)
+            return DBAcademyHelper.to_schema_name_prefix(username=username,
+                                                         course_code=course_code)
         else:
             # Schema name includes the lesson name
             clean_name = re.sub(r"[^a-zA-Z\d]", "_", str(lesson_name))
             while "__" in clean_name: clean_name = clean_name.replace("__", "_")
 
-            return f"{self.to_schema_name_prefix(username)}_{clean_name}"
+            schema_name_prefix = DBAcademyHelper.to_schema_name_prefix(username=username,
+                                                                       course_code=course_code)
+            return f"{schema_name_prefix}_{clean_name}"
 
     @property
-    def current_schema(self):
+    def current_schema(self) -> str:
         return dbgems.spark.sql("SELECT current_database()").first()[0]
 
     @staticmethod
-    def is_smoke_test():
+    def is_smoke_test() -> bool:
         """
         Helper method to indentify when we are running as a smoke test
         :return: Returns true if the notebook is running as a smoke test.
@@ -247,21 +261,16 @@ class DBAcademyHelper:
         return dbgems.spark.conf.get(DBAcademyHelper.SMOKE_TEST_KEY, "false").lower() == "true"
 
     @common.deprecated("Use dbgems.clock_start() instead.")
-    def clock_start(self):
+    def clock_start(self) -> int:
         return dbgems.clock_start()
 
     @common.deprecated("Use dbgems.clock_stopped() instead.")
-    def clock_stopped(self, start, end=""):
+    def clock_stopped(self, start: int, end: str = "") -> str:
         return dbgems.clock_stopped(start, end)
 
     # noinspection PyMethodMayBeStatic
-    def __troubleshoot_error(self, error, section):
+    def __troubleshoot_error(self, error: str, section: str) -> str:
         return DBAcademyHelper.TROUBLESHOOT_ERROR_TEMPLATE.format(error=error, section=section)
-
-    @property
-    def __requires_uc(self):
-        return self.lesson_config is not None and self.lesson_config.requires_uc
-        # return DBAcademyHelper.REQUIREMENTS_UC in self.requirements
 
     @staticmethod
     def monkey_patch(function_ref, delete=True):
@@ -278,7 +287,7 @@ class DBAcademyHelper:
 
         return None if delete else function_ref
 
-    def init(self):
+    def init(self) -> None:
 
         if self.lesson_config.create_catalog:
             assert not self.lesson_config.create_schema, f"Creation of the schema (LessonConfig.create_schema=True) is not supported while creating the catalog (LessonConfig.create_catalog=True)"
@@ -291,7 +300,7 @@ class DBAcademyHelper:
 
         self.__initialized = True                 # Set the all-done flag.
 
-    def __create_catalog(self):
+    def __create_catalog(self) -> None:
         try:
             start = dbgems.clock_start()
             print(f"Creating & using the catalog \"{self.catalog_name}\"", end="...")
@@ -306,7 +315,7 @@ class DBAcademyHelper:
         except Exception as e:
             raise AssertionError(self.__troubleshoot_error(f"Failed to create the catalog \"{self.catalog_name}\".", "Cannot Create Catalog")) from e
 
-    def __create_schema(self):
+    def __create_schema(self) -> None:
         start = dbgems.clock_start()
         # self.created_db = True
 
@@ -320,13 +329,13 @@ class DBAcademyHelper:
             raise AssertionError(self.__troubleshoot_error(f"Failed to create the schema \"{self.schema_name}\".", "Cannot Create Schema")) from e
 
     @common.deprecated(reason="Use DBAcademyHelper.reset_lesson() instead.")
-    def reset_environment(self):
+    def reset_environment(self) -> None:
         return self.reset_lesson()
 
-    def reset_lesson(self):
+    def reset_lesson(self) -> None:
         return self.cleanup(validate_datasets=False)
 
-    def cleanup(self, validate_datasets=True):
+    def cleanup(self, validate_datasets: bool = True) -> None:
         """
         Cleans up the user environment by stopping any active streams,
         dropping the database created by the call to init(),
@@ -359,7 +368,7 @@ class DBAcademyHelper:
             # The last step is to make sure the datasets are still intact and repair if necessary
             self.validate_datasets(fail_fast=True)
 
-    def __cleanup_working_dir(self):
+    def __cleanup_working_dir(self) -> None:
         start = dbgems.clock_start()
         print(f"| removing the working directory \"{self.paths.working_dir}\"", end="...")
 
@@ -368,7 +377,7 @@ class DBAcademyHelper:
         print(dbgems.clock_stopped(start))
 
     @staticmethod
-    def __drop_database(schema_name):
+    def __drop_database(schema_name) -> None:
         from pyspark.sql.utils import AnalysisException
 
         try: location = dbgems.sql(f"DESCRIBE TABLE EXTENDED {schema_name}").filter("col_name == 'Location'").first()["data_type"]
@@ -380,7 +389,7 @@ class DBAcademyHelper:
         try: dbgems.dbutils.fs.rm(location)
         except: pass  # We are going to ignore this as it is most likely deleted or None
 
-    def __drop_schema(self):
+    def __drop_schema(self) -> None:
 
         start = dbgems.clock_start()
         print(f"| dropping the schema \"{self.schema_name}\"", end="...")
@@ -389,7 +398,7 @@ class DBAcademyHelper:
 
         print(dbgems.clock_stopped(start))
 
-    def __drop_catalog(self):
+    def __drop_catalog(self) -> None:
         from pyspark.sql.utils import AnalysisException
 
         start = dbgems.clock_start()
@@ -400,7 +409,7 @@ class DBAcademyHelper:
 
         print(dbgems.clock_stopped(start))
 
-    def __cleanup_stop_all_streams(self):
+    def __cleanup_stop_all_streams(self) -> None:
         for stream in self.__spark.streams.active:
             start = dbgems.clock_start()
             print(f"| stopping the stream \"{stream.name}\"", end="...")
@@ -409,7 +418,7 @@ class DBAcademyHelper:
             except: pass  # Bury any exceptions
             print(dbgems.clock_stopped(start))
 
-    def reset_learning_environment(self):
+    def reset_learning_environment(self) -> None:
         start = dbgems.clock_start()
         print("Resetting the learning environment:")
         self.__reset_databases()
@@ -417,7 +426,7 @@ class DBAcademyHelper:
         self.__reset_working_dir()
         print(f"\nThe learning environment was successfully reset {dbgems.clock_stopped(start)}.")
 
-    def __reset_databases(self):
+    def __reset_databases(self) -> None:
         from pyspark.sql.utils import AnalysisException
 
         # Drop all user-specific catalogs
@@ -439,7 +448,7 @@ class DBAcademyHelper:
                         print(f"Dropping the schema \"{catalog_name}.{schema_name}\"")
                         self.__drop_database(f"{catalog_name}.{schema_name}")
 
-    def __reset_working_dir(self):
+    def __reset_working_dir(self) -> None:
         # noinspection PyProtectedMember
         working_dir_root = self.paths._working_dir_root
 
@@ -447,12 +456,13 @@ class DBAcademyHelper:
             print(f"Deleting working directory \"{working_dir_root}\".")
             dbgems.dbutils.fs.rm(working_dir_root, True)
 
-    def __reset_datasets(self):
+    def __reset_datasets(self) -> None:
         if Paths.exists(self.paths.datasets):
             print(f"Deleting datasets \"{self.paths.datasets}\".")
             dbgems.dbutils.fs.rm(self.paths.datasets, True)
 
-    def __cleanup_feature_store_tables(self):
+    # TODO Not actually used
+    def __cleanup_feature_store_tables(self) -> None:
         # noinspection PyUnresolvedReferences,PyPackageRequirements
         from databricks import feature_store
 
@@ -466,7 +476,8 @@ class DBAcademyHelper:
                 print(f"Dropping feature store table {name}")
                 fs.drop_table(name)
 
-    def __cleanup_mlflow_models(self):
+    # TODO Not actually used
+    def __cleanup_mlflow_models(self) -> None:
         import mlflow
 
         # noinspection PyCallingNonCallable
@@ -481,8 +492,9 @@ class DBAcademyHelper:
                 # noinspection PyUnresolvedReferences
                 mlflow.delete_registered_model(rm.name)
 
+    # TODO Not actually used
     # noinspection PyMethodMayBeStatic
-    def __cleanup_experiments(self):
+    def __cleanup_experiments(self) -> None:
         pass
         # import mlflow
         # experiments = []
@@ -492,7 +504,7 @@ class DBAcademyHelper:
         #     except Exception as e:
         #         print(f"Skipping \"{experiment.name}\"")
 
-    def conclude_setup(self):
+    def conclude_setup(self) -> None:
         """
         Concludes the setup of DBAcademyHelper by advertising to the student the new state of the environment such as predefined path variables, databases and tables created on behalf of the student and the total setup time. Additionally, all path attributes are pushed to the Spark context for reference in SQL statements.
         """
@@ -524,7 +536,7 @@ class DBAcademyHelper:
         if self.lesson_config.create_catalog:
             # Get the list of schemas from the prescribed catalog
             schemas = [s[0] for s in dbgems.sql(f"SHOW SCHEMAS IN {self.catalog_name}").collect()]
-        elif self.__requires_uc:
+        elif self.lesson_config.requires_uc:
             # No telling how many schemas there may be, we would only care about the default
             schemas = ["default"]
         else:
@@ -544,7 +556,7 @@ class DBAcademyHelper:
                 if len(tables) == 0: print("| -none-")
                 for row in tables: print(f"| {row[0]}")
 
-            elif self.__requires_uc:
+            elif self.lesson_config.requires_uc:
                 # We require UC, but we didn't create the catalog.
                 print(f"Using the catalog \"{self.lesson_config.initial_catalog}\" and the schema \"{self.lesson_config.initial_schema}\".")
 
@@ -566,7 +578,7 @@ class DBAcademyHelper:
 
         print(f"\nSetup completed {dbgems.clock_stopped(self.__start)}")
 
-    def install_datasets(self, reinstall_datasets=False):
+    def install_datasets(self, reinstall_datasets: bool = False) -> None:
         """
         Install the datasets used by this course to DBFS.
 
@@ -616,7 +628,7 @@ class DBAcademyHelper:
 
         print(f"""\nThe install of the datasets completed successfully {dbgems.clock_stopped(install_start)}""")
 
-    def print_copyrights(self, mappings: dict = None):
+    def print_copyrights(self, mappings: Optional[Dict[str, str]] = None) -> None:
         if mappings is None:
             mappings = dict()
 
@@ -637,7 +649,7 @@ class DBAcademyHelper:
                 html = f"""<html><body><h1>{dataset.path}</h1><textarea rows="3" style="width:100%; overflow-x:scroll; white-space:nowrap">**ERROR**\n{readme_file} was not found</textarea></body></html>"""
                 dbgems.display_html(html)
 
-    def list_r(self, path, prefix=None, results=None):
+    def list_r(self, path: str, prefix: Optional[str] = None, results: Optional[List[str]] = None) -> List[str]:
         """
         Utility method used by the dataset validation, this method performs a recursive list of the specified path and returns the sorted list of paths.
         """
@@ -658,7 +670,7 @@ class DBAcademyHelper:
         results.sort()
         return results
 
-    def __validate_spark_version(self):
+    def __validate_spark_version(self) -> None:
         self.__current_dbr = dbgems.spark.conf.get("spark.databricks.clusterUsageTags.sparkVersion", None)
 
         if self.__current_dbr is None and not dbgems.spark.conf.get(DBAcademyHelper.PROTECTED_EXECUTION, None):
@@ -679,7 +691,7 @@ class DBAcademyHelper:
         msg = f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\"."
         assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(msg, "Spark Version")
 
-    def __validate_dbfs_writes(self, test_dir):
+    def __validate_dbfs_writes(self, test_dir) -> None:
         from contextlib import redirect_stdout
 
         if not dbgems.spark.conf.get(DBAcademyHelper.PROTECTED_EXECUTION, None):
@@ -789,7 +801,7 @@ class DBAcademyHelper:
 
         if fail_fast: assert fixes == 0, f"Unexpected modifications to source datasets."
 
-    def run_high_availability_job(self, job_name, notebook_path):
+    def run_high_availability_job(self, job_name: str, notebook_path: str) -> None:
 
         # job_name = f"DA-{self.course_name}-Configure-Permissions"
         self.client.jobs().delete_by_name(job_name, success_only=False)
@@ -856,7 +868,7 @@ class DBAcademyHelper:
         print()
         print("Update completed successfully.")
 
-    def init_mlflow_as_job(self):
+    def init_mlflow_as_job(self) -> None:
         """
         Used to initialize MLflow with the job ID when ran under test.
         """
@@ -866,7 +878,7 @@ class DBAcademyHelper:
             mlflow.set_experiment(f"/Curriculum/Test Results/{self.unique_name}-{dbgems.get_job_id()}")
 
     @staticmethod
-    def block_until_stream_is_ready(query: Union[str, pyspark.sql.streaming.StreamingQuery], min_batches: int = 2, delay_seconds: int = 5):
+    def block_until_stream_is_ready(query: Union[str, pyspark.sql.streaming.StreamingQuery], min_batches: int = 2, delay_seconds: int = 5) -> None:
         """
         A utility method used in streaming notebooks to block until the stream has processed n batches. This method serves one main purpose in two different use cases.
 

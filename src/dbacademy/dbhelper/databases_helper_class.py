@@ -15,18 +15,23 @@ class DatabasesHelper:
         self.workspace = workspace
 
     def drop_databases(self):
-        self.workspace.do_for_all_users(lambda username: self._drop_databases_for(username=username))
+        self.workspace.do_for_all_users(lambda username: self.__drop_databases_for(username=username))
 
         # Clear the list of databases (and derived users) to force a refresh
         self.workspace._usernames = None
         self.workspace._existing_databases = None
 
-    def _drop_databases_for(self, username: str):
-        db_name = self.da.to_schema_name(username=username, lesson_name=None)
-        if db_name in self.workspace.existing_databases:
-            print(f"Dropping the database \"{db_name}\" for {username}")
-            dbgems.spark.sql(f"DROP DATABASE {db_name} CASCADE;")
-        else:
+    def __drop_databases_for(self, username: str):
+        deleted = False
+        prefix = self.da.to_schema_name_prefix(username=username,
+                                               course_code=self.da.course_config.course_code)
+
+        for schema_name in self.workspace.existing_databases:
+            if schema_name.startswith(prefix):
+                print(f"Dropping the database \"{schema_name}\" for {username}")
+                dbgems.spark.sql(f"DROP DATABASE {schema_name} CASCADE;")
+
+        if not deleted:
             print(f"Skipping database drop for {username}")
 
     def create_databases(self, drop_existing: bool, post_create: Callable[[str, str], None] = None):
@@ -40,7 +45,8 @@ class DatabasesHelper:
     def __create_database_for(self, username: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
 
-        db_name = self.da.to_schema_name(username=username, lesson_name=None)
+        db_name = self.da.to_schema_name_prefix(username=username,
+                                                course_code=self.da.course_config.course_code)
         db_path = f"{DBAcademyHelper.get_dbacademy_users_path()}/{username}/{self.da.course_config.course_name}/database.db"
 
         if db_name in self.da.workspace.existing_databases:
