@@ -197,6 +197,10 @@ class DBAcademyHelper:
             return dbgems.clean_string(f"{catalog_name_prefix}-{self.lesson_config.clean_name}").lower()
 
     @property
+    def current_catalog(self):
+        return dbgems.spark.sql("SELECT current_catalog()").first()[0]
+
+    @property
     def schema_name_prefix(self):
         if self.lesson_config.create_catalog:
             return "default"
@@ -226,6 +230,10 @@ class DBAcademyHelper:
             while "__" in clean_name: clean_name = clean_name.replace("__", "_")
 
             return f"{self.to_schema_name_prefix(username)}_{clean_name}"
+
+    @property
+    def current_schema(self):
+        return dbgems.spark.sql("SELECT current_database()").first()[0]
 
     @staticmethod
     def is_smoke_test():
