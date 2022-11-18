@@ -216,7 +216,10 @@ class DBAcademyHelper:
 
     @property
     def schema_name(self):
-        return self.to_schema_name(self.username, lesson_name=self.lesson_config.name)
+        if self.lesson_config.create_catalog:
+            return "default"
+        else:
+            return self.to_schema_name(self.username, lesson_name=self.lesson_config.name)
 
     def to_schema_name(self, username: str, lesson_name: Optional[str]) -> str:
         import re
