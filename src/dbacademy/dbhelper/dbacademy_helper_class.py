@@ -490,6 +490,7 @@ class DBAcademyHelper:
         """
         Concludes the setup of DBAcademyHelper by advertising to the student the new state of the environment such as predefined path variables, databases and tables created on behalf of the student and the total setup time. Additionally, all path attributes are pushed to the Spark context for reference in SQL statements.
         """
+        print()
         assert self.__initialized, f"We cannot conclude setup without first calling DBAcademyHelper.init(..)"
 
         # Add custom attributes to the SQL context here.
