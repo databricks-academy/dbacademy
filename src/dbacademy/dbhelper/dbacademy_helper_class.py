@@ -23,23 +23,17 @@ class DBAcademyHelper:
     PROTECTED_EXECUTION = "dbacademy.protected-execution"
     TROUBLESHOOT_ERROR_TEMPLATE = "{error} Please see the \"Troubleshooting | {section}\" section of the \"Version Info\" notebook for more information."
 
-    @staticmethod
-    def get_dbacademy_datasets_path() -> str:
-        return dbgems.spark.conf.get("dbacademy.paths.datasets", default="dbfs:/mnt/dbacademy-datasets")
-
-    @staticmethod
-    def get_dbacademy_users_path() -> str:
-        return dbgems.spark.conf.get("dbacademy.paths.users", default="dbfs:/mnt/dbacademy-users")
-
-    @staticmethod
-    def get_dbacademy_datasets_staging() -> str:
-        return "dbfs:/mnt/dbacademy-datasets-staging"
-
     def __init__(self,
                  course_config: CourseConfig,
                  lesson_config: LessonConfig,
                  debug: bool = False):
-
+        """
+        Creates an instance of DBAcademyHelper from the specified course and lesson config.
+        :param course_config: Those configuration parameters that remain consistent from the duration of a course
+        :param lesson_config: Those configuration parameters that may change from lesson to lesson.
+        :param debug: Enables debug print messages.
+        See also DBAcademyHelper.dprint
+        """
         from .workspace_helper_class import WorkspaceHelper
         from .dev_helper_class import DevHelper
         from .validations.validation_helper_class import ValidationHelper
@@ -126,36 +120,103 @@ class DBAcademyHelper:
         self.__validate_dbfs_writes(DBAcademyHelper.get_dbacademy_users_path())
         self.__validate_dbfs_writes(DBAcademyHelper.get_dbacademy_datasets_path())
 
+    @staticmethod
+    def get_dbacademy_datasets_path() -> str:
+        """
+        This method encapsulates the value resolution for the DBAcademy datasets. By convention, this should always be "dbfs:/mnt/dbacademy-datasets"
+        however, to support those environments that require that the datasets be hosted at another location, this default value can be overridden
+        by specifying the spark configuration parameter "dbacademy.paths.datasets"
+        :return: the location of the DBAcademy datasets.
+        """
+        return dbgems.spark.conf.get("dbacademy.paths.datasets", default="dbfs:/mnt/dbacademy-datasets")
+
+    @staticmethod
+    def get_dbacademy_users_path() -> str:
+        """
+        This method encapsulates the value resolution for the DBAcademy user's directory. By convention, this should always be "dbfs:/mnt/dbacademy-users"
+        however, to support those environments that require that the datasets be hosted at another location, this default value can be overridden
+        by specifying the spark configuration parameter "dbacademy.paths.users"
+        :return: the location of the DBAcademy user's directory.
+        """
+        return dbgems.spark.conf.get("dbacademy.paths.users", default="dbfs:/mnt/dbacademy-users")
+
+    @staticmethod
+    def get_dbacademy_datasets_staging() -> str:
+        """
+        This location is inspected upon initialization to determine where datasets should be loaded from. If a corresponding dataset is found in this location,
+        under the CourseConfig.data_source_name and CourseConfig.data_source_version folders, then data will be installed from this staging repo enabling
+        authoring of both courseware content and courseware datasets without the overhead of premature publishing of a dataset for a course under active development.
+        :return: The location of the staging datasets.
+        """
+        return "dbfs:/mnt/dbacademy-datasets-staging"
+
     @property
     def current_dbr(self) -> str:
+        """
+        This value is obtained from a number of different locations, falling back to more expensive REST calls if preferred methods fails. This is due
+        to a long-old bug in which the spark version (DBR) expressed in the tags' collection is not always available at the time of execution of a course
+        making use of this value flaky.
+
+        Primary location:  dbgems.spark.conf.get("spark.databricks.clusterUsageTags.sparkVersion", None)
+        Secondary location: dbgems.get_tag("sparkVersion", None)
+        Trinary location: DBAcademyHelper.client.clusters.get_current_spark_version()
+        :return: the current DBR for the consumer's cluster.
+        """
         return self.__current_dbr
 
     @property
     def course_config(self) -> CourseConfig:
+        """
+        :return: the course's general configuration
+        """
         return self.__course_config
 
     @property
     def lesson_config(self) -> LessonConfig:
+        """
+        :return: the lesson specific configuration
+        """
         return self.__lesson_config
 
     def dprint(self, message: str) -> None:
+        """
+        Prints the specified message if DBAcademyHelper was initialized with debug=True
+        :param message: The message to be printed
+        :return: None
+        """
         if self.__debug:
             print(f"DEBUG: {message}")
 
     @property
     def working_dir_root(self) -> str:
-        # This is the common super-directory for each lesson, removal of which is designed to ensure
-        # that all assets created by students is removed. As such, it is not attached to the path
-        # object to hide it from students. Used almost exclusively in the Rest notebook.
+        """
+        This is the common super-directory for each lesson, removal of which is designed to ensure
+        that all assets created by students is removed. As such, it is not attached to the path
+        object to hide it from students. Used almost exclusively in the Rest notebook.
+        :return: the location of the working directory root
+        """
         return f"{DBAcademyHelper.get_dbacademy_users_path()}/{self.username}/{self.course_config.course_name}"
 
     @property
     def unique_name(self) -> str:
+        """
+        See DBAcademyHelper.to_unique_name
+        :return: a unique name consisting of the consumer's username, and the course code.
+        """
         return self.to_unique_name(username=self.username,
                                    course_code=self.course_config.course_code)
 
     @staticmethod
     def to_unique_name(*, username: str, course_code: str) -> str:
+        """
+        A utility function that produces a unique name to be used in creating jobs, warehouses, DLT pipelines, experiments and other user & course specific artifacts.
+        The pattern consist of the local part of the email address, a 4-character hash, "da" for DBAcademy and the course's code. The value is then converted to lower case
+        after which all non-alpha and non-digits are replaced with hyphens.
+        See also DBAcademyHelper.unique_name
+        :param username: The full email address of a user. See also LessonConfig.username
+        :param course_code: The course's code. See also CourseConfig.course_code
+        :return: The unique name composited from the specified username and course_code
+        """
         local_part = dbgems.clean_string(username.split("@")[0], "-")
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
         username_hash = dbgems.stable_hash(hash_basis, length=4)
@@ -163,10 +224,22 @@ class DBAcademyHelper:
 
     @property
     def catalog_name_prefix(self) -> str:
+        """
+        See also DBAcademyHelper.to_catalog_name_prefix
+        :return: the prefix for all catalog names that may be created for this consumer during the usage of a course.
+        """
         return self.to_catalog_name_prefix(username=self.username)
 
     @staticmethod
     def to_catalog_name_prefix(*, username: str) -> str:
+        """
+        A utility function that produces a catalog name prefix. The pattern consist of the local part of the email address,
+        a 4-character hash and "da" for DBAcademy. The value is then converted to lower case after which all non-alpha and
+        non-digits are replaced with underscores.
+        See also DBAcademyHelper.catalog_name_prefix
+        :param username: The full email address of a user. See also LessonConfig.username
+        :return: The catalog name composited from the specified username
+        """
         local_part = username.split("@")[0]
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
         username_hash = dbgems.stable_hash(hash_basis, length=4)
@@ -175,7 +248,11 @@ class DBAcademyHelper:
 
     @property
     def catalog_name(self) -> str:
-
+        """
+        Unlike DBAcademy.schema_name, this value is not course specific providing for one catalog per user for all courses.
+        See also DBAcademyHelper.to_catalog_name
+        :return: the prescribed name of the catalog that the consumer is expected to use.
+        """
         if not self.lesson_config.is_uc_enabled_workspace:
             # If this is not a UC workspace, then we use the default for spark
             return DBAcademyHelper.CATALOG_SPARK_DEFAULT
@@ -191,6 +268,15 @@ class DBAcademyHelper:
 
     @staticmethod
     def to_catalog_name(*, username: str, lesson_name: str) -> str:
+        """
+        A utility function that produces a unique catalog name. The pattern consist of the local part of the email address,
+        a 4-character hash and "da" for DBAcademy and the lesson_name. The value is then converted to lower case after which
+        all non-alpha and non-digits are replaced with underscores.
+        See also DBAcademyHelper.catalog_name
+        :param username: The full email address of a user. See also LessonConfig.username
+        :param lesson_name: The name of the lesson. See also LessonConfig.name
+        :return: The unique name composited from the specified username and lesson
+        """
         from dbacademy.dbhelper.lesson_config_class import LessonConfig
 
         catalog_name_prefix = DBAcademyHelper.to_catalog_name_prefix(username=username)
@@ -205,10 +291,17 @@ class DBAcademyHelper:
 
     @property
     def current_catalog(self) -> str:
+        """
+        :return: spark.sql("SELECT current_catalog()").first()[0]
+        """
         return dbgems.spark.sql("SELECT current_catalog()").first()[0]
 
     @property
     def schema_name_prefix(self) -> str:
+        """
+        See also DBAcademyHelper.to_schema_name_prefix
+        :return: the prefix for all schema names that may be created for this consumer during the usage of a course or "default" if LessonConfig.create_catalog = True
+        """
         if self.lesson_config.create_catalog:
             return "default"
         else:
@@ -217,6 +310,15 @@ class DBAcademyHelper:
 
     @staticmethod
     def to_schema_name_prefix(*, username: str, course_code: str) -> str:
+        """
+        A utility function that produces a schema name prefix. The pattern consist of the local part of the email address,
+        a 4-character hash and "da" for DBAcademy and the course's code. The value is then converted to lower case after
+        which all non-alpha and non-digits are replaced with underscores.
+        See also DBAcademyHelper.schema_name_prefix
+        :param username: The full email address of a user. See also LessonConfig.username
+        :param course_code: The course's code. See also CourseConfig.course_code
+        :return: The schema name composited from the specified username and course_code
+        """
         local_part = username.split("@")[0]
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
         username_hash = dbgems.stable_hash(hash_basis, length=4)
@@ -224,6 +326,10 @@ class DBAcademyHelper:
 
     @property
     def schema_name(self) -> str:
+        """
+        See also DBAcademyHelper.to_schema_name
+        :return: the prescribed name of the schema that the consumer is expected to use or "default" if LessonConfig.create_catalog = True
+        """
         if self.lesson_config.create_catalog:
             return "default"
         else:
@@ -233,6 +339,16 @@ class DBAcademyHelper:
 
     @staticmethod
     def to_schema_name(*, username: str, course_code: str, lesson_name: Optional[str]) -> str:
+        """
+        A utility function that produces a unique schema name. The pattern consist of the local part of the email address,
+        a 4-character hash and "da" for DBAcademy, course's code and the lesson_name. The value is then converted to lower case after which
+        all non-alpha and non-digits are replaced with underscores.
+        See also DBAcademyHelper.catalog_name
+        :param username: The full email address of a user. See also LessonConfig.username
+        :param course_code: The course's code. See also CourseConfig.course_code
+        :param lesson_name: The name of the lesson. See also LessonConfig.name
+        :return: The unique name composited from the specified username and lesson
+        """
         import re
 
         if lesson_name is None:
@@ -250,6 +366,9 @@ class DBAcademyHelper:
 
     @property
     def current_schema(self) -> str:
+        """
+        :return: spark.sql("SELECT current_database()").first()[0]
+        """
         return dbgems.spark.sql("SELECT current_database()").first()[0]
 
     @staticmethod
@@ -288,6 +407,11 @@ class DBAcademyHelper:
         return None if delete else function_ref
 
     def init(self) -> None:
+        """
+        Initializes the DBAcademyHelper object allowing for customization of the initialization processes such as calling DBAcademy.reset_lesson()
+        after instantiation but before initialization.
+        :return: None
+        """
 
         if self.lesson_config.create_catalog:
             assert not self.lesson_config.create_schema, f"Creation of the schema (LessonConfig.create_schema=True) is not supported while creating the catalog (LessonConfig.create_catalog=True)"
@@ -333,6 +457,10 @@ class DBAcademyHelper:
         return self.reset_lesson()
 
     def reset_lesson(self) -> None:
+        """
+        Resets the lesson by calling DBAcademy.clean(validate_datasets=False)
+        :return: None
+        """
         return self.cleanup(validate_datasets=False)
 
     def cleanup(self, validate_datasets: bool = True) -> None:
@@ -419,6 +547,11 @@ class DBAcademyHelper:
             print(dbgems.clock_stopped(start))
 
     def reset_learning_environment(self) -> None:
+        """
+        Used almost exclusively by the Reset notebook, invocation drops all databases, installed datasets and remove all working directories.
+        Usage of this method is generally reserved for a "full" reset of a course which is common before invoke smoke tests.
+        :return:
+        """
         start = dbgems.clock_start()
         print("Resetting the learning environment:")
         self.__reset_databases()
@@ -629,6 +762,11 @@ class DBAcademyHelper:
         print(f"""\nThe install of the datasets completed successfully {dbgems.clock_stopped(install_start)}""")
 
     def print_copyrights(self, mappings: Optional[Dict[str, str]] = None) -> None:
+        """
+        Discovers the datasets used by this course and then prints their corresponding README files which should include the corresponding copyrights.
+        :param mappings: Allows for redefinition of the location of the README.md file
+        :return:
+        """
         if mappings is None:
             mappings = dict()
 
@@ -802,6 +940,14 @@ class DBAcademyHelper:
         if fail_fast: assert fixes == 0, f"Unexpected modifications to source datasets."
 
     def run_high_availability_job(self, job_name: str, notebook_path: str) -> None:
+        """
+        Creates a job using the specified notebook path and job name and then executes it in a "secure" context that allows
+        for configuring user specific permissions. This is a hack to our inability to programaticlaly invoke SQL queries, namely GRANT statements
+        against a SQL Warehouse and wherein those same queries executed in a notebook has no affect.
+        :param job_name: The name to be given to the job.
+        :param notebook_path: The path to the notebook
+        :return: None
+        """
 
         # job_name = f"DA-{self.course_name}-Configure-Permissions"
         self.client.jobs().delete_by_name(job_name, success_only=False)

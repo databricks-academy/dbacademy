@@ -12,6 +12,20 @@ class CourseConfig:
                  remote_files: List[str],     # The enumerated list of files in the datasets
                  supported_dbrs: List[str],   # The enumerated list of DBRs supported by this course
                  expected_dbrs: str):         # The expected DBRs as specified at build-time.
+        """
+        The CourseConfig encapsulates those parameters that should never change for the entire duration of a course
+        compared to the LessonConfig which encapsulates parameters that may change from lesson to lesson.
+
+        :param course_code: See the property by the same name
+        :param course_name: See the property by the same name
+        :param data_source_name: See the property by the same name
+        :param data_source_version: See the property by the same name
+        :param install_min_time: See the property by the same name
+        :param install_max_time: See the property by the same name
+        :param remote_files: See the property by the same name
+        :param supported_dbrs: See the property by the same name
+        :param expected_dbrs: See the property by the same name
+        """
         import re
 
         self.__course_code = course_code
@@ -31,6 +45,7 @@ class CourseConfig:
 
         assert len(self.supported_dbrs) >= 0, f"At least one supported DBR must be defined."
 
+        self.__expected_dbrs = expected_dbrs
         if expected_dbrs != "{{supported_dbrs}}":
             # This value is filled in at build time and ignored otherwise.
             expected_dbrs = [e.strip() for e in expected_dbrs.split(",")]
@@ -40,34 +55,63 @@ class CourseConfig:
 
     @property
     def course_code(self) -> str:
+        """
+        :return: the 2-4 character code for a course.
+        """
         return self.__course_code
 
     @property
     def course_name(self) -> str:
+        """
+        :return: the name of the course.
+        """
         return self.__course_name
 
     @property
     def build_name(self) -> str:
+        """
+        :return: the course_name after converting the value to lowercase and after converting all non-alpha and non-digits to a hyphen
+        """
         return self.__build_name
 
     @property
     def data_source_name(self) -> str:
+        """
+        This should be the same as the build_name with support for it deviating as necessary
+        :return: the name of the dataset in the data repository.
+        """
         return self.__data_source_name
 
     @property
     def data_source_version(self) -> str:
+        """
+        :return: the two-digit version number of a dataset prefixed by the letter "v" as in "v01" or "v02" (not to be confused with the version of a course)
+        """
         return self.__data_source_version
 
     @property
     def install_min_time(self) -> str:
+        """
+        :return: the minimum amount of type required to "install" a dataset as measured from the curriculum-dev environment.
+        """
         return self.__install_min_time
 
     @property
     def install_max_time(self) -> str:
+        """
+        :return: the maximum amout of time required to "install" a dataset as measured from, for example, Singapore - typically 2 or 3 times that of CourseConfig.install_min_time
+        """
         return self.__install_max_time
 
     @property
     def remote_files(self) -> List[str]:
+        """
+        Used in validating the dataset within the consumer's workspace without having to hit external cloud storage.
+        See also DBAcademy.validate_datasets
+        See also DevHelper.enumerate_remote_datasets (DA.dev.enumerate_remote_datasets)
+        See also DevHelper.enumerate_local_datasets (DA.dev.enumerate_local_datasets)
+        :return: The enumerated list of files that makes up the course's dataset.
+        """
         return self.__remote_files
 
     @remote_files.setter
@@ -76,4 +120,20 @@ class CourseConfig:
 
     @property
     def supported_dbrs(self) -> List[str]:
+        """
+        Evaluated upon instantiation of DBAcademyHelper, this value ensures that the consumer's current DBR is one of the specified values.
+        When an invalid DBR is used, a specific error message is generated for the user with explicit instructions on how to address the issue.
+        See also DBAcademyHelper.__validate_spark_version
+        :return: the list of DBRs for which this course is certified to run on.
+        """
         return self.__supported_dbrs
+
+    @property
+    def expected_dbrs(self) -> str:
+        """
+        This value should always be set to "{{supported_dbrs}}". At build time, this value is substituted with the comma-seperated list
+        of DBRs that are expressed as being supported from the perspective of the build tooling. This helps to ensure that the final set
+        of supported DBRs expressed in the build tooling are always in sync with the published version of a course.
+        :return: a comma seperated string of expected DBRs.
+        """
+        return self.__expected_dbrs
