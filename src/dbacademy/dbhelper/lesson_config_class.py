@@ -10,7 +10,19 @@ class LessonConfig:
                  requires_uc: bool,
                  installing_datasets: bool,
                  enable_streaming_support: bool):
+        """
+        The LessonConfig encapsulates those parameters that may change from one lesson to another compared to the CourseConfig which
+        encapsulates parameters that should never change for the entire duration of a course.
 
+        This object is mutable until DBAcademyHelper.init() is called at which time mutations are prohibited. This behavior aims to
+        avoid situations where parameters are changed but not reflected in the DBAcademyHelper instance
+        :param name: See the property by the same name
+        :param create_schema: See the property by the same name
+        :param create_catalog: See the property by the same name
+        :param requires_uc: See the property by the same name
+        :param installing_datasets: See the property by the same name
+        :param enable_streaming_support: See the property by the same name
+        """
         self.__mutable = True
 
         self.name = name
@@ -39,22 +51,27 @@ class LessonConfig:
             assert not create_schema, f"Cannot create a user-specific schema when creating UC catalogs"
 
     def lock_mutations(self) -> None:
+        """
+        Called by DBAcademy.init() to lock this object from future mutations.
+        :return: None
+        """
         self.__mutable = False
 
     def __assert_mutable(self) -> None:
         assert self.__mutable, f"LessonConfig is no longer mutable; DBAcademyHelper has already been initialized."
 
-    @staticmethod
-    def is_smoke_test() -> bool:
-        """
-        Helper method to indentify when we are running as a smoke test
-        :return: Returns true if the notebook is running as a smoke test.
-        """
-        from .dbacademy_helper_class import DBAcademyHelper
-        return dbgems.spark.conf.get(DBAcademyHelper.SMOKE_TEST_KEY, "false").lower() == "true"
+    # @staticmethod
+    # def is_smoke_test() -> bool:
+    #     """
+    #     Helper method to indentify when we are running as a smoke test
+    #     :return: Returns True if the notebook is running as a smoke test.
+    #     """
+    #     from .dbacademy_helper_class import DBAcademyHelper
+    #     return dbgems.spark.conf.get(DBAcademyHelper.SMOKE_TEST_KEY, "false").lower() == "true"
 
     @property
     def installing_datasets(self) -> bool:
+        """Indicates that the DBAcademyHelper object should install datasets upon invoking DBAcademyHelper.init()"""
         return self.__installing_datasets
 
     @installing_datasets.setter
@@ -64,6 +81,19 @@ class LessonConfig:
 
     @property
     def name(self) -> Optional[str]:
+        """
+        In most cases the name of a lesson is set to None. In instances where the application state (e.g. databases, working directories, etc)
+        need to be kept from one notebook to the next, specifying the lesson's name ensures that assets like the database name remains
+        the same between multiple notebooks.
+
+        When running under test, see DBAcademyHelper.is_smoke_test, a random lesson name will be applied to each lesson, unless one is specifically
+        specified, so that testing can run asynchronously without resource contentions between, for example, two lessons attempting to modify
+        the same database.
+
+        See also DBAcademyHelper.schema_name & DBAcademyHelper.catalog_name
+
+        :return: The name of the lesson.
+        """
         return self.__name
 
     @name.setter
@@ -74,6 +104,13 @@ class LessonConfig:
 
     @staticmethod
     def to_clean_lesson_name(name: Optional[str]) -> Optional[str]:
+        """
+        Utility function to create a "clean" lesson name.
+
+        See also LessonConfig.name
+        :param name: the name of the lesson
+        :return: the "clean" version of the specified lesson's name
+        """
         import re
 
         if name is None:
@@ -85,10 +122,19 @@ class LessonConfig:
 
     @property
     def clean_name(self) -> str:
+        """
+        A "clean" version of LessonConfig.name wherein all non-alpha characters and non-digits replaced with an underscore.
+        :return: the "clean" version of teh lesson's name
+        """
         return self.__clean_name
 
     @property
     def enable_streaming_support(self) -> bool:
+        """
+        A flag that indicates if support for structure streaming should be provided. The primary usage is to declare a single
+        checkpoint super-directory that all steaming checkpoints can be located in for the sake of consistency.
+        :return: True if DBAcademyHelper should add support for streaming lessons.
+        """
         return self.__enable_streaming_support
 
     @enable_streaming_support.setter
@@ -98,6 +144,11 @@ class LessonConfig:
 
     @property
     def requires_uc(self) -> bool:
+        """
+        A flag that indicates if the lesson requires support for Unity Catalog. When set to True and when LessonConfig.is_uc_enabled_workspace is False,
+        an exception with be throwing with additional instructions on the nature of the error and ultimately directions to remidy the problem.
+        :return: True if the lesson requires Unity Catalog
+        """
         return self.__requires_uc
 
     @requires_uc.setter
@@ -108,31 +159,47 @@ class LessonConfig:
     @property
     def is_uc_enabled_workspace(self) -> bool:
         """
-        There has to be better ways of implementing this, but it is the only option we have found so far.
-        It works when the environment is enabled AND the cluster is configured properly.
+        Returns True if the current workspace is Unity Catalog (UC) enabled and False if not. Absent a more "stable" flag, the
+        implementation actually returns True if the catalog is anything other than "spark_catalog", the name
+        default catalog name for non-UC environments.
         :return: True if this is a UC environment
         """
         from .dbacademy_helper_class import DBAcademyHelper
 
-        # We need to check the prefix for those rare cases when a notebook is re-ran and while
-        # the programming namespace is reset via the call to pip-install, the current catalog and current schema are not.
-        prefix = DBAcademyHelper.to_catalog_name_prefix(username=self.username)
-        return self.initial_catalog.startswith(prefix) or self.initial_catalog == DBAcademyHelper.CATALOG_UC_DEFAULT
+        # Implementation here might be a bit odd, but the idea here is that if our
+        # initial catalog was "spark_catalog" then it's not UC. If the catalog is
+        # "hive_metastore" then we know it is UC, but that is also true if the catalog
+        # was "mickey_mouse_house". That leads to the conclusion that it's UC
+        # if it's anything other than "spark_catalog"
+
+        return not self.initial_catalog == DBAcademyHelper.CATALOG_SPARK_DEFAULT
 
     @property
     def initial_catalog(self) -> str:
+        """
+        :return: the name of the catalog at the moment LessonConfig was instantiated.
+        """
         return self.__initial_catalog
 
     @property
     def initial_schema(self) -> str:
+        """
+        :return: the name of the schema at the moment LessonConfig was instantiated.
+        """
         return self.__initial_schema
 
     @property
     def username(self) -> str:
+        """
+        :return: the current user's name as determined by invoking "SELECT current_user()" in the consumer's workspace.
+        """
         return self.__username
 
     @property
     def create_catalog(self) -> bool:
+        """
+        :return: A flag indicating if DBAcademyHelper should create a user-specific catalog upon invocation of DBAcademyHelper.init()
+        """
         return self.__create_catalog
 
     @create_catalog.setter
@@ -142,6 +209,9 @@ class LessonConfig:
 
     @property
     def create_schema(self) -> bool:
+        """
+        :return: A flag indicating if DBAcademyHelper should create a user-specific schema upon invocation of DBAcademyHelper.init()
+        """
         return self.__create_schema
 
     @create_schema.setter
