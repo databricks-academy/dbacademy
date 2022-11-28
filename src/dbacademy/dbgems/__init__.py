@@ -1,8 +1,17 @@
-from typing import Union, Any
+from typing import Union, Any, Callable
 import pyspark
 import dbacademy.common
 from dbacademy.common import print_warning
 from .mock_dbutils_class import MockDBUtils
+
+DBGEMS_MOCKS = dict()
+
+
+def get_mock_value(key: str, function: Callable[[], Any]) -> Any:
+    if key in DBGEMS_MOCKS:
+        return DBGEMS_MOCKS.get(key)
+    else:
+        return function()
 
 
 def check_deprecation_logging_enabled():
@@ -94,7 +103,7 @@ def is_job():
 
 def get_workspace_id() -> str:
     # noinspection PyUnresolvedReferences
-    return dbutils.entry_point.getDbutils().notebook().getContext().workspaceId().getOrElse(None)
+    return get_mock_value("workspace_id", lambda: dbutils.entry_point.getDbutils().notebook().getContext().workspaceId().getOrElse(None))
 
 
 def get_notebook_path() -> str:
