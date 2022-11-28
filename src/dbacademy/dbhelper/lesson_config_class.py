@@ -1,15 +1,16 @@
-from typing import Optional
+from typing import Optional, Dict, Any
 from dbacademy import dbgems
 
 
 class LessonConfig:
     def __init__(self, *,
-                 name: str,
+                 name: Optional[str],
                  create_schema: bool,
                  create_catalog: bool,
                  requires_uc: bool,
                  installing_datasets: bool,
-                 enable_streaming_support: bool):
+                 enable_streaming_support: bool,
+                 mocks: Optional[Dict[str, Any]] = None):
         """
         The LessonConfig encapsulates those parameters that may change from one lesson to another compared to the CourseConfig which
         encapsulates parameters that should never change for the entire duration of a course.
@@ -22,6 +23,7 @@ class LessonConfig:
         :param requires_uc: See the property by the same name
         :param installing_datasets: See the property by the same name
         :param enable_streaming_support: See the property by the same name
+        :param mocks: Used for testing, allows for mocking out the parameters __username, __initial_schema and __initial_catalog
         """
         self.__mutable = True
 
@@ -30,25 +32,33 @@ class LessonConfig:
         self.installing_datasets = installing_datasets
         self.requires_uc = requires_uc
         self.enable_streaming_support = enable_streaming_support
-
-        # Will be unconditionally True
         self.create_schema = create_schema
         self.create_catalog = create_catalog
 
         try:
+            # Load all three values with a single query
             row = dbgems.sql("SELECT current_user() as username, current_catalog() as catalog, current_database() as schema").first()
             self.__username = row["username"]
-            self.__initial_catalog = row["catalog"]
             self.__initial_schema = row["schema"]
+            self.__initial_catalog = row["catalog"]
         except:
-            self.__username = "unknown@example.com"     # Because of unit tests
-            self.__initial_catalog = "unknown_catalog"  # Because of unit tests
-            self.__initial_schema = "unknown_schema"    # Because of unit tests
+            # Presumably because of unit tests
+            self.__username = None
+            self.__initial_schema = None
+            self.__initial_catalog = None
 
-        if create_catalog:
-            assert requires_uc, f"Inconsistent configuration: The parameter \"create_catalog\" was True and \"requires_uc\" was False."
-            assert self.is_uc_enabled_workspace, f"Cannot create a catalog, UC is not enabled for this workspace/cluster."
-            assert not create_schema, f"Cannot create a user-specific schema when creating UC catalogs"
+        # Mock out the following attributes if specified.
+        mocks = mocks or dict()
+        self.__username = mocks.get("__username", self.__username)
+        self.__initial_schema = mocks.get("__initial_schema", self.__initial_schema)
+        self.__initial_catalog = mocks.get("__initial_catalog", self.__initial_catalog)
+
+    def assert_valid(self) -> None:
+        if self.create_catalog and not self.is_uc_enabled_workspace:
+            raise AssertionError(f"Cannot create a catalog, UC is not enabled for this workspace/cluster.")
+
+        if self.create_catalog and self.create_schema:
+            raise AssertionError(f"Cannot create a user-specific schema when creating UC catalogs")
 
     def lock_mutations(self) -> None:
         """
@@ -59,15 +69,6 @@ class LessonConfig:
 
     def __assert_mutable(self) -> None:
         assert self.__mutable, f"LessonConfig is no longer mutable; DBAcademyHelper has already been initialized."
-
-    # @staticmethod
-    # def is_smoke_test() -> bool:
-    #     """
-    #     Helper method to indentify when we are running as a smoke test
-    #     :return: Returns True if the notebook is running as a smoke test.
-    #     """
-    #     from .dbacademy_helper_class import DBAcademyHelper
-    #     return dbgems.spark.conf.get(DBAcademyHelper.SMOKE_TEST_KEY, "false").lower() == "true"
 
     @property
     def installing_datasets(self) -> bool:
@@ -172,7 +173,13 @@ class LessonConfig:
         # was "mickey_mouse_house". That leads to the conclusion that it's UC
         # if it's anything other than "spark_catalog"
 
-        return not self.initial_catalog == DBAcademyHelper.CATALOG_SPARK_DEFAULT
+        initial_catalog = self.initial_catalog
+        if initial_catalog is None:
+            return False  # If not set then not UC
+        elif initial_catalog == DBAcademyHelper.CATALOG_SPARK_DEFAULT:
+            return False  # If is "spark_catalog", then not UC
+        else:
+            return True  # In all other cases, assumed to be UC.
 
     @property
     def initial_catalog(self) -> str:
