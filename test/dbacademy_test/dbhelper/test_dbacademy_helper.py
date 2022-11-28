@@ -35,5 +35,6 @@ class TestDBAcademyHelper(unittest.TestCase):
     #     schema_name = DBAcademyHelper.to_schema_name("donald.duck@disney.com", "tst-123")
     #     self.assertEqual("da_donald_duck_8192_tst_123", schema_name)  # add assertion here
 
+
 if __name__ == '__main__':
     unittest.main()
