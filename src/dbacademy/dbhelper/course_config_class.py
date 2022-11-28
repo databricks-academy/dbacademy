@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 
 class CourseConfig:
@@ -26,13 +26,10 @@ class CourseConfig:
         :param supported_dbrs: See the property by the same name
         :param expected_dbrs: See the property by the same name
         """
-        import re
-
         self.__course_code = course_code
 
         self.__course_name = course_name
-        self.__build_name = re.sub(r"[^a-zA-Z\d]", "-", course_name)
-        while "--" in self.__build_name: self.__build_name = self.__build_name.replace("--", "-")
+        self.__build_name = CourseConfig.to_build_name(course_name)
 
         self.__data_source_name = data_source_name
         self.__data_source_version = data_source_version
@@ -40,18 +37,15 @@ class CourseConfig:
         self.__install_max_time = install_max_time
         self.__remote_files = remote_files
 
-        assert type(supported_dbrs) == list, f"Expected the parameter \"supported_dbrs\" to be of type \"list\", found \"{type(supported_dbrs)}\"."
+        assert len(supported_dbrs) > 0, f"At least one supported DBR must be defined."
         self.__supported_dbrs = [str(d) for d in supported_dbrs]
-
-        assert len(self.supported_dbrs) >= 0, f"At least one supported DBR must be defined."
 
         self.__expected_dbrs = expected_dbrs
         if expected_dbrs != "{{supported_dbrs}}":
             # This value is filled in at build time and ignored otherwise.
             expected_dbrs = [e.strip() for e in expected_dbrs.split(",")]
-            assert len(supported_dbrs) == len(expected_dbrs), f"The run-time and build-time list of supported DBRs does not match: {supported_dbrs} vs {expected_dbrs}"
-            for dbr in supported_dbrs: assert dbr in expected_dbrs, f"The run-time DBR \"{dbr}\" was not find in the list of expected dbrs: {expected_dbrs}"
-            for dbr in expected_dbrs: assert dbr in supported_dbrs, f"The build-time DBR \"{dbr}\" was not find in the list of supported dbrs: {supported_dbrs}"
+            assert len(supported_dbrs) == len(expected_dbrs), f"The supported and expected list of DBRs does not match: {len(supported_dbrs)} (supported) vs {len(expected_dbrs)} (expected)"
+            for dbr in supported_dbrs: assert dbr in expected_dbrs, f"The supported DBR \"{dbr}\" was not find in the list of expected dbrs: {expected_dbrs}"
 
     @property
     def course_code(self) -> str:
@@ -73,6 +67,22 @@ class CourseConfig:
         :return: the course_name after converting the value to lowercase and after converting all non-alpha and non-digits to a hyphen
         """
         return self.__build_name
+
+    @staticmethod
+    def to_build_name(course_name) -> Optional[str]:
+        """
+        Utility method to create a "build name" from a course name.
+        :param course_name: The name of the course
+        :return: the build name where all non-alpha and non-digits are replaced with hyphens
+        """
+        import re
+
+        if course_name is None:
+            return None
+
+        build_name = re.sub(r"[^a-zA-Z\d]", "-", course_name).lower()
+        while "--" in build_name: build_name = build_name.replace("--", "-")
+        return build_name
 
     @property
     def data_source_name(self) -> str:
@@ -113,10 +123,6 @@ class CourseConfig:
         :return: The enumerated list of files that makes up the course's dataset.
         """
         return self.__remote_files
-
-    @remote_files.setter
-    def remote_files(self, remote_fies: List[str]) -> None:
-        self.__remote_files = remote_fies
 
     @property
     def supported_dbrs(self) -> List[str]:
