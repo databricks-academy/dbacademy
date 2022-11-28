@@ -35,7 +35,7 @@ class CourseConfig:
         self.__data_source_version = data_source_version
         self.__install_min_time = install_min_time
         self.__install_max_time = install_max_time
-        self.__remote_files = remote_files
+        self.remote_files = remote_files
 
         assert len(supported_dbrs) > 0, f"At least one supported DBR must be defined."
         self.__supported_dbrs = [str(d) for d in supported_dbrs]
@@ -123,6 +123,10 @@ class CourseConfig:
         :return: The enumerated list of files that makes up the course's dataset.
         """
         return self.__remote_files
+
+    @remote_files.setter
+    def remote_files(self, remote_fies: List[str]) -> None:
+        self.__remote_files = remote_fies
 
     @property
     def supported_dbrs(self) -> List[str]:
