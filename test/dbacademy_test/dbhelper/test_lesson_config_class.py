@@ -23,6 +23,7 @@ class TestLessonConfig(unittest.TestCase):
                          requires_uc=True,
                          installing_datasets=False,
                          enable_streaming_support=False)
+            raise Exception("Expected AssertionError")
 
         except AssertionError as e:
             self.assertEquals("Cannot create a catalog, UC is not enabled for this workspace/cluster.", str(e))
@@ -36,6 +37,7 @@ class TestLessonConfig(unittest.TestCase):
                          installing_datasets=False,
                          enable_streaming_support=False,
                          mocks={"__initial_catalog": DBAcademyHelper.CATALOG_SPARK_DEFAULT})
+            raise Exception("Expected AssertionError")
 
         except AssertionError as e:
             self.assertEquals("Cannot create a catalog, UC is not enabled for this workspace/cluster.", str(e))
