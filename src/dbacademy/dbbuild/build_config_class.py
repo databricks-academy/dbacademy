@@ -108,8 +108,9 @@ class BuildConfig:
                  ignoring: list = None,
                  publishing_info: dict = None):
 
-        import uuid, time, re
-        from .publish.notebook_def_class import NotebookDef
+        import uuid, time
+        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+        from dbacademy.dbhelper.course_config_class import CourseConfig
 
         self.__validated = False
         self.__created_notebooks = False
@@ -140,7 +141,7 @@ class BuildConfig:
         # Course Name
         self.name = name
         assert self.name is not None, "The course's name must be specified."
-        self.build_name = re.sub(r"[^a-zA-Z\d]", "-", name).lower()
+        self.build_name = CourseConfig.to_build_name(name)
 
         # The Distribution's version
         assert version is not None, "The course's version must be specified."
