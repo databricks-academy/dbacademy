@@ -1,4 +1,4 @@
-from typing import Union, Optional, Dict, List
+from typing import Union, Optional, Dict, List, Any
 
 import pyspark
 from dbacademy import dbgems, common
@@ -8,6 +8,7 @@ from .paths_class import Paths
 
 
 class DBAcademyHelper:
+    from mlflow.entities.experiment import Experiment
     from .lesson_config_class import LessonConfig
     from .course_config_class import CourseConfig
 
@@ -613,10 +614,44 @@ class DBAcademyHelper:
         for table in self.client.ml.feature_store.search_tables():
             name = table.get("name")
             if name.startswith(self.unique_name):
-                print(f"Dropping feature store table {name}")
+                print(f"Dropping feature store table \"{name}\"")
                 fs.drop_table(name)
 
     def __cleanup_mlflow_models(self) -> None:
+        pass
+        # import mlflow
+        # from mlflow.entities import ViewType
+        #
+        # start = dbgems.clock_start()
+        # print(f"Enumerating MLflow Models", end="...")
+        # self.client.ml.mlflow.
+        # experiments = mlflow.models.(view_type=ViewType.ACTIVE_ONLY)
+        # print(dbgems.clock_stopped(start))
+    #
+    #     for experiment in experiments:
+    #         if "/" in experiment.name:
+    #             last = experiment.name.split("/")[-1]
+    #             if last.startswith(self.unique_name):
+    #                 print(f"Deleting registered model {experiment.name}")
+    #                 mlflow.delete_experiment(experiment.experiment_id)
+    #             else:
+    #                 print(f"Skipping registered model {experiment.name}")
+    #         else:
+    #             print(f"Skipping registered model {experiment.name}")
+    #
+    #         # if not rm.name.startswith(self.unique_name):
+    #         #     print(f"Skipping registered model {rm.name}")
+    #         # else:
+    #         #     print(f"Deleting registered model {rm.name}")
+    #             # for mv in rm.:
+    #             #     if mv.current_stage in ["Staging", "Production"]:
+    #             #         # noinspection PyUnresolvedReferences
+    #             #         mlflow.transition_model_version_stage(name=rm.name, version=mv.version, stage="Archived")
+    #
+    #             # noinspection PyUnresolvedReferences
+    #             # mlflow.delete_registered_model(rm.name)
+
+    def __cleanup_experiments(self) -> None:
         import mlflow
         from mlflow.entities import ViewType
 
@@ -629,34 +664,22 @@ class DBAcademyHelper:
             if "/" in experiment.name:
                 last = experiment.name.split("/")[-1]
                 if last.startswith(self.unique_name):
-                    print(f"Deleting registered model {experiment.name}")
+                    self.__delete_experiment(experiment)
                     mlflow.delete_experiment(experiment.experiment_id)
                 else:
-                    print(f"Skipping registered model {experiment.name}")
+                    print(f"Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
             else:
-                print(f"Skipping registered model {experiment.name}")
+                print(f"Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
 
-            # if not rm.name.startswith(self.unique_name):
-            #     print(f"Skipping registered model {rm.name}")
-            # else:
-            #     print(f"Deleting registered model {rm.name}")
-                # for mv in rm.:
-                #     if mv.current_stage in ["Staging", "Production"]:
-                #         # noinspection PyUnresolvedReferences
-                #         mlflow.transition_model_version_stage(name=rm.name, version=mv.version, stage="Archived")
-
-                # noinspection PyUnresolvedReferences
-                # mlflow.delete_registered_model(rm.name)
-
-    @staticmethod
-    def __cleanup_experiments() -> None:
+    def __delete_experiment(self, experiment: Experiment) -> None:
         import mlflow
-        # experiments = []
-        for experiment in mlflow.list_experiments(max_results=999999):
-            # try:
-            #     mlflow.delete_experiment(experiment.experiment_id)
-            # except Exception as e:
-            print(f"Skipping \"{experiment.name}\"")
+
+        status = self.client.workspace.get_status(experiment.name)
+        if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
+            print(f"Deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
+            mlflow.delete_experiment(experiment.experiment_id)
+        else:
+            print(f"Cannot delete experiment \"{experiment.name}\" ({experiment.experiment_id})")
 
     def conclude_setup(self) -> None:
         """
