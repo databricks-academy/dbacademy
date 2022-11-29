@@ -656,31 +656,26 @@ class DBAcademyHelper:
         from mlflow.entities import ViewType
 
         start = dbgems.clock_start()
-        print(f"Enumerating MLflow Experiments", end="...")
         experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
-        print(dbgems.clock_stopped(start))
+        advertisement = f"\nEnumerating MLflow Experiments...{dbgems.clock_stopped(start)}"
 
         for experiment in experiments:
             if "/" in experiment.name:
                 last = experiment.name.split("/")[-1]
                 if last.startswith(self.unique_name):
-                    self.__delete_experiment(experiment)
-                    mlflow.delete_experiment(experiment.experiment_id)
+                    status = self.client.workspace.get_status(experiment.name)
+                    if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
+                        if advertisement: print(advertisement); advertisement = None
+                        print(f"| Deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
+                        mlflow.delete_experiment(experiment.experiment_id)
+                    else:
+                        if advertisement: print(advertisement); advertisement = None
+                        print(f"| Cannot delete experiment \"{experiment.name}\" ({experiment.experiment_id})")
                 else:
                     pass
                     # print(f"Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
             else:
-                print(f"Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
-
-    def __delete_experiment(self, experiment: Experiment) -> None:
-        import mlflow
-
-        status = self.client.workspace.get_status(experiment.name)
-        if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
-            print(f"Deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
-            mlflow.delete_experiment(experiment.experiment_id)
-        else:
-            print(f"Cannot delete experiment \"{experiment.name}\" ({experiment.experiment_id})")
+                print(f"| Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
 
     def conclude_setup(self) -> None:
         """
