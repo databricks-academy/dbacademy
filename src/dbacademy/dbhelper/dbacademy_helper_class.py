@@ -485,10 +485,17 @@ class DBAcademyHelper:
         self.__spark.catalog.clearCache()
         self.__cleanup_stop_all_streams()
 
-        if drop_catalog: self.__drop_catalog()
-        elif drop_schema: self.__drop_schema()
+        if drop_catalog:
+            self.__drop_catalog()
+        elif drop_schema:
+            self.__drop_schema()
 
-        if remove_wd: self.__cleanup_working_dir()
+        self.__cleanup_feature_store_tables()
+        self.__cleanup_mlflow_models()
+        self.__cleanup_experiments()
+
+        if remove_wd:
+            self.__cleanup_working_dir()
 
         if validate_datasets:
             # The last step is to make sure the datasets are still intact and repair if necessary
@@ -555,6 +562,9 @@ class DBAcademyHelper:
         self.__reset_databases()
         self.__reset_datasets()
         self.__reset_working_dir()
+        self.__cleanup_feature_store_tables()
+        self.__cleanup_mlflow_models()
+        self.__cleanup_experiments()
         print(f"\nThe learning environment was successfully reset {dbgems.clock_stopped(start)}.")
 
     def __reset_databases(self) -> None:
@@ -592,7 +602,6 @@ class DBAcademyHelper:
             print(f"Deleting datasets \"{self.paths.datasets}\".")
             dbgems.dbutils.fs.rm(self.paths.datasets, True)
 
-    # TODO Not actually used
     def __cleanup_feature_store_tables(self) -> None:
         # noinspection PyUnresolvedReferences,PyPackageRequirements
         from databricks import feature_store
@@ -607,7 +616,6 @@ class DBAcademyHelper:
                 print(f"Dropping feature store table {name}")
                 fs.drop_table(name)
 
-    # TODO Not actually used
     def __cleanup_mlflow_models(self) -> None:
         import mlflow
 
@@ -623,17 +631,15 @@ class DBAcademyHelper:
                 # noinspection PyUnresolvedReferences
                 mlflow.delete_registered_model(rm.name)
 
-    # TODO Not actually used
-    # noinspection PyMethodMayBeStatic
-    def __cleanup_experiments(self) -> None:
-        pass
-        # import mlflow
+    @staticmethod
+    def __cleanup_experiments() -> None:
+        import mlflow
         # experiments = []
-        # for experiment in mlflow.list_experiments(max_results=999999):
-        #     try:
-        #         mlflow.delete_experiment(experiment.experiment_id)
-        #     except Exception as e:
-        #         print(f"Skipping \"{experiment.name}\"")
+        for experiment in mlflow.list_experiments(max_results=999999):
+            # try:
+            #     mlflow.delete_experiment(experiment.experiment_id)
+            # except Exception as e:
+            print(f"Skipping \"{experiment.name}\"")
 
     def conclude_setup(self) -> None:
         """
