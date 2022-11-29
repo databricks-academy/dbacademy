@@ -83,7 +83,7 @@ class LessonConfig:
     @property
     def name(self) -> Optional[str]:
         """
-        In most cases the name of a lesson is set to None. In instances where the application state (e.g. databases, working directories, etc)
+        In most cases the name of a lesson is set to None. In instances where the application state (e.g. databases, working directories, etc.)
         need to be kept from one notebook to the next, specifying the lesson's name ensures that assets like the database name remains
         the same between multiple notebooks.
 
@@ -147,7 +147,7 @@ class LessonConfig:
     def requires_uc(self) -> bool:
         """
         A flag that indicates if the lesson requires support for Unity Catalog. When set to True and when LessonConfig.is_uc_enabled_workspace is False,
-        an exception with be throwing with additional instructions on the nature of the error and ultimately directions to remidy the problem.
+        an exception with be throwing with additional instructions on the nature of the error and ultimately directions to remedy the problem.
         :return: True if the lesson requires Unity Catalog
         """
         return self.__requires_uc
