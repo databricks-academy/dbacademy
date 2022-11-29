@@ -617,19 +617,20 @@ class DBAcademyHelper:
                 fs.drop_table(name)
 
     def __cleanup_mlflow_models(self) -> None:
-        import mlflow
-
-        # noinspection PyCallingNonCallable
-        for rm in mlflow.list_registered_models(max_results=1000):
-            if rm.name.startswith(self.unique_name):
-                print(f"Deleting registered model {rm.name}")
-                for mv in rm.latest_versions:
-                    if mv.current_stage in ["Staging", "Production"]:
-                        # noinspection PyUnresolvedReferences
-                        mlflow.transition_model_version_stage(name=rm.name, version=mv.version, stage="Archived")
-
-                # noinspection PyUnresolvedReferences
-                mlflow.delete_registered_model(rm.name)
+        pass
+        # import mlflow
+        #
+        # # noinspection PyCallingNonCallable
+        # for rm in mlflow.models.utils. .list_registered_models(max_results=1000):
+        #     if rm.name.startswith(self.unique_name):
+        #         print(f"Deleting registered model {rm.name}")
+        #         for mv in rm.latest_versions:
+        #             if mv.current_stage in ["Staging", "Production"]:
+        #                 # noinspection PyUnresolvedReferences
+        #                 mlflow.transition_model_version_stage(name=rm.name, version=mv.version, stage="Archived")
+        #
+        #         # noinspection PyUnresolvedReferences
+        #         mlflow.delete_registered_model(rm.name)
 
     @staticmethod
     def __cleanup_experiments() -> None:
