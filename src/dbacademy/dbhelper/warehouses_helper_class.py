@@ -34,24 +34,24 @@ class WarehousesHelper:
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
     def create_sql_warehouse_for(self, username, auto_stop_mins=120, enable_serverless_compute=False):
-        return self._create_sql_warehouse(username=username,
-                                          name=self.da.to_unique_name(username=username,
-                                                                      course_code=self.da.course_config.course_code),
-                                          auto_stop_mins=auto_stop_mins,
-                                          min_num_clusters=1,
-                                          max_num_clusters=1,
-                                          enable_serverless_compute=enable_serverless_compute)
+        return self.__create_sql_warehouse(username=username,
+                                           name=self.da.to_unique_name(username=username,
+                                                                       course_code=self.da.course_config.course_code),
+                                           auto_stop_mins=auto_stop_mins,
+                                           min_num_clusters=1,
+                                           max_num_clusters=1,
+                                           enable_serverless_compute=enable_serverless_compute)
 
     def create_shared_sql_warehouse(self, name: str, auto_stop_mins=120, enable_serverless_compute=False):
-        return self._create_sql_warehouse(username=None,
-                                          name=name,
-                                          auto_stop_mins=auto_stop_mins,
-                                          min_num_clusters=self.autoscale_min,
-                                          max_num_clusters=self.autoscale_max,
-                                          enable_serverless_compute=enable_serverless_compute)
+        return self.__create_sql_warehouse(username=None,
+                                           name=name,
+                                           auto_stop_mins=auto_stop_mins,
+                                           min_num_clusters=self.autoscale_min,
+                                           max_num_clusters=self.autoscale_max,
+                                           enable_serverless_compute=enable_serverless_compute)
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
-    def _create_sql_warehouse(self, username: Union[str, None], name: str, auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool):
+    def __create_sql_warehouse(self, username: Union[str, None], name: str, auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool):
         from dbacademy import dbgems
         from dbacademy.dbhelper import WorkspaceHelper
         from dbacademy.dbrest.sql.endpoints import RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT, CLUSTER_SIZE_2X_SMALL
