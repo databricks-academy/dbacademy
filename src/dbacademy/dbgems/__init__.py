@@ -1,15 +1,44 @@
-from typing import Union, Any, Callable
+from typing import Union, Any, Callable, Optional
 import pyspark
 import dbacademy.common
 from dbacademy.common import print_warning
 from .mock_dbutils_class import MockDBUtils
 
-DBGEMS_MOCKS = dict()
+MOCK_VALUES = dict()
+MOCK_CONFIG = dict()
+
+
+def get_spark_config(key: str, default: Optional[str] = None) -> Optional[str]:
+    """
+    Returns the value in the spark config represented by the specified key.
+    When running under test, the value is pulled from MOCK_CONFIG
+    :param key: The name of the key in the spark config
+    :param default: The default value to be returned if the key doesn't exist
+    :return: The requested value or default value
+    """
+    if spark:
+        return spark.conf.get(key, default)
+    else:
+        return MOCK_CONFIG.get(key, default)
+
+
+def set_spark_config(key: str, value: str) -> None:
+    """
+    Sets the value in the spark config represented by the specified key.
+    When running under test, the value is stored in MOCK_CONFIG
+    :param key: The name of the key in the spark config
+    :param value: The value to be stored
+    :return: None
+    """
+    if spark:
+        return spark.conf.set(key, value)
+    else:
+        return MOCK_CONFIG.get(key, value)
 
 
 def get_mock_value(key: str, function: Callable[[], Any]) -> Any:
-    if key in DBGEMS_MOCKS:
-        return DBGEMS_MOCKS.get(key)
+    if key in MOCK_VALUES:
+        return MOCK_VALUES.get(key)
     else:
         return function()
 
@@ -17,7 +46,7 @@ def get_mock_value(key: str, function: Callable[[], Any]) -> Any:
 def check_deprecation_logging_enabled():
     if spark is None:
         return
-    status = spark.conf.get("dbacademy.deprecation.logging", None)
+    status = get_spark_config("dbacademy.deprecation.logging", None)
     if status is None:
         dbacademy.common.deprecation_log_level = "ignore"
     elif status.lower() == "enabled":
