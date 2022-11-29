@@ -610,7 +610,7 @@ class DBAcademyHelper:
         fs = feature_store.FeatureStoreClient()
 
         # noinspection PyUnresolvedReferences
-        for table in self.client.feature_store.search_tables(max_results=1000000):
+        for table in self.client.ml.feature_store.search_tables(max_results=1000000):
             name = table.get("name")
             if name.startswith(self.unique_name):
                 print(f"Dropping feature store table {name}")
