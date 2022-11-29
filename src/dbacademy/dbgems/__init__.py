@@ -4,6 +4,9 @@ import dbacademy.common
 from dbacademy.common import print_warning
 from .mock_dbutils_class import MockDBUtils
 
+SPARK_CONF_DEPENDENCY_WARNING = "dbacademy.dependency.warning"
+SPARK_CONF_DEPRECATION_LOGGING = "dbacademy.deprecation.logging"
+
 MOCK_VALUES = dict()
 MOCK_CONFIG = dict()
 
@@ -46,7 +49,7 @@ def get_mock_value(key: str, function: Callable[[], Any]) -> Any:
 def check_deprecation_logging_enabled():
     if spark is None:
         return
-    status = get_spark_config("dbacademy.deprecation.logging", None)
+    status = get_spark_config(SPARK_CONF_DEPRECATION_LOGGING, None)
     if status is None:
         dbacademy.common.deprecation_log_level = "ignore"
     elif status.lower() == "enabled":
@@ -222,9 +225,10 @@ def validate_dependencies(module: str, curriculum_workspaces_only=True) -> bool:
                 if current_version[1:] == versions[-1]:
                     return True  # They match, all done!
 
-                print_warning(title=f"Outdated Dependency",
-                              message=f"You are using version \"{current_version}\" but the latest version is \"v{versions[-1]}\".\n" +
-                                      f"Please update your dependencies on the module \"{module}\" at your earliest convenience.")
+                elif get_spark_config(SPARK_CONF_DEPENDENCY_WARNING, "disabled").lower() == "enabled":
+                    print_warning(title=f"Outdated Dependency",
+                                  message=f"You are using version \"{current_version}\" but the latest version is \"v{versions[-1]}\".\n" +
+                                          f"Please update your dependencies on the module \"{module}\" at your earliest convenience.")
             else:
                 print_warning(title=f"Invalid Dependency",
                               message=f"You are using the branch or commit hash \"{current_version}\" but the latest version is \"v{versions[-1]}\".\n" +
