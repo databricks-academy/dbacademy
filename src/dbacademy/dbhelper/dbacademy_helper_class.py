@@ -620,19 +620,33 @@ class DBAcademyHelper:
         import mlflow
         from mlflow.entities import ViewType
 
-        # noinspection PyCallingNonCallable
-        for rm in mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY):
-            if not rm.name.startswith(self.unique_name):
-                print(f"Skipping registered model {rm.name}")
+        start = dbgems.clock_start()
+        print(f"Enumerating MLflow Experiments", end="...")
+        experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
+        print(dbgems.clock_stopped(start))
+
+        for experiment in experiments:
+            if "/" in experiment.name:
+                last = experiment.name.split("/")[-1]
+                if last.startswith(self.unique_name):
+                    print(f"Deleting registered model {experiment.name}")
+                    mlflow.delete_experiment(experiment.experiment_id)
+                else:
+                    print(f"Skipping registered model {experiment.name}")
             else:
-                print(f"Deleting registered model {rm.name}")
+                print(f"Skipping registered model {experiment.name}")
+
+            # if not rm.name.startswith(self.unique_name):
+            #     print(f"Skipping registered model {rm.name}")
+            # else:
+            #     print(f"Deleting registered model {rm.name}")
                 # for mv in rm.:
                 #     if mv.current_stage in ["Staging", "Production"]:
                 #         # noinspection PyUnresolvedReferences
                 #         mlflow.transition_model_version_stage(name=rm.name, version=mv.version, stage="Archived")
 
                 # noinspection PyUnresolvedReferences
-                mlflow.delete_registered_model(rm.name)
+                # mlflow.delete_registered_model(rm.name)
 
     @staticmethod
     def __cleanup_experiments() -> None:
