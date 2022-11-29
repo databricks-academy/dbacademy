@@ -114,7 +114,7 @@ class TestLessonConfig(unittest.TestCase):
                               enable_streaming_support=False,
                               mocks={
                                  "__username": "mickey.mouse@disney.com",
-                                 "__initial_schema": "default",
+                                 "__initial_schema": DBAcademyHelper.SCHEMA_DEFAULT,
                                  "__initial_catalog": "whatever_dude"
                               })
 
@@ -128,7 +128,7 @@ class TestLessonConfig(unittest.TestCase):
 
         self.assertTrue(config.is_uc_enabled_workspace)
         self.assertEquals("mickey.mouse@disney.com", config.username)
-        self.assertEquals("default", config.initial_schema)
+        self.assertEquals(DBAcademyHelper.SCHEMA_DEFAULT, config.initial_schema)
         self.assertEquals("whatever_dude", config.initial_catalog)
 
     def test_immutable(self):
@@ -140,7 +140,7 @@ class TestLessonConfig(unittest.TestCase):
                               enable_streaming_support=False,
                               mocks={
                                  "__username": "mickey.mouse@disney.com",
-                                 "__initial_schema": "default",
+                                 "__initial_schema": DBAcademyHelper.SCHEMA_DEFAULT,
                                  "__initial_catalog": "whatever_dude"
                               })
 

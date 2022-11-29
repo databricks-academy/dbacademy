@@ -11,9 +11,8 @@ class DBAcademyHelper:
     from .lesson_config_class import LessonConfig
     from .course_config_class import CourseConfig
 
-    DEFAULT_SCHEMA = "default"
-    INFORMATION_SCHEMA = "information_schema"
-    SPECIAL_SCHEMAS = [DEFAULT_SCHEMA, INFORMATION_SCHEMA]
+    SCHEMA_DEFAULT = "default"
+    SCHEMA_INFORMATION = "information_schema"
 
     SPARK_CONF_SMOKE_TEST = "dbacademy.smoke-test"
     SPARK_CONF_PATHS_DATASETS = "dbacademy.paths.datasets"
@@ -302,10 +301,10 @@ class DBAcademyHelper:
     def schema_name_prefix(self) -> str:
         """
         See also DBAcademyHelper.to_schema_name_prefix
-        :return: the prefix for all schema names that may be created for this consumer during the usage of a course or "default" if LessonConfig.create_catalog = True
+        :return: the prefix for all schema names that may be created for this consumer during the usage of a course or DBAcademyHelper.SCHEMA_DEFAULT if LessonConfig.create_catalog = True
         """
         if self.lesson_config.create_catalog:
-            return "default"
+            return DBAcademyHelper.SCHEMA_DEFAULT
         else:
             return self.to_schema_name_prefix(username=self.username,
                                               course_code=self.course_config.course_code)
@@ -326,10 +325,10 @@ class DBAcademyHelper:
     def schema_name(self) -> str:
         """
         See also DBAcademyHelper.to_schema_name
-        :return: the prescribed name of the schema that the consumer is expected to use or "default" if LessonConfig.create_catalog = True
+        :return: the prescribed name of the schema that the consumer is expected to use or DBAcademyHelper.SCHEMA_DEFAULT if LessonConfig.create_catalog = True
         """
         if self.lesson_config.create_catalog:
-            return "default"
+            return DBAcademyHelper.SCHEMA_DEFAULT
         else:
             return self.to_schema_name(username=self.username,
                                        course_code=self.course_config.course_code,
@@ -576,7 +575,7 @@ class DBAcademyHelper:
             if catalog_name in [DBAcademyHelper.CATALOG_SPARK_DEFAULT, DBAcademyHelper.CATALOG_UC_DEFAULT]:
                 schema_names = [d.databaseName for d in dbgems.spark.sql(f"SHOW DATABASES IN {catalog_name}").collect()]
                 for schema_name in schema_names:
-                    if schema_name.startswith(self.schema_name_prefix) and schema_name != "default":
+                    if schema_name.startswith(self.schema_name_prefix) and schema_name != DBAcademyHelper.SCHEMA_DEFAULT:
                         print(f"Dropping the schema \"{catalog_name}.{schema_name}\"")
                         self.__drop_database(f"{catalog_name}.{schema_name}")
 
@@ -670,13 +669,13 @@ class DBAcademyHelper:
             schemas = [s[0] for s in dbgems.sql(f"SHOW SCHEMAS IN {self.catalog_name}").collect()]
         elif self.lesson_config.requires_uc:
             # No telling how many schemas there may be, we would only care about the default
-            schemas = ["default"]
+            schemas = [DBAcademyHelper.SCHEMA_DEFAULT]
         else:
             # With no catalog, there can only be one schema.
             schemas = [self.schema_name]
 
-        if DBAcademyHelper.INFORMATION_SCHEMA in schemas:
-            del schemas[schemas.index(DBAcademyHelper.INFORMATION_SCHEMA)]
+        if DBAcademyHelper.SCHEMA_INFORMATION in schemas:
+            del schemas[schemas.index(DBAcademyHelper.SCHEMA_INFORMATION)]
 
         for i, schema in enumerate(schemas):
             if i > 0: print()
