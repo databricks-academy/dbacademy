@@ -667,7 +667,8 @@ class DBAcademyHelper:
                     self.__delete_experiment(experiment)
                     mlflow.delete_experiment(experiment.experiment_id)
                 else:
-                    print(f"Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
+                    pass
+                    # print(f"Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
             else:
                 print(f"Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
 
