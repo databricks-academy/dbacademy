@@ -15,33 +15,6 @@ class TestLessonConfig(unittest.TestCase):
         # None name should produce None result
         self.assertIsNone(LessonConfig.to_clean_lesson_name(None))
 
-    def test_is_uc_enabled_workspace_NONE(self):
-        try:
-            LessonConfig(name=None,
-                         create_schema=False,
-                         create_catalog=True,  # Not UC workspace
-                         requires_uc=True,
-                         installing_datasets=False,
-                         enable_streaming_support=False)
-            raise Exception("Expected AssertionError")
-
-        except AssertionError as e:
-            self.assertEquals("Cannot create a catalog, UC is not enabled for this workspace/cluster.", str(e))
-
-    def test_is_uc_enabled_workspace_SPARK_CATALOG(self):
-        try:
-            LessonConfig(name=None,
-                         create_schema=False,
-                         create_catalog=True,  # Not UC workspace
-                         requires_uc=True,
-                         installing_datasets=False,
-                         enable_streaming_support=False,
-                         mocks={"__initial_catalog": DBAcademyHelper.CATALOG_SPARK_DEFAULT})
-            raise Exception("Expected AssertionError")
-
-        except AssertionError as e:
-            self.assertEquals("Cannot create a catalog, UC is not enabled for this workspace/cluster.", str(e))
-
     def test_is_uc_enabled_workspace_CATALOG_UC_DEFAULT(self):
 
         config = LessonConfig(name=None,
@@ -88,14 +61,28 @@ class TestLessonConfig(unittest.TestCase):
         self.assertIsNone(config.initial_schema)
         self.assertEquals("i_have_no_idea", config.initial_catalog)
 
-    def test_lesson_config_create_catalog_no_uc_support(self):
-        config =  LessonConfig(name=None,
-                               create_schema=False,
-                               create_catalog=True,
-                               requires_uc=True,
-                               installing_datasets=False,
-                               enable_streaming_support=False,
-                               mocks={"__initial_catalog": DBAcademyHelper.CATALOG_SPARK_DEFAULT})
+    def test_lesson_config_create_catalog_no_uc_support_CATALOG_SPARK_DEFAULT(self):
+        config = LessonConfig(name=None,
+                              create_schema=False,
+                              create_catalog=True,
+                              requires_uc=True,
+                              installing_datasets=False,
+                              enable_streaming_support=False,
+                              mocks={"__initial_catalog": DBAcademyHelper.CATALOG_SPARK_DEFAULT})
+        try:
+            config.assert_valid()
+            raise Exception("Expected AssertionError")
+        except AssertionError as e:
+            msg = str(e)
+            self.assertEquals(f"Cannot create a catalog, UC is not enabled for this workspace/cluster.", msg)
+
+    def test_lesson_config_create_catalog_no_uc_support_CATALOG_NONE(self):
+        config = LessonConfig(name=None,
+                              create_schema=False,
+                              create_catalog=True,
+                              requires_uc=True,
+                              installing_datasets=False,
+                              enable_streaming_support=False)
         try:
             config.assert_valid()
             raise Exception("Expected AssertionError")
@@ -104,13 +91,13 @@ class TestLessonConfig(unittest.TestCase):
             self.assertEquals(f"Cannot create a catalog, UC is not enabled for this workspace/cluster.", msg)
 
     def test_lesson_config_create_with_catalog_and_schema(self):
-        config =  LessonConfig(name=None,
-                               create_schema=True,
-                               create_catalog=True,
-                               requires_uc=True,
-                               installing_datasets=False,
-                               enable_streaming_support=False,
-                               mocks={"__initial_catalog": DBAcademyHelper.CATALOG_UC_DEFAULT})
+        config = LessonConfig(name=None,
+                              create_schema=True,
+                              create_catalog=True,
+                              requires_uc=True,
+                              installing_datasets=False,
+                              enable_streaming_support=False,
+                              mocks={"__initial_catalog": DBAcademyHelper.CATALOG_UC_DEFAULT})
         try:
             config.assert_valid()
             raise Exception("Expected AssertionError")
