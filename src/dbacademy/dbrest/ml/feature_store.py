@@ -16,7 +16,7 @@ class FeatureStoreClient(ApiContainer):
 
         while "next_page_token" in response:
             next_page_token = response["next_page_token"]
-            response = self.client.api("GET", f"{self.base_uri}/feature-tables/search?max_results={max_results}&next_page_token{next_page_token}")
+            response = self.client.api("GET", f"{self.base_uri}/feature-tables/search?max_results={max_results}&next_page_token={next_page_token}")
             results.extend(response.get("feature_tables", []))
 
         return results
