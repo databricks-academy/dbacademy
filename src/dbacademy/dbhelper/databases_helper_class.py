@@ -103,7 +103,7 @@ class DatabasesHelper:
                         "num_workers": 0,
                         "cluster_name": "",
                         "spark_conf": {
-                            DBAcademyHelper.PROTECTED_EXECUTION: True,
+                            DBAcademyHelper.SPARK_CONF_PROTECTED_EXECUTION: True,
                             "spark.master": "local[*]",
                             "spark.databricks.acl.dfAclsEnabled": "true",
                             "spark.databricks.repl.allowedLanguages": "sql,python",
