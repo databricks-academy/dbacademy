@@ -14,8 +14,7 @@ class CourseConfig:
                  expected_dbrs: str):         # The expected DBRs as specified at build-time.
         """
         The CourseConfig encapsulates those parameters that should never change for the entire duration of a course
-        compared to the LessonConfig which encapsulates parameters that may change from lesson to lesson.
-
+        compared to the LessonConfig which encapsulates parameters that may change from lesson to lesson
         :param course_code: See the property by the same name
         :param course_name: See the property by the same name
         :param data_source_name: See the property by the same name
@@ -71,7 +70,7 @@ class CourseConfig:
     @staticmethod
     def to_build_name(course_name) -> Optional[str]:
         """
-        Utility method to create a "build name" from a course name.
+        Utility method to create a "build name" from a course name
         :param course_name: The name of the course
         :return: the build name where all non-alpha and non-digits are replaced with hyphens
         """
@@ -109,7 +108,7 @@ class CourseConfig:
     @property
     def install_max_time(self) -> str:
         """
-        :return: the maximum amout of time required to "install" a dataset as measured from, for example, Singapore - typically 2 or 3 times that of CourseConfig.install_min_time
+        :return: the maximum amount of time required to "install" a dataset as measured from, for example, Singapore - typically 2 or 3 times that of CourseConfig.install_min_time
         """
         return self.__install_max_time
 
