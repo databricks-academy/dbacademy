@@ -464,7 +464,7 @@ class DBAcademyHelper:
         cleaning out the user-specific catalog, and removing the user's
         lesson-specific working directory and any assets created in that directory.
         """
-        from workspace_cleaner_class import WorkspaceCleaner
+        from dbacademy.dbhelper.workspace_cleaner_class import WorkspaceCleaner
 
         WorkspaceCleaner(self).reset_lesson()
 
@@ -478,7 +478,7 @@ class DBAcademyHelper:
         Usage of this method is generally reserved for a "full" reset of a course which is common before invoke smoke tests.
         :return:
         """
-        from workspace_cleaner_class import WorkspaceCleaner
+        from dbacademy.dbhelper.workspace_cleaner_class import WorkspaceCleaner
 
         WorkspaceCleaner(self).reset_learning_environment()
 
