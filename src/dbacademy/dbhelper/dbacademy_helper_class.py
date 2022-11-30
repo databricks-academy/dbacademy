@@ -201,7 +201,7 @@ class DBAcademyHelper:
         return f"{DBAcademyHelper.get_dbacademy_users_path()}/{self.username}/{self.course_config.course_name}"
 
     @property
-    def unique_name(self, sep = "-") -> str:
+    def unique_name(self, sep: str = "-") -> str:
         """
         See DBAcademyHelper.to_unique_name
         :return: a unique name consisting of the consumer's username, and the course code.
