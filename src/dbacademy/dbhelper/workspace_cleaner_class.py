@@ -17,12 +17,12 @@ class WorkspaceCleaner:
         dbgems.spark.catalog.clearCache()
         status = status | self.__stop_all_streams()
 
-        status = status or self.__drop_catalog()
-        status = status or self.__drop_schema()
-
         status = status or self.__drop_feature_store_tables()
         status = status or self.__cleanup_mlflow_models()
         status = status or self.__cleanup_experiments()
+
+        status = status or self.__drop_catalog()
+        status = status or self.__drop_schema()
 
         # Always last to remove DB files that are not removed by sql-drop operations.
         status = status or self.__cleanup_working_dir()
@@ -35,13 +35,18 @@ class WorkspaceCleaner:
         print("Resetting the workspaces' learning environment:")
 
         start = dbgems.clock_start()
-        self.__reset_databases()
-        self.__reset_datasets()
-        self.__reset_working_dir()
+
+        dbgems.spark.catalog.clearCache()
+        self.__stop_all_streams()
+
         self.__drop_feature_store_tables()
         self.__cleanup_mlflow_models()
         self.__cleanup_experiments()
-        
+
+        self.__reset_databases()
+        self.__reset_datasets()
+        self.__reset_working_dir()
+
         print(f"\nThe learning environment was successfully reset {dbgems.clock_stopped(start)}.")
 
     def __reset_working_dir(self) -> None:
