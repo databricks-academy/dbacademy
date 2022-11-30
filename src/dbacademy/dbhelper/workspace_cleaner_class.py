@@ -9,28 +9,30 @@ class WorkspaceCleaner:
     def __init__(self, da: DBAcademyHelper):
         self.__da = da
 
-        self.announcement = None
-
     def reset_lesson(self) -> None:
 
-        self.announcement = "Resetting the learning environment:"
+        status = False
+        print("Resetting the learning environment:")
         
         dbgems.spark.catalog.clearCache()
-        self.__cleanup_stop_all_streams()
+        status = status | self.__stop_all_streams()
 
-        self.__drop_catalog()
-        self.__drop_schema()
+        status = status or self.__drop_catalog()
+        status = status or self.__drop_schema()
 
-        self.__drop_feature_store_tables()
-        self.__cleanup_mlflow_models()
-        self.__cleanup_experiments()
+        status = status or self.__drop_feature_store_tables()
+        status = status or self.__cleanup_mlflow_models()
+        status = status or self.__cleanup_experiments()
 
         # Always last to remove DB files that are not removed by sql-drop operations.
-        self.__cleanup_working_dir()
+        status = status or self.__cleanup_working_dir()
+
+        if not status:
+            print("| No action taken")
 
     def reset_learning_environment(self) -> None:
 
-        self.announcement = "Resetting the workspaces' learning environment:"
+        print("Resetting the workspaces' learning environment:")
 
         start = dbgems.clock_start()
         self.__reset_databases()
@@ -131,12 +133,12 @@ class WorkspaceCleaner:
         print(dbgems.clock_stopped(start))
         return True
 
-    def __cleanup_stop_all_streams(self) -> None:
+    def __stop_all_streams(self) -> bool:
 
         if len(dbgems.spark.streams.active) == 0:
-            return  # Bail if there are no active streams
+            return False  # Bail if there are no active streams
 
-        self.__print_announcement_once("__cleanup_stop_all_streams")
+        self.__print_announcement_once("__stop_all_streams")
 
         for stream in dbgems.spark.streams.active:
             start = dbgems.clock_start()
@@ -147,11 +149,13 @@ class WorkspaceCleaner:
             except:
                 pass  # Bury any exceptions
             print(dbgems.clock_stopped(start))
+        
+        return True
 
-    def __cleanup_working_dir(self) -> None:
+    def __cleanup_working_dir(self) -> bool:
 
         if not self.__da.paths.exists(self.__da.paths.working_dir):
-            return  # Bail if the directory doesn't exist
+            return False  # Bail if the directory doesn't exist
 
         self.__print_announcement_once("__cleanup_working_dir")
 
@@ -161,8 +165,9 @@ class WorkspaceCleaner:
         dbgems.dbutils.fs.rm(self.__da.paths.working_dir, True)
 
         print(dbgems.clock_stopped(start))
+        return True
 
-    def __drop_feature_store_tables(self) -> None:
+    def __drop_feature_store_tables(self) -> bool:
         from databricks import feature_store
         from contextlib import redirect_stdout
 
@@ -170,7 +175,7 @@ class WorkspaceCleaner:
         feature_store_tables = self.__da.client.ml.feature_store.search_tables()
 
         if len(feature_store_tables) == 0:
-            return  # No tables, nothing to drop
+            return False  # No tables, nothing to drop
 
         self.__print_announcement_once("__drop_feature_store_tables")
 
@@ -183,8 +188,10 @@ class WorkspaceCleaner:
             else:
                 print(f"| Skipping feature store table \"{name}\" {self.__da.schema_name_prefix}")
 
-    def __cleanup_experiments(self) -> None:
-        pass
+        return True
+
+    def __cleanup_experiments(self) -> bool:
+        return False
         # import mlflow
         # from mlflow.entities import ViewType
         #
@@ -213,8 +220,8 @@ class WorkspaceCleaner:
         #         print(f"| Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
         #
 
-    def __cleanup_mlflow_models(self) -> None:
-        pass
+    def __cleanup_mlflow_models(self) -> bool:
+        return False
         # import mlflow
         # from mlflow.entities import ViewType
         #
