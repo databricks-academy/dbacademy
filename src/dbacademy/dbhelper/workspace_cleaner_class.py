@@ -164,6 +164,7 @@ class WorkspaceCleaner:
 
     def __drop_feature_store_tables(self) -> None:
         from databricks import feature_store
+        from contextlib import redirect_stdout
 
         self.__print_announcement_once()
 
@@ -177,7 +178,8 @@ class WorkspaceCleaner:
             if name.startswith(self.__da.schema_name_prefix):
                 # if announcement: print(announcement); announcement = None
                 print(f"| Dropping feature store table \"{name}\"")
-                fs.drop_table(name)
+                with redirect_stdout(None):
+                    fs.drop_table(name)
             else:
                 # if announcement: print(announcement); announcement = None
                 print(f"| Skipping feature store table \"{name}\" {self.__da.schema_name_prefix}")
