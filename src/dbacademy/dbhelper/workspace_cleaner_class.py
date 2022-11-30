@@ -162,7 +162,7 @@ class WorkspaceCleaner:
 
     def __drop_feature_store_tables(self) -> bool:
         from databricks import feature_store
-        from contextlib import redirect_stdout
+        from contextlib import redirect_stderr
 
         fs = feature_store.FeatureStoreClient()
         feature_store_tables = self.__da.client.ml.feature_store.search_tables()
@@ -174,7 +174,7 @@ class WorkspaceCleaner:
             name = table.get("name")
             if name.startswith(self.__da.schema_name_prefix):
                 print(f"| Dropping feature store table \"{name}\"")
-                with redirect_stdout(None):
+                with redirect_stderr(None):
                     fs.drop_table(name)
             else:
                 print(f"| Skipping feature store table \"{name}\" {self.__da.schema_name_prefix}")
