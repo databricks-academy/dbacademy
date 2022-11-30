@@ -63,7 +63,7 @@ class Workspaces(AccountsCRUD):
 
     @overrides
     def _wrap(self, item: dict) -> Workspace:
-        return Workspace(item, self.client)
+        return Workspace(item, self.client) if item is not None else None
 
     def get_by_deployment_name(self, name, if_not_exists: IfNotExists = "error"):
         """
