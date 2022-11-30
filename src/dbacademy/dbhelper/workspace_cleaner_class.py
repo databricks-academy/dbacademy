@@ -174,6 +174,7 @@ class WorkspaceCleaner:
             name = table.get("name")
             if name.startswith(self.__da.schema_name_prefix):
                 print(f"| Dropping feature store table \"{name}\"")
+                print(f"| {__name__}")
                 with redirect_stderr(None):
                     with redirect_stdout(None):
                         fs.drop_table(name)
