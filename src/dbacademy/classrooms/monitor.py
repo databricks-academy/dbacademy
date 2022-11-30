@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Any
 
 from dbacademy.dougrest import DatabricksApi
 from dbacademy.rest.common import DatabricksApiException
@@ -16,28 +16,28 @@ class Commands(object):
         users = workspace.users.list_usernames()
         return len([u for u in users if "odl_instructor" in u])
 
-    def verifyCourseware(self, w, fix=False, onlyStudents=False):
+    def verifyCourseware(self, w, fix=False, only_students=False):
         """Compares each user's home folder to the courseware_spec defined above."""
         users = w.users.list_usernames()
         results = []
-        correctFileCount = -1
+        correct_file_count = -1
         for user in users:
-            if onlyStudents and not "odl_user" in user:
+            if only_students and "odl_user" not in user:
                 continue  # Skip instructors
             folder_name = self.courseware_spec['folder']
             if "dbc" in self.courseware_spec:
                 workspace_path = f"/Users/{user}/{folder_name}"
                 try:
-                    fileCount = len(list(w.workspace.walk(workspace_path)))
-                    if correctFileCount < 0:
-                        correctFileCount = fileCount
+                    file_count = len(list(w.workspace.walk(workspace_path)))
+                    if correct_file_count < 0:
+                        correct_file_count = file_count
                         continue
-                    elif fileCount == correctFileCount:
+                    elif file_count == correct_file_count:
                         continue
-                    elif fileCount > correctFileCount:
+                    elif file_count > correct_file_count:
                         results.append(user + ", extra files found")
                         continue
-                    elif fileCount < correctFileCount:
+                    elif file_count < correct_file_count:
                         results.append(user + ", half imported")
                         if fix:
                             w.workspace.delete(workspace_path, recursive=True)
@@ -55,7 +55,8 @@ class Commands(object):
                     continue
                 if w.repos.exists(workspace_path2):
                     continue
-                if fix and not w.repos.list():  # Comment out the w.repos.list() if you want all users to have a cluster.
+                # Comment out the w.repos.list() if you want all users to have a cluster.
+                if fix and not w.repos.list():
                     #           w.workspace.mkdirs(f"/Repos/{user}")
                     w.repos.create(self.courseware_spec["repo"], workspace_path)
                 results.append(user)
@@ -145,8 +146,6 @@ class Commands(object):
         """Clears the jobs schedules.  Jobs currently running are not terminated."""
         results = []
         for job in w.jobs.list():
-            job_name = job["settings"]["name"]
-            job_id = job["job_id"]
             if job["settings"].get("schedule") is None:
                 continue
             if job["settings"]["schedule"].get("pause_status") != "PAUSED":
@@ -177,19 +176,25 @@ class Commands(object):
 
     @staticmethod
     def stopQueries(w):
-        """Attempts to unschedule any scheduled SQL Query Refresh Schedules.  This may fail due to permissions issues."""
+        """
+        Attempts to unschedule any scheduled SQL Query Refresh Schedules.
+        This may fail due to permissions issues.
+        """
         count = 0
         for q in w.api("GET", "2.0/preview/sql/queries").get("results", []):
             if q.get("schedule"):
                 q = w.api("GET", f"2.0/preview/sql/queries/{q['id']}")
                 q["schedule"] = None
-                w.api("POST", f"2.0/preview/sql/queries/{q['id']}", data=q)
+                w.api("POST", f"2.0/preview/sql/queries/{q['id']}", _data=q)
                 count += 1
         return count
 
     @staticmethod
     def stopDashboards(workspace):
-        """Attempts to unschedule any scheduled SQL Dashboard Refresh Schedules.  This may fail due to permissions issues."""
+        """
+        Attempts to unschedule any scheduled SQL Dashboard Refresh Schedules.
+        This may fail due to permissions issues.
+        """
         results = []
         for dashboard in workspace.api("GET", "2.0/preview/sql/dashboards").get("results", []):
             if dashboard.get("refresh_schedules"):
@@ -301,7 +306,7 @@ class Commands(object):
                     lastrun = None
                 if not lastrun or (now() - lastrun) / 60 > 30:  # If it's been 30 minutes since last DLT run
                     workspace.clusters.terminate(cluster["cluster_id"])
-                    results.append({"pipeline": pipe["name"], "action": "Terminate stale cluster"})
+                    results.append({"pipeline": pipeline["name"], "action": "Terminate stale cluster"})
         return results
 
     @staticmethod
@@ -310,7 +315,7 @@ class Commands(object):
         results = []
         model_endpoints = workspace.api("GET", "2.0/preview/mlflow/endpoints/list").get("endpoints", [])
         for ep in model_endpoints:
-            workspace.api("POST", "2.0/preview/mlflow/endpoints/disable", data=ep)
+            workspace.api("POST", "2.0/preview/mlflow/endpoints/disable", _data=ep)
             results.append(ep)
         return results
 
@@ -657,15 +662,10 @@ class Commands(object):
         else:
             job_id = workspace.jobs.create_multi_task_job(**job_spec)
 
-        run_id = None
-        for job in existing_jobs:
-            if job["settings"]["name"] == job_spec["name"]:
-                job_id = job["job_id"]
-                runs = workspace.jobs.runs.list(job_id=job_id, active_only=True)
-                if runs:
-                    run_id = runs[0]["run_id"]
-
-        if run_id is None:
+        runs = workspace.jobs.runs.list(job_id=job_id, active_only=True)
+        if runs:
+            run_id = runs[0]["run_id"]
+        else:
             response = workspace.api("POST", "/2.1/jobs/run-now", {"job_id": job_id})
             run_id = response["run_id"]
 
@@ -714,7 +714,6 @@ class Commands(object):
         else:
             instance_pool_id = instance_pool["instance_pool_id"]
         workspace.permissions.pools.update_group(instance_pool_id, "users", "CAN_ATTACH_TO")
-        instance_pool_id
 
         tags_policy = {
             f"custom_tags.{tag_name}": {
@@ -750,7 +749,7 @@ class Commands(object):
         }
         cluster_policy.update(tags_policy)
 
-        all_purpose_policy = {
+        all_purpose_policy : Dict[str, Any] = {
             "cluster_type": {
                 "type": "fixed",
                 "value": "all-purpose"
@@ -768,7 +767,7 @@ class Commands(object):
         all_purpose_policy_id = all_purpose_policy.get("policy_id")
         workspace.permissions.clusters.policies.update(all_purpose_policy_id, "group_name", "users", "CAN_USE")
 
-        jobs_policy = {
+        jobs_policy : Dict[str, Any] = {
             "cluster_type": {
                 "type": "fixed",
                 "value": "job"
@@ -778,7 +777,6 @@ class Commands(object):
         jobs_policy = workspace.clusters.policies.create_or_update("Jobs Cluster Policy", jobs_policy)
         jobs_policy_id = jobs_policy.get("policy_id")
         workspace.permissions.clusters.policies.update(jobs_policy_id, "group_name", "users", "CAN_USE")
-        None
         dlt_policy = {
             "cluster_type": {
                 "type": "fixed",
