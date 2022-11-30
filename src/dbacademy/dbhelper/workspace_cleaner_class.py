@@ -15,7 +15,7 @@ class WorkspaceCleaner:
         print("Resetting the learning environment:")
         
         dbgems.spark.catalog.clearCache()
-        status = status | self._stop_all_streams()
+        status = status or self._stop_all_streams()
 
         status = status or self._drop_feature_store_tables()
         status = status or self._cleanup_mlflow_models()
