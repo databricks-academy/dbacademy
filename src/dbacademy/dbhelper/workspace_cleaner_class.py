@@ -15,17 +15,17 @@ class WorkspaceCleaner:
         print("Resetting the learning environment:")
         
         dbgems.spark.catalog.clearCache()
-        status = status or self._stop_all_streams()
+        status = self._stop_all_streams() or status
 
-        status = status or self._drop_feature_store_tables()
-        status = status or self._cleanup_mlflow_models()
-        status = status or self._cleanup_experiments()
+        status = self._drop_feature_store_tables() or status
+        status = self._cleanup_mlflow_models() or status
+        status = self._cleanup_experiments() or status
 
-        status = status or self._drop_catalog()
-        status = status or self._drop_schema()
+        status = self._drop_catalog() or status
+        status = self._drop_schema() or status
 
         # Always last to remove DB files that are not removed by sql-drop operations.
-        status = status or self._cleanup_working_dir()
+        status = self._cleanup_working_dir() or status
 
         if not status:
             print("| No action taken")
