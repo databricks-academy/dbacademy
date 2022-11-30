@@ -190,28 +190,24 @@ class WorkspaceCleaner:
         import mlflow
         from mlflow.entities import ViewType
 
+        if not self.__da.is_smoke_test():
+            # Experiments are tied to a notebook unless we are running under test.
+            # When ran under test, they end up in /Curriculum/Test Results/
+            return False
+
         start = dbgems.clock_start()
+        print(f"| enumerating MLflow Experiments", end="...")
         experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
-        advertisement = f"\nEnumerating MLflow Experiments...{dbgems.clock_stopped(start)}"
+        print(dbgems.clock_stopped(start))
 
         unique_name = self.__da.unique_name("-")
         for experiment in experiments:
-            if "/" in experiment.name:
-                last = experiment.name.split("/")[-1]
-                if last.startswith(unique_name):
-                    status = self.__da.client.workspace.get_status(experiment.name)
-                    if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
-                        if advertisement: print(advertisement); advertisement = None
-                        print(f"| deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
-                        mlflow.delete_experiment(experiment.experiment_id)
-                    # else:
-                    #     if advertisement: print(advertisement); advertisement = None
-                    #     print(f"| cannot delete experiment \"{experiment.name}\" ({experiment.experiment_id})")
-                else:
-                    print(f"| skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
-            else:
-                print(f"| skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
-
+            last = experiment.name.split("/")[-1]
+            if last.startswith(unique_name):
+                status = self.__da.client.workspace.get_status(experiment.name)
+                if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
+                    print(f"| deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
+                    mlflow.delete_experiment(experiment.experiment_id)
 
     @staticmethod
     def _cleanup_mlflow_models() -> bool:
