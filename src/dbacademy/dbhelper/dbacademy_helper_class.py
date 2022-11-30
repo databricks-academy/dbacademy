@@ -604,18 +604,19 @@ class DBAcademyHelper:
             dbgems.dbutils.fs.rm(self.paths.datasets, True)
 
     def __cleanup_feature_store_tables(self) -> None:
-        # noinspection PyUnresolvedReferences,PyPackageRequirements
-        from databricks import feature_store
-
-        # noinspection PyUnresolvedReferences
-        fs = feature_store.FeatureStoreClient()
-
-        # noinspection PyUnresolvedReferences
-        for table in self.client.ml.feature_store.search_tables():
-            name = table.get("name")
-            if name.startswith(self.unique_name):
-                print(f"Dropping feature store table \"{name}\"")
-                fs.drop_table(name)
+        pass
+        # # noinspection PyUnresolvedReferences,PyPackageRequirements
+        # from databricks import feature_store
+        #
+        # # noinspection PyUnresolvedReferences
+        # fs = feature_store.FeatureStoreClient()
+        #
+        # # noinspection PyUnresolvedReferences
+        # for table in self.client.ml.feature_store.search_tables():
+        #     name = table.get("name")
+        #     if name.startswith(self.unique_name):
+        #         print(f"Dropping feature store table \"{name}\"")
+        #         fs.drop_table(name)
 
     def __cleanup_mlflow_models(self) -> None:
         pass
@@ -652,30 +653,31 @@ class DBAcademyHelper:
     #             # mlflow.delete_registered_model(rm.name)
 
     def __cleanup_experiments(self) -> None:
-        import mlflow
-        from mlflow.entities import ViewType
-
-        start = dbgems.clock_start()
-        experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
-        advertisement = f"\nEnumerating MLflow Experiments...{dbgems.clock_stopped(start)}"
-
-        for experiment in experiments:
-            if "/" in experiment.name:
-                last = experiment.name.split("/")[-1]
-                if last.startswith(self.unique_name):
-                    status = self.client.workspace.get_status(experiment.name)
-                    if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
-                        if advertisement: print(advertisement); advertisement = None
-                        print(f"| Deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
-                        mlflow.delete_experiment(experiment.experiment_id)
-                    else:
-                        if advertisement: print(advertisement); advertisement = None
-                        print(f"| Cannot delete experiment \"{experiment.name}\" ({experiment.experiment_id})")
-                else:
-                    pass
-                    # print(f"Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
-            else:
-                print(f"| Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
+        pass
+        # import mlflow
+        # from mlflow.entities import ViewType
+        #
+        # start = dbgems.clock_start()
+        # experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
+        # advertisement = f"\nEnumerating MLflow Experiments...{dbgems.clock_stopped(start)}"
+        #
+        # for experiment in experiments:
+        #     if "/" in experiment.name:
+        #         last = experiment.name.split("/")[-1]
+        #         if last.startswith(self.unique_name):
+        #             status = self.client.workspace.get_status(experiment.name)
+        #             if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
+        #                 if advertisement: print(advertisement); advertisement = None
+        #                 print(f"| Deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
+        #                 mlflow.delete_experiment(experiment.experiment_id)
+        #             else:
+        #                 if advertisement: print(advertisement); advertisement = None
+        #                 print(f"| Cannot delete experiment \"{experiment.name}\" ({experiment.experiment_id})")
+        #         else:
+        #             pass
+        #             # print(f"Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
+        #     else:
+        #         print(f"| Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
 
     def conclude_setup(self) -> None:
         """
