@@ -1,14 +1,13 @@
-from typing import Union, Optional, Dict, List, Any
+from typing import Union, Optional, Dict, List
 
 import pyspark
 from dbacademy import dbgems, common
 from dbacademy.dbrest import DBAcademyRestClient
 
-from .paths_class import Paths
+from dbacademy.dbhelper.paths_class import Paths
 
 
 class DBAcademyHelper:
-    from mlflow.entities.experiment import Experiment
     from .lesson_config_class import LessonConfig
     from .course_config_class import CourseConfig
 
@@ -451,10 +450,6 @@ class DBAcademyHelper:
         except Exception as e:
             raise AssertionError(self.__troubleshoot_error(f"Failed to create the schema \"{self.schema_name}\".", "Cannot Create Schema")) from e
 
-    @common.deprecated(reason="Use DBAcademyHelper.reset_lesson() instead.")
-    def reset_environment(self) -> None:
-        return self.reset_lesson()
-
     def reset_lesson(self) -> None:
         """
         Resets the lesson by calling DBAcademy.clean(validate_datasets=False)
@@ -469,88 +464,13 @@ class DBAcademyHelper:
         cleaning out the user-specific catalog, and removing the user's
         lesson-specific working directory and any assets created in that directory.
         """
+        from workspace_cleaner_class import WorkspaceCleaner
 
-        active_streams = len(self.__spark.streams.active) > 0  # Test to see if there are any active streams
-        remove_wd = self.paths.exists(self.paths.working_dir)  # Test to see if the working directory exists
-
-        if self.lesson_config.create_catalog:
-            drop_catalog = True    # If we created it, we clean it
-            drop_schema = False     # But don't the schema
-        else:
-            drop_catalog = False   # We didn't clean the catalog so don't touch it.
-            drop_schema = self.__spark.sql(f"SHOW DATABASES").filter(f"databaseName == '{self.schema_name}'").count() == 1
-
-        if drop_catalog or drop_schema or remove_wd or active_streams:
-            print("Resetting the learning environment:")
-
-        self.__spark.catalog.clearCache()
-        self.__cleanup_stop_all_streams()
-
-        if drop_catalog:
-            self.__drop_catalog()
-        elif drop_schema:
-            self.__drop_schema()
-
-        self.__cleanup_feature_store_tables()
-        self.__cleanup_mlflow_models()
-        self.__cleanup_experiments()
-
-        if remove_wd:
-            self.__cleanup_working_dir()
+        WorkspaceCleaner(self).reset_lesson()
 
         if validate_datasets:
             # The last step is to make sure the datasets are still intact and repair if necessary
             self.validate_datasets(fail_fast=True)
-
-    def __cleanup_working_dir(self) -> None:
-        start = dbgems.clock_start()
-        print(f"| removing the working directory \"{self.paths.working_dir}\"", end="...")
-
-        dbgems.dbutils.fs.rm(self.paths.working_dir, True)
-
-        print(dbgems.clock_stopped(start))
-
-    @staticmethod
-    def __drop_database(schema_name) -> None:
-        from pyspark.sql.utils import AnalysisException
-
-        try: location = dbgems.sql(f"DESCRIBE TABLE EXTENDED {schema_name}").filter("col_name == 'Location'").first()["data_type"]
-        except Exception: location = None  # Ignore this concurrency error
-
-        try: dbgems.sql(f"DROP DATABASE IF EXISTS {schema_name} CASCADE")
-        except AnalysisException: pass  # Ignore this concurrency error
-
-        try: dbgems.dbutils.fs.rm(location)
-        except: pass  # We are going to ignore this as it is most likely deleted or None
-
-    def __drop_schema(self) -> None:
-
-        start = dbgems.clock_start()
-        print(f"| dropping the schema \"{self.schema_name}\"", end="...")
-
-        self.__drop_database(self.schema_name)
-
-        print(dbgems.clock_stopped(start))
-
-    def __drop_catalog(self) -> None:
-        from pyspark.sql.utils import AnalysisException
-
-        start = dbgems.clock_start()
-        print(f"| dropping the catalog \"{self.catalog_name}\"", end="...")
-
-        try: self.__spark.sql(f"DROP CATALOG IF EXISTS {self.catalog_name} CASCADE")
-        except AnalysisException: pass  # Ignore this concurrency error
-
-        print(dbgems.clock_stopped(start))
-
-    def __cleanup_stop_all_streams(self) -> None:
-        for stream in self.__spark.streams.active:
-            start = dbgems.clock_start()
-            print(f"| stopping the stream \"{stream.name}\"", end="...")
-            stream.stop()
-            try: stream.awaitTermination()
-            except: pass  # Bury any exceptions
-            print(dbgems.clock_stopped(start))
 
     def reset_learning_environment(self) -> None:
         """
@@ -558,129 +478,9 @@ class DBAcademyHelper:
         Usage of this method is generally reserved for a "full" reset of a course which is common before invoke smoke tests.
         :return:
         """
-        start = dbgems.clock_start()
-        print("Resetting the learning environment:")
-        self.__reset_databases()
-        self.__reset_datasets()
-        self.__reset_working_dir()
-        self.__cleanup_feature_store_tables()
-        self.__cleanup_mlflow_models()
-        self.__cleanup_experiments()
-        print(f"\nThe learning environment was successfully reset {dbgems.clock_stopped(start)}.")
+        from workspace_cleaner_class import WorkspaceCleaner
 
-    def __reset_databases(self) -> None:
-        from pyspark.sql.utils import AnalysisException
-
-        # Drop all user-specific catalogs
-        catalog_names = [c.catalog for c in dbgems.spark.sql(f"SHOW CATALOGS").collect()]
-        for catalog_name in catalog_names:
-            if catalog_name.startswith(self.catalog_name_prefix):
-                print(f"Dropping the catalog \"{catalog_name}\"")
-                try: dbgems.spark.sql(f"DROP CATALOG IF EXISTS {catalog_name} CASCADE")
-                except AnalysisException: pass  # Ignore this concurrency error
-
-        # Refresh the list of catalogs
-        catalog_names = [c.catalog for c in dbgems.spark.sql(f"SHOW CATALOGS").collect()]
-        for catalog_name in catalog_names:
-            # There are potentially two "default" catalogs from which we need to remove user-specific schemas
-            if catalog_name in [DBAcademyHelper.CATALOG_SPARK_DEFAULT, DBAcademyHelper.CATALOG_UC_DEFAULT]:
-                schema_names = [d.databaseName for d in dbgems.spark.sql(f"SHOW DATABASES IN {catalog_name}").collect()]
-                for schema_name in schema_names:
-                    if schema_name.startswith(self.schema_name_prefix) and schema_name != DBAcademyHelper.SCHEMA_DEFAULT:
-                        print(f"Dropping the schema \"{catalog_name}.{schema_name}\"")
-                        self.__drop_database(f"{catalog_name}.{schema_name}")
-
-    def __reset_working_dir(self) -> None:
-        # noinspection PyProtectedMember
-        working_dir_root = self.paths._working_dir_root
-
-        if Paths.exists(working_dir_root):
-            print(f"Deleting working directory \"{working_dir_root}\".")
-            dbgems.dbutils.fs.rm(working_dir_root, True)
-
-    def __reset_datasets(self) -> None:
-        if Paths.exists(self.paths.datasets):
-            print(f"Deleting datasets \"{self.paths.datasets}\".")
-            dbgems.dbutils.fs.rm(self.paths.datasets, True)
-
-    def __cleanup_feature_store_tables(self) -> None:
-        from databricks import feature_store
-
-        start = dbgems.clock_start()
-        fs = feature_store.FeatureStoreClient()
-        feature_store_tables = self.client.ml.feature_store.search_tables()
-        announcement = f"\nScanning for feature store tables...({dbgems.clock_stopped(start)})"
-
-        for table in feature_store_tables:
-            name = table.get("name")
-            if name.startswith(self.unique_name):
-                if announcement: print(announcement); announcement = None
-                print(f"| Dropping feature store table \"{name}\"")
-                fs.drop_table(name)
-            else:
-                if announcement: print(announcement); announcement = None
-                print(f"| Skipping feature store table \"{name}\" ({self.unique_name})")
-
-    def __cleanup_mlflow_models(self) -> None:
-        pass
-        # import mlflow
-        # from mlflow.entities import ViewType
-        #
-        # start = dbgems.clock_start()
-        # print(f"Enumerating MLflow Models", end="...")
-        # self.client.ml.mlflow.
-        # experiments = mlflow.models.(view_type=ViewType.ACTIVE_ONLY)
-        # print(dbgems.clock_stopped(start))
-    #
-    #     for experiment in experiments:
-    #         if "/" in experiment.name:
-    #             last = experiment.name.split("/")[-1]
-    #             if last.startswith(self.unique_name):
-    #                 print(f"Deleting registered model {experiment.name}")
-    #                 mlflow.delete_experiment(experiment.experiment_id)
-    #             else:
-    #                 print(f"Skipping registered model {experiment.name}")
-    #         else:
-    #             print(f"Skipping registered model {experiment.name}")
-    #
-    #         # if not rm.name.startswith(self.unique_name):
-    #         #     print(f"Skipping registered model {rm.name}")
-    #         # else:
-    #         #     print(f"Deleting registered model {rm.name}")
-    #             # for mv in rm.:
-    #             #     if mv.current_stage in ["Staging", "Production"]:
-    #             #         # noinspection PyUnresolvedReferences
-    #             #         mlflow.transition_model_version_stage(name=rm.name, version=mv.version, stage="Archived")
-    #
-    #             # noinspection PyUnresolvedReferences
-    #             # mlflow.delete_registered_model(rm.name)
-
-    def __cleanup_experiments(self) -> None:
-        pass
-        # import mlflow
-        # from mlflow.entities import ViewType
-        #
-        # start = dbgems.clock_start()
-        # experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
-        # advertisement = f"\nEnumerating MLflow Experiments...{dbgems.clock_stopped(start)}"
-        #
-        # for experiment in experiments:
-        #     if "/" in experiment.name:
-        #         last = experiment.name.split("/")[-1]
-        #         if last.startswith(self.unique_name):
-        #             status = self.client.workspace.get_status(experiment.name)
-        #             if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
-        #                 if advertisement: print(advertisement); advertisement = None
-        #                 print(f"| Deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
-        #                 mlflow.delete_experiment(experiment.experiment_id)
-        #             else:
-        #                 if advertisement: print(advertisement); advertisement = None
-        #                 print(f"| Cannot delete experiment \"{experiment.name}\" ({experiment.experiment_id})")
-        #         else:
-        #             pass
-        #             # print(f"Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
-        #     else:
-        #         print(f"| Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
+        WorkspaceCleaner(self).reset_learning_environment()
 
     def conclude_setup(self) -> None:
         """
