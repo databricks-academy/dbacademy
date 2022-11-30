@@ -200,10 +200,10 @@ class DBAcademyHelper:
         """
         return f"{DBAcademyHelper.get_dbacademy_users_path()}/{self.username}/{self.course_config.course_name}"
 
-    @property
-    def unique_name(self, sep: str = "-") -> str:
+    def unique_name(self, sep: str) -> str:
         """
         See DBAcademyHelper.to_unique_name
+        :param sep: The seperator to use between words
         :return: a unique name consisting of the consumer's username, and the course code.
         """
         return self.to_unique_name(username=self.username,
@@ -865,7 +865,8 @@ class DBAcademyHelper:
         import mlflow
 
         if dbgems.get_job_id():
-            mlflow.set_experiment(f"/Curriculum/Test Results/{self.unique_name}-{dbgems.get_job_id()}")
+            unique_name = self.unique_name("-")
+            mlflow.set_experiment(f"/Curriculum/Test Results/{unique_name}-{dbgems.get_job_id()}")
 
     @staticmethod
     def block_until_stream_is_ready(query: Union[str, pyspark.sql.streaming.StreamingQuery], min_batches: int = 2, delay_seconds: int = 5) -> None:

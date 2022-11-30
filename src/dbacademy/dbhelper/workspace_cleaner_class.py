@@ -188,10 +188,11 @@ class WorkspaceCleaner:
         # experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
         # advertisement = f"\nEnumerating MLflow Experiments...{dbgems.clock_stopped(start)}"
         #
+        # unique_name = self.unique_name("-")
         # for experiment in experiments:
         #     if "/" in experiment.name:
         #         last = experiment.name.split("/")[-1]
-        #         if last.startswith(self.unique_name):
+        #         if last.startswith(unique_name):
         #             status = self.client.workspace.get_status(experiment.name)
         #             if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
         #                 if advertisement: print(advertisement); advertisement = None
@@ -224,7 +225,7 @@ class WorkspaceCleaner:
     #     for experiment in experiments:
     #         if "/" in experiment.name:
     #             last = experiment.name.split("/")[-1]
-    #             if last.startswith(self.unique_name):
+    #             if last.startswith(unique_name):
     #                 print(f"Deleting registered model {experiment.name}")
     #                 mlflow.delete_experiment(experiment.experiment_id)
     #             else:
@@ -232,7 +233,7 @@ class WorkspaceCleaner:
     #         else:
     #             print(f"Skipping registered model {experiment.name}")
     #
-    #         # if not rm.name.startswith(self.unique_name):
+    #         # if not rm.name.startswith(unique_name):
     #         #     print(f"Skipping registered model {rm.name}")
     #         # else:
     #         #     print(f"Deleting registered model {rm.name}")
