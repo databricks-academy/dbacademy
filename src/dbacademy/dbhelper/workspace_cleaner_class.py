@@ -186,37 +186,32 @@ class WorkspaceCleaner:
 
         return True
 
-    @staticmethod
-    def _cleanup_experiments() -> bool:
-        return False
-        # import mlflow
-        # from mlflow.entities import ViewType
-        #
-        # self.print_announcement_once()
-        #
-        # start = dbgems.clock_start()
-        # experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
-        # advertisement = f"\nEnumerating MLflow Experiments...{dbgems.clock_stopped(start)}"
-        #
-        # unique_name = self.unique_name("-")
-        # for experiment in experiments:
-        #     if "/" in experiment.name:
-        #         last = experiment.name.split("/")[-1]
-        #         if last.startswith(unique_name):
-        #             status = self.client.workspace.get_status(experiment.name)
-        #             if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
-        #                 if advertisement: print(advertisement); advertisement = None
-        #                 print(f"| deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
-        #                 mlflow.delete_experiment(experiment.experiment_id)
-        #             else:
-        #                 if advertisement: print(advertisement); advertisement = None
-        #                 print(f"| cannot delete experiment \"{experiment.name}\" ({experiment.experiment_id})")
-        #         else:
-        #             pass
-        #             # print(f"| skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
-        #     else:
-        #         print(f"| skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
-        #
+    def _cleanup_experiments(self) -> bool:
+        import mlflow
+        from mlflow.entities import ViewType
+
+        start = dbgems.clock_start()
+        experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
+        advertisement = f"\nEnumerating MLflow Experiments...{dbgems.clock_stopped(start)}"
+
+        unique_name = self.__da.unique_name("-")
+        for experiment in experiments:
+            if "/" in experiment.name:
+                last = experiment.name.split("/")[-1]
+                if last.startswith(unique_name):
+                    status = self.__da.client.workspace.get_status(experiment.name)
+                    if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
+                        if advertisement: print(advertisement); advertisement = None
+                        print(f"| deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
+                        mlflow.delete_experiment(experiment.experiment_id)
+                    # else:
+                    #     if advertisement: print(advertisement); advertisement = None
+                    #     print(f"| cannot delete experiment \"{experiment.name}\" ({experiment.experiment_id})")
+                else:
+                    print(f"| skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
+            else:
+                print(f"| skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
+
 
     @staticmethod
     def _cleanup_mlflow_models() -> bool:
