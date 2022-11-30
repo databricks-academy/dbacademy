@@ -604,19 +604,17 @@ class DBAcademyHelper:
             dbgems.dbutils.fs.rm(self.paths.datasets, True)
 
     def __cleanup_feature_store_tables(self) -> None:
-        pass
-        # # noinspection PyUnresolvedReferences,PyPackageRequirements
-        # from databricks import feature_store
-        #
-        # # noinspection PyUnresolvedReferences
-        # fs = feature_store.FeatureStoreClient()
-        #
-        # # noinspection PyUnresolvedReferences
-        # for table in self.client.ml.feature_store.search_tables():
-        #     name = table.get("name")
-        #     if name.startswith(self.unique_name):
-        #         print(f"Dropping feature store table \"{name}\"")
-        #         fs.drop_table(name)
+        from databricks import feature_store
+
+        # noinspection PyUnresolvedReferences
+        fs = feature_store.FeatureStoreClient()
+
+        # noinspection PyUnresolvedReferences
+        for table in self.client.ml.feature_store.search_tables():
+            name = table.get("name")
+            if name.startswith(self.unique_name):
+                print(f"Dropping feature store table \"{name}\"")
+                fs.drop_table(name)
 
     def __cleanup_mlflow_models(self) -> None:
         pass
