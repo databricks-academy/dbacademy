@@ -607,14 +607,20 @@ class DBAcademyHelper:
         from databricks import feature_store
 
         # noinspection PyUnresolvedReferences
+        start = dbgems.clock_start()
         fs = feature_store.FeatureStoreClient()
+        feature_store_tables = self.client.ml.feature_store.search_tables()
+        announcement = f"Scanning for feature store tables...({dbgems.clock_stopped(start)})"
+        print(announcement)
 
         # noinspection PyUnresolvedReferences
-        for table in self.client.ml.feature_store.search_tables():
+        for table in feature_store_tables:
             name = table.get("name")
             if name.startswith(self.unique_name):
-                print(f"Dropping feature store table \"{name}\"")
+                print(f"| Dropping feature store table \"{name}\"")
                 fs.drop_table(name)
+            else:
+                print(f"| Skipping feature store table \"{name}\"")
 
     def __cleanup_mlflow_models(self) -> None:
         pass
