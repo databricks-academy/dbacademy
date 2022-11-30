@@ -166,22 +166,21 @@ class WorkspaceCleaner:
         from databricks import feature_store
         from contextlib import redirect_stdout
 
-        self.__print_announcement_once("__drop_feature_store_tables")
-
-        start = dbgems.clock_start()
-        # announcement = f"| Scanning for feature store tables...{dbgems.clock_stopped(start)}"
         fs = feature_store.FeatureStoreClient()
         feature_store_tables = self.__da.client.ml.feature_store.search_tables()
+
+        if len(feature_store_tables) == 0:
+            return  # No tables, nothing to drop
+
+        self.__print_announcement_once("__drop_feature_store_tables")
 
         for table in feature_store_tables:
             name = table.get("name")
             if name.startswith(self.__da.schema_name_prefix):
-                # if announcement: print(announcement); announcement = None
                 print(f"| Dropping feature store table \"{name}\"")
                 with redirect_stdout(None):
                     fs.drop_table(name)
             else:
-                # if announcement: print(announcement); announcement = None
                 print(f"| Skipping feature store table \"{name}\" {self.__da.schema_name_prefix}")
 
     def __cleanup_experiments(self) -> None:
