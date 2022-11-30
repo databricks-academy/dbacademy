@@ -42,9 +42,9 @@ class WorkspaceCleaner:
         
         print(f"\nThe learning environment was successfully reset {dbgems.clock_stopped(start)}.")
 
-    def __print_announcement_once(self) -> None:
+    def __print_announcement_once(self, context: str) -> None:
         if self.announcement:
-            print(self.announcement)
+            print(self.announcement, context)
             self.announcement = None
 
     def __reset_working_dir(self) -> None:
@@ -101,7 +101,7 @@ class WorkspaceCleaner:
         if not self.__da.lesson_config.create_catalog:
             return False  # If we don't create the catalog, don't drop it
 
-        self.__print_announcement_once()
+        self.__print_announcement_once("__drop_catalog")
 
         start = dbgems.clock_start()
         print(f"| dropping the catalog \"{self.__da.catalog_name}\"", end="...")
@@ -121,7 +121,7 @@ class WorkspaceCleaner:
         elif dbgems.spark.sql(f"SHOW DATABASES").filter(f"databaseName == '{self.__da.schema_name}'").count() == 0:
             return False  # If the database doesn't exist, it cannot be dropped
 
-        self.__print_announcement_once()
+        self.__print_announcement_once("__drop_schema")
 
         start = dbgems.clock_start()
         print(f"| dropping the schema \"{self.__da.schema_name}\"", end="...")
@@ -136,7 +136,7 @@ class WorkspaceCleaner:
         if len(dbgems.spark.streams.active) == 0:
             return  # Bail if there are no active streams
 
-        self.__print_announcement_once()
+        self.__print_announcement_once("__cleanup_stop_all_streams")
 
         for stream in dbgems.spark.streams.active:
             start = dbgems.clock_start()
@@ -153,7 +153,7 @@ class WorkspaceCleaner:
         if not self.__da.paths.exists(self.__da.paths.working_dir):
             return  # Bail if the directory doesn't exist
 
-        self.__print_announcement_once()
+        self.__print_announcement_once("__cleanup_working_dir")
 
         start = dbgems.clock_start()
         print(f"| removing the working directory \"{self.__da.paths.working_dir}\"", end="...")
@@ -166,7 +166,7 @@ class WorkspaceCleaner:
         from databricks import feature_store
         from contextlib import redirect_stdout
 
-        self.__print_announcement_once()
+        self.__print_announcement_once("__drop_feature_store_tables")
 
         start = dbgems.clock_start()
         # announcement = f"| Scanning for feature store tables...{dbgems.clock_stopped(start)}"
