@@ -173,7 +173,7 @@ class WorkspaceCleaner:
         for table in feature_store_tables:
             name = table.get("name")
             if name.startswith(self.__da.schema_name_prefix):
-                print(f"| Dropping feature store table \"{name}\"")
+                print(f"| dropping feature store table \"{name}\"")
                 logger = logging.getLogger("databricks.feature_store._compute_client._compute_client")
                 logger_disabled = logger.disabled
                 logger.disabled = True
@@ -182,7 +182,7 @@ class WorkspaceCleaner:
                 finally:
                     logger.disabled = logger_disabled
             else:
-                print(f"| Skipping feature store table \"{name}\" {self.__da.schema_name_prefix}")
+                print(f"| skipping feature store table \"{name}\" {self.__da.schema_name_prefix}")
 
         return True
 
@@ -206,16 +206,16 @@ class WorkspaceCleaner:
         #             status = self.client.workspace.get_status(experiment.name)
         #             if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
         #                 if advertisement: print(advertisement); advertisement = None
-        #                 print(f"| Deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
+        #                 print(f"| deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
         #                 mlflow.delete_experiment(experiment.experiment_id)
         #             else:
         #                 if advertisement: print(advertisement); advertisement = None
-        #                 print(f"| Cannot delete experiment \"{experiment.name}\" ({experiment.experiment_id})")
+        #                 print(f"| cannot delete experiment \"{experiment.name}\" ({experiment.experiment_id})")
         #         else:
         #             pass
-        #             # print(f"Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
+        #             # print(f"| skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
         #     else:
-        #         print(f"| Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
+        #         print(f"| skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
         #
 
     @staticmethod
@@ -236,17 +236,17 @@ class WorkspaceCleaner:
     #         if "/" in experiment.name:
     #             last = experiment.name.split("/")[-1]
     #             if last.startswith(unique_name):
-    #                 print(f"Deleting registered model {experiment.name}")
+    #                 print(f"| deleting registered model {experiment.name}")
     #                 mlflow.delete_experiment(experiment.experiment_id)
     #             else:
-    #                 print(f"Skipping registered model {experiment.name}")
+    #                 print(f"| skipping registered model {experiment.name}")
     #         else:
-    #             print(f"Skipping registered model {experiment.name}")
+    #             print(f"| skipping registered model {experiment.name}")
     #
     #         # if not rm.name.startswith(unique_name):
-    #         #     print(f"Skipping registered model {rm.name}")
+    #         #     print(f"| kipping registered model {rm.name}")
     #         # else:
-    #         #     print(f"Deleting registered model {rm.name}")
+    #         #     print(f"| deleting registered model {rm.name}")
     #             # for mv in rm.:
     #             #     if mv.current_stage in ["Staging", "Production"]:
     #             #         # noinspection PyUnresolvedReferences
