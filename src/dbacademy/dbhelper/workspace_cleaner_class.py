@@ -150,7 +150,10 @@ class WorkspaceCleaner:
     def _cleanup_working_dir(self) -> bool:
 
         if not self.__da.paths.exists(self.__da.paths.working_dir):
+            print("Bailing on _cleanup_working_dir")
             return False  # Bail if the directory doesn't exist
+
+        print("Proceeding with _cleanup_working_dir")
 
         start = dbgems.clock_start()
         print(f"| removing the working directory \"{self.__da.paths.working_dir}\"", end="...")
