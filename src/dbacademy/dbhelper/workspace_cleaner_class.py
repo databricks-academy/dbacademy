@@ -15,17 +15,17 @@ class WorkspaceCleaner:
         print("Resetting the learning environment:")
         
         dbgems.spark.catalog.clearCache()
-        status = status | self.__stop_all_streams()
+        status = status | self._stop_all_streams()
 
-        status = status or self.__drop_feature_store_tables()
-        status = status or self.__cleanup_mlflow_models()
-        status = status or self.__cleanup_experiments()
+        status = status or self._drop_feature_store_tables()
+        status = status or self._cleanup_mlflow_models()
+        status = status or self._cleanup_experiments()
 
-        status = status or self.__drop_catalog()
-        status = status or self.__drop_schema()
+        status = status or self._drop_catalog()
+        status = status or self._drop_schema()
 
         # Always last to remove DB files that are not removed by sql-drop operations.
-        status = status or self.__cleanup_working_dir()
+        status = status or self._cleanup_working_dir()
 
         if not status:
             print("| No action taken")
@@ -37,19 +37,19 @@ class WorkspaceCleaner:
         start = dbgems.clock_start()
 
         dbgems.spark.catalog.clearCache()
-        self.__stop_all_streams()
+        self._stop_all_streams()
 
-        self.__drop_feature_store_tables()
-        self.__cleanup_mlflow_models()
-        self.__cleanup_experiments()
+        self._drop_feature_store_tables()
+        self._cleanup_mlflow_models()
+        self._cleanup_experiments()
 
-        self.__reset_databases()
-        self.__reset_datasets()
-        self.__reset_working_dir()
+        self._reset_databases()
+        self._reset_datasets()
+        self._reset_working_dir()
 
         print(f"\nThe learning environment was successfully reset {dbgems.clock_stopped(start)}.")
 
-    def __reset_working_dir(self) -> None:
+    def _reset_working_dir(self) -> None:
         # noinspection PyProtectedMember
         working_dir_root = self.__da.paths._working_dir_root
 
@@ -57,12 +57,12 @@ class WorkspaceCleaner:
             print(f"Deleting working directory \"{working_dir_root}\".")
             dbgems.dbutils.fs.rm(working_dir_root, True)
 
-    def __reset_datasets(self) -> None:
+    def _reset_datasets(self) -> None:
         if Paths.exists(self.__da.paths.datasets):
             print(f"Deleting datasets \"{self.__da.paths.datasets}\".")
             dbgems.dbutils.fs.rm(self.__da.paths.datasets, True)
 
-    def __reset_databases(self) -> None:
+    def _reset_databases(self) -> None:
         from pyspark.sql.utils import AnalysisException
 
         # Drop all user-specific catalogs
@@ -82,10 +82,10 @@ class WorkspaceCleaner:
                 for schema_name in schema_names:
                     if schema_name.startswith(self.__da.schema_name_prefix) and schema_name != DBAcademyHelper.SCHEMA_DEFAULT:
                         print(f"Dropping the schema \"{catalog_name}.{schema_name}\"")
-                        self.__drop_database(f"{catalog_name}.{schema_name}")
+                        self._drop_database(f"{catalog_name}.{schema_name}")
 
     @staticmethod
-    def __drop_database(schema_name) -> None:
+    def _drop_database(schema_name) -> None:
         from pyspark.sql.utils import AnalysisException
 
         try: location = dbgems.sql(f"DESCRIBE TABLE EXTENDED {schema_name}").filter("col_name == 'Location'").first()["data_type"]
@@ -97,7 +97,7 @@ class WorkspaceCleaner:
         try: dbgems.dbutils.fs.rm(location)
         except: pass  # We are going to ignore this as it is most likely deleted or None
 
-    def __drop_catalog(self) -> bool:
+    def _drop_catalog(self) -> bool:
         from pyspark.sql.utils import AnalysisException
 
         if not self.__da.lesson_config.create_catalog:
@@ -114,7 +114,7 @@ class WorkspaceCleaner:
         print(dbgems.clock_stopped(start))
         return True
 
-    def __drop_schema(self) -> bool:
+    def _drop_schema(self) -> bool:
 
         if self.__da.lesson_config.create_catalog:
             return False  # If we create the catalog, we don't drop the schema
@@ -124,13 +124,13 @@ class WorkspaceCleaner:
         start = dbgems.clock_start()
         print(f"| dropping the schema \"{self.__da.schema_name}\"", end="...")
 
-        self.__drop_database(self.__da.schema_name)
+        self._drop_database(self.__da.schema_name)
 
         print(dbgems.clock_stopped(start))
         return True
 
     @staticmethod
-    def __stop_all_streams() -> bool:
+    def _stop_all_streams() -> bool:
 
         if len(dbgems.spark.streams.active) == 0:
             return False  # Bail if there are no active streams
@@ -147,7 +147,7 @@ class WorkspaceCleaner:
         
         return True
 
-    def __cleanup_working_dir(self) -> bool:
+    def _cleanup_working_dir(self) -> bool:
 
         if not self.__da.paths.exists(self.__da.paths.working_dir):
             return False  # Bail if the directory doesn't exist
@@ -160,7 +160,7 @@ class WorkspaceCleaner:
         print(dbgems.clock_stopped(start))
         return True
 
-    def __drop_feature_store_tables(self) -> bool:
+    def _drop_feature_store_tables(self) -> bool:
         import logging
         from databricks import feature_store
 
@@ -187,7 +187,7 @@ class WorkspaceCleaner:
         return True
 
     @staticmethod
-    def __cleanup_experiments() -> bool:
+    def _cleanup_experiments() -> bool:
         return False
         # import mlflow
         # from mlflow.entities import ViewType
@@ -219,7 +219,7 @@ class WorkspaceCleaner:
         #
 
     @staticmethod
-    def __cleanup_mlflow_models() -> bool:
+    def _cleanup_mlflow_models() -> bool:
         return False
         # import mlflow
         # from mlflow.entities import ViewType
