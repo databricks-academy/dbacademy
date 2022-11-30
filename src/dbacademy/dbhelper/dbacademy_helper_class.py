@@ -222,10 +222,11 @@ class DBAcademyHelper:
         :param sep: The seperator to use between words, defaults to a hyphen
         :return: The unique name composited from the specified username and course_code
         """
-        local_part = dbgems.clean_string(username.split("@")[0], "-")
+        local_part = username.split("@")[0]
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
         username_hash = dbgems.stable_hash(hash_basis, length=4)
-        return f"{local_part}{sep}{username_hash}{sep}da{sep}{course_code}".lower()
+        name = dbgems.clean_string(f"{local_part}{sep}{username_hash}{sep}da{sep}{course_code}", replacement=sep)
+        return name.lower()
 
     @property
     def catalog_name_prefix(self) -> str:
