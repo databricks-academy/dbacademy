@@ -235,7 +235,7 @@ class CRUD(ApiContainer, metaclass=ABCMeta):
             existing = self.get_by_example(item, if_not_exists="ignore") if if_exists != "create" else None
         if existing is None:
             result = self._create(item)
-            if isinstance(str, dict):
+            if isinstance(result, dict):
                 return self._refresh(result, fetch)
             else:
                 return self._refresh(item, fetch, result)
