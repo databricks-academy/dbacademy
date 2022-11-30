@@ -44,11 +44,6 @@ class WorkspaceCleaner:
         
         print(f"\nThe learning environment was successfully reset {dbgems.clock_stopped(start)}.")
 
-    def __print_announcement_once(self, context: str) -> None:
-        if self.announcement:
-            print(self.announcement, context)
-            self.announcement = None
-
     def __reset_working_dir(self) -> None:
         # noinspection PyProtectedMember
         working_dir_root = self.__da.paths._working_dir_root
@@ -103,8 +98,6 @@ class WorkspaceCleaner:
         if not self.__da.lesson_config.create_catalog:
             return False  # If we don't create the catalog, don't drop it
 
-        self.__print_announcement_once("__drop_catalog")
-
         start = dbgems.clock_start()
         print(f"| dropping the catalog \"{self.__da.catalog_name}\"", end="...")
 
@@ -123,8 +116,6 @@ class WorkspaceCleaner:
         elif dbgems.spark.sql(f"SHOW DATABASES").filter(f"databaseName == '{self.__da.schema_name}'").count() == 0:
             return False  # If the database doesn't exist, it cannot be dropped
 
-        self.__print_announcement_once("__drop_schema")
-
         start = dbgems.clock_start()
         print(f"| dropping the schema \"{self.__da.schema_name}\"", end="...")
 
@@ -133,12 +124,11 @@ class WorkspaceCleaner:
         print(dbgems.clock_stopped(start))
         return True
 
-    def __stop_all_streams(self) -> bool:
+    @staticmethod
+    def __stop_all_streams() -> bool:
 
         if len(dbgems.spark.streams.active) == 0:
             return False  # Bail if there are no active streams
-
-        self.__print_announcement_once("__stop_all_streams")
 
         for stream in dbgems.spark.streams.active:
             start = dbgems.clock_start()
@@ -156,8 +146,6 @@ class WorkspaceCleaner:
 
         if not self.__da.paths.exists(self.__da.paths.working_dir):
             return False  # Bail if the directory doesn't exist
-
-        self.__print_announcement_once("__cleanup_working_dir")
 
         start = dbgems.clock_start()
         print(f"| removing the working directory \"{self.__da.paths.working_dir}\"", end="...")
@@ -177,8 +165,6 @@ class WorkspaceCleaner:
         if len(feature_store_tables) == 0:
             return False  # No tables, nothing to drop
 
-        self.__print_announcement_once("__drop_feature_store_tables")
-
         for table in feature_store_tables:
             name = table.get("name")
             if name.startswith(self.__da.schema_name_prefix):
@@ -190,7 +176,8 @@ class WorkspaceCleaner:
 
         return True
 
-    def __cleanup_experiments(self) -> bool:
+    @staticmethod
+    def __cleanup_experiments() -> bool:
         return False
         # import mlflow
         # from mlflow.entities import ViewType
@@ -220,7 +207,8 @@ class WorkspaceCleaner:
         #         print(f"| Skipping experiment \"{experiment.name}\" ({experiment.experiment_id})")
         #
 
-    def __cleanup_mlflow_models(self) -> bool:
+    @staticmethod
+    def __cleanup_mlflow_models() -> bool:
         return False
         # import mlflow
         # from mlflow.entities import ViewType
