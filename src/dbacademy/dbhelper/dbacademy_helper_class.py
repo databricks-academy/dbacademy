@@ -201,16 +201,17 @@ class DBAcademyHelper:
         return f"{DBAcademyHelper.get_dbacademy_users_path()}/{self.username}/{self.course_config.course_name}"
 
     @property
-    def unique_name(self) -> str:
+    def unique_name(self, sep = "-") -> str:
         """
         See DBAcademyHelper.to_unique_name
         :return: a unique name consisting of the consumer's username, and the course code.
         """
         return self.to_unique_name(username=self.username,
-                                   course_code=self.course_config.course_code)
+                                   course_code=self.course_config.course_code,
+                                   sep=sep)
 
     @staticmethod
-    def to_unique_name(*, username: str, course_code: str) -> str:
+    def to_unique_name(*, username: str, course_code: str, sep: str = "-") -> str:
         """
         A utility function that produces a unique name to be used in creating jobs, warehouses, DLT pipelines, experiments and other user & course specific artifacts.
         The pattern consist of the local part of the email address, a 4-character hash, "da" for DBAcademy and the course's code. The value is then converted to lower case
@@ -218,12 +219,13 @@ class DBAcademyHelper:
         See also DBAcademyHelper.unique_name
         :param username: The full email address of a user. See also LessonConfig.username
         :param course_code: The course's code. See also CourseConfig.course_code
+        :param sep: The seperator to use between words, defaults to a hyphen
         :return: The unique name composited from the specified username and course_code
         """
         local_part = dbgems.clean_string(username.split("@")[0], "-")
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
         username_hash = dbgems.stable_hash(hash_basis, length=4)
-        return f"{local_part}-{username_hash}-da-{course_code}".lower()
+        return f"{local_part}{sep}{username_hash}{sep}da{sep}{course_code}".lower()
 
     @property
     def catalog_name_prefix(self) -> str:
