@@ -11,7 +11,7 @@ class MLflowEndpointsClient(ApiContainer):
 
     def list_endpoints(self) -> List[Dict[str, Any]]:
         response = self.client.api("GET", f"{self.base_uri}/list")
-        return response.get("endpoints")
+        return response.get("endpoints", [])
 
     def get_status(self, model_name: str) -> Dict[str, Any]:
         response = self.client.api("GET", f"{self.base_uri}/get-status?registered_model_name={model_name}")
@@ -28,12 +28,6 @@ class MLflowEndpointsClient(ApiContainer):
             "registered_model_name": model_name
         }
         self.client.api("POST", f"{self.base_uri}/disable", _data=payload)
-
-    def delete(self, model_name: str) -> None:
-        payload = {
-            "registered_model_name": model_name
-        }
-        self.client.api("DELETE", f"{self.base_uri}/delete", _data=payload)
 
     def wait_for_endpoint(self, model_name: str, expected_state: str = "ENDPOINT_STATE_READY", delay_seconds: int = 10, timeout: int = 10*60) -> None:
         import time
@@ -59,7 +53,8 @@ class MLflowEndpointsClient(ApiContainer):
         if model_name is not None:
             url += f"?registered_model_name={model_name}"
 
-        return self.client.api("GET", url).get("endpoint_versions", [])
+        response = self.client.api("GET", url)
+        return response.get("endpoint_versions", [])
 
     def wait_for_endpoint_version(self, model_name: str, version_name: str, delay_seconds: int = 10, timeout: int = 10*60) -> None:
         import time
