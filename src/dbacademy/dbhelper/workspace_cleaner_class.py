@@ -200,9 +200,11 @@ class WorkspaceCleaner:
         start = dbgems.clock_start()
         experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
 
-        if len(experiments) > 0:
-            # Not our normal pattern, but the goal here is to report on ourselves only if experiments were found.
-            print(f"| enumerating MLflow Experiments...{dbgems.clock_stopped(start)}")
+        if len(experiments) == 0:
+            return False
+
+        # Not our normal pattern, but the goal here is to report on ourselves only if experiments were found.
+        print(f"| enumerating MLflow Experiments...{dbgems.clock_stopped(start)}")
 
         if lesson_only:
             unique_name = self.__da.unique_name("-")
@@ -219,39 +221,29 @@ class WorkspaceCleaner:
                     print(f"| deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
                     mlflow.delete_experiment(experiment.experiment_id)
 
-    @staticmethod
-    def _cleanup_mlflow_models() -> bool:
-        return False
-        # import mlflow
-        # from mlflow.entities import ViewType
-        #
-        # self.print_announcement_once()
-        #
-        # start = dbgems.clock_start()
-        # print(f"Enumerating MLflow Models", end="...")
-        # self.client.ml.mlflow.
-        # experiments = mlflow.models.(view_type=ViewType.ACTIVE_ONLY)
-        # print(dbgems.clock_stopped(start))
-    #
-    #     for experiment in experiments:
-    #         if "/" in experiment.name:
-    #             last = experiment.name.split("/")[-1]
-    #             if last.startswith(unique_name):
-    #                 print(f"| deleting registered model {experiment.name}")
-    #                 mlflow.delete_experiment(experiment.experiment_id)
-    #             else:
-    #                 print(f"| skipping registered model {experiment.name}")
-    #         else:
-    #             print(f"| skipping registered model {experiment.name}")
-    #
-    #         # if not rm.name.startswith(unique_name):
-    #         #     print(f"| kipping registered model {rm.name}")
-    #         # else:
-    #         #     print(f"| deleting registered model {rm.name}")
-    #             # for mv in rm.:
-    #             #     if mv.current_stage in ["Staging", "Production"]:
-    #             #         # noinspection PyUnresolvedReferences
-    #             #         mlflow.transition_model_version_stage(name=rm.name, version=mv.version, stage="Archived")
-    #
-    #             # noinspection PyUnresolvedReferences
-    #             # mlflow.delete_registered_model(rm.name)
+        return True
+
+    def _cleanup_mlflow_models(self, lesson_only: bool) -> bool:
+        start = dbgems.clock_start()
+        endpoints = self.__da.client.ml.mlflow_endpoints.list_endpoints()
+
+        if len(endpoints) == 0:
+            return False
+
+        # Not our normal pattern, but the goal here is to report on ourselves only if endpoints were found.
+        print(f"| enumerating MLflow endpoints...{dbgems.clock_stopped(start)}")
+
+        if lesson_only:
+            unique_name = self.__da.unique_name("-")
+        else:
+            unique_name = self.__da.to_unique_name(username=self.__da.username,
+                                                   course_code=self.__da.course_config.course_code,
+                                                   lesson_name=None,
+                                                   sep="-")
+        for endpoint in endpoints:
+            name: str = endpoint.get("registered_model_name")
+            if name.startswith(unique_name):
+                print(f"| disabling MLflow endpoint \"{name}\"")
+                self.__da.client.ml.mlflow_endpoints.disable(name)
+
+        return True
