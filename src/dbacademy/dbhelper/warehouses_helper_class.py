@@ -20,7 +20,9 @@ class WarehousesHelper:
 
     def delete_sql_warehouses_for(self, username):
         name = self.da.to_unique_name(username=username,
-                                      course_code=self.da.course_config.course_code)
+                                      course_code=self.da.course_config.course_code,
+                                      lesson_name=self.da.lesson_config.name,
+                                      sep="-")
         self.client.sql.endpoints.delete_by_name(name=name)
 
     def delete_sql_warehouses(self):
@@ -36,7 +38,9 @@ class WarehousesHelper:
     def create_sql_warehouse_for(self, username, auto_stop_mins=120, enable_serverless_compute=False):
         return self.__create_sql_warehouse(username=username,
                                            name=self.da.to_unique_name(username=username,
-                                                                       course_code=self.da.course_config.course_code),
+                                                                       course_code=self.da.course_config.course_code,
+                                                                       lesson_name=self.da.lesson_config.name,
+                                                                       sep="-"),
                                            auto_stop_mins=auto_stop_mins,
                                            min_num_clusters=1,
                                            max_num_clusters=1,
