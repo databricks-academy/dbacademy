@@ -29,6 +29,12 @@ class MLflowEndpointsClient(ApiContainer):
         }
         self.client.api("POST", f"{self.base_uri}/disable", _data=payload)
 
+    def delete(self, model_name: str) -> None:
+        payload = {
+            "registered_model_name": model_name
+        }
+        self.client.api("DELETE", f"{self.base_uri}/delete", _data=payload)
+
     def wait_for_endpoint(self, model_name: str, expected_state: str = "ENDPOINT_STATE_READY", delay_seconds: int = 10, timeout: int = 10*60) -> None:
         import time
 
