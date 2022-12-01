@@ -160,7 +160,7 @@ class WorkspaceCleaner:
         print(dbgems.clock_stopped(start))
         return True
 
-    def _drop_feature_store_tables(self) -> bool:
+    def _drop_feature_store_tables(self, lesson_only: bool) -> bool:
         import logging
         from databricks import feature_store
 
@@ -172,7 +172,9 @@ class WorkspaceCleaner:
 
         for table in feature_store_tables:
             name = table.get("name")
-            if name.startswith(self.__da.schema_name_prefix):
+            prefix = self.__da.schema_name if lesson_only else self.__da.schema_name_prefix
+
+            if name.startswith(prefix):
                 print(f"| dropping feature store table \"{name}\"")
                 logger = logging.getLogger("databricks.feature_store._compute_client._compute_client")
                 logger_disabled = logger.disabled
@@ -196,9 +198,10 @@ class WorkspaceCleaner:
             return False
 
         start = dbgems.clock_start()
-        print(f"| enumerating MLflow Experiments", end="...")
         experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
-        print(dbgems.clock_stopped(start))
+
+        if len(experiments) > 0:
+            print(f"| enumerating MLflow Experiments...{dbgems.clock_stopped(start)}")
 
         unique_name = self.__da.unique_name("-")
         for experiment in experiments:
