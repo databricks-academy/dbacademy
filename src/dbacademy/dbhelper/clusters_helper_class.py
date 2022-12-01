@@ -27,7 +27,7 @@ class ClustersHelper:
             (f"dbacademy.workspace", dbgems.clean_string(self.workspace.workspace_name)),
             (f"dbacademy.org_id", dbgems.clean_string(self.workspace.org_id)),
             (f"dbacademy.course", dbgems.clean_string(self.da.course_config.course_name)),
-            (f"dbacademy.source", dbgems.clean_string("Smoke-Test" if self.da.is_smoke_test() else self.da.course_config.course_name))
+            (f"dbacademy.source", dbgems.clean_string("Smoke-Test" if self.da.is_smoke_test else self.da.course_config.course_name))
         ]
 
         name = ClustersHelper.POOLS_DEFAULT

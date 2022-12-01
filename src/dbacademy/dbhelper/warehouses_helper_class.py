@@ -12,11 +12,11 @@ class WarehousesHelper:
 
     @property
     def autoscale_min(self):
-        return 1 if self.da.is_smoke_test() else 2
+        return 1 if self.da.is_smoke_test else 2
 
     @property
     def autoscale_max(self):
-        return 1 if self.da.is_smoke_test() else 20
+        return 1 if self.da.is_smoke_test else 20
 
     def delete_sql_warehouses_for(self, username):
         name = self.da.to_unique_name(username=username,
@@ -76,7 +76,7 @@ class WarehousesHelper:
                 f"dbacademy.workspace": dbgems.clean_string(self.workspace.workspace_name),
                 f"dbacademy.org_id": dbgems.clean_string(self.workspace.org_id),
                 f"dbacademy.course": dbgems.clean_string(self.da.course_config.course_name),  # Tag the name of the course
-                f"dbacademy.source": dbgems.clean_string("Smoke-Test" if self.da.is_smoke_test() else self.da.course_config.course_name),
+                f"dbacademy.source": dbgems.clean_string("Smoke-Test" if self.da.is_smoke_test else self.da.course_config.course_name),
             })
         warehouse_id = warehouse.get("id")
 
@@ -95,4 +95,4 @@ class WarehousesHelper:
         print(f"  Autoscale minimum: {min_num_clusters}")
         print(f"  Autoscale maximum: {max_num_clusters}")
         if self.da.is_smoke_test:
-            print(f"  Smoke Test:        {self.da.is_smoke_test()} ")
+            print(f"  Smoke Test:        {self.da.is_smoke_test} ")
