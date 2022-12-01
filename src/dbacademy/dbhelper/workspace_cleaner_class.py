@@ -19,7 +19,7 @@ class WorkspaceCleaner:
 
         status = self._drop_feature_store_tables(lesson_only=True) or status
         status = self._cleanup_mlflow_models() or status
-        status = self._cleanup_experiments() or status
+        status = self._cleanup_experiments(lesson_only=True) or status
 
         status = self._drop_catalog() or status
         status = self._drop_schema() or status
@@ -41,7 +41,7 @@ class WorkspaceCleaner:
 
         self._drop_feature_store_tables(lesson_only=False)
         self._cleanup_mlflow_models()
-        self._cleanup_experiments()
+        self._cleanup_experiments(lesson_only=False)
 
         self._reset_databases()
         self._reset_datasets()
@@ -188,7 +188,7 @@ class WorkspaceCleaner:
 
         return True
 
-    def _cleanup_experiments(self) -> bool:
+    def _cleanup_experiments(self, lesson_only: bool) -> bool:
         import mlflow
         from mlflow.entities import ViewType
 
@@ -204,7 +204,13 @@ class WorkspaceCleaner:
             # Not our normal pattern, but the goal here is to report on ourselves only if experiments were found.
             print(f"| enumerating MLflow Experiments...{dbgems.clock_stopped(start)}")
 
-        unique_name = self.__da.unique_name("-")
+        if lesson_only:
+            unique_name = self.__da.unique_name("-")
+        else:
+            unique_name = self.__da.to_unique_name(username=self.__da.username,
+                                                   course_code=self.__da.course_config.course_code,
+                                                   lesson_name=None,
+                                                   sep="-")
         for experiment in experiments:
             last = experiment.name.split("/")[-1]
             if last.startswith(unique_name):
