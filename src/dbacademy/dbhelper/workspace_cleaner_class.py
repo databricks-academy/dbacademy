@@ -190,7 +190,7 @@ class WorkspaceCleaner:
 
         return True
 
-    def _get_unique_name(self, lesson_only: bool) -> bool:
+    def _get_unique_name(self, lesson_only: bool) -> str:
         if lesson_only:
             return self.__da.unique_name("-")
         else:
@@ -227,7 +227,7 @@ class WorkspaceCleaner:
     def _cleanup_mlflow_models(self, lesson_only: bool) -> bool:
         start = dbgems.clock_start()
 
-        models = self.__da.client.ml.mlflow_models.list_models()
+        models = self.__da.client.ml.mlflow_models.list()
         models = [m for m in models if m.get("name").startswith(self._get_unique_name(lesson_only))]
 
         if len(models) == 0:
