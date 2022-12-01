@@ -33,7 +33,7 @@ class WorkspaceCleaner:
 
     def reset_learning_environment(self) -> None:
 
-        print("Resetting the workspaces' learning environment:")
+        print("Resetting the learning environment for all lessons:")
 
         start = dbgems.clock_start()
 
@@ -49,19 +49,19 @@ class WorkspaceCleaner:
         self._reset_datasets()
         self._reset_working_dir()
 
-        print(f"\nThe learning environment was successfully reset {dbgems.clock_stopped(start)}.")
+        print(f"| the learning environment was successfully reset {dbgems.clock_stopped(start)}.")
 
     def _reset_working_dir(self) -> None:
         # noinspection PyProtectedMember
         working_dir_root = self.__da.paths._working_dir_root
 
         if Paths.exists(working_dir_root):
-            print(f"Deleting working directory \"{working_dir_root}\".")
+            print(f"| deleting working directory \"{working_dir_root}\".")
             dbgems.dbutils.fs.rm(working_dir_root, True)
 
     def _reset_datasets(self) -> None:
         if Paths.exists(self.__da.paths.datasets):
-            print(f"Deleting datasets \"{self.__da.paths.datasets}\".")
+            print(f"| deleting datasets \"{self.__da.paths.datasets}\".")
             dbgems.dbutils.fs.rm(self.__da.paths.datasets, True)
 
     def _reset_databases(self) -> None:
@@ -83,7 +83,7 @@ class WorkspaceCleaner:
                 schema_names = [d.databaseName for d in dbgems.spark.sql(f"SHOW DATABASES IN {catalog_name}").collect()]
                 for schema_name in schema_names:
                     if schema_name.startswith(self.__da.schema_name_prefix) and schema_name != DBAcademyHelper.SCHEMA_DEFAULT:
-                        print(f"Dropping the schema \"{catalog_name}.{schema_name}\"")
+                        print(f"| ropping the schema \"{catalog_name}.{schema_name}\"")
                         self._drop_database(f"{catalog_name}.{schema_name}")
 
     @staticmethod
@@ -192,9 +192,12 @@ class WorkspaceCleaner:
 
     def _get_unique_name(self, lesson_only: bool) -> str:
         if lesson_only:
-            return self.__da.unique_name("-")
+            name = self.__da.unique_name("-")
         else:
-            return self.__da.to_unique_name(username=self.__da.username, course_code=self.__da.course_config.course_code, lesson_name=None, sep="-")
+            name = self.__da.to_unique_name(username=self.__da.username, course_code=self.__da.course_config.course_code, lesson_name=None, sep="-")
+
+        # print(f"Unique Name: {name}")
+        return name
 
     def _cleanup_experiments(self, lesson_only: bool) -> bool:
         import mlflow
@@ -208,9 +211,10 @@ class WorkspaceCleaner:
         start = dbgems.clock_start()
 
         experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
-        experiments = [e for e in experiments if e.name.split("/")[-1].startswith(self._get_unique_name(lesson_only))]
+        experiments = [e for e in experiments if e.name.startswith(self._get_unique_name(lesson_only))]
 
         if len(experiments) == 0:
+
             return False
 
         # Not our normal pattern, but the goal here is to report on ourselves only if experiments were found.
