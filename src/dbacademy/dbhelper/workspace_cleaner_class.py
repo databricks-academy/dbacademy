@@ -196,7 +196,7 @@ class WorkspaceCleaner:
         else:
             name = self.__da.to_unique_name(username=self.__da.username, course_code=self.__da.course_config.course_code, lesson_name=None, sep="-")
 
-        # print(f"Unique Name: {name}")
+        print(f"Unique Name: {name}")
         return name
 
     def _cleanup_experiments(self, lesson_only: bool) -> bool:
