@@ -9,5 +9,5 @@ class MlClient(ApiContainer):
         from dbacademy.dbrest.ml.feature_store import FeatureStoreClient
         self.feature_store = FeatureStoreClient(self.client)
 
-        from dbacademy.dbrest.ml.mlflow import MLflowClient
-        self.mlflow = MLflowClient(self.client)
+        from dbacademy.dbrest.ml.mlflow_endpoints import MLflowEndpointsClient
+        self.mlflow_endpoints = MLflowEndpointsClient(self.client)
