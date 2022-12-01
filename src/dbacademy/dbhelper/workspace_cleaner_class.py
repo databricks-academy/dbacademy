@@ -190,6 +190,12 @@ class WorkspaceCleaner:
 
         return True
 
+    def _get_unique_name(self, lesson_only: bool) -> bool:
+        if lesson_only:
+            return self.__da.unique_name("-")
+        else:
+            return self.__da.to_unique_name(username=self.__da.username, course_code=self.__da.course_config.course_code, lesson_name=None, sep="-")
+
     def _cleanup_experiments(self, lesson_only: bool) -> bool:
         import mlflow
         from mlflow.entities import ViewType
@@ -200,7 +206,9 @@ class WorkspaceCleaner:
             return False
 
         start = dbgems.clock_start()
+
         experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
+        experiments = [e for e in experiments if e.name.split("/")[-1].startswith(self._get_unique_name(lesson_only))]
 
         if len(experiments) == 0:
             return False
@@ -208,26 +216,19 @@ class WorkspaceCleaner:
         # Not our normal pattern, but the goal here is to report on ourselves only if experiments were found.
         print(f"| enumerating MLflow Experiments...{dbgems.clock_stopped(start)}")
 
-        if lesson_only:
-            unique_name = self.__da.unique_name("-")
-        else:
-            unique_name = self.__da.to_unique_name(username=self.__da.username,
-                                                   course_code=self.__da.course_config.course_code,
-                                                   lesson_name=None,
-                                                   sep="-")
         for experiment in experiments:
-            last = experiment.name.split("/")[-1]
-            if last.startswith(unique_name):
-                status = self.__da.client.workspace.get_status(experiment.name)
-                if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
-                    print(f"| deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
-                    mlflow.delete_experiment(experiment.experiment_id)
+            status = self.__da.client.workspace.get_status(experiment.name)
+            if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
+                print(f"| deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
+                mlflow.delete_experiment(experiment.experiment_id)
 
         return True
 
     def _cleanup_mlflow_models(self, lesson_only: bool) -> bool:
         start = dbgems.clock_start()
+
         models = self.__da.client.ml.mlflow_models.list_models()
+        models = [m for m in models if m.get("name").startswith(self._get_unique_name(lesson_only))]
 
         if len(models) == 0:
             return False
@@ -235,33 +236,27 @@ class WorkspaceCleaner:
         # Not our normal pattern, but the goal here is to report on ourselves only if endpoints were found.
         print(f"| enumerating MLflow models...{dbgems.clock_stopped(start)}")
 
-        if lesson_only:
-            unique_name = self.__da.unique_name("-")
-        else:
-            unique_name = self.__da.to_unique_name(username=self.__da.username,
-                                                   course_code=self.__da.course_config.course_code,
-                                                   lesson_name=None,
-                                                   sep="-")
         for model in self.__da.client.ml.mlflow_models.list():
             name = model.get("name")
-            if name.startswith(unique_name):
-                print(f"{name}")
-                versions = self.__da.client.ml.mlflow_model_versions.list(name)
-                for version in versions:
-                    v = version.get("version")
-                    stage = version.get("current_stage").lower()
-                    if stage in ["production", "staging"]:
-                        print(f"| archiving model {name} version #{v}")
-                        self.__da.client.ml.mlflow_model_versions.transition_stage(name, v, "archived")
-                print(f"| deleting model {name}")
-                self.__da.client.ml.mlflow_models.delete(name)
-                print("-" * 80)
+            print(f"{name}")
+            versions = self.__da.client.ml.mlflow_model_versions.list(name)
+            for version in versions:
+                v = version.get("version")
+                stage = version.get("current_stage").lower()
+                if stage in ["production", "staging"]:
+                    print(f"| archiving model {name} version #{v}")
+                    self.__da.client.ml.mlflow_model_versions.transition_stage(name, v, "archived")
+            print(f"| deleting model {name}")
+            self.__da.client.ml.mlflow_models.delete(name)
+            print("-" * 80)
 
         return True
 
     def _cleanup_mlflow_endpoints(self, lesson_only: bool) -> bool:
         start = dbgems.clock_start()
+
         endpoints = self.__da.client.ml.mlflow_endpoints.list_endpoints()
+        endpoints = [e for e in endpoints if e.get("registered_model_name").startswith(self._get_unique_name(lesson_only))]
 
         if len(endpoints) == 0:
             return False
@@ -269,17 +264,9 @@ class WorkspaceCleaner:
         # Not our normal pattern, but the goal here is to report on ourselves only if endpoints were found.
         print(f"| enumerating MLflow endpoints...{dbgems.clock_stopped(start)}")
 
-        if lesson_only:
-            unique_name = self.__da.unique_name("-")
-        else:
-            unique_name = self.__da.to_unique_name(username=self.__da.username,
-                                                   course_code=self.__da.course_config.course_code,
-                                                   lesson_name=None,
-                                                   sep="-")
         for endpoint in endpoints:
             name: str = endpoint.get("registered_model_name")
-            if name.startswith(unique_name):
-                print(f"| disabling MLflow endpoint \"{name}\"")
-                self.__da.client.ml.mlflow_endpoints.disable(name)
+            print(f"| disabling MLflow endpoint \"{name}\"")
+            self.__da.client.ml.mlflow_endpoints.disable(name)
 
         return True
