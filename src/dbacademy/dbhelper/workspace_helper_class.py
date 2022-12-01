@@ -80,7 +80,7 @@ class WorkspaceHelper:
     @property
     def configure_for(self):
         # Under test, we are always configured for the current user only
-        configure_for = WorkspaceHelper.CONFIGURE_FOR_CURRENT_USER_ONLY if self.da.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_CONFIGURE_FOR)
+        configure_for = WorkspaceHelper.CONFIGURE_FOR_CURRENT_USER_ONLY if self.da.is_smoke_test else dbgems.get_parameter(WorkspaceHelper.PARAM_CONFIGURE_FOR)
         assert configure_for in WorkspaceHelper.CONFIGURE_FOR_VALID_OPTIONS, f"Who the workspace is being configured for must be specified, found \"{configure_for}\". Options include {WorkspaceHelper.CONFIGURE_FOR_VALID_OPTIONS}"
         return configure_for
 
@@ -122,10 +122,10 @@ class WorkspaceHelper:
 
     @property
     def lab_id(self):
-        lab_id = "Smoke Test" if self.da.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_LAB_ID, None)
+        lab_id = "Smoke Test" if self.da.is_smoke_test else dbgems.get_parameter(WorkspaceHelper.PARAM_LAB_ID, None)
         return None if lab_id is None else dbgems.clean_string(lab_id)
 
     @property
     def description(self):
-        description = "This is a smoke test" if self.da.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION, None)
+        description = "This is a smoke test" if self.da.is_smoke_test else dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION, None)
         return None if description is None else dbgems.clean_string(description)
