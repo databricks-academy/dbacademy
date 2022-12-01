@@ -11,3 +11,9 @@ class MlClient(ApiContainer):
 
         from dbacademy.dbrest.ml.mlflow_endpoints import MLflowEndpointsClient
         self.mlflow_endpoints = MLflowEndpointsClient(self.client)
+
+        from dbacademy.dbrest.ml.mlflow_models import MLflowModelsClient
+        self.mlflow_models = MLflowModelsClient(self.client)
+
+        from dbacademy.dbrest.ml.mlflow_model_versions import MLflowModelVersionsClient
+        self.mlflow_model_versions = MLflowModelVersionsClient(self.client)
