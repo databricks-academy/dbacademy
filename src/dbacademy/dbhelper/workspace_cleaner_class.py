@@ -8,6 +8,7 @@ class WorkspaceCleaner:
     
     def __init__(self, da: DBAcademyHelper):
         self.__da = da
+        self.__unique_name = None
 
     def reset_lesson(self) -> None:
 
@@ -18,8 +19,8 @@ class WorkspaceCleaner:
         status = self._stop_all_streams() or status
 
         status = self._drop_feature_store_tables(lesson_only=True) or status
-        status = self._cleanup_mlflow_models(lesson_only=True) or status
         status = self._cleanup_mlflow_endpoints(lesson_only=True) or status
+        status = self._cleanup_mlflow_models(lesson_only=True) or status
         status = self._cleanup_experiments(lesson_only=True) or status
 
         status = self._drop_catalog() or status
@@ -41,8 +42,8 @@ class WorkspaceCleaner:
         self._stop_all_streams()
 
         self._drop_feature_store_tables(lesson_only=False)
-        self._cleanup_mlflow_models(lesson_only=True)
         self._cleanup_mlflow_endpoints(lesson_only=True)
+        self._cleanup_mlflow_models(lesson_only=True)
         self._cleanup_experiments(lesson_only=False)
 
         self._reset_databases()
@@ -191,13 +192,16 @@ class WorkspaceCleaner:
         return True
 
     def _get_unique_name(self, lesson_only: bool) -> str:
-        if lesson_only:
-            name = self.__da.unique_name("-")
-        else:
-            name = self.__da.to_unique_name(username=self.__da.username, course_code=self.__da.course_config.course_code, lesson_name=None, sep="-")
+        if self.__unique_name is not None:
+            return self.__unique_name
 
-        print(f"Unique Name: {name}")
-        return name
+        if lesson_only:
+            self.__unique_name = self.__da.unique_name("-")
+        else:
+            self.__unique_name = self.__da.to_unique_name(username=self.__da.username, course_code=self.__da.course_config.course_code, lesson_name=None, sep="-")
+
+        print(f"Unique Name: {self.__unique_name}")
+        return self.__unique_name
 
     def _cleanup_experiments(self, lesson_only: bool) -> bool:
         import mlflow
