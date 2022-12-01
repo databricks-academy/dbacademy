@@ -18,7 +18,7 @@ class WorkspaceCleaner:
         status = self._stop_all_streams() or status
 
         status = self._drop_feature_store_tables(lesson_only=True) or status
-        status = self._cleanup_mlflow_models() or status
+        status = self._cleanup_mlflow_models(lesson_only=True) or status
         status = self._cleanup_experiments(lesson_only=True) or status
 
         status = self._drop_catalog() or status
@@ -40,7 +40,7 @@ class WorkspaceCleaner:
         self._stop_all_streams()
 
         self._drop_feature_store_tables(lesson_only=False)
-        self._cleanup_mlflow_models()
+        self._cleanup_mlflow_models(lesson_only=True)
         self._cleanup_experiments(lesson_only=False)
 
         self._reset_databases()
