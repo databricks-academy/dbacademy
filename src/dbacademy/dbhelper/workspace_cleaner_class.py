@@ -203,11 +203,6 @@ class WorkspaceCleaner:
         import mlflow
         from mlflow.entities import ViewType
 
-        if not self.__da.is_smoke_test:
-            # Experiments are tied to a notebook unless we are running under test.
-            # When ran under test, they end up in /Curriculum/Test Results/
-            return False
-
         start = dbgems.clock_start()
 
         experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
