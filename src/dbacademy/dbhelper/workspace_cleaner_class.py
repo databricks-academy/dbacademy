@@ -17,7 +17,7 @@ class WorkspaceCleaner:
         dbgems.spark.catalog.clearCache()
         status = self._stop_all_streams() or status
 
-        status = self._drop_feature_store_tables() or status
+        status = self._drop_feature_store_tables(lesson_only=True) or status
         status = self._cleanup_mlflow_models() or status
         status = self._cleanup_experiments() or status
 
@@ -39,7 +39,7 @@ class WorkspaceCleaner:
         dbgems.spark.catalog.clearCache()
         self._stop_all_streams()
 
-        self._drop_feature_store_tables()
+        self._drop_feature_store_tables(lesson_only=False)
         self._cleanup_mlflow_models()
         self._cleanup_experiments()
 
@@ -201,6 +201,7 @@ class WorkspaceCleaner:
         experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
 
         if len(experiments) > 0:
+            # Not our normal pattern, but the goal here is to report on ourselves only if experiments were found.
             print(f"| enumerating MLflow Experiments...{dbgems.clock_stopped(start)}")
 
         unique_name = self.__da.unique_name("-")

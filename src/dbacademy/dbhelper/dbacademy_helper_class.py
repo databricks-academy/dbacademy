@@ -208,10 +208,11 @@ class DBAcademyHelper:
         """
         return self.to_unique_name(username=self.username,
                                    course_code=self.course_config.course_code,
+                                   lesson_name=self.lesson_config.name,
                                    sep=sep)
 
     @staticmethod
-    def to_unique_name(*, username: str, course_code: str, sep: str = "-") -> str:
+    def to_unique_name(*, username: str, course_code: str, lesson_name: Optional[str], sep: str) -> str:
         """
         A utility function that produces a unique name to be used in creating jobs, warehouses, DLT pipelines, experiments and other user & course specific artifacts.
         The pattern consist of the local part of the email address, a 4-character hash, "da" for DBAcademy and the course's code. The value is then converted to lower case
@@ -219,14 +220,20 @@ class DBAcademyHelper:
         See also DBAcademyHelper.unique_name
         :param username: The full email address of a user. See also LessonConfig.username
         :param course_code: The course's code. See also CourseConfig.course_code
+        :param lesson_name: The lesson's name (usually None). See also LessonConfig.name
         :param sep: The seperator to use between words, defaults to a hyphen
         :return: The unique name composited from the specified username and course_code
         """
         local_part = username.split("@")[0]
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
         username_hash = dbgems.stable_hash(hash_basis, length=4)
-        name = dbgems.clean_string(f"{local_part}{sep}{username_hash}{sep}da{sep}{course_code}", replacement=sep)
-        return name.lower()
+
+        if lesson_name is None:
+            name = f"{local_part} {username_hash} da {course_code}"
+        else:
+            name = f"{local_part} {username_hash} da {course_code} {lesson_name}"
+
+        return dbgems.clean_string(name, replacement=sep).lower()
 
     @property
     def catalog_name_prefix(self) -> str:
