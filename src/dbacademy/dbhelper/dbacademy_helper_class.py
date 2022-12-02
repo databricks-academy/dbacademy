@@ -68,7 +68,7 @@ class DBAcademyHelper:
         # Are we running under test? If so we can "optimize" for parallel execution
         # without affecting the student's runtime-experience. As in the student can
         # use one working directory and one database, but under test, we can use many
-        if self.lesson_config.name is None and self.is_smoke_test:
+        if self.lesson_config.name is None and DBAcademyHelper.is_smoke_test():
             # The developer did not define a lesson and this is a smoke
             # test, so we can define a lesson here for the sake of testing
 
@@ -398,8 +398,8 @@ class DBAcademyHelper:
         """
         return dbgems.spark.sql("SELECT current_database()").first()[0]
 
-    @property
-    def is_smoke_test(self) -> bool:
+    @staticmethod
+    def is_smoke_test() -> bool:
         """
         Helper method to indentify when we are running as a smoke test
         :return: Returns true if the notebook is running as a smoke test.
