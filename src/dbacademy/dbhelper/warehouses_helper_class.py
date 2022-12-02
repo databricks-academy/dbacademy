@@ -72,11 +72,16 @@ class WarehousesHelper:
                                                      org_id=dbgems.get_org_id())
 
     @staticmethod
-    def create_sql_warehouse(*, client: DBAcademyRestClient, name: str, for_user: Union[str, None], auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool, lab_id: str, workspace_description: str, workspace_name: str, org_id: str):
+    def create_sql_warehouse(*, client: DBAcademyRestClient, name: str, for_user: Union[str, None], auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None):
         from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
         from dbacademy.dbrest.sql.endpoints import RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT, CLUSTER_SIZE_2X_SMALL
+
+        lab_id = lab_id or WorkspaceHelper.get_lab_id()
+        workspace_description = workspace_description or WorkspaceHelper.get_workspace_description()
+        workspace_name = workspace_name or WorkspaceHelper.get_workspace_name()
+        org_id = org_id or dbgems.get_org_id()
 
         warehouse = client.sql.endpoints.create_or_update(
             name=name,
