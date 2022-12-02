@@ -252,7 +252,6 @@ class WorkspaceCleaner:
                     self.__da.client.ml.mlflow_model_versions.transition_stage(name, v, "archived")
             print(f"| deleting model {name}")
             self.__da.client.ml.mlflow_models.delete(name)
-            print("-" * 80)
 
         return True
 
