@@ -13,8 +13,11 @@ class WorkspaceCleaner:
     def reset_lesson(self) -> None:
 
         status = False
-        print("Resetting the learning environment:")
-        
+        if self.__da.lesson_config.name is None:
+            print(f"Resetting the learning environment:")
+        else:
+            print(f"Resetting the learning environment ({self.__da.lesson_config.name}):")
+
         dbgems.spark.catalog.clearCache()
         status = self._stop_all_streams() or status
 
