@@ -7,11 +7,11 @@ class ClustersHelper:
 
     T = TypeVar("T")
 
-    POLICY_ALL_PURPOSE = "DBAcademy All-Purpose Policy"
-    POLICY_JOBS_ONLY = "DBAcademy Jobs-Only Policy"
-    POLICY_DLT_ONLY = "DBAcademy DLT-Only Policy"
+    POLICY_ALL_PURPOSE = "DBAcademy"
+    POLICY_JOBS_ONLY = "DBAcademy Jobs-Only"
+    POLICY_DLT_ONLY = "DBAcademy DLT-Only"
 
-    POOLS_DEFAULT = "DBAcademy Pool"
+    POOL_DEFAULT_NAME = "DBAcademy"
 
     def __init__(self, workspace: WorkspaceHelper, da: DBAcademyHelper):
         self.da = da
@@ -19,7 +19,8 @@ class ClustersHelper:
         self.workspace = workspace
 
     def create_instance_pool(self, min_idle_instances: int = 0, idle_instance_autotermination_minutes: int = 15):
-        return ClustersHelper.create_named_instance_pool(client=self.client,
+        return ClustersHelper.create_named_instance_pool(name=ClustersHelper.POOL_DEFAULT_NAME,
+                                                         client=self.client,
                                                          min_idle_instances=min_idle_instances,
                                                          idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
                                                          lab_id=self.workspace.lab_id,
@@ -29,7 +30,7 @@ class ClustersHelper:
                                                          course_name=self.da.course_config.course_name)
 
     @staticmethod
-    def create_named_instance_pool(*, client, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str, course_name: str):
+    def create_named_instance_pool(*, client, name, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str, course_name: str):
         from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
@@ -45,7 +46,6 @@ class ClustersHelper:
             (f"dbacademy.source", dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test else course_name))
         ]
 
-        name = ClustersHelper.POOLS_DEFAULT
         pool = client.instance_pools.create_or_update(instance_pool_name=name,
                                                       idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
                                                       min_idle_instances=min_idle_instances,
