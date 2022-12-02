@@ -171,7 +171,7 @@ class WorkspaceCleaner:
 
         prefix = self.__da.schema_name if lesson_only else self.__da.schema_name_prefix
         items = self.__da.client.ml.feature_store.search_tables()
-        feature_store_tables = [i for i in items if i.table.get("name").startswith(prefix)]
+        feature_store_tables = [i for i in items if i.get("name").startswith(prefix)]
 
         if len(feature_store_tables) == 0:
             return False  # No tables, nothing to drop
