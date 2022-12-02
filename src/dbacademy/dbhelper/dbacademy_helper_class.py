@@ -1,6 +1,7 @@
-from typing import Union, Optional, Dict, List, Callable
+from typing import Union, Optional, Dict, Callable
 
 import pyspark
+
 from dbacademy import dbgems, common
 from dbacademy.dbrest import DBAcademyRestClient
 
@@ -654,27 +655,6 @@ class DBAcademyHelper:
                 html = f"""<html><body><h1>{dataset.path}</h1><textarea rows="3" style="width:100%; overflow-x:scroll; white-space:nowrap">**ERROR**\n{readme_file} was not found</textarea></body></html>"""
                 dbgems.display_html(html)
 
-    def list_r(self, path: str, prefix: Optional[str] = None, results: Optional[List[str]] = None) -> List[str]:
-        """
-        Utility method used by the dataset validation, this method performs a recursive list of the specified path and returns the sorted list of paths.
-        """
-        if prefix is None: prefix = path
-        if results is None: results = list()
-
-        try:
-            files = dbgems.dbutils.fs.ls(path)
-        except:
-            files = []
-
-        for file in files:
-            data = file.path[len(prefix):]
-            results.append(data)
-            if file.isDir():
-                self.list_r(file.path, prefix, results)
-
-        results.sort()
-        return results
-
     def __validate_spark_version(self) -> None:
         self.__current_dbr = dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_CLUSTER_TAG_SPARK_VERSION, None)
 
@@ -715,6 +695,7 @@ class DBAcademyHelper:
         """
         Validates the "install" of the datasets by recursively listing all files in the remote data repository as well as the local data repository, validating that each file exists but DOES NOT validate file size or checksum.
         """
+        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
 
         validation_start = dbgems.clock_start()
 
@@ -723,7 +704,7 @@ class DBAcademyHelper:
             # and use it as a definitive source to the complete enumeration of our files
             start = dbgems.clock_start()
             print("\nEnumerating staged files for validation", end="...")
-            self.course_config.remote_files = self.list_r(self.staging_source_uri)
+            self.course_config.remote_files = DatasetManager.list_r(self.staging_source_uri)
             print(dbgems.clock_stopped(start))
             print()
 
@@ -733,78 +714,16 @@ class DBAcademyHelper:
         # Proceed with the actual validation and repair if possible
         ############################################################
 
-        print("| listing local files", end="...")
-        start = dbgems.clock_start()
-        local_files = self.list_r(self.paths.datasets)
-        print(dbgems.clock_stopped(start))
+        dataset_manager = DatasetManager(data_source_uri=self.data_source_uri,
+                                         datasets_path=self.paths.datasets,
+                                         remote_files=self.course_config.remote_files)
+        dataset_manager.repair()
+        dataset_manager.print_stats()
 
-        ############################################################
-        # Repair directories first, this will pick up the majority
-        # of the issues by addressing the larger sets.
-        ############################################################
-
-        fixes = 0
-        repaired_paths = []
-
-        def not_fixed(test_file: str):
-            for repaired_path in repaired_paths:
-                if test_file.startswith(repaired_path):
-                    return False
-            return True
-
-        # Remove extra directories (cascade effect vs one file at a time)
-        for file in local_files:
-            if file not in self.course_config.remote_files and file.endswith("/") and not_fixed(file):
-                fixes += 1
-                start = dbgems.clock_start()
-                repaired_paths.append(file)
-                print(f"| removing extra path: {file}", end="...")
-                dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
-                print(dbgems.clock_stopped(start))
-
-        # Add extra directories (cascade effect vs one file at a time)
-        for file in self.course_config.remote_files:
-            if file not in local_files and file.endswith("/") and not_fixed(file):
-                fixes += 1
-                start = dbgems.clock_start()
-                repaired_paths.append(file)
-                print(f"| restoring missing path: {file}", end="...")
-                source_file = f"{self.data_source_uri}/{file[1:]}"
-                target_file = f"{self.paths.datasets}/{file[1:]}"
-                dbgems.dbutils.fs.cp(source_file, target_file, True)
-                print(dbgems.clock_stopped(start))
-
-        ############################################################
-        # Repair only straggling files
-        ############################################################
-
-        # Remove one file at a time (picking up what was not covered by processing directories)
-        for file in local_files:
-            if file not in self.course_config.remote_files and not file.endswith("/") and not_fixed(file):
-                fixes += 1
-                start = dbgems.clock_start()
-                print(f"| removing extra file: {file}", end="...")
-                dbgems.dbutils.fs.rm(f"{self.paths.datasets}/{file[1:]}", True)
-                print(dbgems.clock_stopped(start))
-
-        # Add one file at a time (picking up what was not covered by processing directories)
-        for file in self.course_config.remote_files:
-            if file not in local_files and not file.endswith("/") and not_fixed(file):
-                fixes += 1
-                start = dbgems.clock_start()
-                print(f"| restoring missing file: {file}", end="...")
-                source_file = f"{self.data_source_uri}/{file[1:]}"
-                target_file = f"{self.paths.datasets}/{file[1:]}"
-                dbgems.dbutils.fs.cp(source_file, target_file, True)
-                print(dbgems.clock_stopped(start))
-
-        if fixes == 1: print(f"| fixed 1 issue", end=" ")
-        elif fixes > 0: print(f"| fixed {fixes} issues", end=" ")
-        else: print(f"| completed", end=" ")
         print(dbgems.clock_stopped(validation_start, " total"))
         print()
 
-        if fail_fast: assert fixes == 0, f"Unexpected modifications to source datasets."
+        if fail_fast: assert dataset_manager.fixes == 0, f"Unexpected modifications to source datasets."
 
     def run_high_availability_job(self, job_name: str, notebook_path: str) -> None:
         """
