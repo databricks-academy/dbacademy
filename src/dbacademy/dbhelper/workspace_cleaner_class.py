@@ -231,7 +231,7 @@ class WorkspaceCleaner:
         start = dbgems.clock_start()
 
         models = self.__da.client.ml.mlflow_models.list()
-        models = [m for m in models if m.get("name").endswith(self._get_unique_name(lesson_only))]
+        models = [m for m in models if m.get("name").startswith(self._get_unique_name(lesson_only))]
 
         if len(models) == 0:
             return False
@@ -258,7 +258,7 @@ class WorkspaceCleaner:
         start = dbgems.clock_start()
 
         endpoints = self.__da.client.ml.mlflow_endpoints.list_endpoints()
-        endpoints = [e for e in endpoints if e.get("registered_model_name").endswith(self._get_unique_name(lesson_only))]
+        endpoints = [e for e in endpoints if e.get("registered_model_name").startswith(self._get_unique_name(lesson_only))]
 
         if len(endpoints) == 0:
             return False
