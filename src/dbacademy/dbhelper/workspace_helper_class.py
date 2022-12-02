@@ -46,9 +46,10 @@ class WorkspaceHelper:
         self._usernames = None
         self._existing_databases = None
 
-    def add_entitlement_allow_instance_pool_create(self):
-        group = self.client.scim.groups.get_by_name("users")
-        self.client.scim.groups.add_entitlement(group.get("id"), "allow-instance-pool-create")
+    @staticmethod
+    def add_entitlement_allow_instance_pool_create(client: DBAcademyRestClient):
+        group = client.scim.groups.get_by_name("users")
+        client.scim.groups.add_entitlement(group.get("id"), "allow-instance-pool-create")
 
     @staticmethod
     def add_entitlement_workspace_access(client: DBAcademyRestClient):
