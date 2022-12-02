@@ -210,11 +210,10 @@ class WorkspaceCleaner:
 
         start = dbgems.clock_start()
 
-        experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
+        experiments = mlflow.search_experiments(view_type=ViewType.ALL)
         experiments = [e for e in experiments if e.name.startswith(self._get_unique_name(lesson_only))]
 
         if len(experiments) == 0:
-
             return False
 
         # Not our normal pattern, but the goal here is to report on ourselves only if experiments were found.
