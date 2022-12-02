@@ -34,8 +34,11 @@ class TestDBAcademyHelper(unittest.TestCase):
         self.assertEquals("dbfs:/mnt/dbacademy-datasets-staging", path)
 
     def test_to_unique_name(self):
-        name = DBAcademyHelper.to_unique_name(username="mickey.mouse@disney.com", course_code="test")
+        name = DBAcademyHelper.to_unique_name(username="mickey.mouse@disney.com", course_code="test", lesson_name=None, sep="-")
         self.assertEquals("mickey-mouse-g4qd-da-test", name)
+
+        name = DBAcademyHelper.to_unique_name(username="mickey.mouse@disney.com", course_code="test", lesson_name="Smoke Test", sep="_")
+        self.assertEquals("mickey_mouse_g4qd_da_test_smoke_test", name)
 
     def test_to_catalog_name_prefix(self):
         name = DBAcademyHelper.to_catalog_name_prefix(username="mickey.mouse@disney.com")
@@ -59,11 +62,12 @@ class TestDBAcademyHelper(unittest.TestCase):
         name = DBAcademyHelper.to_schema_name(username="mickey.mouse@disney.com", course_code="asdf", lesson_name="Skinning Cats")
         self.assertEquals("mickey_mouse_g4qd_da_asdf_skinning_cats", name)
 
-    def test_is_smoke_test(self):
-        self.assertFalse(DBAcademyHelper.is_smoke_test)
-
-        dbgems.MOCK_CONFIG[DBAcademyHelper.SPARK_CONF_SMOKE_TEST] = "True"
-        self.assertTrue(DBAcademyHelper.is_smoke_test)
+    # No a longer static method
+    # def test_is_smoke_test(self):
+    #     self.assertFalse(DBAcademyHelper.is_smoke_test)
+    #
+    #     dbgems.MOCK_CONFIG[DBAcademyHelper.SPARK_CONF_SMOKE_TEST] = "True"
+    #     self.assertTrue(DBAcademyHelper.is_smoke_test)
 
     # def test_to_username_hash(self):
     #     username = "mickey.mouse@disney.com"
