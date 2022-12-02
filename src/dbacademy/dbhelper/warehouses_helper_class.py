@@ -1,9 +1,11 @@
 from typing import Union
+from dbacademy import dbgems
 
 
 class WarehousesHelper:
-    from .dbacademy_helper_class import DBAcademyHelper
-    from .workspace_helper_class import WorkspaceHelper
+    from dbacademy.dbrest import DBAcademyRestClient
+    from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+    from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
 
     def __init__(self, workspace: WorkspaceHelper, da: DBAcademyHelper):
         self.da = da
@@ -36,31 +38,45 @@ class WarehousesHelper:
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
     def create_sql_warehouse_for(self, username, auto_stop_mins=120, enable_serverless_compute=False):
-        return self.__create_sql_warehouse(username=username,
-                                           name=self.da.to_unique_name(username=username,
-                                                                       course_code=self.da.course_config.course_code,
-                                                                       lesson_name=self.da.lesson_config.name,
-                                                                       sep="-"),
-                                           auto_stop_mins=auto_stop_mins,
-                                           min_num_clusters=1,
-                                           max_num_clusters=1,
-                                           enable_serverless_compute=enable_serverless_compute)
-
-    def create_shared_sql_warehouse(self, name: str, auto_stop_mins=120, enable_serverless_compute=False):
-        return self.__create_sql_warehouse(username=None,
-                                           name=name,
-                                           auto_stop_mins=auto_stop_mins,
-                                           min_num_clusters=self.autoscale_min,
-                                           max_num_clusters=self.autoscale_max,
-                                           enable_serverless_compute=enable_serverless_compute)
+        from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
+        return WarehousesHelper.create_sql_warehouse(client=self.client,
+                                                     name=self.da.to_unique_name(username=username,
+                                                                                 course_code=self.da.course_config.course_code,
+                                                                                 lesson_name=self.da.lesson_config.name,
+                                                                                 sep="-"),
+                                                     for_user=username,
+                                                     auto_stop_mins=auto_stop_mins,
+                                                     min_num_clusters=1,
+                                                     max_num_clusters=1,
+                                                     enable_serverless_compute=enable_serverless_compute,
+                                                     lab_id=WorkspaceHelper.get_lab_id(),
+                                                     workspace_description=WorkspaceHelper.get_workspace_description(),
+                                                     workspace_name=WorkspaceHelper.get_workspace_name(),
+                                                     org_id=dbgems.get_org_id())
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
-    def __create_sql_warehouse(self, username: Union[str, None], name: str, auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool):
+    def create_shared_sql_warehouse(self, name: str, auto_stop_mins=120, enable_serverless_compute=False):
+        from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
+        return WarehousesHelper.create_sql_warehouse(client=self.client,
+                                                     name=name,
+                                                     for_user=None,
+                                                     auto_stop_mins=auto_stop_mins,
+                                                     min_num_clusters=self.autoscale_min,
+                                                     max_num_clusters=self.autoscale_max,
+                                                     enable_serverless_compute=enable_serverless_compute,
+                                                     lab_id=WorkspaceHelper.get_lab_id(),
+                                                     workspace_description=WorkspaceHelper.get_workspace_description(),
+                                                     workspace_name=WorkspaceHelper.get_workspace_name(),
+                                                     org_id=dbgems.get_org_id())
+
+    @staticmethod
+    def create_sql_warehouse(*, client: DBAcademyRestClient, name: str, for_user: Union[str, None], auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool, lab_id: str, workspace_description: str, workspace_name: str, org_id: str):
         from dbacademy import dbgems
-        from dbacademy.dbhelper import WorkspaceHelper
+        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
         from dbacademy.dbrest.sql.endpoints import RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT, CLUSTER_SIZE_2X_SMALL
 
-        warehouse = self.client.sql.endpoints.create_or_update(
+        warehouse = client.sql.endpoints.create_or_update(
             name=name,
             cluster_size=CLUSTER_SIZE_2X_SMALL,
             enable_serverless_compute=enable_serverless_compute,
@@ -71,28 +87,25 @@ class WarehousesHelper:
             spot_instance_policy=RELIABILITY_OPTIMIZED,
             channel=CHANNEL_NAME_CURRENT,
             tags={
-                f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}": dbgems.clean_string(self.workspace.lab_id),
-                f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}": dbgems.clean_string(self.workspace.description),
-                f"dbacademy.workspace": dbgems.clean_string(self.workspace.workspace_name),
-                f"dbacademy.org_id": dbgems.clean_string(self.workspace.org_id),
-                f"dbacademy.course": dbgems.clean_string(self.da.course_config.course_name),  # Tag the name of the course
-                f"dbacademy.source": dbgems.clean_string("Smoke-Test" if self.da.is_smoke_test else self.da.course_config.course_name),
+                f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}": dbgems.clean_string(lab_id),
+                f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}": dbgems.clean_string(workspace_description),
+                f"dbacademy.workspace": dbgems.clean_string(workspace_name),
+                f"dbacademy.org_id": dbgems.clean_string(org_id),
+                f"dbacademy.source": dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test else lab_id),
             })
         warehouse_id = warehouse.get("id")
 
         # With the warehouse created, make sure that all users can attach to it.
-        if username is None:
-            print(f"Created warehouse \"{name}\" ({warehouse_id})")
-            self.client.permissions.warehouses.update_group(warehouse_id, "users", "CAN_USE")
+        if for_user:
+            print(f"Created warehouse \"{name}\" ({warehouse_id}) for {for_user}")
+            client.permissions.warehouses.update_user(warehouse_id, for_user, "CAN_USE")
         else:
-            print(f"Created warehouse \"{name}\" ({warehouse_id}) for {username}")
-            self.client.permissions.warehouses.update_user(warehouse_id, username, "CAN_USE")
+            print(f"Created warehouse \"{name}\" ({warehouse_id})")
+            client.permissions.warehouses.update_group(warehouse_id, "users", "CAN_USE")
 
-        print(f"  Configured for:    {self.workspace.configure_for}")
-        print(f"  Lab ID:            {self.workspace.lab_id}")
-        print(f"  Description:       {self.workspace.description}")
-        print(f"  Provisioning:      {len(self.workspace.usernames)}")
-        print(f"  Autoscale minimum: {min_num_clusters}")
-        print(f"  Autoscale maximum: {max_num_clusters}")
-        if self.da.is_smoke_test:
-            print(f"  Smoke Test:        {self.da.is_smoke_test} ")
+        print(f"| Lab ID:            {lab_id}")
+        print(f"| Description:       {workspace_description}")
+        print(f"| Autoscale minimum: {min_num_clusters}")
+        print(f"| Autoscale maximum: {max_num_clusters}")
+        if DBAcademyHelper.is_smoke_test:
+            print(f"  Smoke Test:        {DBAcademyHelper.is_smoke_test} ")

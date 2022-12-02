@@ -133,8 +133,11 @@ def is_job():
     return get_job_id() is not None
 
 
+def get_org_id() -> str:
+    return get_mock_value("org_id", lambda: get_tag("orgId"))
+
+
 def get_workspace_id() -> str:
-    # noinspection PyUnresolvedReferences
     return get_mock_value("workspace_id", lambda: dbutils.entry_point.getDbutils().notebook().getContext().workspaceId().getOrElse(None))
 
 
