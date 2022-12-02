@@ -1,4 +1,4 @@
-from typing import Union, Optional, Dict, List
+from typing import Union, Optional, Dict, List, Callable
 
 import pyspark
 from dbacademy import dbgems, common
@@ -425,7 +425,7 @@ class DBAcademyHelper:
             assert not self.lesson_config.create_schema, f"Creation of the schema (LessonConfig.create_schema=True) is not supported while creating the catalog (LessonConfig.create_catalog=True)"
 
         if self.lesson_config.installing_datasets:
-            self.install_datasets()               # Install the data
+            self.__install_datasets()  # Install the data
 
         if self.lesson_config.create_catalog: self.__create_catalog()  # Create the UC catalog
         elif self.lesson_config.create_schema: self.__create_schema()  # Create the Schema (is not a catalog)
@@ -566,7 +566,16 @@ class DBAcademyHelper:
 
         print(f"\nSetup completed {dbgems.clock_stopped(self.__start)}")
 
-    def install_datasets(self, reinstall_datasets: bool = False) -> None:
+    def __install_datasets(self, reinstall_datasets: bool = False) -> None:
+        DBAcademyHelper.install_named_datasets(validator=self.validate_datasets,
+                                               datasets_path=self.paths.datasets,
+                                               data_source_uri=self.data_source_uri,
+                                               reinstall_datasets=reinstall_datasets,
+                                               install_min_time=self.course_config.install_min_time,
+                                               install_max_time=self.course_config.install_max_time)
+
+    @staticmethod
+    def install_named_datasets(*, validator: Callable[[bool], None], datasets_path, data_source_uri, reinstall_datasets: bool = False, install_min_time: str, install_max_time: str) -> None:
         """
         Install the datasets used by this course to DBFS.
 
@@ -574,29 +583,30 @@ class DBAcademyHelper:
         when the storage and compute are, for example, on opposite sides of the world.
         """
         # if not repairing_dataset: print(f"\nThe source for the datasets is\n{self.data_source_uri}/")
-        # if not repairing_dataset: print(f"\nYour local dataset directory is {self.paths.datasets}")
+        # if not repairing_dataset: print(f"\nYour local dataset directory is {datasets_path}")
 
-        if Paths.exists(self.paths.datasets):
+        if Paths.exists(datasets_path):
             # It's already installed...
             if reinstall_datasets:
                 print(f"\nRemoving previously installed datasets")
-                dbgems.dbutils.fs.rm(self.paths.datasets, True)
+                dbgems.dbutils.fs.rm(datasets_path, True)
 
             if not reinstall_datasets:
-                print(f"\nSkipping install of existing datasets to \"{self.paths.datasets}\"")
-                self.validate_datasets(fail_fast=False)
+                print(f"\nSkipping install of existing datasets to \"{datasets_path}\"")
+                fail_fast = False
+                validator(fail_fast)
                 return
 
         print(f"\nInstalling datasets:")
-        print(f"| from \"{self.data_source_uri}\"")
-        print(f"| to \"{self.paths.datasets}\"")
+        print(f"| from \"{data_source_uri}\"")
+        print(f"| to \"{datasets_path}\"")
         print(f"| NOTE: The datasets that we are installing are located in Washington, USA - depending on the")
-        print(f"|       region that your workspace is in, this operation can take as little as {self.course_config.install_min_time} and")
-        print(f"|       upwards to {self.course_config.install_max_time}, but this is a one-time operation.")
+        print(f"|       region that your workspace is in, this operation can take as little as {install_min_time} and")
+        print(f"|       upwards to {install_max_time}, but this is a one-time operation.")
 
         # Using data_source_uri is a temporary hack because it assumes we can actually
         # reach the remote repository - in cases where it's blocked, this will fail.
-        files = dbgems.dbutils.fs.ls(self.data_source_uri)
+        files = dbgems.dbutils.fs.ls(data_source_uri)
 
         what = "dataset" if len(files) == 1 else "datasets"
         print(f"\nInstalling {len(files)} {what}: ")
@@ -606,13 +616,14 @@ class DBAcademyHelper:
             start = dbgems.clock_start()
             print(f"| copying /{f.name[:-1]}", end="...")
 
-            source_path = f"{self.data_source_uri}/{f.name}"
-            target_path = f"{self.paths.datasets}/{f.name}"
+            source_path = f"{data_source_uri}/{f.name}"
+            target_path = f"{datasets_path}/{f.name}"
 
             dbgems.dbutils.fs.cp(source_path, target_path, True)
             print(dbgems.clock_stopped(start))
 
-        self.validate_datasets(fail_fast=False)
+        fail_fast = False
+        validator(fail_fast)
 
         print(f"""\nThe install of the datasets completed successfully {dbgems.clock_stopped(install_start)}""")
 
