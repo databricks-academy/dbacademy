@@ -19,15 +19,26 @@ class ClustersHelper:
         self.workspace = workspace
 
     def create_instance_pool(self, min_idle_instances: int = 0, idle_instance_autotermination_minutes: int = 15):
+        return ClustersHelper.create_named_instance_pool(min_idle_instances=min_idle_instances,
+                                                         idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
+                                                         lab_id=self.workspace.lab_id,
+                                                         workspace_description=self.workspace.description,
+                                                         workspace_name=self.workspace.workspace_name,
+                                                         org_id=self.workspace.org_id,
+                                                         course_name=self.da.course_config.course_name)
+
+    @staticmethod
+    def create_named_instance_pool(*, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str, course_name: str):
         from dbacademy import dbgems
-        from .workspace_helper_class import WorkspaceHelper
+        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
         tags = [
-            (f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}", dbgems.clean_string(self.workspace.lab_id)),
-            (f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}", dbgems.clean_string(self.workspace.description)),
-            (f"dbacademy.workspace", dbgems.clean_string(self.workspace.workspace_name)),
-            (f"dbacademy.org_id", dbgems.clean_string(self.workspace.org_id)),
-            (f"dbacademy.course", dbgems.clean_string(self.da.course_config.course_name)),
-            (f"dbacademy.source", dbgems.clean_string("Smoke-Test" if self.da.is_smoke_test else self.da.course_config.course_name))
+            (f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}", dbgems.clean_string(lab_id)),
+            (f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}", dbgems.clean_string(workspace_description)),
+            (f"dbacademy.workspace", dbgems.clean_string(workspace_name)),
+            (f"dbacademy.org_id", dbgems.clean_string(org_id)),
+            (f"dbacademy.course", dbgems.clean_string(course_name)),
+            (f"dbacademy.source", dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test else course_name))
         ]
 
         name = ClustersHelper.POOLS_DEFAULT
