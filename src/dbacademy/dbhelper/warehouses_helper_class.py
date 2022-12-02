@@ -7,6 +7,8 @@ class WarehousesHelper:
     from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
     from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
 
+    WAREHOUSES_DEFAULT_NAME = "DBAcademy Warehouse"
+
     def __init__(self, workspace: WorkspaceHelper, da: DBAcademyHelper):
         self.da = da
         self.client = da.client
@@ -72,7 +74,7 @@ class WarehousesHelper:
                                                      org_id=dbgems.get_org_id())
 
     @staticmethod
-    def create_sql_warehouse(*, client: DBAcademyRestClient, name: str, for_user: Union[str, None], auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None):
+    def create_sql_warehouse(*, client: DBAcademyRestClient, name: str, auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None, for_user: Union[str, None] = None):
         from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
