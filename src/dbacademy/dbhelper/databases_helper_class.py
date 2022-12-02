@@ -4,6 +4,7 @@ from dbacademy import dbgems
 
 
 class DatabasesHelper:
+    from dbacademy.dbrest import DBAcademyRestClient
     from .dbacademy_helper_class import DBAcademyHelper
     from .workspace_helper_class import WorkspaceHelper
 
@@ -68,21 +69,21 @@ class DatabasesHelper:
 
         return print(msg)
 
-    def configure_permissions(self, notebook_name, spark_version="10.4.x-scala2.12"):
+    @staticmethod
+    def configure_permissions(client: DBAcademyRestClient, notebook_name: str, spark_version: str):
         from dbacademy.dbhelper import DBAcademyHelper, WorkspaceHelper
 
-        job_name = f"""DBAcademy-{self.da.course_config.course_code.upper()}-{notebook_name.split("/")[-1]}"""
+        job_name = f"""DBAcademy-{notebook_name.split("/")[-1]}"""
         print(f"Starting job \"{job_name}\" to update catalog and schema specific permissions")
 
-        self.client.jobs().delete_by_name(job_name, success_only=False)
+        client.jobs().delete_by_name(job_name, success_only=False)
 
         notebook_path = f"{dbgems.get_notebook_dir()}/{notebook_name}"
 
         params = {
             "name": job_name,
             "tags": {
-                "dbacademy.course": dbgems.clean_string(self.da.course_config.course_name, replacement="-"),
-                "dbacademy.source": dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else self.da.course_config.course_name, replacement="-")
+                "dbacademy.source": dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else WorkspaceHelper.get_lab_id())
             },
             "email_notifications": {},
             "timeout_seconds": 7200,
@@ -95,9 +96,7 @@ class DatabasesHelper:
                     "libraries": [],
                     "notebook_task": {
                         "notebook_path": notebook_path,
-                        "base_parameters": {
-                            WorkspaceHelper.PARAM_CONFIGURE_FOR: self.workspace.configure_for
-                        }
+                        "base_parameters": {}
                     },
                     "new_cluster": {
                         "num_workers": 0,
@@ -117,23 +116,23 @@ class DatabasesHelper:
         cluster_params = params.get("tasks")[0].get("new_cluster")
         cluster_params["spark_version"] = spark_version
 
-        if self.client.clusters().get_current_instance_pool_id() is not None:
-            cluster_params["instance_pool_id"] = self.client.clusters().get_current_instance_pool_id()
+        if client.clusters().get_current_instance_pool_id() is not None:
+            cluster_params["instance_pool_id"] = client.clusters().get_current_instance_pool_id()
         else:
-            cluster_params["node_type_id"] = self.client.clusters().get_current_node_type_id()
+            cluster_params["node_type_id"] = client.clusters().get_current_node_type_id()
             if dbgems.get_cloud() == "AWS":
                 # noinspection PyTypeChecker
                 cluster_params["aws_attributes"] = {"availability": "ON_DEMAND"}
 
-        create_response = self.client.jobs().create(params)
+        create_response = client.jobs().create(params)
         job_id = create_response.get("job_id")
 
-        run_response = self.client.jobs().run_now(job_id)
+        run_response = client.jobs().run_now(job_id)
         run_id = run_response.get("run_id")
 
         print(f"| See {dbgems.get_workspace_url()}#job/{job_id}/run/{run_id}")
 
-        final_response = self.client.runs().wait_for(run_id)
+        final_response = client.runs().wait_for(run_id)
 
         final_state = final_response.get("state").get("result_state")
         assert final_state == "SUCCESS", f"Expected the final state to be SUCCESS, found {final_state}"
