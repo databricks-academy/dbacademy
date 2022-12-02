@@ -27,24 +27,20 @@ class ClustersHelper:
                                                          lab_id=self.workspace.lab_id,
                                                          workspace_description=self.workspace.description,
                                                          workspace_name=self.workspace.workspace_name,
-                                                         org_id=self.workspace.org_id,
-                                                         course_name=self.da.course_config.course_name)
+                                                         org_id=self.workspace.org_id)
 
     @staticmethod
-    def create_named_instance_pool(*, client: DBAcademyRestClient, name, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str, course_name: str):
+    def create_named_instance_pool(*, client: DBAcademyRestClient, name, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str):
         from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
-
-        course_name = course_name or "unknown"
 
         tags = [
             (f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}", dbgems.clean_string(lab_id)),
             (f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}", dbgems.clean_string(workspace_description)),
             (f"dbacademy.workspace", dbgems.clean_string(workspace_name)),
             (f"dbacademy.org_id", dbgems.clean_string(org_id)),
-            (f"dbacademy.course", dbgems.clean_string(course_name)),
-            (f"dbacademy.source", dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test else course_name))
+            (f"dbacademy.source", dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test else dbgems.clean_string(lab_id)))
         ]
 
         pool = client.instance_pools.create_or_update(instance_pool_name=name,
