@@ -210,9 +210,9 @@ class WorkspaceCleaner:
 
         start = dbgems.clock_start()
 
-        experiments = mlflow.search_experiments(view_type=ViewType.ALL)
+        experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
         print(f"Found {len(experiments)}")
-        experiments = [e for e in experiments if e.name.startswith(self._get_unique_name(lesson_only))]
+        experiments = [e for e in experiments if e.name.split("/")[-1].startswith(self._get_unique_name(lesson_only))]
         print(f"Kept {len(experiments)}")
 
         if len(experiments) == 0:
