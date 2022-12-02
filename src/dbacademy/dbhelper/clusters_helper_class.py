@@ -63,7 +63,6 @@ class ClustersHelper:
         </div></body></html>
         """)
 
-
         return instance_pool_id
 
     @staticmethod
