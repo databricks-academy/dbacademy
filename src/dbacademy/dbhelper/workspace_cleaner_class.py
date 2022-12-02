@@ -225,6 +225,7 @@ class WorkspaceCleaner:
         return True
 
     def _cleanup_mlflow_models(self, lesson_only: bool) -> bool:
+        import time
 
         models = []
         start = dbgems.clock_start()
@@ -243,16 +244,27 @@ class WorkspaceCleaner:
 
         # Not our normal pattern, but the goal here is to report on ourselves only if models were found.
         print(f"| enumerating MLflow models...{dbgems.clock_stopped(start)}")
+        active_stages = ["production", "staging"]
 
         for model in self.__da.client.ml.mlflow_models.list():
             name = model.get("name")
-            versions = self.__da.client.ml.mlflow_model_versions.list(name)
-            for version in versions:
+            for version in self.__da.client.ml.mlflow_model_versions.list(name):
                 v = version.get("version")
                 stage = version.get("current_stage").lower()
-                if stage in ["production", "staging"]:
+                if stage in active_stages:
                     print(f"| archiving model {name} version #{v}")
                     self.__da.client.ml.mlflow_model_versions.transition_stage(name, v, "archived")
+
+            all_archived = False
+            while not all_archived:
+                all_archived = True  # Assume True at start
+                for version in self.__da.client.ml.mlflow_model_versions.list(name):
+                    if version.get("current_stage").lower() in active_stages:
+                        all_archived = False
+                        v = version.get("version")
+                        print(f"| waiting for {name} version #{v} to be archived")
+                        time.sleep(5)
+
             print(f"| deleting model {name}")
             self.__da.client.ml.mlflow_models.delete(name)
 
