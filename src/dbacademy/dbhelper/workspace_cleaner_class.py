@@ -188,8 +188,6 @@ class WorkspaceCleaner:
                     fs.drop_table(name)
                 finally:
                     logger.disabled = logger_disabled
-            else:
-                print(f"| skipping feature store table \"{name}\" {self.__da.schema_name_prefix}")
 
         return True
 
@@ -249,7 +247,6 @@ class WorkspaceCleaner:
 
         for model in self.__da.client.ml.mlflow_models.list():
             name = model.get("name")
-            print(f"{name}")
             versions = self.__da.client.ml.mlflow_model_versions.list(name)
             for version in versions:
                 v = version.get("version")
