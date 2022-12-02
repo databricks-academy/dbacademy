@@ -86,7 +86,7 @@ class WorkspaceCleaner:
                 schema_names = [d.databaseName for d in dbgems.spark.sql(f"SHOW DATABASES IN {catalog_name}").collect()]
                 for schema_name in schema_names:
                     if schema_name.startswith(self.__da.schema_name_prefix) and schema_name != DBAcademyHelper.SCHEMA_DEFAULT:
-                        print(f"| ropping the schema \"{catalog_name}.{schema_name}\"")
+                        print(f"| dropping the schema \"{catalog_name}.{schema_name}\"")
                         self._drop_database(f"{catalog_name}.{schema_name}")
 
     @staticmethod
