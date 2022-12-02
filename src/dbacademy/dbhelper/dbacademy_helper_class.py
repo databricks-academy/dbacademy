@@ -600,9 +600,10 @@ class DBAcademyHelper:
         print(f"\nInstalling datasets:")
         print(f"| from \"{data_source_uri}\"")
         print(f"| to \"{datasets_path}\"")
-        print(f"| NOTE: The datasets that we are installing are located in Washington, USA - depending on the")
-        print(f"|       region that your workspace is in, this operation can take as little as {install_min_time} and")
-        print(f"|       upwards to {install_max_time}, but this is a one-time operation.")
+        if install_min_time is None or install_max_time is None:
+            print(f"| NOTE: The datasets that we are installing are located in Washington, USA - depending on the")
+            print(f"|       region that your workspace is in, this operation can take as little as {install_min_time} and")
+            print(f"|       upwards to {install_max_time}, but this is a one-time operation.")
 
         # Using data_source_uri is a temporary hack because it assumes we can actually
         # reach the remote repository - in cases where it's blocked, this will fail.
