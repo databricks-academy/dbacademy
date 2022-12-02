@@ -4,7 +4,8 @@ from dbacademy import dbgems
 
 
 class WorkspaceHelper:
-    from .dbacademy_helper_class import DBAcademyHelper
+    from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+    from dbacademy.dbrest import DBAcademyRestClient
 
     T = TypeVar("T")
 
@@ -49,17 +50,20 @@ class WorkspaceHelper:
         group = self.client.scim.groups.get_by_name("users")
         self.client.scim.groups.add_entitlement(group.get("id"), "allow-instance-pool-create")
 
-    def add_entitlement_workspace_access(self):
-        group = self.client.scim.groups.get_by_name("users")
-        self.client.scim.groups.add_entitlement(group.get("id"), "workspace-access")
+    @staticmethod
+    def add_entitlement_workspace_access(client: DBAcademyRestClient):
+        group = client.scim.groups.get_by_name("users")
+        client.scim.groups.add_entitlement(group.get("id"), "workspace-access")
 
-    def add_entitlement_allow_cluster_create(self):
-        group = self.client.scim.groups.get_by_name("users")
-        self.client.scim.groups.add_entitlement(group.get("id"), "allow-cluster-create")
+    @staticmethod
+    def add_entitlement_allow_cluster_create(client: DBAcademyRestClient):
+        group = client.scim.groups.get_by_name("users")
+        client.scim.groups.add_entitlement(group.get("id"), "allow-cluster-create")
 
-    def add_entitlement_databricks_sql_access(self):
-        group = self.client.scim.groups.get_by_name("users")
-        self.client.scim.groups.add_entitlement(group.get("id"), "databricks-sql-access")
+    @staticmethod
+    def add_entitlement_databricks_sql_access(client: DBAcademyRestClient):
+        group = client.scim.groups.get_by_name("users")
+        client.scim.groups.add_entitlement(group.get("id"), "databricks-sql-access")
 
     def do_for_all_users(self, f: Callable[[str], T]) -> List[T]:
         from multiprocessing.pool import ThreadPool
