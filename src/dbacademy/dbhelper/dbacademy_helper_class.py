@@ -1,4 +1,4 @@
-from typing import Union, Optional, Dict, Callable
+from typing import Union, Optional, Dict
 
 import pyspark
 
@@ -88,12 +88,12 @@ class DBAcademyHelper:
         self.username = self.lesson_config.username
 
         # This is the location in our Azure data repository of the datasets for this lesson
-        self.staging_source_uri = f"{DBAcademyHelper.get_dbacademy_datasets_staging()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
-        self.data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
+        self.__staging_source_uri = f"{DBAcademyHelper.get_dbacademy_datasets_staging()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
+        self.__data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
         try:
             files = dbgems.dbutils.fs.ls(self.staging_source_uri)
             if len(files) > 0:
-                self.data_source_uri = self.staging_source_uri
+                self.__data_source_uri = self.staging_source_uri
                 print("*"*80)
                 print(f"* Found staged datasets - using alternate installation location:")
                 print(f"* {self.staging_source_uri}")
@@ -153,6 +153,24 @@ class DBAcademyHelper:
         :return: The location of the staging datasets.
         """
         return "dbfs:/mnt/dbacademy-datasets-staging"
+
+    @property
+    def staging_source_uri(self):
+        """
+        The location of the staging dataset for this course. When data is found at this location, this data will be
+        loaded and validated against as compared to the datasets in the more repository that is typically installed.
+        :return:
+        """
+        return self.__staging_source_uri
+
+    @property
+    def data_source_uri(self):
+        """
+        The location of the datasets for this course. This is the path from which all datasets will be installed
+        from to bring data into the workspace and avoid cloud-cloud file reads through the entire course.
+        :return:
+        """
+        return self.__data_source_uri
 
     @property
     def current_dbr(self) -> str:
@@ -426,12 +444,12 @@ class DBAcademyHelper:
             assert not self.lesson_config.create_schema, f"Creation of the schema (LessonConfig.create_schema=True) is not supported while creating the catalog (LessonConfig.create_catalog=True)"
 
         if self.lesson_config.installing_datasets:
-            self.__install_datasets()  # Install the data
+            self.install_datasets()
 
         if self.lesson_config.create_catalog: self.__create_catalog()  # Create the UC catalog
         elif self.lesson_config.create_schema: self.__create_schema()  # Create the Schema (is not a catalog)
 
-        self.__initialized = True                 # Set the all-done flag.
+        self.__initialized = True  # Set the all-done flag.
 
     def __create_catalog(self) -> None:
         try:
@@ -476,12 +494,13 @@ class DBAcademyHelper:
         lesson-specific working directory and any assets created in that directory.
         """
         from dbacademy.dbhelper.workspace_cleaner_class import WorkspaceCleaner
+        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
 
         WorkspaceCleaner(self).reset_lesson()
 
         if validate_datasets:
             # The last step is to make sure the datasets are still intact and repair if necessary
-            self.validate_datasets(fail_fast=True)
+            DatasetManager.from_dbacademy_helper(self).validate_datasets(fail_fast=True)
 
     def reset_learning_environment(self) -> None:
         """
@@ -567,67 +586,13 @@ class DBAcademyHelper:
 
         print(f"\nSetup completed {dbgems.clock_stopped(self.__start)}")
 
-    def __install_datasets(self, reinstall_datasets: bool = False) -> None:
-        DBAcademyHelper.install_named_datasets(validator=self.validate_datasets,
-                                               datasets_path=self.paths.datasets,
-                                               data_source_uri=self.data_source_uri,
-                                               reinstall_datasets=reinstall_datasets,
-                                               install_min_time=self.course_config.install_min_time,
-                                               install_max_time=self.course_config.install_max_time)
+    def install_datasets(self, reinstall_datasets: bool = False) -> None:
+        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
 
-    @staticmethod
-    def install_named_datasets(*, validator: Callable[[bool], None], datasets_path, data_source_uri, reinstall_datasets: bool = False, install_min_time: str, install_max_time: str) -> None:
-        """
-        Install the datasets used by this course to DBFS.
-
-        This ensures that data and compute are in the same region which subsequently mitigates performance issues
-        when the storage and compute are, for example, on opposite sides of the world.
-        """
-        # if not repairing_dataset: print(f"\nThe source for the datasets is\n{self.data_source_uri}/")
-        # if not repairing_dataset: print(f"\nYour local dataset directory is {datasets_path}")
-
-        if Paths.exists(datasets_path):
-            # It's already installed...
-            if reinstall_datasets:
-                print(f"\nRemoving previously installed datasets")
-                dbgems.dbutils.fs.rm(datasets_path, True)
-
-            if not reinstall_datasets:
-                print(f"\nSkipping install of existing datasets to \"{datasets_path}\"")
-                fail_fast = False
-                validator(fail_fast)
-                return
-
-        print(f"\nInstalling datasets:")
-        print(f"| from \"{data_source_uri}\"")
-        print(f"| to \"{datasets_path}\"")
-        if install_min_time is None or install_max_time is None:
-            print(f"| NOTE: The datasets that we are installing are located in Washington, USA - depending on the")
-            print(f"|       region that your workspace is in, this operation can take as little as {install_min_time} and")
-            print(f"|       upwards to {install_max_time}, but this is a one-time operation.")
-
-        # Using data_source_uri is a temporary hack because it assumes we can actually
-        # reach the remote repository - in cases where it's blocked, this will fail.
-        files = dbgems.dbutils.fs.ls(data_source_uri)
-
-        what = "dataset" if len(files) == 1 else "datasets"
-        print(f"\nInstalling {len(files)} {what}: ")
-
-        install_start = dbgems.clock_start()
-        for f in files:
-            start = dbgems.clock_start()
-            print(f"| copying /{f.name[:-1]}", end="...")
-
-            source_path = f"{data_source_uri}/{f.name}"
-            target_path = f"{datasets_path}/{f.name}"
-
-            dbgems.dbutils.fs.cp(source_path, target_path, True)
-            print(dbgems.clock_stopped(start))
-
-        fail_fast = False
-        validator(fail_fast)
-
-        print(f"""\nThe install of the datasets completed successfully {dbgems.clock_stopped(install_start)}""")
+        dataset_manager = DatasetManager.from_dbacademy_helper(self)
+        dataset_manager.install_dataset(install_min_time=self.course_config.install_min_time,
+                                        install_max_time=self.course_config.install_max_time,
+                                        reinstall_datasets=reinstall_datasets)
 
     def print_copyrights(self, mappings: Optional[Dict[str, str]] = None) -> None:
         """
@@ -690,40 +655,6 @@ class DBAcademyHelper:
 
             except Exception as e:
                 raise AssertionError(self.__troubleshoot_error(f"Unable to write to {file}.", "Cannot Write to DBFS")) from e
-
-    def validate_datasets(self, fail_fast: bool) -> None:
-        """
-        Validates the "install" of the datasets by recursively listing all files in the remote data repository as well as the local data repository, validating that each file exists but DOES NOT validate file size or checksum.
-        """
-        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
-
-        validation_start = dbgems.clock_start()
-
-        if self.staging_source_uri == self.data_source_uri:
-            # When working with staging data, we need to enumerate what is in there
-            # and use it as a definitive source to the complete enumeration of our files
-            start = dbgems.clock_start()
-            print("\nEnumerating staged files for validation", end="...")
-            self.course_config.remote_files = DatasetManager.list_r(self.staging_source_uri)
-            print(dbgems.clock_stopped(start))
-            print()
-
-        print(f"\nValidating the locally installed datasets:")
-
-        ############################################################
-        # Proceed with the actual validation and repair if possible
-        ############################################################
-
-        dataset_manager = DatasetManager(data_source_uri=self.data_source_uri,
-                                         datasets_path=self.paths.datasets,
-                                         remote_files=self.course_config.remote_files)
-        dataset_manager.repair()
-        dataset_manager.print_stats()
-
-        print(dbgems.clock_stopped(validation_start, " total"))
-        print()
-
-        if fail_fast: assert dataset_manager.fixes == 0, f"Unexpected modifications to source datasets."
 
     def run_high_availability_job(self, job_name: str, notebook_path: str) -> None:
         """
