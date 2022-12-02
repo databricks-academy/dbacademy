@@ -211,7 +211,9 @@ class WorkspaceCleaner:
         start = dbgems.clock_start()
 
         experiments = mlflow.search_experiments(view_type=ViewType.ALL)
+        print(f"Found {len(experiments)}")
         experiments = [e for e in experiments if e.name.startswith(self._get_unique_name(lesson_only))]
+        print(f"Kept {len(experiments)}")
 
         if len(experiments) == 0:
             return False
