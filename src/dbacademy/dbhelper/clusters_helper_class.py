@@ -30,10 +30,15 @@ class ClustersHelper:
                                                          org_id=self.workspace.org_id)
 
     @staticmethod
-    def create_named_instance_pool(*, client: DBAcademyRestClient, name, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str):
+    def create_named_instance_pool(*, client: DBAcademyRestClient, name, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None):
         from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
+
+        lab_id = lab_id or WorkspaceHelper.get_lab_id()
+        workspace_description = workspace_description or WorkspaceHelper.get_workspace_description()
+        workspace_name = workspace_name or WorkspaceHelper.get_workspace_name()
+        org_id = org_id or dbgems.get_org_id()
 
         tags = [
             (f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}", dbgems.clean_string(lab_id)),
@@ -56,7 +61,7 @@ class ClustersHelper:
         return instance_pool_id
 
     @staticmethod
-    def __create_cluster_policy(client: DBAcademyRestClient, instance_pool_id: Union[None, str], name: str, definition: dict) -> str:
+    def __create_cluster_policy(*, client: DBAcademyRestClient, instance_pool_id: Union[None, str], name: str, definition: dict) -> str:
         if instance_pool_id is not None:
             definition["instance_pool_id"] = {
                 "type": "fixed",
@@ -82,8 +87,8 @@ class ClustersHelper:
         return policy_id
 
     @staticmethod
-    def create_all_purpose_policy(client: DBAcademyRestClient, instance_pool_id: str) -> None:
-        ClustersHelper.__create_cluster_policy(client, instance_pool_id, ClustersHelper.POLICY_ALL_PURPOSE, {
+    def create_all_purpose_policy(*, client: DBAcademyRestClient, instance_pool_id: str) -> None:
+        ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=instance_pool_id, name=ClustersHelper.POLICY_ALL_PURPOSE, definition={
             "cluster_type": {
                 "type": "fixed",
                 "value": "all-purpose"
@@ -98,8 +103,8 @@ class ClustersHelper:
         })
 
     @staticmethod
-    def create_jobs_policy(client: DBAcademyRestClient, instance_pool_id: str) -> None:
-        ClustersHelper.__create_cluster_policy(client, instance_pool_id, ClustersHelper.POLICY_JOBS_ONLY, {
+    def create_jobs_policy(*, client: DBAcademyRestClient, instance_pool_id: str) -> None:
+        ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=instance_pool_id, name=ClustersHelper.POLICY_JOBS_ONLY, definition={
             "cluster_type": {
                 "type": "fixed",
                 "value": "job"
@@ -107,11 +112,16 @@ class ClustersHelper:
         })
 
     @staticmethod
-    def create_dlt_policy(client: DBAcademyRestClient, instance_pool_id: str, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -> None:
+    def create_dlt_policy(*, client: DBAcademyRestClient, instance_pool_id: str, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None) -> None:
         from dbacademy import dbgems
         from .workspace_helper_class import WorkspaceHelper
 
-        ClustersHelper.__create_cluster_policy(client, instance_pool_id, ClustersHelper.POLICY_DLT_ONLY, {
+        lab_id = lab_id or WorkspaceHelper.get_lab_id()
+        workspace_description = workspace_description or WorkspaceHelper.get_workspace_description()
+        workspace_name = workspace_name or WorkspaceHelper.get_workspace_name()
+        org_id = org_id or dbgems.get_org_id()
+
+        ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=instance_pool_id, name=ClustersHelper.POLICY_DLT_ONLY, definition={
             "cluster_type": {
                 "type": "fixed",
                 "value": "dlt"
