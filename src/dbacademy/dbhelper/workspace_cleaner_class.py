@@ -247,12 +247,15 @@ class WorkspaceCleaner:
         active_stages = ["production", "staging"]
 
         for model in self.__da.client.ml.mlflow_models.list():
+            start = dbgems.clock_start()
             name = model.get("name")
+            print(f"| deleting model {name}", end="...")
+
             for version in self.__da.client.ml.mlflow_model_versions.list(name):
                 v = version.get("version")
                 stage = version.get("current_stage").lower()
                 if stage in active_stages:
-                    print(f"| archiving model {name} version #{v}")
+                    print(f" archiving model v{v}", end="...")
                     self.__da.client.ml.mlflow_model_versions.transition_stage(name, v, "archived")
 
             all_archived = False
@@ -262,11 +265,11 @@ class WorkspaceCleaner:
                     if version.get("current_stage").lower() in active_stages:
                         all_archived = False
                         v = version.get("version")
-                        print(f"| waiting for {name} version #{v} to be archived")
+                        print(f" waiting for v{v}", end="...")
                         time.sleep(5)
 
-            print(f"| deleting model {name}")
             self.__da.client.ml.mlflow_models.delete(name)
+            print(dbgems.clock_stopped(start))
 
         return True
 
