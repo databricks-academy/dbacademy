@@ -85,7 +85,7 @@ class ClustersHelper:
         client.permissions.cluster_policies.update_group(policy_id, "users", "CAN_USE")
 
         dbgems.display_html(f"""
-        <html><body><div>
+        <html style="margin:0"><body style="margin:0"><div style="margin:0">
             See <a href="/#setting/clusters/cluster-policies/view/{policy_id}" target="_blank">{name} ({policy_id})</a>
         </div></body></html>
         """)
