@@ -19,6 +19,18 @@ class WorkspaceHelper:
     CONFIGURE_FOR_OPTIONS = ["", CONFIGURE_FOR_ALL_USERS, CONFIGURE_FOR_MISSING_USERS_ONLY, CONFIGURE_FOR_CURRENT_USER_ONLY]
     CONFIGURE_FOR_VALID_OPTIONS = CONFIGURE_FOR_OPTIONS[1:]  # all but empty-string
 
+    @staticmethod
+    def get_lab_id():
+        return dbgems.get_parameter(WorkspaceHelper.PARAM_LAB_ID)
+
+    @staticmethod
+    def get_workspace_name():
+        return dbgems.get_spark_config("spark.databricks.workspaceUrl", default=dbgems.get_notebooks_api_endpoint())
+
+    @staticmethod
+    def get_workspace_description():
+        return dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION)
+
     def __init__(self, da: DBAcademyHelper):
         from .warehouses_helper_class import WarehousesHelper
         from .databases_helper_class import DatabasesHelper
