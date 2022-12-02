@@ -84,7 +84,6 @@ class ClustersHelper:
         # With the pool created, make sure that all users can attach to it.
         client.permissions.cluster_policies.update_group(policy_id, "users", "CAN_USE")
 
-        print(f"Created policy \"{name}\" ({policy_id})")
         dbgems.display_html(f"""
         <html><body><div>
             See <a href="/#setting/clusters/instance-pools/view/{policy_id}" target="_blank">{name} ({policy_id})</a>
