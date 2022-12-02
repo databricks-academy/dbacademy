@@ -62,12 +62,11 @@ class TestDBAcademyHelper(unittest.TestCase):
         name = DBAcademyHelper.to_schema_name(username="mickey.mouse@disney.com", course_code="asdf", lesson_name="Skinning Cats")
         self.assertEquals("mickey_mouse_g4qd_da_asdf_skinning_cats", name)
 
-    # No a longer static method
-    # def test_is_smoke_test(self):
-    #     self.assertFalse(DBAcademyHelper.is_smoke_test)
-    #
-    #     dbgems.MOCK_CONFIG[DBAcademyHelper.SPARK_CONF_SMOKE_TEST] = "True"
-    #     self.assertTrue(DBAcademyHelper.is_smoke_test)
+    def test_is_smoke_test(self):
+        self.assertFalse(DBAcademyHelper.is_smoke_test())
+
+        dbgems.MOCK_CONFIG[DBAcademyHelper.SPARK_CONF_SMOKE_TEST] = "True"
+        self.assertTrue(DBAcademyHelper.is_smoke_test())
 
     # def test_to_username_hash(self):
     #     username = "mickey.mouse@disney.com"

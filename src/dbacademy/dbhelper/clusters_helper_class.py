@@ -40,7 +40,7 @@ class ClustersHelper:
             (f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}", dbgems.clean_string(workspace_description)),
             (f"dbacademy.workspace", dbgems.clean_string(workspace_name)),
             (f"dbacademy.org_id", dbgems.clean_string(org_id)),
-            (f"dbacademy.source", dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test else dbgems.clean_string(lab_id)))
+            (f"dbacademy.source", dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else dbgems.clean_string(lab_id)))
         ]
 
         pool = client.instance_pools.create_or_update(instance_pool_name=name,
