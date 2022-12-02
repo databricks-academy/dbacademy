@@ -108,4 +108,5 @@ class WarehousesHelper:
         print(f"| Autoscale minimum: {min_num_clusters}")
         print(f"| Autoscale maximum: {max_num_clusters}")
         if DBAcademyHelper.is_smoke_test:
-            print(f"| Smoke Test:        {DBAcademyHelper.is_smoke_test} ")
+            value = DBAcademyHelper.is_smoke_test
+            print(f"| Smoke Test:        {value} ")
