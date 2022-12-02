@@ -169,25 +169,24 @@ class WorkspaceCleaner:
         import logging
         from databricks import feature_store
 
-        fs = feature_store.FeatureStoreClient()
-        feature_store_tables = self.__da.client.ml.feature_store.search_tables()
+        prefix = self.__da.schema_name if lesson_only else self.__da.schema_name_prefix
+        items = self.__da.client.ml.feature_store.search_tables()
+        feature_store_tables = [i for i in items if i.table.get("name").startswith(prefix)]
 
         if len(feature_store_tables) == 0:
             return False  # No tables, nothing to drop
 
-        for table in feature_store_tables:
-            name = table.get("name")
-            prefix = self.__da.schema_name if lesson_only else self.__da.schema_name_prefix
+        logger = logging.getLogger("databricks.feature_store._compute_client._compute_client")
+        logger_disabled = logger.disabled
+        logger.disabled = True
 
-            if name.startswith(prefix):
+        try:
+            for table in feature_store_tables:
+                name = table.get("name")
                 print(f"| dropping feature store table \"{name}\"")
-                logger = logging.getLogger("databricks.feature_store._compute_client._compute_client")
-                logger_disabled = logger.disabled
-                logger.disabled = True
-                try:
-                    fs.drop_table(name)
-                finally:
-                    logger.disabled = logger_disabled
+                feature_store.FeatureStoreClient().drop_table(name)
+        finally:
+            logger.disabled = logger_disabled
 
         return True
 
@@ -264,7 +263,7 @@ class WorkspaceCleaner:
         endpoints = []
         start = dbgems.clock_start()
 
-        # Filter out the models that pertain to this course and user
+        # Filter out the endpoints that pertain to this course and user
         unique_name = self._get_unique_name(lesson_only)
         for endpoint in self.__da.client.ml.mlflow_endpoints.list_endpoints():
             for part in endpoint.get("registered_model_name").split("_"):
