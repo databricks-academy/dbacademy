@@ -86,7 +86,7 @@ class ClustersHelper:
 
         dbgems.display_html(f"""
         <html><body><div>
-            See <a href="/#setting/clusters/instance-pools/view/{policy_id}" target="_blank">{name} ({policy_id})</a>
+            See <a href="/#setting/clusters/cluster-policies/view/{policy_id}" target="_blank">{name} ({policy_id})</a>
         </div></body></html>
         """)
 
