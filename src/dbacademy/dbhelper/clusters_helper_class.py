@@ -107,11 +107,11 @@ class ClustersHelper:
         })
 
     @staticmethod
-    def create_dlt_policy(client: DBAcademyRestClient, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -> None:
+    def create_dlt_policy(client: DBAcademyRestClient, instance_pool_id: str, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -> None:
         from dbacademy import dbgems
         from .workspace_helper_class import WorkspaceHelper
 
-        ClustersHelper.__create_cluster_policy(client, None, ClustersHelper.POLICY_DLT_ONLY, {
+        ClustersHelper.__create_cluster_policy(client, instance_pool_id, ClustersHelper.POLICY_DLT_ONLY, {
             "cluster_type": {
                 "type": "fixed",
                 "value": "dlt"
