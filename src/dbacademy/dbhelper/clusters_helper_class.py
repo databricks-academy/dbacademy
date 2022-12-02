@@ -19,7 +19,8 @@ class ClustersHelper:
         self.workspace = workspace
 
     def create_instance_pool(self, min_idle_instances: int = 0, idle_instance_autotermination_minutes: int = 15):
-        return ClustersHelper.create_named_instance_pool(min_idle_instances=min_idle_instances,
+        return ClustersHelper.create_named_instance_pool(client=self.client,
+                                                         min_idle_instances=min_idle_instances,
                                                          idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
                                                          lab_id=self.workspace.lab_id,
                                                          workspace_description=self.workspace.description,
@@ -28,7 +29,7 @@ class ClustersHelper:
                                                          course_name=self.da.course_config.course_name)
 
     @staticmethod
-    def create_named_instance_pool(*, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str, course_name: str):
+    def create_named_instance_pool(*, client, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str, course_name: str):
         from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
@@ -42,14 +43,14 @@ class ClustersHelper:
         ]
 
         name = ClustersHelper.POOLS_DEFAULT
-        pool = self.client.instance_pools.create_or_update(instance_pool_name=name,
-                                                           idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
-                                                           min_idle_instances=min_idle_instances,
-                                                           tags=tags)
+        pool = client.instance_pools.create_or_update(instance_pool_name=name,
+                                                      idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
+                                                      min_idle_instances=min_idle_instances,
+                                                      tags=tags)
         instance_pool_id = pool.get("instance_pool_id")
 
         # With the pool created, make sure that all users can attach to it.
-        self.client.permissions.pools.update_group(instance_pool_id, "users", "CAN_ATTACH_TO")
+        client.permissions.pools.update_group(instance_pool_id, "users", "CAN_ATTACH_TO")
 
         print(f"Created the pool \"{name}\" ({instance_pool_id})")
         return instance_pool_id
