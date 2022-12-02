@@ -121,3 +121,10 @@ class WarehousesHelper:
 
         if DBAcademyHelper.is_smoke_test():
             print(f"| Smoke Test:        {DBAcademyHelper.is_smoke_test()} ")
+
+        dbgems.display_html(f"""
+        <html style="margin:0"><body style="margin:0"><div style="margin:0">
+            See <a href="/sql/warehouses/{warehouse_id}" target="_blank">{name} ({warehouse_id})</a>
+        </div></body></html>
+        """)
+
