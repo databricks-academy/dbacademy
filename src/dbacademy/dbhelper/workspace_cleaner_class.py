@@ -228,15 +228,23 @@ class WorkspaceCleaner:
         return True
 
     def _cleanup_mlflow_models(self, lesson_only: bool) -> bool:
+
+        models = []
         start = dbgems.clock_start()
 
-        models = self.__da.client.ml.mlflow_models.list()
-        models = [m for m in models if m.get("name").startswith(self._get_unique_name(lesson_only))]
+        # Filter out the models that pertain to this course and user
+        unique_name = self._get_unique_name(lesson_only)
+        for model in self.__da.client.ml.mlflow_models.list():
+            for part in model.get("name").split("_"):
+                if lesson_only and unique_name == part:
+                    models.append(model)
+                elif part.startswith(unique_name):
+                    models.append(model)
 
         if len(models) == 0:
             return False
 
-        # Not our normal pattern, but the goal here is to report on ourselves only if endpoints were found.
+        # Not our normal pattern, but the goal here is to report on ourselves only if models were found.
         print(f"| enumerating MLflow models...{dbgems.clock_stopped(start)}")
 
         for model in self.__da.client.ml.mlflow_models.list():
@@ -255,10 +263,18 @@ class WorkspaceCleaner:
         return True
 
     def _cleanup_mlflow_endpoints(self, lesson_only: bool) -> bool:
+
+        endpoints = []
         start = dbgems.clock_start()
 
-        endpoints = self.__da.client.ml.mlflow_endpoints.list_endpoints()
-        endpoints = [e for e in endpoints if e.get("registered_model_name").startswith(self._get_unique_name(lesson_only))]
+        # Filter out the models that pertain to this course and user
+        unique_name = self._get_unique_name(lesson_only)
+        for endpoint in self.__da.client.ml.mlflow_endpoints.list_endpoints():
+            for part in endpoint.get("registered_model_name").split("_"):
+                if lesson_only and unique_name == part:
+                    endpoints.append(endpoint)
+                elif part.startswith(unique_name):
+                    endpoints.append(endpoint)
 
         if len(endpoints) == 0:
             return False
