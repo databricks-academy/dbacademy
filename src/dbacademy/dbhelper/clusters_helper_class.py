@@ -57,7 +57,13 @@ class ClustersHelper:
         # With the pool created, make sure that all users can attach to it.
         client.permissions.pools.update_group(instance_pool_id, "users", "CAN_ATTACH_TO")
 
-        print(f"Created the pool \"{name}\" ({instance_pool_id})")
+        dbgems.display_html(f"""
+        <html style="margin:0"><body style="margin:0"><div style="margin:0">
+            See <a href="/#setting/clusters/instance-pools/view/{instance_pool_id}" target="_blank">{name} ({instance_pool_id})</a>
+        </div></body></html>
+        """)
+
+
         return instance_pool_id
 
     @staticmethod
