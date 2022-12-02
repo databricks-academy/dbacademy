@@ -13,7 +13,8 @@ class DevHelper:
         """
         Development function used to enumerate the remote datasets for use in validate_datasets()
         """
-        files = self.da.list_r(self.da.data_source_uri)
+        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
+        files = DatasetManager.list_r(self.da.data_source_uri)
         files = "remote_files = " + str(files).replace("'", "\"")
 
         dbgems.display_html(f"""
@@ -25,7 +26,8 @@ class DevHelper:
         """
         Development function used to enumerate the local datasets for use in validate_datasets()
         """
-        files = self.da.list_r(self.da.paths.datasets)
+        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
+        files = DatasetManager.list_r(self.da.paths.datasets)
         files = "remote_files = " + str(files).replace("'", "\"")
 
         dbgems.display_html(f"""

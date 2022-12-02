@@ -3,14 +3,25 @@ from dbacademy import dbgems
 
 
 class DatasetManager:
-    def __init__(self, *, data_source_uri: str, datasets_path: str, remote_files: List[str]):
+
+    @staticmethod
+    def from_dbacademy_helper(da):
+        return DatasetManager(data_source_uri=da.data_source_uri,
+                              staging_source_uri=da.staging_source_uri,
+                              datasets_path=da.paths.datasets,
+                              remote_files=da.course_config.remote_files)
+
+    def __init__(self, *, data_source_uri: str, staging_source_uri: str, datasets_path: str, remote_files: List[str]):
         """
+        Creates an instance of DatasetManager
         :param data_source_uri: See DBAcademy.data_source_uri
+        :param staging_source_uri: See DBAcademy.staging_source_uri
         :param datasets_path: See DBAcademy.paths.datasets, Paths
         """
         self.__fixes = 0
         self.__repaired_paths = []
         self.__data_source_uri = data_source_uri
+        self.__staging_source_uri = staging_source_uri
         self.__datasets_path = datasets_path
         self.__remote_files = remote_files
 
@@ -32,6 +43,10 @@ class DatasetManager:
         return self.__data_source_uri
 
     @property
+    def staging_source_uri(self):
+        return self.staging_source_uri
+
+    @property
     def local_files(self) -> List[str]:
         return self.__local_files
 
@@ -43,30 +58,89 @@ class DatasetManager:
     def repaired_paths(self) -> List[str]:
         return self.__repaired_paths
 
-    def validate_named_dataset(self, *, fail_fast: bool) -> None:
+    def install_dataset(self, *, install_min_time: str, install_max_time: str, reinstall_datasets: bool = False) -> None:
         """
-        Utility to validate the installed dataset against the remote repo - provided specifically for Workspace-Setup jobs
-        :param fail_fast: Indicates if the operation should fail with an exception if validation fails
-        :return: None
-        """
+        Install the datasets used by this course to DBFS.
 
+        This ensures that data and compute are in the same region which subsequently mitigates performance issues
+        when the storage and compute are, for example, on opposite sides of the world.
+        """
+        from dbacademy.dbhelper.paths_class import Paths
+        # if not repairing_dataset: print(f"\nThe source for the datasets is\n{self.data_source_uri}/")
+        # if not repairing_dataset: print(f"\nYour local dataset directory is {datasets_path}")
+
+        if Paths.exists(self.datasets_path):
+            # It's already installed...
+            if reinstall_datasets:
+                print(f"\nRemoving previously installed datasets")
+                dbgems.dbutils.fs.rm(self.datasets_path, True)
+
+            if not reinstall_datasets:
+                print(f"\nSkipping install of existing datasets to \"{self.datasets_path}\"")
+                self.validate_datasets(fail_fast=False)
+                return
+
+        print(f"\nInstalling datasets:")
+        print(f"| from \"{self.data_source_uri}\"")
+        print(f"| to \"{self.datasets_path}\"")
+        if install_min_time is None or install_max_time is None:
+            print(f"| NOTE: The datasets that we are installing are located in Washington, USA - depending on the")
+            print(f"|       region that your workspace is in, this operation can take as little as {install_min_time} and")
+            print(f"|       upwards to {install_max_time}, but this is a one-time operation.")
+
+        # Using data_source_uri is a temporary hack because it assumes we can actually
+        # reach the remote repository - in cases where it's blocked, this will fail.
+        files = dbgems.dbutils.fs.ls(self.data_source_uri)
+
+        what = "dataset" if len(files) == 1 else "datasets"
+        print(f"\nInstalling {len(files)} {what}: ")
+
+        install_start = dbgems.clock_start()
+        for f in files:
+            start = dbgems.clock_start()
+            print(f"| copying /{f.name[:-1]}", end="...")
+
+            source_path = f"{self.data_source_uri}/{f.name}"
+            target_path = f"{self.datasets_path}/{f.name}"
+
+            dbgems.dbutils.fs.cp(source_path, target_path, True)
+            print(dbgems.clock_stopped(start))
+
+        self.validate_datasets(fail_fast=False)
+
+        print(f"""\nThe install of the datasets completed successfully {dbgems.clock_stopped(install_start)}""")
+
+    def validate_datasets(self, fail_fast: bool) -> None:
+        """
+        Validates the "install" of the datasets by recursively listing all files in the remote data repository as well as the local data repository, validating that each file exists but DOES NOT validate file size or checksum.
+        """
         validation_start = dbgems.clock_start()
 
-        start = dbgems.clock_start()
-        print("\nEnumerating remote files", end="...")
-        self.__remote_files = DatasetManager.list_r(self.data_source_uri)
-        print(dbgems.clock_stopped(start))
-        print()
+        if self.staging_source_uri == self.data_source_uri:
+            # When working with staging data, we need to enumerate what is in there
+            # and use it as a definitive source to the complete enumeration of our files
+            start = dbgems.clock_start()
+            print("\nEnumerating staged files for validation", end="...")
+            self.__remote_files = DatasetManager.list_r(self.staging_source_uri)
+            print(dbgems.clock_stopped(start))
+            print()
 
-        self.__repair_paths()
-        self.__repair_files()
+        print(f"\nValidating the locally installed datasets:")
+
+        ############################################################
+        # Proceed with the actual validation and repair if possible
+        ############################################################
+
+        self.__repair()
+        self.__print_stats()
 
         print(dbgems.clock_stopped(validation_start, " total"))
         print()
 
-        if fail_fast: assert self.fixes == 0, f"Unexpected modifications to source datasets."
+        if fail_fast:
+            assert self.fixes == 0, f"Unexpected modifications to source datasets."
 
-    def repair(self) -> None:
+    def __repair(self) -> None:
         self.__repair_paths()
         self.__repair_files()
 
@@ -165,7 +239,7 @@ class DatasetManager:
         results.sort()
         return results
 
-    def print_stats(self) -> None:
+    def __print_stats(self) -> None:
         if self.fixes == 1:
             print(f"| fixed 1 issue", end=" ")
         elif self.fixes > 0:
