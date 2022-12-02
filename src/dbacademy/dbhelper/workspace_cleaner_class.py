@@ -211,7 +211,7 @@ class WorkspaceCleaner:
         start = dbgems.clock_start()
 
         experiments = mlflow.search_experiments(view_type=ViewType.ACTIVE_ONLY)
-        experiments = [e for e in experiments if e.name.split("/")[-1].endswith(self._get_unique_name(lesson_only))]
+        experiments = [e for e in experiments if e.name.split("/")[-1].startswith(self._get_unique_name(lesson_only))]
 
         if len(experiments) == 0:
             return False
@@ -258,7 +258,7 @@ class WorkspaceCleaner:
         start = dbgems.clock_start()
 
         endpoints = self.__da.client.ml.mlflow_endpoints.list_endpoints()
-        endpoints = [e for e in endpoints if e.get("registered_model_name").startswith(self._get_unique_name(lesson_only))]
+        endpoints = [e for e in endpoints if e.get("registered_model_name").endswith(self._get_unique_name(lesson_only))]
 
         if len(endpoints) == 0:
             return False
