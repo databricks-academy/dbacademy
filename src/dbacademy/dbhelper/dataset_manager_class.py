@@ -44,7 +44,7 @@ class DatasetManager:
 
     @property
     def staging_source_uri(self):
-        return self.staging_source_uri
+        return self.__staging_source_uri
 
     @property
     def local_files(self) -> List[str]:
