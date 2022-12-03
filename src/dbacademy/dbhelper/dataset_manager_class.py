@@ -85,9 +85,10 @@ class DatasetManager:
         files = dbgems.dbutils.fs.ls(self.data_source_uri)
 
         total = len(files)
-        what = "dataset" if total == 1 else "datasets"
+        print("| ")
 
         install_start = dbgems.clock_start()
+
         for i, f in enumerate(files):
             start = dbgems.clock_start()
             print(f"| copying {i+1}/{total} /{f.name[:-1]}", end="...")
