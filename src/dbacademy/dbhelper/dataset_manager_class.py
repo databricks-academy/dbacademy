@@ -84,13 +84,13 @@ class DatasetManager:
         # reach the remote repository - in cases where it's blocked, this will fail.
         files = dbgems.dbutils.fs.ls(self.data_source_uri)
 
-        what = "dataset" if len(files) == 1 else "datasets"
-        print(f"\nInstalling {len(files)} {what}: ")
+        total = len(files)
+        what = "dataset" if total == 1 else "datasets"
 
         install_start = dbgems.clock_start()
-        for f in files:
+        for i, f in enumerate(files):
             start = dbgems.clock_start()
-            print(f"| copying /{f.name[:-1]}", end="...")
+            print(f"| copying {i+}/{total} /{f.name[:-1]}", end="...")
 
             source_path = f"{self.data_source_uri}/{f.name}"
             target_path = f"{self.datasets_path}/{f.name}"
