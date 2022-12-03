@@ -120,7 +120,13 @@ class DatasetManager:
         print(f"\nValidating the locally installed datasets:")
 
         self.__validate_and_repair()
-        self.__print_stats()
+
+        if self.fixes == 1:
+            print(f"| fixed 1 issue", end="...")
+        elif self.fixes > 0:
+            print(f"| fixed {self.fixes} issues", end="...")
+        else:
+            print(f"| validation completed", end="...")
 
         print(dbgems.clock_stopped(validation_start, " total"))
 
@@ -227,11 +233,3 @@ class DatasetManager:
 
         results.sort()
         return results
-
-    def __print_stats(self) -> None:
-        if self.fixes == 1:
-            print(f"| fixed 1 issue", end=" ")
-        elif self.fixes > 0:
-            print(f"| fixed {self.fixes} issues", end=" ")
-        else:
-            print(f"| completed", end=" ")
