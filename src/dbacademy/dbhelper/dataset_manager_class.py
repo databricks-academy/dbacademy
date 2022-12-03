@@ -25,11 +25,6 @@ class DatasetManager:
         self.__datasets_path = datasets_path
         self.__remote_files = remote_files
 
-        print("| listing local files", end="...")
-        start = dbgems.clock_start()
-        self.__local_files = DatasetManager.list_r(self.datasets_path)
-        print(dbgems.clock_stopped(start))
-
     @property
     def remote_files(self) -> List[str]:
         return self.__remote_files
@@ -45,10 +40,6 @@ class DatasetManager:
     @property
     def staging_source_uri(self):
         return self.__staging_source_uri
-
-    @property
-    def local_files(self) -> List[str]:
-        return self.__local_files
 
     @property
     def fixes(self) -> int:
@@ -127,11 +118,7 @@ class DatasetManager:
 
         print(f"\nValidating the locally installed datasets:")
 
-        ############################################################
-        # Proceed with the actual validation and repair if possible
-        ############################################################
-
-        self.__repair()
+        self.__validate_and_repair()
         self.__print_stats()
 
         print(dbgems.clock_stopped(validation_start, " total"))
@@ -140,17 +127,19 @@ class DatasetManager:
         if fail_fast:
             assert self.fixes == 0, f"Unexpected modifications to source datasets."
 
-    def __repair(self) -> None:
-        self.__repair_paths()
-        self.__repair_files()
+    def __validate_and_repair(self) -> None:
+        print("| listing local files", end="...")
+        start = dbgems.clock_start()
+        local_files = DatasetManager.list_r(self.datasets_path)
+        print(dbgems.clock_stopped(start))
 
-    def __repair_paths(self) -> None:
-        self.__del_extra_paths()
-        self.__add_extra_paths()
+        # Process directories first
+        self.__del_extra_paths(local_files)
+        self.__add_extra_paths(local_files)
 
-    def __repair_files(self) -> None:
-        self.__del_extra_files()
-        self.__add_extra_files()
+        # Then process individual files
+        self.__del_extra_files(local_files)
+        self.__add_extra_files(local_files)
 
     def __dataset_not_fixed(self, test_file: str) -> bool:
         for repaired_path in self.repaired_paths:
@@ -158,13 +147,13 @@ class DatasetManager:
                 return False
         return True
 
-    def __del_extra_paths(self) -> None:
+    def __del_extra_paths(self, local_files: List[str]) -> None:
         """
         Removes extra directories (cascade effect vs one file at a time)
         :return: None
         """
 
-        for file in self.local_files:
+        for file in local_files:
             if file not in self.remote_files and file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
                 start = dbgems.clock_start()
@@ -173,13 +162,13 @@ class DatasetManager:
                 dbgems.dbutils.fs.rm(f"{self.datasets_path}/{file[1:]}", True)
                 print(dbgems.clock_stopped(start))
 
-    def __add_extra_paths(self) -> None:
+    def __add_extra_paths(self, local_files: List[str]) -> None:
         """
         Adds extra directories (cascade effect vs one file at a time)
         :return: None
         """
         for file in self.remote_files:
-            if file not in self.local_files and file.endswith("/") and self.__dataset_not_fixed(test_file=file):
+            if file not in local_files and file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
                 start = dbgems.clock_start()
                 self.repaired_paths.append(file)
@@ -189,12 +178,12 @@ class DatasetManager:
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
                 print(dbgems.clock_stopped(start))
 
-    def __del_extra_files(self) -> None:
+    def __del_extra_files(self, local_files: List[str]) -> None:
         """
         Remove one file at a time (picking up what was not covered by processing directories)
         :return: None
         """
-        for file in self.local_files:
+        for file in local_files:
             if file not in self.remote_files and not file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
                 start = dbgems.clock_start()
@@ -202,13 +191,13 @@ class DatasetManager:
                 dbgems.dbutils.fs.rm(f"{self.datasets_path}/{file[1:]}", True)
                 print(dbgems.clock_stopped(start))
 
-    def __add_extra_files(self) -> None:
+    def __add_extra_files(self, local_files: List[str]) -> None:
         """
         Add one file at a time (picking up what was not covered by processing directories)
         :return: None
         """
         for file in self.remote_files:
-            if file not in self.local_files and not file.endswith("/") and self.__dataset_not_fixed(test_file=file):
+            if file not in local_files and not file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
                 start = dbgems.clock_start()
                 print(f"| restoring missing file: {file}", end="...")
