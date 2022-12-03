@@ -27,12 +27,22 @@ class LessonConfig:
         """
         self.__mutable = True
 
+        self.__name = None
         self.name = name
 
+        self.__installing_datasets = None
         self.installing_datasets = installing_datasets
+
+        self.__requires_uc = None
         self.requires_uc = requires_uc
+
+        self.__enable_streaming_support = None
         self.enable_streaming_support = enable_streaming_support
+
+        self.__create_schema = None
         self.create_schema = create_schema
+
+        self.__create_catalog = None
         self.create_catalog = create_catalog
 
         try:
@@ -77,8 +87,9 @@ class LessonConfig:
 
     @installing_datasets.setter
     def installing_datasets(self, installing_datasets: bool) -> None:
-        self.__assert_mutable()
-        self.__installing_datasets = installing_datasets
+        if not self.__installing_datasets == installing_datasets:
+            self.__assert_mutable()
+            self.__installing_datasets = installing_datasets
 
     @property
     def name(self) -> Optional[str]:
@@ -99,9 +110,10 @@ class LessonConfig:
 
     @name.setter
     def name(self, name: Optional[str]) -> None:
-        self.__assert_mutable()
-        self.__name = name
-        self.__clean_name = self.to_clean_lesson_name(name)
+        if not self.__name == name:
+            self.__assert_mutable()
+            self.__name = name
+            self.__clean_name = self.to_clean_lesson_name(name)
 
     @staticmethod
     def to_clean_lesson_name(name: Optional[str]) -> Optional[str]:
@@ -140,8 +152,9 @@ class LessonConfig:
 
     @enable_streaming_support.setter
     def enable_streaming_support(self, enable_streaming_support) -> None:
-        self.__assert_mutable()
-        self.__enable_streaming_support = enable_streaming_support
+        if not self.__enable_streaming_support == enable_streaming_support:
+            self.__assert_mutable()
+            self.__enable_streaming_support = enable_streaming_support
 
     @property
     def requires_uc(self) -> bool:
@@ -154,8 +167,9 @@ class LessonConfig:
 
     @requires_uc.setter
     def requires_uc(self, requires_uc) -> None:
-        self.__assert_mutable()
-        self.__requires_uc = requires_uc
+        if not self.__requires_uc == requires_uc:
+            self.__assert_mutable()
+            self.__requires_uc = requires_uc
 
     @property
     def is_uc_enabled_workspace(self) -> bool:
@@ -211,8 +225,9 @@ class LessonConfig:
 
     @create_catalog.setter
     def create_catalog(self, create_catalog: bool) -> None:
-        self.__assert_mutable()
-        self.__create_catalog = create_catalog
+        if not self.__create_catalog == create_catalog:
+            self.__assert_mutable()
+            self.__create_catalog = create_catalog
 
     @property
     def create_schema(self) -> bool:
@@ -223,5 +238,6 @@ class LessonConfig:
 
     @create_schema.setter
     def create_schema(self, create_schema: bool) -> None:
-        self.__assert_mutable()
-        self.__create_schema = create_schema
+        if not self.__create_schema == create_schema:
+            self.__assert_mutable()
+            self.__create_schema = create_schema
