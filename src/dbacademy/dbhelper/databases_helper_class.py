@@ -130,11 +130,7 @@ class DatabasesHelper:
         run_response = client.jobs().run_now(job_id)
         run_id = run_response.get("run_id")
 
-        dbgems.display_html(f"""
-        <html style="margin:0"><body style="margin:0"><div style="margin:0">
-            See <a href="/#job/{job_id}/run/{run_id}" target="_blank">{job_name} ({job_id}/{run_id})</a>
-        </div></body></html>
-        """)
+        print(f"| See {dbgems.get_workspace_url()}")
 
         final_response = client.runs().wait_for(run_id)
 
@@ -143,4 +139,11 @@ class DatabasesHelper:
 
         print()
         print(f"Completed \"{job_name}\" ({job_id}) successfully.")
+
+        dbgems.display_html(f"""
+        <html style="margin:0"><body style="margin:0"><div style="margin:0">
+            See <a href="/#job/{job_id}/run/{run_id}" target="_blank">{job_name} ({job_id}/{run_id})</a>
+        </div></body></html>
+        """)
+
         return job_id
