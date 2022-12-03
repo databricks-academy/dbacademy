@@ -122,7 +122,6 @@ class DatasetManager:
         self.__print_stats()
 
         print(dbgems.clock_stopped(validation_start, " total"))
-        print()
 
         if fail_fast:
             assert self.fixes == 0, f"Unexpected modifications to source datasets."
