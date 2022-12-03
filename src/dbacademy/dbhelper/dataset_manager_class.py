@@ -75,6 +75,7 @@ class DatasetManager:
         print(f"| from \"{self.data_source_uri}\"")
         print(f"| to \"{self.datasets_path}\"")
         if install_min_time is not None and install_max_time is not None:
+            print(f"|")
             print(f"| NOTE: The datasets that we are installing are located in Washington, USA - depending on the")
             print(f"|       region that your workspace is in, this operation can take as little as {install_min_time} and")
             print(f"|       upwards to {install_max_time}, but this is a one-time operation.")
