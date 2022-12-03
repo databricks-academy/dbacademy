@@ -99,9 +99,9 @@ class DatasetManager:
             dbgems.dbutils.fs.cp(source_path, target_path, True)
             print(dbgems.clock_stopped(start))
 
-        self.validate_datasets(fail_fast=False)
-
         print(f"|\n| completed datasets installation successfully...{dbgems.clock_stopped(install_start)}")
+
+        self.validate_datasets(fail_fast=False)
 
     def validate_datasets(self, fail_fast: bool) -> None:
         """
