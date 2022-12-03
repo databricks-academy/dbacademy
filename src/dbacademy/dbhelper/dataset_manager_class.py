@@ -101,7 +101,7 @@ class DatasetManager:
 
         self.validate_datasets(fail_fast=False)
 
-        print(f"""\nThe install of the datasets completed successfully {dbgems.clock_stopped(install_start)}""")
+        print(f"|\n| completed datasets installation successfully...{dbgems.clock_stopped(install_start)}")
 
     def validate_datasets(self, fail_fast: bool) -> None:
         """
