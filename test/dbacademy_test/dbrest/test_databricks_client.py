@@ -67,7 +67,8 @@ class TestDatabricksApiClient(unittest.TestCase):
 
     def testMlFlow(self):
         ws = dougrest_factory.test_client()
-        result = list(ws.mlflow.registered_models.list())
+        response = ws.mlflow.registered_models.list()
+        result = list(response)
         self.assertIsInstance(result, list)
         self.assertTrue(result)
 

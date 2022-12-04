@@ -28,6 +28,7 @@ class LessonConfig:
         self.__mutable = True
 
         self.__name = None
+        self.__clean_name = None
         self.name = name
 
         self.__installing_datasets = None
