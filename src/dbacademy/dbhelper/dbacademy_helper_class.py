@@ -471,7 +471,7 @@ class DBAcademyHelper:
         # self.created_db = True
 
         try:
-            print(f"Creating & using the schema \"{self.schema_name}\"", end="...")
+            print(f"\nCreating & using the schema \"{self.schema_name}\"", end="...")
             dbgems.sql(f"CREATE DATABASE IF NOT EXISTS {self.schema_name} LOCATION '{self.paths.user_db}'")
             dbgems.sql(f"USE {self.schema_name}")
             print(dbgems.clock_stopped(start))
