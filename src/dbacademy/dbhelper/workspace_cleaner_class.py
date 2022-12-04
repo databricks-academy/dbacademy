@@ -21,7 +21,7 @@ class WorkspaceCleaner:
         dbgems.spark.catalog.clearCache()
         status = self._stop_all_streams() or status
 
-        if self.__da.course_config.ml_feature_enabled:
+        if self.__da.lesson_config.enable_ml_support:
             status = self._drop_feature_store_tables(lesson_only=True) or status
             status = self._cleanup_mlflow_endpoints(lesson_only=True) or status
             status = self._cleanup_mlflow_models(lesson_only=True) or status
@@ -45,7 +45,7 @@ class WorkspaceCleaner:
         dbgems.spark.catalog.clearCache()
         self._stop_all_streams()
 
-        if self.__da.course_config.ml_feature_enabled:
+        if self.__da.lesson_config.enable_ml_support:
             self._drop_feature_store_tables(lesson_only=False)
             self._cleanup_mlflow_endpoints(lesson_only=False)
             self._cleanup_mlflow_models(lesson_only=False)

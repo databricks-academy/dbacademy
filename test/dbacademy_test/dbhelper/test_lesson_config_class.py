@@ -23,6 +23,7 @@ class TestLessonConfig(unittest.TestCase):
                               requires_uc=True,
                               installing_datasets=False,
                               enable_streaming_support=False,
+                              enable_ml_support=False,
                               mocks={"__initial_catalog": DBAcademyHelper.CATALOG_UC_DEFAULT})
 
         self.assertIsNone(config.name)
@@ -46,6 +47,7 @@ class TestLessonConfig(unittest.TestCase):
                               requires_uc=True,
                               installing_datasets=False,
                               enable_streaming_support=False,
+                              enable_ml_support=False,
                               mocks={"__initial_catalog": "i_have_no_idea"})
 
         self.assertIsNone(config.name)
@@ -68,6 +70,7 @@ class TestLessonConfig(unittest.TestCase):
                               requires_uc=True,
                               installing_datasets=False,
                               enable_streaming_support=False,
+                              enable_ml_support=False,
                               mocks={"__initial_catalog": DBAcademyHelper.CATALOG_SPARK_DEFAULT})
         try:
             config.assert_valid()
@@ -82,7 +85,8 @@ class TestLessonConfig(unittest.TestCase):
                               create_catalog=True,
                               requires_uc=True,
                               installing_datasets=False,
-                              enable_streaming_support=False)
+                              enable_streaming_support=False,
+                              enable_ml_support=False)
         try:
             config.assert_valid()
             raise Exception("Expected AssertionError")
@@ -97,6 +101,7 @@ class TestLessonConfig(unittest.TestCase):
                               requires_uc=True,
                               installing_datasets=False,
                               enable_streaming_support=False,
+                              enable_ml_support=False,
                               mocks={"__initial_catalog": DBAcademyHelper.CATALOG_UC_DEFAULT})
         try:
             config.assert_valid()
@@ -112,6 +117,7 @@ class TestLessonConfig(unittest.TestCase):
                               requires_uc=True,
                               installing_datasets=False,
                               enable_streaming_support=False,
+                              enable_ml_support=False,
                               mocks={
                                  "__username": "mickey.mouse@disney.com",
                                  "__initial_schema": DBAcademyHelper.SCHEMA_DEFAULT,
@@ -138,6 +144,7 @@ class TestLessonConfig(unittest.TestCase):
                               requires_uc=True,
                               installing_datasets=False,
                               enable_streaming_support=False,
+                              enable_ml_support=False,
                               mocks={
                                  "__username": "mickey.mouse@disney.com",
                                  "__initial_schema": DBAcademyHelper.SCHEMA_DEFAULT,

@@ -10,6 +10,7 @@ class LessonConfig:
                  requires_uc: bool,
                  installing_datasets: bool,
                  enable_streaming_support: bool,
+                 enable_ml_support: bool,
                  mocks: Optional[Dict[str, Any]] = None):
         """
         The LessonConfig encapsulates those parameters that may change from one lesson to another compared to the CourseConfig which
@@ -23,6 +24,7 @@ class LessonConfig:
         :param requires_uc: See the property by the same name
         :param installing_datasets: See the property by the same name
         :param enable_streaming_support: See the property by the same name
+        :param enable_ml_support: See the property by the same name
         :param mocks: Used for testing, allows for mocking out the parameters __username, __initial_schema and __initial_catalog
         """
         self.__mutable = True
@@ -39,6 +41,9 @@ class LessonConfig:
 
         self.__enable_streaming_support = None
         self.enable_streaming_support = enable_streaming_support
+
+        self.__enable_ml_support = None
+        self.enable_ml_support = enable_ml_support
 
         self.__create_schema = None
         self.create_schema = create_schema
@@ -156,6 +161,20 @@ class LessonConfig:
         if not self.__enable_streaming_support == enable_streaming_support:
             self.__assert_mutable()
             self.__enable_streaming_support = enable_streaming_support
+
+    @property
+    def enable_ml_support(self) -> bool:
+        """
+        A flag that indicates if support for managing ML & MLflow artifacts. The primary usage is to
+        purge Feature Tables, Experiments (mainly those created under test), ML Models and Serving Endpoints
+        """
+        return self.__enable_ml_support
+
+    @enable_ml_support.setter
+    def enable_ml_support(self, enable_ml_support) -> None:
+        if not self.__enable_ml_support == enable_ml_support:
+            self.__assert_mutable()
+            self.__enable_ml_support = enable_ml_support
 
     @property
     def requires_uc(self) -> bool:
