@@ -240,10 +240,10 @@ class WorkspaceCleaner:
             for part in name.split("_"):
                 if lesson_only and unique_name == part:
                     models.append(model)
-                    print(f"| Matched model \"{name}\" against \"{unique_name}\" ({lesson_only})")
+                    # print(f"| Matched model \"{name}\" against \"{unique_name}\" ({lesson_only})")
                 elif part.startswith(unique_name):
                     models.append(model)
-                    print(f"| Matched model \"{name}\" against \"{unique_name}\" ({lesson_only})")
+                    # print(f"| Matched model \"{name}\" against \"{unique_name}\" ({lesson_only})")
 
         if len(models) == 0:
             return False
