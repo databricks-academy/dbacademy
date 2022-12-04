@@ -47,8 +47,8 @@ class WorkspaceCleaner:
 
         if self.__da.course_config.ml_feature_enabled:
             self._drop_feature_store_tables(lesson_only=False)
-            self._cleanup_mlflow_endpoints(lesson_only=True)
-            self._cleanup_mlflow_models(lesson_only=True)
+            self._cleanup_mlflow_endpoints(lesson_only=False)
+            self._cleanup_mlflow_models(lesson_only=False)
             self._cleanup_experiments(lesson_only=False)
 
         self._reset_databases()
@@ -236,11 +236,14 @@ class WorkspaceCleaner:
         # Filter out the models that pertain to this course and user
         unique_name = self._get_unique_name(lesson_only)
         for model in self.__da.client.ml.mlflow_models.list():
-            for part in model.get("name").split("_"):
+            name = model.get("name")
+            for part in name.split("_"):
                 if lesson_only and unique_name == part:
                     models.append(model)
+                    print(f"| Matched model \"{name}\" against \"{unique_name}\" ({lesson_only})")
                 elif part.startswith(unique_name):
                     models.append(model)
+                    print(f"| Matched model \"{name}\" against \"{unique_name}\" ({lesson_only})")
 
         if len(models) == 0:
             return False
