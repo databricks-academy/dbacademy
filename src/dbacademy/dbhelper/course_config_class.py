@@ -3,9 +3,6 @@ from typing import List, Optional
 
 class CourseConfig:
 
-    FEATURE_ML = "ML"
-    FEATURE_TYPES = [FEATURE_ML]
-
     def __init__(self, *,
                  course_code: str,
                  course_name: str,
@@ -15,8 +12,7 @@ class CourseConfig:
                  install_max_time: str,
                  remote_files: List[str],
                  supported_dbrs: List[str],
-                 expected_dbrs: str,
-                 features: List = None):
+                 expected_dbrs: str):
         """
         The CourseConfig encapsulates those parameters that should never change for the entire duration of a course
         compared to the LessonConfig which encapsulates parameters that may change from lesson to lesson
@@ -29,7 +25,6 @@ class CourseConfig:
         :param remote_files: See the property by the same name
         :param supported_dbrs: See the property by the same name
         :param expected_dbrs: See the property by the same name
-        :param features: See the property by the same name
         """
         self.__course_code = course_code
 
@@ -41,10 +36,6 @@ class CourseConfig:
         self.__install_min_time = install_min_time
         self.__install_max_time = install_max_time
         self.__remote_files = remote_files
-
-        self.__features = features or list()
-        for feature in self.features:
-            assert feature in CourseConfig.FEATURE_TYPES, f"The parameter \"features\" must any one of CourseConfig.FEATURE_TYPES, found {feature}, expected {CourseConfig.FEATURE_TYPES}"
 
         assert len(supported_dbrs) > 0, f"At least one supported DBR must be defined."
         self.__supported_dbrs = [str(d) for d in supported_dbrs]
@@ -121,23 +112,6 @@ class CourseConfig:
         :return: the maximum amount of time required to "install" a dataset as measured from, for example, Singapore - typically 2 or 3 times that of CourseConfig.install_min_time
         """
         return self.__install_max_time
-
-    @property
-    def features(self) -> List[str]:
-        """
-        Enumeration of special features to be supported by DBAcademyHelper and related components.
-        See also CourseConfig.ml_feature_enabled
-        :return: The list of enabled features
-        """
-        return self.__features
-
-    @property
-    def ml_feature_enabled(self):
-        """
-        This feature enables the setup and teardown of specific data science artifacts such as Experiments, Feature Tables and ML Models
-        :return: True if the "ML" feature is enabled for this course.
-        """
-        return CourseConfig.FEATURE_ML in self.features
 
     @property
     def remote_files(self) -> List[str]:
