@@ -252,7 +252,7 @@ class WorkspaceCleaner:
         print(f"| enumerating MLflow models...{dbgems.clock_stopped(start)}")
         active_stages = ["production", "staging"]
 
-        for model in self.__da.client.ml.mlflow_models.list():
+        for model in models:
             start = dbgems.clock_start()
             name = model.get("name")
             print(f"| deleting model {name}", end="...")
