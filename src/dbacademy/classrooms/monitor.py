@@ -738,11 +738,11 @@ class Commands(object):
                 "type": "fixed",
                 "value": instance_pool_id,
                 "hidden": False,
-            }
+            },
         }
         cluster_policy.update(tags_policy)
 
-        all_purpose_policy : Dict[str, Any] = {
+        all_purpose_policy: Dict[str, Any] = {
             "cluster_type": {
                 "type": "fixed",
                 "value": "all-purpose"
@@ -753,6 +753,10 @@ class Commands(object):
                 "maxValue": 180,
                 "defaultValue": autotermination,
             },
+            "data_security_mode": {
+                "type": "unlimited",
+                "defaultValue": "SINGLE_USER"
+            },
         }
         all_purpose_policy.update(cluster_policy)
         all_purpose_policy = workspace.clusters.policies.create_or_update("DBAcademy",
@@ -760,7 +764,7 @@ class Commands(object):
         all_purpose_policy_id = all_purpose_policy.get("policy_id")
         workspace.permissions.clusters.policies.update(all_purpose_policy_id, "group_name", "users", "CAN_USE")
 
-        jobs_policy : Dict[str, Any] = {
+        jobs_policy: Dict[str, Any] = {
             "cluster_type": {
                 "type": "fixed",
                 "value": "job"
@@ -770,7 +774,7 @@ class Commands(object):
         jobs_policy = workspace.clusters.policies.create_or_update("DBAcademy Jobs", jobs_policy)
         jobs_policy_id = jobs_policy.get("policy_id")
         workspace.permissions.clusters.policies.update(jobs_policy_id, "group_name", "users", "CAN_USE")
-        dlt_policy = {
+        dlt_policy: Dict[str, Any] = {
             "cluster_type": {
                 "type": "fixed",
                 "value": "dlt"
