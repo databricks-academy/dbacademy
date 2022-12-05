@@ -793,6 +793,45 @@ class Commands(object):
         dlt_policy_id = dlt_policy.get("policy_id")
         workspace.permissions.clusters.policies.update(dlt_policy_id, "group_name", "users", "CAN_USE")
 
+    @staticmethod
+    def single_user_clusters(ws):
+        def get_owners(cluster):
+            cluster_id = cluster["cluster_id"]
+            acl = ws.permissions.clusters.get(cluster_id).get("access_control_list", [])
+            owners = [perm["user_name"] for perm in acl if
+                      "user_name" in perm and
+                      perm["all_permissions"][0]["inherited"] == False and
+                      perm["all_permissions"][0]["permission_level"] == "CAN_MANAGE" and
+                      True
+                      ]
+            return owners
+
+        def update_cluster(cluster):
+            #     if "lab-cluster" not in cluster["cluster_name"]:
+            #       return
+            if cluster.get("data_security_mode") == "SINGLE_USER" and cluster.get("spark_conf", {}).get(
+                    "spark.databricks.dataLineage.enabled") == "true":
+                return
+            owners = get_owners(cluster)
+            if len(owners) != 1:
+                return {"Cluster": cluster["cluster_name"], "Error": f"Ambiguous ownership: {owners!r}"}
+            cluster["single_user_name"] = owners[0]
+            cluster["data_security_mode"] = "SINGLE_USER"
+            cluster.get("spark_conf", {})["spark.databricks.dataLineage.enabled"] = "true"
+            for forbidden_key in ("ebs_volumes_spec", "ebs_volume_count"):
+                if forbidden_key in cluster.get("aws_attributes", {}):
+                    del cluster["aws_attributes"][forbidden_key]
+            try:
+                ws.clusters.update(cluster)
+            except Exception as ex:
+                return {"Cluster": cluster["cluster_name"], "Error": str(ex)}
+                raise ex
+
+        from multiprocessing.pool import ThreadPool
+        with ThreadPool(100) as pool:
+            results = pool.map(update_cluster, ws.clusters.list())
+        return results
+
 
 def getWorkspace(workspaces, *, name=None, url=None):
     if name:
