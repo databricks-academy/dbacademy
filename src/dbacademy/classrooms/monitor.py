@@ -681,7 +681,7 @@ class Commands(object):
     def policies_create(self, workspace):
         import re
         workspace_hostname = re.match(r"^https://([^/]+)/.*$", workspace.url)[1]
-        machine_type = self.cluster_spec["machine_type"]
+        machine_type = self.cluster_spec["node_type_id"]
         autotermination = self.cluster_spec["autotermination_minutes"]
 
         tags = {
