@@ -683,6 +683,7 @@ class Commands(object):
         workspace_hostname = re.match(r"^https://([^/]+)/.*$", workspace.url)[1]
         machine_type = self.cluster_spec["node_type_id"]
         autotermination = self.cluster_spec["autotermination_minutes"]
+        spark_version = self.cluster_spec["spark_version"]
 
         tags = {
             "dbacademy.event_name": self.event.get("name", "unknown"),
@@ -697,7 +698,7 @@ class Commands(object):
             'node_type_id': machine_type,
             'custom_tags': {k.replace("dbacademy", "dbacademy.pool"): v for k, v in tags.items()},
             'idle_instance_autotermination_minutes': 5,
-            'preloaded_spark_versions': ["auto:latest-lts-ml"],
+            'preloaded_spark_versions': [spark_version],
         }
 
         instance_pool = workspace.pools.get_by_name(instance_pool_name, if_not_exists="ignore")
