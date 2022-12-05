@@ -657,8 +657,10 @@ class Commands(object):
         if job:
             job_id = job["job_id"]
             workspace.jobs.runs.delete_all(job_id)
-            workspace.jobs.delete(job_id)
-        job_id = workspace.jobs.create_multi_task_job(**job_spec)
+            job_spec["job_id"] = job_id
+            workspace.jobs.update(job_spec)
+        else:
+            job_id = workspace.jobs.create_multi_task_job(**job_spec)
 
         runs = workspace.jobs.runs.list(job_id=job_id, active_only=True)
         if runs:
