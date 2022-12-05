@@ -622,15 +622,15 @@ class Commands(object):
             "job_clusters": [{
                 "job_cluster_key": "Workspace-Setup",
                 "new_cluster": {
-                    "spark_version": "10.4.x-scala2.12",
+                    "spark_version": self.cluster_spec["spark_version"],
                     "spark_conf": {
                         "spark.master": "local[*, 4]",
                         "spark.databricks.cluster.profile": "singleNode"
                     },
                     "custom_tags": {
                         "ResourceClass": "SingleNode",
-                        "dbacademy.event_name": self.event["name"],
-                        "dbacademy.event_description": self.event["description"],
+                        "dbacademy.event_name": self.event.get("name", "unknown"),
+                        "dbacademy.event_description": self.event.get("description", "unknown"),
                         "dbacademy.workspace": workspace_hostname
                     },
                     "spark_env_vars": {
@@ -678,29 +678,24 @@ class Commands(object):
                 return result
             sleep(60)  # seconds
 
-    @staticmethod
-    def policiesCreate(workspace):
+    def policies_create(self, workspace):
         import re
         workspace_hostname = re.match(r"^https://([^/]+)/.*$", workspace.url)[1]
-        event_name = "Partner-Class"
-        machine_type = "i3.xlarge"
-        autotermination = 40
-        spark_versions = ["10.4.x-cpu-ml-scala2.12", "10.4.x-scala2.12"]
+        machine_type = self.cluster_spec["machine_type"]
+        autotermination = 120
+        spark_versions = ["11.3.x-cpu-ml-scala2.12", "11.3.x-scala2.12"]
         spark_version = spark_versions[0]
 
         tags = {
-            "dbacademy.event_name": event_name,
-            "dbacademy.workspace": workspace_hostname
+            "dbacademy.event_name": self.event.get("name", "unknown"),
+            "dbacademy.event_description": self.event.get("description", "unknown"),
+            "dbacademy.workspace": workspace_hostname,
         }
 
         instance_pool_name = f"{machine_type} Pool"
         instance_pool_spec = {
             'instance_pool_name': instance_pool_name,
             'min_idle_instances': 0,
-            #       "aws_attributes": {
-            #           "first_on_demand": 1,
-            #           "availability": "SPOT_WITH_FALLBACK"
-            #       },
             'node_type_id': machine_type,
             'custom_tags': {k.replace("dbacademy", "dbacademy.pool"): v for k, v in tags.items()},
             'idle_instance_autotermination_minutes': 5,
