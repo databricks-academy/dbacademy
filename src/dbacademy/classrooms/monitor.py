@@ -682,9 +682,7 @@ class Commands(object):
         import re
         workspace_hostname = re.match(r"^https://([^/]+)/.*$", workspace.url)[1]
         machine_type = self.cluster_spec["machine_type"]
-        autotermination = 120
-        spark_versions = ["11.3.x-cpu-ml-scala2.12", "11.3.x-scala2.12"]
-        spark_version = spark_versions[0]
+        autotermination = self.cluster_spec["autotermination_minutes"]
 
         tags = {
             "dbacademy.event_name": self.event.get("name", "unknown"),
@@ -699,7 +697,7 @@ class Commands(object):
             'node_type_id': machine_type,
             'custom_tags': {k.replace("dbacademy", "dbacademy.pool"): v for k, v in tags.items()},
             'idle_instance_autotermination_minutes': 5,
-            'preloaded_spark_versions': [spark_version],
+            'preloaded_spark_versions': ["auto:latest-lts-ml"],
         }
 
         instance_pool = workspace.pools.get_by_name(instance_pool_name, if_not_exists="ignore")
@@ -725,16 +723,15 @@ class Commands(object):
                 "value": "singleNode",
                 "hidden": False,
             },
-            "spark_version": {
-                "type": "allowlist",
-                "values": spark_versions,
-                "defaultValue": spark_version,
-                "isOptional": True
-            },
             "num_workers": {
                 "type": "fixed",
                 "value": 0,
                 "hidden": False,
+            },
+            "spark_version": {
+                "type": "unlimited",
+                "defaultValue": "auto:latest-lts-ml",
+                "isOptional": True
             },
             "instance_pool_id": {
                 "type": "fixed",
@@ -749,15 +746,15 @@ class Commands(object):
                 "type": "fixed",
                 "value": "all-purpose"
             },
-            "autotermination_minutes": {
+           "autotermination_minutes": {
                 "type": "range",
                 "minValue": 1,
-                "maxValue": autotermination,
+                "maxValue": 180,
                 "defaultValue": autotermination,
             },
         }
         all_purpose_policy.update(cluster_policy)
-        all_purpose_policy = workspace.clusters.policies.create_or_update("All-Purpose Cluster Policy",
+        all_purpose_policy = workspace.clusters.policies.create_or_update("DBAcademy",
                                                                           all_purpose_policy)
         all_purpose_policy_id = all_purpose_policy.get("policy_id")
         workspace.permissions.clusters.policies.update(all_purpose_policy_id, "group_name", "users", "CAN_USE")
@@ -769,7 +766,7 @@ class Commands(object):
             },
         }
         jobs_policy.update(cluster_policy)
-        jobs_policy = workspace.clusters.policies.create_or_update("Jobs Cluster Policy", jobs_policy)
+        jobs_policy = workspace.clusters.policies.create_or_update("DBAcademy Jobs", jobs_policy)
         jobs_policy_id = jobs_policy.get("policy_id")
         workspace.permissions.clusters.policies.update(jobs_policy_id, "group_name", "users", "CAN_USE")
         dlt_policy = {
@@ -783,8 +780,11 @@ class Commands(object):
                 "hidden": False,
             },
         }
+        for forbidden in ("node_type_id", "driver_node_type_id", "instance_pool_id", "driver_instance_pool_id"):
+            if forbidden in dlt_policy:
+                del dlt_policy[forbidden]
         dlt_policy.update(tags_policy)
-        dlt_policy = workspace.clusters.policies.create_or_update("DLT Cluster Policy", dlt_policy)
+        dlt_policy = workspace.clusters.policies.create_or_update("DBAcademy DLT", dlt_policy)
         dlt_policy_id = dlt_policy.get("policy_id")
         workspace.permissions.clusters.policies.update(dlt_policy_id, "group_name", "users", "CAN_USE")
 
