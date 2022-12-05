@@ -70,7 +70,6 @@ class TestDatabricksApiClient(unittest.TestCase):
         response = ws.mlflow.registered_models.list()
         result = list(response)
         self.assertIsInstance(result, list)
-        self.assertTrue(result)
 
     def testPermissions(self):
         ws = dougrest_factory.test_client()
