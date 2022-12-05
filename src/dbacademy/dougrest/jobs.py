@@ -93,7 +93,7 @@ class Jobs(ApiContainer):
         return bool(job)
 
     def update(self, job):
-        return self.databricks.api("POST", "2.1/jobs/update", job)
+        return self.databricks.api("POST", "2.1/jobs/update", _data=job)
 
     def delete(self, job, *, if_not_exists="error"):
         if isinstance(job, str):
