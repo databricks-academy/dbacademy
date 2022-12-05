@@ -13,7 +13,8 @@ class RegisteredModels(ApiContainer):
                 "page_token": page_token,
             })
             page_token = response.get("next_page_token")
-            yield from response["registered_models"]
+            if "registered_models" in response:
+                yield from response["registered_models"]
             if not page_token:
                 return
 
@@ -61,6 +62,7 @@ class RegisteredModels(ApiContainer):
                 "page_token": page_token,
             })
             page_token = response.get("next_page_token")
-            yield from response["registered_models"]
+            if "registered_models" in response:
+                yield from response["registered_models"]
             if not page_token:
                 return
