@@ -255,7 +255,7 @@ class NotebookDef:
 
             # Need to validate that the link exists.
 
-    def test_source_for(self, command: str, i: int, what: str):
+    def test_source_for(self, command: str, i: int, what: str, template: str):
         if what in command:
             pos = command.find(what)
             pos_a = command.rfind("\n", 0, pos)
@@ -269,15 +269,20 @@ class NotebookDef:
             prefix = f"Cmd #{i+1} "
             padding = " "*len(prefix)
             if "prohibited-dataset" not in self.ignoring:
-                self.warn(lambda: False, f"{prefix}| Course includes prohibited use of {what}:\n{padding}| {line}")
+                self.warn(lambda: False, template.format(prefix=prefix, what=what, padding=padding, line=line))
 
     def test_source_cells(self, language: str, command: str, i: int):
 
         if language not in ["python", "scala", "sql", "java", "r"]:
             return command
 
-        self.test_source_for(command, i, "/mnt/training")
-        self.test_source_for(command, i, "/databricks-datasets")
+        template = "{prefix}| Course includes prohibited use of {what}:\n{padding}| {line}"
+        self.test_source_for(command, i, "/mnt/training", template=template)
+        self.test_source_for(command, i, "/databricks-datasets", template=template)
+
+        template = "{prefix}| Course includes prohibited use of {what}:\n{padding}| {line}"
+        self.test_source_for(command, i, "dbfs:/", template=template)
+        self.test_source_for(command, i, "/dbfs/", template=template)
 
         return command
 
