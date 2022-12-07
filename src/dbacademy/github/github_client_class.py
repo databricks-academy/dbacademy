@@ -63,7 +63,7 @@ class Repo:
         # , headers = {"User-Agent": "Databricks Academy"}
         response = self.client.api("GET", _endpoint_path=path, _expected=[200, 403], _result_type=requests.Response)
 
-        if response.status_code == 403:
+        if response is None or response.status_code == 403:
             return ["v0.0.0"]
         else:
             assert response.status_code == 200, f"Expected HTTP 200, found {response.status_code}:\n{response.text}"
