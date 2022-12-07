@@ -140,6 +140,10 @@ class Publisher:
         else:
             self.assert_no_changes_in_source_repo()
 
+        if self.publishing_mode == Publisher.PUBLISHING_MODE_MANUAL:
+            # This is a manual publish so target repo will be empty
+            self.__changes_in_target_repo = 0
+
         if skip_generation:
             self.__generated_notebooks = True
             dbgems.print_warning(f"SKIPPING GENERATION", "Skipping the generation of notebooks")
@@ -439,7 +443,7 @@ class Publisher:
 
     def assert_no_changes_in_target_repo(self) -> None:
         method = "Publisher.validate_no_changes_in_target_repo()"
-        assert self.__changes_in_target_repo is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
+        assert self.__changes_in_target_repo is not None, f"The target repository was not tested for changes. Please run {method} to update the build state."
         assert self.__changes_in_target_repo == 0, f"Found {self.__changes_in_target_repo} changes(s) in the target repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
     def validate_no_changes_in_target_repo(self, skip_validation=False) -> None:
