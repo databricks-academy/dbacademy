@@ -637,8 +637,13 @@ class DBAcademyHelper:
                       f"{self.course_config.supported_dbrs}"
             dbgems.print_warning("Spark Version", self.__troubleshoot_error(warning, "Spark Version"))
 
-        msg = f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\"."
-        assert self.current_dbr in self.course_config.supported_dbrs, self.__troubleshoot_error(msg, "Spark Version")
+        message = f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\"."
+        if self.current_dbr not in self.course_config.supported_dbrs:
+            # This is an unsupported DBR
+            if dbgems.get_spark_config("dbacademy.runtime.check", "fail").lower() == "warn":
+                dbgems.print_warning("Unsupported DBR", message=message)
+            else:
+                raise AssertionError(self.__troubleshoot_error(message, "Spark Version"))
 
     def __validate_dbfs_writes(self, test_dir) -> None:
         from contextlib import redirect_stdout
