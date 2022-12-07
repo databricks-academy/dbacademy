@@ -79,7 +79,7 @@ class Publisher:
         else:
             assert publishing_mode in Publisher.PUBLISHING_MODES, f"Expected the parameter \"publishing_mode\" to be one of {Publisher.PUBLISHING_MODES}, found \"{publishing_mode}\""
 
-        self.__publishing_mode = publishing_mode
+        self.publishing_mode = publishing_mode
 
     def __init_notebooks(self, notebooks) -> None:
         from datetime import datetime
