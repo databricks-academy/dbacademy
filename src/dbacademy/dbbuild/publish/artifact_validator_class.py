@@ -195,7 +195,6 @@ class ArtifactValidator:
             distribution_path = docs_publisher.get_distribution_path(version=version, file=file)
             assert os.path.exists(distribution_path), f"The document {name} was not found at \"{distribution_path}\""
 
-        print(f"|")
         print(f"| PASSED: All documents exported to the distribution system")
 
         return True
