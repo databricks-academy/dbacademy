@@ -50,7 +50,6 @@ class DBAcademyHelper:
 
         self.__debug = debug
         self.__start = dbgems.clock_start()
-        self.__spark = dbgems.spark
 
         # Initialized in the call to init()
         self.__initialized = False
@@ -520,26 +519,26 @@ class DBAcademyHelper:
         assert self.__initialized, f"We cannot conclude setup without first calling DBAcademyHelper.init(..)"
 
         # Add custom attributes to the SQL context here.
-        self.__spark.conf.set("da.username", self.username)
-        self.__spark.conf.set("DA.username", self.username)
+        dbgems.set_spark_config("da.username", self.username)
+        dbgems.set_spark_config("DA.username", self.username)
 
-        self.__spark.conf.set("da.catalog_name", self.catalog_name or "")
-        self.__spark.conf.set("DA.catalog_name", self.catalog_name or "")
+        dbgems.set_spark_config("da.catalog_name", self.catalog_name or "")
+        dbgems.set_spark_config("DA.catalog_name", self.catalog_name or "")
 
-        self.__spark.conf.set("da.schema_name", self.schema_name)
-        self.__spark.conf.set("DA.schema_name", self.schema_name)
+        dbgems.set_spark_config("da.schema_name", self.schema_name)
+        dbgems.set_spark_config("DA.schema_name", self.schema_name)
 
         # Purely for backwards compatability
-        self.__spark.conf.set("da.db_name", self.schema_name)
-        self.__spark.conf.set("DA.db_name", self.schema_name)
+        dbgems.set_spark_config("da.db_name", self.schema_name)
+        dbgems.set_spark_config("DA.db_name", self.schema_name)
 
         # Automatically add all path attributes to the SQL context as well.
         for key in self.paths.__dict__:
             if not key.startswith("_"):
                 value = self.paths.__dict__[key]
                 if value is not None:
-                    self.__spark.conf.set(f"da.paths.{key.lower()}", value)
-                    self.__spark.conf.set(f"DA.paths.{key.lower()}", value)
+                    dbgems.set_spark_config(f"da.paths.{key.lower()}", value)
+                    dbgems.set_spark_config(f"DA.paths.{key.lower()}", value)
 
         if self.lesson_config.create_catalog:
             # Get the list of schemas from the prescribed catalog
@@ -560,7 +559,7 @@ class DBAcademyHelper:
             if self.lesson_config.create_catalog:
                 # We have a catalog and presumably a default schema
                 print(f"Predefined tables in \"{self.catalog_name}.{schema}\":")
-                tables = self.__spark.sql(f"SHOW TABLES IN {self.catalog_name}.{schema}").filter("isTemporary == false").select("tableName").collect()
+                tables = dbgems.sql(f"SHOW TABLES IN {self.catalog_name}.{schema}").filter("isTemporary == false").select("tableName").collect()
                 if len(tables) == 0: print("| -none-")
                 for row in tables: print(f"| {row[0]}")
 
@@ -573,7 +572,7 @@ class DBAcademyHelper:
                 # catalog_table = schema if self.env.initial_catalog == DBAcademyHelper.CATALOG_SPARK_DEFAULT else f"{self.env.initial_catalog}.{schema}"
 
                 print(f"Predefined tables in \"{schema}\":")
-                tables = self.__spark.sql(f"SHOW TABLES IN {schema}").filter("isTemporary == false").select("tableName").collect()
+                tables = dbgems.sql(f"SHOW TABLES IN {schema}").filter("isTemporary == false").select("tableName").collect()
                 if len(tables) == 0: print("| -none-")
                 for row in tables: print(f"| {row[0]}")
 
