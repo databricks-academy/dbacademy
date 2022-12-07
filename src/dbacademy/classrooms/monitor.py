@@ -9,6 +9,7 @@ class Commands(object):
         self.cluster_spec = cluster_spec
         self.courseware_spec = courseware_spec
         self.event = event
+        self.all_users = False
 
     @staticmethod
     def countInstructors(workspace):
@@ -600,6 +601,10 @@ class Commands(object):
         workspace_hostname = re.match("https://([^/]+)/api/", workspace.url)[1]
 
         # Spec for the job to run
+        if self.all_users:
+            configure_for = WorkspaceHelper.CONFIGURE_FOR_ALL_USERS
+        else:
+            configure_for = WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY
         job_spec = {
             "name": "Workspace-Setup",
             "timeout_seconds": 60 * 60 * 6,  # 6 hours
@@ -611,8 +616,7 @@ class Commands(object):
                     "base_parameters": {
                         WorkspaceHelper.PARAM_LAB_ID: self.event["name"],
                         WorkspaceHelper.PARAM_DESCRIPTION: self.event["description"],
-                        # Or WorkspaceHelper.PARAM_CONFIGURE_FOR: "All Users" if you need to reset all users.
-                        WorkspaceHelper.PARAM_CONFIGURE_FOR: WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY
+                        WorkspaceHelper.PARAM_CONFIGURE_FOR: configure_for,
                     },
                     "source": "GIT"
                 },
