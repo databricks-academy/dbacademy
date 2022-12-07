@@ -1016,7 +1016,7 @@ def __install_libraries():
     version = spark.conf.get(key, specified_version)
 
     if specified_version != version:
-        message = f"WARNING: This course was built for the DBAcademy Library {{specified_version}} but it is being overridden via the Spark configuration variable\n"
+        message = f"WARNING: This course was built for the DBAcademy Library {{specified_version}} but it is being overridden via the Spark configuration variable\\n"
         message += f"{{key}}. The use of version {version} is not advised as we cannot guarantee compatability with this version of the course."
         print_warning(title: str, message: message)
 
