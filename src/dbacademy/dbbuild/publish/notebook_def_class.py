@@ -1009,7 +1009,16 @@ def __validate_libraries():
 
 def __install_libraries():
     global pip_command
-    version = spark.conf.get("dbacademy.library.version", "{version}")
+    from dbacademy.common import print_warning
+    
+    specified_version = "{version}"
+    key = "dbacademy.library.version"
+    version = spark.conf.get(key, specified_version)
+
+    if specified_version != version:
+        message = f"WARNING: This course was built for the DBAcademy Library {specified_version} but it is being overridden via the Spark configuration variable\n"
+        message += "{key}. The use of version {version} is not advised as we cannot guarantee compatability with this version of the course."
+        print_warning(title: str, message: message)
 
     try:
         from dbacademy import dbgems  
