@@ -75,9 +75,9 @@ class Publisher:
 
         if self.version in BuildConfig.VERSIONS_LIST:
             # Building, Testing or Translating
-            assert publishing_mode is None, f"Expected the parameter publishing_mode to be None when the version is one of {BuildConfig.VERSIONS_LIST}, found \"{self.version}\""
+            assert publishing_mode is None, f"Expected the parameter \"publishing_mode\" to be None when the version is one of {BuildConfig.VERSIONS_LIST}, found \"{self.version}\""
         else:
-            assert publishing_mode in Publisher.PUBLISHING_MODES, f"Expected the parameter publishing_mode to be one of {Publisher.PUBLISHING_MODES}, found \"{publishing_mode}\""
+            assert publishing_mode in Publisher.PUBLISHING_MODES, f"Expected the parameter \"publishing_mode\" to be one of {Publisher.PUBLISHING_MODES}, found \"{publishing_mode}\""
 
         self.__publishing_mode = publishing_mode
 
