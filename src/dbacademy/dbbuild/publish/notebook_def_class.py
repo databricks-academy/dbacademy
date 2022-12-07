@@ -1011,7 +1011,7 @@ def __install_libraries():
     global pip_command
     from dbacademy.common import print_warning
     
-    specified_version = "{version}"
+    specified_version = f"{version}"
     key = "dbacademy.library.version"
     version = spark.conf.get(key, specified_version)
 
