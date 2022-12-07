@@ -9,8 +9,8 @@ from dbacademy.dbhelper.paths_class import Paths
 
 
 class DBAcademyHelper:
-    from .lesson_config_class import LessonConfig
-    from .course_config_class import CourseConfig
+    from dbacademy.dbhelper.lesson_config_class import LessonConfig
+    from dbacademy.dbhelper.course_config_class import CourseConfig
 
     SCHEMA_DEFAULT = "default"
     SCHEMA_INFORMATION = "information_schema"
