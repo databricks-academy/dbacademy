@@ -468,10 +468,10 @@ class DBAcademyHelper:
 
     def __create_schema(self) -> None:
         start = dbgems.clock_start()
-        # self.created_db = True
-
         try:
-            print(f"\nCreating & using the schema \"{self.schema_name}\"", end="...")
+
+            print(f"\nCreating & using the schema \"{self.schema_name}\" in the catalog \"{self.catalog_name}\"", end="...")
+            dbgems.sql(f"USE CATALOG {self.catalog_name}")
             dbgems.sql(f"CREATE DATABASE IF NOT EXISTS {self.schema_name} LOCATION '{self.paths.user_db}'")
             dbgems.sql(f"USE {self.schema_name}")
             print(dbgems.clock_stopped(start))
