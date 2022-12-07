@@ -365,16 +365,16 @@ class BuildConfig:
 
     # Used by notebooks
     # TODO Cannot define return type
-    def to_publisher(self):
+    def to_publisher(self, publishing_mode: Optional[str] = None):
         from dbacademy.dbbuild.publish.publisher_class import Publisher
         assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
-        return Publisher(self)
+        return Publisher(self, publishing_mode)
 
     # Used by notebooks
     # TODO Cannot define return type
     def to_translator(self):
-        publisher = self.to_publisher()
+        publisher = self.to_publisher(publishing_mode=None)
         publisher.validate(silent=True)
         return publisher.to_translator()
 
