@@ -45,7 +45,8 @@ class CourseConfig:
             # This value is filled in at build time and ignored otherwise.
             expected_dbrs = [e.strip() for e in expected_dbrs.split(",")]
             assert len(supported_dbrs) == len(expected_dbrs), f"The supported and expected list of DBRs does not match: {len(supported_dbrs)} (supported) vs {len(expected_dbrs)} (expected)"
-            for dbr in supported_dbrs: assert dbr in expected_dbrs, f"The supported DBR \"{dbr}\" was not find in the list of expected dbrs: {expected_dbrs}"
+            for dbr in supported_dbrs:
+                assert dbr in expected_dbrs, f"The supported DBR \"{dbr}\" was not find in the list of expected dbrs: {expected_dbrs}"
 
     @property
     def course_code(self) -> str:
