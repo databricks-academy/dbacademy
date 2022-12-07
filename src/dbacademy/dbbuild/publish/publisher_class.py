@@ -9,9 +9,13 @@ class Publisher:
 
     VERSION_INFO_NOTEBOOK = "Version Info"
 
+    PUBLISHING_MODE_MANUAL = "manual"
+    PUBLISHING_MODE_AUTOMATIC = "automatic"
+    PUBLISHING_MODES = [PUBLISHING_MODE_MANUAL, PUBLISHING_MODE_AUTOMATIC]
+
     KEEPERS = [".gitignore", "README.md", "LICENSE", "docs"]
 
-    def __init__(self, build_config: BuildConfig):
+    def __init__(self, build_config: BuildConfig, publishing_mode: Optional[str]):
         from dbacademy.dbbuild.build_config_class import BuildConfig
 
         # Various validation steps
@@ -45,6 +49,8 @@ class Publisher:
         self.i18n_resources_dir = f"{self.source_repo}/Resources/{build_config.i18n_language}"
         self.i18n_language = build_config.i18n_language
 
+        self.publishing_mode = publishing_mode
+
         if build_config.i18n_language is None:
             self.common_language = "english"
         else:
@@ -58,6 +64,22 @@ class Publisher:
         self.white_list = build_config.white_list
         self.black_list = build_config.black_list
         self.__validate_white_black_list()
+
+    @property
+    def publishing_mode(self) -> Optional[str]:
+        return self.__publishing_mode
+
+    @publishing_mode.setter
+    def publishing_mode(self, publishing_mode: Optional[str]) -> None:
+        from dbacademy.dbbuild import BuildConfig
+
+        if self.version in BuildConfig.VERSIONS_LIST:
+            # Building, Testing or Translating
+            assert publishing_mode is None, f"Expected the parameter publishing_mode to be None when the version is one of {BuildConfig.VERSIONS_LIST}, found \"{self.version}\""
+        else:
+            assert publishing_mode in Publisher.PUBLISHING_MODES, f"Expected the parameter publishing_mode to be one of {Publisher.PUBLISHING_MODES}, found \"{publishing_mode}\""
+
+        self.__publishing_mode = publishing_mode
 
     def __init_notebooks(self, notebooks) -> None:
         from datetime import datetime
