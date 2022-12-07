@@ -9,6 +9,7 @@ class Commands(object):
         self.cluster_spec = cluster_spec
         self.courseware_spec = courseware_spec
         self.event = event
+        self.all_users = False
 
     @staticmethod
     def countInstructors(workspace):
@@ -600,6 +601,10 @@ class Commands(object):
         workspace_hostname = re.match("https://([^/]+)/api/", workspace.url)[1]
 
         # Spec for the job to run
+        if self.all_users:
+            configure_for = WorkspaceHelper.CONFIGURE_FOR_ALL_USERS
+        else:
+            configure_for = WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY
         job_spec = {
             "name": "Workspace-Setup",
             "timeout_seconds": 60 * 60 * 6,  # 6 hours
@@ -611,8 +616,7 @@ class Commands(object):
                     "base_parameters": {
                         WorkspaceHelper.PARAM_LAB_ID: self.event["name"],
                         WorkspaceHelper.PARAM_DESCRIPTION: self.event["description"],
-                        # Or WorkspaceHelper.PARAM_CONFIGURE_FOR: "All Users" if you need to reset all users.
-                        WorkspaceHelper.PARAM_CONFIGURE_FOR: WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY
+                        WorkspaceHelper.PARAM_CONFIGURE_FOR: configure_for,
                     },
                     "source": "GIT"
                 },
@@ -622,15 +626,15 @@ class Commands(object):
             "job_clusters": [{
                 "job_cluster_key": "Workspace-Setup",
                 "new_cluster": {
-                    "spark_version": "10.4.x-scala2.12",
+                    "spark_version": self.cluster_spec["spark_version"],
                     "spark_conf": {
                         "spark.master": "local[*, 4]",
                         "spark.databricks.cluster.profile": "singleNode"
                     },
                     "custom_tags": {
                         "ResourceClass": "SingleNode",
-                        "dbacademy.event_name": self.event["name"],
-                        "dbacademy.event_description": self.event["description"],
+                        "dbacademy.event_name": self.event.get("name", "unknown"),
+                        "dbacademy.event_description": self.event.get("description", "unknown"),
                         "dbacademy.workspace": workspace_hostname
                     },
                     "spark_env_vars": {
@@ -678,29 +682,23 @@ class Commands(object):
                 return result
             sleep(60)  # seconds
 
-    @staticmethod
-    def policiesCreate(workspace):
+    def policies_create(self, workspace):
         import re
         workspace_hostname = re.match(r"^https://([^/]+)/.*$", workspace.url)[1]
-        event_name = "Partner-Class"
-        machine_type = "i3.xlarge"
-        autotermination = 40
-        spark_versions = ["10.4.x-cpu-ml-scala2.12", "10.4.x-scala2.12"]
-        spark_version = spark_versions[0]
+        machine_type = self.cluster_spec["node_type_id"]
+        autotermination = self.cluster_spec["autotermination_minutes"]
+        spark_version = self.cluster_spec["spark_version"]
 
         tags = {
-            "dbacademy.event_name": event_name,
-            "dbacademy.workspace": workspace_hostname
+            "dbacademy.event_name": self.event.get("name", "unknown"),
+            "dbacademy.event_description": self.event.get("description", "unknown"),
+            "dbacademy.workspace": workspace_hostname,
         }
 
         instance_pool_name = f"{machine_type} Pool"
         instance_pool_spec = {
             'instance_pool_name': instance_pool_name,
             'min_idle_instances': 0,
-            #       "aws_attributes": {
-            #           "first_on_demand": 1,
-            #           "availability": "SPOT_WITH_FALLBACK"
-            #       },
             'node_type_id': machine_type,
             'custom_tags': {k.replace("dbacademy", "dbacademy.pool"): v for k, v in tags.items()},
             'idle_instance_autotermination_minutes': 5,
@@ -730,54 +728,57 @@ class Commands(object):
                 "value": "singleNode",
                 "hidden": False,
             },
-            "spark_version": {
-                "type": "allowlist",
-                "values": spark_versions,
-                "defaultValue": spark_version,
-                "isOptional": True
-            },
             "num_workers": {
                 "type": "fixed",
                 "value": 0,
                 "hidden": False,
             },
+            "spark_version": {
+                "type": "unlimited",
+                "defaultValue": "auto:latest-lts-ml",
+                "isOptional": True
+            },
             "instance_pool_id": {
                 "type": "fixed",
                 "value": instance_pool_id,
                 "hidden": False,
-            }
+            },
         }
         cluster_policy.update(tags_policy)
 
-        all_purpose_policy : Dict[str, Any] = {
+        all_purpose_policy: Dict[str, Any] = {
             "cluster_type": {
                 "type": "fixed",
                 "value": "all-purpose"
             },
-            "autotermination_minutes": {
+           "autotermination_minutes": {
                 "type": "range",
                 "minValue": 1,
-                "maxValue": autotermination,
+                "maxValue": 180,
                 "defaultValue": autotermination,
+            },
+            "data_security_mode": {
+                "type": "unlimited",
+                "defaultValue": "SINGLE_USER"
             },
         }
         all_purpose_policy.update(cluster_policy)
-        all_purpose_policy = workspace.clusters.policies.create_or_update("All-Purpose Cluster Policy",
+        all_purpose_policy = workspace.clusters.policies.create_or_update("DBAcademy",
                                                                           all_purpose_policy)
         all_purpose_policy_id = all_purpose_policy.get("policy_id")
         workspace.permissions.clusters.policies.update(all_purpose_policy_id, "group_name", "users", "CAN_USE")
 
-        jobs_policy : Dict[str, Any] = {
+        jobs_policy: Dict[str, Any] = {
             "cluster_type": {
                 "type": "fixed",
                 "value": "job"
             },
         }
         jobs_policy.update(cluster_policy)
-        jobs_policy = workspace.clusters.policies.create_or_update("Jobs Cluster Policy", jobs_policy)
+        jobs_policy = workspace.clusters.policies.create_or_update("DBAcademy Jobs", jobs_policy)
         jobs_policy_id = jobs_policy.get("policy_id")
         workspace.permissions.clusters.policies.update(jobs_policy_id, "group_name", "users", "CAN_USE")
-        dlt_policy = {
+        dlt_policy: Dict[str, Any] = {
             "cluster_type": {
                 "type": "fixed",
                 "value": "dlt"
@@ -788,10 +789,52 @@ class Commands(object):
                 "hidden": False,
             },
         }
+        for forbidden in ("node_type_id", "driver_node_type_id", "instance_pool_id", "driver_instance_pool_id"):
+            if forbidden in dlt_policy:
+                del dlt_policy[forbidden]
         dlt_policy.update(tags_policy)
-        dlt_policy = workspace.clusters.policies.create_or_update("DLT Cluster Policy", dlt_policy)
+        dlt_policy = workspace.clusters.policies.create_or_update("DBAcademy DLT", dlt_policy)
         dlt_policy_id = dlt_policy.get("policy_id")
         workspace.permissions.clusters.policies.update(dlt_policy_id, "group_name", "users", "CAN_USE")
+
+    @staticmethod
+    def single_user_clusters(ws):
+        def get_owners(cluster):
+            cluster_id = cluster["cluster_id"]
+            acl = ws.permissions.clusters.get(cluster_id).get("access_control_list", [])
+            owners = [perm["user_name"] for perm in acl if
+                      "user_name" in perm and
+                      perm["all_permissions"][0]["inherited"] == False and
+                      perm["all_permissions"][0]["permission_level"] == "CAN_MANAGE" and
+                      True
+                      ]
+            return owners
+
+        def update_cluster(cluster):
+            #     if "lab-cluster" not in cluster["cluster_name"]:
+            #       return
+            if cluster.get("data_security_mode") == "SINGLE_USER" and cluster.get("spark_conf", {}).get(
+                    "spark.databricks.dataLineage.enabled") == "true":
+                return
+            owners = get_owners(cluster)
+            if len(owners) != 1:
+                return {"Cluster": cluster["cluster_name"], "Error": f"Ambiguous ownership: {owners!r}"}
+            cluster["single_user_name"] = owners[0]
+            cluster["data_security_mode"] = "SINGLE_USER"
+            cluster.get("spark_conf", {})["spark.databricks.dataLineage.enabled"] = "true"
+            for forbidden_key in ("ebs_volumes_spec", "ebs_volume_count"):
+                if forbidden_key in cluster.get("aws_attributes", {}):
+                    del cluster["aws_attributes"][forbidden_key]
+            try:
+                ws.clusters.update(cluster)
+            except Exception as ex:
+                return {"Cluster": cluster["cluster_name"], "Error": str(ex)}
+                raise ex
+
+        from multiprocessing.pool import ThreadPool
+        with ThreadPool(100) as pool:
+            results = pool.map(update_cluster, ws.clusters.list())
+        return results
 
 
 def getWorkspace(workspaces, *, name=None, url=None):
