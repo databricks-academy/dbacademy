@@ -34,7 +34,7 @@ class DatabasesHelper:
                 dbgems.spark.sql(f"DROP DATABASE {schema_name} CASCADE;")
 
         if not dropped:
-            print(f"Skipping database drop for {username}")
+            print(f"Database not drop for {username}")
 
     def create_databases(self, configure_for: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
         usernames = self.workspace.get_usernames(configure_for)
