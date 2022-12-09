@@ -48,6 +48,10 @@ class ClustersHelper:
             (f"dbacademy.source", dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else dbgems.clean_string(lab_id)))
         ]
 
+        # We cannot update some pool attributes once they are created.
+        # To address this, we need to delete it then create it.
+        client.instance_pools.delete_by_name(name)
+
         pool = client.instance_pools.create_or_update(instance_pool_name=name,
                                                       idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
                                                       min_idle_instances=min_idle_instances,
