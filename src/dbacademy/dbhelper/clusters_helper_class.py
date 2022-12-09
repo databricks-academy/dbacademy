@@ -118,7 +118,7 @@ class ClustersHelper:
                 "type": "range",
                 "minValue": 1,
                 "maxValue": 180,
-                "defaultValue": 120,
+                "defaultValue": 180,
                 "hidden": False
             },
             "spark_conf.spark.databricks.cluster.profile": {
