@@ -19,11 +19,13 @@ class ClustersHelper:
         self.client = da.client
         self.workspace = workspace
 
-    def create_instance_pool(self, min_idle_instances: int = 0, idle_instance_autotermination_minutes: int = 15):
+    def create_instance_pool(self, min_idle_instances: int = 0, idle_instance_autotermination_minutes: int = 15, node_type_id: str = None, preloaded_spark_version: str = None):
         return ClustersHelper.create_named_instance_pool(name=ClustersHelper.POOL_DEFAULT_NAME,
                                                          client=self.client,
                                                          min_idle_instances=min_idle_instances,
                                                          idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
+                                                         node_type_id=node_type_id,
+                                                         preloaded_spark_version=preloaded_spark_version,
                                                          lab_id=self.workspace.lab_id,
                                                          workspace_description=self.workspace.description,
                                                          workspace_name=self.workspace.workspace_name,
