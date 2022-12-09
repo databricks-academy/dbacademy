@@ -9,8 +9,8 @@ class ClustersHelper:
     T = TypeVar("T")
 
     POLICY_ALL_PURPOSE = "DBAcademy"
-    POLICY_JOBS_ONLY = "DBAcademy Jobs-Only"
-    POLICY_DLT_ONLY = "DBAcademy DLT-Only"
+    POLICY_JOBS_ONLY = "DBAcademy Jobs"
+    POLICY_DLT_ONLY = "DBAcademy DLT"
 
     POOL_DEFAULT_NAME = "DBAcademy"
 
@@ -99,7 +99,7 @@ class ClustersHelper:
         return policy_id
 
     @staticmethod
-    def create_all_purpose_policy(*, client: DBAcademyRestClient, instance_pool_id: str) -> None:
+    def create_all_purpose_policy(*, client: DBAcademyRestClient, instance_pool_id: str, spark_version: str) -> None:
         ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=instance_pool_id, name=ClustersHelper.POLICY_ALL_PURPOSE, definition={
             "cluster_type": {
                 "type": "fixed",
@@ -108,18 +108,56 @@ class ClustersHelper:
             "autotermination_minutes": {
                 "type": "range",
                 "minValue": 1,
-                "maxValue": 120,
+                "maxValue": 180,
                 "defaultValue": 120,
                 "hidden": False
+            },
+            "spark_conf.spark.databricks.cluster.profile": {
+                "type": "fixed",
+                "value": "singleNode",
+                "hidden": False,
+            },
+            "num_workers": {
+                "type": "fixed",
+                "value": 0,
+                "hidden": False
+            },
+            "spark_version": {
+                "type": "unlimited",
+                "defaultValue": spark_version,
+                "isOptional": True
+            },
+            "data_security_mode": {
+                "type": "unlimited",
+                "defaultValue": "SINGLE_USER"
             },
         })
 
     @staticmethod
-    def create_jobs_policy(*, client: DBAcademyRestClient, instance_pool_id: str) -> None:
+    def create_jobs_policy(*, client: DBAcademyRestClient, instance_pool_id: str, spark_version: str) -> None:
         ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=instance_pool_id, name=ClustersHelper.POLICY_JOBS_ONLY, definition={
             "cluster_type": {
                 "type": "fixed",
                 "value": "job"
+            },
+            "spark_version": {
+                "type": "unlimited",
+                "defaultValue": spark_version,
+                "isOptional": True
+            },
+            "spark_conf.spark.databricks.cluster.profile": {
+                "type": "fixed",
+                "value": "singleNode",
+                "hidden": False,
+            },
+            "num_workers": {
+                "type": "fixed",
+                "value": 0,
+                "hidden": False
+            },
+            "data_security_mode": {
+                "type": "unlimited",
+                "defaultValue": "SINGLE_USER"
             },
         })
 
@@ -138,6 +176,16 @@ class ClustersHelper:
             "cluster_type": {
                 "type": "fixed",
                 "value": "dlt"
+            },
+            "spark_conf.spark.databricks.cluster.profile": {
+                "type": "fixed",
+                "value": "singleNode",
+                "hidden": False,
+            },
+            "num_workers": {
+                "type": "fixed",
+                "value": 0,
+                "hidden": False,
             },
             f"custom_tags.dbacademy.{WorkspaceHelper.PARAM_LAB_ID}": {
                 "type": "fixed",
