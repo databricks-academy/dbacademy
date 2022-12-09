@@ -18,6 +18,7 @@ class DBAcademyHelper:
     SPARK_CONF_SMOKE_TEST = "dbacademy.smoke-test"
     SPARK_CONF_PATHS_DATASETS = "dbacademy.paths.datasets"
     SPARK_CONF_PATHS_USERS = "dbacademy.paths.users"
+    SPARK_CONF_DATA_SOURCE_URI = "dbacademy.data-source-uri"
     SPARK_CONF_PROTECTED_EXECUTION = "dbacademy.protected-execution"
     SPARK_CONF_CLUSTER_TAG_SPARK_VERSION = "spark.databricks.clusterUsageTags.sparkVersion"
 
@@ -88,7 +89,8 @@ class DBAcademyHelper:
 
         # This is the location in our Azure data repository of the datasets for this lesson
         self.__staging_source_uri = f"{DBAcademyHelper.get_dbacademy_datasets_staging()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
-        self.__data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
+        default_data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
+        self.__data_source_uri = dbgems.get_parameter(DBAcademyHelper.SPARK_CONF_DATA_SOURCE_URI, default_data_source_uri)
         try:
             files = dbgems.dbutils.fs.ls(self.staging_source_uri)
             if len(files) > 0:

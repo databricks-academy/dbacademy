@@ -30,7 +30,7 @@ class ClustersHelper:
                                                          org_id=self.workspace.org_id)
 
     @staticmethod
-    def create_named_instance_pool(*, client: DBAcademyRestClient, name, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None):
+    def create_named_instance_pool(*, client: DBAcademyRestClient, name, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None, node_type_id: str = None):
         from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
@@ -51,6 +51,7 @@ class ClustersHelper:
         pool = client.instance_pools.create_or_update(instance_pool_name=name,
                                                       idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
                                                       min_idle_instances=min_idle_instances,
+                                                      node_type_id=node_type_id,
                                                       tags=tags)
         instance_pool_id = pool.get("instance_pool_id")
 

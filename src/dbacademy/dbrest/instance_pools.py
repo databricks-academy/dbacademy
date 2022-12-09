@@ -21,7 +21,7 @@ class InstancePoolsClient(ApiContainer):
         # Does not support pagination
         return self.client.api("GET", f"{self.base_uri}/list").get("instance_pools", [])
 
-    def create_or_update(self, instance_pool_name: str, idle_instance_autotermination_minutes: int, min_idle_instances: int = 0, max_capacity: int = None, tags: dict = None):
+    def create_or_update(self, instance_pool_name: str, idle_instance_autotermination_minutes: int, min_idle_instances: int = 0, max_capacity: int = None, node_type_id: str = None, tags: dict = None):
 
         pool = self.get_by_name(instance_pool_name)
         tags = [] if tags is None else tags
@@ -33,7 +33,8 @@ class InstancePoolsClient(ApiContainer):
                               instance_pool_name=instance_pool_name,
                               max_capacity=max_capacity,
                               min_idle_instances=min_idle_instances,
-                              idle_instance_autotermination_minutes=idle_instance_autotermination_minutes)
+                              idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
+                              node_type_id=node_type_id)
         else:
             # Issue a create request for a new pool
             definition = {
@@ -41,6 +42,9 @@ class InstancePoolsClient(ApiContainer):
                 "min_idle_instances": min_idle_instances,
                 "idle_instance_autotermination_minutes": idle_instance_autotermination_minutes,
             }
+            if node_type_id is not None:
+                definition["node_type_id"] = node_type_id
+
             result = self.create(instance_pool_name, definition, tags)
             instance_pool_id = result.get("instance_pool_id")
 
@@ -95,7 +99,7 @@ class InstancePoolsClient(ApiContainer):
                                  max_capacity=max_capacity,
                                  idle_instance_autotermination_minutes=idle_instance_autotermination_minutes)
 
-    def update_by_id(self, instance_pool_id: str, instance_pool_name: str, min_idle_instances: int = None, max_capacity: int = None, idle_instance_autotermination_minutes: int = None):
+    def update_by_id(self, instance_pool_id: str, instance_pool_name: str, min_idle_instances: int = None, max_capacity: int = None, idle_instance_autotermination_minutes: int = None, node_type_id: str = None):
         assert type(instance_pool_id) == str, f"Expected id to be of type str, found {type(instance_pool_id)}"
         assert instance_pool_name is None or type(instance_pool_name) == str, f"Expected name to be of type str, found {type(instance_pool_name)}"
         assert min_idle_instances is None or type(min_idle_instances) == int, f"Expected min_idle_instances to be of type int, found {type(min_idle_instances)}"
@@ -112,6 +116,7 @@ class InstancePoolsClient(ApiContainer):
         if max_capacity is not None: params["max_capacity"] = max_capacity
         if min_idle_instances is not None: params["min_idle_instances"] = min_idle_instances
         if idle_instance_autotermination_minutes is not None: params["idle_instance_autotermination_minutes"] = idle_instance_autotermination_minutes
+        if node_type_id is not None: params["node_type_id"] = node_type_id
 
         self.client.api("POST", f"{self.base_uri}/edit", params)
         return self.get_by_id(instance_pool_id)
