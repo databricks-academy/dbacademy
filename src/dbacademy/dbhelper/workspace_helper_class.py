@@ -95,27 +95,19 @@ class WorkspaceHelper:
             # dbgems.get_tags() can throw exceptions in some secure contexts
             return dbgems.get_notebooks_api_endpoint()
 
-    @property
-    def configure_for(self):
-        from dbacademy.dbhelper import DBAcademyHelper
-        # Under test, we are always configured for the current user only
-
-        configure_for = WorkspaceHelper.CONFIGURE_FOR_CURRENT_USER_ONLY if DBAcademyHelper.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_CONFIGURE_FOR)
+    def get_usernames(self, configure_for: str):
         assert configure_for in WorkspaceHelper.CONFIGURE_FOR_VALID_OPTIONS, f"Who the workspace is being configured for must be specified, found \"{configure_for}\". Options include {WorkspaceHelper.CONFIGURE_FOR_VALID_OPTIONS}"
-        return configure_for
 
-    @property
-    def usernames(self):
         if self._usernames is None:
             users = self.client.scim().users().list()
             self._usernames = [r.get("userName") for r in users]
             self._usernames.sort()
 
-        if self.configure_for == WorkspaceHelper.CONFIGURE_FOR_CURRENT_USER_ONLY:
+        if configure_for == WorkspaceHelper.CONFIGURE_FOR_CURRENT_USER_ONLY:
             # Override for the current user only
             return [self.da.username]
 
-        elif self.configure_for == WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY:
+        elif configure_for == WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY:
             # TODO - This isn't going to hold up long-term, maybe track per-user properties in this respect.
             # The presumption here is that if the user doesn't have their own
             # database, then they are also missing the rest of their config.
