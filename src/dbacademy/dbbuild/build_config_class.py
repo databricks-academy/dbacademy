@@ -14,6 +14,16 @@ class BuildConfig:
 
     @staticmethod
     def load(file: str, *, version: str) -> Any:
+        """
+        Loads the configuration for this course from the specified JSON file.
+        See also BuildConfig.VERSION_TEST
+        See also BuildConfig.VERSION_BUILD
+        See also BuildConfig.VERSION_TRANSLATION
+        See also BuildConfig.VERSIONS_LIST
+        :param file: The path to the JSON config file
+        :param version: The current version being published. Expected to be one of BuildConfig.VERSIONS_LIST or an actual version number in the form of "vX.Y.Z"
+        :return:
+        """
         import json
 
         common.validate_type(file, "file", str)
@@ -23,7 +33,13 @@ class BuildConfig:
             return BuildConfig.load_config(config=json.load(f), version=version)
 
     @staticmethod
-    def load_config(config: Dict, version: str) -> Any:
+    def load_config(config: Dict[str, Any], version: str) -> Any:
+        """
+        Called by BuildConfig.load(), this method loads a build configuration from a dictionary
+        :param config: The dictionary of configuration parameters
+        :param version: The current version being published. Expected to be one of BuildConfig.VERSIONS_LIST or an actual version number in the form of "vX.Y.Z"
+        :return:
+        """
 
         common.validate_type(config, "config", Dict)
         common.validate_type(version, "version", str)
@@ -31,7 +47,7 @@ class BuildConfig:
         configurations = config.get("notebook_config", dict())
         if "notebook_config" in config: del config["notebook_config"]
 
-        publish_only = config.get("publish_only", None)
+        publish_only: Dict[str, List[str]] = config.get("publish_only", None)
         if "publish_only" in config: del config["publish_only"]
 
         build_config = BuildConfig(version=version, **config)
@@ -237,6 +253,12 @@ class BuildConfig:
         if has_wip: print()
 
     def validate(self, validate_version: bool = True, validate_readme: bool = True):
+        """
+        Asserts that the build configuration is valid. Upon validating, prints the build parameters
+        :param validate_version: Flag to disable validation of the version number
+        :param validate_readme: Flag to disable validation of the README file
+        :return:
+        """
 
         assert self.__created_notebooks, f"The notebooks have not yet been initialized; Please call BuildConfig.initialize_notebooks() before proceeding."
 
@@ -268,7 +290,11 @@ class BuildConfig:
         self.__validated = True
 
     @property
-    def instance_pool(self):
+    def instance_pool(self) -> Dict[str, Any]:
+        """
+        The instance pool to use for testing.
+        :return: The instance pool dictionary
+        """
         if self.__instance_pool is None:  # This may have not been specified upon instantiation
             self.__instance_pool = self.client.clusters().get_current_instance_pool_id()
 
@@ -276,6 +302,10 @@ class BuildConfig:
 
     @property
     def spark_version(self) -> str:
+        """
+        The spark version to use for testing; defaults to the current cluster's spark-version
+        :return: The spark version
+        """
         if self.__spark_version is None:  # This may have not been specified upon instantiation
             self.__spark_version = self.client.clusters().get_current_spark_version()
 
@@ -283,6 +313,10 @@ class BuildConfig:
 
     @property
     def validated(self) -> bool:
+        """
+        Flag to indicate that the build configuration has been validated.
+        :return:
+        """
         return self.__validated
 
     def __validate_readme(self) -> None:
@@ -358,6 +392,10 @@ class BuildConfig:
     # Used by notebooks
     # TODO Cannot define return type
     def to_resource_diff(self):
+        """
+        Creates an instance of ResourceDiff from the current build configuration
+        :return: An instance of ResourceDiff
+        """
         from dbacademy.dbbuild.publish.resource_diff_class import ResourceDiff
         assert self.validated, f"Cannot diff until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed."
 
@@ -366,6 +404,11 @@ class BuildConfig:
     # Used by notebooks
     # TODO Cannot define return type
     def to_publisher(self, publishing_mode: Optional[str] = None):
+        """
+        Creates an instance of Publisher from the current build configuration
+        :param publishing_mode: See Publisher.publishing_mode
+        :return: the current publishing mode
+        """
         from dbacademy.dbbuild.publish.publisher_class import Publisher
         assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
@@ -374,6 +417,10 @@ class BuildConfig:
     # Used by notebooks
     # TODO Cannot define return type
     def to_translator(self):
+        """
+        Creates an instance of Translator from the current build configuration.
+        :return:
+        """
         publisher = self.to_publisher(publishing_mode=None)
         publisher.validate(silent=True)
         return publisher.to_translator()
@@ -381,6 +428,12 @@ class BuildConfig:
     # Used by notebooks
     # TODO Cannot define return type
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
+        """
+        Creates an instance of TestSuite from the current build configuration.
+        :param test_type: See TestSuite.test_type
+        :param keep_success: See TestSuite.keep_success
+        :return:
+        """
         from dbacademy.dbbuild.test.test_suite_class import TestSuite
 
         assert self.validated, f"Cannot test until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
@@ -390,7 +443,13 @@ class BuildConfig:
                          test_type=test_type,
                          keep_success=keep_success)
 
-    def assert_all_tests_passed(self, clouds: Optional[str] = None):
+    def assert_all_tests_passed(self, clouds: List[str] = None) -> None:
+        """
+        Asserts that tests for the specified clouds have passed.
+        :param clouds: The list of clouds consisting of the values "AWS", "MSA", "GCP" and if None, will default to a list containing all three.
+        :return: None
+        """
+
         if self.version in BuildConfig.VERSIONS_LIST:
             return  # This is Test, Build or Translation and as such does not need to be validated.
 
@@ -402,6 +461,11 @@ class BuildConfig:
             assert self.__passing_tests.get(cloud), f"The tests for the cloud {cloud} and version {self.version} did not pass. Please address the test failures and run the corresponding smoke tests before proceeding."
 
     def validate_all_tests_passed(self, cloud: str):
+        """
+        Verifies that tests the for this course, cloud and version have passed and will prohibit progression if the tests have not passed.
+        :param cloud: One of the three values "AWS", "MSA" or "GCP"
+        :return: None
+        """
         cloud = common.validate_type(cloud, "cloud", str).upper()
 
         assert self.validated, f"Cannot validate smoke-tests until the build configuration passes validation. See BuildConfig.validate()"

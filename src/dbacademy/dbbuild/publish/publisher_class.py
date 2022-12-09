@@ -67,6 +67,13 @@ class Publisher:
 
     @property
     def publishing_mode(self) -> Optional[str]:
+        """
+        Indicates which mode the publisher is operating under. Expected values include None or one of Publisher.PUBLISHING_MODES. When testing
+        the mode is expected to be None. When actually publishing a specific version of a course "manual" (Publisher.PUBLISHING_MODE_MANUAL) indicates
+        that the DBC will be exported and published manually where "automatic" (Publisher.PUBLISHING_MODE_AUTOMATIC) indicates that the DBC,
+        slides, etc will be published to the distribution system via the build scripts.
+        :return: the current publishing mode
+        """
         return self.__publishing_mode
 
     @publishing_mode.setter
@@ -79,7 +86,7 @@ class Publisher:
         else:
             assert publishing_mode in Publisher.PUBLISHING_MODES, f"Expected the parameter \"publishing_mode\" to be one of {Publisher.PUBLISHING_MODES}, found \"{publishing_mode}\""
 
-        self.publishing_mode = publishing_mode
+        self.__publishing_mode = publishing_mode
 
     def __init_notebooks(self, notebooks) -> None:
         from datetime import datetime
@@ -114,6 +121,12 @@ class Publisher:
                 assert path in self.white_list or path in self.black_list, f"The notebook \"{path}\" was not found in either the white-list or black-list."
 
     def create_resource_bundle(self, folder_name: str = None, target_dir: str = None) -> str:
+        """
+        Only applicable to translated courses, this method creates a "resource bundle" consisting of MD files of the notebook's various MD cells.
+        :param folder_name: The name of the folder for the resource bundle as a subfolder of target_dir
+        :param target_dir: The directory under which resource bundles are located.
+        :return: The HTML results that should be rendered with displayHTML() from the calling notebook
+        """
 
         assert self.i18n_language is None, f"Resource bundles are created for the English translations only, found {self.i18n_language}"
 
@@ -127,10 +140,21 @@ class Publisher:
             <p><a href="/#workspace{target_dir}/{folder_name}/{Publisher.VERSION_INFO_NOTEBOOK}.md" target="_blank">Resource Bundle: {folder_name}</a></p>
         </body></html>"""
 
-    def assert_notebooks_generated(self):
+    def assert_notebooks_generated(self) -> None:
+        """
+        Asserts that the notebooks have been generated - used to control program flow.
+        :return: None
+        """
         assert self.__generated_notebooks, "The notebooks have not yet been generated. See Publisher.generate_notebooks()"
 
-    def generate_notebooks(self, *, skip_generation: bool = False, verbose=False, debugging=False, **kwargs) -> Optional[str]:
+    def generate_notebooks(self, *, skip_generation: bool = False, verbose=False, debugging=False) -> Optional[str]:
+        """
+        Generates the publishable notebooks from the source notebooks.
+        :param skip_generation: Overrides the default behavior and skips generation of the notebook
+        :param verbose: True of verbose logging
+        :param debugging: True for debug logging
+        :return: The HTML results that should be rendered with displayHTML() from the calling notebook
+        """
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.dbbuild.build_utils_class import BuildUtils
         from dbacademy.dbbuild import BuildConfig
@@ -148,9 +172,6 @@ class Publisher:
             self.__generated_notebooks = True
             dbgems.print_warning(f"SKIPPING GENERATION", "Skipping the generation of notebooks")
             return None
-
-        if "mode" in kwargs:
-            dbgems.print_warning(title="DEPRECATION WARNING", message=f"The parameter \"mode\" has been deprecated.\nPlease remove the parameter.")
 
         found_version_info = False
         main_notebooks: List[NotebookDef] = []
@@ -224,6 +245,10 @@ class Publisher:
         return html
 
     def create_published_message(self) -> str:
+        """
+        Convenience method to aid in creating the publishing email and Slack message.
+        :return: The HTML results that should be rendered with displayHTML() from the calling notebook
+        """
         from .advertiser import Advertiser
         from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
 
@@ -238,6 +263,11 @@ class Publisher:
         return advertiser.html
 
     def validate(self, silent: bool = False) -> None:
+        """
+        Validates that the publisher's configuration is valid
+        :param silent: Suppresses output of the validation operation
+        :return: None
+        """
         if not silent:
             print(f"Source: {self.source_dir}")
             print(f"Target: {self.target_dir}")
@@ -250,10 +280,21 @@ class Publisher:
         self.__validated = True
 
     def assert_validated_config(self) -> None:
+        """
+        Asserts that the publishing configuration was validated - used to control program flow.
+        :return: None
+        """
         assert self.__validated, f"The publisher's configuration has not yet been validated. See Publisher.validate()"
         assert self.__validated_repo_reset, f"Failed to configure target repo. See Publisher.configure_target_repo()"
 
-    def configure_target_repo(self, target_dir: str = None, target_repo_url: str = None, branch: str = "published", **kwargs) -> None:
+    def configure_target_repo(self, target_dir: str = None, target_repo_url: str = None, branch: str = "published") -> None:
+        """
+        Configures the build to publish to a public GitHub repository. In most cases, the default values should be used.
+        :param target_dir: The directory under /Repos that the GitHub will be cloned to
+        :param target_repo_url: The locations of the GitHub public GitHub repo
+        :param branch: The name of the branch to publish to
+        :return: None
+        """
         from ..build_utils_class import BuildUtils
 
         # Assume for now that we have failed. This overrides the default
@@ -271,10 +312,6 @@ class Publisher:
             dbgems.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
         target_repo_url = target_repo_url or new_target_repo_url
 
-        if "target_url" in kwargs:
-            dbgems.print_warning(title="DEPRECATION WARNING", message=f"The parameter \"target_url\" has been deprecated.\nUse \"target_repo_url\" instead.")
-            target_repo_url = kwargs.get("target_url")
-
         self.target_dir = common.validate_type(target_dir, "target_dir", str)
         self.target_repo_url = common.validate_type(target_repo_url, "target_repo_url", str)
 
@@ -283,6 +320,11 @@ class Publisher:
         self.__validated_repo_reset = True
 
     def generate_published_docs(self) -> str:
+        """
+        Generates the HTML docs and writes them to the GitHub repo under /docs
+        :return: The HTML results that should be rendered with displayHTML() from the calling notebook
+        """
+
         import os, shutil
 
         source_docs_path = f"{self.source_repo}/docs"
@@ -309,6 +351,10 @@ class Publisher:
     # Used by notebooks
     # TODO Cannot define return type without circular dependencies
     def to_translator(self):
+        """
+        Creates an instance of the Translator class from this class
+        :return: Translator
+        """
         from dbacademy.dbbuild.publish.translator_class import Translator
         self.assert_validated_config()
 
@@ -317,6 +363,12 @@ class Publisher:
     # Used by notebooks
     # TODO Cannot define return type without circular dependencies
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
+        """
+        Creates an instance of the TestSuite class from this class. Typically, the parameters are not specified.
+        :param test_type: See TestSuite.test_type
+        :param keep_success: See TestSuite.keep_success
+        :return: TestSuite
+        """
         from dbacademy.dbbuild.test.test_suite_class import TestSuite
 
         return TestSuite(build_config=self.build_config,
@@ -341,6 +393,11 @@ class Publisher:
         print(f"Generated docs for \"{notebook.path}\"...({int(time.time()) - start} seconds)")
 
     def generate_source_docs(self, asynchronous: bool = True) -> None:
+        """
+        For courses like DAWD that produce HTML output, run each notebook to generate those assets and write them to the /docs sub-folder in the source repository.
+        :param asynchronous: True to generate docs asynchronously, False to process them serially
+        :return:
+        """
         from multiprocessing.pool import ThreadPool
 
         if asynchronous:
@@ -351,9 +408,20 @@ class Publisher:
                 self.__generate_html(notebook)
 
     def assert_created_dbcs(self) -> None:
+        """
+        Asserts that the various DBC files have been created - used to control program flow.
+        :return: None
+        """
         assert self.__created_dbcs, "The DBCS have not yet been created. See Publisher.create_dbcs()"
 
     def create_dbcs(self) -> str:
+        """
+        Exports the DBC files from the published directory and then saves the corresponding DBC file.
+        Depending on the configuration, one copy can be written to a version-specific folder of the distribution system,
+        one copy can be written to the "latest" folder of the distribution system, one copy will be written to dbfs:/FileStore
+        for direct download from the calling notebook
+        :return: The HTML results that should be rendered with displayHTML() from the calling notebook
+        """
         from ..build_utils_class import BuildUtils
 
         self.assert_no_changes_in_target_repo()
@@ -383,9 +451,18 @@ class Publisher:
         return f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>"""
 
     def assert_created_docs(self) -> None:
+        """
+        Asserts that the published form of the Google-Docs (e.g. Slides Decks) were created - used to control program flow.
+        :return: None
+        """
         assert self.__created_docs, "The docs have not yet been created. See Publisher.create_docs()"
 
     def create_docs(self) -> str:
+        """
+        Published the Google-Docs specified by the build config by exporting them as PDFs and then saving them to the distribution system and then
+        by copying those raw Google-Docs to the Published folder found in Databricks to facilitate instructor usage during class.
+        :return:
+        """
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
         from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
 
@@ -409,9 +486,18 @@ class Publisher:
             return html
 
     def assert_validate_artifacts(self) -> None:
+        """
+        Asserts Publisher.validate_artifacts() was called  - used to control program flow.
+        :return: None
+        """
         assert self.__validated_artifacts, "The published artifacts have not been verified. See Publisher.validate_artifacts()"
 
     def validate_artifacts(self) -> None:
+        """
+        Asserts that all assets were valid. For Google-Docs this means to verify that they are in the distribution system. For DBCs, this means
+        to import each DBC, locate the Version Info notebook, and then to validate that it contains the correct version number - used to control program flow.
+        :return: None
+        """
         from dbacademy.dbbuild.publish.artifact_validator_class import ArtifactValidator
 
         self.assert_created_docs()
@@ -421,11 +507,21 @@ class Publisher:
         self.__validated_artifacts = True
 
     def assert_no_changes_in_source_repo(self) -> None:
+        """
+        Asserts that there are no uncommitted changes in the source repository - used to control program flow.
+        :return: None
+        """
         method = "Publisher.validate_no_changes_in_source_repo()"
         assert self.__changes_in_source_repo is not None, f"The source repository was not tested for changes. Please run {method} to update the build state."
         assert self.__changes_in_source_repo == 0, f"Found {self.__changes_in_source_repo} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
     def validate_no_changes_in_source_repo(self, skip_validation=False) -> None:
+        """
+        Exports the source repository to a temp directory, enumerates all the files in that temp directory and then compares it
+        to an enumeration of all files in the source directory. Reports on any uncommitted files
+        :param skip_validation: True to override validation
+        :return: None
+        """
         from ..build_utils_class import BuildUtils
 
         if skip_validation:
@@ -442,11 +538,21 @@ class Publisher:
             self.assert_no_changes_in_source_repo()
 
     def assert_no_changes_in_target_repo(self) -> None:
+        """
+        Asserts that there are no uncommitted changes in the target repository - used to control program flow.
+        :return: None
+        """
         method = "Publisher.validate_no_changes_in_target_repo()"
         assert self.__changes_in_target_repo is not None, f"The target repository was not tested for changes. Please run {method} to update the build state."
         assert self.__changes_in_target_repo == 0, f"Found {self.__changes_in_target_repo} changes(s) in the target repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
     def validate_no_changes_in_target_repo(self, skip_validation=False) -> None:
+        """
+        Exports the target repository to a temp directory, enumerates all the files in that temp directory and then compares it
+        to an enumeration of all files in the actual target directory. Reports on any uncommitted files.
+        :param skip_validation: True to override validation
+        :return: None
+        """
         from ..build_utils_class import BuildUtils
 
         if skip_validation:
