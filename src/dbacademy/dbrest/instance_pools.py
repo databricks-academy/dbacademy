@@ -45,6 +45,7 @@ class InstancePoolsClient(ApiContainer):
             }
             if node_type_id is not None:
                 definition["node_type_id"] = node_type_id
+
             if preloaded_spark_versions is not None:
                 definition["preloaded_spark_versions"] = preloaded_spark_versions
 
