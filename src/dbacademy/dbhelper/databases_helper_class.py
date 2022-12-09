@@ -15,8 +15,8 @@ class DatabasesHelper:
         self.client = da.client
         self.workspace = workspace
 
-    def drop_databases(self):
-        self.workspace.do_for_all_users(self.workspace.usernames, lambda username: self.__drop_databases_for(username=username))
+    def drop_databases(self, configure_for: str):
+        self.workspace.do_for_all_users(self.workspace.get_usernames(configure_for), lambda username: self.__drop_databases_for(username=username))
 
         # Clear the list of databases (and derived users) to force a refresh
         self.workspace._usernames = None
@@ -35,10 +35,11 @@ class DatabasesHelper:
         if not deleted:
             print(f"Skipping database drop for {username}")
 
-    def create_databases(self, drop_existing: bool, post_create: Callable[[str, str], None] = None):
-        self.workspace.do_for_all_users(self.workspace.usernames, lambda username: self.__create_database_for(username=username,
-                                                                                                              drop_existing=drop_existing,
-                                                                                                              post_create=post_create))
+    def create_databases(self, configure_for: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
+        usernames = self.workspace.get_usernames(configure_for)
+        self.workspace.do_for_all_users(usernames, lambda username: self.__create_database_for(username=username,
+                                                                                               drop_existing=drop_existing,
+                                                                                               post_create=post_create))
         # Clear the list of databases (and derived users) to force a refresh
         self.workspace._usernames = None
         self.workspace._existing_databases = None
