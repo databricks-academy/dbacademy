@@ -23,16 +23,17 @@ class DatabasesHelper:
         self.workspace._existing_databases = None
 
     def __drop_databases_for(self, username: str):
-        deleted = False
+        dropped = False
         prefix = self.da.to_schema_name_prefix(username=username,
                                                course_code=self.da.course_config.course_code)
 
         for schema_name in self.workspace.existing_databases:
             if schema_name.startswith(prefix):
                 print(f"Dropping the database \"{schema_name}\" for {username}")
+                dropped = True
                 dbgems.spark.sql(f"DROP DATABASE {schema_name} CASCADE;")
 
-        if not deleted:
+        if not dropped:
             print(f"Skipping database drop for {username}")
 
     def create_databases(self, configure_for: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
