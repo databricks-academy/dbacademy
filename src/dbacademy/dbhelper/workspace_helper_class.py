@@ -66,16 +66,17 @@ class WorkspaceHelper:
         group = client.scim.groups.get_by_name("users")
         client.scim.groups.add_entitlement(group.get("id"), "databricks-sql-access")
 
-    def do_for_all_users(self, f: Callable[[str], T]) -> List[T]:
+    @staticmethod
+    def do_for_all_users(usernames: List[str], f: Callable[[str], T]) -> List[T]:
         from multiprocessing.pool import ThreadPool
 
         # if self.usernames is None:
         #     raise ValueError("DBAcademyHelper.workspace.usernames must be defined before calling DBAcademyHelper.workspace.do_for_all_users(). See also DBAcademyHelper.workspace.load_all_usernames()")
-        if len(self.usernames) == 0:
+        if len(usernames) == 0:
             return []
 
-        with ThreadPool(len(self.usernames)) as pool:
-            return pool.map(f, self.usernames)
+        with ThreadPool(len(usernames)) as pool:
+            return pool.map(f, usernames)
 
     @property
     def org_id(self):

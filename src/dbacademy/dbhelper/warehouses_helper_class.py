@@ -32,13 +32,13 @@ class WarehousesHelper:
         self.client.sql.endpoints.delete_by_name(name=name)
 
     def delete_sql_warehouses(self):
-        self.workspace.do_for_all_users(lambda username: self.delete_sql_warehouses_for(username=username))
+        self.workspace.do_for_all_users(self.workspace.usernames, lambda username: self.delete_sql_warehouses_for(username=username))
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
     def create_sql_warehouses(self, auto_stop_mins=120, enable_serverless_compute=False):
-        self.workspace.do_for_all_users(lambda username: self.create_sql_warehouse_for(username=username,
-                                                                                       auto_stop_mins=auto_stop_mins,
-                                                                                       enable_serverless_compute=enable_serverless_compute))
+        self.workspace.do_for_all_users(self.workspace.usernames, lambda username: self.create_sql_warehouse_for(username=username,
+                                                                                                                 auto_stop_mins=auto_stop_mins,
+                                                                                                                 enable_serverless_compute=enable_serverless_compute))
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
     def create_sql_warehouse_for(self, username, auto_stop_mins=120, enable_serverless_compute=False):

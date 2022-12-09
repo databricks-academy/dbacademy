@@ -16,7 +16,7 @@ class DatabasesHelper:
         self.workspace = workspace
 
     def drop_databases(self):
-        self.workspace.do_for_all_users(lambda username: self.__drop_databases_for(username=username))
+        self.workspace.do_for_all_users(self.workspace.usernames, lambda username: self.__drop_databases_for(username=username))
 
         # Clear the list of databases (and derived users) to force a refresh
         self.workspace._usernames = None
@@ -36,9 +36,9 @@ class DatabasesHelper:
             print(f"Skipping database drop for {username}")
 
     def create_databases(self, drop_existing: bool, post_create: Callable[[str, str], None] = None):
-        self.workspace.do_for_all_users(lambda username: self.__create_database_for(username=username,
-                                                                                    drop_existing=drop_existing,
-                                                                                    post_create=post_create))
+        self.workspace.do_for_all_users(self.workspace.usernames, lambda username: self.__create_database_for(username=username,
+                                                                                                              drop_existing=drop_existing,
+                                                                                                              post_create=post_create))
         # Clear the list of databases (and derived users) to force a refresh
         self.workspace._usernames = None
         self.workspace._existing_databases = None
@@ -130,7 +130,7 @@ class DatabasesHelper:
         run_response = client.jobs().run_now(job_id)
         run_id = run_response.get("run_id")
 
-        print(f"| See {dbgems.get_workspace_url()}")
+        print(f"| See {dbgems.get_workspace_url()}#job/{job_id}/run/{run_id}")
 
         final_response = client.runs().wait_for(run_id)
 
