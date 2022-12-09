@@ -4,7 +4,6 @@ from dbacademy import dbgems, common
 
 class Publisher:
     from dbacademy.dbbuild.build_config_class import BuildConfig
-    # from dbacademy.dbbuild.publish.translator_class import Translator
     from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
 
     VERSION_INFO_NOTEBOOK = "Version Info"
@@ -27,6 +26,7 @@ class Publisher:
         self.__created_docs = False
         self.__created_dbcs = False
         self.__validated_artifacts = False
+        self.__publishing_mode = None
 
         self.build_config = common.validate_type(build_config, "build_config", BuildConfig)
 

@@ -125,7 +125,8 @@ class ClustersHelper:
     @staticmethod
     def create_dlt_policy(*, client: DBAcademyRestClient, instance_pool_id: str, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None) -> None:
         from dbacademy import dbgems
-        from .workspace_helper_class import WorkspaceHelper
+        from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
+        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
 
         lab_id = lab_id or WorkspaceHelper.get_lab_id()
         workspace_description = workspace_description or WorkspaceHelper.get_workspace_description()
@@ -155,6 +156,11 @@ class ClustersHelper:
             "custom_tags.dbacademy.org_id": {
                 "type": "fixed",
                 "value": dbgems.clean_string(org_id),  # self.workspace.org_id),
+                "hidden": False
+            },
+            "custom_tags.dbacademy.source": {
+                "type": "fixed",
+                "value": dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else dbgems.clean_string(lab_id)),
                 "hidden": False
             },
         })
