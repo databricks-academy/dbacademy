@@ -30,7 +30,7 @@ class ClustersHelper:
                                                          org_id=self.workspace.org_id)
 
     @staticmethod
-    def create_named_instance_pool(*, client: DBAcademyRestClient, name, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None, node_type_id: str = None, preloaded_spark_version: str = None):
+    def create_named_instance_pool(*, client: DBAcademyRestClient, name, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str, node_type_id: str, preloaded_spark_version: str):
         from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
@@ -108,7 +108,7 @@ class ClustersHelper:
         return policy_id
 
     @staticmethod
-    def create_all_purpose_policy(*, client: DBAcademyRestClient, instance_pool_id: str, spark_version: str) -> None:
+    def create_all_purpose_policy(*, client: DBAcademyRestClient, instance_pool_id: str, spark_version: str, autotermination_minutes_max: int, autotermination_minutes_default: int) -> None:
         ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=instance_pool_id, name=ClustersHelper.POLICY_ALL_PURPOSE, definition={
             "cluster_type": {
                 "type": "fixed",
@@ -117,8 +117,8 @@ class ClustersHelper:
             "autotermination_minutes": {
                 "type": "range",
                 "minValue": 1,
-                "maxValue": 180,
-                "defaultValue": 180,
+                "maxValue": autotermination_minutes_max,
+                "defaultValue": autotermination_minutes_default,
                 "hidden": False
             },
             "spark_conf.spark.databricks.cluster.profile": {
@@ -179,7 +179,7 @@ class ClustersHelper:
         })
 
     @staticmethod
-    def create_dlt_policy(*, client: DBAcademyRestClient, instance_pool_id: str, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None) -> None:
+    def create_dlt_policy(*, client: DBAcademyRestClient, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -> None:
         from dbacademy import dbgems
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
@@ -189,7 +189,7 @@ class ClustersHelper:
         workspace_name = workspace_name or WorkspaceHelper.get_workspace_name()
         org_id = org_id or dbgems.get_org_id()
 
-        ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=instance_pool_id, name=ClustersHelper.POLICY_DLT_ONLY, definition={
+        ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=None, name=ClustersHelper.POLICY_DLT_ONLY, definition={
             "cluster_type": {
                 "type": "fixed",
                 "value": "dlt"
