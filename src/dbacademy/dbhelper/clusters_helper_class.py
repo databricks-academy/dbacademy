@@ -136,6 +136,10 @@ class ClustersHelper:
                 "type": "unlimited",
                 "defaultValue": "SINGLE_USER"
             },
+            "runtime_engine": {
+                "type": "unlimited",
+                "defaultValue": "STANDARD"
+            },
         })
 
     @staticmethod
@@ -163,6 +167,10 @@ class ClustersHelper:
             "data_security_mode": {
                 "type": "unlimited",
                 "defaultValue": "SINGLE_USER"
+            },
+            "runtime_engine": {
+                "type": "unlimited",
+                "defaultValue": "STANDARD"
             },
         })
 
