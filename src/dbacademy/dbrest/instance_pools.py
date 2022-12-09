@@ -126,7 +126,7 @@ class InstancePoolsClient(ApiContainer):
         if node_type_id is not None:
             params["node_type_id"] = node_type_id
         if preloaded_spark_version is not None:
-            params["preloaded_spark_versions"] = preloaded_spark_version
+            params["preloaded_spark_versions"] = [preloaded_spark_version]
 
         self.client.api("POST", f"{self.base_uri}/edit", params)
         return self.get_by_id(instance_pool_id)
