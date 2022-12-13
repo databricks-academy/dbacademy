@@ -15,6 +15,8 @@ class Jobs(ApiContainer):
                 job = job["job_id"]
             elif "name" in job:
                 job = job["name"]
+            elif "name" in job.get("settings",{}):
+                job = job['settings']["name"]
             else:
                 raise ValueError(f"Job dict must have job_id or name: {job!r}")
         if isinstance(job, str):
@@ -25,8 +27,8 @@ class Jobs(ApiContainer):
                 elif if_not_exists == "ignore":
                     return None
                 else:
-                    raise ValueError(
-                        f"if_not_exists argument must be either 'ignore' or 'error'.  Found if_not_exists={if_not_exists!r}.")
+                    raise ValueError("if_not_exists argument must be one of 'ignore', 'error'.  "
+                                     f"Found if_not_exists={if_not_exists!r}.")
             elif len(existing_jobs) == 1:
                 job = existing_jobs[0]["job_id"]
             else:
@@ -34,7 +36,7 @@ class Jobs(ApiContainer):
         if isinstance(job, int):
             return job
         raise ValueError(
-            f"DatabricksApi.jobs.delete(job): job must be id:int, name:str, job:dict.  Found: {job!r}.")
+            f"DatabricksApi.jobs._id(job): job must be id:int, name:str, job:dict.  Found: {job!r}.")
 
     def get(self, job, *, return_list=False, if_not_exists="error"):
         if isinstance(job, dict):
@@ -52,8 +54,8 @@ class Jobs(ApiContainer):
                 elif if_not_exists == "ignore":
                     return existing_jobs if return_list else None
                 else:
-                    raise ValueError(
-                        f"if_not_exists argument must be either 'ignore' or 'error'.  Found if_not_exists={if_not_exists!r}.")
+                    raise ValueError("if_not_exists argument must be one of 'ignore', 'error'.  "
+                                     f"Found if_not_exists={if_not_exists!r}.")
             elif return_list:
                 return existing_jobs
             elif len(existing_jobs) == 1:
@@ -162,7 +164,7 @@ class Jobs(ApiContainer):
         elif not self.exists(name) or if_exists == "proceed":
             return self.databricks.api("POST", "2.1/jobs/create", _data=spec)["job_id"]
         elif if_exists == "ignore":
-            return None
+            return self.get(name)
         elif if_exists == "error":
             raise DatabricksApiException(f"Job with name={name!r} already exists", 409)
         else:
@@ -199,5 +201,5 @@ class Jobs(ApiContainer):
                 else:
                     raise e
         else:
-            raise ValueError(
-                f"if_not_exists argument must be one of 'ignore', 'error', or 'create'.  Found if_not_exists={if_not_exists!r}.")
+            raise ValueError("if_not_exists argument must be one of 'ignore', 'error', or 'create'.  "
+                             f"Found if_not_exists={if_not_exists!r}.")
