@@ -83,7 +83,7 @@ class Workspaces(AccountsCRUD):
                private_access_settings=None, private_access_settings_id=None, private_access_settings_name=None,
                services_encryption_key=None, services_encryption_key_id=None, services_encryption_key_name=None,
                storage_encryption_key=None, storage_encryption_key_id=None, storage_encryption_key_name=None,
-               fetch: bool = None, if_exists: IfExists = "error"):
+               fetch: bool = None, if_exists: IfExists = "error") -> Workspace:
 
         if credentials_id:
             pass
