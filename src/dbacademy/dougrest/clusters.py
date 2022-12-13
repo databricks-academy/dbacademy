@@ -1,7 +1,7 @@
 from typing import Dict
 
 from dbacademy.dbrest.cluster_policies import ClustersPolicyClient
-from dbacademy.rest.common import ApiContainer
+from dbacademy.rest.common import ApiContainer, IfExists, DatabricksApiException
 
 
 class Clusters(ApiContainer):
@@ -22,7 +22,7 @@ class Clusters(ApiContainer):
 
     def create(self, cluster_name, node_type_id=None, driver_node_type_id=None,
                timeout_minutes=120, num_workers=0, num_cores="*", instance_pool_id=None, spark_version=None,
-               start=True, **cluster_spec):
+               start=True, if_exists: IfExists ="create", **cluster_spec):
         data = {
             "cluster_name": cluster_name,
             "spark_version": spark_version or self.databricks.default_spark_version,
@@ -30,25 +30,27 @@ class Clusters(ApiContainer):
             "num_workers": num_workers,
             "spark_env_vars": {"PYSPARK_PYTHON": "/databricks/python3/bin/python3"},
         }
-        if self.databricks.cloud == "AWS":
-            data["aws_attributes"] = {
-                "first_on_demand": 1,
-                "availability": "SPOT_WITH_FALLBACK",
-            }
-        elif self.databricks.cloud == "Azure":
-            data["azure_attributes"] = {
-                "first_on_demand": 1,
-                "availability": "ON_DEMAND_AZURE",
-                "spot_bid_max_price": -1,
-            }
         if instance_pool_id:
             data["instance_pool_id"] = instance_pool_id
+        elif "policy_id" in cluster_spec:
+            pass
         else:
             node_type_id = node_type_id or self.databricks.default_machine_type
             driver_node_type_id = driver_node_type_id or node_type_id
             data["node_type_id"] = node_type_id
             data["driver_node_type_id"] = driver_node_type_id
             data["enable_elastic_disk"] = "true"
+            if self.databricks.cloud == "AWS":
+                data["aws_attributes"] = {
+                    "first_on_demand": 1,
+                    "availability": "SPOT_WITH_FALLBACK",
+                }
+            elif self.databricks.cloud == "Azure":
+                data["azure_attributes"] = {
+                    "first_on_demand": 1,
+                    "availability": "ON_DEMAND_AZURE",
+                    "spot_bid_max_price": -1,
+                }
         if num_workers == 0:
             data["spark_conf"] = {
                 "spark.databricks.cluster.profile": "singleNode",
@@ -56,10 +58,37 @@ class Clusters(ApiContainer):
             }
             data["custom_tags"] = {"ResourceClass": "SingleNode"}
         data.update(cluster_spec)
+        if if_exists != "create":
+            existing = self.list_by_name().get(cluster_name, {})
+            existing_id = existing.get("cluster_id")
+            def quiet_start(id):
+                if not start:
+                    return
+                try:
+                    self.start(existing_id)
+                except DatabricksApiException as e:
+                    if not (e.http_code==400 and "unexpected state Running" in e.message):
+                        raise e
+            if existing_id is None:
+                pass
+            elif if_exists == "error":
+                raise DatabricksApiException(f"Cluster {cluster_name!r} already exists.", 404)
+            elif if_exists == "overwrite":
+                self.delete(existing_id)
+            elif if_exists == "ignore":
+                quiet_start(existing_id)
+                return existing
+            elif if_exists == "update":
+                data["cluster_id"] = existing_id
+                self.update(data)
+                quiet_start(existing_id)
+                return data
+            else:
+                raise ValueError("if_exists must be one of create, error, ignore, overwrite, or update")
         response = self.databricks.api("POST", "2.0/clusters/create", data)
+        data["cluster_id"] = response["cluster_id"]
         if not start:
             self.terminate(response["cluster_id"])
-        data["cluster_id"] = response["cluster_id"]
         return data
 
     def update(self, cluster):
