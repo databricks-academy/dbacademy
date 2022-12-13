@@ -128,6 +128,46 @@ class MyTestCase(unittest.TestCase):
         thread.send_warning("This is a warning")
         thread.send_warning("This is a warning")
 
+    # def test_mention_message(self):
+    #     who = "<@U5V5F358T>"
+    #
+    #     thread = SlackThread(f"training-engine-test", "Mentions Test", self.token)
+    #     thread.send_msg(f"This is a message for {who}")
+    #
+    #     thread = SlackThread(f"training-engine-test", "Mentions Test", self.token)
+    #     thread.send_warning(f"This is a warning for {who}")
+    #
+    #     thread = SlackThread(f"training-engine-test", "Mentions Test", self.token)
+    #     thread.send_error(f"This is a error for {who}")
+    #
+    #     try:
+    #         1 / 0
+    #     except:
+    #         thread = SlackThread(f"training-engine-test", "Mentions Test", self.token)
+    #         thread.send_exception(f"This is an exception for {who}")
+    #
+    # def test_mention_thread(self):
+    #     who = "@U5V5F358T"
+    #
+    #     thread = SlackThread(f"training-engine-test", "Mentions Test", self.token)
+    #     thread.send_msg(f"This is a message thread")
+    #     thread.send_msg(f"Hey {who}")
+    #
+    #     thread = SlackThread(f"training-engine-test", "Mentions Test", self.token)
+    #     thread.send_warning(f"This is a warning thread")
+    #     thread.send_msg(f"Hey {who}")
+    #
+    #     thread = SlackThread(f"training-engine-test", "Mentions Test", self.token)
+    #     thread.send_error(f"This is a error thread")
+    #     thread.send_msg(f"Hey {who}")
+    #
+    #     try:
+    #         1 / 0
+    #     except:
+    #         thread = SlackThread(f"training-engine-test", "Mentions Test", self.token)
+    #         thread.send_exception(f"This is an exception thread")
+    #     thread.send_msg(f"Hey {who}")
+
 
 if __name__ == '__main__':
     unittest.main()
