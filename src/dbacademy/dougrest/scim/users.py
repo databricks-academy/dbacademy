@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from dbacademy.rest.common import ApiContainer, DatabricksApiException
+from dbacademy.rest.common import ApiContainer, DatabricksApiException, IfExists
 
 
 class Users(ApiContainer):
@@ -73,7 +73,7 @@ class Users(ApiContainer):
         }
         return self.set_entitlements(user, entitlements)
 
-    def create(self, username, allow_cluster_create=True):
+    def create(self, username, allow_cluster_create=True, if_exists: IfExists = "error"):
         entitlements = []
         if allow_cluster_create:
             entitlements.append({"value": "allow-cluster-create"})
@@ -85,7 +85,8 @@ class Users(ApiContainer):
             "userName": username,
             "entitlements": entitlements
         }
-        return self.databricks.api("POST", f"{self.path}/scim/v2/Users", _data=data)
+        expected = 409 if if_exists in ["ignore", "overwrite"] else None
+        return self.databricks.api("POST", f"{self.path}/scim/v2/Users", _data=data, _expected=expected)
 
     def delete_by_id(self, id):
         return self.databricks.api("DELETE", f"{self.path}/scim/v2/Users/{id}")
