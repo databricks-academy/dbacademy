@@ -92,7 +92,9 @@ class ClustersHelper:
 
         # Some attributes of a policy cannot be updated once created.
         # To get around this, we first delete the policy.
-        client.cluster_policies.delete_by_name(name)
+        policy = client.cluster_policies.get_by_name(name)
+        if policy:
+            client.cluster_policies.delete_by_id(policy["policy_id"])
 
         policy = client.cluster_policies.create_or_update(name, definition)
 
