@@ -243,6 +243,13 @@ class CRUD(ApiContainer, metaclass=ABCMeta):
             return existing
         if if_exists == "update":
             return self.update(item, fetch=fetch, if_not_exists="error")
+        if if_exists == "overwrite":
+            self.delete_by_example(item)
+            result = self._create(item)
+            if isinstance(result, dict):
+                return self._refresh(result, fetch)
+            else:
+                return self._refresh(item, fetch, result)
         if if_exists == "error":
             raise DatabricksApiException(f"{self.singular}({self.id_key}={existing[self.id_key]!r}, "
                                          f"{self.name_key}={existing[self.name_key]!r}) "
