@@ -1,5 +1,6 @@
 from typing import Union
 from dbacademy import dbgems
+from dbacademy.rest.common import DatabricksApiException
 
 
 class WarehousesHelper:
@@ -86,23 +87,34 @@ class WarehousesHelper:
         workspace_name = workspace_name or WorkspaceHelper.get_workspace_name()
         org_id = org_id or dbgems.get_org_id()
 
-        warehouse = client.sql.endpoints.create_or_update(
-            name=name,
-            cluster_size=CLUSTER_SIZE_2X_SMALL,
-            enable_serverless_compute=enable_serverless_compute,
-            min_num_clusters=min_num_clusters,
-            max_num_clusters=max_num_clusters,
-            auto_stop_mins=auto_stop_mins,
-            enable_photon=True,
-            spot_instance_policy=RELIABILITY_OPTIMIZED,
-            channel=CHANNEL_NAME_CURRENT,
-            tags={
-                f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}": dbgems.clean_string(lab_id),
-                f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}": dbgems.clean_string(workspace_description),
-                f"dbacademy.workspace": dbgems.clean_string(workspace_name),
-                f"dbacademy.org_id": dbgems.clean_string(org_id),
-                f"dbacademy.source": dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else lab_id),
-            })
+        def do_create(enable_serverless):
+            return client.sql.endpoints.create_or_update(
+                name=name,
+                cluster_size=CLUSTER_SIZE_2X_SMALL,
+                enable_serverless_compute=enable_serverless,
+                min_num_clusters=min_num_clusters,
+                max_num_clusters=max_num_clusters,
+                auto_stop_mins=auto_stop_mins,
+                enable_photon=True,
+                spot_instance_policy=RELIABILITY_OPTIMIZED,
+                channel=CHANNEL_NAME_CURRENT,
+                tags={
+                    f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}": dbgems.clean_string(lab_id),
+                    f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}": dbgems.clean_string(workspace_description),
+                    f"dbacademy.workspace": dbgems.clean_string(workspace_name),
+                    f"dbacademy.org_id": dbgems.clean_string(org_id),
+                    f"dbacademy.source": dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else lab_id),
+                })
+        if enable_serverless_compute:
+            try:
+                warehouse = do_create(enable_serverless=True)
+            except DatabricksApiException as e:
+                if e.http_code == 400 and "Serverless Compute" in e.message:
+                    warehouse = do_create(enable_serverless=False)
+                else:
+                    raise e
+        else:
+            warehouse = do_create(enable_serverless=True)
         warehouse_id = warehouse.get("id")
 
         # With the warehouse created, make sure that all users can attach to it.
