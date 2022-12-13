@@ -18,7 +18,7 @@ class Workspace(DatabricksApi):
                          authorization_header=auth)
         self.update(data_dict)
 
-    def wait_until_ready(self, timeout_seconds=30*60):
+    def wait_until_ready(self, timeout_seconds=30 * 60):
         start = time.time()
         while self["workspace_status"] == "PROVISIONING":
             workspace_id = self["workspace_id"]
@@ -28,6 +28,16 @@ class Workspace(DatabricksApi):
                 raise TimeoutError(f"Workspace not ready after waiting {timeout_seconds} seconds")
             if self["workspace_status"] == "PROVISIONING":
                 time.sleep(15)
+
+    def wait_until_gone(self, timeout_seconds=30*60):
+        workspace_id = self["workspace_id"]
+        start = time.time()
+        while True:
+            if not self.accounts.workspaces.get_by_id(workspace_id, if_not_exists="ignore"):
+                break
+            if time.time() - start > timeout_seconds:
+                raise TimeoutError(f"Workspace not ready after waiting {timeout_seconds} seconds")
+            time.sleep(15)
 
     @overrides
     def api(self, _http_method: HttpMethod, _endpoint_path: str, _data: dict = None, *,

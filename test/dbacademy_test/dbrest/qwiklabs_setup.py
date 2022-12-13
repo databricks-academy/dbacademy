@@ -32,14 +32,18 @@ lab_description = "Qwiklabs Testing"
 workspace_name = lab_id
 
 # Normally I'd set if_exists to "error" to error out if a resource already exists.  But here I set it to "overwrite"
-# in order to allow you to run this script multiple times without issue.
-if_exists = "ignore"
+# in order to allow you to run this script multiple times without issue.  You can also set it to "ignore" to avoid
+# rerunning operations that have already been run.
+if_exists = "overwrite"
 
 
 # Step 1: Create the workspace.
 
 if if_exists == "overwrite":
-    databricks.workspaces.delete_by_name(workspace_name, if_not_exists="ignore")
+    workspace = databricks.workspaces.get_by_name(workspace_name, if_not_exists="ignore")
+    if workspace:
+        databricks.workspaces.delete_by_name(workspace_name)
+        workspace.wait_until_gone()
 
 credentials_config = databricks.credentials.create_by_example(
     {
@@ -164,14 +168,14 @@ else:
     print(f"Workspace-Setup job completed successfully.")
 
 
-# Step 4: Create instructor and end-user cluster (not all courses will require this)
+# Step 4: Create end-user cluster (not all courses will require this)
 
 policy = workspace.clusters.policies.get_by_name("DBAcademy")
 end_user_name = re.subn("@.*", "", end_user)[0]
 cluster_spec = {
     "cluster_name": f"{end_user_name}'s DBAcademy Cluster",
     "policy_id": policy["policy_id"],
-    "data_security_mode": "SINGLE_USER",
+    "data_security_mode": "LEGACY_SINGLE_USER_STANDARD",
     "single_user_name": end_user,
     "runtime_engine": "STANDARD"
 }
