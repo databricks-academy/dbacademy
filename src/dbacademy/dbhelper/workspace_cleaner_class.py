@@ -55,7 +55,28 @@ class WorkspaceCleaner:
         self._reset_datasets()
         self._reset_working_dir()
 
+        self._drop_instance_pool()
+        self._drop_cluster_policy()
+
         print(f"| the learning environment was successfully reset {dbgems.clock_stopped(start)}.")
+
+    def _drop_instance_pool(self):
+        from dbacademy.dbhelper import ClustersHelper
+
+        for pool_name in ClustersHelper.POOLS:
+            pool = self.__da.client.instance_pools.get_by_name(pool_name)
+            if pool is not None:
+                print(f"| dropping the instance pool \"{pool_name}\".")
+                self.__da.client.instance_pools.delete_by_name(pool_name)
+
+    def _drop_cluster_policy(self):
+        from dbacademy.dbhelper import ClustersHelper
+
+        for policy_name in ClustersHelper.POLICIES:
+            policy = self.__da.client.cluster_policies.get_by_name(policy_name)
+            if policy is not None:
+                print(f"| dropping the cluster policy \"{policy_name}\".")
+                self.__da.client.cluster_policies.delete_by_name(policy_name)
 
     def _reset_working_dir(self) -> None:
         # noinspection PyProtectedMember
