@@ -7,7 +7,7 @@ class MyTestCase(unittest.TestCase):
     @property
     def token(self):
         import os
-        return os.getenv("SLACK_OAUTH_ACCESS_TOKEN_", None)
+        return os.getenv("SLACK_OAUTH_ACCESS_TOKEN", None)
 
     def test_rebuild_first_message(self):
         if self.token is None:
