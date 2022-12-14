@@ -445,7 +445,17 @@ def __validate_libraries():
 
 def __install_libraries():
     global pip_command
-    version = spark.conf.get("dbacademy.library.version", "v9.8.7")
+    
+    specified_version = f"v9.8.7"
+    key = "dbacademy.library.version"
+    version = spark.conf.get(key, specified_version)
+
+    if specified_version != version:
+        print("** Dependency Version Overridden *******************************************************************")
+        print(f"* This course was built for {specified_version} of the DBAcademy Library, but it is being overridden via the Spark")
+        print(f"* configuration variable \\"{key}\\". The use of version v9.8.7 is not advised as we")
+        print(f"* cannot guarantee compatibility with this version of the course.")
+        print("****************************************************************************************************")
 
     try:
         from dbacademy import dbgems  
@@ -506,7 +516,17 @@ def __validate_libraries():
 
 def __install_libraries():
     global pip_command
-    version = spark.conf.get("dbacademy.library.version", "v6.5.4")
+    
+    specified_version = f"v6.5.4"
+    key = "dbacademy.library.version"
+    version = spark.conf.get(key, specified_version)
+
+    if specified_version != version:
+        print("** Dependency Version Overridden *******************************************************************")
+        print(f"* This course was built for {specified_version} of the DBAcademy Library, but it is being overridden via the Spark")
+        print(f"* configuration variable \\"{key}\\". The use of version v6.5.4 is not advised as we")
+        print(f"* cannot guarantee compatibility with this version of the course.")
+        print("****************************************************************************************************")
 
     try:
         from dbacademy import dbgems  
