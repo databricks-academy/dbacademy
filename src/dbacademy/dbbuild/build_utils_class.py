@@ -21,12 +21,14 @@ class BuildUtils:
     def clean_target_dir(client, target_dir: str, verbose):
         from dbacademy.dbbuild.publish.publisher_class import Publisher
 
-        if verbose: print(f"Cleaning {target_dir}...")
+        if verbose:
+            print(f"Cleaning {target_dir}...")
 
         keepers = [f"{target_dir}/{k}" for k in Publisher.KEEPERS]
 
         for path in [p.get("path") for p in client.workspace.ls(target_dir) if p.get("path") not in keepers]:
-            if verbose: print(f"...{path}")
+            if verbose:
+                print(f"...{path}")
             client.workspace().delete_path(path)
 
     # noinspection PyUnusedLocal
@@ -43,10 +45,12 @@ class BuildUtils:
             os.remove(target_file)
 
         course_dir = "/".join(target_file.split("/")[:-2])
-        if not os.path.exists(course_dir): os.mkdir(course_dir)
+        if not os.path.exists(course_dir):
+            os.mkdir(course_dir)
 
         version_dir = "/".join(target_file.split("/")[:-1])
-        if not os.path.exists(version_dir): os.mkdir(version_dir)
+        if not os.path.exists(version_dir):
+            os.mkdir(version_dir)
 
         with open(target_file, "wb") as f:
             # print(f"Writing data: {target_file}")
@@ -74,7 +78,8 @@ class BuildUtils:
 
         actual_branch = response.get("branch")
         if actual_branch != branch:
-            if actual_branch != "published": print(f"\n*** Unexpected branch: {actual_branch}, expected {branch} ***\n")
+            if actual_branch != "published":
+                print(f"\n*** Unexpected branch: {actual_branch}, expected {branch} ***\n")
             client.repos.update(repo_id=repo_id, branch=branch)
 
         results = client.repos.get(repo_id)
@@ -114,13 +119,15 @@ class BuildUtils:
     @staticmethod
     def __ends_with(test_path: str, values: List[str]):
         for ext in values:
-            if test_path.endswith(ext): return True
+            if test_path.endswith(ext):
+                return True
         return False
 
     @staticmethod
     def __starts_with(test_path: str, values: List[str]):
         for ext in values:
-            if test_path.startswith(ext): return True
+            if test_path.startswith(ext):
+                return True
         return False
 
     @staticmethod

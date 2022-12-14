@@ -144,7 +144,8 @@ class NotebookDef:
             parent = '/'.join(self.path.split("/")[:offset])
             target = f"{parent}/{target}"
 
-        if target.startswith("/"): target = target[1:]
+        if target.startswith("/"):
+            target = target[1:]
 
         notebooks = [n for n in all_paths if target == n]
 
@@ -621,11 +622,16 @@ For more current information, please see <a href="https://files.training.databri
             # Process the various directives
             if command.strip() == "":
                 skipped += self.skipping(i, "Empty Cell")
-            elif NotebookDef.D_SOURCE_ONLY in directives:          skipped += self.skipping(i, None)
-            elif NotebookDef.D_INCLUDE_HEADER_TRUE in directives:  skipped += self.skipping(i, None)
-            elif NotebookDef.D_INCLUDE_HEADER_FALSE in directives: skipped += self.skipping(i, None)
-            elif NotebookDef.D_INCLUDE_FOOTER_TRUE in directives:  skipped += self.skipping(i, None)
-            elif NotebookDef.D_INCLUDE_FOOTER_FALSE in directives: skipped += self.skipping(i, None)
+            elif NotebookDef.D_SOURCE_ONLY in directives:
+                skipped += self.skipping(i, None)
+            elif NotebookDef.D_INCLUDE_HEADER_TRUE in directives:
+                skipped += self.skipping(i, None)
+            elif NotebookDef.D_INCLUDE_HEADER_FALSE in directives:
+                skipped += self.skipping(i, None)
+            elif NotebookDef.D_INCLUDE_FOOTER_TRUE in directives:
+                skipped += self.skipping(i, None)
+            elif NotebookDef.D_INCLUDE_FOOTER_FALSE in directives:
+                skipped += self.skipping(i, None)
 
             elif NotebookDef.D_TODO in directives:
                 # This is a TO-DO cell, exclude from solution notebooks

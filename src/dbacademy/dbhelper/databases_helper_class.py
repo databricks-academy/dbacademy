@@ -55,8 +55,10 @@ class DatabasesHelper:
         if db_name in self.da.workspace.existing_databases:
             # The database already exists.
 
-            if drop_existing: dbgems.spark.sql(f"DROP DATABASE IF EXISTS {db_name} CASCADE;")
-            else: return print(f"Skipping existing schema \"{db_name}\" for {username}")
+            if drop_existing:
+                dbgems.spark.sql(f"DROP DATABASE IF EXISTS {db_name} CASCADE;")
+            else:
+                return print(f"Skipping existing schema \"{db_name}\" for {username}")
 
         dbgems.sql(f"CREATE DATABASE IF NOT EXISTS {db_name} LOCATION '{db_path}';")
 

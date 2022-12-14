@@ -136,7 +136,8 @@ class LessonConfig:
             return None
 
         value = re.sub(r"[^a-zA-Z\d]", "_", str(name))
-        while "__" in value: value = value.replace("__", "_")
+        while "__" in value:
+            value = value.replace("__", "_")
         return value
 
     @property

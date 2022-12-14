@@ -77,10 +77,12 @@ class TestSuite:
         self.build_config.spark_conf["dbacademy.smoke-test"] = "true"
 
         course_name = re.sub(r"[^a-zA-Z\d]", "-", self.build_config.name.lower())
-        while "--" in course_name: course_name = course_name.replace("--", "-")
+        while "--" in course_name:
+            course_name = course_name.replace("--", "-")
 
         self.test_type = re.sub(r"[^a-zA-Z\d]", "-", self.test_type.lower())
-        while "--" in self.test_type: self.test_type = self.test_type.replace("--", "-")
+        while "--" in self.test_type:
+            self.test_type = self.test_type.replace("--", "-")
 
         params = {
             "name": f"{job_name}",
@@ -240,7 +242,8 @@ class TestSuite:
         run_id = response.get("run_id", 0)
 
         result_state = response.get("state", {}).get("result_state", "UNKNOWN")
-        if result_state == "FAILED" and test.notebook.ignored: result_state = "IGNORED"
+        if result_state == "FAILED" and test.notebook.ignored:
+            result_state = "IGNORED"
 
         execution_duration = response.get("execution_duration", 0)
         notebook_path = response.get("task", {}).get("notebook_task", {}).get("notebook_path", "UNKNOWN")
@@ -289,7 +292,8 @@ class TestSuite:
     def send_status_update(self, message_type, message):
         import requests, json
 
-        if self.slack_first_message is None: self.slack_first_message = message
+        if self.slack_first_message is None:
+            self.slack_first_message = message
 
         payload = {
             "channel": "curr-smoke-tests",

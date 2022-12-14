@@ -218,8 +218,10 @@ class DatasetManager:
         """
         Utility method used by the dataset validation, this method performs a recursive list of the specified path and returns the sorted list of paths.
         """
-        if prefix is None: prefix = path
-        if results is None: results = list()
+        if prefix is None:
+            prefix = path
+        if results is None:
+            results = list()
 
         try:
             files = dbgems.dbutils.fs.ls(path)
