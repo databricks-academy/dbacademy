@@ -17,8 +17,10 @@ class RunsClient(ApiContainer):
         json_response = self.client.api("GET", url)
         runs.extend(json_response.get("runs", builtins.list()))
 
-        if not json_response.get("has_more", False): return runs
-        else: return self.list(runs)
+        if not json_response.get("has_more", False):
+            return runs
+        else:
+            return self.list(runs)
 
     def list_by_job_id(self, job_id, runs=None):
         runs = runs or []
@@ -26,8 +28,10 @@ class RunsClient(ApiContainer):
         json_response = self.client.api("GET", url)
         runs.extend(json_response.get("runs", builtins.list()))
 
-        if not json_response.get("has_more", False): return runs
-        else: return self.list_by_job_id(runs)
+        if not json_response.get("has_more", False):
+            return runs
+        else:
+            return self.list_by_job_id(runs)
 
     def cancel(self, run_id): 
         return self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/runs/cancel", run_id=run_id)

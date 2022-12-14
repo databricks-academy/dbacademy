@@ -78,8 +78,10 @@ class WorkspaceCleaner:
         for catalog_name in catalog_names:
             if catalog_name.startswith(self.__da.catalog_name_prefix):
                 print(f"Dropping the catalog \"{catalog_name}\"")
-                try: dbgems.spark.sql(f"DROP CATALOG IF EXISTS {catalog_name} CASCADE")
-                except AnalysisException: pass  # Ignore this concurrency error
+                try:
+                    dbgems.spark.sql(f"DROP CATALOG IF EXISTS {catalog_name} CASCADE")
+                except AnalysisException:
+                    pass  # Ignore this concurrency error
 
         # Refresh the list of catalogs
         catalog_names = [c.catalog for c in dbgems.spark.sql(f"SHOW CATALOGS").collect()]
@@ -96,14 +98,20 @@ class WorkspaceCleaner:
     def _drop_database(schema_name) -> None:
         from pyspark.sql.utils import AnalysisException
 
-        try: location = dbgems.sql(f"DESCRIBE TABLE EXTENDED {schema_name}").filter("col_name == 'Location'").first()["data_type"]
-        except Exception: location = None  # Ignore this concurrency error
+        try:
+            location = dbgems.sql(f"DESCRIBE TABLE EXTENDED {schema_name}").filter("col_name == 'Location'").first()["data_type"]
+        except Exception:
+            location = None  # Ignore this concurrency error
 
-        try: dbgems.sql(f"DROP DATABASE IF EXISTS {schema_name} CASCADE")
-        except AnalysisException: pass  # Ignore this concurrency error
+        try:
+            dbgems.sql(f"DROP DATABASE IF EXISTS {schema_name} CASCADE")
+        except AnalysisException:
+            pass  # Ignore this concurrency error
 
-        try: dbgems.dbutils.fs.rm(location)
-        except: pass  # We are going to ignore this as it is most likely deleted or None
+        try:
+            dbgems.dbutils.fs.rm(location)
+        except:
+            pass  # We are going to ignore this as it is most likely deleted or None
 
     def _drop_catalog(self) -> bool:
         from pyspark.sql.utils import AnalysisException
@@ -170,6 +178,7 @@ class WorkspaceCleaner:
 
     def _drop_feature_store_tables(self, lesson_only: bool) -> bool:
         import logging
+        # noinspection PyPackageRequirements
         from databricks import feature_store
 
         prefix = self.__da.schema_name if lesson_only else self.__da.schema_name_prefix

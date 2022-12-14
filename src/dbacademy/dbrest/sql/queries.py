@@ -12,15 +12,18 @@ class SqlQueriesClient(ApiContainer):
         self.max_page_size = 250
 
     def list(self, queries=None, page=1):
-        if queries is None: queries = builtins.list()
+        if queries is None:
+            queries = builtins.list()
 
         url = f"{self.base_uri}?page_size={self.max_page_size}&page={page}"
         json_response = self.client.api("GET", url)
 
         queries.extend(json_response.get("results", builtins.list()))
 
-        if json_response.get("count") == len(queries): return queries
-        else: return self.list(queries=queries, page=page+1)
+        if json_response.get("count") == len(queries):
+            return queries
+        else:
+            return self.list(queries=queries, page=page+1)
 
     def get_by_id(self, query_id):
         return self.client.api("GET", f"{self.base_uri}/{query_id}")
@@ -32,7 +35,8 @@ class SqlQueriesClient(ApiContainer):
         return self.client.api("POST", f"{self.base_uri}/trash/{query_id}")
 
     def get_by_name(self, query_name, queries=None, page=1):
-        if queries is None: queries = builtins.list()
+        if queries is None:
+            queries = builtins.list()
 
         url = f"{self.base_uri}?page_size={self.max_page_size}&page={page}"
         json_response = self.client.api("GET", url)
@@ -44,8 +48,10 @@ class SqlQueriesClient(ApiContainer):
                 return query
 
         # Not found, continue looking.
-        if json_response.get("count") == len(queries): return None
-        else: return self.get_by_name(query_name=query_name, queries=queries, page=page+1)
+        if json_response.get("count") == len(queries):
+            return None
+        else:
+            return self.get_by_name(query_name=query_name, queries=queries, page=page+1)
 
     def clone(self, query: dict):
         create_def = self.existing_to_create(query)
@@ -82,11 +88,17 @@ class SqlQueriesClient(ApiContainer):
     def update(self, id_value: str, name: str = None, query: str = None, description: str = None, schedule: dict = None, options: dict = None, data_source_id: str = None):
         params = dict()
 
-        if name is not None: params["name"] = name
-        if query is not None: params["query"] = query
-        if description is not None: params["description"] = description
-        if schedule is not None: params["schedule"] = schedule
-        if options is not None: params["options"] = builtins.dict() if options is None else options
-        if data_source_id is not None: params["data_source_id"] = data_source_id
+        if name is not None:
+            params["name"] = name
+        if query is not None:
+            params["query"] = query
+        if description is not None:
+            params["description"] = description
+        if schedule is not None:
+            params["schedule"] = schedule
+        if options is not None:
+            params["options"] = builtins.dict() if options is None else options
+        if data_source_id is not None:
+            params["data_source_id"] = data_source_id
         
         return self.update_from_dict(id_value, params)

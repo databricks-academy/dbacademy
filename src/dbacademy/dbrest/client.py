@@ -37,9 +37,11 @@ class DBAcademyRestClient(ApiClient):
         if not any((authorization_header, token, password)):
             from dbacademy import dbgems
             token = dbgems.get_notebooks_api_token()
-            if verbose: print(f"Using notebook token.")
+            if verbose:
+                print(f"Using notebook token.")
         else:
-            if verbose: print(f"Using caller-provided token.")
+            if verbose:
+                print(f"Using caller-provided token.")
 
         url = endpoint.rstrip("/") + "/api/"
 

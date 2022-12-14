@@ -52,7 +52,8 @@ class JobsClient(ApiContainer):
         jobs = response.get("jobs", list())
 
         found, job = search(jobs)
-        if found: return job
+        if found:
+            return job
 
         while response.get("has_more", False):
             offset += limit
@@ -60,7 +61,8 @@ class JobsClient(ApiContainer):
             jobs = response.get("jobs", list())
 
             found, job = search(jobs)
-            if found: return job
+            if found:
+                return job
 
         return None
 

@@ -48,7 +48,9 @@ class GoogleClient:
     def to_file_name(file: Dict[str, str]) -> str:
         name = file.get("name")
         file_name = f"{name}.pdf".replace(":", "-").replace(" ", "-").lower()
-        while "--" in file_name: file_name = file_name.replace("--", "-")
+
+        while "--" in file_name:
+            file_name = file_name.replace("--", "-")
 
         return file_name
 

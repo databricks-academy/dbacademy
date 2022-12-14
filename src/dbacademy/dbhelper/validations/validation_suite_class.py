@@ -317,17 +317,26 @@ class ValidationSuite(object):
 
     @staticmethod
     def compare_lists(value_a: list, value_b: list, test_column_order: bool):
-        if value_a is None and value_b is None: return True
-        if value_a is None or value_b is None: return False
-        if len(value_a) != len(value_b): return False
+        if value_a is None and value_b is None:
+            return True
+
+        if value_a is None or value_b is None:
+            return False
+
+        if len(value_a) != len(value_b):
+            return False
 
         if test_column_order:
             return value_a == value_b
 
         for column in value_a:
-            if column not in value_b: return False
+            if column not in value_b:
+                return False
+
         for column in value_b:
-            if column not in value_a: return False
+            if column not in value_a:
+                return False
+
         return True
 
     @staticmethod
@@ -353,8 +362,11 @@ class ValidationSuite(object):
     def compare_schemas(schema_a: pyspark.sql.types.StructType, schema_b: pyspark.sql.types.StructType, test_column_order: bool):
         from pyspark.sql.types import StructField
 
-        if schema_a is None and schema_b is None: return True
-        if schema_a is None or schema_b is None: return False
+        if schema_a is None and schema_b is None:
+            return True
+
+        if schema_a is None or schema_b is None:
+            return False
 
         sch_a = [StructField(s.name, s.dataType, True) for s in schema_a]
         sch_b = [StructField(s.name, s.dataType, True) for s in schema_b]

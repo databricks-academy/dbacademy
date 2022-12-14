@@ -82,7 +82,8 @@ class CourseConfig:
             return None
 
         build_name = re.sub(r"[^a-zA-Z\d]", "-", course_name).lower()
-        while "--" in build_name: build_name = build_name.replace("--", "-")
+        while "--" in build_name:
+            build_name = build_name.replace("--", "-")
         return build_name
 
     @property

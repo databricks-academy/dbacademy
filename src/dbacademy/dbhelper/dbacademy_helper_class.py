@@ -238,9 +238,9 @@ class DBAcademyHelper:
         The pattern consist of the local part of the email address, a 4-character hash, "da" for DBAcademy and the course's code. The value is then converted to lower case
         after which all non-alpha and non-digits are replaced with hyphens.
         See also DBAcademyHelper.unique_name
-        :param username: The full email address of a user. See also LessonConfig.username
-        :param course_code: The course's code. See also CourseConfig.course_code
-        :param lesson_name: The lesson's name (usually None). See also LessonConfig.name
+        :param username: The full email address of a user. See also `LessonConfig.username`
+        :param course_code: The course's code. See also `CourseConfig.course_code`
+        :param lesson_name: The lesson's name (usually None). See also `LessonConfig.name`
         :param sep: The seperator to use between words, defaults to a hyphen
         :return: The unique name composited from the specified username and course_code
         """
@@ -270,7 +270,7 @@ class DBAcademyHelper:
         a 4-character hash and "da" for DBAcademy. The value is then converted to lower case after which all non-alpha and
         non-digits are replaced with underscores.
         See also DBAcademyHelper.catalog_name_prefix
-        :param username: The full email address of a user. See also LessonConfig.username
+        :param username: The full email address of a user. See also `LessonConfig.username`
         :return: The catalog name composited from the specified username
         """
         return DBAcademyHelper.to_catalog_name(username=username, lesson_name=None)
@@ -302,7 +302,7 @@ class DBAcademyHelper:
         a 4-character hash and "da" for DBAcademy and the lesson_name. The value is then converted to lower case after which
         all non-alpha and non-digits are replaced with underscores.
         See also DBAcademyHelper.catalog_name
-        :param username: The full email address of a user. See also LessonConfig.username
+        :param username: The full email address of a user. See also `LessonConfig.username`
         :param lesson_name: The name of the lesson. See also LessonConfig.name
         :return: The unique name composited from the specified username and lesson
         """
@@ -343,7 +343,7 @@ class DBAcademyHelper:
     def to_schema_name_prefix(*, username: str, course_code: str) -> str:
         """
         Shorthand for DBAcademyHelper.to_schema_name(username=username, course_code=course_code, lesson_name=None)
-        :param username: The full email address of a user. See also LessonConfig.username
+        :param username: The full email address of a user. See also `LessonConfig.username`
         :param course_code: The course's code. See also CourseConfig.course_code
         :return: The schema name composited from the specified username and course_code
         """
@@ -371,7 +371,7 @@ class DBAcademyHelper:
         a 4-character hash and "da" for DBAcademy, course's code and the lesson_name. The value is then converted to lower case after which
         all non-alpha and non-digits are replaced with underscores.
         See also DBAcademyHelper.catalog_name
-        :param username: The full email address of a user. See also LessonConfig.username
+        :param username: The full email address of a user. See also `LessonConfig.username`
         :param course_code: The course's code. See also CourseConfig.course_code
         :param lesson_name: The name of the lesson. See also LessonConfig.name
         :return: The unique name composited from the specified username and lesson
@@ -447,8 +447,10 @@ class DBAcademyHelper:
         if self.lesson_config.installing_datasets:
             self.install_datasets()
 
-        if self.lesson_config.create_catalog: self.__create_catalog()  # Create the UC catalog
-        elif self.lesson_config.create_schema: self.__create_schema()  # Create the Schema (is not a catalog)
+        if self.lesson_config.create_catalog:
+            self.__create_catalog()  # Create the UC catalog
+        elif self.lesson_config.create_schema:
+            self.__create_schema()  # Create the Schema (is not a catalog)
 
         self.__initialized = True  # Set the all-done flag.
 
@@ -556,14 +558,17 @@ class DBAcademyHelper:
             del schemas[schemas.index(DBAcademyHelper.SCHEMA_INFORMATION)]
 
         for i, schema in enumerate(schemas):
-            if i > 0: print()
+            if i > 0:
+                print()
 
             if self.lesson_config.create_catalog:
                 # We have a catalog and presumably a default schema
                 print(f"Predefined tables in \"{self.catalog_name}.{schema}\":")
                 tables = dbgems.sql(f"SHOW TABLES IN {self.catalog_name}.{schema}").filter("isTemporary == false").select("tableName").collect()
-                if len(tables) == 0: print("| -none-")
-                for row in tables: print(f"| {row[0]}")
+                if len(tables) == 0:
+                    print("| -none-")
+                for row in tables:
+                    print(f"| {row[0]}")
 
             elif self.lesson_config.requires_uc:
                 # We require UC, but we didn't create the catalog.
@@ -575,8 +580,10 @@ class DBAcademyHelper:
 
                 print(f"Predefined tables in \"{schema}\":")
                 tables = dbgems.sql(f"SHOW TABLES IN {schema}").filter("isTemporary == false").select("tableName").collect()
-                if len(tables) == 0: print("| -none-")
-                for row in tables: print(f"| {row[0]}")
+                if len(tables) == 0:
+                    print("| -none-")
+                for row in tables:
+                    print(f"| {row[0]}")
 
             else:
                 # Not UC, didn't create the database
@@ -744,6 +751,7 @@ class DBAcademyHelper:
             unique_name = self.unique_name("-")
             mlflow.set_experiment(f"/Curriculum/Test Results/{unique_name}-{dbgems.get_job_id()}")
 
+    # noinspection PyUnresolvedReferences
     @staticmethod
     def block_until_stream_is_ready(query: Union[str, pyspark.sql.streaming.StreamingQuery], min_batches: int = 2, delay_seconds: int = 5) -> None:
         """
@@ -770,7 +778,8 @@ class DBAcademyHelper:
                 time.sleep(delay_seconds)  # Give it a couple of seconds
                 queries = [aq for aq in dbgems.spark.streams.active if aq.name == query]
 
-            if len(queries) > 1: raise ValueError(f"More than one spark query was found for the name \"{query}\".")
+            if len(queries) > 1:
+                raise ValueError(f"More than one spark query was found for the name \"{query}\".")
             query = queries[0]
 
         while True:

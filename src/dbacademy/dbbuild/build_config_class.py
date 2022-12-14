@@ -45,10 +45,12 @@ class BuildConfig:
         common.validate_type(version, "version", str)
 
         configurations = config.get("notebook_config", dict())
-        if "notebook_config" in config: del config["notebook_config"]
+        if "notebook_config" in config:
+            del config["notebook_config"]
 
         publish_only: Dict[str, List[str]] = config.get("publish_only", None)
-        if "publish_only" in config: del config["publish_only"]
+        if "publish_only" in config:
+            del config["publish_only"]
 
         build_config = BuildConfig(version=version, **config)
         build_config.__initialize_notebooks()
@@ -132,8 +134,10 @@ class BuildConfig:
         self.__created_notebooks = False
         self.__passing_tests: Dict[str, bool] = dict()
 
-        try: self.username = dbgems.sql("SELECT current_user()").first()[0]
-        except: self.username = "mickey.mouse@disney.com"  # When unit testing
+        try:
+            self.username = dbgems.sql("SELECT current_user()").first()[0]
+        except:
+            self.username = "mickey.mouse@disney.com"  # When unit testing
 
         self.supported_dbrs = supported_dbrs or []
 
@@ -250,7 +254,8 @@ class BuildConfig:
                                                    i18n_language=self.i18n_language,
                                                    ignoring=self.ignoring,
                                                    version=self.version)
-        if has_wip: print()
+        if has_wip:
+            print()
 
     def validate(self, validate_version: bool = True, validate_readme: bool = True):
         """
@@ -262,8 +267,11 @@ class BuildConfig:
 
         assert self.__created_notebooks, f"The notebooks have not yet been initialized; Please call BuildConfig.initialize_notebooks() before proceeding."
 
-        if validate_version: self.__validate_version()
-        if validate_readme: self.__validate_readme()
+        if validate_version:
+            self.__validate_version()
+
+        if validate_readme:
+            self.__validate_readme()
 
         print("Build Configuration:")
         print(f"| suite_id:          {self.suite_id}")
@@ -346,7 +354,8 @@ class BuildConfig:
 
     def __index_notebooks(self):
         max_name_length = 0
-        for path in self.notebooks: max_name_length = len(path) if len(path) > max_name_length else max_name_length
+        for path in self.notebooks:
+            max_name_length = len(path) if len(path) > max_name_length else max_name_length
 
         rounds = list(map(lambda notebook_path: self.notebooks.get(notebook_path).test_round, self.notebooks))
         rounds.sort()
@@ -370,17 +379,20 @@ class BuildConfig:
                     include_solution = str(notebook.include_solution).ljust(5)
 
                     replacements = notebook.replacements.copy()  # Take a deep copy to minimize noise
-                    if "required_dbrs" in replacements: del replacements["required_dbrs"]
+                    if "required_dbrs" in replacements:
+                        del replacements["required_dbrs"]
 
                     replacements_copy = replacements.copy()
-                    if "supported_dbrs" in replacements_copy: del replacements_copy["supported_dbrs"]
+                    if "supported_dbrs" in replacements_copy:
+                        del replacements_copy["supported_dbrs"]
 
                     if len(replacements_copy) == 0:
                         print(f"{notebook.order: >3}: {path}   ignored={ignored}   include_solution={include_solution}   replacements=None")
                     else:
                         print(f"{notebook.order: >3}: {path}   ignored={ignored}   include_solution={include_solution}   replacements={{")
                         max_key_length = 0
-                        for key in replacements_copy: max_key_length = len(key) if len(key) > max_key_length else max_key_length
+                        for key in replacements_copy:
+                            max_key_length = len(key) if len(key) > max_key_length else max_key_length
 
                         for key in replacements_copy:
                             value = replacements_copy.get(key)
@@ -429,7 +441,7 @@ class BuildConfig:
     # TODO Cannot define return type
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
         """
-        Creates an instance of TestSuite from the current build configuration.
+        Creates an instance of TestSuite from the current build configuration
         :param test_type: See TestSuite.test_type
         :param keep_success: See TestSuite.keep_success
         :return:
@@ -445,8 +457,8 @@ class BuildConfig:
 
     def assert_all_tests_passed(self, clouds: List[str] = None) -> None:
         """
-        Asserts that tests for the specified clouds have passed.
-        :param clouds: The list of clouds consisting of the values "AWS", "MSA", "GCP" and if None, will default to a list containing all three.
+        Asserts that tests for the specified clouds have passed
+        :param clouds: The list of clouds consisting of the values "AWS", "MSA", "GCP" and if None, will default to a list containing all three
         :return: None
         """
 
@@ -462,7 +474,7 @@ class BuildConfig:
 
     def validate_all_tests_passed(self, cloud: str):
         """
-        Verifies that tests the for this course, cloud and version have passed and will prohibit progression if the tests have not passed.
+        Verifies that tests the for this course, cloud and version have passed and will prohibit progression if the tests have not passed
         :param cloud: One of the three values "AWS", "MSA" or "GCP"
         :return: None
         """

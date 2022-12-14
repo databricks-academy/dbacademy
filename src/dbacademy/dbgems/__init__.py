@@ -382,7 +382,8 @@ def clean_string(value, replacement: str = "_"):
     import re
     replacement_2x = replacement+replacement
     value = re.sub(r"[^a-zA-Z\d]", replacement, str(value))
-    while replacement_2x in value: value = value.replace(replacement_2x, replacement)
+    while replacement_2x in value:
+        value = value.replace(replacement_2x, replacement)
     return value
 
 

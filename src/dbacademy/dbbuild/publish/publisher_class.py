@@ -71,7 +71,7 @@ class Publisher:
         Indicates which mode the publisher is operating under. Expected values include None or one of Publisher.PUBLISHING_MODES. When testing
         the mode is expected to be None. When actually publishing a specific version of a course "manual" (Publisher.PUBLISHING_MODE_MANUAL) indicates
         that the DBC will be exported and published manually where "automatic" (Publisher.PUBLISHING_MODE_AUTOMATIC) indicates that the DBC,
-        slides, etc will be published to the distribution system via the build scripts.
+        slides, etc. will be published to the distribution system via the build scripts.
         :return: the current publishing mode
         """
         return self.__publishing_mode
@@ -122,7 +122,7 @@ class Publisher:
 
     def create_resource_bundle(self, folder_name: str = None, target_dir: str = None) -> str:
         """
-        Only applicable to translated courses, this method creates a "resource bundle" consisting of MD files of the notebook's various MD cells.
+        Only applicable to translated courses, this method creates a "resource bundle" consisting of MD files of the notebook's various MD cells
         :param folder_name: The name of the folder for the resource bundle as a subfolder of target_dir
         :param target_dir: The directory under which resource bundles are located.
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
@@ -149,7 +149,7 @@ class Publisher:
 
     def generate_notebooks(self, *, skip_generation: bool = False, verbose=False, debugging=False) -> Optional[str]:
         """
-        Generates the publishable notebooks from the source notebooks.
+        Generates the publishable notebooks from the source notebooks
         :param skip_generation: Overrides the default behavior and skips generation of the notebook
         :param verbose: True of verbose logging
         :param debugging: True for debug logging
@@ -289,7 +289,7 @@ class Publisher:
 
     def configure_target_repo(self, target_dir: str = None, target_repo_url: str = None, branch: str = "published") -> None:
         """
-        Configures the build to publish to a public GitHub repository. In most cases, the default values should be used.
+        Configures the build to publish to a public GitHub repository. In most cases, the default values should be used
         :param target_dir: The directory under /Repos that the GitHub will be cloned to
         :param target_repo_url: The locations of the GitHub public GitHub repo
         :param branch: The name of the branch to publish to
@@ -364,7 +364,7 @@ class Publisher:
     # TODO Cannot define return type without circular dependencies
     def to_test_suite(self, test_type: str = None, keep_success: bool = False):
         """
-        Creates an instance of the TestSuite class from this class. Typically, the parameters are not specified.
+        Creates an instance of the TestSuite class from this class. Typically, the parameters are not specified
         :param test_type: See TestSuite.test_type
         :param keep_success: See TestSuite.keep_success
         :return: TestSuite
@@ -548,8 +548,8 @@ class Publisher:
 
     def validate_no_changes_in_target_repo(self, skip_validation=False) -> None:
         """
-        Exports the target repository to a temp directory, enumerates all the files in that temp directory and then compares it
-        to an enumeration of all files in the actual target directory. Reports on any uncommitted files.
+        Exports the target repository to a temp directory, enumerates all the files in that temp directory, then compares it
+        to an enumeration of all files in the actual target directory and finally reports on any uncommitted files
         :param skip_validation: True to override validation
         :return: None
         """

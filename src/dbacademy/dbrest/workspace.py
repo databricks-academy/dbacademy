@@ -36,7 +36,8 @@ class WorkspaceClient(ApiContainer):
                     entities.append(next_item)
                 elif object_type == "DIRECTORY":
                     result = self.ls(next_item["path"])
-                    if result is not None: queue.extend(result)
+                    if result is not None:
+                        queue.extend(result)
 
             return entities
 
@@ -72,7 +73,8 @@ class WorkspaceClient(ApiContainer):
             local_file_path = f"/tmp/{file_name}"
 
         if source_url is not None:
-            if os.path.exists(local_file_path): os.remove(local_file_path)
+            if os.path.exists(local_file_path):
+                os.remove(local_file_path)
 
             # noinspection PyUnresolvedReferences
             urllib.request.urlretrieve(source_url, local_file_path)

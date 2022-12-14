@@ -80,9 +80,12 @@ class ChangeLog:
                 assert v_parts[1].isnumeric(), f"The change long entry's Minor version field is not an integral value, found \"{self.version}\"."
                 assert v_parts[2].isnumeric(), f"The change long entry's Bug-Fix version field is not an integral value, found \"{self.version}\"."
 
-                if self.target_version is None: version_index = i            # Use the first one we find.
-                elif self.target_version == self.version: version_index = i  # We found the target version.
-                else: continue
+                if self.target_version is None:
+                    version_index = i            # Use the first one we find.
+                elif self.target_version == self.version:
+                    version_index = i  # We found the target version.
+                else:
+                    continue
 
                 self.date = parts[3]
                 assert self.date.startswith("(") and self.date.endswith(")"), f"Expected the change log entry's date field to be of the form \"(M-D-YYYY)\" or \"(TBD)\", found \"{self.date}\" for version \"{self.version}\"."
