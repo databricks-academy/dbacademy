@@ -11,8 +11,10 @@ class ClustersHelper:
     POLICY_ALL_PURPOSE = "DBAcademy"
     POLICY_JOBS_ONLY = "DBAcademy Jobs"
     POLICY_DLT_ONLY = "DBAcademy DLT"
+    POLICIES = [POLICY_ALL_PURPOSE, POLICY_JOBS_ONLY, POLICY_DLT_ONLY]
 
     POOL_DEFAULT_NAME = "DBAcademy"
+    POOLS = [POOL_DEFAULT_NAME]
 
     def __init__(self, workspace: WorkspaceHelper, da: DBAcademyHelper):
         self.da = da
