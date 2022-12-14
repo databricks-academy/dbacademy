@@ -137,7 +137,12 @@ class InstancePoolsClient(ApiContainer):
 
     def delete_by_name(self, name):
         pool = self.get_by_name(name)
-        if pool is None: return None
 
-        instance_pool_id = pool.get("instance_pool_id")
-        return self.delete_by_id(instance_pool_id)
+        if pool is not None:
+            # We found the pool, delete it.
+            instance_pool_id = pool.get("instance_pool_id")
+            return self.delete_by_id(instance_pool_id)
+
+        # The pool doesn't exist so there is nothing to do
+        return None
+
