@@ -1,3 +1,4 @@
+from typing import Optional
 from dbacademy.rest.common import ApiContainer, ApiClient
 
 
@@ -67,9 +68,12 @@ class ClustersPolicyClient(ApiContainer):
     def delete_by_id(self, policy_id):
         return self.client.api("POST", f"{self.base_uri}/delete", policy_id=policy_id)
 
-    def delete_by_name(self, name):
+    def delete_by_name(self, name) -> Optional[str]:
         policy = self.get_by_name(name)
-        assert policy is not None, f"A policy named \"{name}\" was not found."
+        if policy is not None:
+            # We found the policy, delete it.
+            policy_id = policy.get("policy_id")
+            return self.delete_by_id(policy_id)
 
-        policy_id = policy.get("policy_id")
-        return self.delete_by_id(policy_id)
+        # The policy doesn't exist so there is nothing to do
+        return None
