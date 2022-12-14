@@ -43,7 +43,7 @@ class WarehousesHelper:
                                                                                                   enable_serverless_compute=enable_serverless_compute))
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
-    def create_sql_warehouse_for(self, username, auto_stop_mins=120, enable_serverless_compute=False):
+    def create_sql_warehouse_for(self, username, auto_stop_mins=120, enable_serverless_compute=True):
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
         return WarehousesHelper.create_sql_warehouse(client=self.client,
                                                      name=self.da.to_unique_name(username=username,
@@ -61,7 +61,7 @@ class WarehousesHelper:
                                                      org_id=dbgems.get_org_id())
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
-    def create_shared_sql_warehouse(self, name: str, auto_stop_mins=120, enable_serverless_compute=False):
+    def create_shared_sql_warehouse(self, name: str, auto_stop_mins=120, enable_serverless_compute=True):
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
         return WarehousesHelper.create_sql_warehouse(client=self.client,
                                                      name=name,
@@ -115,6 +115,7 @@ class WarehousesHelper:
                     raise e
         else:
             warehouse = do_create(enable_serverless=False)
+
         warehouse_id = warehouse.get("id")
 
         # With the warehouse created, make sure that all users can attach to it.
