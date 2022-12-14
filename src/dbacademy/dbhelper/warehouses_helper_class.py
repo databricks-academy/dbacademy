@@ -87,7 +87,7 @@ class WarehousesHelper:
         workspace_name = workspace_name or WorkspaceHelper.get_workspace_name()
         org_id = org_id or dbgems.get_org_id()
 
-        def do_create(enable_serverless):
+        def do_create(enable_serverless: bool):
             return client.sql.endpoints.create_or_update(
                 name=name,
                 cluster_size=CLUSTER_SIZE_2X_SMALL,
@@ -114,7 +114,7 @@ class WarehousesHelper:
                 else:
                     raise e
         else:
-            warehouse = do_create(enable_serverless=True)
+            warehouse = do_create(enable_serverless=False)
         warehouse_id = warehouse.get("id")
 
         # With the warehouse created, make sure that all users can attach to it.
