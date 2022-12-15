@@ -117,8 +117,7 @@ job_spec = {
                 "spark_version": spark_version,
                 "spark_conf": {
                     "spark.master": "local[*, 4]",
-                    "spark.databricks.cluster.profile": "singleNode",
-                    "dbacademy.library.version": "qwiklabs"  # For production, delete this line
+                    "spark.databricks.cluster.profile": "singleNode"
                 },
                 "custom_tags": {
                     "ResourceClass": "SingleNode"
