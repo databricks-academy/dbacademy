@@ -27,7 +27,7 @@ class TestDBAcademyRestClient(unittest.TestCase):
 
     def testClusters(self):
         ws = dbrest_factory.test_client()
-        result = ws.clusters.list()
+        result = ws.clusters.list_clusters()
         self.assertIsNotNone(result)
 
     def testJobs(self):
