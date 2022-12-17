@@ -48,8 +48,9 @@ class ClusterConfig:
             spark_conf["spark.master"] = "local[*]"
             extra_params.get("custom_tags")["ResourceClass"] = "SingleNode"
 
-            if single_user_name is not None:
-                spark_conf["spark.databricks.cluster.profile"] = "singleNode"
+            # if single_user_name is not None:
+            #     spark_conf["spark.databricks.cluster.profile"] = "singleNode"
+            spark_conf["spark.databricks.cluster.profile"] = "singleNode"
 
         if on_demand:
             extra_params.get("aws_attributes")["availability"] = "ON_DEMAND"
