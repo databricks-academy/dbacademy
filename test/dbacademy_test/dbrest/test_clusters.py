@@ -170,7 +170,10 @@ class TestClusters(unittest.TestCase):
             "instance_source": {"node_type_id": "i3.xlarge"},
             "node_type_id": "i3.xlarge",
             "num_workers": 0,
-            "spark_conf": {"spark.master": "local[*]"},
+            "spark_conf": {
+                "spark.master": "local[*]",
+                "spark.databricks.cluster.profile": "singleNode"
+            },
             "spark_version": "11.3.x-scala2.12",
             "state": "PENDING",
             "state_message": "",
@@ -421,9 +424,6 @@ class TestClusters(unittest.TestCase):
 
         self.maxDiff = None
         self.assertEquals(cluster_a, cluster_b)
-
-        self.client.clusters.terminate_by_id(cluster_id)
-        self.client.clusters.destroy_by_id(cluster_id)
 
     def test_list_deprecated(self):
         self.client.clusters.create(cluster_name="Deprecated List",
