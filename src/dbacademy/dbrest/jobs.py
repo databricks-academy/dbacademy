@@ -1,13 +1,256 @@
+from typing import Dict, Any, List
+from dbacademy import common
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import ApiContainer
+from dbacademy.dbrest.clusters import ClusterConfig
+
+
+class TaskConfig:
+
+    def __init__(self, *,
+                 job_params: Dict[str, Any],
+                 task_params: Dict[str, Any],
+                 task_key: str,
+                 description: str = None,
+                 max_retries: int = 0,
+                 min_retry_interval_millis: int = 0,
+                 retry_on_timeout: bool = False,
+                 timeout_seconds: int = None,
+                 depends_on: List[str] = None):
+
+        task_builder = self
+        self.defined = []
+
+        self.job_params = job_params
+        self.params = task_params
+
+        self.params["task_key"] = task_key
+        self.params["max_retries"] = max_retries
+        self.params["min_retry_interval_millis"] = min_retry_interval_millis
+        self.params["retry_on_timeout"] = retry_on_timeout
+        self.params["depends_on"] = depends_on or list()
+
+        if description is not None:
+            self.params["description"] = description
+
+        if timeout_seconds is not None:
+            self.params["timeout_seconds"] = timeout_seconds
+
+        class Cluster:
+            def __init__(self):
+                self.name = "cluster"
+
+            def on_demand(self, existing_cluster_id: str) -> TaskConfig:
+                assert self.name not in task_builder.defined, "The cluster has already been defined."
+                task_builder.defined.append(self.name)
+                task_builder.params["existing_cluster_id"] = existing_cluster_id
+                return task_builder
+
+            def job(self, job_cluster_key: str) -> TaskConfig:
+                assert self.name not in task_builder.defined, "The cluster has already been defined."
+                task_builder.defined.append(self.name)
+                task_builder.params["job_cluster_key"] = job_cluster_key
+                return task_builder
+
+            def new(self, cluster_config: ClusterConfig) -> TaskConfig:
+                assert self.name not in task_builder.defined, "The cluster has already been defined."
+                task_builder.defined.append(self.name)
+                task_builder.params["new_cluster"] = cluster_config.params
+                return task_builder
+
+        self.cluster = Cluster()
+
+        class Task:
+            def __init__(self):
+                self.name = "task"
+
+            def notebook(self, notebook_path: str, source: str, base_parameters: Dict[str, str] = None) -> TaskConfig:
+                assert self.name not in task_builder.defined, "The task has already been defined."
+                task_builder.defined.append(self.name)
+
+                sources = ["WORKSPACE", "GIT"]
+                assert source.upper() in sources, f"The source parameter must be one of {sources}, found \"{source}\""
+
+                if source == "GIT":
+                    assert task_builder.job_params["git_source"] is not None, f"The git source must be specified before defining a git notebook task"
+
+                task_builder.params["notebook_task"] = {
+                    "notebook_path": notebook_path,
+                    "source": source,
+                    "base_parameters": base_parameters or dict()
+                }
+
+                return task_builder
+
+            def jar(self) -> TaskConfig:  # , main_class_name: str, parameters: List[str]) -> TaskConfig:
+                assert self.name not in task_builder.defined, "The task has already been defined."
+                task_builder.defined.append(self.name)
+                assert 1/0, "Not yet implemented"
+                return task_builder
+
+            def python(self) -> TaskConfig:  # , python_file: str, parameters: List[str]) -> TaskConfig:
+                assert self.name not in task_builder.defined, "The task has already been defined."
+                task_builder.defined.append(self.name)
+                assert 1/0, "Not yet implemented"
+                return task_builder
+
+            def submit(self) -> TaskConfig:  # , parameters: List[str]) -> TaskConfig:
+                assert self.name not in task_builder.defined, "The task has already been defined."
+                task_builder.defined.append(self.name)
+                assert 1/0, "Not yet implemented"
+                return task_builder
+
+            def pipeline(self) -> TaskConfig:  # , pipeline_id: str, full_refresh: bool = False) -> TaskConfig:
+                assert self.name not in task_builder.defined, "The task has already been defined."
+                task_builder.defined.append(self.name)
+                assert 1/0, "Not yet implemented"
+                return task_builder
+
+            def wheel(self) -> TaskConfig:  # , package_name: str, entry_point: str, parameters: List[str], named_parameters: List[str]) -> TaskConfig:
+                assert self.name not in task_builder.defined, "The task has already been defined."
+                task_builder.defined.append(self.name)
+                assert 1/0, "Not yet implemented"
+                return task_builder
+
+            def sql(self) -> TaskConfig:  # , query_id: str, dashboard_id: str, alert_id: str, parameters: List[str], warehouse_id: str) -> TaskConfig:
+                assert self.name not in task_builder.defined, "The task has already been defined."
+                task_builder.defined.append(self.name)
+                assert 1/0, "Not yet implemented"
+                return task_builder
+
+            def dbt(self) -> TaskConfig:  # , project_directory: str, commands: List[str], schema: str, warehouse_id: str, catalog: str, profiles_directory: str) -> TaskConfig:
+                assert self.name not in task_builder.defined, "The task has already been defined."
+                task_builder.defined.append(self.name)
+                assert 1/0, "Not yet implemented"
+                return task_builder
+
+        self.task = Task()
+
+        class Library:
+            def __init__(self):
+                self.name = "library"
+
+            def jar(self):
+                assert self.name not in task_builder.defined, "The library has already been defined."
+                task_builder.defined.append(self.name)
+                assert 1/0, "Not yet implemented"
+                return task_builder
+
+            def egg(self):
+                assert self.name not in task_builder.defined, "The library has already been defined."
+                task_builder.defined.append(self.name)
+                assert 1/0, "Not yet implemented"
+                return task_builder
+
+            def wheel(self):
+                assert self.name not in task_builder.defined, "The library has already been defined."
+                task_builder.defined.append(self.name)
+                assert 1/0, "Not yet implemented"
+                return task_builder
+
+            def pypi(self):
+                assert self.name not in task_builder.defined, "The library has already been defined."
+                task_builder.defined.append(self.name)
+                assert 1/0, "Not yet implemented"
+                return task_builder
+
+            def maven(self):
+                assert self.name not in task_builder.defined, "The library has already been defined."
+                task_builder.defined.append(self.name)
+                assert 1/0, "Not yet implemented"
+                return task_builder
+
+            def cran(self):
+                assert self.name not in task_builder.defined, "The library has already been defined."
+                task_builder.defined.append(self.name)
+                assert 1/0, "Not yet implemented"
+                return task_builder
+
+        self.library = Library()
+
+    def add_email_notifications(self, *, on_start: List[str], on_success: List[str], on_failure: List[str], no_alert_for_skipped_runs: bool = False) -> "TaskConfig":
+        self.params["email_notifications"] = {
+            "on_start": on_start or list(),
+            "on_success": on_success or list(),
+            "on_failure": on_failure or list(),
+            "no_alert_for_skipped_runs": no_alert_for_skipped_runs
+        },
+        return self
+
+    def add_webhook_notifications(self, *, on_start: List[str], on_success: List[str], on_failure: List[str]) -> "TaskConfig":
+        self.params["email_notifications"] = {
+            "on_start": on_start or list(),
+            "on_success": on_success or list(),
+            "on_failure": on_failure or list(),
+        },
+        return self
+
+
+class JobConfig:
+    def __init__(self, *,
+                 job_name: str,
+                 timeout_seconds: int = 300,
+                 max_concurrent_runs: int = 1,
+                 tags: Dict[str, str] = None):
+
+        self.params = {
+            "name": job_name,
+            "tags": tags or dict(),
+            "timeout_seconds": timeout_seconds,
+            "max_concurrent_runs": max_concurrent_runs,
+            "format": "MULTI_TASK",
+            "tasks": [],
+        }
+
+    def git_branch(self, *, provider: str, url: str, branch: str):
+        self.params["git_source"] = {
+            "git_provider": provider,
+            "git_url": url,
+            "git_branch": branch
+        }
+
+    def git_tag(self, *, provider: str, url: str, tag: str):
+        self.params["git_source"] = {
+            "git_provider": provider,
+            "git_url": url,
+            "git_tag": tag
+        }
+
+    def git_commit(self, *, provider: str, url: str, commit: str):
+        self.params["git_source"] = {
+            "git_provider": provider,
+            "git_url": url,
+            "git_commit": commit
+        }
+
+    def add_task(self, *, task_key: str, description: str = None, max_retries: int = 0, min_retry_interval_millis: int = 0, retry_on_timeout: bool = False, timeout_seconds: int = None, depends_on: List[str] = None) -> TaskConfig:
+        depends_on = depends_on or list()
+
+        if "tasks" not in self.params:
+            self.params["tasks"] = []
+
+        task = dict()
+        self.params["tasks"].append(task)
+
+        return TaskConfig(job_params=self.params,
+                          task_params=task,
+                          task_key=task_key,
+                          description=description,
+                          max_retries=max_retries,
+                          min_retry_interval_millis=min_retry_interval_millis,
+                          retry_on_timeout=retry_on_timeout,
+                          timeout_seconds=timeout_seconds,
+                          depends_on=depends_on)
 
 
 class JobsClient(ApiContainer):
+
     def __init__(self, client: DBAcademyRestClient):
         self.client = client      # Client API exposing other operations to this class
         self.base_uri = f"{self.client.endpoint}/api/2.1/jobs"
 
-    def create(self, params):
+    @common.deprecated("Use JobsClient.create_job() instead")
+    def create(self, params) -> Dict[str, Any]:
         if "notebook_task" in params:
             print("*"*80)
             print("* DEPRECATION WARNING")
@@ -18,11 +261,17 @@ class JobsClient(ApiContainer):
         else:
             return self.create_2_1(params)
 
-    def create_2_0(self, params):
+    @common.deprecated("Use JobsClient.create_job() instead")
+    def create_2_0(self, params) -> Dict[str, Any]:
         return self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/create", params)
 
-    def create_2_1(self, params):
+    @common.deprecated("Use JobsClient.create_job() instead")
+    def create_2_1(self, params) -> Dict[str, Any]:
         return self.client.api("POST", f"{self.client.endpoint}/api/2.1/jobs/create", params)
+
+    def create_from_config(self, config: JobConfig):
+        response = self.client.api("POST", f"{self.client.endpoint}/api/2.1/jobs/create", config.params)
+        return response.get("job_id")
 
     def run_now(self, job_id: str, notebook_params: dict = None):
         payload = {
@@ -33,6 +282,7 @@ class JobsClient(ApiContainer):
 
         return self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/run-now", payload)
 
+    @common.deprecated("Use JobsClient.get_by_id() instead")
     def get(self, job_id):
         return self.get_by_id(job_id)
 
@@ -89,11 +339,8 @@ class JobsClient(ApiContainer):
 
         return all_jobs
 
+    @common.deprecated("Use JobsClient.delete_by_id() instead")
     def delete_by_job_id(self, job_id):
-        print("*" * 80)
-        print("* DEPRECATION WARNING")
-        print("* delete_by_job_id() has been replaced by delete_by_id()")
-        print("*" * 80)
         self.delete_by_id(job_id)
 
     def delete_by_id(self, job_id):

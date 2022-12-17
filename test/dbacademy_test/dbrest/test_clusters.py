@@ -1,9 +1,9 @@
 import unittest
 
+unit_test_service_principle = "d8835420-9797-45f5-897b-6d81d7f80023"
+
 
 class TestClusters(unittest.TestCase):
-
-    unit_test_service_principle = "d8835420-9797-45f5-897b-6d81d7f80023"
 
     def setUp(self) -> None:
         import os
@@ -23,7 +23,6 @@ class TestClusters(unittest.TestCase):
         clusters = self.client.clusters.list_clusters()
         for cluster in clusters:
             cluster_id = cluster.get("cluster_id")
-            # self.client.clusters.terminate_by_id(cluster_id)
             self.client.clusters.destroy_by_id(cluster_id)
 
     @property
@@ -70,7 +69,7 @@ class TestClusters(unittest.TestCase):
                                                  node_type_id="i3.xlarge",
                                                  num_workers=0,
                                                  autotermination_minutes=10,
-                                                 single_user_name=TestClusters.unit_test_service_principle)
+                                                 single_user_name=unit_test_service_principle)
         cluster = self.client.clusters.get_by_id(cluster_id)
 
         ignored = ["last_activity_time", "last_restarted_time", "last_state_loss_time", "start_time", "aws_attributes"]
@@ -80,14 +79,14 @@ class TestClusters(unittest.TestCase):
             "cluster_id": cluster_id,
             "cluster_name": "Default Cluster",
             "cluster_source": "API",
-            "creator_user_name": TestClusters.unit_test_service_principle,
+            "creator_user_name": unit_test_service_principle,
             "custom_tags": {
                 "ResourceClass": "SingleNode"
             },
             "data_security_mode": "SINGLE_USER",
             "default_tags": {
                 "Vendor": "Databricks",
-                "Creator": TestClusters.unit_test_service_principle,
+                "Creator": unit_test_service_principle,
                 "ClusterName": "Default Cluster",
                 "ClusterId": cluster_id
             },
@@ -101,7 +100,7 @@ class TestClusters(unittest.TestCase):
             "instance_source": {"node_type_id": "i3.xlarge"},
             "node_type_id": "i3.xlarge",
             "num_workers": 0,
-            "single_user_name": TestClusters.unit_test_service_principle,
+            "single_user_name": unit_test_service_principle,
             "spark_conf": {
                 "spark.master": "local[*]",
                 "spark.databricks.cluster.profile": "singleNode"
@@ -151,13 +150,13 @@ class TestClusters(unittest.TestCase):
             "cluster_id": cluster_id,
             "cluster_name": "Default Cluster",
             "cluster_source": "API",
-            "creator_user_name": TestClusters.unit_test_service_principle,
+            "creator_user_name": unit_test_service_principle,
             "custom_tags": {
                 "ResourceClass": "SingleNode"
             },
             "default_tags": {
                 "Vendor": "Databricks",
-                "Creator": TestClusters.unit_test_service_principle,
+                "Creator": unit_test_service_principle,
                 "ClusterName": "Default Cluster",
                 "ClusterId": cluster_id
             },
@@ -260,10 +259,10 @@ class TestClusters(unittest.TestCase):
                                                  node_type_id="i3.xlarge",
                                                  num_workers=0,
                                                  autotermination_minutes=10,
-                                                 single_user_name=TestClusters.unit_test_service_principle)
+                                                 single_user_name=unit_test_service_principle)
         cluster = self.client.clusters.get_by_id(cluster_id)
 
-        self.assertEquals(TestClusters.unit_test_service_principle, cluster.get("single_user_name"))
+        self.assertEquals(unit_test_service_principle, cluster.get("single_user_name"))
         self.assertEquals("SINGLE_USER", cluster.get("data_security_mode"))
 
         self.assertEquals(0, cluster.get("num_workers"))

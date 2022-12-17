@@ -4,31 +4,28 @@ from dbacademy.rest.common import ApiContainer
 from dbacademy import common
 
 
-class ClustersClient(ApiContainer):
+class ClusterConfig:
+    def __init__(self, *,
+                 cluster_name: Optional[str],
+                 spark_version: str,
+                 node_type_id: str,
+                 driver_node_type_id: str = None,
+                 num_workers: int,
+                 autotermination_minutes: Optional[int],
+                 single_user_name: str = None,
+                 on_demand: bool = True,
+                 spark_conf: Optional[Dict[str, Any]] = None,
+                 **kwargs):
 
-    def __init__(self, client: DBAcademyRestClient):
-        self.client = client
-        self.base_uri = f"{self.client.endpoint}/api/2.0/clusters"
-
-    def create(self, *,
-               cluster_name: str,
-               spark_version: str,
-               node_type_id: str,
-               driver_node_type_id: str = None,
-               num_workers: int,
-               autotermination_minutes: int,
-               single_user_name: str = None,
-               on_demand: bool = True,
-               spark_conf: Optional[Dict[str, Any]] = None,
-               **kwargs) -> str:
-
-        params = {
+        self.__params = {
             "cluster_name": cluster_name,
             "spark_version": spark_version,
             "node_type_id": node_type_id,
             "num_workers": num_workers,
-            "autotermination_minutes": autotermination_minutes,
         }
+
+        if autotermination_minutes is not None:
+            self.__params["autotermination_minutes"] = autotermination_minutes
 
         spark_conf = spark_conf or dict()
 
@@ -58,20 +55,49 @@ class ClustersClient(ApiContainer):
             extra_params.get("aws_attributes")["availability"] = "ON_DEMAND"
 
         if len(spark_conf) > 0:
-            params["spark_conf"] = spark_conf
+            self.__params["spark_conf"] = spark_conf
 
-        if len(extra_params) > 0:
-            assert "cluster_name" not in extra_params, f"Found the parameter \"cluster_name\" in extra_params; use the method parameters instead."
-            assert "spark_version" not in extra_params, f"Found the parameter \"spark_version\" in extra_params; use the method parameters instead."
-            assert "node_type_id" not in extra_params, f"Found the parameter \"node_type_id\" in extra_params; use the method parameters instead."
-            assert "num_workers" not in extra_params, f"Found the parameter \"num_workers\" in extra_params; use the method parameters instead."
-            assert "spark_conf" not in extra_params, f"Found the parameter \"spark_conf\" in extra_params; use the method parameters instead."
-            assert "autotermination_minutes" not in extra_params, f"Found the parameter \"autotermination_minutes\" in extra_params; use the method parameters instead."
+        for key, value in extra_params.items():
+            self.__params[key] = value
 
-            for key, value in extra_params.items():
-                params[key] = value
+    @property
+    def params(self) -> Dict[str, Any]:
+        return self.__params
 
-        return self.create_from_dict(params)
+
+class ClustersClient(ApiContainer):
+
+    def __init__(self, client: DBAcademyRestClient):
+        self.client = client
+        self.base_uri = f"{self.client.endpoint}/api/2.0/clusters"
+
+    def create(self, *,
+               cluster_name: str,
+               spark_version: str,
+               node_type_id: str,
+               driver_node_type_id: str = None,
+               num_workers: int,
+               autotermination_minutes: int,
+               single_user_name: str = None,
+               on_demand: bool = True,
+               spark_conf: Optional[Dict[str, Any]] = None,
+               **kwargs) -> str:
+
+        config = ClusterConfig(cluster_name=cluster_name,
+                               spark_version=spark_version,
+                               node_type_id=node_type_id,
+                               driver_node_type_id=driver_node_type_id,
+                               num_workers=num_workers,
+                               autotermination_minutes=autotermination_minutes,
+                               single_user_name=single_user_name,
+                               on_demand=on_demand,
+                               spark_conf=spark_conf,
+                               **kwargs)
+
+        return self.create_from_config(config)
+
+    def create_from_config(self, config: ClusterConfig) -> str:
+        return self.create_from_dict(config.params)
 
     def create_from_dict(self, params: Dict[str, Any]) -> str:
         cluster = self.client.api("POST", f"{self.base_uri}/create", _data=params)
