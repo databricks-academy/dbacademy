@@ -77,7 +77,7 @@ class DatabasesHelper:
     def configure_permissions(client: DBAcademyRestClient, notebook_name: str, spark_version: str):
         from dbacademy.dbhelper import DBAcademyHelper, WorkspaceHelper
 
-        job_name = f"""DBAcademy-{notebook_name.split("/")[-1]}"""
+        job_name = f"""DBAcademy {notebook_name.split("/")[-1]}"""
         print(f"Starting job \"{job_name}\" to update catalog and schema specific permissions")
 
         client.jobs().delete_by_name(job_name, success_only=False)
