@@ -249,7 +249,7 @@ class JobsClient(ApiContainer):
         self.client = client      # Client API exposing other operations to this class
         self.base_uri = f"{self.client.endpoint}/api/2.1/jobs"
 
-    @common.deprecated("Use JobsClient.create_job() instead")
+    @common.deprecated("Use JobsClient.create_from_config() instead")
     def create(self, params) -> Dict[str, Any]:
         if "notebook_task" in params:
             print("*"*80)
@@ -261,16 +261,19 @@ class JobsClient(ApiContainer):
         else:
             return self.create_2_1(params)
 
-    @common.deprecated("Use JobsClient.create_job() instead")
+    @common.deprecated("Use JobsClient.create_from_config() instead")
     def create_2_0(self, params) -> Dict[str, Any]:
         return self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/create", params)
 
-    @common.deprecated("Use JobsClient.create_job() instead")
+    @common.deprecated("Use JobsClient.create_from_config() instead")
     def create_2_1(self, params) -> Dict[str, Any]:
         return self.client.api("POST", f"{self.client.endpoint}/api/2.1/jobs/create", params)
 
-    def create_from_config(self, config: JobConfig):
-        response = self.client.api("POST", f"{self.client.endpoint}/api/2.1/jobs/create", config.params)
+    def create_from_config(self, config: JobConfig) -> str:
+        return self.create_from_dict(config.params)
+
+    def create_from_dict(self, params: Dict[str, Any]) -> str:
+        response = self.client.api("POST", f"{self.client.endpoint}/api/2.1/jobs/create", params)
         return response.get("job_id")
 
     def run_now(self, job_id: str, notebook_params: dict = None):
