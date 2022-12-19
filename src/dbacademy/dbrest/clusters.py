@@ -1,10 +1,18 @@
 from typing import Optional, Dict, Any, List
+from enum import Enum
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import ApiContainer
 from dbacademy import common
 
 
+class Availability(Enum):
+    SPOT = "SPOT"
+    FALL_BACK = "FALL_BACK"
+    ON_DEMAND = "ON_DEMAND"
+
+
 class ClusterConfig:
+
     def __init__(self, *,
                  cluster_name: Optional[str],
                  spark_version: str,
@@ -14,7 +22,7 @@ class ClusterConfig:
                  num_workers: int,
                  autotermination_minutes: Optional[int],
                  single_user_name: str = None,
-                 on_demand: bool = True,
+                 availability: Availability = None,
                  spark_conf: Optional[Dict[str, Any]] = None,
                  **kwargs):
 
@@ -49,14 +57,17 @@ class ClusterConfig:
             spark_conf["spark.master"] = "local[*]"
             extra_params.get("custom_tags")["ResourceClass"] = "SingleNode"
 
-            # if single_user_name is not None:
-            #     spark_conf["spark.databricks.cluster.profile"] = "singleNode"
             spark_conf["spark.databricks.cluster.profile"] = "singleNode"
 
-        if on_demand:
-            if instance_profile_id is None:
-                # aws_attributes.availability can only be specified when an instance_profile_id isn't.
-                extra_params.get("aws_attributes")["availability"] = "ON_DEMAND"
+        assert extra_params.get("aws_attributes", dict()).get("availability") is None, f"The parameter \"aws_attributes.availability\" should not be specified directly, use \"availability\" instead."
+
+        if instance_profile_id is None and availability is None:
+            # Default to on-demand if the instance profile was not defined
+            availability = Availability.ON_DEMAND
+
+        if availability is not None:
+            assert instance_profile_id is None, f"The parameter \"availability\" cannot be specified when \"instance_profile_id\" is specified."
+            extra_params.get("aws_attributes")["availability"] = availability.value
 
         if len(spark_conf) > 0:
             self.__params["spark_conf"] = spark_conf
@@ -75,6 +86,7 @@ class ClustersClient(ApiContainer):
         self.client = client
         self.base_uri = f"{self.client.endpoint}/api/2.0/clusters"
 
+    @common.deprecated(f"Use ClusterClient.create_from_config() instead")
     def create(self, *,
                cluster_name: str,
                spark_version: str,
@@ -94,7 +106,7 @@ class ClustersClient(ApiContainer):
                                num_workers=num_workers,
                                autotermination_minutes=autotermination_minutes,
                                single_user_name=single_user_name,
-                               on_demand=on_demand,
+                               availability=Availability.ON_DEMAND if on_demand else Availability.FALL_BACK,
                                spark_conf=spark_conf,
                                **kwargs)
 

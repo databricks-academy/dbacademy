@@ -1,4 +1,5 @@
 import unittest
+from dbacademy.dbrest.clusters import ClusterConfig
 
 unit_test_service_principle = "d8835420-9797-45f5-897b-6d81d7f80023"
 
@@ -31,23 +32,26 @@ class TestClusters(unittest.TestCase):
 
     def test_cluster_lifecycles(self):
 
-        cluster_id_1 = self.client.clusters.create(cluster_name="Life Cycle #1",
-                                                   spark_version="11.3.x-scala2.12",
-                                                   node_type_id="i3.xlarge",
-                                                   num_workers=0,
-                                                   autotermination_minutes=10)
+        cluster_id_1 = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Life Cycle #1",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10))
 
-        cluster_id_2 = self.client.clusters.create(cluster_name="Life Cycle #2",
-                                                   spark_version="11.3.x-scala2.12",
-                                                   node_type_id="i3.xlarge",
-                                                   num_workers=0,
-                                                   autotermination_minutes=10)
+        cluster_id_2 = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Life Cycle #2",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10))
 
-        cluster_id_3 = self.client.clusters.create(cluster_name="Life Cycle #2",
-                                                   spark_version="11.3.x-scala2.12",
-                                                   node_type_id="i3.xlarge",
-                                                   num_workers=0,
-                                                   autotermination_minutes=10)
+        cluster_id_3 = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Life Cycle #2",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10))
 
         self.client.clusters.terminate_by_id(cluster_id_1)
         self.client.clusters.terminate_by_id(cluster_id_2)
@@ -64,12 +68,13 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id_3)
 
     def test_default_cluster_for_single_user(self):
-        cluster_id = self.client.clusters.create(cluster_name="Default Cluster",
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 num_workers=0,
-                                                 autotermination_minutes=10,
-                                                 single_user_name=unit_test_service_principle)
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Default Cluster",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10,
+            single_user_name=unit_test_service_principle))
         cluster = self.client.clusters.get_by_id(cluster_id)
 
         ignored = ["last_activity_time", "last_restarted_time", "last_state_loss_time", "start_time", "aws_attributes"]
@@ -136,11 +141,12 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_default_cluster(self):
-        cluster_id = self.client.clusters.create(cluster_name="Default Cluster",
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 num_workers=0,
-                                                 autotermination_minutes=10)
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Default Cluster",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10))
         cluster = self.client.clusters.get_by_id(cluster_id)
 
         ignored = ["last_activity_time", "last_restarted_time", "last_state_loss_time", "start_time", "aws_attributes"]
@@ -205,64 +211,70 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_auto_terminate(self):
-        cluster_id = self.client.clusters.create(cluster_name="Auto Terminate 10",
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 num_workers=0,
-                                                 autotermination_minutes=10)
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Auto Terminate 10",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10))
         cluster = self.client.clusters.get_by_id(cluster_id)
         self.assertEquals(10, cluster.get("autotermination_minutes"))
         self.client.clusters.destroy_by_id(cluster_id)
 
-        cluster_id = self.client.clusters.create(cluster_name="Auto Terminate 10",
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 num_workers=0,
-                                                 autotermination_minutes=23)
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Auto Terminate 10",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=23))
         cluster = self.client.clusters.get_by_id(cluster_id)
         self.assertEquals(23, cluster.get("autotermination_minutes"))
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_create_multi_node(self):
-        cluster_id = self.client.clusters.create(cluster_name="Single-Node",
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 num_workers=0,
-                                                 autotermination_minutes=10)
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Single-Node",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10))
         cluster = self.client.clusters.get_by_id(cluster_id)
         self.assertEquals(0, cluster.get("num_workers"))
         self.assertEquals("local[*]", cluster.get("spark_conf").get("spark.master"))
         self.client.clusters.destroy_by_id(cluster_id)
 
-        cluster_id = self.client.clusters.create(cluster_name="Multi-Node",
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 num_workers=3,
-                                                 autotermination_minutes=10)
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Multi-Node",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=3,
+            autotermination_minutes=10))
         cluster = self.client.clusters.get_by_id(cluster_id)
         self.assertEquals(3, cluster.get("num_workers"))
         self.assertEquals(None, cluster.get("spark_conf", {}).get("spark.master"))
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_create_single_user(self):
-        cluster_id = self.client.clusters.create(cluster_name="Single User A",
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 num_workers=0,
-                                                 autotermination_minutes=10,
-                                                 # single_user_name=unit_test_service_principle
-                                                 )
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Single User A",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10,
+            # single_user_name=unit_test_service_principle
+        ))
         cluster = self.client.clusters.get_by_id(cluster_id)
         self.assertIsNone(cluster.get("single_user_name"))
         self.assertIsNone(cluster.get("data_security_mode"))
         self.client.clusters.destroy_by_id(cluster_id)
 
-        cluster_id = self.client.clusters.create(cluster_name="Single User B",
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 num_workers=0,
-                                                 autotermination_minutes=10,
-                                                 single_user_name=unit_test_service_principle)
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Single User B",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10,
+            single_user_name=unit_test_service_principle))
         cluster = self.client.clusters.get_by_id(cluster_id)
 
         self.assertEquals(unit_test_service_principle, cluster.get("single_user_name"))
@@ -294,59 +306,107 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_create_driver_node_type(self):
-        cluster_id = self.client.clusters.create(cluster_name="Driver Node Type A",
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 # driver_node_type_id="i3.2xlarge",
-                                                 num_workers=0,
-                                                 autotermination_minutes=10)
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Driver Node Type A",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            # driver_node_type_id="i3.2xlarge",
+            num_workers=0,
+            autotermination_minutes=10))
         cluster = self.client.clusters.get_by_id(cluster_id)
         self.assertEquals("i3.xlarge", cluster.get("node_type_id"))
         self.assertEquals("i3.xlarge", cluster.get("driver_node_type_id"))
         self.client.clusters.destroy_by_id(cluster_id)
 
-        cluster_id = self.client.clusters.create(cluster_name="Driver Node Type B",
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 driver_node_type_id="i3.2xlarge",
-                                                 num_workers=0,
-                                                 autotermination_minutes=10)
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Driver Node Type B",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            driver_node_type_id="i3.2xlarge",
+            num_workers=0,
+            autotermination_minutes=10))
         cluster = self.client.clusters.get_by_id(cluster_id)
         self.assertEquals("i3.xlarge", cluster.get("node_type_id"))
         self.assertEquals("i3.2xlarge", cluster.get("driver_node_type_id"))
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_create_with_spark_conf(self):
-        cluster_id = self.client.clusters.create(cluster_name="AWS Attributes",
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 num_workers=0,
-                                                 autotermination_minutes=10,
-                                                 spark_conf={
-                                                     "dbacademy.whatever": "enabled"
-                                                 })
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="AWS Attributes",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10,
+            spark_conf={
+                "dbacademy.whatever": "enabled"
+            }))
         cluster = self.client.clusters.get_by_id(cluster_id)
         self.assertEquals("enabled", cluster.get("spark_conf").get("dbacademy.whatever"))
 
-    # def test_create_with_aws_attributes(self):
-    #     cluster_id = self.client.clusters.create(cluster_name="AWS Attributes",
-    #                                              spark_version="11.3.x-scala2.12",
-    #                                              node_type_id="i3.xlarge",
-    #                                              num_workers=0,
-    #                                              autotermination_minutes=10,
-    #                                              aws_attributes={
-    #                                                  "availability": "ON_DEMAND"
-    #                                              })
-    #     cluster = self.client.clusters.get_by_id(cluster_id)
-    #     self.assertEquals("ON_DEMAND", cluster.get("aws_attributes").get("availability"))
-    #
+    def test_create_with_aws_attributes_availability(self):
+        from dbacademy.dbrest.clusters import ClusterConfig
+
+        try:
+            ClusterConfig(cluster_name="AWS Attributes SPOT",
+                          spark_version="11.3.x-scala2.12",
+                          node_type_id="i3.xlarge",
+                          num_workers=0,
+                          autotermination_minutes=10,
+                          aws_attributes={
+                            "availability": "SPOT"
+                          })
+        except AssertionError as e:
+            self.assertEquals(f"The parameter \"aws_attributes.availability\" should not be specified directly, use \"availability\" instead.", str(e))
+
+    def test_create_with_availability_on_demand_and_instance_profile(self):
+        from dbacademy.dbrest.clusters import ClusterConfig, Availability
+
+        try:
+            ClusterConfig(
+                cluster_name="AWS Attributes Conflicting",
+                spark_version="11.3.x-scala2.12",
+                node_type_id="i3.xlarge",
+                num_workers=0,
+                autotermination_minutes=10,
+                on_demand="whatever",
+                availability=Availability.SPOT,
+                instance_profile_id="0123456789")
+        except AssertionError as e:
+            self.assertEquals(f"The parameter \"availability\" cannot be specified when \"instance_profile_id\" is specified.", str(e))
+
+    def test_create_with_availability_default(self):
+        from dbacademy.dbrest.clusters import ClusterConfig, Availability
+
+        config = ClusterConfig(cluster_name="AWS Attributes Default",
+                               spark_version="11.3.x-scala2.12",
+                               node_type_id="i3.xlarge",
+                               num_workers=0,
+                               autotermination_minutes=10)
+        cluster_id = self.client.clusters.create_from_config(config)
+        cluster = self.client.clusters.get_by_id(cluster_id)
+        self.assertEquals(Availability.ON_DEMAND.value, cluster.get("aws_attributes").get("availability"))
+
+    def test_create_with_availability_SPOT(self):
+        from dbacademy.dbrest.clusters import ClusterConfig, Availability
+
+        config = ClusterConfig(cluster_name="AWS Attributes SPOT",
+                               spark_version="11.3.x-scala2.12",
+                               node_type_id="i3.xlarge",
+                               num_workers=0,
+                               autotermination_minutes=10,
+                               availability=Availability.SPOT)
+        cluster_id = self.client.clusters.create_from_config(config)
+        cluster = self.client.clusters.get_by_id(cluster_id)
+        self.assertEquals(Availability.SPOT.value, cluster.get("aws_attributes").get("availability"))
+
     def test_create_with_extra_params(self):
-        cluster_id = self.client.clusters.create(cluster_name="Extra Params",
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 num_workers=0,
-                                                 autotermination_minutes=10,
-                                                 custom_tags={"dbacademy.smoke_tests": True})
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Extra Params",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10,
+            custom_tags={"dbacademy.smoke_tests": True}))
         cluster = self.client.clusters.get_by_id(cluster_id)
         self.assertEquals("true", cluster.get("custom_tags").get("dbacademy.smoke_tests"))
 
@@ -375,11 +435,12 @@ class TestClusters(unittest.TestCase):
         import time
 
         cluster_name = "Destroy By Name"
-        self.client.clusters.create(cluster_name=cluster_name,
-                                    spark_version="11.3.x-scala2.12",
-                                    node_type_id="i3.xlarge",
-                                    num_workers=0,
-                                    autotermination_minutes=10)
+        self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name=cluster_name,
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10))
 
         cluster = self.client.clusters.get_by_name(cluster_name)
         self.assertIsNotNone(cluster)
@@ -400,11 +461,12 @@ class TestClusters(unittest.TestCase):
 
     def test_destroy_by_name(self):
         cluster_name = "Destroy By Name"
-        self.client.clusters.create(cluster_name=cluster_name,
-                                    spark_version="11.3.x-scala2.12",
-                                    node_type_id="i3.xlarge",
-                                    num_workers=0,
-                                    autotermination_minutes=10)
+        self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name=cluster_name,
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10))
         self.client.clusters.destroy_by_name(cluster_name)
 
         cluster = self.client.clusters.get_by_name(cluster_name)
@@ -413,11 +475,12 @@ class TestClusters(unittest.TestCase):
     def test_get_by_name(self):
         # Create and then get by name
         cluster_name = "Cluster By Name"
-        cluster_id = self.client.clusters.create(cluster_name=cluster_name,
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 num_workers=0,
-                                                 autotermination_minutes=10)
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name=cluster_name,
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10))
 
         cluster_a = self.client.clusters.get_by_id(cluster_id)
         cluster_b = self.client.clusters.get_by_name(cluster_name)
@@ -426,11 +489,12 @@ class TestClusters(unittest.TestCase):
         self.assertEquals(cluster_a, cluster_b)
 
     def test_list_deprecated(self):
-        self.client.clusters.create(cluster_name="Deprecated List",
-                                    spark_version="11.3.x-scala2.12",
-                                    node_type_id="i3.xlarge",
-                                    num_workers=0,
-                                    autotermination_minutes=10)
+        self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Deprecated List",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10))
         try:
             self.client.clusters.list()
             raise Exception("Expected DeprecationWarning")
@@ -438,11 +502,12 @@ class TestClusters(unittest.TestCase):
             self.assertEquals("dbacademy.dbrest.clusters.list(self): Use ClustersClient.list_clusters() instead", str(e))
 
     def test_get_deprecated(self):
-        cluster_id = self.client.clusters.create(cluster_name="Deprecated Get",
-                                                 spark_version="11.3.x-scala2.12",
-                                                 node_type_id="i3.xlarge",
-                                                 num_workers=0,
-                                                 autotermination_minutes=10)
+        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cluster_name="Deprecated Get",
+            spark_version="11.3.x-scala2.12",
+            node_type_id="i3.xlarge",
+            num_workers=0,
+            autotermination_minutes=10))
         try:
             self.client.clusters.get(cluster_id)
             raise Exception("Expected DeprecationWarning")
