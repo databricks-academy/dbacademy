@@ -8,7 +8,7 @@ class ClusterConfig:
     def __init__(self, *,
                  cluster_name: Optional[str],
                  spark_version: str,
-                 node_type_id: str,
+                 node_type_id: Optional[str],
                  driver_node_type_id: str = None,
                  num_workers: int,
                  autotermination_minutes: Optional[int],
