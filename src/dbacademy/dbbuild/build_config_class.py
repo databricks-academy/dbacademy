@@ -310,6 +310,7 @@ class BuildConfig:
         """
         if self.__instance_pool_id is None:  # This may have not been specified upon instantiation
             self.__instance_pool_id = self.client.clusters().get_current_instance_pool_id()
+            assert self.__instance_pool_id is not None, f"The current cluster is not configured to use an instance pool which is required for execution of smoke-tests"
 
         return self.__instance_pool_id
 
