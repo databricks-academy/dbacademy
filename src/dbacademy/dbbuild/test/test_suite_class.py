@@ -61,7 +61,7 @@ class TestSuite:
 
     def reset(self):
         # Delete all jobs, even those that were successful
-        self.client.jobs().delete_by_name(job_names=self.get_all_job_names(), success_only=False)
+        self.client.jobs.delete_by_name(job_names=self.get_all_job_names(), success_only=False)
         print()
 
     def cleanup(self):
@@ -69,61 +69,45 @@ class TestSuite:
             print(f"Skipping deletion of all jobs: TestSuite.keep_success == {self.keep_success}")
         else:
             # Delete all successful jobs, keeping those jobs that failed
-            self.client.jobs().delete_by_name(job_names=self.get_all_job_names(), success_only=True)
+            self.client.jobs.delete_by_name(job_names=self.get_all_job_names(), success_only=True)
 
     def create_test_job(self, *, job_name: str, notebook_path: str, policy_id: str = None):
         import re
+        from dbacademy.dbrest.jobs import JobConfig
+        from dbacademy.dbrest.clusters import ClusterConfig
 
         self.build_config.spark_conf["dbacademy.smoke-test"] = "true"
-
-        course_name = re.sub(r"[^a-zA-Z\d]", "-", self.build_config.name.lower())
-        while "--" in course_name:
-            course_name = course_name.replace("--", "-")
 
         self.test_type = re.sub(r"[^a-zA-Z\d]", "-", self.test_type.lower())
         while "--" in self.test_type:
             self.test_type = self.test_type.replace("--", "-")
 
-        params = {
-            "name": f"{job_name}",
-            "tags": {
-                "dbacademy.course": course_name,
+        job_config = JobConfig(job_name=job_name, timeout_seconds=120*60, tags={
+                "dbacademy.course": self.build_config.build_name,
                 "dbacademy.source": "dbacademy-smoke-test",
                 "dbacademy.test-type": self.test_type
-            },
-            "email_notifications": {},
-            "timeout_seconds": 7200,
-            "max_concurrent_runs": 1,
-            "format": "MULTI_TASK",
-            "tasks": [
-                {
-                    "task_key": "Smoke-Test",
-                    "description": "Executes a single notebook, hoping that the magic smoke doesn't escape",
-                    "libraries": self.build_config.libraries,
-                    "notebook_task": {
-                        "notebook_path": f"{notebook_path}",
-                        "base_parameters": self.build_config.job_arguments
-                    },
-                    "new_cluster": {
-                        "num_workers": self.build_config.workers,
-                        "spark_version": f"{self.build_config.spark_version}",
-                        "spark_conf": self.build_config.spark_conf,
-                        "instance_pool_id": f"{self.build_config.instance_pool}",
-                        "spark_env_vars": {
-                            "WSFS_ENABLE_WRITE_SUPPORT": "true"
-                        },
-                    },
-                },
-            ],
-        }
+            })
+        task_config = job_config.add_task(task_key="Smoke-Test", description="Executes a single notebook, hoping that the magic smoke doesn't escape")
+        task_config.library.from_dict(self.build_config.libraries)
+        task_config.task.notebook(notebook_path=notebook_path, source="WORKSPACE", base_parameters=self.build_config.job_arguments)
 
         if policy_id is not None:
             policy = self.client.cluster_policies.get_by_id(policy_id)
             assert policy is not None, f"The policy \"{policy_id}\" does not exist or you do not have permissions to use specified policy: {[p.get('name') for p in self.client.cluster_policies.list()]}"
-            params.get("tasks")[0].get("new_cluster")["policy_id"] = policy_id
 
-        json_response = self.client.jobs().create(params)
-        return json_response["job_id"]
+        cluster_config = ClusterConfig(cluster_name=None,
+                                       num_workers=self.build_config.workers,
+                                       spark_version=self.build_config.spark_version,
+                                       spark_conf=self.build_config.spark_conf,
+                                       node_type_id=None,  # Expecting to have an instance pool when testing
+                                       instance_pool_id=self.build_config.instance_pool_id,
+                                       policy_id=policy_id,
+                                       autotermination_minutes=None,
+                                       spark_env_vars={"WSFS_ENABLE_WRITE_SUPPORT": "true"})
+        task_config.cluster.new(cluster_config=cluster_config)
+
+        job_id = self.client.jobs.create_from_config(job_config)
+        return job_id
 
     def test_all_synchronously(self, test_round, fail_fast=True, service_principal: str = None, policy_id: str = None) -> bool:
 
@@ -165,7 +149,7 @@ class TestSuite:
                     sp = self.client.scim.service_principals.get_by_name(service_principal)
                     self.client.permissions.jobs.change_owner(job_id=job_id, owner_type="service_principal", owner_id=sp.get("applicationId"))
 
-                run_id = self.client.jobs().run_now(job_id)["run_id"]
+                run_id = self.client.jobs.run_now(job_id).get("run_id")
 
                 host_name = dbgems.get_notebooks_api_endpoint() if dbgems.get_browser_host_name() is None else f"https://{dbgems.get_browser_host_name()}"
                 print(f"""/{test.notebook.path}\n - {host_name}?o={dbgems.get_workspace_id()}#job/{job_id}/run/{run_id}""")
@@ -195,7 +179,7 @@ class TestSuite:
                 sp = self.client.scim.service_principals.get_by_name(service_principal)
                 self.client.permissions.jobs.change_owner(job_id=test.job_id, owner_type="service_principal", owner_id=sp.get("applicationId"))
 
-            test.run_id = self.client.jobs().run_now(test.job_id)["run_id"]
+            test.run_id = self.client.jobs.run_now(test.job_id).get("run_id")
 
             print(f"""/{test.notebook.path}\n - https://{dbgems.get_browser_host_name()}?o={dbgems.get_workspace_id()}#job/{test.job_id}/run/{test.run_id}""")
 
