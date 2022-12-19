@@ -18,7 +18,7 @@ class TaskConfig:
                  timeout_seconds: int = None,
                  depends_on: List[str] = None):
 
-        task_builder = self
+        task_config: TaskConfig = self
         self.defined = []
 
         self.job_params = job_params
@@ -41,22 +41,22 @@ class TaskConfig:
                 self.name = "cluster"
 
             def on_demand(self, existing_cluster_id: str) -> TaskConfig:
-                assert self.name not in task_builder.defined, "The cluster has already been defined."
-                task_builder.defined.append(self.name)
-                task_builder.params["existing_cluster_id"] = existing_cluster_id
-                return task_builder
+                assert self.name not in task_config.defined, "The cluster has already been defined."
+                task_config.defined.append(self.name)
+                task_config.params["existing_cluster_id"] = existing_cluster_id
+                return task_config
 
             def job(self, job_cluster_key: str) -> TaskConfig:
-                assert self.name not in task_builder.defined, "The cluster has already been defined."
-                task_builder.defined.append(self.name)
-                task_builder.params["job_cluster_key"] = job_cluster_key
-                return task_builder
+                assert self.name not in task_config.defined, "The cluster has already been defined."
+                task_config.defined.append(self.name)
+                task_config.params["job_cluster_key"] = job_cluster_key
+                return task_config
 
             def new(self, cluster_config: ClusterConfig) -> TaskConfig:
-                assert self.name not in task_builder.defined, "The cluster has already been defined."
-                task_builder.defined.append(self.name)
-                task_builder.params["new_cluster"] = cluster_config.params
-                return task_builder
+                assert self.name not in task_config.defined, "The cluster has already been defined."
+                task_config.defined.append(self.name)
+                task_config.params["new_cluster"] = cluster_config.params
+                return task_config
 
         self.cluster = Cluster()
 
@@ -65,64 +65,64 @@ class TaskConfig:
                 self.name = "task"
 
             def notebook(self, notebook_path: str, source: str, base_parameters: Dict[str, str] = None) -> TaskConfig:
-                assert self.name not in task_builder.defined, "The task has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The task has already been defined."
+                task_config.defined.append(self.name)
 
                 sources = ["WORKSPACE", "GIT"]
                 assert source.upper() in sources, f"The source parameter must be one of {sources}, found \"{source}\""
 
                 if source == "GIT":
-                    assert task_builder.job_params["git_source"] is not None, f"The git source must be specified before defining a git notebook task"
+                    assert task_config.job_params["git_source"] is not None, f"The git source must be specified before defining a git notebook task"
 
-                task_builder.params["notebook_task"] = {
+                task_config.params["notebook_task"] = {
                     "notebook_path": notebook_path,
                     "source": source,
                     "base_parameters": base_parameters or dict()
                 }
 
-                return task_builder
+                return task_config
 
             def jar(self) -> TaskConfig:  # , main_class_name: str, parameters: List[str]) -> TaskConfig:
-                assert self.name not in task_builder.defined, "The task has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The task has already been defined."
+                task_config.defined.append(self.name)
                 assert 1/0, "Not yet implemented"
-                return task_builder
+                return task_config
 
             def python(self) -> TaskConfig:  # , python_file: str, parameters: List[str]) -> TaskConfig:
-                assert self.name not in task_builder.defined, "The task has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The task has already been defined."
+                task_config.defined.append(self.name)
                 assert 1/0, "Not yet implemented"
-                return task_builder
+                return task_config
 
             def submit(self) -> TaskConfig:  # , parameters: List[str]) -> TaskConfig:
-                assert self.name not in task_builder.defined, "The task has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The task has already been defined."
+                task_config.defined.append(self.name)
                 assert 1/0, "Not yet implemented"
-                return task_builder
+                return task_config
 
             def pipeline(self) -> TaskConfig:  # , pipeline_id: str, full_refresh: bool = False) -> TaskConfig:
-                assert self.name not in task_builder.defined, "The task has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The task has already been defined."
+                task_config.defined.append(self.name)
                 assert 1/0, "Not yet implemented"
-                return task_builder
+                return task_config
 
             def wheel(self) -> TaskConfig:  # , package_name: str, entry_point: str, parameters: List[str], named_parameters: List[str]) -> TaskConfig:
-                assert self.name not in task_builder.defined, "The task has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The task has already been defined."
+                task_config.defined.append(self.name)
                 assert 1/0, "Not yet implemented"
-                return task_builder
+                return task_config
 
             def sql(self) -> TaskConfig:  # , query_id: str, dashboard_id: str, alert_id: str, parameters: List[str], warehouse_id: str) -> TaskConfig:
-                assert self.name not in task_builder.defined, "The task has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The task has already been defined."
+                task_config.defined.append(self.name)
                 assert 1/0, "Not yet implemented"
-                return task_builder
+                return task_config
 
             def dbt(self) -> TaskConfig:  # , project_directory: str, commands: List[str], schema: str, warehouse_id: str, catalog: str, profiles_directory: str) -> TaskConfig:
-                assert self.name not in task_builder.defined, "The task has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The task has already been defined."
+                task_config.defined.append(self.name)
                 assert 1/0, "Not yet implemented"
-                return task_builder
+                return task_config
 
         self.task = Task()
 
@@ -131,46 +131,46 @@ class TaskConfig:
                 self.name = "library"
 
             def jar(self):
-                assert self.name not in task_builder.defined, "The library has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The library has already been defined."
+                task_config.defined.append(self.name)
                 assert 1/0, "Not yet implemented"
-                return task_builder
+                return task_config
 
             def egg(self):
-                assert self.name not in task_builder.defined, "The library has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The library has already been defined."
+                task_config.defined.append(self.name)
                 assert 1/0, "Not yet implemented"
-                return task_builder
+                return task_config
 
             def wheel(self):
-                assert self.name not in task_builder.defined, "The library has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The library has already been defined."
+                task_config.defined.append(self.name)
                 assert 1/0, "Not yet implemented"
-                return task_builder
+                return task_config
 
             def pypi(self):
-                assert self.name not in task_builder.defined, "The library has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The library has already been defined."
+                task_config.defined.append(self.name)
                 assert 1/0, "Not yet implemented"
-                return task_builder
+                return task_config
 
             def maven(self):
-                assert self.name not in task_builder.defined, "The library has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The library has already been defined."
+                task_config.defined.append(self.name)
                 assert 1/0, "Not yet implemented"
-                return task_builder
+                return task_config
 
             def cran(self):
-                assert self.name not in task_builder.defined, "The library has already been defined."
-                task_builder.defined.append(self.name)
+                assert self.name not in task_config.defined, "The library has already been defined."
+                task_config.defined.append(self.name)
                 assert 1/0, "Not yet implemented"
-                return task_builder
+                return task_config
 
             def from_dict(self, libraries):
-                assert self.name not in task_builder.defined, "The library has already been defined."
-                task_builder.defined.append(self.name)
-                task_builder["libraries"] = libraries
-                return task_builder
+                assert self.name not in task_config.defined, "The library has already been defined."
+                task_config.defined.append(self.name)
+                task_config.libraries = libraries
+                return task_config
 
         self.library: Library = Library()
 
