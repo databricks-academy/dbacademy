@@ -91,7 +91,7 @@ class DatasetManager:
 
         for i, f in enumerate(files):
             start = dbgems.clock_start()
-            print(f"| copying {i+1}/{total} /{f.name[:-1]}", end="...")
+            print(f"| copying {i+1}/{total}: {f.name[:-1]}", end="...")
 
             source_path = f"{self.data_source_uri}/{f.name}"
             target_path = f"{self.datasets_path}/{f.name}"
