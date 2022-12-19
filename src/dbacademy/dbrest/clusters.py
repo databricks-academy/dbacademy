@@ -172,7 +172,7 @@ class ClustersClient(ApiContainer):
         """
         from dbacademy import dbgems
         cluster_id = cluster_id or dbgems.get_tags().get("clusterId")
-        return self.get(cluster_id).get("spark_version", None)
+        return self.get_by_id(cluster_id).get("spark_version", None)
 
     def get_current_instance_pool_id(self, cluster_id: str = None) -> Optional[str]:
         """
@@ -182,7 +182,7 @@ class ClustersClient(ApiContainer):
         """
         from dbacademy import dbgems
         cluster_id = cluster_id or dbgems.get_tags()["clusterId"]
-        return self.get(cluster_id).get("instance_pool_id", None)
+        return self.get_by_id(cluster_id).get("instance_pool_id", None)
 
     def get_current_node_type_id(self, cluster_id: str = None) -> Optional[str]:
         """
@@ -192,4 +192,4 @@ class ClustersClient(ApiContainer):
         """
         from dbacademy import dbgems
         cluster_id = cluster_id or dbgems.get_tags().get("clusterId")
-        return self.get(cluster_id).get("node_type_id", None)
+        return self.get_by_id(cluster_id).get("node_type_id", None)
