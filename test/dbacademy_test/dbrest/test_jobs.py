@@ -65,7 +65,7 @@ class TestJobsClient(unittest.TestCase):
         self.assertEquals(True, job.get("run_as_owner"))
 
         settings = job.get("settings")
-        self.assertEquals("Job for Git", settings.get("name"))
+        self.assertEquals("Job from Git", settings.get("name"))
         self.assertEquals(2, settings.get("max_concurrent_runs"))
         self.assertEquals("SINGLE_TASK", settings.get("format"))
 
