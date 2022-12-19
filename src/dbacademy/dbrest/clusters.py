@@ -10,6 +10,7 @@ class ClusterConfig:
                  spark_version: str,
                  node_type_id: Optional[str],
                  driver_node_type_id: str = None,
+                 instance_profile_id: str = None,
                  num_workers: int,
                  autotermination_minutes: Optional[int],
                  single_user_name: str = None,
@@ -20,18 +21,18 @@ class ClusterConfig:
         self.__params = {
             "cluster_name": cluster_name,
             "spark_version": spark_version,
-            "node_type_id": node_type_id,
             "num_workers": num_workers,
+            "node_type_id": node_type_id,
+            "instance_profile_id": instance_profile_id,
+            "autotermination_minutes": autotermination_minutes,
         }
-
-        if autotermination_minutes is not None:
-            self.__params["autotermination_minutes"] = autotermination_minutes
 
         spark_conf = spark_conf or dict()
 
         extra_params = kwargs or dict()
         if "custom_tags" not in extra_params:
             extra_params["custom_tags"] = dict()
+
         if "aws_attributes" not in extra_params:
             extra_params["aws_attributes"] = dict()
 
@@ -53,7 +54,9 @@ class ClusterConfig:
             spark_conf["spark.databricks.cluster.profile"] = "singleNode"
 
         if on_demand:
-            extra_params.get("aws_attributes")["availability"] = "ON_DEMAND"
+            if instance_profile_id is None:
+                # aws_attributes.availability can only be specified when an instance_profile_id isn't.
+                extra_params.get("aws_attributes")["availability"] = "ON_DEMAND"
 
         if len(spark_conf) > 0:
             self.__params["spark_conf"] = spark_conf
