@@ -80,7 +80,19 @@ def get_parameter(name: str, default_value: Any = "") -> Union[None, str]:
             return default_value
 
 
-def get_cloud():
+def is_aws() -> bool:
+    return "AWS" == get_cloud()
+
+
+def is_msa() -> bool:
+    return "MSA" == get_cloud()
+
+
+def is_gcp() -> bool:
+    return "GCP" == get_cloud()
+
+
+def get_cloud() -> str:
     import os
 
     config_path = "/databricks/common/conf/deploy.conf"
