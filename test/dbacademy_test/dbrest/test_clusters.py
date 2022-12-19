@@ -370,9 +370,9 @@ class TestClusters(unittest.TestCase):
                 autotermination_minutes=10,
                 on_demand="whatever",
                 availability=Availability.SPOT,
-                instance_profile_id="0123456789")
+                instance_pool_id="0123456789")
         except AssertionError as e:
-            self.assertEquals(f"The parameter \"availability\" cannot be specified when \"instance_profile_id\" is specified.", str(e))
+            self.assertEquals(f"The parameter \"availability\" cannot be specified when \"instance_pool_id\" is specified.", str(e))
 
     def test_create_with_availability_default(self):
         from dbacademy.dbrest.clusters import ClusterConfig, Availability
@@ -483,7 +483,12 @@ class TestClusters(unittest.TestCase):
             autotermination_minutes=10))
 
         cluster_a = self.client.clusters.get_by_id(cluster_id)
+        if "state_message" in cluster_a:
+            del cluster_a["state_message"]
+
         cluster_b = self.client.clusters.get_by_name(cluster_name)
+        if "state_message" in cluster_b:
+            del cluster_b["state_message"]
 
         self.maxDiff = None
         self.assertEquals(cluster_a, cluster_b)

@@ -18,7 +18,7 @@ class ClusterConfig:
                  spark_version: str,
                  node_type_id: Optional[str],
                  driver_node_type_id: str = None,
-                 instance_profile_id: str = None,
+                 instance_pool_id: str = None,
                  num_workers: int,
                  autotermination_minutes: Optional[int],
                  single_user_name: str = None,
@@ -31,7 +31,7 @@ class ClusterConfig:
             "spark_version": spark_version,
             "num_workers": num_workers,
             "node_type_id": node_type_id,
-            "instance_profile_id": instance_profile_id,
+            "instance_pool_id": instance_pool_id,
             "autotermination_minutes": autotermination_minutes,
         }
 
@@ -61,12 +61,12 @@ class ClusterConfig:
 
         assert extra_params.get("aws_attributes", dict()).get("availability") is None, f"The parameter \"aws_attributes.availability\" should not be specified directly, use \"availability\" instead."
 
-        if instance_profile_id is None and availability is None:
+        if instance_pool_id is None and availability is None:
             # Default to on-demand if the instance profile was not defined
             availability = Availability.ON_DEMAND
 
         if availability is not None:
-            assert instance_profile_id is None, f"The parameter \"availability\" cannot be specified when \"instance_profile_id\" is specified."
+            assert instance_pool_id is None, f"The parameter \"availability\" cannot be specified when \"instance_pool_id\" is specified."
             extra_params.get("aws_attributes")["availability"] = availability.value
 
         if len(spark_conf) > 0:
