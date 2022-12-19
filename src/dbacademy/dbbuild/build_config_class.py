@@ -1,4 +1,4 @@
-from typing import Type, List, Dict, Union, Any, Optional
+from typing import Type, List, Dict, Union, Any, Optional, Callable
 from dbacademy import dbgems, common
 from dbacademy.rest.factory import dbrest_factory
 
@@ -261,6 +261,11 @@ class BuildConfig:
                                                    version=self.version)
         if has_wip:
             print()
+
+    def exclude_notebook(self, test_function: Callable[[str], bool]):
+        for path in list(self.notebooks.keys()):
+            if test_function(path):
+                del self.notebooks[path]
 
     def validate(self, validate_version: bool = True, validate_readme: bool = True):
         """
