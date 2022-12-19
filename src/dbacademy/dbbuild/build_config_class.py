@@ -262,6 +262,11 @@ class BuildConfig:
         if has_wip:
             print()
 
+    def ignore_failures(self, test_function: Callable[[str], bool]):
+        for path in list(self.notebooks.keys()):
+            if test_function(path):
+                self.notebooks[path].ignored = True
+
     def exclude_notebook(self, test_function: Callable[[str], bool]):
         for path in list(self.notebooks.keys()):
             if test_function(path):
