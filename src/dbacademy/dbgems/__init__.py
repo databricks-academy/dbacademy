@@ -81,18 +81,31 @@ def get_parameter(name: str, default_value: Any = "") -> Union[None, str]:
 
 
 def is_aws() -> bool:
+    """
+    :return: True if this is a workspace backed by Amazon Web Services (AWS)
+    """
     return "AWS" == get_cloud()
 
 
 def is_msa() -> bool:
+    """
+    :return: True if this is a workspace backed by Microsoft Azure (MSA)
+    """
     return "MSA" == get_cloud()
 
 
 def is_gcp() -> bool:
+    """
+    :return: True if this is a workspace backed by Google Cloud Platform (GCP)
+    """
     return "GCP" == get_cloud()
 
 
 def get_cloud() -> str:
+    """
+    Indicates which cloud the current workspace is deployed into
+    :return: One of GCP, AWS or MSA
+    """
     import os
 
     config_path = "/databricks/common/conf/deploy.conf"
