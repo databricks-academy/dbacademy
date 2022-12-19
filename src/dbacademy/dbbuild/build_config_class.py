@@ -4,6 +4,7 @@ from dbacademy.rest.factory import dbrest_factory
 
 
 class BuildConfig:
+    from dbacademy.dbrest import DBAcademyRestClient
 
     LANGUAGE_OPTIONS_DEFAULT = "Default"
 
@@ -111,10 +112,10 @@ class BuildConfig:
                  supported_dbrs: List[str] = None,
                  spark_version: str = None,
                  cloud: str = None,
-                 instance_pool: str = None,
+                 instance_pool_id: str = None,
                  workers: int = None,
                  libraries: list = None,
-                 client=None,
+                 client: DBAcademyRestClient = None,
                  source_dir: str = None,
                  source_repo: str = None,
                  spark_conf: dict = None,
@@ -150,7 +151,7 @@ class BuildConfig:
 
         self.test_type = None
         self.notebooks: Union[None, Dict[str, NotebookDef]] = None
-        self.client = dbrest_factory.current_workspace() if client is None else client
+        self.__client = client or dbrest_factory.current_workspace()
 
         # The instance of this test run
         self.suite_id = str(time.time()) + "-" + str(uuid.uuid1())
@@ -175,7 +176,7 @@ class BuildConfig:
         self.workers = 0 if workers is None else workers
 
         # The instance pool from which to obtain VMs - lazily evaluated via property
-        self.__instance_pool = instance_pool
+        self.__instance_pool_id = instance_pool_id
 
         # Spark configuration parameters
         self.spark_conf = dict() if spark_conf is None else spark_conf
@@ -199,6 +200,10 @@ class BuildConfig:
 
         self.change_log = None
         self.publishing_info = publishing_info or {}
+
+    @property
+    def client(self) -> DBAcademyRestClient:
+        return self.__client
 
     def __initialize_notebooks(self):
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
@@ -279,7 +284,7 @@ class BuildConfig:
         print(f"| version:           {self.version}")
         print(f"| spark_version:     {self.spark_version}")
         print(f"| workers:           {self.workers}")
-        print(f"| instance_pool:     {self.instance_pool}")
+        print(f"| instance_pool_id:  {self.instance_pool_id}")
         print(f"| spark_conf:        {self.spark_conf}")
         print(f"| cloud:             {self.cloud}")
         print(f"| libraries:         {self.libraries}")
@@ -298,15 +303,15 @@ class BuildConfig:
         self.__validated = True
 
     @property
-    def instance_pool(self) -> Dict[str, Any]:
+    def instance_pool_id(self) -> str:
         """
         The instance pool to use for testing.
-        :return: The instance pool dictionary
+        :return: The instance pool id
         """
-        if self.__instance_pool is None:  # This may have not been specified upon instantiation
-            self.__instance_pool = self.client.clusters().get_current_instance_pool_id()
+        if self.__instance_pool_id is None:  # This may have not been specified upon instantiation
+            self.__instance_pool_id = self.client.clusters().get_current_instance_pool_id()
 
-        return self.__instance_pool
+        return self.__instance_pool_id
 
     @property
     def spark_version(self) -> str:
