@@ -92,10 +92,28 @@ class TestJobsClient(unittest.TestCase):
 
         self.assertEquals({"dbacademy.unit-test": "true"}, settings.get("tags"))
 
-        new_cluster = settings.get("new_cluster")
-        self.assertIsNotNone(new_cluster)
-
-        pass
+        actual_cluster = settings.get("new_cluster")
+        self.assertIsNotNone(actual_cluster)
+        expected_cluster = {
+            "spark_version": "11.3.x-scala2.12",
+            "spark_conf": {
+                "spark.master": "local[*]",
+                "spark.databricks.cluster.profile": "singleNode"
+            },
+            "aws_attributes": {
+                "availability": "ON_DEMAND",
+                "zone_id": "us-west-2b"
+            },
+            "node_type_id": "i3.xlarge",
+            "custom_tags": {
+                "ResourceClass": "SingleNode"
+            },
+            "enable_elastic_disk": False,
+            "single_user_name": "d8835420-9797-45f5-897b-6d81d7f80023",
+            "data_security_mode": "SINGLE_USER",
+            "num_workers": 0
+        }
+        self.assertEquals(expected_cluster, actual_cluster)
 
 
 if __name__ == "__main__":
