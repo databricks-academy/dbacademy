@@ -166,7 +166,13 @@ class TaskConfig:
                 assert 1/0, "Not yet implemented"
                 return task_builder
 
-        self.library = Library()
+            def from_dict(self, libraries):
+                assert self.name not in task_builder.defined, "The library has already been defined."
+                task_builder.defined.append(self.name)
+                task_builder["libraries"] = libraries
+                return task_builder
+
+        self.library: Library = Library()
 
     def add_email_notifications(self, *, on_start: List[str], on_success: List[str], on_failure: List[str], no_alert_for_skipped_runs: bool = False) -> "TaskConfig":
         self.params["email_notifications"] = {
