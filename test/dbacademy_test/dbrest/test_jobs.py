@@ -76,7 +76,14 @@ class TestJobsClient(unittest.TestCase):
         self.assertIsNotNone(notebook_task)
         self.assertEquals("Workspace-Setup", notebook_task.get("notebook_path"))
         self.assertEquals("GIT", notebook_task.get("source"))
-        self.assertEquals({"color": "red"}, notebook_task.get("base_parameters"))
+
+        base_parameters = {
+            "lab_id": "Testing 123",
+            "description": "This is a test of the Emergency Broadcast System. This is only a test.",
+            "node_type_id": "i3.xlarge",
+            "spark_version": "11.3.x-scala2.12"
+        }
+        self.assertEquals(base_parameters, notebook_task.get("base_parameters"))
 
         git_source = settings.get("git_source")
         self.assertEquals("https://github.com/databricks-academy/workspace-setup.git", git_source.get("git_url"))
@@ -91,5 +98,5 @@ class TestJobsClient(unittest.TestCase):
         pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
