@@ -4,7 +4,7 @@ from dbacademy import dbgems
 class Paths:
     from .lesson_config_class import LessonConfig
 
-    def __init__(self, *, lesson_config: LessonConfig, working_dir_root: str, datasets: str, enable_streaming_support: bool):
+    def __init__(self, *, lesson_config: LessonConfig, working_dir_root: str, datasets: str):
 
         self._working_dir_root = working_dir_root
 
@@ -24,8 +24,12 @@ class Paths:
 
         # When working with streams, it helps to put all checkpoints in their
         # own directory relative the previously defined working_dir
-        if enable_streaming_support:
+        if lesson_config.enable_streaming_support:
             self.checkpoints = f"{self.working_dir}/_checkpoints"
+
+        if lesson_config.enable_ml_support:
+            self.datasets_path = self.datasets.replace("dbfs:/", "/dbfs/")
+            self.working_path = self.working_dir.replace("dbfs:/", "/dbfs/")
 
     # noinspection PyGlobalUndefined
     @staticmethod
