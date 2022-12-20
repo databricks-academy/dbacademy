@@ -256,7 +256,7 @@ class NotebookDef:
 
             # Need to validate that the link exists.
 
-    def test_source_for(self, command: str, i: int, what: str, template: str):
+    def test_source_for(self, command: str, i: int, what: str, template: str) -> bool:
         if what in command:
             pos = command.find(what)
             pos_a = command.rfind("\n", 0, pos)
@@ -269,21 +269,23 @@ class NotebookDef:
 
             prefix = f"Cmd #{i+1} "
             padding = " "*len(prefix)
-            if "prohibited-dataset" not in self.ignoring:
-                self.warn(lambda: False, template.format(prefix=prefix, what=what, padding=padding, line=line))
+            return self.warn(lambda: False, template.format(prefix=prefix, what=what, padding=padding, line=line))
 
     def test_source_cells(self, language: str, command: str, i: int):
 
         if language not in ["python", "scala", "sql", "java", "r"]:
             return command
 
-        template = "{prefix}| Course includes prohibited use of {what}:\n| {line}"
-        self.test_source_for(command, i, "\"/mnt/training\"", template=template)
-        self.test_source_for(command, i, "\"/databricks-datasets\"", template=template)
+        datasets_template = "{prefix}| Course includes prohibited use of {what}:\n| {line}"
+        self.test_source_for(command, i, "\"/mnt/training\"", template=datasets_template)
+        self.test_source_for(command, i, "\"/databricks-datasets\"", template=datasets_template)
 
-        template = "{prefix}| Course includes prohibited use of {what}; consider DA.paths.working_path and/or DA.paths.datasets_path with ML support enabled:\n| {line}"
-        self.test_source_for(command, i, "\"dbfs:/\"", template=template)
-        self.test_source_for(command, i, "\"/dbfs/\"", template=template)
+        replace_dbfs_template = "{prefix}| Course includes prohibited use of {what};\n| Consider creating DA.paths.working_path & DA.paths.datasets_path with DA.paths.to_vm_path(path) instead\n| {line}"
+        if self.test_source_for(command, i, """replace("dbfs:/", "/dbfs/")""", template=replace_dbfs_template):
+
+            dbfs_template = "{prefix}| Course includes prohibited use of {what};\n| {line}"
+            self.test_source_for(command, i, "\"dbfs:/\"", template=dbfs_template)
+            self.test_source_for(command, i, "\"/dbfs/\"", template=dbfs_template)
 
         return command
 

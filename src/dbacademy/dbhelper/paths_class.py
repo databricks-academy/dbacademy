@@ -27,11 +27,10 @@ class Paths:
         if lesson_config.enable_streaming_support:
             self.checkpoints = f"{self.working_dir}/_checkpoints"
 
-        if lesson_config.enable_ml_support:
-            self.datasets_path = self.datasets.replace("dbfs:/", "/dbfs/")
-            self.working_path = self.working_dir.replace("dbfs:/", "/dbfs/")
+    @staticmethod
+    def to_vm_path(path):
+        return path.replace("dbfs:/", "/dbfs/")
 
-    # noinspection PyGlobalUndefined
     @staticmethod
     def exists(path):
         """
