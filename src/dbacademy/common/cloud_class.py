@@ -1,4 +1,3 @@
-from typing import Union
 from enum import Enum
 
 
@@ -8,35 +7,47 @@ class Cloud(Enum):
     GCP = "GCP"
     UNKNOWN = "UNKNOWN"
 
-    def is_aws(self, actual_cloud: Union[str, "Cloud"] = None) -> bool:
-        """
-        :param actual_cloud: the actual value against which to test or `Cloud.current` if `actual_cloud == None`
-        :return: True if this is a workspace backed by Amazon Web Services (AWS)
-        """
-        actual_cloud = actual_cloud or self.current
-        actual_cloud = actual_cloud if type(actual_cloud) == str else actual_cloud.value
-        return self.value == actual_cloud
+    @property
+    def is_aws(self) -> bool:
+        return self == Cloud.AWS
 
-    def is_msa(self, actual_cloud: Union[str, "Cloud"] = None) -> bool:
-        """
-        :param actual_cloud: the actual value against which to test or `Cloud.current` if `actual_cloud == None`
-        :return: True if this is a workspace backed by Microsoft Azure (MSA)
-        """
-        actual_cloud = actual_cloud or self.current
-        actual_cloud = actual_cloud if type(actual_cloud) == str else actual_cloud.value
-        return self.MSA.value == actual_cloud
+    @property
+    def is_msa(self) -> bool:
+        return self == Cloud.MSA
 
-    def is_gcp(self, actual_cloud: Union[str, "Cloud"] = None) -> bool:
-        """
-        :param actual_cloud: the actual value against which to test or `Cloud.current` if `actual_cloud == None`
-        :return: True if this is a workspace backed by Google Cloud Platform (GCP)
-        """
-        actual_cloud = actual_cloud or self.current
-        actual_cloud = actual_cloud if type(actual_cloud) == str else actual_cloud.value
-        return self.GCP.value == actual_cloud
+    @property
+    def is_gcp(self) -> bool:
+        return self == Cloud.GCP
+
+    # @staticmethod
+    # def is_aws(actual_cloud: Union[str, "Cloud"]) -> bool:
+    #     """
+    #     :param actual_cloud: the actual value against which to test or `Cloud.current` if `actual_cloud == None`
+    #     :return: True if this is a workspace backed by Amazon Web Services (AWS)
+    #     """
+    #     actual_cloud = actual_cloud if type(actual_cloud) == str else actual_cloud.value
+    #     return Cloud.AWS.value == actual_cloud
+    #
+    # @staticmethod
+    # def is_msa(actual_cloud: Union[str, "Cloud"]) -> bool:
+    #     """
+    #     :param actual_cloud: the actual value against which to test or `Cloud.current` if `actual_cloud == None`
+    #     :return: True if this is a workspace backed by Microsoft Azure (MSA)
+    #     """
+    #     actual_cloud = actual_cloud if type(actual_cloud) == str else actual_cloud.value
+    #     return Cloud.MSA.value == actual_cloud
+    #
+    # @staticmethod
+    # def is_gcp(actual_cloud: Union[str, "Cloud"]) -> bool:
+    #     """
+    #     :param actual_cloud: the actual value against which to test or `Cloud.current` if `actual_cloud == None`
+    #     :return: True if this is a workspace backed by Google Cloud Platform (GCP)
+    #     """
+    #     actual_cloud = actual_cloud if type(actual_cloud) == str else actual_cloud.value
+    #     return Cloud.GCP.value == actual_cloud
 
     @staticmethod
-    def current() -> "Cloud":
+    def current_cloud() -> "Cloud":
         """
         Indicates which cloud the current workspace is deployed into
         :return: One of GCP, AWS, MSA or UNKNOWN if the current cloud cannot be auto-determined

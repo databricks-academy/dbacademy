@@ -75,6 +75,7 @@ class TestSuite:
         import re
         from dbacademy.dbrest.jobs import JobConfig
         from dbacademy.dbrest.clusters import ClusterConfig
+        from dbacademy.common import Cloud
 
         self.build_config.spark_conf["dbacademy.smoke-test"] = "true"
 
@@ -95,7 +96,8 @@ class TestSuite:
             policy = self.client.cluster_policies.get_by_id(policy_id)
             assert policy is not None, f"The policy \"{policy_id}\" does not exist or you do not have permissions to use specified policy: {[p.get('name') for p in self.client.cluster_policies.list()]}"
 
-        cluster_config = ClusterConfig(cluster_name=None,
+        cluster_config = ClusterConfig(cloud=Cloud.current_cloud(),
+                                       cluster_name=None,
                                        num_workers=self.build_config.workers,
                                        spark_version=self.build_config.spark_version,
                                        spark_conf=self.build_config.spark_conf,

@@ -75,6 +75,7 @@ class DatabasesHelper:
 
     @staticmethod
     def configure_permissions(client: DBAcademyRestClient, notebook_name: str, spark_version: str):
+        from dbacademy.common import Cloud
         from dbacademy.dbhelper import DBAcademyHelper, WorkspaceHelper
 
         job_name = f"""DBAcademy {notebook_name.split("/")[-1]}"""
@@ -124,7 +125,7 @@ class DatabasesHelper:
             cluster_params["instance_pool_id"] = client.clusters().get_current_instance_pool_id()
         else:
             cluster_params["node_type_id"] = client.clusters().get_current_node_type_id()
-            if dbgems.get_cloud() == "AWS":
+            if Cloud.current_cloud().is_aws:
                 # noinspection PyTypeChecker
                 cluster_params["aws_attributes"] = {"availability": "ON_DEMAND"}
 

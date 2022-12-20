@@ -1,7 +1,5 @@
 from typing import Callable, List, TypeVar
 
-from dbacademy import dbgems
-
 
 class WorkspaceHelper:
     from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
@@ -24,14 +22,20 @@ class WorkspaceHelper:
 
     @staticmethod
     def get_lab_id():
+        from dbacademy import dbgems
+
         return dbgems.get_parameter(WorkspaceHelper.PARAM_LAB_ID)
 
     @staticmethod
     def get_workspace_name():
+        from dbacademy import dbgems
+
         return dbgems.get_spark_config("spark.databricks.workspaceUrl", default=dbgems.get_notebooks_api_endpoint())
 
     @staticmethod
     def get_workspace_description():
+        from dbacademy import dbgems
+
         return dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION)
 
     def __init__(self, da: DBAcademyHelper):
@@ -82,6 +86,8 @@ class WorkspaceHelper:
 
     @property
     def org_id(self):
+        from dbacademy import dbgems
+
         try:
             return dbgems.get_tag("orgId", "unknown")
         except:
@@ -90,6 +96,8 @@ class WorkspaceHelper:
 
     @property
     def workspace_name(self):
+        from dbacademy import dbgems
+
         try:
             workspace_name = dbgems.get_browser_host_name()
             return dbgems.get_notebooks_api_endpoint() if workspace_name is None else workspace_name
@@ -129,6 +137,8 @@ class WorkspaceHelper:
 
     @property
     def existing_databases(self):
+        from dbacademy import dbgems
+
         if self._existing_databases is None:
             existing = dbgems.spark.sql("SHOW DATABASES").collect()
             self._existing_databases = {d[0] for d in existing}
@@ -136,12 +146,16 @@ class WorkspaceHelper:
 
     @property
     def lab_id(self):
+        from dbacademy import dbgems
         from dbacademy.dbhelper import DBAcademyHelper
+
         lab_id = "Smoke Test" if DBAcademyHelper.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_LAB_ID, None)
         return None if lab_id is None else dbgems.clean_string(lab_id)
 
     @property
     def description(self):
+        from dbacademy import dbgems
         from dbacademy.dbhelper import DBAcademyHelper
+
         description = "This is a smoke test" if DBAcademyHelper.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION, None)
         return None if description is None else dbgems.clean_string(description)

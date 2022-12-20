@@ -1,14 +1,9 @@
 from typing import Union, Optional, Dict
 
-import pyspark
-
-from dbacademy import dbgems, common
-from dbacademy.dbrest import DBAcademyRestClient
-
-from dbacademy.dbhelper.paths_class import Paths
-
 
 class DBAcademyHelper:
+    import pyspark
+    from dbacademy import common
     from dbacademy.dbhelper.lesson_config_class import LessonConfig
     from dbacademy.dbhelper.course_config_class import CourseConfig
 
@@ -38,9 +33,12 @@ class DBAcademyHelper:
         :param debug: Enables debug print messages.
         See also DBAcademyHelper.dprint
         """
-        from .workspace_helper_class import WorkspaceHelper
-        from .dev_helper_class import DevHelper
-        from .validations.validation_helper_class import ValidationHelper
+        from dbacademy import dbgems
+        from dbacademy.dbrest import DBAcademyRestClient
+        from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
+        from dbacademy.dbhelper.dev_helper_class import DevHelper
+        from dbacademy.dbhelper.validations.validation_helper_class import ValidationHelper
+        from dbacademy.dbhelper.paths_class import Paths
 
         assert lesson_config is not None, f"The parameter lesson_config:LessonConfig must be specified."
         lesson_config.assert_valid()
@@ -132,6 +130,7 @@ class DBAcademyHelper:
         by specifying the spark configuration parameter identified by DBAcademyHelper.SPARK_CONF_PATHS_DATASETS
         :return: the location of the DBAcademy datasets.
         """
+        from dbacademy import dbgems
         return dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PATHS_DATASETS, default="dbfs:/mnt/dbacademy-datasets")
 
     @staticmethod
@@ -142,6 +141,7 @@ class DBAcademyHelper:
         by specifying the spark configuration parameter identified by DBAcademyHelper.SPARK_CONF_PATHS_USERS
         :return: the location of the DBAcademy user's directory.
         """
+        from dbacademy import dbgems
         return dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PATHS_USERS, default="dbfs:/mnt/dbacademy-users")
 
     @staticmethod
@@ -243,6 +243,8 @@ class DBAcademyHelper:
         :param sep: The seperator to use between words, defaults to a hyphen
         :return: The unique name composited from the specified username and course_code
         """
+        from dbacademy import dbgems
+
         local_part = username.split("@")[0]
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
         username_hash = dbgems.stable_hash(hash_basis, length=4)
@@ -305,6 +307,7 @@ class DBAcademyHelper:
         :param lesson_name: The name of the lesson. See also LessonConfig.name
         :return: The unique name composited from the specified username and lesson
         """
+        from dbacademy import dbgems
         from dbacademy.dbhelper.lesson_config_class import LessonConfig
 
         local_part = username.split("@")[0]
@@ -324,6 +327,7 @@ class DBAcademyHelper:
         """
         :return: spark.sql("SELECT current_catalog()").first()[0]
         """
+        from dbacademy import dbgems
         return dbgems.spark.sql("SELECT current_catalog()").first()[0]
 
     @property
@@ -375,6 +379,7 @@ class DBAcademyHelper:
         :param lesson_name: The name of the lesson. See also LessonConfig.name
         :return: The unique name composited from the specified username and lesson
         """
+        from dbacademy import dbgems
         from dbacademy.dbhelper.lesson_config_class import LessonConfig
 
         local_part = username.split("@")[0]
@@ -396,6 +401,7 @@ class DBAcademyHelper:
         """
         :return: spark.sql("SELECT current_database()").first()[0]
         """
+        from dbacademy import dbgems
         return dbgems.spark.sql("SELECT current_database()").first()[0]
 
     @staticmethod
@@ -404,14 +410,17 @@ class DBAcademyHelper:
         Helper method to indentify when we are running as a smoke test
         :return: Returns true if the notebook is running as a smoke test.
         """
+        from dbacademy import dbgems
         return dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_SMOKE_TEST, "false").lower() == "true"
 
     @common.deprecated("Use dbgems.clock_start() instead.")
     def clock_start(self) -> int:
+        from dbacademy import dbgems
         return dbgems.clock_start()
 
     @common.deprecated("Use dbgems.clock_stopped() instead.")
     def clock_stopped(self, start: int, end: str = "") -> str:
+        from dbacademy import dbgems
         return dbgems.clock_stopped(start, end)
 
     # noinspection PyMethodMayBeStatic
@@ -454,6 +463,7 @@ class DBAcademyHelper:
         self.__initialized = True  # Set the all-done flag.
 
     def __create_catalog(self) -> None:
+        from dbacademy import dbgems
         try:
             start = dbgems.clock_start()
             print(f"Creating & using the catalog \"{self.catalog_name}\"", end="...")
@@ -469,6 +479,8 @@ class DBAcademyHelper:
             raise AssertionError(self.__troubleshoot_error(f"Failed to create the catalog \"{self.catalog_name}\".", "Cannot Create Catalog")) from e
 
     def __create_schema(self) -> None:
+        from dbacademy import dbgems
+
         start = dbgems.clock_start()
         try:
 
@@ -518,6 +530,8 @@ class DBAcademyHelper:
         """
         Concludes the setup of DBAcademyHelper by advertising to the student the new state of the environment such as predefined path variables, databases and tables created on behalf of the student and the total setup time. Additionally, all path attributes are pushed to the Spark context for reference in SQL statements.
         """
+        from dbacademy import dbgems
+
         print()
         assert self.__initialized, f"We cannot conclude setup without first calling DBAcademyHelper.init(..)"
 
@@ -607,6 +621,8 @@ class DBAcademyHelper:
         :param mappings: Allows for redefinition of the location of the README.md file
         :return:
         """
+        from dbacademy import dbgems
+
         if mappings is None:
             mappings = dict()
 
@@ -628,6 +644,8 @@ class DBAcademyHelper:
                 dbgems.display_html(html)
 
     def __validate_spark_version(self) -> None:
+        from dbacademy import dbgems
+
         self.__current_dbr = dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_CLUSTER_TAG_SPARK_VERSION, None)
 
         if self.__current_dbr is None and not dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PROTECTED_EXECUTION, None):
@@ -654,6 +672,7 @@ class DBAcademyHelper:
                 raise AssertionError(self.__troubleshoot_error(message, "Spark Version"))
 
     def __validate_dbfs_writes(self, test_dir) -> None:
+        from dbacademy import dbgems
         from contextlib import redirect_stdout
 
         if not dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PROTECTED_EXECUTION, None):
@@ -745,6 +764,7 @@ class DBAcademyHelper:
         Used to initialize MLflow with the job ID when ran under test.
         """
         import mlflow
+        from dbacademy import dbgems
 
         if dbgems.get_job_id():
             unique_name = self.unique_name("-")

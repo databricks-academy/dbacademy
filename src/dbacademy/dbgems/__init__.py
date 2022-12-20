@@ -80,7 +80,7 @@ def get_parameter(name: str, default_value: Any = "") -> Union[None, str]:
             return default_value
 
 
-@dbacademy.common.deprecated("Use dbacademy.common.Cloud instead")
+@dbacademy.common.deprecated("Use dbacademy.common.Cloud.current_cloud() instead")
 def get_cloud() -> str:
     """
     Indicates which cloud the current workspace is deployed into
