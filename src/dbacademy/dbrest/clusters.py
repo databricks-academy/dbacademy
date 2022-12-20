@@ -6,14 +6,28 @@ from dbacademy import common
 
 
 class Availability(Enum):
-    SPOT = "SPOT"
-    FALL_BACK = "FALL_BACK"
     ON_DEMAND = "ON_DEMAND"
+    SPOT = "SPOT"
+    SPOT_WITH_FALLBACK = "SPOT_WITH_FALLBACK"
+
+    @property
+    def is_on_demand(self) -> bool:
+        return self == Availability.ON_DEMAND
+
+    @property
+    def is_spot(self) -> bool:
+        return self == Availability.SPOT
+
+    @property
+    def is_spot_with_fallback(self) -> bool:
+        return self == Availability.SPOT_WITH_FALLBACK
 
 
 class ClusterConfig:
+    from dbacademy.common import Cloud
 
     def __init__(self, *,
+                 cloud: Cloud,
                  cluster_name: Optional[str],
                  spark_version: str,
                  node_type_id: Optional[str],
@@ -41,9 +55,6 @@ class ClusterConfig:
         if "custom_tags" not in extra_params:
             extra_params["custom_tags"] = dict()
 
-        if "aws_attributes" not in extra_params:
-            extra_params["aws_attributes"] = dict()
-
         if single_user_name is not None:
             extra_params["single_user_name"] = single_user_name
             extra_params["data_security_mode"] = "SINGLE_USER"
@@ -60,6 +71,8 @@ class ClusterConfig:
             spark_conf["spark.databricks.cluster.profile"] = "singleNode"
 
         assert extra_params.get("aws_attributes", dict()).get("availability") is None, f"The parameter \"aws_attributes.availability\" should not be specified directly, use \"availability\" instead."
+        assert extra_params.get("azure_attributes", dict()).get("availability") is None, f"The parameter \"azure_attributes.availability\" should not be specified directly, use \"availability\" instead."
+        assert extra_params.get("gcp_attributes", dict()).get("availability") is None, f"The parameter \"gcp_attributes.availability\" should not be specified directly, use \"availability\" instead."
 
         if instance_pool_id is None and availability is None:
             # Default to on-demand if the instance profile was not defined
@@ -67,7 +80,24 @@ class ClusterConfig:
 
         if availability is not None:
             assert instance_pool_id is None, f"The parameter \"availability\" cannot be specified when \"instance_pool_id\" is specified."
-            extra_params.get("aws_attributes")["availability"] = availability.value
+
+            cloud_attributes = f"{cloud.value.lower()}_attributes".replace("msa_", "azure_")
+            extra_params[cloud_attributes] = dict()
+
+            if cloud.is_aws:
+                extra_params.get(cloud_attributes)["availability"] = availability.value
+
+            elif cloud.is_msa:
+                if availability.is_on_demand:
+                    extra_params.get(cloud_attributes)["availability"] = "ON_DEMAND_AZURE"
+                else:  # Same for SPOT and SPOT_WITH_FALLBACK
+                    extra_params.get(cloud_attributes)["availability"] = "SPOT_WITH_FALLBACK_AZURE"
+
+            elif cloud.is_gcp:
+                if availability.is_on_demand:
+                    extra_params.get(cloud_attributes)["availability"] = "ON_DEMAND_GCP"
+                else:  # Same for SPOT and SPOT_WITH_FALLBACK
+                    extra_params.get(cloud_attributes)["availability"] = "PREEMPTIBLE_WITH_FALLBACK_GCP"
 
         if len(spark_conf) > 0:
             self.__params["spark_conf"] = spark_conf
@@ -106,7 +136,7 @@ class ClustersClient(ApiContainer):
                                num_workers=num_workers,
                                autotermination_minutes=autotermination_minutes,
                                single_user_name=single_user_name,
-                               availability=Availability.ON_DEMAND if on_demand else Availability.FALL_BACK,
+                               availability=Availability.ON_DEMAND if on_demand else Availability.SPOT_WITH_FALLBACK,
                                spark_conf=spark_conf,
                                **kwargs)
 
