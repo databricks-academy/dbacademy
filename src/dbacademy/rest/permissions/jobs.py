@@ -25,9 +25,15 @@ class Jobs(PermissionsCrud):
 
     def change_owner(self, job_id, owner_type: What, owner_id: str):
 
-        if owner_type == "user": owner_type = "user_name"
-        if owner_type == "group": owner_type = "group_name"
-        if owner_type == "service_principal": owner_type = "service_principal_name"
+        if owner_type == "user":
+            owner_type = "user_name"
+
+        if owner_type == "group":
+            owner_type = "group_name"
+
+        if owner_type == "service_principal":
+            owner_type = "service_principal_name"
+
         assert owner_type in ["user_name", "group_name", "service_principal_name"], f"Expected owner_type to be one of \"user_name\", \"group_name\", or \"service_principal_name\", found \"{owner_type}\"."
 
         old_what, old_id = self.get_owner(job_id)

@@ -114,8 +114,7 @@ class DBAcademyHelper:
 
         self.paths = Paths(lesson_config=self.lesson_config,
                            working_dir_root=self.working_dir_root,
-                           datasets=datasets_path,
-                           enable_streaming_support=lesson_config.enable_streaming_support)
+                           datasets=datasets_path)
 
         self.__lesson_config.lock_mutations()
 
