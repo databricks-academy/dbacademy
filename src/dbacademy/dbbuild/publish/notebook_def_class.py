@@ -277,13 +277,13 @@ class NotebookDef:
         if language not in ["python", "scala", "sql", "java", "r"]:
             return command
 
-        template = "{prefix}| Course includes prohibited use of {what}:\n{padding}| {line}"
-        self.test_source_for(command, i, "/mnt/training", template=template)
-        self.test_source_for(command, i, "/databricks-datasets", template=template)
+        template = "{prefix}| Course includes prohibited use of {what}:\n| {line}"
+        self.test_source_for(command, i, "\"/mnt/training\"", template=template)
+        self.test_source_for(command, i, "\"/databricks-datasets\"", template=template)
 
-        template = "{prefix}| Course includes prohibited use of {what}:\n{padding}| {line}"
-        self.test_source_for(command, i, "dbfs:/", template=template)
-        self.test_source_for(command, i, "/dbfs/", template=template)
+        template = "{prefix}| Course includes prohibited use of {what}; consider DA.paths.working_path and/or DA.paths.datasets_path with ML support enabled:\n| {line}"
+        self.test_source_for(command, i, "\"dbfs:/\"", template=template)
+        self.test_source_for(command, i, "\"/dbfs/\"", template=template)
 
         return command
 
