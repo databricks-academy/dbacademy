@@ -1,3 +1,4 @@
+from typing import List, Dict
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import ApiContainer
 
@@ -17,7 +18,7 @@ class ScimGroupsClient(ApiContainer):
 
     def get_by_id(self, id_value):
         url = f"{self.base_uri}/{id_value}"
-        return self.client.api("GET", url)
+        return self.client.api("GET", url, _expected=[200, 404])
 
     def get_by_name(self, name):
         for group in self.list():
@@ -28,11 +29,12 @@ class ScimGroupsClient(ApiContainer):
 
     def delete_by_id(self, id_value):
         url = f"{self.base_uri}/{id_value}"
-        return self.client.api("DELETE", url, _expected=204)
+        self.client.api("DELETE", url, _expected=204)
+        return None
 
     def delete_by_name(self, name):
         for group in self.list():
-            if name == name.get("name"):
+            if name == group.get("displayName"):
                 return self.delete_by_id(group.get("id"))
 
         return None
@@ -55,18 +57,31 @@ class ScimGroupsClient(ApiContainer):
                }
         self.client.api("PATCH", f"{self.base_uri}/{group_id}", data)
 
-    # def create(self, name):
-    #     payload = {
-    #         "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
-    #         "name": name,
-    #         "groups": [],
-    #         "entitlements": []
-    #     }
-    #     url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Groups"
-    #     return self.client.execute_post_json(url, payload, expected=[200, 201])
+    def create(self, name: str, *, members: List[str] = None, entitlements: List[str] = None):
+
+        members = members or list()
+        members_list: List[Dict[str, str]] = list()
+
+        entitlements = entitlements or list()
+        entitlements_list: List[Dict[str, str]] = list()
+
+        params = {
+            "schemas": ["urn:ietf:params:scim:schemas:core:2.0:Group"],
+            "displayName": name,
+            "members": members_list,
+            "entitlements": entitlements_list
+        }
+
+        for member in members:
+            members_list.append({"value": member})
+
+        for entitlement in entitlements:
+            entitlements_list.append({"value": entitlement})
+
+        return self.client.api("POST", self.base_uri, params)
 
     def add_entitlement(self, group_id, entitlement):
-        payload = {
+        params = {
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
             "Operations": [
                 {
@@ -81,10 +96,10 @@ class ScimGroupsClient(ApiContainer):
             ]
         }
         url = f"{self.base_uri}/{group_id}"
-        return self.client.api("PATCH", url, payload)
+        return self.client.api("PATCH", url, params)
 
     def remove_entitlement(self, group_id, entitlement):
-        payload = {
+        params = {
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
             "Operations": [
                 {
@@ -99,4 +114,4 @@ class ScimGroupsClient(ApiContainer):
             ]
         }
         url = f"{self.base_uri}/{group_id}"
-        return self.client.api("PATCH", url, payload)
+        return self.client.api("PATCH", url, params)
