@@ -1,4 +1,6 @@
 import unittest
+
+from dbacademy.common import Cloud
 from dbacademy.dbrest.clusters import ClusterConfig
 
 unit_test_service_principle = "d8835420-9797-45f5-897b-6d81d7f80023"
@@ -33,6 +35,7 @@ class TestClusters(unittest.TestCase):
     def test_cluster_lifecycles(self):
 
         cluster_id_1 = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Life Cycle #1",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -40,6 +43,7 @@ class TestClusters(unittest.TestCase):
             autotermination_minutes=10))
 
         cluster_id_2 = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Life Cycle #2",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -47,6 +51,7 @@ class TestClusters(unittest.TestCase):
             autotermination_minutes=10))
 
         cluster_id_3 = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Life Cycle #2",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -69,6 +74,7 @@ class TestClusters(unittest.TestCase):
 
     def test_default_cluster_for_single_user(self):
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Default Cluster",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -142,6 +148,7 @@ class TestClusters(unittest.TestCase):
 
     def test_default_cluster(self):
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Default Cluster",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -212,6 +219,7 @@ class TestClusters(unittest.TestCase):
 
     def test_auto_terminate(self):
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Auto Terminate 10",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -222,6 +230,7 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id)
 
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Auto Terminate 10",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -233,6 +242,7 @@ class TestClusters(unittest.TestCase):
 
     def test_create_multi_node(self):
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Single-Node",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -244,6 +254,7 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id)
 
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Multi-Node",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -256,6 +267,7 @@ class TestClusters(unittest.TestCase):
 
     def test_create_single_user(self):
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Single User A",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -269,6 +281,7 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id)
 
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Single User B",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -307,6 +320,7 @@ class TestClusters(unittest.TestCase):
 
     def test_create_driver_node_type(self):
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Driver Node Type A",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -319,6 +333,7 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id)
 
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Driver Node Type B",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -332,6 +347,7 @@ class TestClusters(unittest.TestCase):
 
     def test_create_with_spark_conf(self):
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="AWS Attributes",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -347,7 +363,8 @@ class TestClusters(unittest.TestCase):
         from dbacademy.dbrest.clusters import ClusterConfig
 
         try:
-            ClusterConfig(cluster_name="AWS Attributes SPOT",
+            ClusterConfig(cloud=Cloud.AWS,
+                          cluster_name="AWS Attributes SPOT",
                           spark_version="11.3.x-scala2.12",
                           node_type_id="i3.xlarge",
                           num_workers=0,
@@ -362,22 +379,23 @@ class TestClusters(unittest.TestCase):
         from dbacademy.dbrest.clusters import ClusterConfig, Availability
 
         try:
-            ClusterConfig(
-                cluster_name="AWS Attributes Conflicting",
-                spark_version="11.3.x-scala2.12",
-                node_type_id="i3.xlarge",
-                num_workers=0,
-                autotermination_minutes=10,
-                on_demand="whatever",
-                availability=Availability.SPOT,
-                instance_pool_id="0123456789")
+            ClusterConfig(cloud=Cloud.AWS,
+                          cluster_name="AWS Attributes Conflicting",
+                          spark_version="11.3.x-scala2.12",
+                          node_type_id="i3.xlarge",
+                          num_workers=0,
+                          autotermination_minutes=10,
+                          on_demand="whatever",
+                          availability=Availability.SPOT,
+                          instance_pool_id="0123456789")
         except AssertionError as e:
             self.assertEquals(f"The parameter \"availability\" cannot be specified when \"instance_pool_id\" is specified.", str(e))
 
     def test_create_with_availability_default(self):
         from dbacademy.dbrest.clusters import ClusterConfig, Availability
 
-        config = ClusterConfig(cluster_name="AWS Attributes Default",
+        config = ClusterConfig(cloud=Cloud.AWS,
+                               cluster_name="AWS Attributes Default",
                                spark_version="11.3.x-scala2.12",
                                node_type_id="i3.xlarge",
                                num_workers=0,
@@ -386,21 +404,126 @@ class TestClusters(unittest.TestCase):
         cluster = self.client.clusters.get_by_id(cluster_id)
         self.assertEquals(Availability.ON_DEMAND.value, cluster.get("aws_attributes").get("availability"))
 
+    def test_create_with_availability_ON_DEMAND(self):
+        from dbacademy.dbrest.clusters import ClusterConfig, Availability
+
+        config = ClusterConfig(cloud=Cloud.AWS,
+                               cluster_name="AWS Attributes SPOT",
+                               spark_version="11.3.x-scala2.12",
+                               node_type_id="i3.xlarge",
+                               num_workers=0,
+                               autotermination_minutes=10,
+                               availability=Availability.ON_DEMAND)
+
+        self.assertEquals(Availability.ON_DEMAND.value, config.params.get("aws_attributes").get("availability"))
+        self.assertIsNone(config.params.get("azure_attributes"))
+        self.assertIsNone(config.params.get("gcp_attributes"))
+
+        config = ClusterConfig(cloud=Cloud.MSA,
+                               cluster_name="MSA Attributes SPOT",
+                               spark_version="11.3.x-scala2.12",
+                               node_type_id="i3.xlarge",
+                               num_workers=0,
+                               autotermination_minutes=10,
+                               availability=Availability.ON_DEMAND)
+
+        self.assertIsNone(config.params.get("aws_attributes"))
+        self.assertEquals("ON_DEMAND_AZURE", config.params.get("azure_attributes").get("availability"))
+        self.assertIsNone(config.params.get("gcp_attributes"))
+
+        config = ClusterConfig(cloud=Cloud.GCP,
+                               cluster_name="GCP Attributes SPOT",
+                               spark_version="11.3.x-scala2.12",
+                               node_type_id="i3.xlarge",
+                               num_workers=0,
+                               autotermination_minutes=10,
+                               availability=Availability.ON_DEMAND)
+
+        self.assertIsNone(config.params.get("aws_attributes"))
+        self.assertIsNone(config.params.get("azure_attributes"))
+        self.assertEquals("ON_DEMAND_GCP", config.params.get("gcp_attributes").get("availability"))
+
     def test_create_with_availability_SPOT(self):
         from dbacademy.dbrest.clusters import ClusterConfig, Availability
 
-        config = ClusterConfig(cluster_name="AWS Attributes SPOT",
+        config = ClusterConfig(cloud=Cloud.AWS,
+                               cluster_name="AWS Attributes SPOT",
                                spark_version="11.3.x-scala2.12",
                                node_type_id="i3.xlarge",
                                num_workers=0,
                                autotermination_minutes=10,
                                availability=Availability.SPOT)
-        cluster_id = self.client.clusters.create_from_config(config)
-        cluster = self.client.clusters.get_by_id(cluster_id)
-        self.assertEquals(Availability.SPOT.value, cluster.get("aws_attributes").get("availability"))
+
+        self.assertEquals(Availability.SPOT.value, config.params.get("aws_attributes").get("availability"))
+        self.assertIsNone(config.params.get("azure_attributes"))
+        self.assertIsNone(config.params.get("gcp_attributes"))
+
+        config = ClusterConfig(cloud=Cloud.MSA,
+                               cluster_name="AWS Attributes SPOT",
+                               spark_version="11.3.x-scala2.12",
+                               node_type_id="i3.xlarge",
+                               num_workers=0,
+                               autotermination_minutes=10,
+                               availability=Availability.SPOT)
+
+        self.assertIsNone(config.params.get("aws_attributes"))
+        self.assertEquals("SPOT_WITH_FALLBACK_AZURE", config.params.get("azure_attributes").get("availability"))
+        self.assertIsNone(config.params.get("gcp_attributes"))
+
+        config = ClusterConfig(cloud=Cloud.GCP,
+                               cluster_name="AWS Attributes SPOT",
+                               spark_version="11.3.x-scala2.12",
+                               node_type_id="i3.xlarge",
+                               num_workers=0,
+                               autotermination_minutes=10,
+                               availability=Availability.SPOT)
+
+        self.assertIsNone(config.params.get("aws_attributes"))
+        self.assertIsNone(config.params.get("azure_attributes"))
+        self.assertEquals("PREEMPTIBLE_WITH_FALLBACK_GCP", config.params.get("gcp_attributes").get("availability"))
+
+    def test_create_with_availability_SPOT_WITH_FALLBACK(self):
+        from dbacademy.dbrest.clusters import ClusterConfig, Availability
+
+        config = ClusterConfig(cloud=Cloud.AWS,
+                               cluster_name="AWS Attributes SPOT",
+                               spark_version="11.3.x-scala2.12",
+                               node_type_id="i3.xlarge",
+                               num_workers=0,
+                               autotermination_minutes=10,
+                               availability=Availability.SPOT_WITH_FALLBACK)
+
+        self.assertEquals(Availability.SPOT_WITH_FALLBACK.value, config.params.get("aws_attributes").get("availability"))
+        self.assertIsNone(config.params.get("azure_attributes"))
+        self.assertIsNone(config.params.get("gcp_attributes"))
+
+        config = ClusterConfig(cloud=Cloud.MSA,
+                               cluster_name="AWS Attributes SPOT",
+                               spark_version="11.3.x-scala2.12",
+                               node_type_id="i3.xlarge",
+                               num_workers=0,
+                               autotermination_minutes=10,
+                               availability=Availability.SPOT_WITH_FALLBACK)
+
+        self.assertIsNone(config.params.get("aws_attributes"))
+        self.assertEquals("SPOT_WITH_FALLBACK_AZURE", config.params.get("azure_attributes").get("availability"))
+        self.assertIsNone(config.params.get("gcp_attributes"))
+
+        config = ClusterConfig(cloud=Cloud.GCP,
+                               cluster_name="AWS Attributes SPOT",
+                               spark_version="11.3.x-scala2.12",
+                               node_type_id="i3.xlarge",
+                               num_workers=0,
+                               autotermination_minutes=10,
+                               availability=Availability.SPOT_WITH_FALLBACK)
+
+        self.assertIsNone(config.params.get("aws_attributes"))
+        self.assertIsNone(config.params.get("azure_attributes"))
+        self.assertEquals("PREEMPTIBLE_WITH_FALLBACK_GCP", config.params.get("gcp_attributes").get("availability"))
 
     def test_create_with_extra_params(self):
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Extra Params",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -436,6 +559,7 @@ class TestClusters(unittest.TestCase):
 
         cluster_name = "Destroy By Name"
         self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name=cluster_name,
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -462,6 +586,7 @@ class TestClusters(unittest.TestCase):
     def test_destroy_by_name(self):
         cluster_name = "Destroy By Name"
         self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name=cluster_name,
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -476,6 +601,7 @@ class TestClusters(unittest.TestCase):
         # Create and then get by name
         cluster_name = "Cluster By Name"
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name=cluster_name,
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -495,6 +621,7 @@ class TestClusters(unittest.TestCase):
 
     def test_list_deprecated(self):
         self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Deprecated List",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
@@ -508,6 +635,7 @@ class TestClusters(unittest.TestCase):
 
     def test_get_deprecated(self):
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+            cloud=Cloud.AWS,
             cluster_name="Deprecated Get",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",

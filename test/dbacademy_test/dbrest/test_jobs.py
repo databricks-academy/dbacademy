@@ -34,6 +34,7 @@ class TestJobsClient(unittest.TestCase):
         from dbacademy.dbrest.jobs import JobConfig
         from dbacademy.dbrest.clusters import ClusterConfig
         from dbacademy.dbhelper import WorkspaceHelper
+        from dbacademy.common import Cloud
 
         config = JobConfig(job_name="Job from Git",
                            timeout_seconds=333,
@@ -49,7 +50,8 @@ class TestJobsClient(unittest.TestCase):
             WorkspaceHelper.PARAM_NODE_TYPE_ID: "i3.xlarge",
             WorkspaceHelper.PARAM_SPARK_VERSION: "11.3.x-scala2.12"
         })
-        task_config.cluster.new(ClusterConfig(cluster_name=None,
+        task_config.cluster.new(ClusterConfig(cloud=Cloud.AWS,
+                                              cluster_name=None,
                                               spark_version="11.3.x-scala2.12",
                                               node_type_id="i3.xlarge",
                                               single_user_name=unit_test_service_principle,

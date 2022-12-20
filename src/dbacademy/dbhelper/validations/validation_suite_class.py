@@ -1,14 +1,16 @@
 from typing import List, Callable, Iterable, Any, Sized
-import pyspark
-
-from .validation_class import Validation
-from .validation_result_class import ValidationResult
 
 
 class ValidationSuite(object):
     from dbacademy.dbhelper.validations import lazy_property
+    import pyspark
+
+    from dbacademy.dbhelper.validations.validation_class import Validation
+    from dbacademy.dbhelper.validations.validation_result_class import ValidationResult
 
     def __init__(self, name) -> None:
+        from dbacademy.dbhelper.validations.validation_class import Validation
+
         self.name = name
         self.ids = set()
         self.test_cases: List[Validation] = list()
@@ -18,7 +20,8 @@ class ValidationSuite(object):
         return self.run_tests()
 
     def run_tests(self) -> List[ValidationResult]:
-        from .validation_results_aggregator_class import ValidationResultsAggregator
+        from dbacademy.dbhelper.validations.validation_results_aggregator_class import ValidationResultsAggregator
+        from dbacademy.dbhelper.validations.validation_result_class import ValidationResult
 
         failed_tests = set()
         test_results = list()
@@ -108,6 +111,7 @@ class ValidationSuite(object):
         return self
 
     def test(self, test_function: Callable[[], Any], actual_value: Callable[[], Any], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
                                         test_case_id=test_case_id,
@@ -120,6 +124,7 @@ class ValidationSuite(object):
                                         test_function=test_function))
 
     def test_equals(self, actual_value: Callable[[], Any], expected_value: Any, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
                                         test_case_id=test_case_id,
@@ -132,6 +137,7 @@ class ValidationSuite(object):
                                         test_function=lambda: actual_value() == expected_value))
 
     def test_true(self, actual_value: Callable[[], bool], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
                                         test_case_id=test_case_id,
@@ -144,6 +150,7 @@ class ValidationSuite(object):
                                         test_function=lambda: actual_value() is True))
 
     def test_false(self, actual_value: Callable[[], bool], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
                                         test_case_id=test_case_id,
@@ -156,6 +163,7 @@ class ValidationSuite(object):
                                         test_function=lambda: actual_value() is False))
 
     def test_is_none(self, actual_value: Callable[[], Any], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
                                         test_case_id=test_case_id,
@@ -168,6 +176,7 @@ class ValidationSuite(object):
                                         test_function=lambda: actual_value() is None))
 
     def test_not_none(self, actual_value: Callable[[], Any], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
                                         test_case_id=test_case_id,
@@ -180,6 +189,7 @@ class ValidationSuite(object):
                                         test_function=lambda: actual_value() is not None))
 
     def test_length(self, actual_value: Callable[[], Sized], expected_length: int, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
                                         test_case_id=test_case_id,
@@ -199,6 +209,7 @@ class ValidationSuite(object):
                   description=f"""<div>Execute prerequisites.</div><div style='max-width: 1024px; overflow-x:auto'>{e}</div>""")
 
     def fail(self, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
                                         test_case_id=test_case_id,
@@ -211,6 +222,7 @@ class ValidationSuite(object):
                                         test_function=lambda: False))
 
     def test_floats(self, actual_value: Callable[[], float], expected_value: Any, description: str, *, test_case_id: str = None, tolerance=0.01, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
                                         test_case_id=test_case_id,
@@ -223,6 +235,7 @@ class ValidationSuite(object):
                                         test_function=lambda: self.compare_floats(actual_value(), expected_value, tolerance)))
 
     def test_rows(self, actual_value: Callable[[], pyspark.sql.Row], expected_value: pyspark.sql.Row, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
                                         test_case_id=test_case_id,
@@ -235,6 +248,7 @@ class ValidationSuite(object):
                                         test_function=lambda: self.compare_rows(actual_value(), expected_value)))
 
     def test_data_frames(self, actual_value: Callable[[], pyspark.sql.DataFrame], expected_value: pyspark.sql.DataFrame, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
                                         test_case_id=test_case_id,
@@ -247,6 +261,7 @@ class ValidationSuite(object):
                                         test_function=lambda: self.compare_data_frames(actual_value(), expected_value)))
 
     def test_contains(self, actual_value: Callable[[], Any], expected_values: Iterable[Any], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
                                         test_case_id=test_case_id,
@@ -259,6 +274,7 @@ class ValidationSuite(object):
                                         test_function=lambda: actual_value() in expected_values))
 
     def test_sequence(self, actual_value: Callable[[], list], expected_value: list, test_column_order: bool, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
                                         test_case_id=test_case_id,
@@ -277,6 +293,8 @@ class ValidationSuite(object):
                           expected_nullable: str = None,
                           *,
                           description: str = None, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+
+        from dbacademy.dbhelper.validations.validation_class import Validation
 
         def actual_value() -> str:
             schema = struct_type()

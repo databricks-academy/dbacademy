@@ -128,6 +128,7 @@ class BuildConfig:
                  publishing_info: dict = None):
 
         import uuid, time
+        from dbacademy.common import Cloud
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.dbhelper.course_config_class import CourseConfig
 
@@ -157,7 +158,7 @@ class BuildConfig:
         self.suite_id = str(time.time()) + "-" + str(uuid.uuid1())
 
         # The name of the cloud on which these tests were run
-        self.cloud = dbgems.get_cloud() if cloud is None else cloud
+        self.cloud = Cloud.current_cloud().value if cloud is None else cloud
 
         # Course Name
         self.name = name
