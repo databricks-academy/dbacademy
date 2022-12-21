@@ -91,11 +91,15 @@ class WorkspaceCleaner:
             print(f"| deleting datasets \"{self.__da.paths.datasets}\".")
             dbgems.dbutils.fs.rm(self.__da.paths.datasets, True)
 
+    @staticmethod
+    def __list_catalogs():
+        return [c.catalog for c in dbgems.spark.sql(f"SHOW CATALOGS").collect()]
+
     def _reset_databases(self) -> None:
         from pyspark.sql.utils import AnalysisException
 
         # Drop all user-specific catalogs
-        catalog_names = [c.catalog for c in dbgems.spark.sql(f"SHOW CATALOGS").collect()]
+        catalog_names = self.__list_catalogs()
         for catalog_name in catalog_names:
             if catalog_name.startswith(self.__da.catalog_name_prefix):
                 print(f"Dropping the catalog \"{catalog_name}\"")
@@ -105,7 +109,7 @@ class WorkspaceCleaner:
                     pass  # Ignore this concurrency error
 
         # Refresh the list of catalogs
-        catalog_names = [c.catalog for c in dbgems.spark.sql(f"SHOW CATALOGS").collect()]
+        catalog_names = self.__list_catalogs()
         for catalog_name in catalog_names:
             # There are potentially two "default" catalogs from which we need to remove user-specific schemas
             if catalog_name in [DBAcademyHelper.CATALOG_SPARK_DEFAULT, DBAcademyHelper.CATALOG_UC_DEFAULT]:

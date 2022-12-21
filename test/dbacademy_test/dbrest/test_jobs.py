@@ -32,7 +32,7 @@ class TestJobsClient(unittest.TestCase):
 
     def test_create_git_job(self):
         from dbacademy.dbrest.jobs import JobConfig
-        from dbacademy.dbrest.clusters import ClusterConfig
+        from dbacademy.dbrest.clusters import JobClusterConfig
         from dbacademy.dbhelper import WorkspaceHelper
         from dbacademy.common import Cloud
 
@@ -50,13 +50,11 @@ class TestJobsClient(unittest.TestCase):
             WorkspaceHelper.PARAM_NODE_TYPE_ID: "i3.xlarge",
             WorkspaceHelper.PARAM_SPARK_VERSION: "11.3.x-scala2.12"
         })
-        task_config.cluster.new(ClusterConfig(cloud=Cloud.AWS,
-                                              cluster_name=None,
-                                              spark_version="11.3.x-scala2.12",
-                                              node_type_id="i3.xlarge",
-                                              single_user_name=unit_test_service_principle,
-                                              num_workers=0,
-                                              autotermination_minutes=None))
+        task_config.cluster.new(JobClusterConfig(cloud=Cloud.AWS,
+                                                 spark_version="11.3.x-scala2.12",
+                                                 node_type_id="i3.xlarge",
+                                                 num_workers=0,
+                                                 autotermination_minutes=None))
 
         job_id = self.client.jobs.create_from_config(config)
         job = self.client.jobs.get_by_id(job_id)
@@ -111,7 +109,6 @@ class TestJobsClient(unittest.TestCase):
                 "ResourceClass": "SingleNode"
             },
             "enable_elastic_disk": False,
-            "single_user_name": "d8835420-9797-45f5-897b-6d81d7f80023",
             "data_security_mode": "SINGLE_USER",
             "num_workers": 0
         }
