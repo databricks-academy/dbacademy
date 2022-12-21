@@ -10,6 +10,8 @@ from multiprocessing.pool import ThreadPool
 from dbacademy.dougrest import DatabricksApi
 
 
+# TODO remove unused parameter
+# noinspection PyUnusedLocal
 def curl_login(self):
     from dbacademy.dbgems import dbutils
     if dbutils:
@@ -29,12 +31,14 @@ class MyHTMLParser(HTMLParser):
             self.method = attrs["method"]
             self.action = attrs["action"]
         if tag == "input" and "name" in attrs:
-            self.params.append((attrs["name"],attrs["value"]))
+            self.params.append((attrs["name"], attrs["value"]))
 
 
 web = requests.Session()
 
 web.headers['User-Agent'] = 'Mozilla/5.0'
+# TODO Doug, I don't know how to address this one - or at least I dont' want to invest the time :-p
+# noinspection PyTypeChecker
 cookies = re.search("'Cookie: ([^']*)'", curl_login)[1].strip().split("; ")
 cookies = dict(c.split("=", maxsplit=1) for c in cookies)
 for key, value in cookies.items():
@@ -56,6 +60,8 @@ response = web.get(f"{cloudlabs_login}/oauth2/v2.0/authorize", params={
   'response_mode': 'fragment'
 })
 
+# TODO remove redundancy
+# noinspection RegExpRedundantEscape
 settings_json = re.search(r'var SETTINGS = ({.*"retryOn":\["error","timeout"\]}}).*', response.text)[1]
 settings_json = re.sub(r"{allowedTags.*indexOf\('IMPORT'\) >= 0\)}}", '""', settings_json)
 settings = json.loads(settings_json)
@@ -70,9 +76,9 @@ parser.feed(response.text)
 response = web.request(parser.method, url=parser.action, params=parser.params, allow_redirects=True)
 location = response.history[-1].headers["Location"]
 token = urllib.parse.parse_qs(urllib.parse.urlparse(location).fragment)["id_token"][0]
-web.headers["Authorization"]="Bearer "+ token
-web.headers['roleid']='43375134326F4F7130564F3748766963514E48574E413D3D'
-web.headers['tenantid']='3279416D4E696563426D7048637545563564676733413D3D'
+web.headers["Authorization"] = "Bearer " + token
+web.headers['roleid'] = '43375134326F4F7130564F3748766963514E48574E413D3D'
+web.headers['tenantid'] = '3279416D4E696563426D7048637545563564676733413D3D'
 
 data = json.loads("""{"State":"1","InstructorId":null,"StartIndex":1000,"PageCount":1}""")
 labs = web.post("https://api.cloudlabs.ai/api/OnDemandLab/GetOnDemandLabs", json=data).json()
@@ -84,11 +90,11 @@ summit_all = summit_aws+summit_msa+summit_gcp
 pattern = re.compile("^([^-]*)-([^|]*[^ |])( *|.*)$")
 labs = {}
 for course in summit_all:
-    match=pattern.match(course["Title"])
+    match = pattern.match(course["Title"])
     course["Cloud"] = match[1]
     course["Course Title"] = match[2]
     course["Long Title"] = match[2] + match[3]
-    labs.setdefault(course["Long Title"],{})[course["Cloud"]] = course
+    labs.setdefault(course["Long Title"], {})[course["Cloud"]] = course
 lab_titles = labs.keys()
 
 all_labs = [lab for group in labs.values() for lab in group.values()]
@@ -102,12 +108,12 @@ def lookup_workspaces(lab):
         return lab
     import csv
     from io import StringIO
-    rows=[line for line in csv.reader(StringIO(put_response.text))]
+    rows = [line for line in csv.reader(StringIO(put_response.text))]
     for i, row in enumerate(rows):
         for j, col in enumerate(row):
-            row[j]=col.strip()
-    header=rows[0]
-    workspaces=[]
+            row[j] = col.strip()
+    header = rows[0]
+    workspaces = []
     for row in rows[1:]:
         assert len(row) == len(header)
         row = dict(zip(header, row))

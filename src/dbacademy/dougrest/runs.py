@@ -1,4 +1,4 @@
-from typing import Union, Optional, Literal, List
+from typing import Union, Optional, Literal
 
 from dbacademy.rest.common import DatabricksApiException, ApiContainer
 
@@ -19,10 +19,14 @@ class Runs(ApiContainer):
                 f"DatabricksApi.jobs.runs._id(run): run must be run_id:int or run:dict.  Found: {run!r}.")
         return run
 
+    # TODO Remove unused parameter
+    # noinspection PyUnusedLocal
     def get(self, run: Union[int, dict], *, if_not_exists: str = "error") -> dict:
         run = self._id(run)
         return self.databricks.api("GET", "2.1/jobs/runs/get", _data={"run_id": run})
 
+    # TODO Remove unused parameter
+    # noinspection PyUnusedLocal
     def get_output(self, run: Union[int, dict], *, if_not_exists: str = "error") -> dict:
         # Detect if it's a multi-task job with only 1 task.
         if isinstance(run, dict) and len(run.get("tasks", ())) == 1:

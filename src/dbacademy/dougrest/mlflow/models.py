@@ -18,7 +18,9 @@ class RegisteredModels(ApiContainer):
             if not page_token:
                 return
 
-    def create(self, name, description=None, tags={}):
+    def create(self, name, description=None, tags=None):
+        tags = tags or dict()
+
         return self.databricks.api("POST", "2.0/mlflow/registered-models/create", {
             "name": name,
             "description": description,
@@ -52,6 +54,8 @@ class RegisteredModels(ApiContainer):
             "name": name,
         }).get("registered_model")
 
+    # TODO Rename the parameter filter
+    # noinspection PyShadowingBuiltins
     def search(self, filter, order_by, *, models_per_page=None):
         page_token = None
         while True:

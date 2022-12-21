@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Any
 
 from dbacademy.dbrest.cluster_policies import ClustersPolicyClient
 from dbacademy.rest.common import ApiContainer, IfExists, DatabricksApiException
@@ -9,7 +9,9 @@ class Clusters(ApiContainer):
         self.databricks = databricks
         self.policies = ClustersPolicyClient(databricks)
 
-    def get(self, id):
+    # TODO Rename parameter to "cluster_id"
+    # noinspection PyShadowingBuiltins
+    def get(self, id: str) -> Dict[str, Any]:
         return self.databricks.api("GET", "2.0/clusters/get", _data={"cluster_id": id})
 
     def list(self):
@@ -22,7 +24,7 @@ class Clusters(ApiContainer):
 
     def create(self, cluster_name, node_type_id=None, driver_node_type_id=None,
                timeout_minutes=120, num_workers=0, num_cores="*", instance_pool_id=None, spark_version=None,
-               start=True, if_exists: IfExists ="create", **cluster_spec):
+               start=True, if_exists: IfExists = "create", **cluster_spec):
         data = {
             "cluster_name": cluster_name,
             "spark_version": spark_version or self.databricks.default_spark_version,
@@ -61,14 +63,19 @@ class Clusters(ApiContainer):
         if if_exists != "create":
             existing = self.list_by_name().get(cluster_name, {})
             existing_id = existing.get("cluster_id")
-            def quiet_start(id):
+
+            # TODO Doug: This parameter doesn't appear to be used.
+            # Renamed parameter from id to address shadowing warning
+            # noinspection PyUnusedLocal
+            def quiet_start(unused_id):
                 if not start:
                     return
                 try:
                     self.start(existing_id)
                 except DatabricksApiException as e:
-                    if not (e.http_code==400 and "unexpected state Running" in e.message):
+                    if not (e.http_code == 400 and "unexpected state Running" in e.message):
                         raise e
+
             if existing_id is None:
                 pass
             elif if_exists == "error":
@@ -133,24 +140,32 @@ class Clusters(ApiContainer):
             }
             data["custom_tags"] = {"ResourceClass": "SingleNode"}
         data.update(cluster_spec)
-        response = self.databricks.api("POST", "2.0/clusters/edit", data)
+        self.databricks.api("POST", "2.0/clusters/edit", data)
         return cluster_id
 
+    # TODO rename to parameter to cluster_id
+    # noinspection PyShadowingBuiltins
     def start(self, id):
         data = {"cluster_id": id}
         response = self.databricks.api("POST", "2.0/clusters/start", data)
         return response
 
+    # TODO rename to parameter to cluster_id
+    # noinspection PyShadowingBuiltins
     def restart(self, id):
         data = {"cluster_id": id}
         response = self.databricks.api("POST", "2.0/clusters/restart", data)
         return response
 
+    # TODO rename to parameter to cluster_id
+    # noinspection PyShadowingBuiltins
     def terminate(self, id):
         data = {"cluster_id": id}
         response = self.databricks.api("POST", "2.0/clusters/delete", data)
         return response
 
+    # TODO rename to parameter to cluster_id
+    # noinspection PyShadowingBuiltins
     def delete(self, id):
         data = {"cluster_id": id}
         response = self.databricks.api("POST", "2.0/clusters/permanent-delete", data)
@@ -166,8 +181,8 @@ class Clusters(ApiContainer):
             return self.create(name, machine_type, driver_machine_type, timeout_minutes,
                                num_workers, num_cores, instance_pool_id, cluster_spec)
         elif cluster["state"] == "TERMINATED":
-            id = cluster["cluster_id"]
-            self.edit(cluster_id=id,
+            cluster_id = cluster["cluster_id"]
+            self.edit(cluster_id=cluster_id,
                       cluster_name=name,
                       machine_type=machine_type,
                       driver_machine_type=driver_machine_type,
@@ -175,12 +190,16 @@ class Clusters(ApiContainer):
                       num_workers=num_workers,
                       num_cores=num_cores,
                       instance_pool_id=instance_pool_id)
-            self.start(id)
-            return id
+            self.start(cluster_id)
+            return cluster_id
         else:
             return cluster["cluster_id"]
 
-    def set_acl(self, cluster_id, user_permissions: Dict[str,str] = {}, group_permissions: Dict[str,str] ={}):
+    def set_acl(self, cluster_id, user_permissions: Dict[str, str] = None, group_permissions: Dict[str, str] = None):
+        user_permissions = user_permissions or dict()
+        group_permissions = group_permissions or dict()
+
+        # noinspection PyTypeChecker
         data = {
             "access_control_list": [
                                        {
@@ -196,7 +215,11 @@ class Clusters(ApiContainer):
         }
         return self.databricks.api("PUT", f"2.0/preview/permissions/clusters/{cluster_id}", data)
 
-    def add_to_acl(self, cluster_id, user_permissions: Dict[str,str] = {}, group_permissions: Dict[str,str] = {}):
+    def add_to_acl(self, cluster_id, user_permissions: Dict[str, str] = None, group_permissions: Dict[str, str] = None):
+        user_permissions = user_permissions or dict()
+        group_permissions = group_permissions or dict()
+
+        # noinspection PyTypeChecker
         data = {
             "access_control_list": [
                                        {

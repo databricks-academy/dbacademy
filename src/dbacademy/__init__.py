@@ -4,6 +4,7 @@ def validate_dependencies():
         assert validated_dependencies
     except NameError:
         try:
+            # noinspection PyUnusedLocal
             validated_dependencies = True
             from dbacademy import dbgems
             dbgems.validate_dependencies("dbacademy")

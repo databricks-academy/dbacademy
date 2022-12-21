@@ -75,6 +75,15 @@ class ApiClient(ApiContainer):
         from urllib3.util.retry import Retry
         from requests.adapters import HTTPAdapter
 
+        # Precluding python warning.
+        # TODO add type parameters
+        self.session = None
+        self.credentials = None
+        self.networks = None
+        self.storage = None
+        self.private_access = None
+        self.keys = None
+
         # if verbose: print("ApiClient.__init__, url: " + url)
         # if verbose: print("ApiClient.__init__, client: " + str(client))
 
@@ -110,6 +119,9 @@ class ApiClient(ApiContainer):
         self.verbose = verbose
 
         backoff_factor = self.connect_timeout
+        # noinspection PyUnresolvedReferences
+        # BACKOFF_MAX is not a real parameter.
+        # https://stackoverflow.com/questions/47675138/how-to-override-backoff-max-while-working-with-requests-retry
         retry = Retry(connect=Retry.BACKOFF_MAX / backoff_factor, backoff_factor=backoff_factor)
 
         self.session = requests.Session()
@@ -173,7 +185,7 @@ class ApiClient(ApiContainer):
         if data:
             _data = _data.copy()
             _data.update(data)
-        _base_url = urljoin(self.url, _base_url)
+        _base_url: str = urljoin(self.url, _base_url)
         self._verify_hostname(_base_url)
         self._throttle_calls()
         if _endpoint_path.startswith(_base_url):
@@ -210,11 +222,12 @@ class ApiClient(ApiContainer):
                 }
 
     @staticmethod
-    def _verify_hostname(url):
+    def _verify_hostname(url: str):
         """Verify the host for the url-endpoint exists.  Throws socket.gaierror if it does not."""
         from urllib.parse import urlparse
         from socket import gethostbyname, gaierror
         from requests.exceptions import ConnectionError
+
         url = urlparse(url)
         try:
             gethostbyname(url.hostname)
