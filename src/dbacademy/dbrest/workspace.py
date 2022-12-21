@@ -63,7 +63,8 @@ class WorkspaceClient(ApiContainer):
         return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/import", payload)
 
     def import_dbc_files(self, target_path, source_url=None, overwrite=True, local_file_path=None):
-        import os, base64, urllib
+        import os, base64
+        from urllib import request
 
         if local_file_path is None and source_url is None:
             raise AssertionError(f"Either the local_file_path ({local_file_path}) or source_url ({source_url}) parameter must be specified")
@@ -76,8 +77,7 @@ class WorkspaceClient(ApiContainer):
             if os.path.exists(local_file_path):
                 os.remove(local_file_path)
 
-            # noinspection PyUnresolvedReferences
-            urllib.request.urlretrieve(source_url, local_file_path)
+            request.urlretrieve(source_url, local_file_path)
 
         with open(local_file_path, mode='rb') as file:
             content = file.read()

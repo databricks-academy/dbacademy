@@ -273,7 +273,6 @@ def get_workspace_url():
         return f"https://{get_notebooks_api_token()}/?o={get_workspace_id()}"
 
 
-# noinspection PyUnresolvedReferences
 def proof_of_life(expected_get_username,
                   expected_get_tag,
                   expected_get_browser_host_name,
@@ -287,6 +286,7 @@ def proof_of_life(expected_get_username,
     simply invokes all the functions as proof of life
     """
 
+    # noinspection PyUnresolvedReferences
     import dbruntime
     from py4j.java_collections import JavaMap
 
