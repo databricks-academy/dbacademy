@@ -90,7 +90,7 @@ def validate_element_type(actual_values: Iterable[Any], name, expected_type):
         assert isinstance(actual_value, expected_type), msg
 
 
-def clean_string(value, replacement: str = "_"):
+def clean_string(value, replacement: str = "_") -> str:
     import re
     replacement_2x = replacement+replacement
     value = re.sub(r"[^a-zA-Z\d]", replacement, str(value))

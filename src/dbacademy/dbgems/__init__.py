@@ -387,7 +387,7 @@ def stable_hash(*args, length: int) -> str:
 
 
 @dbacademy.common.deprecated("Use dbacademy.common.clean_string() instead")
-def clean_string(value, replacement: str = "_"):
+def clean_string(value, replacement: str = "_") -> str:
     from dbacademy import common
     return common.clean_string(value, replacement)
 
