@@ -24,8 +24,9 @@ class Workspace(ApiContainer):
     def mkdirs(self, workspace_path):
         self.databricks.api("POST", "2.0/workspace/mkdirs", {"path": workspace_path})
 
-    def copy(self, source_path, target_path, *, target_connection=None, if_exists="overwrite", exclude=set(),
-             dry_run=False):
+    def copy(self, source_path, target_path, *, target_connection=None, if_exists="overwrite", exclude=None, dry_run=False):
+        exclude = exclude or set()
+
         source_connection = self.databricks
         if target_connection is None:
             target_connection = source_connection
@@ -42,12 +43,12 @@ class Workspace(ApiContainer):
         print("copy", source_path, target_path)
         # Try to copy the entire directory at once
         try:
-            bytes = source_connection.workspace.export(workspace_path=source_path, format="DBC").get("content",
-                                                                                                     None)
-            if bytes and not dry_run:
-                target_connection.workspace.import_from_data(workspace_path=target_path, content=bytes,
+            content = source_connection.workspace.export(workspace_path=source_path, format="DBC").get("content", None)
+            if content and not dry_run:
+                target_connection.workspace.import_from_data(workspace_path=target_path, content=content,
                                                              format="DBC", if_exists=if_exists)
             return
+
         except DatabricksApiException as e:
             cause = e
             if "exceeded the limit" in e.message:
@@ -80,6 +81,8 @@ class Workspace(ApiContainer):
                       if_exists=if_exists,
                       exclude=exclude)
 
+    # TODO Remove unused parameter
+    # noinspection PyUnusedLocal
     def compare(self, source_path, target_path, target_connection=None, compare_contents=False):
         """
         Recursively compare the filenames and types, but not contents of the files.
@@ -149,6 +152,8 @@ class Workspace(ApiContainer):
             "recursive": "true" if recursive else "false"
         })
 
+    # TODO Rename parameter "format"
+    # noinspection PyShadowingBuiltins
     @staticmethod
     def read_data_from_url(source_url, format="DBC"):
         import base64
@@ -162,10 +167,14 @@ class Workspace(ApiContainer):
             raise DatabricksApiException("Unknown format.")
         return content
 
+    # TODO Rename parameter "format"
+    # noinspection PyShadowingBuiltins
     def import_from_url(self, source_url, workspace_path, format="DBC", *, if_exists="error"):
         content = self.read_data_from_url(source_url)
         self.import_from_data(content, workspace_path, format, if_exists=if_exists)
 
+    # TODO Rename parameter "format"
+    # noinspection PyShadowingBuiltins
     def import_from_data(self, content, workspace_path, format="DBC", *, language=None, if_exists="error"):
         data = {
             "content": content,
@@ -190,6 +199,8 @@ class Workspace(ApiContainer):
                     print("Invalid if_exists: " + if_exists)
                     raise e
 
+    # TODO Rename parameter "format"
+    # noinspection PyShadowingBuiltins
     def export(self, workspace_path, format="DBC"):
         data = {
             "path": workspace_path,

@@ -17,6 +17,8 @@ class Repos(ApiContainer):
     def exists(self, workspace_path):
         return workspace_path in self.list_by_path()
 
+    # TODO Remove unused parameter
+    # noinspection PyUnusedLocal
     def create(self, url, path=None, provider="gitHub", *, if_exists="error"):
         data = {
             "url": url,
@@ -28,6 +30,8 @@ class Repos(ApiContainer):
         #            del data[k]
         self.databricks.api("POST", "2.0/repos", data)
 
+    # TODO Rename parameter "repo_id"
+    # noinspection PyShadowingBuiltins
     def delete(self, repo=None, id=None, workspace_path=None):
         if repo:
             id = repo["id"]

@@ -4,6 +4,7 @@ from dbacademy.dougrest import DatabricksApi
 from dbacademy.rest.common import DatabricksApiException
 
 
+# noinspection PyPep8Naming
 class Commands(object):
     def __init__(self, cluster_spec: Dict, courseware_spec: Dict, event: Dict):
         self.cluster_spec = cluster_spec
@@ -22,6 +23,7 @@ class Commands(object):
         users = w.users.list_usernames()
         results = []
         correct_file_count = -1
+
         for user in users:
             if only_students and "odl_user" not in user:
                 continue  # Skip instructors
@@ -84,11 +86,11 @@ class Commands(object):
     @staticmethod
     def endpointsCreateStarter(workspace):
         """Creates a starter SQL Endpoint."""
-        id = workspace.sql.endpoints.create(name="Class Warehouse", min_num_clusters=1, max_num_clusters=1,
-                                            photon=True, preview_channel=False, spot=True, size="XXSMALL",
-                                            timeout_minutes=45)
-        workspace.sql.endpoints.stop(id)
-        workspace.permissions.sql.endpoints.update_group(id, "users", "CAN_USE")
+        endpoint_id = workspace.sql.endpoints.create(name="Class Warehouse", min_num_clusters=1, max_num_clusters=1,
+                                                     photon=True, preview_channel=False, spot=True, size="XXSMALL",
+                                                     timeout_minutes=45)
+        workspace.sql.endpoints.stop(endpoint_id)
+        workspace.permissions.sql.endpoints.update_group(endpoint_id, "users", "CAN_USE")
         return True
 
     @staticmethod
@@ -222,14 +224,14 @@ class Commands(object):
         """Takes an ACL you read and turns it into an ACL you can write."""
         results = []
         for ac in acl:
-            for type, name in ac.items():
-                if type == "all_permissions":
+            for ac_type, name in ac.items():
+                if ac_type == "all_permissions":
                     continue
                 for perm in ac["all_permissions"]:
                     if perm.get("inherited"):
                         continue
                     level = perm["permission_level"]
-                    entry = {type: name, "permission_level": level}
+                    entry = {ac_type: name, "permission_level": level}
                     results.append(entry)
         return results
 
@@ -275,7 +277,11 @@ class Commands(object):
     @staticmethod
     def stopDLT(workspace):
         """Switches any continuous DLT pipelines to standard triggered pipelines"""
+
+        # TODO dateutil is a "provided" package in Notebooks.
+        # noinspection PyPackageRequirements
         import dateutil.parser as dp
+
         from time import time as now
         results = []
         page_token = ""
@@ -334,7 +340,7 @@ class Commands(object):
 
     @staticmethod
     def listAlarms(workspace):
-        """Search for any SQL Quey alarms that might restart Warehouses"""
+        """Search for any SQL Query alarms that might restart Warehouses"""
         # See: https://databricks.slack.com/archives/CTV173T6G/p1652820397463219
         import base64
         from dbacademy.dbgems import dbutils
@@ -452,12 +458,18 @@ class Commands(object):
         clusters = [c for c in clusters if
                     c["cluster_name"][0:4] not in ("dlt-", "job-") and c["cluster_name"] != "my_cluster"]
         pattern = re.compile(r"\D")
+
+        # TODO What's the purpose of this call if the return value is not used?
+        # noinspection PyUnusedLocal
         clusters_map = {pattern.subn("", c["cluster_name"])[0]: c["cluster_id"] for c in clusters}
+
         if not clusters:
             return [{"cluster_name": " ", "error": "No cluster in workspace"}]
 
         errors = []
         for c in clusters:
+            # TODO this instance of err is not used and is redefined at line 489
+            # noinspection PyUnusedLocal
             err = None
             if c.get("cluster_source") in ["PIPELINE", "JOB", "PIPELINE_MAINTENANCE"]:
                 continue
@@ -517,12 +529,15 @@ class Commands(object):
                 count += 1
         return count
 
+    # TODO Remove unused parameter "w"
+    # noinspection PyUnusedLocal
     @staticmethod
     def addInstructors(w, instructors):
-        def add_instructors(w):
+
+        def add_instructors(w2):
             for user in instructors:
-                w.users.create(user)
-                w.groups.add_member("admins", user_name=user)
+                w2.users.create(user)
+                w2.groups.add_member("admins", user_name=user)
 
         return add_instructors
 
@@ -536,7 +551,7 @@ class Commands(object):
         for u in w.users.list():
             entitlements = {e["value"] for e in u.get("entitlements", [])}
             groups = {g["display"] for g in u.get("groups", [])}
-            if "allow-cluster-create" in entitlements and not "admins" in groups:
+            if "allow-cluster-create" in entitlements and "admins" not in groups:
                 changed = True
                 w.users.set_cluster_create(u, cluster_create=False, pool_create=False)
         g = w.scim.groups.get(group_name="users")
@@ -553,6 +568,8 @@ class Commands(object):
             if ep["name"].startswith("da-"):
                 ws.sql.endpoints.delete(ep["id"])
 
+    # TODO local variables "cloud" are not used
+    # noinspection PyUnusedLocal
     @staticmethod
     def _cloud_specific_attributes(workspace):
         # Cloud specific values
@@ -751,7 +768,7 @@ class Commands(object):
                 "type": "fixed",
                 "value": "all-purpose"
             },
-           "autotermination_minutes": {
+            "autotermination_minutes": {
                 "type": "range",
                 "minValue": 1,
                 "maxValue": 180,
@@ -804,7 +821,7 @@ class Commands(object):
             acl = ws.permissions.clusters.get(cluster_id).get("access_control_list", [])
             owners = [perm["user_name"] for perm in acl if
                       "user_name" in perm and
-                      perm["all_permissions"][0]["inherited"] == False and
+                      perm["all_permissions"][0]["inherited"] is False and
                       perm["all_permissions"][0]["permission_level"] == "CAN_MANAGE" and
                       True
                       ]
@@ -829,7 +846,6 @@ class Commands(object):
                 ws.clusters.update(cluster)
             except Exception as ex:
                 return {"Cluster": cluster["cluster_name"], "Error": str(ex)}
-                raise ex
 
         from multiprocessing.pool import ThreadPool
         with ThreadPool(100) as pool:
@@ -837,6 +853,7 @@ class Commands(object):
         return results
 
 
+# noinspection PyPep8Naming
 def getWorkspace(workspaces, *, name=None, url=None):
     if name:
         return next(w for w in workspaces if w["workspace_name"] == name)
@@ -846,6 +863,8 @@ def getWorkspace(workspaces, *, name=None, url=None):
         raise Exception("getWorkspace: must provide workspace name or url")
 
 
+# TODO Remove unused locals
+# noinspection PyPep8Naming,PyUnusedLocal
 def scanWorkspaces(function, workspaces, *, url=None, name=None, ignoreConnectionErrors=False):
     from requests.exceptions import ConnectionError, HTTPError
     from collections.abc import Mapping, Iterable
@@ -857,6 +876,7 @@ def scanWorkspaces(function, workspaces, *, url=None, name=None, ignoreConnectio
     elif url:
         workspaces = (w for w in workspaces if url in w.url)
 
+    # noinspection PyPep8Naming
     def checkWorkspace(w):
         try:
             result = function(w)

@@ -15,7 +15,7 @@ class Jobs(ApiContainer):
                 job = job["job_id"]
             elif "name" in job:
                 job = job["name"]
-            elif "name" in job.get("settings",{}):
+            elif "name" in job.get("settings", {}):
                 job = job['settings']["name"]
             else:
                 raise ValueError(f"Job dict must have job_id or name: {job!r}")
@@ -69,7 +69,7 @@ class Jobs(ApiContainer):
             f"DatabricksApi.jobs.delete(job): job must be id:int, name:str, job:dict.  Found: {job!r}.")
 
     def list(self):
-        offset=0
+        offset = 0
         while True:
             response = self.databricks.api("GET", "2.1/jobs/list", limit=25, offset=offset)
             jobs = response.get('jobs', [])
@@ -128,6 +128,8 @@ class Jobs(ApiContainer):
             raise ValueError(
                 f"if_not_exists argument must be either 'ignore' or 'error'.  Found if_not_exists={if_not_exists!r}.")
 
+    # TODO Remove unused parameter
+    # noinspection PyUnusedLocal
     def create_single_task_job(self, name, *, notebook_path=None, timeout_seconds=None, max_concurrent_runs=1,
                                new_cluster=None, existing_cluster_id=None, if_exists="proceed", **args):
         task = {"task_key": name}
@@ -149,6 +151,8 @@ class Jobs(ApiContainer):
                                           new_cluster=new_cluster,
                                           if_exists=if_exists, **args)
 
+    # TODO Remove unused parameter
+    # noinspection PyUnusedLocal
     def create_multi_task_job(self, name, tasks, *, max_concurrent_runs=1, new_cluster=None, if_exists="proceed",
                               **args):
         spec = {
@@ -183,11 +187,13 @@ class Jobs(ApiContainer):
             ) -> Optional[dict]:
         job = self._id(job)
         spec = {"job_id": job}
-        vars = locals()
+        local_vars = locals()
+
         for param in ("idempotency_token", "notebook_params", "jar_params", "python_params", "spark_submit_params",
                       "python_named_params"):
-            if vars[param]:
-                spec[param] = vars[param]
+            if local_vars[param]:
+                spec[param] = local_vars[param]
+
         if if_not_exists == "error":
             return self.databricks.api("POST", "2.1/jobs/run-now", _data=spec)
         elif if_not_exists == "ignore":

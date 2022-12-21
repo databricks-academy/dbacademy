@@ -67,6 +67,10 @@ class Workspace(DatabricksApi):
 
 
 class Workspaces(AccountsCRUD):
+    # Cannot be imported due to circular dependency
+    # from dbacademy.dougrest.accounts import AccountsApi
+
+    # noinspection PyUnresolvedReferences
     def __init__(self, client: "AccountsApi"):
         super().__init__(client, "/workspaces", "workspace")
         self.client = client
@@ -160,4 +164,7 @@ class Workspaces(AccountsCRUD):
         for key, value in list(spec.items()):
             if value is None or value == "":
                 del spec[key]
+
+        # TODO fix error or remove TODO statement
+        # noinspection PyTypeChecker
         return self.create_by_example(spec, fetch=fetch, if_exists=if_exists)

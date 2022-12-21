@@ -5,6 +5,8 @@ class Endpoints(ApiContainer):
     def __init__(self, databricks):
         self.databricks = databricks
 
+    # TODO Rename parameter "endpoint_id"
+    # noinspection PyShadowingBuiltins
     def get_by_id(self, id):
         return self.databricks.api("GET", f"2.0/sql/endpoints/{id}")
 
@@ -38,13 +40,18 @@ class Endpoints(ApiContainer):
         return response["id"]
 
     def edit(self, endpoint):
-        id = endpoint["id"]
-        response = self.databricks.api("POST", f"2.0/sql/endpoints/{id}/edit", endpoint)
+        endpoint_id = endpoint["id"]
+        response = self.databricks.api("POST", f"2.0/sql/endpoints/{endpoint_id}/edit", endpoint)
         return response
 
+    # TODO Remove noinspection PyUnusedLocal once tested
+    # noinspection PyUnusedLocal
     def edit_by_name(self, name, size="XSMALL", min_num_clusters=1, max_num_clusters=1, timeout_minutes=120,
                      photon=False, spot=False, preview_channel=False):
         raise Exception("Untested, function.  Test me first.")
+
+        # TODO remove noinspection PyUnreachableCode once tested
+        # noinspection PyUnreachableCode
         data = {
             "name": name,
             "size": size,
@@ -60,14 +67,20 @@ class Endpoints(ApiContainer):
         response = self.databricks.api("POST", f"2.0/sql/endpoints/{id}/edit", data)
         return response["id"]
 
+    # TODO Rename parameter "endpoint_id"
+    # noinspection PyShadowingBuiltins
     def start(self, id):
         response = self.databricks.api("POST", f"2.0/sql/endpoints/{id}/start")
         return response
 
+    # TODO Rename parameter "endpoint_id"
+    # noinspection PyShadowingBuiltins
     def stop(self, id):
         response = self.databricks.api("POST", f"2.0/sql/endpoints/{id}/stop")
         return response
 
+    # TODO Rename parameter "endpoint_id"
+    # noinspection PyShadowingBuiltins
     def delete(self, id):
         response = self.databricks.api("DELETE", f"2.0/sql/endpoints/{id}")
         return response

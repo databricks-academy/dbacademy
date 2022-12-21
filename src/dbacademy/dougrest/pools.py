@@ -1,7 +1,7 @@
 from typing import Dict, List
 
 from dbacademy.dougrest import DatabricksApi
-from dbacademy.rest.common import HttpStatusCodes, Item, ItemId, ApiClient
+from dbacademy.rest.common import HttpStatusCodes, Item, ItemId
 from dbacademy.rest.crud import CRUD
 
 
@@ -51,7 +51,7 @@ class Pools(CRUD):
                       'node_type_id', 'idle_instance_autotermination_minutes']
         data = {key: pool[key] for key in valid_keys}
         data["min_idle_instances"] = min_idle
-        response = self.databricks.api("POST", "2.0/instance-pools/edit", **data)
+        self.databricks.api("POST", "2.0/instance-pools/edit", **data)
         return pool["instance_pool_id"]
 
     def edit_by_name(self, name, min_idle):
@@ -68,8 +68,13 @@ class Pools(CRUD):
             return self.create(name, machine_type, min_idle)
 
     def set_acl(self, instance_pool_id,
-                user_permissions: Dict[str, str] = {},
-                group_permissions: Dict[str, str] = {"users": "CAN_ATTACH_TO"}):
+                user_permissions: Dict[str, str] = None,
+                group_permissions: Dict[str, str] = None):
+
+        user_permissions = user_permissions or dict()
+        group_permissions = group_permissions or {"users": "CAN_ATTACH_TO"}
+
+        # noinspection PyTypeChecker
         data = {
             "access_control_list": [
                                        {
@@ -86,8 +91,13 @@ class Pools(CRUD):
         return self.databricks.api("PUT", f"2.0/preview/permissions/instance-pools/{instance_pool_id}", data)
 
     def add_to_acl(self, instance_pool_id,
-                   user_permissions: Dict[str, str] = {},
-                   group_permissions: Dict[str, str] = {"users": "CAN_ATTACH_TO"}):
+                   user_permissions: Dict[str, str] = None,
+                   group_permissions: Dict[str, str] = None):
+
+        user_permissions = user_permissions or dict()
+        group_permissions = group_permissions or {"users": "CAN_ATTACH_TO"}
+
+        # noinspection PyTypeChecker
         data = {
             "access_control_list": [
                                        {

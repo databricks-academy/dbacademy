@@ -18,6 +18,8 @@ class Users(ApiContainer):
     def list_by_username(self):
         return {u["userName"]: u for u in self.list()}
 
+    # TODO Rename parameter "id" to "user_id"
+    # noinspection PyShadowingBuiltins
     def get_by_id(self, id):
         return self.databricks.api("GET", f"{self.path}/scim/v2/Users/{id}")
 
@@ -29,16 +31,16 @@ class Users(ApiContainer):
             raise DatabricksApiException(f"User({username!r}) not found", 404)
 
     def overwrite(self, user: dict):
-        id = user["id"]
-        return self.databricks.api("PUT", f"{self.path}/scim/v2/Users/{id}", _data=user)
+        user_id = user["id"]
+        return self.databricks.api("PUT", f"{self.path}/scim/v2/Users/{user_id}", _data=user)
 
     def patch(self, user: dict, operations: List[Dict]):
-        id = user["id"]
+        user_id = user["id"]
         data = {
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
             "Operations": operations
         }
-        return self.databricks.api("PATCH", f"{self.path}/scim/v2/Users/{id}", _data=data)
+        return self.databricks.api("PATCH", f"{self.path}/scim/v2/Users/{user_id}", _data=data)
 
     def set_entitlements(self, user: dict, entitlements: Dict[str, bool]):
         adds = []
@@ -88,6 +90,8 @@ class Users(ApiContainer):
         expected = 409 if if_exists in ["ignore", "overwrite"] else None
         return self.databricks.api("POST", f"{self.path}/scim/v2/Users", _data=data, _expected=expected)
 
+    # TODO Rename parameter "id" to "user_id"
+    # noinspection PyShadowingBuiltins
     def delete_by_id(self, id):
         return self.databricks.api("DELETE", f"{self.path}/scim/v2/Users/{id}")
 
