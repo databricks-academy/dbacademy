@@ -1,5 +1,7 @@
 from typing import Union, Any, Callable, Optional
+
 import pyspark
+
 import dbacademy.common
 from dbacademy.common import print_warning
 from .mock_dbutils_class import MockDBUtils
@@ -288,6 +290,7 @@ def proof_of_life(expected_get_username,
 
     # noinspection PyUnresolvedReferences
     import dbruntime
+    import pyspark
     from py4j.java_collections import JavaMap
 
     assert isinstance(dbutils, dbruntime.dbutils.DBUtils), f"Expected {dbruntime.dbutils.DBUtils}, found {type(dbutils)}"
@@ -383,13 +386,10 @@ def stable_hash(*args, length: int) -> str:
     return "".join(result)
 
 
+@dbacademy.common.deprecated("Use dbacademy.common.clean_string() instead")
 def clean_string(value, replacement: str = "_"):
-    import re
-    replacement_2x = replacement+replacement
-    value = re.sub(r"[^a-zA-Z\d]", replacement, str(value))
-    while replacement_2x in value:
-        value = value.replace(replacement_2x, replacement)
-    return value
+    from dbacademy import common
+    return common.clean_string(value, replacement)
 
 
 def clock_start() -> int:
