@@ -188,7 +188,7 @@ class BuildConfig:
         self.job_arguments = dict() if job_arguments is None else job_arguments
 
         # The libraries to be attached to the cluster
-        self.libraries = [] if libraries is None else libraries
+        self.libraries = libraries or list()
 
         self.source_repo = dbgems.get_notebook_dir(offset=-2) if source_repo is None else source_repo
         self.source_dir = f"{self.source_repo}/Source" if source_dir is None else source_dir

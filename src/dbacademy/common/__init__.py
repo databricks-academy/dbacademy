@@ -88,3 +88,12 @@ def validate_element_type(actual_values: Iterable[Any], name, expected_type):
     for i, actual_value in enumerate(actual_values):
         msg = f"Expected element {i} of {name} to be of type {expected_type}, found {type(actual_value)}"
         assert isinstance(actual_value, expected_type), msg
+
+
+def clean_string(value, replacement: str = "_"):
+    import re
+    replacement_2x = replacement+replacement
+    value = re.sub(r"[^a-zA-Z\d]", replacement, str(value))
+    while replacement_2x in value:
+        value = value.replace(replacement_2x, replacement)
+    return value
