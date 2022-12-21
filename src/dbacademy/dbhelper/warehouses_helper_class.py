@@ -129,7 +129,7 @@ class WarehousesHelper:
         print(f"| Lab ID:            {lab_id}")
         print(f"| Description:       {workspace_description}")
         print(f"| Workspace Name:    {workspace_name}")
-        print(f"| Org ID:            {workspace_name}")
+        print(f"| Org ID:            {org_id}")
         print(f"| Autoscale minimum: {min_num_clusters}")
         print(f"| Autoscale maximum: {max_num_clusters}")
 
