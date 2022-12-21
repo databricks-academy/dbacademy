@@ -74,7 +74,7 @@ class TestSuite:
     def create_test_job(self, *, job_name: str, notebook_path: str, policy_id: str = None):
         import re
         from dbacademy.dbrest.jobs import JobConfig
-        from dbacademy.dbrest.clusters import ClusterConfig
+        from dbacademy.dbrest.clusters import JobClusterConfig
         from dbacademy.common import Cloud
 
         self.build_config.spark_conf["dbacademy.smoke-test"] = "true"
@@ -96,17 +96,16 @@ class TestSuite:
             policy = self.client.cluster_policies.get_by_id(policy_id)
             assert policy is not None, f"The policy \"{policy_id}\" does not exist or you do not have permissions to use specified policy: {[p.get('name') for p in self.client.cluster_policies.list()]}"
 
-        cluster_config = ClusterConfig(cloud=Cloud.current_cloud(),
-                                       cluster_name=None,
-                                       num_workers=self.build_config.workers,
-                                       spark_version=self.build_config.spark_version,
-                                       spark_conf=self.build_config.spark_conf,
-                                       node_type_id=None,  # Expecting to have an instance pool when testing
-                                       instance_pool_id=self.build_config.instance_pool_id,
-                                       single_user_name=dbgems.get_username(),
-                                       policy_id=policy_id,
-                                       autotermination_minutes=None,
-                                       spark_env_vars={"WSFS_ENABLE_WRITE_SUPPORT": "true"})
+        cluster_config = JobClusterConfig(cloud=Cloud.current_cloud(),
+                                          num_workers=self.build_config.workers,
+                                          spark_version=self.build_config.spark_version,
+                                          spark_conf=self.build_config.spark_conf,
+                                          node_type_id=None,  # Expecting to have an instance pool when testing
+                                          instance_pool_id=self.build_config.instance_pool_id,
+                                          policy_id=policy_id,
+                                          autotermination_minutes=None,
+                                          spark_env_vars={"WSFS_ENABLE_WRITE_SUPPORT": "true"})
+
         task_config.cluster.new(cluster_config=cluster_config)
 
         job_id = self.client.jobs.create_from_config(job_config)

@@ -1,116 +1,11 @@
 from typing import Optional, Dict, Any, List
-from enum import Enum
-from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import ApiContainer
-from dbacademy import common
-
-
-class Availability(Enum):
-    ON_DEMAND = "ON_DEMAND"
-    SPOT = "SPOT"
-    SPOT_WITH_FALLBACK = "SPOT_WITH_FALLBACK"
-
-    @property
-    def is_on_demand(self) -> bool:
-        return self == Availability.ON_DEMAND
-
-    @property
-    def is_spot(self) -> bool:
-        return self == Availability.SPOT
-
-    @property
-    def is_spot_with_fallback(self) -> bool:
-        return self == Availability.SPOT_WITH_FALLBACK
-
-
-class ClusterConfig:
-    from dbacademy.common import Cloud
-
-    def __init__(self, *,
-                 cloud: Cloud,
-                 cluster_name: Optional[str],
-                 spark_version: str,
-                 node_type_id: Optional[str],
-                 driver_node_type_id: str = None,
-                 instance_pool_id: str = None,
-                 num_workers: int,
-                 autotermination_minutes: Optional[int],
-                 single_user_name: str = None,
-                 availability: Availability = None,
-                 spark_conf: Optional[Dict[str, Any]] = None,
-                 **kwargs):
-
-        self.__params = {
-            "cluster_name": cluster_name,
-            "spark_version": spark_version,
-            "num_workers": num_workers,
-            "node_type_id": node_type_id,
-            "instance_pool_id": instance_pool_id,
-            "autotermination_minutes": autotermination_minutes,
-        }
-
-        spark_conf = spark_conf or dict()
-
-        extra_params = kwargs or dict()
-        if "custom_tags" not in extra_params:
-            extra_params["custom_tags"] = dict()
-
-        if single_user_name is not None:
-            extra_params["single_user_name"] = single_user_name
-            extra_params["data_security_mode"] = "SINGLE_USER"
-            extra_params["spark.databricks.passthrough.enabled"] = "true"
-
-        if driver_node_type_id is not None:
-            extra_params["driver_node_type_id"] = driver_node_type_id
-
-        if num_workers == 0:
-            # Don't use "local[*, 4] because the node type might have more cores
-            spark_conf["spark.master"] = "local[*]"
-            extra_params.get("custom_tags")["ResourceClass"] = "SingleNode"
-
-            spark_conf["spark.databricks.cluster.profile"] = "singleNode"
-
-        assert extra_params.get("aws_attributes", dict()).get("availability") is None, f"The parameter \"aws_attributes.availability\" should not be specified directly, use \"availability\" instead."
-        assert extra_params.get("azure_attributes", dict()).get("availability") is None, f"The parameter \"azure_attributes.availability\" should not be specified directly, use \"availability\" instead."
-        assert extra_params.get("gcp_attributes", dict()).get("availability") is None, f"The parameter \"gcp_attributes.availability\" should not be specified directly, use \"availability\" instead."
-
-        if instance_pool_id is None and availability is None:
-            # Default to on-demand if the instance profile was not defined
-            availability = Availability.ON_DEMAND
-
-        if availability is not None:
-            assert instance_pool_id is None, f"The parameter \"availability\" cannot be specified when \"instance_pool_id\" is specified."
-
-            cloud_attributes = f"{cloud.value.lower()}_attributes".replace("msa_", "azure_")
-            extra_params[cloud_attributes] = dict()
-
-            if cloud.is_aws:
-                extra_params.get(cloud_attributes)["availability"] = availability.value
-
-            elif cloud.is_msa:
-                if availability.is_on_demand:
-                    extra_params.get(cloud_attributes)["availability"] = "ON_DEMAND_AZURE"
-                else:  # Same for SPOT and SPOT_WITH_FALLBACK
-                    extra_params.get(cloud_attributes)["availability"] = "SPOT_WITH_FALLBACK_AZURE"
-
-            elif cloud.is_gcp:
-                if availability.is_on_demand:
-                    extra_params.get(cloud_attributes)["availability"] = "ON_DEMAND_GCP"
-                else:  # Same for SPOT and SPOT_WITH_FALLBACK
-                    extra_params.get(cloud_attributes)["availability"] = "PREEMPTIBLE_WITH_FALLBACK_GCP"
-
-        if len(spark_conf) > 0:
-            self.__params["spark_conf"] = spark_conf
-
-        for key, value in extra_params.items():
-            self.__params[key] = value
-
-    @property
-    def params(self) -> Dict[str, Any]:
-        return self.__params
 
 
 class ClustersClient(ApiContainer):
+    from dbacademy.dbrest.clusters import ClusterConfig
+    from dbacademy.dbrest import DBAcademyRestClient
+    from dbacademy import common
 
     def __init__(self, client: DBAcademyRestClient):
         self.client = client
@@ -128,6 +23,7 @@ class ClustersClient(ApiContainer):
                on_demand: bool = True,
                spark_conf: Optional[Dict[str, Any]] = None,
                **kwargs) -> str:
+        from dbacademy.dbrest.clusters import ClusterConfig, Availability
 
         config = ClusterConfig(cluster_name=cluster_name,
                                spark_version=spark_version,
@@ -165,10 +61,14 @@ class ClustersClient(ApiContainer):
     # I'm not 100% sure this isn't called outside of this library -JDP
     @common.deprecated("Use ClustersClient.get_by_id() or ClustersClient.get_by_name() instead")
     def get(self, cluster_id):
+        from dbacademy import common
+
         cluster_id = common.validate_type(cluster_id, "cluster_id", str)
         return self.client.api("GET", f"{self.base_uri}/get?cluster_id={cluster_id}")
 
     def get_by_id(self, cluster_id) -> Optional[Dict[str, Any]]:
+        from dbacademy import common
+
         cluster_id = common.validate_type(cluster_id, "cluster_id", str)
         return self.client.api("GET", f"{self.base_uri}/get?cluster_id={cluster_id}", _expected=[200, 400])
 
@@ -180,10 +80,13 @@ class ClustersClient(ApiContainer):
         return None
 
     def terminate_by_id(self, cluster_id) -> None:
+        from dbacademy import common
+
         cluster_id = common.validate_type(cluster_id, "cluster_id", str)
         return self.client.api("POST", f"{self.base_uri}/delete", cluster_id=cluster_id)
 
     def terminate_by_name(self, cluster_name) -> None:
+        from dbacademy import common
         from dbacademy.rest.common import DatabricksApiException
 
         cluster_name = common.validate_type(cluster_name, "cluster_name", str)
@@ -196,11 +99,15 @@ class ClustersClient(ApiContainer):
         raise DatabricksApiException(f"The cluster {cluster_name} was not found", http_code=400)
 
     def destroy_by_id(self, cluster_id) -> None:
+        from dbacademy import common
+
         cluster_id = common.validate_type(cluster_id, "cluster_id", str)
         self.client.api("POST", f"{self.base_uri}/permanent-delete", cluster_id=cluster_id, _expected=[200, 400])
         return None
 
     def destroy_by_name(self, cluster_name) -> None:
+        from dbacademy import common
+
         cluster_name = common.validate_type(cluster_name, "cluster_name", str)
         cluster = self.get_by_name(cluster_name)
         if cluster is not None:

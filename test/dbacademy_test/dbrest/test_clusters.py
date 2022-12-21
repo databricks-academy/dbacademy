@@ -369,8 +369,10 @@ class TestClusters(unittest.TestCase):
                           node_type_id="i3.xlarge",
                           num_workers=0,
                           autotermination_minutes=10,
-                          aws_attributes={
-                            "availability": "SPOT"
+                          extra_params={
+                              "aws_attributes": {
+                                "availability": "SPOT"
+                              }
                           })
         except AssertionError as e:
             self.assertEquals(f"The parameter \"aws_attributes.availability\" should not be specified directly, use \"availability\" instead.", str(e))
@@ -385,7 +387,6 @@ class TestClusters(unittest.TestCase):
                           node_type_id="i3.xlarge",
                           num_workers=0,
                           autotermination_minutes=10,
-                          on_demand="whatever",
                           availability=Availability.SPOT,
                           instance_pool_id="0123456789")
         except AssertionError as e:
@@ -631,7 +632,7 @@ class TestClusters(unittest.TestCase):
             self.client.clusters.list()
             raise Exception("Expected DeprecationWarning")
         except DeprecationWarning as e:
-            self.assertEquals("dbacademy.dbrest.clusters.list(self): Use ClustersClient.list_clusters() instead", str(e))
+            self.assertEquals("dbacademy.dbrest.clusters.cluster_client_class.list(self): Use ClustersClient.list_clusters() instead", str(e))
 
     def test_get_deprecated(self):
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
@@ -645,7 +646,7 @@ class TestClusters(unittest.TestCase):
             self.client.clusters.get(cluster_id)
             raise Exception("Expected DeprecationWarning")
         except DeprecationWarning as e:
-            self.assertEquals("dbacademy.dbrest.clusters.get(self, cluster_id): Use ClustersClient.get_by_id() or ClustersClient.get_by_name() instead", str(e))
+            self.assertEquals("dbacademy.dbrest.clusters.cluster_client_class.get(self, cluster_id): Use ClustersClient.get_by_id() or ClustersClient.get_by_name() instead", str(e))
 
     def test_list_node_types(self):
         types = self.client.clusters.list_node_types()
