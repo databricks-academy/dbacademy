@@ -129,6 +129,7 @@ class JobClusterConfig(ClusterConfig):
 
     def __init__(self, *,
                  cloud: Cloud,
+                 # cluster_name: Optional[str],
                  spark_version: str,
                  node_type_id: Optional[str],
                  driver_node_type_id: str = None,
@@ -136,9 +137,11 @@ class JobClusterConfig(ClusterConfig):
                  policy_id: str = None,
                  num_workers: int,
                  autotermination_minutes: Optional[int],
+                 # single_user_name: str = None,
                  availability: Availability = None,
-                 spark_conf: Optional[Dict[str, Any]] = None,
-                 spark_env_vars: Optional[Dict[str, Any]] = None,
+                 spark_conf: Optional[Dict[str, str]] = None,
+                 spark_env_vars: Optional[Dict[str, str]] = None,
+                 custom_tags: Optional[Dict[str, str]] = None,
                  extra_params: Dict[str, Any] = None):
 
         super().__init__(cloud=cloud,
@@ -153,5 +156,6 @@ class JobClusterConfig(ClusterConfig):
                          single_user_name=None,
                          spark_conf=spark_conf,
                          spark_env_vars=spark_env_vars,
+                         custom_tags=custom_tags,
                          availability=availability,
                          extra_params=extra_params)
