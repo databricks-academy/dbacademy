@@ -2,10 +2,10 @@ from typing import Union, Optional, Dict
 
 
 class DBAcademyHelper:
-    import pyspark
     from dbacademy import common
     from dbacademy.dbhelper.lesson_config_class import LessonConfig
     from dbacademy.dbhelper.course_config_class import CourseConfig
+    from pyspark.sql.streaming import StreamingQuery
 
     SCHEMA_DEFAULT = "default"
     SCHEMA_INFORMATION = "information_schema"
@@ -770,9 +770,8 @@ class DBAcademyHelper:
             unique_name = self.unique_name("-")
             mlflow.set_experiment(f"/Curriculum/Test Results/{unique_name}-{dbgems.get_job_id()}")
 
-    # noinspection PyUnresolvedReferences
     @staticmethod
-    def block_until_stream_is_ready(query: Union[str, pyspark.sql.streaming.StreamingQuery], min_batches: int = 2, delay_seconds: int = 5) -> None:
+    def block_until_stream_is_ready(query: Union[str, StreamingQuery], min_batches: int = 2, delay_seconds: int = 5) -> None:
         """
         A utility method used in streaming notebooks to block until the stream has processed n batches. This method serves one main purpose in two different use cases.
 
@@ -786,9 +785,11 @@ class DBAcademyHelper:
         :param delay_seconds:
         :return:
         """
-
         import time, pyspark
-        assert query is not None and type(query) in [str, pyspark.sql.streaming.StreamingQuery], f"Expected the query parameter to be of type \"str\" or \"pyspark.sql.streaming.StreamingQuery\", found \"{type(query)}\"."
+        from dbacademy import dbgems
+        from pyspark.sql.streaming import StreamingQuery
+
+        assert query is not None and type(query) in [str, StreamingQuery], f"Expected the query parameter to be of type \"str\" or \"pyspark.sql.streaming.StreamingQuery\", found \"{type(query)}\"."
 
         if type(query) != pyspark.sql.streaming.StreamingQuery:
             queries = [aq for aq in dbgems.spark.streams.active if aq.name == query]
