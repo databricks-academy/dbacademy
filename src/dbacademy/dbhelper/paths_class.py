@@ -1,5 +1,5 @@
 class Paths:
-    from .lesson_config_class import LessonConfig
+    from dbacademy.dbhelper.lesson_config_class import LessonConfig
 
     def __init__(self, *, lesson_config: LessonConfig, working_dir_root: str, datasets: str):
 

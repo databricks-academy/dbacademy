@@ -2,7 +2,7 @@ from typing import Dict
 
 
 class __ValidationResultsAggregator(object):
-    from .validation_result_class import ValidationResult
+    from dbacademy.dbhelper.validations.validation_result_class import ValidationResult
 
     test_results: Dict[str, ValidationResult] = dict()
 

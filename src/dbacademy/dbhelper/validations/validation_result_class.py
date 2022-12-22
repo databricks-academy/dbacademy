@@ -1,5 +1,5 @@
 class ValidationResult(object):
-    from .validation_class import Validation
+    from dbacademy.dbhelper.validations.validation_class import Validation
 
     __slots__ = ('test', 'skipped', 'passed', 'status', 'points', 'exception', 'message')
 

@@ -497,11 +497,11 @@ class BuildConfig:
         :param cloud: One of the three values "AWS", "MSA" or "GCP"
         :return: None
         """
-        from dbacademy import dbgems, common
+        from dbacademy import common
 
         cloud = common.validate_type(cloud, "cloud", str).upper()
 
         assert self.validated, f"Cannot validate smoke-tests until the build configuration passes validation. See BuildConfig.validate()"
 
         self.__passing_tests[cloud] = True
-        dbgems.print_warning("NOT IMPLEMENTED", f"This function has not yet been implemented for {cloud}.")
+        common.print_warning("NOT IMPLEMENTED", f"This function has not yet been implemented for {cloud}.")

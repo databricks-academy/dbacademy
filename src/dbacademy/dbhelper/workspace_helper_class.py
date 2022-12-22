@@ -39,9 +39,9 @@ class WorkspaceHelper:
         return dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION)
 
     def __init__(self, da: DBAcademyHelper):
-        from .warehouses_helper_class import WarehousesHelper
-        from .databases_helper_class import DatabasesHelper
-        from .clusters_helper_class import ClustersHelper
+        from dbacademy.dbhelper.warehouses_helper_class import WarehousesHelper
+        from dbacademy.dbhelper.databases_helper_class import DatabasesHelper
+        from dbacademy.dbhelper.clusters_helper_class import ClustersHelper
 
         self.da = da
         self.client = da.client

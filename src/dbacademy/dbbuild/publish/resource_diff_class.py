@@ -2,7 +2,7 @@ from typing import Union
 
 
 class ResourceDiff:
-    from ..build_config_class import BuildConfig
+    from dbacademy.dbbuild.build_config_class import BuildConfig
 
     def __init__(self, build_config: BuildConfig, *, resources_folder: str = None, old_resource: str = None, new_resource: str = None):
         import os

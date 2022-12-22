@@ -2,7 +2,7 @@ from dbacademy.dbbuild.build_config_class import BuildConfig
 
 
 def help_html():
-    from .publish.notebook_def_class import NotebookDef
+    from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
 
     docs = {
         NotebookDef.D_SOURCE_ONLY: f"Indicates that this cell is used in the source notebook only and is not to be included in the published version.",

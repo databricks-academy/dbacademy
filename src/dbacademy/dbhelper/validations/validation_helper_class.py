@@ -1,6 +1,6 @@
 class ValidationHelper:
-    from ..dbacademy_helper_class import DBAcademyHelper
-    from .validation_suite_class import ValidationSuite
+    from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+    from dbacademy.dbhelper.validations.validation_suite_class import ValidationSuite
 
     def __init__(self, da: DBAcademyHelper):
 
@@ -9,7 +9,7 @@ class ValidationHelper:
 
     # noinspection PyMethodMayBeStatic
     def new(self, name) -> ValidationSuite:
-        from .validation_suite_class import ValidationSuite
+        from dbacademy.dbhelper.validations.validation_suite_class import ValidationSuite
         return ValidationSuite(name)
 
     @staticmethod

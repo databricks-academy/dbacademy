@@ -87,7 +87,7 @@ class Translator:
 
     def __reset_published_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None):
         from dbacademy import common
-        from ..build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         username = common.clean_string(self.username, "_")
         self.source_branch = source_branch or f"published-v{self.core_version}"
@@ -102,7 +102,7 @@ class Translator:
 
     def __reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = None):
         from dbacademy import common
-        from ..build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         username = common.clean_string(self.username, "_")
         self.target_branch = target_branch or "published"
@@ -116,7 +116,7 @@ class Translator:
                                   which="target")
 
     def create_published_message(self) -> str:
-        from .advertiser import Advertiser
+        from dbacademy.dbbuild.publish.advertiser import Advertiser
         from dbacademy.dbbuild.change_log_class import ChangeLog
         from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
 
@@ -210,7 +210,7 @@ class Translator:
         assert self.__changes_in_source_repo == 0, f"Found {self.__changes_in_source_repo} changes(s) in the source repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
     def validate_no_changes_in_source_repo(self):
-        from ..build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         self.assert_validated()
 
@@ -231,7 +231,7 @@ class Translator:
         assert self.__changes_in_target_repo == 0, f"Found {self.__changes_in_target_repo} changes(s) in the target repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
     def validate_no_changes_in_target_repo(self):
-        from ..build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         self.assert_generated_notebooks()
 
@@ -266,13 +266,13 @@ class Translator:
         from dbacademy.dbbuild.build_utils_class import BuildUtils
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.dbbuild.publish.publisher_class import Publisher
-        from dbacademy import dbgems
+        from dbacademy import dbgems, common
 
         self.assert_no_changes_in_source_repo()
 
         if skip_generation:
             self.__generated_notebooks = True
-            dbgems.print_warning(f"SKIPPING GENERATION", "Skipping the generation of notebooks")
+            common.print_warning(f"SKIPPING GENERATION", "Skipping the generation of notebooks")
             return None
 
         print(f"Publishing translated version of {self.build_config.name}, {self.version}")

@@ -201,7 +201,7 @@ class LessonConfig:
         default catalog name for non-UC environments.
         :return: True if this is a UC environment
         """
-        from .dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
 
         # Implementation here might be a bit odd, but the idea here is that if our
         # initial catalog was "spark_catalog" then it's not UC. If the catalog is

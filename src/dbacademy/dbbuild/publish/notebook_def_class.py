@@ -522,7 +522,7 @@ For more current information, please see <a href="https://files.training.databri
         return command
 
     def publish(self, source_dir: str, target_dir: str, i18n_resources_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
-        from ..build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
         assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
