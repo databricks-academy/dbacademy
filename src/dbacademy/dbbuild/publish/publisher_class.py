@@ -155,7 +155,7 @@ class Publisher:
         :param debugging: True for debug logging
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
-        from dbacademy import dbgems
+        from dbacademy import common, dbgems
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.dbbuild.build_utils_class import BuildUtils
         from dbacademy.dbbuild import BuildConfig
@@ -171,7 +171,7 @@ class Publisher:
 
         if skip_generation:
             self.__generated_notebooks = True
-            dbgems.print_warning(f"SKIPPING GENERATION", "Skipping the generation of notebooks")
+            common.print_warning(f"SKIPPING GENERATION", "Skipping the generation of notebooks")
             return None
 
         found_version_info = False
@@ -250,7 +250,7 @@ class Publisher:
         Convenience method to aid in creating the publishing email and Slack message.
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
-        from .advertiser import Advertiser
+        from dbacademy.dbbuild.publish.advertiser import Advertiser
         from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
 
         self.assert_validate_artifacts()
@@ -296,8 +296,8 @@ class Publisher:
         :param branch: The name of the branch to publish to
         :return: None
         """
-        from dbacademy import dbgems, common
-        from ..build_utils_class import BuildUtils
+        from dbacademy import common
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         # Assume for now that we have failed. This overrides the default
         # of True meaning we have to succeed here to continue
@@ -305,13 +305,13 @@ class Publisher:
 
         new_target_dir = f"/Repos/Temp/{self.build_name}" if not self.i18n else f"/Repos/Temp/{self.build_name}-{self.common_language}"
         if target_dir == new_target_dir:
-            dbgems.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_dir\" is the same as the default value.\nConsider removing the parameter.")
+            common.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_dir\" is the same as the default value.\nConsider removing the parameter.")
         target_dir = target_dir or new_target_dir
 
         prefix = "https://github.com/databricks-academy"
         new_target_repo_url = f"{prefix}/{self.build_name}.git" if not self.i18n else f"{prefix}/{self.build_name}-{self.common_language}.git"
         if target_repo_url == new_target_repo_url:
-            dbgems.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
+            common.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
         target_repo_url = target_repo_url or new_target_repo_url
 
         self.target_dir = common.validate_type(target_dir, "target_dir", str)
@@ -425,7 +425,7 @@ class Publisher:
         for direct download from the calling notebook
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
-        from ..build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         self.assert_no_changes_in_target_repo()
 
@@ -525,11 +525,11 @@ class Publisher:
         :param skip_validation: True to override validation
         :return: None
         """
-        from dbacademy import dbgems
+        from dbacademy import common
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         if skip_validation:
-            dbgems.print_warning(f"SKIPPING VALIDATION", "The source directory is not being evaluated for pending changes")
+            common.print_warning(f"SKIPPING VALIDATION", "The source directory is not being evaluated for pending changes")
             self.__changes_in_source_repo = 0
 
         else:
@@ -557,11 +557,11 @@ class Publisher:
         :param skip_validation: True to override validation
         :return: None
         """
-        from dbacademy import dbgems
+        from dbacademy import common
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         if skip_validation:
-            dbgems.print_warning(f"SKIPPING VALIDATION", "The target directory is not being evaluated for pending changes")
+            common.print_warning(f"SKIPPING VALIDATION", "The target directory is not being evaluated for pending changes")
             self.__changes_in_target_repo = 0
 
         else:

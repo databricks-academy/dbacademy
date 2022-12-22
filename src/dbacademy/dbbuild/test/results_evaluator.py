@@ -20,10 +20,10 @@ class ResultsEvaluator:
         return len(self.failed_set) == 0
 
     def to_html(self, **kwargs) -> str:
-        from dbacademy import dbgems
+        from dbacademy import common
 
         if "print_success_links" in kwargs:
-            dbgems.print_warning(title="DEPRECATION WARNING", message=f"The parameter \"print_success_links\" is not supported. Use Publisher.to_test_suite(keep_success=True) instead")
+            common.print_warning(title="DEPRECATION WARNING", message=f"The parameter \"print_success_links\" is not supported. Use Publisher.to_test_suite(keep_success=True) instead")
 
         html = "</body>"
         html += self.add_section("Failed", self.failed_set)
@@ -58,7 +58,7 @@ class ResultsEvaluator:
 
     @staticmethod
     def to_job_link(*, job_id, run_id, label):
-        from ..build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         url = BuildUtils.to_job_url(job_id=job_id, run_id=run_id)
         return f"""<a href="{url}" target="_blank">{label}</a>"""

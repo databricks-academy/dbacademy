@@ -217,12 +217,12 @@ class TestSuite:
         return result_state != 'FAILED'
 
     def to_results_evaluator(self):
-        from .results_evaluator import ResultsEvaluator
+        from dbacademy.dbbuild.test.results_evaluator import ResultsEvaluator
         return ResultsEvaluator(self.test_results, self.keep_success)
 
     def log_run(self, test, response):
         import time, uuid, requests, json
-        from dbacademy import dbgems
+        from dbacademy import common
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         job_id = response.get("job_id", 0)
@@ -261,7 +261,7 @@ class TestSuite:
         except Exception as e:
             import traceback
             message = f"{str(e)}\n{traceback.format_exc()}"
-            dbgems.print_warning(title="Smoke Test Logging Failure", message=message, length=100)
+            common.print_warning(title="Smoke Test Logging Failure", message=message, length=100)
 
         if result_state == "FAILED":
             message_type = "error"
@@ -278,7 +278,7 @@ class TestSuite:
 
     def send_status_update(self, message_type, message):
         import requests, json
-        from dbacademy import dbgems
+        from dbacademy import common
 
         if self.slack_first_message is None:
             self.slack_first_message = message
@@ -296,4 +296,4 @@ class TestSuite:
             assert response.status_code == 200, f"({response.status_code}): {response.text}"
             self.slack_thread_ts = response.json().get("data", {}).get("thread_ts")
         except Exception as e:
-            dbgems.print_warning(title="Slack Notification Failure", message=str(e), length=100)
+            common.print_warning(title="Slack Notification Failure", message=str(e), length=100)

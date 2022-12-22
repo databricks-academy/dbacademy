@@ -74,7 +74,7 @@ class DocsPublisher:
             shutil.copyfileobj(file_bytes, f)
 
     def process_pdfs(self) -> None:
-        from dbacademy import dbgems
+        from dbacademy import common
         from dbacademy.google.google_client_class import GoogleClientException
 
         print("Exporting Google Docs as PDFs:")
@@ -86,7 +86,7 @@ class DocsPublisher:
                 file_name, file_url = self.__download_google_doc(index=index, total=total, gdoc_url=link)
                 self.__pdfs[file_name] = file_url
             except GoogleClientException as e:
-                dbgems.print_warning("SKIPPING DOWNLOAD", f"{error_message}\n{e.message}")
+                common.print_warning("SKIPPING DOWNLOAD", f"{error_message}\n{e.message}")
 
     def process_google_slides(self) -> None:
 

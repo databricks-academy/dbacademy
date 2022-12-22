@@ -1,10 +1,11 @@
 from typing import Union, Any, Callable, Optional
 
+# The one import I can't shake!!! JDP
 import pyspark
 
-import dbacademy.common
-from dbacademy.common import print_warning
-from .mock_dbutils_class import MockDBUtils
+from dbacademy import common
+from dbacademy.dbgems.mock_dbutils_class import MockDBUtils
+
 
 SPARK_CONF_DEPENDENCY_WARNING = "dbacademy.dependency.warning"
 SPARK_CONF_DEPRECATION_LOGGING = "dbacademy.deprecation.logging"
@@ -49,6 +50,9 @@ def get_mock_value(key: str, function: Callable[[], Any]) -> Any:
 
 
 def check_deprecation_logging_enabled():
+    import dbacademy.common
+    from dbacademy.dbgems.mock_dbutils_class import MockDBUtils
+
     if spark is None:
         return
     status = get_spark_config(SPARK_CONF_DEPRECATION_LOGGING, None)
@@ -82,7 +86,7 @@ def get_parameter(name: str, default_value: Any = "") -> Union[None, str]:
             return default_value
 
 
-@dbacademy.common.deprecated("Use dbacademy.common.Cloud.current_cloud() instead")
+@common.deprecated("Use dbacademy.common.Cloud.current_cloud() instead")
 def get_cloud() -> str:
     """
     Indicates which cloud the current workspace is deployed into
@@ -162,6 +166,8 @@ def get_notebook_dir(offset=-1) -> str:
 
 
 def get_notebooks_api_endpoint() -> str:
+    from dbacademy.dbgems.mock_dbutils_class import MockDBUtils
+
     if isinstance(dbutils, MockDBUtils):
         raise Exception("This is a MockDBUtils")
     else:
@@ -236,13 +242,13 @@ def validate_dependencies(module: str, curriculum_workspaces_only=True) -> bool:
                     return True  # They match, all done!
 
                 elif get_spark_config(SPARK_CONF_DEPENDENCY_WARNING, "disabled").lower() == "enabled":
-                    print_warning(title=f"Outdated Dependency",
-                                  message=f"You are using version \"{current_version}\" but the latest version is \"v{versions[-1]}\".\n" +
-                                          f"Please update your dependencies on the module \"{module}\" at your earliest convenience.")
+                    common.print_warning(title=f"Outdated Dependency",
+                                         message=f"You are using version \"{current_version}\" but the latest version is \"v{versions[-1]}\".\n" +
+                                                 f"Please update your dependencies on the module \"{module}\" at your earliest convenience.")
             else:
-                print_warning(title=f"Invalid Dependency",
-                              message=f"You are using the branch or commit hash \"{current_version}\" but the latest version is \"v{versions[-1]}\".\n" +
-                                      f"Please update your dependencies on the module \"{module}\" at your earliest convenience.")
+                common.print_warning(title=f"Invalid Dependency",
+                                     message=f"You are using the branch or commit hash \"{current_version}\" but the latest version is \"v{versions[-1]}\".\n" +
+                                             f"Please update your dependencies on the module \"{module}\" at your earliest convenience.")
     except Exception as e:
         if testable:
             raise e
@@ -386,7 +392,7 @@ def stable_hash(*args, length: int) -> str:
     return "".join(result)
 
 
-@dbacademy.common.deprecated("Use dbacademy.common.clean_string() instead")
+@common.deprecated("Use dbacademy.common.clean_string() instead")
 def clean_string(value, replacement: str = "_") -> str:
     from dbacademy import common
     return common.clean_string(value, replacement)

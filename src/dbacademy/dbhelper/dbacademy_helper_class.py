@@ -647,7 +647,7 @@ class DBAcademyHelper:
                 dbgems.display_html(html)
 
     def __validate_spark_version(self) -> None:
-        from dbacademy import dbgems
+        from dbacademy import dbgems, common
 
         self.__current_dbr = dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_CLUSTER_TAG_SPARK_VERSION, None)
 
@@ -664,13 +664,13 @@ class DBAcademyHelper:
                       f"Please be aware that this courseware may not execute properly unless you are using\n" + \
                       f"one of this course's supported DBRs:\n" + \
                       f"{self.course_config.supported_dbrs}"
-            dbgems.print_warning("Spark Version", self.__troubleshoot_error(warning, "Spark Version"))
+            common.print_warning("Spark Version", self.__troubleshoot_error(warning, "Spark Version"))
 
         message = f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\"."
         if self.current_dbr not in self.course_config.supported_dbrs:
             # This is an unsupported DBR
             if dbgems.get_spark_config("dbacademy.runtime.check", "fail").lower() == "warn":
-                dbgems.print_warning("Unsupported DBR", message=message)
+                common.print_warning("Unsupported DBR", message=message)
             else:
                 raise AssertionError(self.__troubleshoot_error(message, "Spark Version"))
 

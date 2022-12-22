@@ -3,8 +3,8 @@ from typing import Callable, TypeVar
 
 class DatabasesHelper:
     from dbacademy.dbrest import DBAcademyRestClient
-    from .dbacademy_helper_class import DBAcademyHelper
-    from .workspace_helper_class import WorkspaceHelper
+    from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+    from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
 
     T = TypeVar("T")
 
