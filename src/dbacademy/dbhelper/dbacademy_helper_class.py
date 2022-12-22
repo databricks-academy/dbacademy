@@ -244,6 +244,7 @@ class DBAcademyHelper:
         :return: The unique name composited from the specified username and course_code
         """
         from dbacademy import dbgems
+        from dbacademy import common
 
         local_part = username.split("@")[0]
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
@@ -254,7 +255,7 @@ class DBAcademyHelper:
         else:
             name = f"{local_part} {username_hash} da {course_code} {lesson_name}"
 
-        return dbgems.clean_string(name, replacement=sep).lower()
+        return common.clean_string(name, replacement=sep).lower()
 
     @property
     def catalog_name_prefix(self) -> str:
@@ -308,6 +309,7 @@ class DBAcademyHelper:
         :return: The unique name composited from the specified username and lesson
         """
         from dbacademy import dbgems
+        from dbacademy import common
         from dbacademy.dbhelper.lesson_config_class import LessonConfig
 
         local_part = username.split("@")[0]
@@ -316,11 +318,11 @@ class DBAcademyHelper:
 
         if lesson_name is None:
             # With no lesson, catalog and prefix are the same.
-            return dbgems.clean_string(f"{local_part}-{username_hash}-da").lower()
+            return common.clean_string(f"{local_part}-{username_hash}-da").lower()
         else:
             # Append the lesson name to the catalog name
             clean_name = LessonConfig.to_clean_lesson_name(lesson_name)
-            return dbgems.clean_string(f"{local_part}-{username_hash}-da-{clean_name}").lower()
+            return common.clean_string(f"{local_part}-{username_hash}-da-{clean_name}").lower()
 
     @property
     def current_catalog(self) -> str:
@@ -380,6 +382,7 @@ class DBAcademyHelper:
         :return: The unique name composited from the specified username and lesson
         """
         from dbacademy import dbgems
+        from dbacademy import common
         from dbacademy.dbhelper.lesson_config_class import LessonConfig
 
         local_part = username.split("@")[0]
@@ -389,12 +392,12 @@ class DBAcademyHelper:
         if lesson_name is None:
             # No lesson, database name is the same as prefix
             # return DBAcademyHelper.to_schema_name_prefix(username=username, course_code=course_code)
-            return dbgems.clean_string(f"{local_part}-{username_hash}-da-{course_code}").lower()
+            return common.clean_string(f"{local_part}-{username_hash}-da-{course_code}").lower()
 
         else:
             # Schema name includes the lesson name
             clean_name = LessonConfig.to_clean_lesson_name(lesson_name)
-            return dbgems.clean_string(f"{local_part}-{username_hash}-da-{course_code}-{clean_name}").lower()
+            return common.clean_string(f"{local_part}-{username_hash}-da-{course_code}-{clean_name}").lower()
 
     @property
     def current_schema(self) -> str:
@@ -673,11 +676,12 @@ class DBAcademyHelper:
 
     def __validate_dbfs_writes(self, test_dir) -> None:
         from dbacademy import dbgems
+        from dbacademy import common
         from contextlib import redirect_stdout
 
         if not dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PROTECTED_EXECUTION, None):
-            notebook_path = dbgems.clean_string(dbgems.get_notebook_path())
-            username = dbgems.clean_string(self.username)
+            notebook_path = common.clean_string(dbgems.get_notebook_path())
+            username = common.clean_string(self.username)
             file = f"{test_dir}/temp/dbacademy-{self.course_config.course_code}-{username}-{notebook_path}.txt"
             try:
                 with redirect_stdout(None):

@@ -1,5 +1,4 @@
 from typing import Dict
-from dbacademy import dbgems
 
 
 class DocsPublisher:
@@ -75,6 +74,7 @@ class DocsPublisher:
             shutil.copyfileobj(file_bytes, f)
 
     def process_pdfs(self) -> None:
+        from dbacademy import dbgems
         from dbacademy.google.google_client_class import GoogleClientException
 
         print("Exporting Google Docs as PDFs:")

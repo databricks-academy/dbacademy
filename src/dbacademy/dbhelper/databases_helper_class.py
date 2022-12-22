@@ -1,7 +1,5 @@
 from typing import Callable, TypeVar
 
-from dbacademy import dbgems
-
 
 class DatabasesHelper:
     from dbacademy.dbrest import DBAcademyRestClient
@@ -23,6 +21,8 @@ class DatabasesHelper:
         self.workspace._existing_databases = None
 
     def __drop_databases_for(self, username: str):
+        from dbacademy import dbgems
+
         dropped = False
         prefix = self.da.to_schema_name_prefix(username=username,
                                                course_code=self.da.course_config.course_code)
@@ -46,6 +46,7 @@ class DatabasesHelper:
         self.workspace._existing_databases = None
 
     def __create_database_for(self, username: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
+        from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
 
         db_name = self.da.to_schema_name_prefix(username=username,
@@ -75,6 +76,8 @@ class DatabasesHelper:
 
     @staticmethod
     def configure_permissions(client: DBAcademyRestClient, notebook_name: str, spark_version: str):
+        from dbacademy import dbgems
+        from dbacademy import common
         from dbacademy.common import Cloud
         from dbacademy.dbhelper import DBAcademyHelper, WorkspaceHelper
 
@@ -88,7 +91,7 @@ class DatabasesHelper:
         params = {
             "name": job_name,
             "tags": {
-                "dbacademy.source": dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else WorkspaceHelper.get_lab_id())
+                "dbacademy.source": common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else WorkspaceHelper.get_lab_id())
             },
             "email_notifications": {},
             "timeout_seconds": 7200,

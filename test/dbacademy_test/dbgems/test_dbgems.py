@@ -1,10 +1,11 @@
 import unittest
-from dbacademy import dbgems
 
 
 class MyTestCase(unittest.TestCase):
 
     def test_spark_conf_get(self):
+        from dbacademy import dbgems
+
         value = dbgems.get_spark_config("some.random.value")
         self.assertIsNone(value)
 

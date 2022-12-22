@@ -1,6 +1,3 @@
-from dbacademy import dbgems
-
-
 class DevHelper:
     from .dbacademy_helper_class import DBAcademyHelper
 
@@ -13,7 +10,9 @@ class DevHelper:
         """
         Development function used to enumerate the remote datasets for use in validate_datasets()
         """
+        from dbacademy import dbgems
         from dbacademy.dbhelper.dataset_manager_class import DatasetManager
+
         files = DatasetManager.list_r(self.da.data_source_uri)
         files = "remote_files = " + str(files).replace("'", "\"")
 
@@ -26,7 +25,9 @@ class DevHelper:
         """
         Development function used to enumerate the local datasets for use in validate_datasets()
         """
+        from dbacademy import dbgems
         from dbacademy.dbhelper.dataset_manager_class import DatasetManager
+
         files = DatasetManager.list_r(self.da.paths.datasets)
         files = "remote_files = " + str(files).replace("'", "\"")
 

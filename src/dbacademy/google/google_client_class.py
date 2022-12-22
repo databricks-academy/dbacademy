@@ -1,17 +1,4 @@
 from typing import Dict, Any
-from dbacademy import dbgems
-
-# noinspection PyPackageRequirements
-from google.oauth2 import service_account
-
-# noinspection PyPackageRequirements
-import googleapiclient.discovery
-
-# noinspection PyPackageRequirements
-from googleapiclient.http import MediaIoBaseDownload
-
-# noinspection PyPackageRequirements
-import googleapiclient.errors
 
 
 class GoogleClient:
@@ -23,6 +10,16 @@ class GoogleClient:
     @staticmethod
     def __get_service(api_name, api_version):
         import json
+        from dbacademy import dbgems
+
+        # noinspection PyPackageRequirements
+        from google.oauth2 import service_account
+
+        # noinspection PyPackageRequirements
+        import googleapiclient.discovery
+
+        # noinspection PyPackageRequirements
+        import googleapiclient.errors
 
         scopes = ["https://www.googleapis.com/auth/drive",
                   "https://www.googleapis.com/auth/drive.file",
@@ -69,6 +66,10 @@ class GoogleClient:
 
     def file_export(self, file_id: str) -> io.BytesIO:
         import io
+
+        # noinspection PyPackageRequirements
+        from googleapiclient.http import MediaIoBaseDownload
+
         drive_service = self.drive_service
 
         class DownloadRequest:
@@ -125,6 +126,9 @@ class GoogleClient:
     @staticmethod
     def execute(request) -> Dict[str, Any]:
         import json, socket
+
+        # noinspection PyPackageRequirements
+        import googleapiclient.errors
 
         try:
             return request.execute()

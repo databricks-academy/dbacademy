@@ -1,6 +1,4 @@
 from typing import Type, List, Dict, Union, Any, Optional, Callable
-from dbacademy import dbgems, common
-from dbacademy.rest.factory import dbrest_factory
 
 
 class BuildConfig:
@@ -26,6 +24,7 @@ class BuildConfig:
         :return:
         """
         import json
+        from dbacademy import common
 
         common.validate_type(file, "file", str)
         common.validate_type(version, "version", str)
@@ -41,6 +40,7 @@ class BuildConfig:
         :param version: The current version being published. Expected to be one of BuildConfig.VERSIONS_LIST or an actual version number in the form of "vX.Y.Z"
         :return:
         """
+        from dbacademy import common
 
         common.validate_type(config, "config", Dict)
         common.validate_type(version, "version", str)
@@ -131,6 +131,8 @@ class BuildConfig:
         from dbacademy.common import Cloud
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.dbhelper.course_config_class import CourseConfig
+        from dbacademy import dbgems
+        from dbacademy.rest.factory import dbrest_factory
 
         self.__validated = False
         self.__created_notebooks = False
@@ -495,6 +497,8 @@ class BuildConfig:
         :param cloud: One of the three values "AWS", "MSA" or "GCP"
         :return: None
         """
+        from dbacademy import dbgems, common
+
         cloud = common.validate_type(cloud, "cloud", str).upper()
 
         assert self.validated, f"Cannot validate smoke-tests until the build configuration passes validation. See BuildConfig.validate()"

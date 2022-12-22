@@ -147,15 +147,17 @@ class WorkspaceHelper:
     @property
     def lab_id(self):
         from dbacademy import dbgems
+        from dbacademy import common
         from dbacademy.dbhelper import DBAcademyHelper
 
         lab_id = "Smoke Test" if DBAcademyHelper.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_LAB_ID, None)
-        return None if lab_id is None else dbgems.clean_string(lab_id)
+        return None if lab_id is None else common.clean_string(lab_id)
 
     @property
     def description(self):
         from dbacademy import dbgems
+        from dbacademy import common
         from dbacademy.dbhelper import DBAcademyHelper
 
         description = "This is a smoke test" if DBAcademyHelper.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION, None)
-        return None if description is None else dbgems.clean_string(description)
+        return None if description is None else common.clean_string(description)

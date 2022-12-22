@@ -1,11 +1,11 @@
 from typing import Optional
-from dbacademy import dbgems, common
 
 
 class Translator:
     from dbacademy.dbbuild.publish.publisher_class import Publisher
 
     def __init__(self, publisher: Publisher):
+        from dbacademy import common
         from dbacademy.dbbuild.publish.publisher_class import Publisher
 
         # By default, we are not validated
@@ -53,6 +53,7 @@ class Translator:
         self.__select_i18n_language(publisher.source_repo)
 
     def __select_i18n_language(self, source_repo: str):
+        from dbacademy import dbgems
 
         self.resources_folder = f"{source_repo}/Resources"
 
@@ -85,9 +86,10 @@ class Translator:
         self.common_language = self.i18n_language.split("-")[0]
 
     def __reset_published_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None):
+        from dbacademy import common
         from ..build_utils_class import BuildUtils
 
-        username = dbgems.clean_string(self.username, "_")
+        username = common.clean_string(self.username, "_")
         self.source_branch = source_branch or f"published-v{self.core_version}"
         self.source_dir = source_dir or f"/Repos/Temp/{username}-{self.build_name}-english-{self.source_branch}"
         self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
@@ -99,9 +101,10 @@ class Translator:
                                   which="published")
 
     def __reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = None):
+        from dbacademy import common
         from ..build_utils_class import BuildUtils
 
-        username = dbgems.clean_string(self.username, "_")
+        username = common.clean_string(self.username, "_")
         self.target_branch = target_branch or "published"
         self.target_dir = target_dir or f"/Repos/Temp/{username}-{self.build_name}-{self.common_language}"
         self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
@@ -260,9 +263,10 @@ class Translator:
 
     def generate_notebooks(self, skip_generation: bool = False) -> Optional[str]:
         from datetime import datetime
-        from ..build_utils_class import BuildUtils
-        from ..publish.notebook_def_class import NotebookDef
-        from ..publish.publisher_class import Publisher
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+        from dbacademy.dbbuild.publish.publisher_class import Publisher
+        from dbacademy import dbgems
 
         self.assert_no_changes_in_source_repo()
 
@@ -400,7 +404,8 @@ class Translator:
         assert self.__created_dbcs, "The DBCs have not yet been created. See Translator.create_dbcs()"
 
     def create_dbcs(self):
-        from ..build_utils_class import BuildUtils
+        from dbacademy import dbgems
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         self.assert_no_changes_in_target_repo()
 

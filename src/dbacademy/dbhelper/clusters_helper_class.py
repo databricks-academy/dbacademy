@@ -36,6 +36,7 @@ class ClustersHelper:
     @staticmethod
     def create_named_instance_pool(*, client: DBAcademyRestClient, name, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str, node_type_id: str, preloaded_spark_version: str):
         from dbacademy import dbgems
+        from dbacademy import common
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
 
@@ -45,11 +46,11 @@ class ClustersHelper:
         org_id = org_id or dbgems.get_org_id()
 
         tags = [
-            (f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}", dbgems.clean_string(lab_id)),
-            (f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}", dbgems.clean_string(workspace_description)),
-            (f"dbacademy.workspace", dbgems.clean_string(workspace_name)),
-            (f"dbacademy.org_id", dbgems.clean_string(org_id)),
-            (f"dbacademy.source", dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else dbgems.clean_string(lab_id)))
+            (f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}", common.clean_string(lab_id)),
+            (f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}", common.clean_string(workspace_description)),
+            (f"dbacademy.workspace", common.clean_string(workspace_name)),
+            (f"dbacademy.org_id", common.clean_string(org_id)),
+            (f"dbacademy.source", common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else lab_id))
         ]
 
         # We cannot update some pool attributes once they are created.
@@ -187,6 +188,7 @@ class ClustersHelper:
     @staticmethod
     def create_dlt_policy(*, client: DBAcademyRestClient, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -> None:
         from dbacademy import dbgems
+        from dbacademy import common
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
 
@@ -212,27 +214,27 @@ class ClustersHelper:
             },
             f"custom_tags.dbacademy.{WorkspaceHelper.PARAM_LAB_ID}": {
                 "type": "fixed",
-                "value": dbgems.clean_string(lab_id),  # self.workspace.lab_id),
+                "value": common.clean_string(lab_id),  # self.workspace.lab_id),
                 "hidden": False
             },
             f"custom_tags.dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}": {
                 "type": "fixed",
-                "value": dbgems.clean_string(workspace_description),  # self.workspace.description),
+                "value": common.clean_string(workspace_description),  # self.workspace.description),
                 "hidden": False
             },
             "custom_tags.dbacademy.workspace": {
                 "type": "fixed",
-                "value": dbgems.clean_string(workspace_name),  # self.workspace.workspace_name),
+                "value": common.clean_string(workspace_name),  # self.workspace.workspace_name),
                 "hidden": False
             },
             "custom_tags.dbacademy.org_id": {
                 "type": "fixed",
-                "value": dbgems.clean_string(org_id),  # self.workspace.org_id),
+                "value": common.clean_string(org_id),  # self.workspace.org_id),
                 "hidden": False
             },
             "custom_tags.dbacademy.source": {
                 "type": "fixed",
-                "value": dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else dbgems.clean_string(lab_id)),
+                "value": common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else dbgems.clean_string(lab_id)),
                 "hidden": False
             },
         })

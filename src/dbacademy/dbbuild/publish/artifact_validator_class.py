@@ -1,6 +1,4 @@
 from typing import Optional
-from dbacademy import dbgems
-from dbacademy import common
 
 
 class ArtifactValidator:
@@ -48,6 +46,7 @@ class ArtifactValidator:
                                  common_language=translator.common_language)
 
     def __init__(self, *, build_name: str, version: str, core_version: str, client: DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str, translation: Translation, i18n: bool, common_language: str) -> None:
+        from dbacademy import common
         from dbacademy.dbbuild.publish.publishing_info_class import Translation
 
         self.build_name = build_name
@@ -83,6 +82,7 @@ class ArtifactValidator:
         assert suite.passed, f"One or more problems were found."
 
     def __validate_distribution_dbc(self, as_latest: bool) -> True:
+        from dbacademy import dbgems
 
         if not as_latest:
             label = self.version
@@ -120,6 +120,8 @@ class ArtifactValidator:
         return self.__validate_dbc(version=version, dbc_url=dbc_url)
 
     def __validate_dbc(self, version=None, dbc_url=None) -> bool:
+        from dbacademy import dbgems
+
         version = version or self.version
 
         dbc_target_dir = f"{self.temp_work_dir}/{self.build_name}-v{version}"[10:]
@@ -148,7 +150,8 @@ class ArtifactValidator:
         return True
 
     def __validate_git_branch(self, *, branch: str, version: Optional[str]) -> bool:
-        from ..build_utils_class import BuildUtils
+        from dbacademy import common
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         print()
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo:")
@@ -158,7 +161,7 @@ class ArtifactValidator:
         else:
             repo_url = f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
 
-        name = dbgems.clean_string(self.username)
+        name = common.clean_string(self.username)
         target_dir = f"{self.temp_repo_dir}/{name}-{self.build_name}-{branch}"
         BuildUtils.reset_git_repo(client=self.client,
                                   directory=target_dir,
