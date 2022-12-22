@@ -1,15 +1,15 @@
 from typing import Union, List, Dict
-from dbacademy.dbrest import DBAcademyRestClient
-from dbacademy import dbgems
 
 
 class BuildUtils:
+    from dbacademy.dbrest import DBAcademyRestClient
 
     def __init__(self):
         pass
 
     @staticmethod
     def to_job_url(*, job_id: str, run_id: str):
+        from dbacademy import dbgems
         return f"{dbgems.get_workspace_url()}#job/{job_id}/run/{run_id}"
 
     @staticmethod
@@ -133,6 +133,7 @@ class BuildUtils:
     @staticmethod
     def index_repo_dir(*, client: DBAcademyRestClient, repo_dir: str, ignored: List[str]) -> Dict[str, Dict[str, str]]:
         import os
+        from dbacademy import dbgems
 
         start = dbgems.clock_start()
         print(f"Indexing \"{repo_dir}\"", end="...")

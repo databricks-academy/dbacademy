@@ -1,5 +1,4 @@
 from typing import List, Optional
-from dbacademy import dbgems, common
 
 
 class Publisher:
@@ -15,6 +14,7 @@ class Publisher:
     KEEPERS = [".gitignore", "README.md", "LICENSE", "docs"]
 
     def __init__(self, build_config: BuildConfig, publishing_mode: Optional[str]):
+        from dbacademy import common
         from dbacademy.dbbuild.build_config_class import BuildConfig
 
         # Various validation steps
@@ -155,6 +155,7 @@ class Publisher:
         :param debugging: True for debug logging
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
+        from dbacademy import dbgems
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.dbbuild.build_utils_class import BuildUtils
         from dbacademy.dbbuild import BuildConfig
@@ -295,6 +296,7 @@ class Publisher:
         :param branch: The name of the branch to publish to
         :return: None
         """
+        from dbacademy import dbgems, common
         from ..build_utils_class import BuildUtils
 
         # Assume for now that we have failed. This overrides the default
@@ -324,7 +326,7 @@ class Publisher:
         Generates the HTML docs and writes them to the GitHub repo under /docs
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
-
+        from dbacademy import dbgems
         import os, shutil
 
         source_docs_path = f"{self.source_repo}/docs"
@@ -378,6 +380,7 @@ class Publisher:
 
     def __generate_html(self, notebook: NotebookDef) -> None:
         import time
+        from dbacademy import dbgems
 
         if notebook.test_round < 2:
             return  # Skip for rounds 0 & 1
@@ -522,7 +525,8 @@ class Publisher:
         :param skip_validation: True to override validation
         :return: None
         """
-        from ..build_utils_class import BuildUtils
+        from dbacademy import dbgems
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         if skip_validation:
             dbgems.print_warning(f"SKIPPING VALIDATION", "The source directory is not being evaluated for pending changes")
@@ -553,7 +557,8 @@ class Publisher:
         :param skip_validation: True to override validation
         :return: None
         """
-        from ..build_utils_class import BuildUtils
+        from dbacademy import dbgems
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         if skip_validation:
             dbgems.print_warning(f"SKIPPING VALIDATION", "The target directory is not being evaluated for pending changes")

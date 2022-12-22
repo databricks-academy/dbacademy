@@ -1,5 +1,4 @@
 import typing
-from dbacademy import dbgems
 
 
 class ResultsEvaluator:
@@ -21,6 +20,8 @@ class ResultsEvaluator:
         return len(self.failed_set) == 0
 
     def to_html(self, **kwargs) -> str:
+        from dbacademy import dbgems
+
         if "print_success_links" in kwargs:
             dbgems.print_warning(title="DEPRECATION WARNING", message=f"The parameter \"print_success_links\" is not supported. Use Publisher.to_test_suite(keep_success=True) instead")
 

@@ -1,7 +1,3 @@
-from dbacademy import dbgems
-from ..build_utils_class import BuildUtils
-
-
 class TestSuite:
     from dbacademy.dbbuild.build_config_class import BuildConfig
 
@@ -12,6 +8,7 @@ class TestSuite:
     TEST_TYPES = [TEST_TYPE_INTERACTIVE, TEST_TYPE_STOCK, TEST_TYPE_PHOTON, TEST_TYPE_ML]
 
     def __init__(self, *, build_config: BuildConfig, test_dir: str, test_type: str, keep_success: bool = False):
+        from dbacademy import dbgems
         from dbacademy.dbbuild.test.test_instance_class import TestInstance
 
         self.test_dir = test_dir
@@ -112,6 +109,7 @@ class TestSuite:
         return job_id
 
     def test_all_synchronously(self, test_round, fail_fast=True, service_principal: str = None, policy_id: str = None) -> bool:
+        from dbacademy import dbgems
 
         if test_round not in self.test_rounds:
             print(f"** WARNING ** There are no notebooks in round #{test_round}")
@@ -162,6 +160,7 @@ class TestSuite:
         return passed
 
     def test_all_asynchronously(self, test_round: int, service_principal: str = None, policy_id: str = None) -> bool:
+        from dbacademy import dbgems
 
         tests = self.test_rounds[test_round]
 
@@ -223,6 +222,8 @@ class TestSuite:
 
     def log_run(self, test, response):
         import time, uuid, requests, json
+        from dbacademy import dbgems
+        from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         job_id = response.get("job_id", 0)
         run_id = response.get("run_id", 0)
@@ -277,6 +278,7 @@ class TestSuite:
 
     def send_status_update(self, message_type, message):
         import requests, json
+        from dbacademy import dbgems
 
         if self.slack_first_message is None:
             self.slack_first_message = message

@@ -1,6 +1,3 @@
-from dbacademy import dbgems
-
-
 class Paths:
     from .lesson_config_class import LessonConfig
 
@@ -36,6 +33,7 @@ class Paths:
         """
         Returns true if the specified path exists else false.
         """
+        from dbacademy import dbgems
         try:
             return len(dbgems.dbutils.fs.ls(path)) >= 0
         except Exception:

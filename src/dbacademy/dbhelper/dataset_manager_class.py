@@ -1,5 +1,4 @@
 from typing import Optional, List
-from dbacademy import dbgems
 
 
 class DatasetManager:
@@ -56,6 +55,7 @@ class DatasetManager:
         This ensures that data and compute are in the same region which subsequently mitigates performance issues
         when the storage and compute are, for example, on opposite sides of the world.
         """
+        from dbacademy import dbgems
         from dbacademy.dbhelper.paths_class import Paths
         # if not repairing_dataset: print(f"\nThe source for the datasets is\n{self.data_source_uri}/")
         # if not repairing_dataset: print(f"\nYour local dataset directory is {datasets_path}")
@@ -107,6 +107,8 @@ class DatasetManager:
         """
         Validates the "install" of the datasets by recursively listing all files in the remote data repository as well as the local data repository, validating that each file exists but DOES NOT validate file size or checksum.
         """
+        from dbacademy import dbgems
+
         validation_start = dbgems.clock_start()
 
         if self.staging_source_uri == self.data_source_uri:
@@ -135,6 +137,8 @@ class DatasetManager:
             assert self.fixes == 0, f"Unexpected modifications to source datasets."
 
     def __validate_and_repair(self) -> None:
+        from dbacademy import dbgems
+
         print("| listing local files", end="...")
         start = dbgems.clock_start()
         local_files = DatasetManager.list_r(self.datasets_path)
@@ -159,6 +163,7 @@ class DatasetManager:
         Removes extra directories (cascade effect vs one file at a time)
         :return: None
         """
+        from dbacademy import dbgems
 
         for file in local_files:
             if file not in self.remote_files and file.endswith("/") and self.__dataset_not_fixed(test_file=file):
@@ -174,6 +179,8 @@ class DatasetManager:
         Adds extra directories (cascade effect vs one file at a time)
         :return: None
         """
+        from dbacademy import dbgems
+
         for file in self.remote_files:
             if file not in local_files and file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
@@ -190,6 +197,8 @@ class DatasetManager:
         Remove one file at a time (picking up what was not covered by processing directories)
         :return: None
         """
+        from dbacademy import dbgems
+
         for file in local_files:
             if file not in self.remote_files and not file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
@@ -203,6 +212,8 @@ class DatasetManager:
         Add one file at a time (picking up what was not covered by processing directories)
         :return: None
         """
+        from dbacademy import dbgems
+
         for file in self.remote_files:
             if file not in local_files and not file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
@@ -218,6 +229,8 @@ class DatasetManager:
         """
         Utility method used by the dataset validation, this method performs a recursive list of the specified path and returns the sorted list of paths.
         """
+        from dbacademy import dbgems
+
         if prefix is None:
             prefix = path
         if results is None:

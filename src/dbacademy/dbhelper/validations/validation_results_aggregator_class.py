@@ -1,5 +1,4 @@
 from typing import Dict
-from dbacademy import dbgems
 
 
 class __ValidationResultsAggregator(object):
@@ -28,7 +27,9 @@ class __ValidationResultsAggregator(object):
         return self.percentage == 100
 
     def display_results(self):
+        from dbacademy import dbgems
         from dbacademy.dbhelper.validations import _TEST_RESULTS_STYLE
+
         dbgems.display_html(_TEST_RESULTS_STYLE + f"""
     <table class='results'>
       <tr><th colspan="2">Test Summary</th></tr>

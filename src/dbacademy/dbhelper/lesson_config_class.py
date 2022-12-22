@@ -1,5 +1,4 @@
 from typing import Optional, Dict, Any
-from dbacademy import dbgems
 
 
 class LessonConfig:
@@ -27,6 +26,8 @@ class LessonConfig:
         :param enable_ml_support: See the property by the same name
         :param mocks: Used for testing, allows for mocking out the parameters __username, __initial_schema and __initial_catalog
         """
+        from dbacademy import dbgems
+
         self.__mutable = True
 
         self.__name = None

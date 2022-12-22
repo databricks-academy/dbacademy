@@ -1,8 +1,3 @@
-from dbacademy import dbgems
-from dbacademy.dbhelper.paths_class import Paths
-from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
-
-
 class WorkspaceCleaner:
     from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
     
@@ -11,6 +6,7 @@ class WorkspaceCleaner:
         self.__unique_name = None
 
     def reset_lesson(self) -> None:
+        from dbacademy import dbgems
 
         status = False
         if self.__da.lesson_config.name is None:
@@ -37,6 +33,7 @@ class WorkspaceCleaner:
             print("| No action taken")
 
     def reset_learning_environment(self) -> None:
+        from dbacademy import dbgems
 
         print("Resetting the learning environment for all lessons:")
 
@@ -79,6 +76,9 @@ class WorkspaceCleaner:
                 self.__da.client.cluster_policies.delete_by_name(policy_name)
 
     def _reset_working_dir(self) -> None:
+        from dbacademy import dbgems
+        from dbacademy.dbhelper.paths_class import Paths
+
         # noinspection PyProtectedMember
         working_dir_root = self.__da.paths._working_dir_root
 
@@ -87,15 +87,22 @@ class WorkspaceCleaner:
             dbgems.dbutils.fs.rm(working_dir_root, True)
 
     def _reset_datasets(self) -> None:
+        from dbacademy import dbgems
+        from dbacademy.dbhelper.paths_class import Paths
+
         if Paths.exists(self.__da.paths.datasets):
             print(f"| deleting datasets \"{self.__da.paths.datasets}\".")
             dbgems.dbutils.fs.rm(self.__da.paths.datasets, True)
 
     @staticmethod
     def __list_catalogs():
+        from dbacademy import dbgems
+
         return [c.catalog for c in dbgems.spark.sql(f"SHOW CATALOGS").collect()]
 
     def _reset_databases(self) -> None:
+        from dbacademy import dbgems
+        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from pyspark.sql.utils import AnalysisException
 
         # Drop all user-specific catalogs
@@ -121,6 +128,7 @@ class WorkspaceCleaner:
 
     @staticmethod
     def _drop_database(schema_name) -> None:
+        from dbacademy import dbgems
         from pyspark.sql.utils import AnalysisException
 
         try:
@@ -139,6 +147,7 @@ class WorkspaceCleaner:
             pass  # We are going to ignore this as it is most likely deleted or None
 
     def _drop_catalog(self) -> bool:
+        from dbacademy import dbgems
         from pyspark.sql.utils import AnalysisException
 
         if not self.__da.lesson_config.create_catalog:
@@ -156,6 +165,7 @@ class WorkspaceCleaner:
         return True
 
     def _drop_schema(self) -> bool:
+        from dbacademy import dbgems
 
         if self.__da.lesson_config.create_catalog:
             return False  # If we create the catalog, we don't drop the schema
@@ -172,6 +182,7 @@ class WorkspaceCleaner:
 
     @staticmethod
     def _stop_all_streams() -> bool:
+        from dbacademy import dbgems
 
         if len(dbgems.spark.streams.active) == 0:
             return False  # Bail if there are no active streams
@@ -189,6 +200,7 @@ class WorkspaceCleaner:
         return True
 
     def _cleanup_working_dir(self) -> bool:
+        from dbacademy import dbgems
 
         if not self.__da.paths.exists(self.__da.paths.working_dir):
             return False  # Bail if the directory doesn't exist
@@ -241,6 +253,7 @@ class WorkspaceCleaner:
     def _cleanup_experiments(self, lesson_only: bool) -> bool:
         import mlflow
         from mlflow.entities import ViewType
+        from dbacademy import dbgems
 
         start = dbgems.clock_start()
 
@@ -263,6 +276,7 @@ class WorkspaceCleaner:
 
     def _cleanup_mlflow_models(self, lesson_only: bool) -> bool:
         import time
+        from dbacademy import dbgems
 
         models = []
         start = dbgems.clock_start()
@@ -314,6 +328,7 @@ class WorkspaceCleaner:
         return True
 
     def _cleanup_mlflow_endpoints(self, lesson_only: bool) -> bool:
+        from dbacademy import dbgems
 
         endpoints = []
         start = dbgems.clock_start()

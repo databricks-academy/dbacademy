@@ -1,6 +1,4 @@
 from typing import Union
-from dbacademy import dbgems
-from dbacademy.rest.common import DatabricksApiException
 
 
 class WarehousesHelper:
@@ -44,7 +42,9 @@ class WarehousesHelper:
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
     def create_sql_warehouse_for(self, username, auto_stop_mins=120, enable_serverless_compute=True):
+        from dbacademy import dbgems
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
+
         return WarehousesHelper.create_sql_warehouse(client=self.client,
                                                      name=self.da.to_unique_name(username=username,
                                                                                  course_code=self.da.course_config.course_code,
@@ -62,7 +62,9 @@ class WarehousesHelper:
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
     def create_shared_sql_warehouse(self, name: str, auto_stop_mins=120, enable_serverless_compute=True):
+        from dbacademy import dbgems
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
+
         return WarehousesHelper.create_sql_warehouse(client=self.client,
                                                      name=name,
                                                      for_user=None,
@@ -78,6 +80,8 @@ class WarehousesHelper:
     @staticmethod
     def create_sql_warehouse(*, client: DBAcademyRestClient, name: str, auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None, for_user: Union[str, None] = None):
         from dbacademy import dbgems
+        from dbacademy import common
+        from dbacademy.rest.common import DatabricksApiException
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
         from dbacademy.dbrest.sql.endpoints import RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT, CLUSTER_SIZE_2X_SMALL
@@ -99,11 +103,11 @@ class WarehousesHelper:
                 spot_instance_policy=RELIABILITY_OPTIMIZED,
                 channel=CHANNEL_NAME_CURRENT,
                 tags={
-                    f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}": dbgems.clean_string(lab_id),
-                    f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}": dbgems.clean_string(workspace_description),
-                    f"dbacademy.workspace": dbgems.clean_string(workspace_name),
-                    f"dbacademy.org_id": dbgems.clean_string(org_id),
-                    f"dbacademy.source": dbgems.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else lab_id),
+                    f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}": common.clean_string(lab_id),
+                    f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}": common.clean_string(workspace_description),
+                    f"dbacademy.workspace": common.clean_string(workspace_name),
+                    f"dbacademy.org_id": common.clean_string(org_id),
+                    f"dbacademy.source": common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else lab_id),
                 })
         if enable_serverless_compute:
             try:
@@ -141,4 +145,3 @@ class WarehousesHelper:
             See <a href="/sql/warehouses/{warehouse_id}" target="_blank">{name} ({warehouse_id})</a>
         </div></body></html>
         """)
-
