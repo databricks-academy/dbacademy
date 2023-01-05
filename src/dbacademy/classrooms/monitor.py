@@ -623,7 +623,7 @@ class Commands(object):
 
         # Spec for the job to run
         job_spec = {
-            "name": "Workspace-Setup",
+            "name": "DBAcademy Workspace-Setup",
             "timeout_seconds": 60 * 60 * 6,  # 6 hours
             "max_concurrent_runs": 1,
             "tasks": [{
