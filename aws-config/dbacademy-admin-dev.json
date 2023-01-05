@@ -1,0 +1,100 @@
+{
+  "Role Definition": {
+    "name": "dbacademy-admin-dev",
+    "account": "981174701421",
+
+    "Trust Relationship": {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {
+                    "Service": "lambda.amazonaws.com"
+                },
+                "Action": "sts:AssumeRole"
+            }
+        ]
+    },
+
+    "Inline Policy #1 - RestrictToSingleLambda":   {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Sid": "WhitelistSpecificLambdaFunction",
+                "Effect": "Deny",
+                "Action": "*",
+                "Resource": "*",
+                "Condition": {
+                    "StringNotLike": {
+                        "aws:userid": "*:dbacademy-admin-dev"
+                    }
+                }
+            }
+        ]
+    },
+
+    "Inline Policy #2 - LambdaAccess":   {
+      "Version": "2012-10-17",
+      "Statement": [
+          {
+              "Effect": "Allow",
+              "Action": "logs:CreateLogGroup",
+              "Resource": "arn:aws:logs:us-west-2:981174701421:*"
+          },
+          {
+              "Effect": "Allow",
+              "Action": [
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents"
+              ],
+              "Resource": [
+                  "arn:aws:logs:us-west-2:981174701421:log-group:/aws/lambda/dbacademy-admin-dev:*"
+              ]
+          },
+          {
+              "Effect": "Allow",
+              "Action": [
+                  "s3:ListBucket",
+                  "s3:GetObject",
+                  "s3:PutObject"
+              ],
+              "Resource": [
+                  "arn:aws:s3:::db-tracking-prod",
+                  "arn:aws:s3:::db-tracking-prod/*",
+                  "arn:aws:s3:::dbacademy",
+                  "arn:aws:s3:::dbacademy/*",
+                  "arn:aws:s3:::files.training.databricks.com",
+                  "arn:aws:s3:::files.training.databricks.com/*",
+                  "arn:aws:s3:::curriculum-storage",
+                  "arn:aws:s3:::curriculum-storage/*"
+              ]
+          },
+          {
+              "Sid": "SecretsManagerPrefixedAccess",
+              "Effect": "Allow",
+              "Action": [
+                  "secretsmanager:GetSecretValue",
+                  "secretsmanager:DescribeSecret"
+              ],
+              "Resource": [
+                  "arn:aws:secretsmanager:*:981174701421:secret:dbacademy-*"
+              ]
+          },
+          {
+              "Sid": "DynamoDBPrefixedAccess",
+              "Effect": "Allow",
+              "Action": [
+                  "dynamodb:BatchGetItem",
+                  "dynamodb:GetItem",
+                  "dynamodb:Query",
+                  "dynamodb:Scan",
+                  "dynamodb:BatchWriteItem",
+                  "dynamodb:PutItem",
+                  "dynamodb:UpdateItem"
+              ],
+              "Resource": "arn:aws:logs:us-west-2:981174701421:table/dbacademy-*"
+          }
+      ]
+    }
+  }
+}
