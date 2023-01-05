@@ -33,7 +33,7 @@
             ]
         },
 
-        "Inline Policy #2 - LambdaAccess":   {
+        "Inline Policy #2 - LambdaAccess": {
             "Version": "2012-10-17",
             "Statement": [
                 {
