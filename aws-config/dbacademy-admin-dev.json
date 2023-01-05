@@ -59,14 +59,8 @@
                         "s3:PutObject"
                     ],
                     "Resource": [
-                        "arn:aws:s3:::db-tracking-prod",
-                        "arn:aws:s3:::db-tracking-prod/*",
-                        "arn:aws:s3:::dbacademy",
-                        "arn:aws:s3:::dbacademy/*",
-                        "arn:aws:s3:::files.training.databricks.com",
-                        "arn:aws:s3:::files.training.databricks.com/*",
-                        "arn:aws:s3:::curriculum-storage",
-                        "arn:aws:s3:::curriculum-storage/*"
+                        "arn:aws:s3:::dbacademy-test",
+                        "arn:aws:s3:::dbacademy-test/*"
                     ]
                 },
                 {
@@ -77,7 +71,7 @@
                         "secretsmanager:DescribeSecret"
                     ],
                     "Resource": [
-                        "arn:aws:secretsmanager:*:981174701421:secret:dbacademy-*"
+                        "arn:aws:secretsmanager:*:981174701421:secret:dbacademy-dev-*"
                     ]
                 },
                 {
@@ -92,7 +86,7 @@
                         "dynamodb:PutItem",
                         "dynamodb:UpdateItem"
                     ],
-                    "Resource": "arn:aws:logs:us-west-2:981174701421:table/dbacademy-*"
+                    "Resource": "arn:aws:logs:us-west-2:981174701421:table/dbacademy-dev-*"
                 }
             ]
         }
