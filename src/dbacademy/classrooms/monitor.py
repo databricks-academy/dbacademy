@@ -639,7 +639,7 @@ class Commands(object):
                     },
                     "source": "GIT"
                 },
-                "job_cluster_key": "Workspace-Setup",
+                "job_cluster_key": "Workspace-Setup-Cluster",
                 "timeout_seconds": 0
             }],
             "job_clusters": [{
