@@ -605,6 +605,103 @@ class Commands(object):
             raise ValueError("Workspace is in unknown cloud.")
         return cloud_attributes
 
+    @staticmethod
+    def universal_setup(workspace: DatabricksApi):
+        from dbacademy.dbhelper import WorkspaceHelper
+        if workspace.cloud == "AWS":
+            node_type_id = "i3.xlarge"
+        elif workspace.cloud == "MSA":
+            node_type_id = "Standard_DS3_v2"
+        elif workspace.cloud == "GCP":
+            node_type_id = "n1-standard-4"
+        else:
+            raise Exception(f"The cloud {workspace.cloud} is not supported.")
+        spark_version = "11.3.x-ml-scala2.12"
+
+        import re
+        workspace_hostname = re.match("https://([^/]+)/api/", workspace.url)[1]
+
+        # Spec for the job to run
+        job_spec = {
+            "name": "Workspace-Setup",
+            "timeout_seconds": 60 * 60 * 6,  # 6 hours
+            "max_concurrent_runs": 1,
+            "tasks": [{
+                "task_key": "Workspace-Setup",
+                "notebook_task": {
+                    "notebook_path": "Workspace-Setup",
+                    "base_parameters": {
+                        WorkspaceHelper.PARAM_LAB_ID: "Unknown",
+                        WorkspaceHelper.PARAM_DESCRIPTION: "Unknown",
+                        WorkspaceHelper.PARAM_CONFIGURE_FOR: WorkspaceHelper.CONFIGURE_FOR_ALL_USERS,
+                        WorkspaceHelper.PARAM_NODE_TYPE_ID: node_type_id,
+                        WorkspaceHelper.PARAM_SPARK_VERSION: spark_version,
+                    },
+                    "source": "GIT"
+                },
+                "job_cluster_key": "Workspace-Setup",
+                "timeout_seconds": 0
+            }],
+            "job_clusters": [{
+                "job_cluster_key": "Workspace-Setup-Cluster",
+                "new_cluster": {
+                    "spark_version": "11.3.x-scala2.12",
+                    "spark_conf": {
+                        "spark.master": "local[*, 4]",
+                        "spark.databricks.cluster.profile": "singleNode"
+                    },
+                    "custom_tags": {
+                        "ResourceClass": "SingleNode",
+                        "dbacademy.event_name": "Unknown",
+                        "dbacademy.event_description": "Unknown",
+                        "dbacademy.workspace": workspace_hostname
+                    },
+                    "spark_env_vars": {
+                        "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+                    },
+                    "enable_elastic_disk": True,
+                    "data_security_mode": "SINGLE_USER",
+                    "runtime_engine": "STANDARD",
+                    "num_workers": 0
+                }
+            }],
+            "git_source": {
+                "git_url": "https://github.com/databricks-academy/workspace-setup.git",
+                "git_provider": "gitHub",
+                "git_branch": "published"
+            },
+            "format": "MULTI_TASK"
+        }
+
+        # Append cloud specific attributes the job_clusters spec.
+        cloud_attributes = Commands._cloud_specific_attributes(workspace)
+        job_spec["job_clusters"][0]["new_cluster"].update(cloud_attributes)
+
+        job = workspace.jobs.get(job_spec["name"], if_not_exists="ignore") or {}
+        if job:
+            job_id = job["job_id"]
+            workspace.jobs.runs.delete_all(job_id)
+            job_spec["job_id"] = job_id
+            workspace.jobs.update(job_spec)
+        else:
+            job_id = workspace.jobs.create_multi_task_job(**job_spec)
+
+        runs = workspace.jobs.runs.list(job_id=job_id, active_only=True)
+        if runs:
+            run_id = runs[0]["run_id"]
+        else:
+            response = workspace.api("POST", "/2.1/jobs/run-now", {"job_id": job_id})
+            run_id = response["run_id"]
+
+        # Poll for job completion
+        from time import sleep
+        while True:
+            response = workspace.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
+            if response["state"]["life_cycle_state"] not in ["PENDING", "RUNNING", "TERMINATING"]:
+                result = response["state"]["result_state"]
+                return result
+            sleep(60)  # seconds
+
     def workspace_setup(self, workspace: DatabricksApi):
         import requests as web
         from dbacademy.dbhelper import WorkspaceHelper
