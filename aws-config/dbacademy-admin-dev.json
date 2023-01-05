@@ -36,15 +36,21 @@
         "Inline Policy #2 - LambdaAccess": {
             "Version": "2012-10-17",
             "Statement": [
-                {
-                    "Effect": "Allow",
-                    "Action": [
-                        "logs:CreateLogGroup",
-                        "logs:CreateLogStream",
-                        "logs:PutLogEvents"
-                    ],
-                    "Resource": "arn:aws:logs:us-west-2:981174701421:*"
-                },
+        {
+            "Effect": "Allow",
+            "Action": "logs:CreateLogGroup",
+            "Resource": "arn:aws:logs:us-west-2:981174701421:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": [
+                "arn:aws:logs:us-west-2:981174701421:log-group:/aws/lambda/dbacademy-admin-dev:*"
+            ]
+        },
                 {
                     "Effect": "Allow",
                     "Action": [
