@@ -66,7 +66,11 @@
                         "arn:aws:s3:::files.training.databricks.com",
                         "arn:aws:s3:::files.training.databricks.com/*",
                         "arn:aws:s3:::curriculum-storage",
-                        "arn:aws:s3:::curriculum-storage/*"
+                        "arn:aws:s3:::curriculum-storage/*",
+                        "arn:aws:s3:::secured.training.databricks.com",
+                        "arn:aws:s3:::secured.training.databricks.com/*",
+                        "arn:aws:s3:::resources.training.databricks.com",
+                        "arn:aws:s3:::resources.training.databricks.com/*"
                     ]
                 },
                 {
@@ -77,7 +81,7 @@
                         "secretsmanager:DescribeSecret"
                     ],
                     "Resource": [
-                        "arn:aws:secretsmanager:*:981174701421:secret:dbacademy-*"
+                        "arn:aws:secretsmanager:*:981174701421:secret:dbacademy-prod-*"
                     ]
                 },
                 {
@@ -92,7 +96,7 @@
                         "dynamodb:PutItem",
                         "dynamodb:UpdateItem"
                     ],
-                    "Resource": "arn:aws:logs:us-west-2:981174701421:table/dbacademy-*"
+                    "Resource": "arn:aws:logs:us-west-2:981174701421:table/dbacademy-prod-*"
                 }
             ]
         }
