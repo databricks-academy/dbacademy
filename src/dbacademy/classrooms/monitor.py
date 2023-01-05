@@ -616,7 +616,7 @@ class Commands(object):
             node_type_id = "n1-standard-4"
         else:
             raise Exception(f"The cloud {workspace.cloud} is not supported.")
-        spark_version = "11.3.x-ml-scala2.12"
+        spark_version = "11.3.x-cpu-ml-scala2.12"
 
         import re
         workspace_hostname = re.match("https://([^/]+)/api/", workspace.url)[1]
