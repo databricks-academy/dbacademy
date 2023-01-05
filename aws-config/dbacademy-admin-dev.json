@@ -81,6 +81,12 @@
                         "dynamodb:UpdateItem"
                     ],
                     "Resource": "arn:aws:logs:us-west-2:981174701421:table/dbacademy-dev-*"
+                },
+                {
+                    "Sid": "SES",
+                    "Effect": "Allow",
+                    "Action": "ses:SendEmail",
+                    "Resource": "*"
                 }
             ]
         }
