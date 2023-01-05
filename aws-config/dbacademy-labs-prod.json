@@ -1,6 +1,6 @@
 {
     "Role Definition": {
-        "name": "dbacademy-admin-prod",
+        "name": "dbacademy-labs-prod",
         "account": "981174701421",
 
         "Trust Relationship": {
@@ -26,7 +26,7 @@
                     "Resource": "*",
                     "Condition": {
                         "StringNotLike": {
-                            "aws:userid": "*:dbacademy-admin-prod"
+                            "aws:userid": "*:dbacademy-labs-prod"
                         }
                     }
                 }
@@ -48,7 +48,7 @@
                         "logs:PutLogEvents"
                     ],
                     "Resource": [
-                        "arn:aws:logs:us-west-2:981174701421:log-group:/aws/lambda/dbacademy-admin-prod:*"
+                        "arn:aws:logs:us-west-2:981174701421:log-group:/aws/lambda/dbacademy-labs-prod:*"
                     ]
                 },
                 {
@@ -59,14 +59,10 @@
                         "s3:PutObject"
                     ],
                     "Resource": [
-                        "arn:aws:s3:::db-tracking-prod",
-                        "arn:aws:s3:::db-tracking-prod/*",
                         "arn:aws:s3:::dbacademy",
                         "arn:aws:s3:::dbacademy/*",
                         "arn:aws:s3:::files.training.databricks.com",
                         "arn:aws:s3:::files.training.databricks.com/*",
-                        "arn:aws:s3:::curriculum-storage",
-                        "arn:aws:s3:::curriculum-storage/*",
                         "arn:aws:s3:::secured.training.databricks.com",
                         "arn:aws:s3:::secured.training.databricks.com/*",
                         "arn:aws:s3:::resources.training.databricks.com",

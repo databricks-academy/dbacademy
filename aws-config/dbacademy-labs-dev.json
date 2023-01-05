@@ -1,6 +1,6 @@
 {
     "Role Definition": {
-        "name": "dbacademy-admin-dev",
+        "name": "dbacademy-labs-dev",
         "account": "981174701421",
 
         "Trust Relationship": {
@@ -26,7 +26,7 @@
                     "Resource": "*",
                     "Condition": {
                         "StringNotLike": {
-                            "aws:userid": "*:dbacademy-admin-dev"
+                            "aws:userid": "*:dbacademy-labs-dev"
                         }
                     }
                 }
@@ -48,7 +48,7 @@
                         "logs:PutLogEvents"
                     ],
                     "Resource": [
-                        "arn:aws:logs:us-west-2:981174701421:log-group:/aws/lambda/dbacademy-admin-dev:*"
+                        "arn:aws:logs:us-west-2:981174701421:log-group:/aws/lambda/dbacademy-labs-dev:*"
                     ]
                 },
                 {
