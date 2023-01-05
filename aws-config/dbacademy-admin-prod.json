@@ -16,7 +16,7 @@
             ]
         },
 
-        "Inline Policy #1 - RestrictToSingleLambda":   {
+        "Inline Policy #1 - RestrictToSingleLambda": {
             "Version": "2012-10-17",
             "Statement": [
                 {
