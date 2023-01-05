@@ -54,7 +54,9 @@
                     ],
                     "Resource": [
                         "arn:aws:s3:::dbacademy-test",
-                        "arn:aws:s3:::dbacademy-test/*"
+                        "arn:aws:s3:::dbacademy-test/*",
+                        "arn:aws:s3:::dbacademy-dev",
+                        "arn:aws:s3:::dbacademy-dev/*"
                     ]
                 },
                 {
