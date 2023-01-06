@@ -226,7 +226,7 @@ def validate_dependencies(module: str, curriculum_workspaces_only=True) -> bool:
     try:
         if testable:
             current_version = lookup_current_module_version(module)
-            versions = github.default_client.repo(module).list_all_tags()
+            versions = github.default_client().repo(module).list_all_tags()
 
             if len(versions) == 0:
                 print(f"** WARNING ** No versions found for {module}; Double check the spelling and try again.")
