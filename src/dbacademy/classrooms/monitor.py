@@ -564,20 +564,17 @@ class Commands(object):
     @staticmethod
     def disallow_databricks_sql(w: DatabricksApi):
         changed = False
-        new_entitlements = {
-            "databricks-sql-access": False,
-        }
         for u in w.users.list():
             entitlements = {e["value"] for e in u.get("entitlements", [])}
             groups = {g["display"] for g in u.get("groups", [])}
             if "databricks-sql-access" in entitlements and "admins" not in groups:
                 changed = True
-                w.users.set_entitlements(u, new_entitlements)
+                w.users.set_entitlements(u, {"databricks-sql-access": False})
         g = w.scim.groups.get(group_name="users")
         entitlements = {e["value"] for e in g.get("entitlements", [])}
         if "databricks-sql-access" in entitlements:
             changed = True
-            w.scim.groups.set_entitlements(g, new_entitlements)
+            w.scim.groups.remove_entitlement(g, "databricks-sql-access")
         return changed
 
     @staticmethod
