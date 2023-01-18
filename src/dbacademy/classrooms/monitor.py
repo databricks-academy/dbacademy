@@ -574,7 +574,7 @@ class Commands(object):
         entitlements = {e["value"] for e in g.get("entitlements", [])}
         if "databricks-sql-access" in entitlements:
             changed = True
-            w.scim.groups.remove_entitlement(g, "databricks-sql-access")
+            w.scim.groups.remove_entitlement("databricks-sql-access", group=g)
         return changed
 
     @staticmethod
