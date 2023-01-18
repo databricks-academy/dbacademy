@@ -562,6 +562,25 @@ class Commands(object):
         return changed
 
     @staticmethod
+    def disallow_databricks_sql(w: DatabricksApi):
+        changed = False
+        entitlements = {
+            "databricks-sql-access": False,
+        }
+        for u in w.users.list():
+            entitlements = {e["value"] for e in u.get("entitlements", [])}
+            groups = {g["display"] for g in u.get("groups", [])}
+            if "databricks-sql-access" in entitlements and "admins" not in groups:
+                changed = True
+                w.users.set_entitlements(u, entitlements)
+        g = w.scim.groups.get(group_name="users")
+        entitlements = {e["value"] for e in g.get("entitlements", [])}
+        if "databricks-sql-access" in entitlements:
+            changed = True
+            w.scim.groups.set_entitlements(g, entitlements)
+        return changed
+
+    @staticmethod
     def remove_da_endpoints(ws):
         endpoints = ws.sql.endpoints.list()
         for ep in endpoints:
