@@ -418,6 +418,20 @@ class Commands(object):
         """List all running clusters"""
         return [{"cluster_name": c["cluster_name"], "cluster": c} for c in w.clusters.list()]
 
+    @staticmethod
+    def clusters_no_manage(ws: DatabricksApi):
+        for cluster in ws.clusters.list():
+            cluster_id = cluster["cluster_id"]
+            acl = ws.permissions.clusters.get(cluster_id).get("access_control_list", [])
+            owners = [perm["user_name"] for perm in acl if
+                      "user_name" in perm and
+                      perm["all_permissions"][0]["inherited"] is False and
+                      perm["all_permissions"][0]["permission_level"] == "CAN_MANAGE"
+                      ]
+            for owner in owners:
+                ws.permissions.clusters.update_user(cluster_id, owner, "CAN_ATTACH_TO")
+            return owners
+
     def clustersCreateMissing(self, w, fix=False):
         """Create user clusters matching the cluster spec above"""
         import re
