@@ -926,8 +926,7 @@ class Commands(object):
             owners = [perm["user_name"] for perm in acl if
                       "user_name" in perm and
                       perm["all_permissions"][0]["inherited"] is False and
-                      perm["all_permissions"][0]["permission_level"] == "CAN_MANAGE" and
-                      True
+                      perm["all_permissions"][0]["permission_level"] in ["CAN_MANAGE", "CAN_RESTART"]
                       ]
             return owners
 
@@ -954,7 +953,7 @@ class Commands(object):
         from multiprocessing.pool import ThreadPool
         with ThreadPool(100) as pool:
             results = pool.map(update_cluster, ws.clusters.list())
-        return results
+        return [r for r in results if r is not None]
 
 
 # noinspection PyPep8Naming
