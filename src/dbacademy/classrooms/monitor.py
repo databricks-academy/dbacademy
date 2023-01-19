@@ -420,6 +420,7 @@ class Commands(object):
 
     @staticmethod
     def clusters_no_manage(ws: DatabricksApi):
+        count = 0
         for cluster in ws.clusters.list():
             cluster_id = cluster["cluster_id"]
             acl = ws.permissions.clusters.get(cluster_id).get("access_control_list", [])
@@ -430,7 +431,8 @@ class Commands(object):
                       ]
             for owner in owners:
                 ws.permissions.clusters.update_user(cluster_id, owner, "CAN_ATTACH_TO")
-            return owners
+                count += 1
+        return count
 
     def clustersCreateMissing(self, w, fix=False):
         """Create user clusters matching the cluster spec above"""
