@@ -426,11 +426,10 @@ class Commands(object):
             acl = ws.permissions.clusters.get(cluster_id).get("access_control_list", [])
             owners = [perm["user_name"] for perm in acl if
                       "user_name" in perm and
-                      perm["all_permissions"][0]["inherited"] is False and
-                      perm["all_permissions"][0]["permission_level"] == "CAN_MANAGE"
+                      perm["all_permissions"][0]["inherited"] is False
                       ]
             for owner in owners:
-                ws.permissions.clusters.update_user(cluster_id, owner, "CAN_ATTACH_TO")
+                ws.permissions.clusters.update_user(cluster_id, owner, "CAN_RESTART")
                 count += 1
         return count
 
