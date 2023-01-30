@@ -196,6 +196,8 @@ class ArtifactValidator:
             print(f"| {i+1} of {total}: {name} (https://drive.google.com/drive/folders/{folder_id})")
 
             distribution_path = docs_publisher.get_distribution_path(version=version, file=file)
+            print(f"|                   {distribution_path}")
+
             assert os.path.exists(distribution_path), f"The document {name} was not found at \"{distribution_path}\""
 
         print(f"| PASSED: All documents exported to the distribution system")
