@@ -277,11 +277,7 @@ class Commands(object):
     @staticmethod
     def stopDLT(workspace):
         """Switches any continuous DLT pipelines to standard triggered pipelines"""
-
-        # TODO dateutil is a "provided" package in Notebooks.
-        # noinspection PyPackageRequirements
         import dateutil.parser as dp
-
         from time import time as now
         results = []
         page_token = ""
@@ -422,6 +418,21 @@ class Commands(object):
         """List all running clusters"""
         return [{"cluster_name": c["cluster_name"], "cluster": c} for c in w.clusters.list()]
 
+    @staticmethod
+    def clusters_no_manage(ws: DatabricksApi):
+        count = 0
+        for cluster in ws.clusters.list():
+            cluster_id = cluster["cluster_id"]
+            acl = ws.permissions.clusters.get(cluster_id).get("access_control_list", [])
+            owners = [perm["user_name"] for perm in acl if
+                      "user_name" in perm and
+                      perm["all_permissions"][0]["inherited"] is False
+                      ]
+            for owner in owners:
+                ws.permissions.clusters.update_user(cluster_id, owner, "CAN_RESTART")
+                count += 1
+        return count
+
     def clustersCreateMissing(self, w, fix=False):
         """Create user clusters matching the cluster spec above"""
         import re
@@ -453,24 +464,13 @@ class Commands(object):
 
     def clustersVerify(self, w, fix=False):
         """Check all clusters against the cluster spec above"""
-        import re
         clusters = w.clusters.list()
         clusters = [c for c in clusters if
                     c["cluster_name"][0:4] not in ("dlt-", "job-") and c["cluster_name"] != "my_cluster"]
-        pattern = re.compile(r"\D")
-
-        # TODO What's the purpose of this call if the return value is not used?
-        # noinspection PyUnusedLocal
-        clusters_map = {pattern.subn("", c["cluster_name"])[0]: c["cluster_id"] for c in clusters}
-
         if not clusters:
             return [{"cluster_name": " ", "error": "No cluster in workspace"}]
-
         errors = []
         for c in clusters:
-            # TODO this instance of err is not used and is redefined at line 489
-            # noinspection PyUnusedLocal
-            err = None
             if c.get("cluster_source") in ["PIPELINE", "JOB", "PIPELINE_MAINTENANCE"]:
                 continue
             differences = {k: c.get(k) for k in self.cluster_spec if k not in c or c[k] != self.cluster_spec[k]}
@@ -529,16 +529,12 @@ class Commands(object):
                 count += 1
         return count
 
-    # TODO Remove unused parameter "w"
-    # noinspection PyUnusedLocal
     @staticmethod
-    def addInstructors(w, instructors):
-
-        def add_instructors(w2):
+    def addInstructors(instructors):
+        def add_instructors(ws):
             for user in instructors:
-                w2.users.create(user)
-                w2.groups.add_member("admins", user_name=user)
-
+                ws.users.create(user)
+                ws.groups.add_member("admins", user_name=user)
         return add_instructors
 
     @staticmethod
@@ -562,19 +558,32 @@ class Commands(object):
         return changed
 
     @staticmethod
+    def disallow_databricks_sql(w: DatabricksApi):
+        changed = False
+        for u in w.users.list():
+            entitlements = {e["value"] for e in u.get("entitlements", [])}
+            groups = {g["display"] for g in u.get("groups", [])}
+            if "databricks-sql-access" in entitlements and "admins" not in groups:
+                changed = True
+                w.users.set_entitlements(u, {"databricks-sql-access": False})
+        g = w.scim.groups.get(group_name="users")
+        entitlements = {e["value"] for e in g.get("entitlements", [])}
+        if "databricks-sql-access" in entitlements:
+            changed = True
+            w.scim.groups.remove_entitlement("databricks-sql-access", group=g)
+        return changed
+
+    @staticmethod
     def remove_da_endpoints(ws):
         endpoints = ws.sql.endpoints.list()
         for ep in endpoints:
             if ep["name"].startswith("da-"):
                 ws.sql.endpoints.delete(ep["id"])
 
-    # TODO local variables "cloud" are not used
-    # noinspection PyUnusedLocal
     @staticmethod
     def _cloud_specific_attributes(workspace):
         # Cloud specific values
         if ".cloud.databricks.com" in workspace.url:
-            cloud = "AWS"
             cloud_attributes = {
                 "node_type_id": "i3.xlarge",
                 "aws_attributes": {
@@ -584,7 +593,6 @@ class Commands(object):
                 },
             }
         elif ".gcp.databricks.com" in workspace.url:
-            cloud = "GCP"
             cloud_attributes = {
                 "node_type_id": "n1-highmem-4",
                 "gcp_attributes": {
@@ -593,7 +601,6 @@ class Commands(object):
                 },
             }
         elif ".azuredatabricks.net" in workspace.url:
-            cloud = "MSA"
             cloud_attributes = {
                 "node_type_id": "Standard_DS3_v2",
                 "azure_attributes": {
@@ -919,8 +926,7 @@ class Commands(object):
             owners = [perm["user_name"] for perm in acl if
                       "user_name" in perm and
                       perm["all_permissions"][0]["inherited"] is False and
-                      perm["all_permissions"][0]["permission_level"] == "CAN_MANAGE" and
-                      True
+                      perm["all_permissions"][0]["permission_level"] in ["CAN_MANAGE", "CAN_RESTART"]
                       ]
             return owners
 
@@ -947,7 +953,7 @@ class Commands(object):
         from multiprocessing.pool import ThreadPool
         with ThreadPool(100) as pool:
             results = pool.map(update_cluster, ws.clusters.list())
-        return results
+        return [r for r in results if r is not None]
 
 
 # noinspection PyPep8Naming
@@ -960,8 +966,7 @@ def getWorkspace(workspaces, *, name=None, url=None):
         raise Exception("getWorkspace: must provide workspace name or url")
 
 
-# TODO Remove unused locals
-# noinspection PyPep8Naming,PyUnusedLocal
+# noinspection PyPep8Naming
 def scanWorkspaces(function, workspaces, *, url=None, name=None, ignoreConnectionErrors=False):
     from requests.exceptions import ConnectionError, HTTPError
     from collections.abc import Mapping, Iterable
@@ -1003,16 +1008,11 @@ def scanWorkspaces(function, workspaces, *, url=None, name=None, ignoreConnectio
         map_results = pool.map(lambda w: list(checkWorkspace(w)), workspaces)
 
     # Determine the schema for the results and turn it into a pretty dataframe cs
-    has_exceptions = False
-    has_results = False
     example = OrderedDict()
     map_results = [r for w in map_results for r in w]
     for r in map_results:
         if r[1]:
-            has_results = True
             example.update(r[1])
-        else:
-            has_exceptions = True
     keys = example.keys()
 
     results = []
