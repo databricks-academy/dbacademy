@@ -66,8 +66,15 @@ class ArtifactValidator:
 
     def validate_publishing_processes(self) -> None:
         from dbacademy.dbhelper.validations.validation_suite_class import ValidationSuite
+
+        if "-" not in self.version:
+            latest_version = "vLATEST"
+        else:
+            code = self.version.split("-")[1]
+            latest_version = f"vLATEST{code}"
+
         suite = ValidationSuite(name="Distribution")
-        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=True), description="DBC in Distribution System (LATEST)", depends_on=[])
+        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=True), description=f"DBC in Distribution System ({latest_version})", depends_on=[])
         suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=False), description=f"DBC in Distribution System ({self.version})", depends_on=[])
 
         if self.target_repo_url is not None:
@@ -75,7 +82,7 @@ class ArtifactValidator:
             suite.test_true(actual_value=lambda: self.__validate_git_branch(branch="published", version=None), description=f"Found \"{self.version}\" in Version Info from GitHub Repo (published)", depends_on=[])
             suite.test_true(actual_value=lambda: self.__validate_git_branch(branch=f"published-v{self.version}", version=None), description=f"Found \"{self.version}\" in Version Info from GitHub Repo (published-v{self.version})", depends_on=[])
 
-        suite.test_true(actual_value=lambda: self.__validate_published_docs(version="LATEST"), description=f"Docs Published as PDF (LATEST)", depends_on=[])
+        suite.test_true(actual_value=lambda: self.__validate_published_docs(version=latest_version), description=f"Docs Published as PDF ({latest_version})", depends_on=[])
         suite.test_true(actual_value=lambda: self.__validate_published_docs(version=self.version), description=f"Docs Published as PDF ({self.version})", depends_on=[])
 
         suite.display_results()
