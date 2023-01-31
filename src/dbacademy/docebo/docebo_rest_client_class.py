@@ -12,7 +12,7 @@ class DoceboRestClient(ApiClient):
         consumer_key = os.environ.get("DOCEBO_CONSUMER_KEY")
         username = os.environ.get("DOCEBO_USERNAME")
         password = os.environ.get("DOCEBO_PASSWORD")
-        endpoint = os.environ.get("DOCEBO_BASE_URL")
+        endpoint = os.environ.get("DOCEBO_ENDPOINT")
 
         return DoceboRestClient(endpoint=endpoint,
                                 username=username,
