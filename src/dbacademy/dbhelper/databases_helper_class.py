@@ -18,7 +18,7 @@ class DatabasesHelper:
 
         # Clear the list of databases (and derived users) to force a refresh
         self.workspace._usernames = None
-        self.workspace._existing_databases = None
+        self.workspace.clear_existing_databases()
 
     def __drop_databases_for(self, username: str):
         from dbacademy import dbgems
@@ -36,6 +36,30 @@ class DatabasesHelper:
         if not dropped:
             print(f"Database not drop for {username}")
 
+    def drop_catalogs(self, configure_for: str):
+        self.workspace.do_for_all_users(self.workspace.get_usernames(configure_for), lambda username: self.__drop_catalogs_for(username=username))
+
+        # Clear the list of catalogs (and derived users) to force a refresh
+        self.workspace._usernames = None
+        self.workspace.clear_existing_databases()
+        self.workspace.clear_existing_catalogs()
+
+    def __drop_catalogs_for(self, username: str):
+        from dbacademy import dbgems
+
+        dropped = False
+        prefix = self.da.to_schema_name_prefix(username=username,
+                                               course_code=self.da.course_config.course_code)
+
+        for catalog_name in self.workspace.existing_catalogs:
+            if catalog_name.startswith(prefix):
+                print(f"Dropping the catalog \"{catalog_name}\" for {username}")
+                dropped = True
+                dbgems.spark.sql(f"DROP CATALOG {catalog_name} CASCADE;")
+
+        if not dropped:
+            print(f"Catalog not drop for {username}")
+
     def create_databases(self, configure_for: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
         usernames = self.workspace.get_usernames(configure_for)
         self.workspace.do_for_all_users(usernames, lambda username: self.__create_database_for(username=username,
@@ -43,7 +67,7 @@ class DatabasesHelper:
                                                                                                post_create=post_create))
         # Clear the list of databases (and derived users) to force a refresh
         self.workspace._usernames = None
-        self.workspace._existing_databases = None
+        self.databases = self.workspace.clear_existing_databases()
 
     def __create_database_for(self, username: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
         from dbacademy import dbgems
@@ -68,6 +92,45 @@ class DatabasesHelper:
         if post_create:
             # Call the post-create init function if defined
             response = post_create(username, db_name)
+            if response is not None:
+                msg += "\n"
+                msg += str(response)
+
+        return print(msg)
+
+    def create_catalog(self, configure_for: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
+        usernames = self.workspace.get_usernames(configure_for)
+        self.workspace.do_for_all_users(usernames, lambda username: self.__create_catalog_for(username=username,
+                                                                                              drop_existing=drop_existing,
+                                                                                              post_create=post_create))
+        # Clear the list of catalogs (and derived users) to force a refresh
+        self.workspace._usernames = None
+        self.workspace.clear_existing_databases()
+        self.workspace.clear_existing_catalogs()
+
+    def __create_catalog_for(self, username: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
+        from dbacademy import dbgems
+        # from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+
+        cat_name = self.da.to_schema_name_prefix(username=username,
+                                                 course_code=self.da.course_config.course_code)
+        # db_path = f"{DBAcademyHelper.get_dbacademy_users_path()}/{username}/{self.da.course_config.course_name}/database.db"
+
+        if cat_name in self.da.workspace.existing_catalogs:
+            # The catalog already exists.
+
+            if drop_existing:
+                dbgems.spark.sql(f"DROP CATALOG IF EXISTS {cat_name} CASCADE;")
+            else:
+                return print(f"Skipping existing catalog \"{cat_name}\" for {username}")
+
+        dbgems.sql(f"CREATE CATALOG IF NOT EXISTS {cat_name};")
+
+        msg = f"Created schema \"{cat_name}\" for \"{username}\", dropped existing: {drop_existing}"
+
+        if post_create:
+            # Call the post-create init function if defined
+            response = post_create(username, cat_name)
             if response is not None:
                 msg += "\n"
                 msg += str(response)

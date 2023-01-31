@@ -50,7 +50,8 @@ class WorkspaceHelper:
         self.clusters = ClustersHelper(self, da)
 
         self._usernames = None
-        self._existing_databases = None
+        self.__existing_databases = None
+        self.__existing_catalogs = None
 
     @staticmethod
     def add_entitlement_allow_instance_pool_create(client: DBAcademyRestClient):
@@ -123,11 +124,18 @@ class WorkspaceHelper:
             # database, then they are also missing the rest of their config.
             missing_users = set()
 
-            for username in self._usernames:
-                prefix = self.da.to_schema_name_prefix(username=username, course_code=self.da.course_config.course_code)
-                for schema_name in self.existing_databases:
-                    if schema_name.startswith(prefix):
-                        missing_users.add(username)
+            if self.da.lesson_config.requires_uc:
+                for username in self._usernames:
+                    prefix = self.da.to_catalog_name_prefix(username=username)
+                    for catalog_name in self.existing_catalogs:
+                        if catalog_name.startswith(prefix):
+                            missing_users.add(username)
+            else:
+                for username in self._usernames:
+                    prefix = self.da.to_schema_name_prefix(username=username, course_code=self.da.course_config.course_code)
+                    for schema_name in self.existing_databases:
+                        if schema_name.startswith(prefix):
+                            missing_users.add(username)
 
             missing_users = list(missing_users)
             missing_users.sort()
@@ -139,10 +147,27 @@ class WorkspaceHelper:
     def existing_databases(self):
         from dbacademy import dbgems
 
-        if self._existing_databases is None:
+        if self.__existing_databases is None:
             existing = dbgems.spark.sql("SHOW DATABASES").collect()
-            self._existing_databases = {d[0] for d in existing}
-        return self._existing_databases
+            self.__existing_databases = {d[0] for d in existing}
+
+        return self.__existing_databases
+
+    def clear_existing_databases(self):
+        self.__existing_databases = None
+
+    @property
+    def existing_catalogs(self):
+        from dbacademy import dbgems
+
+        if self.__existing_catalogs is None:
+            existing = dbgems.spark.sql("SHOW CATALOGS").collect()
+            self.__existing_catalogs = {d[0] for d in existing}
+
+        return self.__existing_catalogs
+
+    def clear_existing_catalogs(self):
+        self.__existing_catalogs = None
 
     @property
     def lab_id(self):
