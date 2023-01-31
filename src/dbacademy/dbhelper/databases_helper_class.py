@@ -67,7 +67,6 @@ class DatabasesHelper:
                                                                                                post_create=post_create))
         # Clear the list of databases (and derived users) to force a refresh
         self.workspace._usernames = None
-        self.databases = self.workspace.clear_existing_databases()
 
     def __create_database_for(self, username: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
         from dbacademy import dbgems
