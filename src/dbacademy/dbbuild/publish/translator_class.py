@@ -241,6 +241,7 @@ class Translator:
             self.__changes_in_target_repo = 0
 
         elif self.target_repo_url is None:
+            self.assert_notebooks_generated()
             self.__changes_in_target_repo = 0
             msg = "Aborting build to force manual-confirmation before publishing."
             common.print_warning(f"SKIPPING VALIDATION", f"This course is not being published to a GitHub repo.\n{msg}")
