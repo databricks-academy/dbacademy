@@ -85,8 +85,12 @@ class DocsPublisher:
             try:
                 file_name, file_url = self.__download_google_doc(index=index, total=total, gdoc_url=link)
                 self.__pdfs[file_name] = file_url
+
             except GoogleClientException as e:
                 common.print_warning("SKIPPING DOWNLOAD", f"{error_message}\n{e.message}")
+
+            if index < len(self.translation.document_links)-1:
+                print("|")
 
     def process_google_slides(self) -> None:
 
