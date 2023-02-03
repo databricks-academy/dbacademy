@@ -265,15 +265,65 @@ class BuildConfig:
         if has_wip:
             print()
 
-    def ignore_failures(self, test_function: Callable[[str], bool]):
+    @staticmethod
+    def get_lesson_number(notebook_path: str):
+        """
+        Utility function to return the notebook's 2-character numerical prefix.
+        :param notebook_path: the path to the notebook.
+        :return: the notebook's numerical prefix if the 2-character prefix is numerical, else -1.
+        """
+        assert notebook_path is not None, f"The parameter \"notebook_path\" must be specified."
+
+        sep = " - "
+        if sep not in notebook_path:
+            return -1
+        else:
+            prefix = notebook_path.split(sep)[0].strip()
+
+            if not prefix[0].isnumeric():
+                # Remove teh first character
+                prefix = prefix[1:]
+
+            if prefix.isnumeric():
+                return int(prefix)
+            else:
+                return -1
+
+    def ignore_failures(self, test_function: Callable[[str, int], bool]) -> None:
+        """
+        Updates the notebook's configuration parameter \"ignored\" based on the result of the provided callable.
+        The callable takes two parameters, the first is a string representing the notebook's path, and the second is the notebook's numerical prefix or -1.
+        :param test_function: The callable that will return true for which failures will be ignored. Params are path:str and lesson_number:int
+        :return:
+        """
+
         for path in list(self.notebooks.keys()):
-            if test_function(path):
+            number = self.get_lesson_number(path)
+            if test_function(path, number):
                 self.notebooks[path].ignored = True
 
-    def exclude_notebook(self, test_function: Callable[[str], bool]):
+    def exclude_notebook(self, test_function: Callable[[str, int], bool]) -> None:
+        """
+        Removes an existing notebook from the collection of notebooks for this build.
+        :param test_function: The callable that will return true if the notebooks should be excluded. Params are path:str and lesson_number:int
+        :return:
+        """
         for path in list(self.notebooks.keys()):
-            if test_function(path):
+            number = self.get_lesson_number(path)
+            if test_function(path, number):
                 del self.notebooks[path]
+
+    def set_test_round(self, test_round: int, test_function: Callable[[str, int], bool]) -> None:
+        """
+        Updates the notebook's configuration parameter \"test_round\" based on the result of the provided callable.
+        :param test_round: The test round to which this notebooks should be assigned.
+        :param test_function: The callable that will return true if the notebooks should be excluded. Params are path:str and lesson_number:int
+        :return:
+        """
+        for path in list(self.notebooks.keys()):
+            number = self.get_lesson_number(path)
+            if test_function(path, number):
+                self.notebooks[path].test_round = test_round
 
     def validate(self, validate_version: bool = True, validate_readme: bool = True):
         """
