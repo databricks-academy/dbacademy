@@ -89,7 +89,7 @@ class Translator:
         from dbacademy import common
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
-        username = common.clean_string(self.username, "_")
+        username = common.clean_string(self.username, replacement="_")
         self.source_branch = source_branch or f"published-v{self.core_version}"
         self.source_dir = source_dir or f"/Repos/Temp/{username}-{self.build_name}-english-{self.source_branch}"
         self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
@@ -104,7 +104,7 @@ class Translator:
         from dbacademy import common
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
-        username = common.clean_string(self.username, "_")
+        username = common.clean_string(self.username, replacement="_")
         self.target_branch = target_branch or "published"
         self.target_dir = target_dir or f"/Repos/Temp/{username}-{self.build_name}-{self.common_language}"
         self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
@@ -358,9 +358,9 @@ class Translator:
             new_source += f"\n{cmd_delim}\n".join(new_commands)  # Join all the new_commands into one
 
             # Update the built_on and version_number - typically only found in the Version Info notebook.
-            built_on = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
-            new_source = new_source.replace("{{built_on}}", built_on)
+            new_source = new_source.replace("{{course_name}}", self.build_config.name)
             new_source = new_source.replace("{{version_number}}", self.version)
+            new_source = new_source.replace("{{built_on}}", datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC"))
 
             # Write the new notebook to the target directory
             self.client.workspace.import_notebook(language=language.upper(),

@@ -95,7 +95,8 @@ class Publisher:
         for notebook in notebooks:
             assert type(notebook) == NotebookDef, f"Expected the parameter \"notebook\" to be of type \"NotebookDef\", found \"{type(notebook)}\"."
 
-            # Add the universal replacements
+            # Update the built_on and version_number - typically only found in the Version Info notebook.
+            notebook.replacements["course_name"] = self.build_config.name
             notebook.replacements["version_number"] = self.version
             notebook.replacements["built_on"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
 
