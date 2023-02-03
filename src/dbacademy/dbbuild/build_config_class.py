@@ -277,17 +277,21 @@ class BuildConfig:
         sep = " - "
         if sep not in notebook_path:
             return -1
-        else:
-            prefix = notebook_path.split(sep)[0].strip()
 
-            if not prefix[0].isnumeric():
-                # Remove teh first character
-                prefix = prefix[1:]
+        prefix = notebook_path.split(sep)[0].strip()
+        if prefix == "":
+            return -1
 
-            if prefix.isnumeric():
-                return int(prefix)
-            else:
+        while not prefix[0].isnumeric():
+            # Remove the first character
+            prefix = prefix[1:]
+            if prefix == "":
                 return -1
+
+        if prefix.isnumeric():
+            return int(prefix)
+        else:
+            return -1
 
     def ignore_failures(self, test_function: Callable[[str, int], bool]) -> None:
         """

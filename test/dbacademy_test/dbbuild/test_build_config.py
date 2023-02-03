@@ -31,8 +31,15 @@ class TestBuildConfig(unittest.TestCase):
         from dbacademy.dbbuild.build_config_class import BuildConfig
 
         self.assertEqual(-1, BuildConfig.get_lesson_number("Includes/Whatever"))
-        self.assertEqual(-1, BuildConfig.get_lesson_number("AB03 - Lesson Three"))
-        self.assertEqual(-1, BuildConfig.get_lesson_number("1-Lesson Three"))
+        self.assertEqual(-1, BuildConfig.get_lesson_number("AB - 03 - Lesson Three"))
+        self.assertEqual(-1, BuildConfig.get_lesson_number(" - 03 - Lesson Three"))
+        self.assertEqual(-1, BuildConfig.get_lesson_number("32A - Lesson Three"))
+        self.assertEqual(-1, BuildConfig.get_lesson_number("32 B - Lesson Three"))
+
+        self.assertEqual(2, BuildConfig.get_lesson_number("ADE 2 - Streaming Architecture with DLT/ADE 2.1 - Operations"))
+        self.assertEqual(6, BuildConfig.get_lesson_number("ADE 6 - Automate Production Jobs - WIP/ADE 6.1 - Getting Started"))
+        self.assertEqual(0, BuildConfig.get_lesson_number("DE 0 - Intro to PySpark/DE 0.00 - Module Introduction"))
+        self.assertEqual(1, BuildConfig.get_lesson_number("DE 1 - Databricks Workspace/DE 1.1 - Create and Manage Interactive Clusters"))
 
         self.assertEqual(1, BuildConfig.get_lesson_number("1 - Lesson One"))
         self.assertEqual(2, BuildConfig.get_lesson_number("02 - Lesson Two"))
