@@ -318,7 +318,11 @@ class Publisher:
         self.target_dir = common.validate_type(target_dir, "target_dir", str)
         self.target_repo_url = common.validate_type(target_repo_url, "target_repo_url", str)
 
-        BuildUtils.reset_git_repo(client=self.client, directory=self.target_dir, repo_url=self.target_repo_url, branch=branch, which=None)
+        BuildUtils.reset_git_repo(client=self.client,
+                                  directory=self.target_dir,
+                                  repo_url=self.target_repo_url,
+                                  branch=branch,
+                                  which=None)
 
         self.__validated_repo_reset = True
 

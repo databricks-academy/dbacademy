@@ -122,7 +122,9 @@ class Translator:
 
         self.assert_validated_artifacts()
 
-        change_log = self.build_config.change_log or ChangeLog(source_repo=self.source_repo, target_version=self.core_version)
+        change_log = self.build_config.change_log or ChangeLog(source_repo=self.source_repo,
+                                                               readme_file_name=self.build_config.readme_file_name,
+                                                               target_version=self.core_version)
 
         advertiser = Advertiser(source_repo=self.source_repo,
                                 name=self.build_config.name,
