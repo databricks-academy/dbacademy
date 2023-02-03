@@ -118,6 +118,7 @@ class BuildConfig:
                  client: DBAcademyRestClient = None,
                  source_dir: str = None,
                  source_repo: str = None,
+                 readme_file_name: str = None,
                  spark_conf: dict = None,
                  job_arguments: dict = None,
                  include_solutions: bool = True,
@@ -195,6 +196,8 @@ class BuildConfig:
         self.source_repo = dbgems.get_notebook_dir(offset=-2) if source_repo is None else source_repo
         self.source_dir = f"{self.source_repo}/Source" if source_dir is None else source_dir
         self.source_dir = source_dir or f"{self.source_repo}/Source"
+
+        self.__readme_file_name = readme_file_name or "README.md"
 
         self.include_solutions = include_solutions
 
@@ -370,6 +373,10 @@ class BuildConfig:
         self.__validated = True
 
     @property
+    def readme_file_name(self):
+        return self.__readme_file_name
+
+    @property
     def instance_pool_id(self) -> str:
         """
         The instance pool to use for testing.
@@ -408,7 +415,7 @@ class BuildConfig:
         elif self.i18n_language is not None:
             return  # We are building a translation, presumably days to weeks later, this is not expected to match
 
-        self.change_log = ChangeLog(source_repo=self.source_repo, target_version=None)
+        self.change_log = ChangeLog(source_repo=self.source_repo, readme_file_name=self.readme_file_name, target_version=None)
         self.change_log.validate(expected_version=self.core_version, date=None)
 
     def __validate_version(self):
