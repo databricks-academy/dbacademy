@@ -105,12 +105,12 @@ class ArtifactValidator:
         print()
         print(f"Validating the DBC in DBAcademy's distribution system ({label}):")
 
-        target_path = f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/{file_name}"
+        target_path = f"dbfs:/mnt/resources.training.databricks.com/distributions/{self.build_name}/{file_name}"
         files = dbgems.dbutils.fs.ls(target_path)  # Generates an un-catchable exception
         assert len(files) == 1, f"The distribution DBC was not found at \"{target_path}\"."
 
-        print(f"| PASSED:  .../{file_name} found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/\".")
-        print(f"| UNKNOWN: \"v{self.version}\" found in \"s3://secured.training.databricks.com/distributions/{self.build_name}/{file_name}\".")
+        print(f"| PASSED:  .../{file_name} found in \"s3://resources.training.databricks.com/distributions/{self.build_name}/\".")
+        print(f"| UNKNOWN: \"v{self.version}\" found in \"s3://resources.training.databricks.com/distributions/{self.build_name}/{file_name}\".")
 
         return True
 
