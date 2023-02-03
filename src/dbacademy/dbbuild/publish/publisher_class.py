@@ -432,7 +432,7 @@ class Publisher:
         for direct download from the calling notebook
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
-        import os
+        import os, shutil
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         if self.target_repo_url is None:
@@ -458,7 +458,7 @@ class Publisher:
         latest_dir = f"{base_dir}/vLATEST"
         if os.path.exists(latest_dir):
             # Remove existing DIRECTORY, not just the one file
-            os.remove(latest_dir)
+            shutil.rmtree(latest_dir)
 
         BuildUtils.write_file(data=data,
                               overwrite=False,
