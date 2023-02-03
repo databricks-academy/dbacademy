@@ -572,7 +572,9 @@ class Publisher:
             self.__changes_in_target_repo = 0
 
         elif self.target_repo_url is None:
-            common.print_warning(f"SKIPPING VALIDATION", "This course is not being published to a GitHub repo")
+            msg = "Aborting build to force manual-confirmation before publishing."
+            common.print_warning(f"SKIPPING VALIDATION", f"This course is not being published to a GitHub repo.\n{msg}")
+            raise Exception(msg)
 
         else:
             repo_name = f"{self.build_name}.git"
