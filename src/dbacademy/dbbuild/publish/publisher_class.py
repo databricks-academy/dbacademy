@@ -534,7 +534,7 @@ class Publisher:
             self.__changes_in_source_repo = 0
 
         else:
-            repo_name = f"{self.build_name}-source.git"
+            repo_name = self.source_repo.split("/")[-1]
             results = BuildUtils.validate_no_changes_in_repo(client=self.client,
                                                              build_name=self.build_name,
                                                              repo_url=f"https://github.com/databricks-academy/{repo_name}",
