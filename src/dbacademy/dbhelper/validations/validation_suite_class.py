@@ -73,7 +73,7 @@ class ValidationSuite(object):
         dbgems.display_html(html)
 
     def display_results(self) -> None:
-        self._display("results")
+        self._display(css_class="results")
 
     def grade(self) -> int:
         self._display("grade")
@@ -386,8 +386,8 @@ class ValidationSuite(object):
         if schema_a is None or schema_b is None:
             return False
 
-        sch_a = [StructField(s.name, s.dataType, True) for s in schema_a]
-        sch_b = [StructField(s.name, s.dataType, True) for s in schema_b]
+        sch_a = [StructField(s.name, s.dataType, nullable=True) for s in schema_a]
+        sch_b = [StructField(s.name, s.dataType, nullable=True) for s in schema_b]
 
         if test_column_order:
             return [sch_a] == [sch_b]
