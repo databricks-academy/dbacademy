@@ -6,16 +6,21 @@ class ChangeLog:
     CHANGE_LOG_TAG = "## Change Log"
     CHANGE_LOG_VERSION = "### Version "
 
-    def __init__(self, *, source_repo: str, target_version: Optional[str]):
+    def __init__(self, *, source_repo: str, readme_file_name: str, target_version: Optional[str]):
 
         self.__source_repo = source_repo
         self.__target_version = target_version
+        self.__readme_file_name = readme_file_name
 
         self.entries = []
         self.version: Optional[str] = None
         self.date: Optional[str] = None
 
         self.__load()
+
+    @property
+    def readme_file_name(self):
+        return self.__readme_file_name
 
     @property
     def source_repo(self):
@@ -44,8 +49,8 @@ class ChangeLog:
     def __load(self):
         import os
 
-        readme_path = f"/Workspace{self.source_repo}/README.md"
-        assert os.path.exists(readme_path), f"The README.md file was not found at {readme_path}"
+        readme_path = f"/Workspace{self.source_repo}/{self.readme_file_name}"
+        assert os.path.exists(readme_path), f"The README file was not found at {readme_path}"
 
         with open(readme_path, "r") as f:
             lines = f.readlines()
