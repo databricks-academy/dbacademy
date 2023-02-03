@@ -40,8 +40,8 @@ class BuildUtils:
         target_file = target_file.replace("dbfs:/", "/dbfs/")
 
         if os.path.exists(target_file):
-            # assert overwrite, f"Cannot overwrite existing file: {target_file}"
-            # print(f"Removing existing file: {target_file}")
+            assert overwrite, f"Cannot overwrite existing file: {target_file}"
+            print(f"Removing existing file: {target_file}")
             os.remove(target_file)
 
         course_dir = "/".join(target_file.split("/")[:-2])

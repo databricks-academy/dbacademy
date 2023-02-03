@@ -446,17 +446,17 @@ class Publisher:
 
         BuildUtils.write_file(data=data,
                               overwrite=False,
-                              target_name="Distributions system (versioned)",
+                              target_name="Distributions System (versioned)",
                               target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
 
         BuildUtils.write_file(data=data,
-                              overwrite=False,
-                              target_name="Distributions system (latest)",
+                              overwrite=True,
+                              target_name="Distributions System (latest)",
                               target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/vLATEST/notebooks.dbc")
 
         BuildUtils.write_file(data=data,
                               overwrite=True,
-                              target_name="workspace-local FileStore",
+                              target_name="Workspace-Local FileStore",
                               target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
 
         url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc"
