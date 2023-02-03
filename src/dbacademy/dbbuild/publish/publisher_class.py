@@ -214,6 +214,9 @@ class Publisher:
             BuildUtils.print_if(verbose, "-" * 80)
             BuildUtils.clean_target_dir(self.client, self.target_dir, verbose)
 
+        errors = 0
+        warnings = 0
+
         for notebook in main_notebooks:
             notebook.publish(source_dir=self.source_dir,
                              target_dir=self.target_dir,
@@ -221,9 +224,8 @@ class Publisher:
                              verbose=verbose, 
                              debugging=debugging,
                              other_notebooks=self.notebooks)
-
-        warnings = 0
-        errors = 0
+            errors += len(notebook.errors)
+            warnings += len(notebook.warnings)
 
         print("-"*80)
         print(f"All done!")
