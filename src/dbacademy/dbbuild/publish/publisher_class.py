@@ -432,6 +432,7 @@ class Publisher:
         for direct download from the calling notebook
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
+        import os
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         if self.target_repo_url is None:
@@ -444,16 +445,27 @@ class Publisher:
         print(f"Exporting DBC from \"{self.target_dir}\"")
         data = self.build_config.client.workspace.export_dbc(self.target_dir)
 
+        # The root directory for all versions of this course
+        base_dir = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_config.build_name}"
+
+        version_dir = f"{base_dir}/v{self.build_config.version}"
+        assert not os.path.exists(version_dir), f"Cannot published, {self.version} has already been published."
         BuildUtils.write_file(data=data,
                               overwrite=False,
                               target_name="Distributions System (versioned)",
-                              target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
+                              target_file=f"{version_dir}/{self.build_config.build_name}.dbc")
+
+        latest_dir = f"{base_dir}/vLATEST"
+        if os.path.exists(latest_dir):
+            # Remove existing DIRECTORY, not just the one file
+            os.remove(latest_dir)
 
         BuildUtils.write_file(data=data,
-                              overwrite=True,
+                              overwrite=False,
                               target_name="Distributions System (latest)",
-                              target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_config.build_name}/vLATEST/notebooks.dbc")
+                              target_file=f"{latest_dir}/{self.build_config.build_name}.dbc")
 
+        # Provided simply for convenient download
         BuildUtils.write_file(data=data,
                               overwrite=True,
                               target_name="Workspace-Local FileStore",

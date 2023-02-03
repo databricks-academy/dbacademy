@@ -433,12 +433,12 @@ class Translator:
         BuildUtils.write_file(data=data,
                               overwrite=False,
                               target_name="Distributions System (versioned)",
-                              target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc")
+                              target_file=f"dbfs:/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc")
 
         BuildUtils.write_file(data=data,
                               overwrite=True,
                               target_name="Distributions System (latest)",
-                              target_file=f"dbfs:/mnt/secured.training.databricks.com/distributions/{self.build_name}/vLATEST-{self.lang_code}/notebooks.dbc")
+                              target_file=f"dbfs:/mnt/resources.training.databricks.com/distributions/{self.build_name}/vLATEST-{self.lang_code}/notebooks.dbc")
 
         BuildUtils.write_file(data=data,
                               overwrite=True,

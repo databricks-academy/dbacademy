@@ -33,7 +33,7 @@ class DocsPublisher:
 
     def get_distribution_path(self, *, version: str, file: Dict[str, str]) -> str:
         file_name = self.__google_client.to_file_name(file)
-        return f"/dbfs/mnt/secured.training.databricks.com/distributions/{self.build_name}/v{version}/{file_name}"
+        return f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{version}/{file_name}"
 
     def __download_google_doc(self, *, index: int, total: int, gdoc_id: str = None, gdoc_url: str = None) -> (str, str):
         from dbacademy import dbgems
