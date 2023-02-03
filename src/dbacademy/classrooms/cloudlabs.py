@@ -40,6 +40,7 @@ web.headers['User-Agent'] = 'Mozilla/5.0'
 # TODO Doug, I don't know how to address this one - or at least I dont' want to invest the time :-p
 # noinspection PyTypeChecker
 cookies = re.search("'Cookie: ([^']*)'", curl_login)[1].strip().split("; ")
+# noinspection PyTypeChecker
 cookies = dict(c.split("=", maxsplit=1) for c in cookies)
 for key, value in cookies.items():
     web.cookies.set(key, value, domain="login.microsoftonline.com", path="/")
