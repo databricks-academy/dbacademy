@@ -55,7 +55,7 @@ def check_deprecation_logging_enabled():
 
     if spark is None:
         return
-    status = get_spark_config(SPARK_CONF_DEPRECATION_LOGGING, None)
+    status = get_spark_config(SPARK_CONF_DEPRECATION_LOGGING, default=None)
     if status is None:
         dbacademy.common.deprecation_log_level = "ignore"
     elif status.lower() == "enabled":
@@ -68,14 +68,14 @@ def sql(query):
     return spark.sql(query)
 
 
-def get_parameter(name: str, default_value: Any = "") -> Union[None, str]:
+def get_parameter(name: str, default: Any = "") -> Union[None, str]:
     from py4j.protocol import Py4JJavaError
     try:
-        if default_value is not None and type(default_value) != str:
-            default_value = str(default_value)
+        if default is not None and type(default) != str:
+            default = str(default)
 
         result = dbutils.widgets.get(name)
-        return_value = result or default_value
+        return_value = result or default
 
         return None if return_value is None else str(return_value)
 
@@ -83,7 +83,7 @@ def get_parameter(name: str, default_value: Any = "") -> Union[None, str]:
         if "InputWidgetNotDefined" not in ex.java_exception.getClass().getName():
             raise ex
         else:
-            return default_value
+            return default
 
 
 @common.deprecated("Use dbacademy.common.Cloud.current_cloud() instead")
@@ -117,13 +117,13 @@ def get_tags():
     return java_map
 
 
-def get_tag(tag_name: str, default_value: str = None) -> str:
+def get_tag(tag_name: str, default: str = None) -> str:
     try:
         value = get_tags().get(tag_name)
-        return value or default_value
+        return value or default
     except Exception as e:
         if "CommandContext.tags() is not whitelisted" in str(e):
-            return default_value
+            return default
         else:
             raise e
 
@@ -132,12 +132,12 @@ def get_username() -> str:
     return get_tag("user")
 
 
-def get_browser_host_name(default_value=None):
-    return get_tag(tag_name="browserHostName", default_value=default_value)
+def get_browser_host_name(default=None):
+    return get_tag(tag_name="browserHostName", default=default)
 
 
-def get_job_id(default_value=None):
-    return get_tag(tag_name="jobId", default_value=default_value)
+def get_job_id(default=None):
+    return get_tag(tag_name="jobId", default=default)
 
 
 def is_job():
@@ -208,7 +208,7 @@ def is_curriculum_workspace() -> bool:
         return False
 
     # TODO Consider that this will return false when ran as a job. The net effect being that we would not, for example, get library warnings for smoke-tests.
-    host_name = get_browser_host_name(default_value="unknown")
+    host_name = get_browser_host_name(default="unknown")
 
     if host_name.endswith(".cloud.databricks.com"):
         if host_name.startswith("curriculum-student"):
@@ -303,7 +303,7 @@ def proof_of_life(expected_get_username,
     assert isinstance(spark, pyspark.sql.SparkSession), f"Expected {pyspark.sql.SparkSession}, found {type(spark)}"
     assert isinstance(sc, pyspark.context.SparkContext), f"Expected {pyspark.context.SparkContext}, found {type(sc)}"
 
-    value = get_parameter("some_widget", default_value="undefined")
+    value = get_parameter("some_widget", default="undefined")
     assert value == "undefined", f"Expected \"undefined\", found \"{value}\"."
 
     value = get_cloud()
@@ -390,6 +390,7 @@ def stable_hash(*args, length: int) -> str:
         result += numerals[value % 36]
         value //= 36
     return "".join(result)
+
 
 @common.deprecated("Use dbacademy.common.clean_string() instead")
 def clean_string(value, replacement: str = "_") -> str:
