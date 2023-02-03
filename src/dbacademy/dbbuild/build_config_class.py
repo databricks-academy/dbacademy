@@ -415,7 +415,10 @@ class BuildConfig:
         elif self.i18n_language is not None:
             return  # We are building a translation, presumably days to weeks later, this is not expected to match
 
-        self.change_log = ChangeLog(source_repo=self.source_repo, readme_file_name=self.readme_file_name, target_version=None)
+        self.change_log = ChangeLog(source_repo=self.source_repo,
+                                    readme_file_name=self.readme_file_name,
+                                    target_version=None)
+
         self.change_log.validate(expected_version=self.core_version, date=None)
 
     def __validate_version(self):

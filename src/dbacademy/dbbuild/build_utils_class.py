@@ -90,7 +90,6 @@ class BuildUtils:
     @staticmethod
     def validate_no_changes_in_repo(*, client: DBAcademyRestClient, build_name: str, repo_url: str, directory: str) -> List[str]:
         repo_dir = f"/Repos/Temp/{build_name}-diff"
-        ignored = ["/Published/", "/Build-Scripts/"]
 
         BuildUtils.reset_git_repo(client=client,
                                   directory=repo_dir,
@@ -98,8 +97,8 @@ class BuildUtils:
                                   branch="published",
                                   which="diff")
         print()
-        index_a: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=repo_dir, ignored=ignored)
-        index_b: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=directory, ignored=ignored)
+        index_a: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=repo_dir)
+        index_b: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=directory)
         print()
 
         print(f"Comparing {directory}")
@@ -131,9 +130,11 @@ class BuildUtils:
         return False
 
     @staticmethod
-    def index_repo_dir(*, client: DBAcademyRestClient, repo_dir: str, ignored: List[str]) -> Dict[str, Dict[str, str]]:
+    def index_repo_dir(*, client: DBAcademyRestClient, repo_dir: str) -> Dict[str, Dict[str, str]]:
         import os
         from dbacademy import dbgems
+
+        ignored = ["/Published/", "/Build-Scripts/", "/Build-Scripts-"]
 
         start = dbgems.clock_start()
         print(f"Indexing \"{repo_dir}\"", end="...")
