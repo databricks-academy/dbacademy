@@ -434,7 +434,12 @@ class Publisher:
         """
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
-        self.assert_no_changes_in_target_repo()
+        if self.target_repo_url is None:
+            # If there is no repo, we need to make sure the notebooks were generated.
+            self.assert_notebooks_generated()
+        else:
+            # With a target repo, we need to validate that there are no uncommitted changes
+            self.assert_no_changes_in_target_repo()
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
         data = self.build_config.client.workspace.export_dbc(self.target_dir)
@@ -572,15 +577,15 @@ class Publisher:
             self.__changes_in_target_repo = 0
 
         elif self.target_repo_url is None:
+            self.__changes_in_target_repo = 0
             msg = "Aborting build to force manual-confirmation before publishing."
             common.print_warning(f"SKIPPING VALIDATION", f"This course is not being published to a GitHub repo.\n{msg}")
             raise Exception(msg)
 
         else:
-            repo_name = f"{self.build_name}.git"
             results = BuildUtils.validate_no_changes_in_repo(client=self.client,
                                                              build_name=self.build_name,
-                                                             repo_url=f"https://github.com/databricks-academy/{repo_name}",
+                                                             repo_url=self.target_repo_url,
                                                              directory=self.target_dir)
             self.__changes_in_target_repo = len(results)
             self.assert_no_changes_in_target_repo()

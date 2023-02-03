@@ -232,17 +232,27 @@ class Translator:
         assert self.__changes_in_target_repo is not None, f"The target repository was not tested for changes. Please run {method} to update the build state."
         assert self.__changes_in_target_repo == 0, f"Found {self.__changes_in_target_repo} changes(s) in the target repository. Please commit any changes before continuing and re-run {method} to update the build state."
 
-    def validate_no_changes_in_target_repo(self):
+    def validate_no_changes_in_target_repo(self, skip_validation=False):
+        from dbacademy import common
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
-        self.assert_generated_notebooks()
+        if skip_validation:
+            common.print_warning(f"SKIPPING VALIDATION", "The target directory is not being evaluated for pending changes")
+            self.__changes_in_target_repo = 0
 
-        results = BuildUtils.validate_no_changes_in_repo(client=self.client,
-                                                         build_name=self.build_name,
-                                                         repo_url=self.target_repo_url,
-                                                         directory=self.target_dir)
-        self.__changes_in_target_repo = len(results)
-        self.assert_no_changes_in_target_repo()
+        elif self.target_repo_url is None:
+            self.__changes_in_target_repo = 0
+            msg = "Aborting build to force manual-confirmation before publishing."
+            common.print_warning(f"SKIPPING VALIDATION", f"This course is not being published to a GitHub repo.\n{msg}")
+            raise Exception(msg)
+
+        else:
+            results = BuildUtils.validate_no_changes_in_repo(client=self.client,
+                                                             build_name=self.build_name,
+                                                             repo_url=self.target_repo_url,
+                                                             directory=self.target_dir)
+            self.__changes_in_target_repo = len(results)
+            self.assert_no_changes_in_target_repo()
 
     @staticmethod
     def __extract_i18n_guid(command):
@@ -260,7 +270,7 @@ class Translator:
     def assert_validated(self):
         assert self.validated, f"Cannot publish until the validator's configuration passes validation. Ensure that Translator.validate() was called and that all assignments passed"
 
-    def assert_generated_notebooks(self):
+    def assert_notebooks_generated(self):
         assert self.__generated_notebooks, f"The notebooks have not been published. See Translator.publish_notebooks()"
 
     def generate_notebooks(self, skip_generation: bool = False) -> Optional[str]:
@@ -409,7 +419,12 @@ class Translator:
         from dbacademy import dbgems
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
-        self.assert_no_changes_in_target_repo()
+        if self.target_repo_url is None:
+            # If there is no repo, we need to make sure the notebooks were generated.
+            self.assert_notebooks_generated()
+        else:
+            # With a target repo, we need to validate that there are no uncommitted changes
+            self.assert_no_changes_in_target_repo()
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
         data = self.client.workspace.export_dbc(self.target_dir)
