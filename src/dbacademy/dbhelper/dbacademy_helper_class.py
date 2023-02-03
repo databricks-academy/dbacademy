@@ -649,12 +649,12 @@ class DBAcademyHelper:
     def __validate_spark_version(self) -> None:
         from dbacademy import dbgems, common
 
-        self.__current_dbr = dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_CLUSTER_TAG_SPARK_VERSION, None)
+        self.__current_dbr = dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_CLUSTER_TAG_SPARK_VERSION, default=None)
 
-        if self.__current_dbr is None and not dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PROTECTED_EXECUTION, None):
+        if self.__current_dbr is None and not dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PROTECTED_EXECUTION, default=None):
             # In some random scenarios, the spark version will come back None because the tags are not yet initialized.
             # In this case, we can query the cluster and ask it for its spark version instead.
-            self.__current_dbr = dbgems.get_tag("sparkVersion", None)
+            self.__current_dbr = dbgems.get_tag("sparkVersion")
 
         try:
             if self.__current_dbr is None:
@@ -679,7 +679,7 @@ class DBAcademyHelper:
         from dbacademy import common
         from contextlib import redirect_stdout
 
-        if not dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PROTECTED_EXECUTION, None):
+        if not dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PROTECTED_EXECUTION, default=None):
             notebook_path = common.clean_string(dbgems.get_notebook_path())
             username = common.clean_string(self.username)
             file = f"{test_dir}/temp/dbacademy-{self.course_config.course_code}-{username}-{notebook_path}.txt"
