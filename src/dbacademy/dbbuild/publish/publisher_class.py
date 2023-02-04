@@ -433,6 +433,7 @@ class Publisher:
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
         import os, shutil
+        from dbacademy import dbgems
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         if self.target_repo_url is None:
@@ -447,18 +448,24 @@ class Publisher:
 
         # The root directory for all versions of this course
         base_dir = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_config.build_name}"
-
         version_dir = f"{base_dir}/v{self.build_config.version}"
-        assert not os.path.exists(version_dir), f"Cannot published, {self.version} has already been published."
+
+        try:
+            dbgems.dbutils.fs.ls(version_dir.replace("/dbfs/", "dbfs:/"))
+        except:
+            # It doesn't really exists, just delete here to clear the file cache.
+            shutil.rmtree(version_dir, ignore_errors=True)
+
+        assert not os.path.exists(version_dir), f"Cannot publish v{self.version}; it already exists."
+
         BuildUtils.write_file(data=data,
                               overwrite=False,
                               target_name="Distributions System (versioned)",
                               target_file=f"{version_dir}/{self.build_config.build_name}.dbc")
 
         latest_dir = f"{base_dir}/vLATEST"
-        if os.path.exists(latest_dir):
-            # Remove existing DIRECTORY, not just the one file
-            shutil.rmtree(latest_dir)
+        # Remove existing DIRECTORY, not just the one file
+        shutil.rmtree(latest_dir, ignore_errors=True)
 
         BuildUtils.write_file(data=data,
                               overwrite=False,
