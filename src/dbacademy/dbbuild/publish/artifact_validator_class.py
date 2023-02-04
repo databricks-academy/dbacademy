@@ -95,12 +95,8 @@ class ArtifactValidator:
             label = self.version
         else:
             label = "vLATEST"
-            if "-" in self.version:
-                pos = self.version.find("-")
-                tail = self.version[pos:]
-                label += tail
 
-        file_name = f"{label}/notebooks.dbc" if as_latest else f"v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
+        file_name = f"v{self.version}/{self.build_name}.dbc"
 
         print()
         print(f"Validating the DBC in DBAcademy's distribution system ({label}):")
@@ -119,7 +115,6 @@ class ArtifactValidator:
         print("Validating the DBC in GitHub's Releases page:")
 
         version = version or self.version
-        # core_version = version.split("-")[0]
 
         base_url = self.target_repo_url[:-4] if self.target_repo_url.endswith(".git") else self.target_repo_url
         dbc_url = f"{base_url}/releases/download/v{version}/{self.build_name}-v{self.version}-notebooks.dbc"
