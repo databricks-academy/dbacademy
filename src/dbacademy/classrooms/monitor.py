@@ -139,7 +139,6 @@ class Commands(object):
     @staticmethod
     def stopLongLivedClusters(w):
         """Stop clusters up more than 12 hours, including running DLT pipelines and jobs."""
-        running = [c for c in w.clusters.list() if c["state"] != "TERMINATED"]
 
         def uptime(cluster: Dict) -> float:
             from datetime import datetime
@@ -148,9 +147,9 @@ class Commands(object):
             hours = (now_utime - start_utime) / 60 / 60
             return round(hours, 1)
 
+        running = [c for c in w.clusters.list() if c["state"] != "TERMINATED" and uptime(c) > 12]
         for c in running:
-            if uptime(c) > 12:
-                w.clusters.terminate(c["cluster_id"])
+            w.clusters.terminate(c["cluster_id"])
         return len(running)
 
     @staticmethod
