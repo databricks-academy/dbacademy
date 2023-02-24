@@ -151,7 +151,7 @@ class Commands(object):
         for c in running:
             if uptime(c) > 12:
                 w.clusters.terminate(c["cluster_id"])
-            return len(running)
+        return len(running)
 
     @staticmethod
     def stopClusters(w):
