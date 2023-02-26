@@ -12,6 +12,7 @@ class WorkspaceHelper:
     PARAM_CONFIGURE_FOR = "configure_for"
     PARAM_NODE_TYPE_ID = "node_type_id"
     PARAM_SPARK_VERSION = "spark_version"
+    PARAM_DATASETS = "datasets"
 
     CONFIGURE_FOR_ALL_USERS = "All Users"
     CONFIGURE_FOR_MISSING_USERS_ONLY = "Missing Users Only"
