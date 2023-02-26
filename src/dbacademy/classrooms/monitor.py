@@ -649,7 +649,8 @@ class Commands(object):
 
         # Spec for the job to run
         job_spec = {
-            "name": "DBAcademy Workspace-Setup",
+            "name": WorkspaceHelper.BOOTSTRAP_JOB_NAME,
+            # TODO - 6 hours might be a "little" too long?
             "timeout_seconds": 60 * 60 * 6,  # 6 hours
             "max_concurrent_runs": 1,
             "tasks": [{

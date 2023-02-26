@@ -7,6 +7,9 @@ class WorkspaceHelper:
 
     T = TypeVar("T")
 
+    WORKSPACE_SETUP_JOB_NAME = "DBAcademy Workspace-Setup"
+    BOOTSTRAP_JOB_NAME = "DBAcademy Workspace-Setup (Bootstrap)"
+
     PARAM_LAB_ID = "lab_id"
     PARAM_DESCRIPTION = "description"
     PARAM_CONFIGURE_FOR = "configure_for"
