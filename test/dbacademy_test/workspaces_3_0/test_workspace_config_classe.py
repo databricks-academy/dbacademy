@@ -20,7 +20,7 @@ class TestWorkspaceConfig(unittest.TestCase):
             "example-course",
             "machine-learning-in-production",
         ]
-        self.event_config = EventConfig(event_id=1234, max_participants=100)
+        self.event_config = EventConfig(event_id=1234, max_participants=100, description="Fun times!")
 
     def test_create_workspace_config(self):
         from dbacademy_test.workspaces_3_0 import test_index_error

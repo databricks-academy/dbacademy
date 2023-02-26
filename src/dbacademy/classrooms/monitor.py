@@ -629,7 +629,7 @@ class Commands(object):
         return cloud_attributes
 
     @staticmethod
-    def universal_setup(workspace: DatabricksApi, *, node_type_id: str = None, spark_version: str = None, datasets: List[str] = None):
+    def universal_setup(workspace: DatabricksApi, *, node_type_id: str = None, spark_version: str = None, datasets: List[str] = None, lab_id: str = None, description: str = None):
         from dbacademy.dbhelper import WorkspaceHelper
         if workspace.cloud == "AWS":
             node_type_id = node_type_id or "i3.xlarge"
@@ -658,8 +658,8 @@ class Commands(object):
                 "notebook_task": {
                     "notebook_path": "Workspace-Setup",
                     "base_parameters": {
-                        WorkspaceHelper.PARAM_LAB_ID: "Unknown",
-                        WorkspaceHelper.PARAM_DESCRIPTION: "Unknown",
+                        WorkspaceHelper.PARAM_LAB_ID: lab_id or "Unknown",
+                        WorkspaceHelper.PARAM_DESCRIPTION: description or "Unknown",
                         WorkspaceHelper.PARAM_CONFIGURE_FOR: WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY,
                         WorkspaceHelper.PARAM_NODE_TYPE_ID: node_type_id,
                         WorkspaceHelper.PARAM_SPARK_VERSION: spark_version,

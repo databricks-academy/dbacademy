@@ -46,8 +46,7 @@ class WorkspaceSetup:
     def account_config(self) -> AccountConfig:
         return self.__account_config
 
-    @staticmethod
-    def __setup_workspace(pair: WorkspacePair):
+    def __setup_workspace(self, pair: WorkspacePair):
         from dbacademy.classrooms.classroom import Classroom
         from dbacademy.classrooms.monitor import Commands
 
@@ -66,7 +65,9 @@ class WorkspaceSetup:
         Commands.universal_setup(workspace_api,
                                  node_type_id=workspace_config.default_node_type_id,
                                  spark_version=workspace_config.default_dbr,
-                                 datasets=workspace_config.datasets)
+                                 datasets=workspace_config.datasets,
+                                 lab_id=self.account_config.event_config.event_id,
+                                 description=self.account_config.event_config.description)
 
         print(f"""Finished setup for "{name}" """)
 

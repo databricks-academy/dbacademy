@@ -5,7 +5,7 @@ from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
 from dbacademy.workspaces_3_0.workspace_setup_class import WorkspaceSetup
 
 if __name__ == '__main__':
-    event_config = EventConfig(event_id=9999, max_participants=80)
+    event_config = EventConfig(event_id=9999, max_participants=80, description="Fun and games!")
 
     storage_config = StorageConfig(credentials_name="default", storage_configuration="us-west-2")
 
@@ -22,5 +22,5 @@ if __name__ == '__main__':
                                      workspace_config=workspace_config)
 
     workspace_setup = WorkspaceSetup(account)
-    workspace_setup.create_workspaces()
-    # workspace_setup.delete_workspaces()
+    # workspace_setup.create_workspaces()
+    workspace_setup.delete_workspaces()
