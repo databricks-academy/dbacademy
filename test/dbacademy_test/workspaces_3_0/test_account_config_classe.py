@@ -9,7 +9,7 @@ class TestAccountConfig(unittest.TestCase):
 
     @pytest.fixture(autouse=True)
     def setup_test(self):
-        self.event_config = EventConfig(event_id=999, max_participants=300)
+        self.event_config = EventConfig(event_id=999, max_participants=300, description="Fun times!")
         self.storage_config = StorageConfig(credentials_name="default", storage_configuration="us-west-2")
 
         dbc_urls = ["https://labs.training.databricks.com/api/courses?course=example-course&version=vLATEST&artifact=lessons.dbc&token=abcd"]

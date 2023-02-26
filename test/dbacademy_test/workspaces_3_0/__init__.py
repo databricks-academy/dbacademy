@@ -8,7 +8,8 @@ def test_assertion_error(test: unittest.TestCase, expected_msg: str, test_lambda
         raise Exception("Expected an AssertionError")
 
     except AssertionError as e:
-        test.assertEqual(expected_msg, str(e))
+        if expected_msg != str(e):
+            test.assertEqual(expected_msg, str(e))
 
 
 def test_index_error(test: unittest.TestCase, test_lambda: Callable):
@@ -17,4 +18,5 @@ def test_index_error(test: unittest.TestCase, test_lambda: Callable):
         raise Exception("Expected an AssertionError")
 
     except IndexError as e:
-        test.assertEqual("list index out of range", str(e))
+        if "list index out of range" != str(e):
+            test.assertEqual("list index out of range", str(e))
