@@ -137,6 +137,22 @@ class Commands(object):
         return [c["name"] for c in w.sql.endpoints.list() if c["state"] != "STOPPED"]
 
     @staticmethod
+    def stopLongLivedClusters(w):
+        """Stop clusters up more than 12 hours, including running DLT pipelines and jobs."""
+
+        def uptime(cluster: Dict) -> float:
+            from datetime import datetime
+            now_utime = datetime.now().timestamp()
+            start_utime = cluster.get("driver", {}).get("start_timestamp", 0) / 1000 or now_utime
+            hours = (now_utime - start_utime) / 60 / 60
+            return round(hours, 1)
+
+        running = [c for c in w.clusters.list() if c["state"] != "TERMINATED" and uptime(c) > 12]
+        for c in running:
+            w.clusters.terminate(c["cluster_id"])
+        return len(running)
+
+    @staticmethod
     def stopClusters(w):
         """Stop all clusters, including running DLT pipelines and jobs."""
         running = [c for c in w.clusters.list() if c["state"] != "TERMINATED"]
