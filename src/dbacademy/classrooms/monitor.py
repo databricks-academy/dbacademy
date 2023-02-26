@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from dbacademy.dougrest import DatabricksApi
 from dbacademy.rest.common import DatabricksApiException
@@ -613,20 +613,23 @@ class Commands(object):
         return cloud_attributes
 
     @staticmethod
-    def universal_setup(workspace: DatabricksApi):
+    def universal_setup(workspace: DatabricksApi, *, node_type_id: str = None, spark_version: str = None, datasets: List[str] = None):
         from dbacademy.dbhelper import WorkspaceHelper
         if workspace.cloud == "AWS":
-            node_type_id = "i3.xlarge"
+            node_type_id = node_type_id or "i3.xlarge"
         elif workspace.cloud == "MSA":
-            node_type_id = "Standard_DS3_v2"
+            node_type_id = node_type_id or "Standard_DS3_v2"
         elif workspace.cloud == "GCP":
-            node_type_id = "n1-standard-4"
+            node_type_id = node_type_id or "n1-standard-4"
         else:
             raise Exception(f"The cloud {workspace.cloud} is not supported.")
-        spark_version = "11.3.x-cpu-ml-scala2.12"
+        spark_version = spark_version or "11.3.x-cpu-ml-scala2.12"
 
         import re
         workspace_hostname = re.match("https://([^/]+)/api/", workspace.url)[1]
+
+        if datasets is None:
+            datasets = list()
 
         # Spec for the job to run
         job_spec = {
@@ -640,9 +643,10 @@ class Commands(object):
                     "base_parameters": {
                         WorkspaceHelper.PARAM_LAB_ID: "Unknown",
                         WorkspaceHelper.PARAM_DESCRIPTION: "Unknown",
-                        WorkspaceHelper.PARAM_CONFIGURE_FOR: WorkspaceHelper.CONFIGURE_FOR_ALL_USERS,
+                        WorkspaceHelper.PARAM_CONFIGURE_FOR: WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY,
                         WorkspaceHelper.PARAM_NODE_TYPE_ID: node_type_id,
                         WorkspaceHelper.PARAM_SPARK_VERSION: spark_version,
+                        WorkspaceHelper.PARAM_DATASETS: ",".join(datasets),
                     },
                     "source": "GIT"
                 },
