@@ -725,8 +725,9 @@ class Commands(object):
         from time import sleep
         while True:
             response = workspace.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
-            if response["state"]["life_cycle_state"] not in ["PENDING", "RUNNING", "TERMINATING"]:
-                result = response["state"]["result_state"]
+            life_cycle_state = response.get("state").get("life_cycle_state")
+            if life_cycle_state not in ["PENDING", "RUNNING", "TERMINATING"]:
+                result = response.get("state").get("result_state")
                 return result
             sleep(60)  # seconds
 
@@ -817,12 +818,38 @@ class Commands(object):
 
         # Poll for job completion
         from time import sleep
-        while True:
-            response = workspace.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
-            if response["state"]["life_cycle_state"] not in ["PENDING", "RUNNING", "TERMINATING"]:
-                result = response["state"]["result_state"]
-                return result
-            sleep(60)  # seconds
+        response = self.wait_for(workspace, run_id)
+        if response.get("state").get("life_cycle_state") == "TERMINATED":
+            print("The job completed successfully.")
+        else:
+            pass
+
+        # while True:
+        #     response = workspace.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
+        #     if response["state"]["life_cycle_state"] not in ["PENDING", "RUNNING", "TERMINATING"]:
+        #         result = response["state"]["result_state"]
+        #         return result
+        #     sleep(60)  # seconds
+
+    def wait_for(self, workspace, run_id):
+        import time
+
+        wait = 60  # seconds
+        response = workspace.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
+        state = response["state"]["life_cycle_state"]
+        job_id = response.get("job_id", 0)
+
+        if state != "TERMINATED" and state != "INTERNAL_ERROR" and state != "SKIPPED":
+            if state == "PENDING" or state == "RUNNING":
+                print(f" - Job #{job_id}-{run_id} is {state}, checking again in {wait} seconds")
+                time.sleep(wait)
+            else:
+                print(f" - Job #{job_id}-{run_id} is {state}, checking again in 5 seconds")
+                time.sleep(5)
+
+            return self.wait_for(workspace, run_id)
+
+        return response
 
     def policies_create(self, workspace):
         import re
