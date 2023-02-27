@@ -28,6 +28,12 @@ class WorkspaceHelper:
     CONFIGURE_FOR_VALID_OPTIONS = CONFIGURE_FOR_OPTIONS[1:]  # all but empty-string
 
     @staticmethod
+    def get_spark_version():
+        from dbacademy import dbgems
+
+        return dbgems.get_parameter(WorkspaceHelper.PARAM_SPARK_VERSION)
+
+    @staticmethod
     def get_lab_id():
         from dbacademy import dbgems
 

@@ -26,6 +26,9 @@ class InstancePoolsClient(ApiContainer):
         pool = self.get_by_name(instance_pool_name)
         tags = [] if tags is None else tags
 
+        # Convert empty string to None
+        preloaded_spark_version = None if preloaded_spark_version is not None and preloaded_spark_version.strip() == "" else preloaded_spark_version
+
         if pool is not None:
             # Issue an update request to the pool
             instance_pool_id = pool.get("instance_pool_id")
