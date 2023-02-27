@@ -46,7 +46,7 @@ class TestWorkspaceConfig(unittest.TestCase):
 
         self.assertIsNone(workspace.event_config)
         self.assertIsNone(workspace.workspace_number)
-        self.assertIsNone(workspace.workspace_name)
+        self.assertIsNone(workspace.name)
 
         # Spotcheck users
         self.assertEqual(150, len(workspace.users))

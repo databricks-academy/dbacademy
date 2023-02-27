@@ -35,17 +35,38 @@ class TestAccountConfig(unittest.TestCase):
         self.assertEqual(self.event_config, account.event_config)
         self.assertEqual(self.storage_config, account.storage_config)
         self.assertEqual(self.workspace_config, account.workspace_config)
+        self.assertEqual(self.workspace_config, account.workspace_config)
+        self.assertEqual(0, len(account.ignored_workspaces))
 
         self.assertEqual(3, len(account.workspaces))
 
         self.assertEqual(1, account.workspaces[0].workspace_number)
-        self.assertEqual("classroom-999-001", account.workspaces[0].workspace_name)
+        self.assertEqual("classroom-999-001", account.workspaces[0].name)
 
         self.assertEqual(2, account.workspaces[1].workspace_number)
-        self.assertEqual("classroom-999-002", account.workspaces[1].workspace_name)
+        self.assertEqual("classroom-999-002", account.workspaces[1].name)
 
         self.assertEqual(3, account.workspaces[2].workspace_number)
-        self.assertEqual("classroom-999-003", account.workspaces[2].workspace_name)
+        self.assertEqual("classroom-999-003", account.workspaces[2].name)
+
+    def test_create_account_config_ignored_workspaces(self):
+        from dbacademy_test.workspaces_3_0 import test_assertion_error
+
+        account = AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config)
+        self.assertEqual(0, len(account.ignored_workspaces))
+
+        account = AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config, ignored_workspaces=[])
+        self.assertEqual(0, len(account.ignored_workspaces))
+
+        account = AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config, ignored_workspaces=[1])
+        self.assertEqual(1, len(account.ignored_workspaces))
+
+        account = AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config, ignored_workspaces=[1, 2])
+        self.assertEqual(2, len(account.ignored_workspaces))
+
+        # noinspection PyTypeChecker
+        test_assertion_error(self, """The parameter "ignored_workspaces" must be of type <class 'list'>, found <class 'str'>.""",
+                             lambda: AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config, ignored_workspaces="moo"))
 
     def test_create_account_config_region(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
@@ -87,10 +108,10 @@ class TestAccountConfig(unittest.TestCase):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "password" must be a string value, found <class \'int\'>.""",
+        test_assertion_error(self, """The parameter "password" must be of type <class 'str'>, found <class 'int'>.""",
                              lambda: AccountConfig(region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password=0, event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config))
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "password" must be a string value, found <class \'NoneType\'>.""",
+        test_assertion_error(self, """The parameter "password" must be of type <class 'str'>, found <class 'NoneType'>.""",
                              lambda: AccountConfig(region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password=None, event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config))
         test_assertion_error(self, """The parameter "password" must be specified, found "".""",
                              lambda: AccountConfig(region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password="", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config))

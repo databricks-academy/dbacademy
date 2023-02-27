@@ -19,7 +19,8 @@ if __name__ == '__main__':
     account = AccountConfig.from_env(region="us-west-2",
                                      event_config=event_config,
                                      storage_config=storage_config,
-                                     workspace_config=workspace_config)
+                                     workspace_config=workspace_config,
+                                     ignored=[1])
 
     workspace_setup = WorkspaceSetup(account)
     workspace_setup.create_workspaces()
