@@ -21,7 +21,7 @@ class ClustersHelper:
         self.client = da.client
         self.workspace = workspace
 
-    def create_instance_pool(self, *, preloaded_spark_version: str, min_idle_instances: int = 0, idle_instance_autotermination_minutes: int = 15, node_type_id: str = None, org_id: str = None, lab_id: str = None, workspace_name: str = None, workspace_description: str = None):
+    def create_instance_pool(self, *, preloaded_spark_version: str, min_idle_instances: int = 0, idle_instance_autotermination_minutes: int = 15, node_type_id: str = None, org_id: str, lab_id: str, workspace_name: str, workspace_description: str):
         return ClustersHelper.create_named_instance_pool(name=ClustersHelper.POOL_DEFAULT_NAME,
                                                          client=self.client,
                                                          min_idle_instances=min_idle_instances,
@@ -115,21 +115,13 @@ class ClustersHelper:
         return policy_id
 
     @staticmethod
-    def create_all_purpose_policy(*, client: DBAcademyRestClient, instance_pool_id: str, spark_version: str, autotermination_minutes_max: int, autotermination_minutes_default: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -> None:
-        from dbacademy import common, dbgems
-        from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+    def create_all_purpose_policy(*, client: DBAcademyRestClient, instance_pool_id: str, spark_version: str, autotermination_minutes_max: int, autotermination_minutes_default: int) -> None:
 
         if type(autotermination_minutes_max) != int or autotermination_minutes_max == 0:
             autotermination_minutes_max = 180
 
         if type(autotermination_minutes_default) != int or autotermination_minutes_default == 0:
             autotermination_minutes_default = 120
-
-        org_id = org_id or dbgems.get_org_id()
-        lab_id = lab_id or WorkspaceHelper.get_lab_id()
-        workspace_name = workspace_name or WorkspaceHelper.get_workspace_name()
-        workspace_description = workspace_description or WorkspaceHelper.get_workspace_description()
 
         definition = {
             "cluster_type": {
@@ -164,28 +156,13 @@ class ClustersHelper:
         }
         ClustersHelper.add_default_policy(definition, "spark_version", spark_version)
 
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_LAB_ID, lab_id)
-
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_DESCRIPTION, workspace_description)
-
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_SOURCE, "Smoke-Test" if DBAcademyHelper.is_smoke_test() else common.clean_string(lab_id))
-
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_ORG_ID, org_id)
-
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_WORKSPACE_NAME, workspace_name)
-
         ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=instance_pool_id, name=ClustersHelper.POLICY_ALL_PURPOSE, definition=definition)
 
     @staticmethod
-    def create_jobs_policy(*, client: DBAcademyRestClient, instance_pool_id: str, spark_version: str, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -> None:
+    def create_jobs_policy(*, client: DBAcademyRestClient, instance_pool_id: str, spark_version: str) -> None:
         from dbacademy import common, dbgems
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
-
-        org_id = org_id or dbgems.get_org_id()
-        lab_id = lab_id or WorkspaceHelper.get_lab_id()
-        workspace_name = workspace_name or WorkspaceHelper.get_workspace_name()
-        workspace_description = workspace_description or WorkspaceHelper.get_workspace_description()
 
         definition = {
             "cluster_type": {
@@ -212,16 +189,6 @@ class ClustersHelper:
             },
         }
         ClustersHelper.add_default_policy(definition, "spark_version", spark_version)
-
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_LAB_ID, lab_id)
-
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_DESCRIPTION, workspace_description)
-
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_SOURCE, "Smoke-Test" if DBAcademyHelper.is_smoke_test() else common.clean_string(lab_id))
-
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_ORG_ID, org_id)
-
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_WORKSPACE_NAME, workspace_name)
 
         ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=instance_pool_id, name=ClustersHelper.POLICY_JOBS_ONLY, definition=definition)
 
