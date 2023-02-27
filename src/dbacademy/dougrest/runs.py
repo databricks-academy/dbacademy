@@ -1,4 +1,9 @@
-from typing import Union, Optional, Literal
+from typing import Union, Optional, List
+
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 
 from dbacademy.rest.common import DatabricksApiException, ApiContainer
 
