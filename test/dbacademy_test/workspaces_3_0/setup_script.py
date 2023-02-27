@@ -22,5 +22,5 @@ if __name__ == '__main__':
                                      workspace_config=workspace_config)
 
     workspace_setup = WorkspaceSetup(account)
-    # workspace_setup.create_workspaces()
-    workspace_setup.delete_workspaces()
+    workspace_setup.create_workspaces()
+    # workspace_setup.delete_workspaces()
