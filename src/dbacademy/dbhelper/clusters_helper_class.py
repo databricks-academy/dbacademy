@@ -1,4 +1,4 @@
-from typing import TypeVar, Union
+from typing import TypeVar, Union, Dict, Any
 
 
 class ClustersHelper:
@@ -48,9 +48,9 @@ class ClustersHelper:
         tags = [
             (f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}", common.clean_string(lab_id)),
             (f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}", common.clean_string(workspace_description)),
-            (f"dbacademy.workspace", common.clean_string(workspace_name)),
-            (f"dbacademy.org_id", common.clean_string(org_id)),
-            (f"dbacademy.source", common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else lab_id))
+            (f"dbacademy.{WorkspaceHelper.PARAM_WORKSPACE_NAME}", common.clean_string(workspace_name)),
+            (f"dbacademy.{WorkspaceHelper.PARAM_ORG_ID}", common.clean_string(org_id)),
+            (f"dbacademy.{WorkspaceHelper.PARAM_SOURCE}", common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else lab_id))
         ]
 
         # We cannot update some pool attributes once they are created.
@@ -115,8 +115,23 @@ class ClustersHelper:
         return policy_id
 
     @staticmethod
-    def create_all_purpose_policy(*, client: DBAcademyRestClient, instance_pool_id: str, spark_version: str, autotermination_minutes_max: int, autotermination_minutes_default: int) -> None:
-        ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=instance_pool_id, name=ClustersHelper.POLICY_ALL_PURPOSE, definition={
+    def create_all_purpose_policy(*, client: DBAcademyRestClient, instance_pool_id: str, spark_version: str, autotermination_minutes_max: int, autotermination_minutes_default: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -> None:
+        from dbacademy import common, dbgems
+        from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
+        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+
+        if type(autotermination_minutes_max) != int or autotermination_minutes_max == 0:
+            autotermination_minutes_max = 180
+
+        if type(autotermination_minutes_default) != int or autotermination_minutes_default == 0:
+            autotermination_minutes_default = 120
+
+        org_id = org_id or dbgems.get_org_id()
+        lab_id = lab_id or WorkspaceHelper.get_lab_id()
+        workspace_name = workspace_name or WorkspaceHelper.get_workspace_name()
+        workspace_description = workspace_description or WorkspaceHelper.get_workspace_description()
+
+        definition = {
             "cluster_type": {
                 "type": "fixed",
                 "value": "all-purpose"
@@ -138,11 +153,6 @@ class ClustersHelper:
                 "value": 0,
                 "hidden": False
             },
-            "spark_version": {
-                "type": "unlimited",
-                "defaultValue": spark_version,
-                "isOptional": True
-            },
             "data_security_mode": {
                 "type": "unlimited",
                 "defaultValue": "SINGLE_USER"
@@ -151,19 +161,36 @@ class ClustersHelper:
                 "type": "unlimited",
                 "defaultValue": "STANDARD"
             },
-        })
+        }
+        ClustersHelper.add_default_policy(definition, "spark_version", spark_version)
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_LAB_ID, lab_id)
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_DESCRIPTION, workspace_description)
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_SOURCE, "Smoke-Test" if DBAcademyHelper.is_smoke_test() else common.clean_string(lab_id))
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_ORG_ID, org_id)
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_WORKSPACE_NAME, workspace_name)
+
+        ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=instance_pool_id, name=ClustersHelper.POLICY_ALL_PURPOSE, definition=definition)
 
     @staticmethod
-    def create_jobs_policy(*, client: DBAcademyRestClient, instance_pool_id: str, spark_version: str) -> None:
-        ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=instance_pool_id, name=ClustersHelper.POLICY_JOBS_ONLY, definition={
+    def create_jobs_policy(*, client: DBAcademyRestClient, instance_pool_id: str, spark_version: str, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -> None:
+        from dbacademy import common, dbgems
+        from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
+        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+
+        org_id = org_id or dbgems.get_org_id()
+        lab_id = lab_id or WorkspaceHelper.get_lab_id()
+        workspace_name = workspace_name or WorkspaceHelper.get_workspace_name()
+        workspace_description = workspace_description or WorkspaceHelper.get_workspace_description()
+
+        definition = {
             "cluster_type": {
                 "type": "fixed",
                 "value": "job"
-            },
-            "spark_version": {
-                "type": "unlimited",
-                "defaultValue": spark_version,
-                "isOptional": True
             },
             "spark_conf.spark.databricks.cluster.profile": {
                 "type": "fixed",
@@ -183,21 +210,33 @@ class ClustersHelper:
                 "type": "unlimited",
                 "defaultValue": "STANDARD"
             },
-        })
+        }
+        ClustersHelper.add_default_policy(definition, "spark_version", spark_version)
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_LAB_ID, lab_id)
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_DESCRIPTION, workspace_description)
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_SOURCE, "Smoke-Test" if DBAcademyHelper.is_smoke_test() else common.clean_string(lab_id))
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_ORG_ID, org_id)
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_WORKSPACE_NAME, workspace_name)
+
+        ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=instance_pool_id, name=ClustersHelper.POLICY_JOBS_ONLY, definition=definition)
 
     @staticmethod
     def create_dlt_policy(*, client: DBAcademyRestClient, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -> None:
-        from dbacademy import dbgems
-        from dbacademy import common
+        from dbacademy import common, dbgems
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
 
-        lab_id = lab_id or WorkspaceHelper.get_lab_id()
-        workspace_description = workspace_description or WorkspaceHelper.get_workspace_description()
-        workspace_name = workspace_name or WorkspaceHelper.get_workspace_name()
         org_id = org_id or dbgems.get_org_id()
+        lab_id = lab_id or WorkspaceHelper.get_lab_id()
+        workspace_name = workspace_name or WorkspaceHelper.get_workspace_name()
+        workspace_description = workspace_description or WorkspaceHelper.get_workspace_description()
 
-        ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=None, name=ClustersHelper.POLICY_DLT_ONLY, definition={
+        definition = {
             "cluster_type": {
                 "type": "fixed",
                 "value": "dlt"
@@ -212,29 +251,49 @@ class ClustersHelper:
                 "value": 0,
                 "hidden": False,
             },
-            f"custom_tags.dbacademy.{WorkspaceHelper.PARAM_LAB_ID}": {
-                "type": "fixed",
-                "value": common.clean_string(lab_id),  # self.workspace.lab_id),
-                "hidden": False
-            },
-            f"custom_tags.dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}": {
-                "type": "fixed",
-                "value": common.clean_string(workspace_description),  # self.workspace.description),
-                "hidden": False
-            },
-            "custom_tags.dbacademy.workspace": {
-                "type": "fixed",
-                "value": common.clean_string(workspace_name),  # self.workspace.workspace_name),
-                "hidden": False
-            },
-            "custom_tags.dbacademy.org_id": {
-                "type": "fixed",
-                "value": common.clean_string(org_id),  # self.workspace.org_id),
-                "hidden": False
-            },
-            "custom_tags.dbacademy.source": {
-                "type": "fixed",
-                "value": common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else dbgems.clean_string(lab_id)),
-                "hidden": False
-            },
-        })
+        }
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_LAB_ID, lab_id)
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_DESCRIPTION, workspace_description)
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_SOURCE, "Smoke-Test" if DBAcademyHelper.is_smoke_test() else common.clean_string(lab_id))
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_ORG_ID, org_id)
+
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_WORKSPACE_NAME, workspace_name)
+
+        ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=None, name=ClustersHelper.POLICY_DLT_ONLY, definition=definition)
+
+    @staticmethod
+    def add_default_policy(definition: Dict[str, Any], name: str, value: str):
+
+        if value is None or value.strip() == "":
+            from dbacademy import common
+            common.print_warning("Invalid Cluster Policy Parameter", f"""The cluster policy parameter "{name}" was not specified; consequently it will be excluded from the cluster policy.""")
+            return
+
+        definition[name] = {
+            "type": "unlimited",
+            "defaultValue": value,
+            "isOptional": True
+        }
+
+    @staticmethod
+    def add_custom_tag(definition: Dict[str, Any], name: str, value: str, default_value: str = "UNKNOWN"):
+        from dbacademy import common
+
+        key = f"custom_tags.dbacademy.{name}"
+
+        if value is None or value.strip() == "":
+            common.print_warning("Invalid Cluster Policy Parameter", f"""The cluster policy parameter "{key}" was not specified; consequently the default value "{default_value}" will be used instead.""")
+
+            value = default_value
+
+        str_value = common.clean_string(value, replacement="_")
+
+        definition[key] = {
+            "type": "fixed",
+            "value": str_value,
+            "hidden": False
+        }
