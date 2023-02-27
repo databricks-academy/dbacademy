@@ -56,6 +56,7 @@ class InstancePoolsClient(ApiContainer):
 
     def create(self, name: str, definition: dict, tags: list = None):
         from dbacademy import dbgems
+        from dbacademy.common import Cloud
         assert type(name) == str, f"Expected name to be of type str, found {type(name)}"
         assert type(definition) == dict, f"Expected definition to be of type dict, found {type(definition)}"
 
@@ -70,7 +71,7 @@ class InstancePoolsClient(ApiContainer):
             custom_tags.append(key_value)
         definition["custom_tags"] = custom_tags
 
-        if dbgems.get_cloud() == "AWS":
+        if Cloud.current_cloud().is_aws:
             definition["node_type_id"] = definition.get("node_type_id", "i3.xlarge")
 
             aws_attributes = definition.get("aws_attributes", {})
@@ -78,14 +79,14 @@ class InstancePoolsClient(ApiContainer):
 
             definition["aws_attributes"] = aws_attributes
 
-        elif dbgems.get_cloud() == "MSA":
+        elif Cloud.current_cloud().is_msa:
             definition["node_type_id"] = definition.get("node_type_id", "Standard_DS3_v2")
 
-        elif dbgems.get_cloud() == "GCP":
+        elif Cloud.current_cloud().is_gcp:
             definition["node_type_id"] = definition.get("node_type_id", "n1-standard-4")
 
         else:
-            raise Exception(f"The cloud {dbgems.get_cloud()} is not supported.")
+            raise Exception(f"The cloud {Cloud.current_cloud()} is not supported.")
 
         pool = self.client.api("POST", f"{self.base_uri}/create", definition)
         return self.get_by_id(pool.get("instance_pool_id"))

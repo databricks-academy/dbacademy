@@ -295,8 +295,8 @@ def proof_of_life(expected_get_username,
     """
 
     # noinspection PyUnresolvedReferences
-    import dbruntime
-    import pyspark
+    import dbruntime, pyspark
+    from dbacademy.common import Cloud
     from py4j.java_collections import JavaMap
 
     assert isinstance(dbutils, dbruntime.dbutils.DBUtils), f"Expected {dbruntime.dbutils.DBUtils}, found {type(dbutils)}"
@@ -306,7 +306,7 @@ def proof_of_life(expected_get_username,
     value = get_parameter("some_widget", default="undefined")
     assert value == "undefined", f"Expected \"undefined\", found \"{value}\"."
 
-    value = get_cloud()
+    value = Cloud.current_cloud()
     assert value == "AWS", f"Expected \"AWS\", found \"{value}\"."
 
     value = get_tags()
