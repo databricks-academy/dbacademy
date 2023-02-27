@@ -49,49 +49,60 @@ class WorkspaceSetup:
     def __setup_workspace(self, pair: WorkspacePair):
         from dbacademy.classrooms.classroom import Classroom
         from dbacademy.classrooms.monitor import Commands
+        try:
+            workspace_api = pair.workspace_api
+            workspace_config = pair.workspace_config
+            name = workspace_config.name
 
-        workspace_api = pair.workspace_api
-        workspace_config = pair.workspace_config
-        name = workspace_config.workspace_name
+            classroom = Classroom(num_students=workspace_config.max_user_count,
+                                  username_pattern=workspace_config.username_pattern,
+                                  databricks_api=workspace_api)
 
-        classroom = Classroom(num_students=workspace_config.max_user_count,
-                              username_pattern=workspace_config.username_pattern,
-                              databricks_api=workspace_api)
+            print(f"""Waiting for workspace "{name}" to finish provisioning..""")
+            workspace_api.wait_until_ready()
 
-        print(f"""Creating {workspace_config.max_user_count} users for "{name}".""")
-        classroom.create_users()
+            print(f"""Creating {workspace_config.max_user_count} users for "{name}".""")
+            classroom.create_users()
 
-        print(f"""Starting Universal-Workspace-Setup for "{name}" """)
-        Commands.universal_setup(workspace_api,
-                                 node_type_id=workspace_config.default_node_type_id,
-                                 spark_version=workspace_config.default_dbr,
-                                 datasets=workspace_config.datasets,
-                                 lab_id=self.account_config.event_config.event_id,
-                                 description=self.account_config.event_config.description)
+            print(f"""Starting Universal-Workspace-Setup for "{name}" """)
+            Commands.universal_setup(workspace_api,
+                                     node_type_id=workspace_config.default_node_type_id,
+                                     spark_version=workspace_config.default_dbr,
+                                     datasets=workspace_config.datasets,
+                                     lab_id=self.account_config.event_config.event_id,
+                                     description=self.account_config.event_config.description)
 
-        print(f"""Finished setup for "{name}" """)
+            print(f"""Finished setup for "{name}" """)
+        except Exception as e:
+            raise Exception(f"""Failed to create the workspace "{pair.workspace_config.name}".""") from e
 
     def create_workspaces(self):
-        from multiprocessing.pool import ThreadPool
+        # from multiprocessing.pool import ThreadPool
 
         for workspace_config in self.account_config.workspaces:
-            name = workspace_config.workspace_name
+            name = workspace_config.name
             print(f"""Creating the workspace "{name}".""")
 
-            workspace_api = self.accounts_api.workspaces.create(workspace_name=name,
-                                                                deployment_name=name,
-                                                                region=self.account_config.region,
-                                                                credentials_name=self.account_config.storage_config.credentials_name,
-                                                                storage_configuration_name=self.account_config.storage_config.storage_configuration)
+            workspace_api = self.accounts_api.workspaces.get_by_name(name, if_not_exists="ignore")
+            if workspace_api is None:
+                # It doesn't exist, so go ahead and create it.
+                workspace_api = self.accounts_api.workspaces.create(workspace_name=name,
+                                                                    deployment_name=name,
+                                                                    region=self.account_config.region,
+                                                                    credentials_name=self.account_config.storage_config.credentials_name,
+                                                                    storage_configuration_name=self.account_config.storage_config.storage_configuration)
 
             self.__workspaces.append(WorkspacePair(workspace_config, workspace_api))
 
-        with ThreadPool(len(self.workspaces)) as pool:
-            pool.map(self.__setup_workspace, self.workspaces)
+        for workspace in self.workspaces:
+            self.__setup_workspace(workspace)
+
+        # with ThreadPool(len(self.workspaces)) as pool:
+        #     pool.map(self.__setup_workspace, self.workspaces)
 
     def delete_workspaces(self):
         for workspace_config in self.account_config.workspaces:
-            name = workspace_config.workspace_name
+            name = workspace_config.name
 
             try:
                 print(f"""Deleting the workspace "{name}".""")

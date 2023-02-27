@@ -7,7 +7,7 @@ class AccountConfig:
     from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
 
     @staticmethod
-    def from_env(region: str, event_config: EventConfig, storage_config: StorageConfig, workspace_config: WorkspaceConfig) -> "AccountConfig":
+    def from_env(region: str, event_config: EventConfig, storage_config: StorageConfig, workspace_config: WorkspaceConfig, ignored_workspaces: List[int] = None) -> "AccountConfig":
         import os
 
         env = "WORKSPACE_SETUP_ACCOUNT_ID"
@@ -28,14 +28,16 @@ class AccountConfig:
                              password=password,
                              event_config=event_config,
                              storage_config=storage_config,
-                             workspace_config=workspace_config)
+                             workspace_config=workspace_config,
+                             ignored_workspaces=ignored_workspaces)
 
-    def __init__(self, *, region: str, account_id: str, username: str, password: str, event_config: EventConfig, storage_config: StorageConfig, workspace_config: WorkspaceConfig) -> None:
+    def __init__(self, *, region: str, account_id: str, username: str, password: str, event_config: EventConfig, storage_config: StorageConfig, workspace_config: WorkspaceConfig, ignored_workspaces: List[int] = None) -> None:
         """
         Creates the configuration for account-level settings.
         """
         import math
         from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
+        from dbacademy.workspaces_3_0 import ParameterValidator
 
         assert type(region) == str, f"""The parameter "region" must be a string value, found {type(region)}."""
         assert len(region) > 0, f"""The parameter "region" must be specified, found "{region}"."""
@@ -46,12 +48,17 @@ class AccountConfig:
         assert type(username) == str, f"""The parameter "username" must be a string value, found {type(username)}."""
         assert len(username) > 0, f"""The parameter "username" must be specified, found "{username}"."""
 
-        assert type(password) == str, f"""The parameter "password" must be a string value, found {type(password)}."""
+        ParameterValidator.validate_type(str, password=password)
+        # assert type(password) == str, f"""The parameter "password" must be a string value, found {type(password)}."""
         assert len(password) > 0, f"""The parameter "password" must be specified, found "{password}"."""
 
-        assert event_config is not None, f"""The parameter "event_config" must be specified."""
-        assert storage_config is not None, f"""The parameter "storage_config" must be specified."""
-        assert workspace_config is not None, f"""The parameter "workspace_config" must be specified."""
+        ignored_workspaces = ignored_workspaces or list()  # Default to an empty list if not provided.
+        ParameterValidator.validate_type(list, ignored_workspaces=ignored_workspaces)
+        # ParameterValidator.validate_min_length("ignored", 0, ignored_workspaces)
+
+        ParameterValidator.validate_not_none(event_config=event_config)
+        ParameterValidator.validate_not_none(storage_config=storage_config)
+        ParameterValidator.validate_not_none(workspace_config=workspace_config)
 
         self.__region = region
 
@@ -62,6 +69,7 @@ class AccountConfig:
         self.__event_config = event_config
         self.__storage_config = storage_config
         self.__workspace_config = workspace_config
+        self.__ignored_workspaces = ignored_workspaces
 
         count = math.ceil(event_config.max_participants / workspace_config.max_user_count)
         self.__workspaces = list()
@@ -77,6 +85,10 @@ class AccountConfig:
                            workspace_number=i+1)
 
             self.__workspaces.append(workspace)
+
+    @property
+    def ignored_workspaces(self) -> List[int]:
+        return self.__ignored_workspaces
 
     @property
     def workspaces(self) -> List[WorkspaceConfig]:

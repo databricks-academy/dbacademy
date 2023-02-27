@@ -43,7 +43,7 @@ class WorkspaceConfig:
 
         self.__event_config = None
         self.__workspace_number = None
-        self.__workspace_name = None
+        self.__name = None
 
         for i, dbc_url in enumerate(dbc_urls):
             self.__validate_url(i, dbc_url)
@@ -67,11 +67,11 @@ class WorkspaceConfig:
 
         self.__event_config = event_config
         self.__workspace_number = workspace_number
-        self.__workspace_name = f"classroom-{event_config.event_id}-{workspace_number:03d}"
+        self.__name = f"classroom-{event_config.event_id}-{workspace_number:03d}"
 
     @property
-    def workspace_name(self) -> str:
-        return self.__workspace_name
+    def name(self) -> str:
+        return self.__name
 
     @property
     def username_pattern(self) -> str:
