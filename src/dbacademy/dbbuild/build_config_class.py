@@ -434,8 +434,8 @@ class BuildConfig:
             suffix = None
             if "-" in bug:
                 pos = bug.find("-")
-                bug = bug[0:pos]
                 suffix = bug[pos:]
+                bug = bug[:pos]
 
             assert major.isnumeric(), f"{msg}: major={major}"
             assert minor.isnumeric(), f"{msg}: minor={minor}"
