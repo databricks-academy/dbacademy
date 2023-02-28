@@ -35,7 +35,10 @@ class BuildUtils:
     @staticmethod
     def write_file(*, data: bytearray, target_file: str, overwrite: bool, target_name):
         import os
-        print(f"\nWriting DBC to {target_name}:\n   {target_file}")
+        if target_file.endswith("_meta.json"):
+            print(f"\nWriting Meta File to {target_name}:\n   {target_file}")
+        else:
+            print(f"\nWriting DBC to {target_name}:\n   {target_file}")
 
         target_file = target_file.replace("dbfs:/", "/dbfs/")
 

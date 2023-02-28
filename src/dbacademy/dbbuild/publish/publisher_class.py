@@ -468,7 +468,7 @@ class Publisher:
 
         BuildUtils.write_file(data=meta_bytes,
                               overwrite=False,
-                              target_name="Meta File (_meta.json)",
+                              target_name="Distributions System (versioned)",
                               target_file=f"{version_dir}/_meta.json")
 
         BuildUtils.write_file(data=data,
