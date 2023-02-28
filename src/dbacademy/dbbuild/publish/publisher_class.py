@@ -432,7 +432,7 @@ class Publisher:
         for direct download from the calling notebook
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
-        import os, shutil
+        import os, json, shutil, datetime
         from dbacademy import dbgems
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
@@ -457,6 +457,19 @@ class Publisher:
             shutil.rmtree(version_dir, ignore_errors=True)
 
         assert not os.path.exists(version_dir), f"Cannot publish v{self.version}; it already exists."
+
+        meta = {
+            "created_at": str(datetime.datetime.now(datetime.timezone.utc)),
+            "created_by": self.username,
+            "version": self.version,
+        }
+        meta_bytes = bytearray()
+        meta_bytes.extend(map(ord, json.dumps(meta, indent=4)))
+
+        BuildUtils.write_file(data=meta_bytes,
+                              overwrite=False,
+                              target_name="Meta File (_meta.json)",
+                              target_file=f"{version_dir}/_meta.json")
 
         BuildUtils.write_file(data=data,
                               overwrite=False,
