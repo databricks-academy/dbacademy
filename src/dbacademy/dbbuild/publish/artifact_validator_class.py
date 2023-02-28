@@ -68,7 +68,7 @@ class ArtifactValidator:
         from dbacademy.dbhelper.validations.validation_suite_class import ValidationSuite
 
         suite = ValidationSuite(name="Distribution")
-        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(), description=f"DBC in Distribution System ({self.version})", depends_on=[])
+        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(), description=f"DBC in Distribution System ({self.version}-PENDING)", depends_on=[])
 
         if self.target_repo_url is not None:
             suite.test_true(actual_value=lambda: self.__validate_git_releases_dbc(), description=f"Found \"{self.version}\" in Version Info in DBC from GitHub", depends_on=[])
@@ -83,7 +83,7 @@ class ArtifactValidator:
     def __validate_distribution_dbc(self) -> True:
         from dbacademy import dbgems
 
-        file_name = f"v{self.version}/{self.build_name}.dbc"
+        file_name = f"v{self.version}-PENDING/{self.build_name}.dbc"
 
         print()
         print(f"Validating the DBC in DBAcademy's distribution system ({self.version}):")
