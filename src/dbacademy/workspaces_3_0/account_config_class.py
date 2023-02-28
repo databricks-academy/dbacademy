@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 
 class AccountConfig:
@@ -7,7 +7,7 @@ class AccountConfig:
     from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
 
     @staticmethod
-    def from_env(region: str, event_config: EventConfig, storage_config: StorageConfig, workspace_config: WorkspaceConfig, ignored_workspaces: List[int] = None) -> "AccountConfig":
+    def from_env(region: str, event_config: EventConfig, storage_config: StorageConfig, workspace_config: WorkspaceConfig, ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
         import os
 
         env = "WORKSPACE_SETUP_ACCOUNT_ID"
@@ -31,7 +31,7 @@ class AccountConfig:
                              workspace_config=workspace_config,
                              ignored_workspaces=ignored_workspaces)
 
-    def __init__(self, *, region: str, account_id: str, username: str, password: str, event_config: EventConfig, storage_config: StorageConfig, workspace_config: WorkspaceConfig, ignored_workspaces: List[int] = None) -> None:
+    def __init__(self, *, region: str, account_id: str, username: str, password: str, event_config: EventConfig, storage_config: StorageConfig, workspace_config: WorkspaceConfig, ignored_workspaces: List[Union[int, str]] = None) -> None:
         """
         Creates the configuration for account-level settings.
         """
@@ -74,6 +74,7 @@ class AccountConfig:
         count = math.ceil(event_config.max_participants / workspace_config.max_user_count)
         self.__workspaces = list()
         for i in range(0, count):
+            workspace_number = i+1
             workspace = WorkspaceConfig(max_user_count=workspace_config.max_user_count,
                                         courses="example-course",
                                         datasets="example-course",
@@ -81,13 +82,17 @@ class AccountConfig:
                                         default_dbr=workspace_config.default_dbr,
                                         dbc_urls=workspace_config.dbc_urls)
 
-            workspace.init(event_config=event_config,
-                           workspace_number=i+1)
+            workspace.init(event_config=event_config, workspace_number=workspace_number)
 
-            self.__workspaces.append(workspace)
+            if workspace.name in self.ignored_workspaces:
+                print(f"Skipping workspace #{workspace.name}")
+            elif workspace_number in self.ignored_workspaces:
+                print(f"Skipping workspace #{workspace_number}")
+            else:
+                self.__workspaces.append(workspace)
 
     @property
-    def ignored_workspaces(self) -> List[int]:
+    def ignored_workspaces(self) -> List[Union[int, str]]:
         return self.__ignored_workspaces
 
     @property

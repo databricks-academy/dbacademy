@@ -423,17 +423,24 @@ class BuildConfig:
 
     def __validate_version(self):
         if self.version not in BuildConfig.VERSIONS_LIST:
-            msg = f"The version parameter must be one of {BuildConfig.VERSIONS_LIST} or of the form \"N.N.N\" or \"N.N.N-AA\" where \"N\" is an integral value and \"A\" a two-character language code, found \"{self.version}\"."
             self.version.split(".")
 
-            assert len(self.version.split(".")) == 3, msg
-            major, minor, bug = self.version.split(".")
-            bug, lang = bug.split("-") if "-" in bug else (bug, "NA")
+            msg = f"The version parameter must be one of {BuildConfig.VERSIONS_LIST} or of the form \"N.N.N-PENDING\" where \"N\" is an integral value, found \"{self.version}\"."
+
+            parts = self.version.split(".")
+            assert len(parts) == 3, msg
+
+            major, minor, bug = parts
+            suffix = None
+            if "-" in bug:
+                pos = bug.find("-")
+                bug = bug[0:pos]
+                suffix = bug[pos:]
 
             assert major.isnumeric(), msg
             assert minor.isnumeric(), msg
             assert bug.isnumeric(), msg
-            assert len(lang) == 2 and lang.upper() == lang, msg
+            assert suffix is None or suffix == "-PENDING", msg
 
     def __index_notebooks(self):
         max_name_length = 0
