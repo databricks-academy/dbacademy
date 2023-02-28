@@ -41,6 +41,7 @@ class ChangeLog:
 
     def validate(self, expected_version: str, date: Optional[str]):
         from datetime import datetime
+        expected_version = expected_version.replace("-PENDING", "")
         assert self.version == expected_version, f"The change log entry's version is not \"{expected_version}\", found \"{self.version}\"."
 
         date = date or datetime.today().strftime("%-m-%-d-%Y")
