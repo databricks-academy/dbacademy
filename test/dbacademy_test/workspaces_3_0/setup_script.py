@@ -20,7 +20,7 @@ if __name__ == '__main__':
                                      event_config=event_config,
                                      storage_config=storage_config,
                                      workspace_config=workspace_config,
-                                     ignored=[1])
+                                     ignored_workspaces=["classroom-9999-001", "classroom-9999-002"])
 
     workspace_setup = WorkspaceSetup(account)
     workspace_setup.create_workspaces()

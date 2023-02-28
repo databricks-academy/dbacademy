@@ -52,21 +52,44 @@ class TestAccountConfig(unittest.TestCase):
     def test_create_account_config_ignored_workspaces(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
+        # None
         account = AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config)
         self.assertEqual(0, len(account.ignored_workspaces))
 
+        # Empty
         account = AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config, ignored_workspaces=[])
         self.assertEqual(0, len(account.ignored_workspaces))
 
+        # One Int
         account = AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config, ignored_workspaces=[1])
         self.assertEqual(1, len(account.ignored_workspaces))
+        self.assertEqual(1, account.ignored_workspaces[0])
 
+        # Two ints
         account = AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config, ignored_workspaces=[1, 2])
         self.assertEqual(2, len(account.ignored_workspaces))
+        self.assertEqual(1, account.ignored_workspaces[0])
+        self.assertEqual(2, account.ignored_workspaces[1])
+
+        # One String
+        account = AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config, ignored_workspaces=["apple"])
+        self.assertEqual(1, len(account.ignored_workspaces))
+        self.assertEqual("apple", account.ignored_workspaces[0])
+
+        # Two Strings
+        account = AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config, ignored_workspaces=["apple", "banana"])
+        self.assertEqual("apple", account.ignored_workspaces[0])
+        self.assertEqual("banana", account.ignored_workspaces[1])
+
+        # Ints & Strings
+        account = AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config, ignored_workspaces=[1, "apple"])
+        self.assertEqual(2, len(account.ignored_workspaces))
+        self.assertEqual(1, account.ignored_workspaces[0])
+        self.assertEqual("apple", account.ignored_workspaces[1])
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "ignored_workspaces" must be of type <class 'list'>, found <class 'str'>.""",
-                             lambda: AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config, ignored_workspaces="moo"))
+        test_assertion_error(self, """The parameter "ignored_workspaces" must be of type <class 'list'>, found <class 'float'>.""",
+                             lambda: AccountConfig(region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, storage_config=self.storage_config, workspace_config=self.workspace_config, ignored_workspaces=1.0))
 
     def test_create_account_config_region(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
