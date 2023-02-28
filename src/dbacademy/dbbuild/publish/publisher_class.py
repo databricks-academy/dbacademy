@@ -448,7 +448,7 @@ class Publisher:
 
         # The root directory for all versions of this course
         base_dir = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_config.build_name}"
-        version_dir = f"{base_dir}/v{self.build_config.version}"
+        version_dir = f"{base_dir}/v{self.build_config.version}-PENDING"
 
         try:
             dbgems.dbutils.fs.ls(version_dir.replace("/dbfs/", "dbfs:/"))
@@ -463,14 +463,14 @@ class Publisher:
                               target_name="Distributions System (versioned)",
                               target_file=f"{version_dir}/{self.build_config.build_name}.dbc")
 
-        latest_dir = f"{base_dir}/vLATEST"
+        # latest_dir = f"{base_dir}/vLATEST"
         # Remove existing DIRECTORY, not just the one file
-        shutil.rmtree(latest_dir, ignore_errors=True)
+        # shutil.rmtree(latest_dir, ignore_errors=True)
 
-        BuildUtils.write_file(data=data,
-                              overwrite=False,
-                              target_name="Distributions System (latest)",
-                              target_file=f"{latest_dir}/{self.build_config.build_name}.dbc")
+        # BuildUtils.write_file(data=data,
+        #                       overwrite=False,
+        #                       target_name="Distributions System (latest)",
+        #                       target_file=f"{latest_dir}/{self.build_config.build_name}.dbc")
 
         # Provided simply for convenient download
         BuildUtils.write_file(data=data,
