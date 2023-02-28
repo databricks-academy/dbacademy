@@ -425,22 +425,16 @@ class BuildConfig:
         if self.version not in BuildConfig.VERSIONS_LIST:
             self.version.split(".")
 
-            msg = f"The version parameter must be one of {BuildConfig.VERSIONS_LIST} or of the form \"N.N.N-PENDING\" where \"N\" is an integral value, found \"{self.version}\""
+            msg = f"The version parameter must be one of {BuildConfig.VERSIONS_LIST} or of the form \"N.N.N\" where \"N\" is an integral value, found \"{self.version}\""
 
             parts = self.version.split(".")
             assert len(parts) == 3, f"{msg}: {len(parts)}"
 
             major, minor, bug = parts
-            suffix = None
-            if "-" in bug:
-                pos = bug.find("-")
-                suffix = bug[pos:]
-                bug = bug[:pos]
 
             assert major.isnumeric(), f"{msg}: major={major}"
             assert minor.isnumeric(), f"{msg}: minor={minor}"
             assert bug.isnumeric(), f"{msg}: bug={bug}"
-            assert suffix == "-PENDING", f"{msg}: suffix={suffix}"
 
     def __index_notebooks(self):
         max_name_length = 0
