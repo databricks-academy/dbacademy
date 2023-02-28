@@ -453,7 +453,7 @@ class Publisher:
         try:
             dbgems.dbutils.fs.ls(version_dir.replace("/dbfs/", "dbfs:/"))
         except:
-            # It doesn't really exists, just delete here to clear the file cache.
+            # It doesn't really exist, just delete here to clear the file cache.
             shutil.rmtree(version_dir, ignore_errors=True)
 
         assert not os.path.exists(version_dir), f"Cannot publish v{self.version}; it already exists."
