@@ -67,39 +67,26 @@ class ArtifactValidator:
     def validate_publishing_processes(self) -> None:
         from dbacademy.dbhelper.validations.validation_suite_class import ValidationSuite
 
-        if "-" not in self.version:
-            latest_version = "LATEST"
-        else:
-            code = self.version.split("-")[1]
-            latest_version = f"LATEST-{code}"
-
         suite = ValidationSuite(name="Distribution")
-        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=True), description=f"DBC in Distribution System (v{latest_version})", depends_on=[])
-        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(as_latest=False), description=f"DBC in Distribution System ({self.version})", depends_on=[])
+        suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(), description=f"DBC in Distribution System ({self.version})", depends_on=[])
 
         if self.target_repo_url is not None:
             suite.test_true(actual_value=lambda: self.__validate_git_releases_dbc(), description=f"Found \"{self.version}\" in Version Info in DBC from GitHub", depends_on=[])
             suite.test_true(actual_value=lambda: self.__validate_git_branch(branch="published", version=None), description=f"Found \"{self.version}\" in Version Info from GitHub Repo (published)", depends_on=[])
             suite.test_true(actual_value=lambda: self.__validate_git_branch(branch=f"published-v{self.version}", version=None), description=f"Found \"{self.version}\" in Version Info from GitHub Repo (published-v{self.version})", depends_on=[])
 
-        suite.test_true(actual_value=lambda: self.__validate_published_docs(version=latest_version), description=f"Docs Published as PDF (v{latest_version})", depends_on=[])
         suite.test_true(actual_value=lambda: self.__validate_published_docs(version=self.version), description=f"Docs Published as PDF ({self.version})", depends_on=[])
 
         suite.display_results()
         assert suite.passed, f"One or more problems were found."
 
-    def __validate_distribution_dbc(self, as_latest: bool) -> True:
+    def __validate_distribution_dbc(self) -> True:
         from dbacademy import dbgems
-
-        if not as_latest:
-            label = self.version
-        else:
-            label = "vLATEST"
 
         file_name = f"v{self.version}/{self.build_name}.dbc"
 
         print()
-        print(f"Validating the DBC in DBAcademy's distribution system ({label}):")
+        print(f"Validating the DBC in DBAcademy's distribution system ({self.version}):")
 
         target_path = f"dbfs:/mnt/resources.training.databricks.com/distributions/{self.build_name}/{file_name}"
         files = dbgems.dbutils.fs.ls(target_path)  # Generates an un-catchable exception
