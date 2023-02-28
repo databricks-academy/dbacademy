@@ -82,7 +82,6 @@ class ApiClient(ApiContainer):
         self.networks = None
         self.storage = None
         self.private_access = None
-        self.keys = None
 
         # if verbose: print("ApiClient.__init__, url: " + url)
         # if verbose: print("ApiClient.__init__, client: " + str(client))
