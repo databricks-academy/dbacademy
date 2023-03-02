@@ -6,7 +6,7 @@ __all__ = ["WorkspaceConfig"]
 class WorkspaceConfig:
     from dbacademy.workspaces_3_0.event_config_class import EventConfig
 
-    def __init__(self, *, max_user_count: int, default_node_type_id: str, default_dbr: str, dbc_urls: Union[None, str, List[str]], courses: Union[None, str, List[str]], datasets: Union[None, str, List[str]], username_pattern: str = "class+{student_number:03d}@databricks.com") -> None:
+    def __init__(self, *, max_user_count: int, default_node_type_id: str, default_dbr: str, dbc_urls: Union[None, str, List[str]], courses: Union[None, str, List[str]], datasets: Union[None, str, List[str]], username_pattern: str, workspace_name_pattern: str, credentials_name: str, storage_configuration: str) -> None:
         """
         Creates the configuration for workspace-level settings
         :param max_user_count: see the corresponding property
@@ -41,6 +41,21 @@ class WorkspaceConfig:
         assert type(username_pattern) == str, f"""The parameter "username_pattern" must be a string value, found {type(username_pattern)}."""
         assert len(username_pattern) > 3, f"""The parameter "username_pattern" must have a length > 0, found "{username_pattern}"."""
 
+        assert type(workspace_name_pattern) == str, f"""The parameter "workspace_name_pattern" must be a string value, found {type(workspace_name_pattern)}."""
+        assert len(workspace_name_pattern) > 3, f"""The parameter "workspace_name_pattern" must have a length > 0, found "{workspace_name_pattern}"."""
+
+        assert type(credentials_name) == str, f"""The parameter "credentials_name" must be a string value, found {type(credentials_name)}."""
+        assert len(credentials_name) > 0, f"""The parameter "credentials_name" must be specified, found "{credentials_name}"."""
+
+        assert type(storage_configuration) == str, f"""The parameter "storage_configuration" must be a string value, found {type(storage_configuration)}."""
+        assert len(storage_configuration) > 0, f"""The parameter "storage_configuration" must be specified, found "{storage_configuration}"."""
+
+        assert "{student_number}" in username_pattern, f"""Expected the parameter "username_pattern" to contain "{{student_number}}", found "{username_pattern}"."""
+        assert "{workspace_number}" in workspace_name_pattern, f"""Expected the parameter "workspace_name_pattern" to contain "{{workspace_number}}", found "{workspace_name_pattern}"."""
+
+        self.__credentials_name = credentials_name
+        self.__storage_configuration = storage_configuration
+
         self.__event_config = None
         self.__workspace_number = None
         self.__name = None
@@ -55,10 +70,12 @@ class WorkspaceConfig:
         self.__max_user_count = max_user_count
         self.__dbc_urls = dbc_urls
         self.__username_pattern = username_pattern
+        self.__workspace_name_pattern = workspace_name_pattern
 
         self.__users: List[str] = list()
         for i in range(0, max_user_count):
-            self.__users.append(f"class+{i:03d}@databricks.com")
+            value = f"{i:03d}"
+            self.__users.append(self.__username_pattern.format(student_number=value))  # f"class+{i:03d}@databricks.com")
 
     def init(self, *, event_config: EventConfig, workspace_number: int):
 
@@ -67,7 +84,18 @@ class WorkspaceConfig:
 
         self.__event_config = event_config
         self.__workspace_number = workspace_number
-        self.__name = f"classroom-{event_config.event_id}-{workspace_number:03d}"
+
+        if "event_id" in self.workspace_name_pattern and "workspace_number" in self.workspace_name_pattern:
+            event_id_str = f"{event_config.event_id:03d}"
+            workspace_number_str = f"{workspace_number:03d}"
+            self.__name = self.workspace_name_pattern.format(event_id=event_id_str, workspace_number=workspace_number_str)
+
+        elif "workspace_number" in self.workspace_name_pattern:
+            workspace_number_str = f"{self.workspace_number:03d}"
+            self.__name = self.workspace_name_pattern.format(workspace_number=workspace_number_str)
+
+        else:
+            raise Exception("Invalid workspace_name_pattern")
 
     @property
     def name(self) -> str:
@@ -76,6 +104,10 @@ class WorkspaceConfig:
     @property
     def username_pattern(self) -> str:
         return self.__username_pattern
+
+    @property
+    def workspace_name_pattern(self) -> str:
+        return self.__workspace_name_pattern
 
     @property
     def workspace_number(self) -> int:
@@ -143,3 +175,19 @@ class WorkspaceConfig:
     @property
     def default_dbr(self) -> str:
         return self.__default_dbr
+
+    @property
+    def credentials_name(self):
+        """
+        This is the name of the credentials for a workspaces' storage configuration (e.g. DBFS).
+        :return: the credential's name
+        """
+        return self.__credentials_name
+
+    @property
+    def storage_configuration(self):
+        """
+        This is the name of the storage configuration for a workspace (e.g. DBFS)
+        :return:
+        """
+        return self.__storage_configuration

@@ -3,11 +3,11 @@ from typing import List, Union
 
 class AccountConfig:
     from dbacademy.workspaces_3_0.event_config_class import EventConfig
-    from dbacademy.workspaces_3_0.storage_config_class import StorageConfig
+    from dbacademy.workspaces_3_0.uc_storage_config_class import UcStorageConfig
     from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
 
     @staticmethod
-    def from_env(region: str, event_config: EventConfig, storage_config: StorageConfig, workspace_config: WorkspaceConfig, ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
+    def from_env(region: str, event_config: EventConfig, uc_storage_config: UcStorageConfig, workspace_config: WorkspaceConfig, first_workspace_number: int, ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
         import os
 
         env = "WORKSPACE_SETUP_ACCOUNT_ID"
@@ -27,11 +27,12 @@ class AccountConfig:
                              username=username,
                              password=password,
                              event_config=event_config,
-                             storage_config=storage_config,
+                             uc_storage_config=uc_storage_config,
                              workspace_config=workspace_config,
-                             ignored_workspaces=ignored_workspaces)
+                             ignored_workspaces=ignored_workspaces,
+                             first_workspace_number=first_workspace_number)
 
-    def __init__(self, *, region: str, account_id: str, username: str, password: str, event_config: EventConfig, storage_config: StorageConfig, workspace_config: WorkspaceConfig, ignored_workspaces: List[Union[int, str]] = None) -> None:
+    def __init__(self, *, region: str, account_id: str, username: str, password: str, event_config: EventConfig, uc_storage_config: UcStorageConfig, workspace_config: WorkspaceConfig, ignored_workspaces: List[Union[int, str]] = None, first_workspace_number: int) -> None:
         """
         Creates the configuration for account-level settings.
         """
@@ -57,7 +58,7 @@ class AccountConfig:
         # ParameterValidator.validate_min_length("ignored", 0, ignored_workspaces)
 
         ParameterValidator.validate_not_none(event_config=event_config)
-        ParameterValidator.validate_not_none(storage_config=storage_config)
+        ParameterValidator.validate_not_none(storage_config=uc_storage_config)
         ParameterValidator.validate_not_none(workspace_config=workspace_config)
 
         self.__region = region
@@ -67,20 +68,23 @@ class AccountConfig:
         self.__password = password
 
         self.__event_config = event_config
-        self.__storage_config = storage_config
-        self.__workspace_config = workspace_config
+        self.__uc_storage_config = uc_storage_config
+        self.__workspace_config_template = workspace_config
         self.__ignored_workspaces = ignored_workspaces
 
         count = math.ceil(event_config.max_participants / workspace_config.max_user_count)
         self.__workspaces = list()
-        for i in range(0, count):
-            workspace_number = i+1
+        for workspace_number in range(first_workspace_number, first_workspace_number+count):
             workspace = WorkspaceConfig(max_user_count=workspace_config.max_user_count,
                                         courses="example-course",
                                         datasets="example-course",
                                         default_node_type_id="i3.xlarge",
                                         default_dbr=workspace_config.default_dbr,
-                                        dbc_urls=workspace_config.dbc_urls)
+                                        dbc_urls=workspace_config.dbc_urls,
+                                        credentials_name=workspace_config.credentials_name,
+                                        storage_configuration=workspace_config.storage_configuration,
+                                        username_pattern=workspace_config.username_pattern,
+                                        workspace_name_pattern=workspace_config.workspace_name_pattern)
 
             workspace.init(event_config=event_config, workspace_number=workspace_number)
 
@@ -120,9 +124,9 @@ class AccountConfig:
         return self.__event_config
 
     @property
-    def storage_config(self) -> StorageConfig:
-        return self.__storage_config
+    def uc_storage_config(self) -> UcStorageConfig:
+        return self.__uc_storage_config
 
     @property
-    def workspace_config(self) -> WorkspaceConfig:
-        return self.__workspace_config
+    def workspace_config_template(self) -> WorkspaceConfig:
+        return self.__workspace_config_template
