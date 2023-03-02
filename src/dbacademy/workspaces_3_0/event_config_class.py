@@ -6,9 +6,8 @@ __all__ = ["EventConfig"]
 class EventConfig:
     def __init__(self, *, event_id: Optional[int], max_participants: int, description: str):
 
-        if event_id is not None:
-            assert type(event_id) == int, f"""The parameter "event_id" must be an integral value, found {type(event_id)}."""
-            assert event_id > 0, f"""The parameter "event_id" must be greater than zero, found "{event_id}"."""
+        assert type(event_id) == int, f"""The parameter "event_id" must be an integral value, found {type(event_id)}."""
+        # assert event_id > 0, f"""The parameter "event_id" must be greater than zero, found "{event_id}"."""
 
         assert type(max_participants) == int, f"""The parameter "max_participants" must be an integral value, found {type(max_participants)}."""
         assert max_participants > 0, f"""The parameter "max_participants" must be greater than zero, found "{max_participants}"."""

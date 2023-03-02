@@ -13,12 +13,11 @@ class TestEventConfig(unittest.TestCase):
     def test_create_event_config_event_id(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
-        event = EventConfig(event_id=None, max_participants=250, description="Fun time!")
-        self.assertIsNone(event.event_id)
+        event = EventConfig(event_id=0, max_participants=250, description="Fun time!")
+        self.assertEqual(0, event.event_id)
 
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "event_id" must be an integral value, found <class 'str'>.""", lambda: EventConfig(event_id="1234", max_participants=250, description="Fun time!"))
-        test_assertion_error(self, """The parameter "event_id" must be greater than zero, found "0".""", lambda: EventConfig(event_id=0, max_participants=250, description="Fun time!"))
 
     def test_create_event_config_participant_count(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error

@@ -380,8 +380,9 @@ def is_generating_docs() -> bool:
     return str(value).lower() == "true"
 
 
-def stable_hash(*args, length: int) -> str:
+def stable_hash(*args: Any, length: int) -> str:
     import hashlib
+    args = [str(a) for a in args]
     data = ":".join(args).encode("utf-8")
     value = int(hashlib.md5(data).hexdigest(), 16)
     numerals = "0123456789abcdefghijklmnopqrstuvwxyz"

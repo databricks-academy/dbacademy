@@ -13,7 +13,7 @@ class TestAccountConfig(unittest.TestCase):
         self.uc_storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", owner="instructors")
 
         dbc_urls = ["https://labs.training.databricks.com/api/courses?course=example-course&version=vLATEST&artifact=lessons.dbc&token=abcd"]
-        self.workspace_config = WorkspaceConfig(max_user_count=100, courses="example-course", datasets="example-course", default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", dbc_urls=dbc_urls, credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", workspace_name_pattern="classroom-{event_id}-{workspace_number}")
+        self.workspace_config = WorkspaceConfig(max_users=100, courses="example-course", datasets="example-course", default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", dbc_urls=dbc_urls, credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", workspace_name_pattern="classroom-{event_id}-{workspace_number}")
 
     def test_from_env(self):
         account = AccountConfig.from_env(first_workspace_number=1, region="us-west-2", event_config=self.event_config, uc_storage_config=self.uc_storage_config, workspace_config=self.workspace_config)
@@ -40,22 +40,22 @@ class TestAccountConfig(unittest.TestCase):
         self.assertEqual(3, len(account.workspaces))
 
         self.assertEqual(3, account.workspaces[0].workspace_number)
-        self.assertEqual("classroom-999-003", account.workspaces[0].name)
+        self.assertEqual("classroom-999-003-b1yrh", account.workspaces[0].name)
 
         self.assertEqual(4, account.workspaces[1].workspace_number)
-        self.assertEqual("classroom-999-004", account.workspaces[1].name)
+        self.assertEqual("classroom-999-004-xn4z4", account.workspaces[1].name)
 
         self.assertEqual(5, account.workspaces[2].workspace_number)
-        self.assertEqual("classroom-999-005", account.workspaces[2].name)
+        self.assertEqual("classroom-999-005-8wq32", account.workspaces[2].name)
 
         # Test with different class name template
 
-        workspace_config = WorkspaceConfig(max_user_count=100, courses="example-course", datasets="example-course", default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", dbc_urls=list(), credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", workspace_name_pattern="classroom-{workspace_number}")
+        workspace_config = WorkspaceConfig(max_users=100, courses="example-course", datasets="example-course", default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", dbc_urls=list(), credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", workspace_name_pattern="Random-{workspace_number}")
         account = AccountConfig(first_workspace_number=7, region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, uc_storage_config=self.uc_storage_config, workspace_config=workspace_config)
 
         self.assertEqual(3, len(account.workspaces))
         self.assertEqual(7, account.workspaces[0].workspace_number)
-        self.assertEqual("classroom-007", account.workspaces[0].name)
+        self.assertEqual("random-007-xeztd", account.workspaces[0].name)
 
     def test_create_account_config_ignored_workspaces(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error

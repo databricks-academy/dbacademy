@@ -72,10 +72,10 @@ class AccountConfig:
         self.__workspace_config_template = workspace_config
         self.__ignored_workspaces = ignored_workspaces
 
-        count = math.ceil(event_config.max_participants / workspace_config.max_user_count)
+        count = math.ceil(event_config.max_participants / workspace_config.max_users)
         self.__workspaces = list()
         for workspace_number in range(first_workspace_number, first_workspace_number+count):
-            workspace = WorkspaceConfig(max_user_count=workspace_config.max_user_count,
+            workspace = WorkspaceConfig(max_users=workspace_config.max_users,
                                         courses="example-course",
                                         datasets="example-course",
                                         default_node_type_id="i3.xlarge",
