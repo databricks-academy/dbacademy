@@ -337,23 +337,25 @@ class Publisher:
         import os, shutil
 
         source_docs_path = f"{self.source_repo}/docs"
-        target_docs_path = f"{self.target_dir}/docs/v{self.build_config.version}"
+        # target_docs_path = f"{self.target_dir}/docs/v{self.build_config.version}"
+        target_docs_path = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.build_config.version}"
 
         print(f"Source: {source_docs_path}")
         print(f"Target: {target_docs_path}")
 
-        if os.path.exists(f"/Workspace/{target_docs_path}"):
-            shutil.rmtree(f"/Workspace/{target_docs_path}")
-
-        shutil.copytree(src=f"/Workspace/{source_docs_path}",
-                        dst=f"/Workspace/{target_docs_path}")
-
-        print("-" * 80)
-        for file in os.listdir(f"/Workspace/{target_docs_path}"):
-            print(file)
+        # if os.path.exists(target_docs_path):
+        #     shutil.rmtree(target_docs_path)
+        #
+        # shutil.copytree(src=f"/Workspace/{source_docs_path}",
+        #                 dst=target_docs_path)
+        #
+        # print("-" * 80)
+        # for file in os.listdir(target_docs_path):
+        #     print(file)
 
         html = f"""<html><body style="font-size:16px">
-                         <div><a href="{dbgems.get_workspace_url()}#workspace{target_docs_path}/index.html" target="_blank">See Published Version</a></div>
+                         <div>Contents written to...</div>
+                         <div>{target_docs_path}</div>
                    </body></html>"""
         return html
 
