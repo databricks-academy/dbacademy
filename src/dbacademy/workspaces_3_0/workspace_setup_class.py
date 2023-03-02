@@ -72,7 +72,7 @@ class WorkspaceSetup:
                                                                     credentials_name=self.account_config.workspace_config_template.credentials_name,
                                                                     storage_configuration_name=self.account_config.workspace_config_template.storage_configuration)
 
-            classroom = Classroom(num_students=workspace_config.max_user_count,
+            classroom = Classroom(num_students=workspace_config.max_users,
                                   username_pattern=workspace_config.username_pattern,
                                   databricks_api=workspace_api)
 
@@ -100,15 +100,15 @@ class WorkspaceSetup:
         print(f"""Completed setup for {len(self.account_config.workspaces)} workspaces.""")
 
     def for_each_workspace(self, some_action: Callable[[WorkspaceTrio], None]) -> None:
-        # from multiprocessing.pool import ThreadPool
+        from multiprocessing.pool import ThreadPool
 
         print("-"*100)
 
-        # with ThreadPool(len(self.workspaces)) as pool:
-        #     pool.map(self.some_action, self.workspaces)
+        with ThreadPool(len(self.workspaces)) as pool:
+            pool.map(some_action, self.workspaces)
 
-        for trio in self.workspaces:
-            some_action(trio)
+        # for trio in self.workspaces:
+        #     some_action(trio)
 
     def delete_workspaces(self):
         print("\n")
@@ -145,10 +145,26 @@ class WorkspaceSetup:
         trio.workspace_api.wait_until_ready()
 
         name = trio.workspace_config.name
-        max_user_count = trio.workspace_config.max_user_count
+        max_users = trio.workspace_config.max_users
 
-        print(f"""Creating {max_user_count} users for "{name}".""")
-        trio.classroom.create_users()
+        print(f"""Creating {max_users} users for "{name}".""")
+        # trio.classroom.create_users()
+
+        existing_users = trio.classroom.databricks.users.list_usernames()
+        if len(existing_users) > 0:
+            print(f"""Found {len(existing_users)} users for "{name}".""")
+
+        for i, username in enumerate(trio.workspace_config.users):
+            # user_name = self.username_pattern.format(student_number=i)
+            if username in existing_users:
+                continue
+
+            # TODO parameterize allow_cluster_create
+            trio.classroom.databricks.users.create(username, allow_cluster_create=False)
+            if i == 0:  # User 0 gets admin rights.
+                trio.classroom.databricks.groups.add_member("admins", user_name=username)
+                # TODO add user zero to the instructors group which may need to be created first
+                # trio.classroom.databricks.groups.add_member("instructors", user_name=username)
 
     def __for_workspace_start_universal_workspace_setup(self, trio: WorkspaceTrio):
         from dbacademy.classrooms.monitor import Commands
@@ -167,6 +183,7 @@ class WorkspaceSetup:
                                      lab_id=self.account_config.event_config.event_id,
                                      description=self.account_config.event_config.description)
 
+            # TODO delete the Bootstrap job if successful, leaving the log-lived job.
             print(f"""Finished Universal-Workspace-Setup for "{name}" """)
 
         except Exception as e:

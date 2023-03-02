@@ -6,10 +6,10 @@ __all__ = ["WorkspaceConfig"]
 class WorkspaceConfig:
     from dbacademy.workspaces_3_0.event_config_class import EventConfig
 
-    def __init__(self, *, max_user_count: int, default_node_type_id: str, default_dbr: str, dbc_urls: Union[None, str, List[str]], courses: Union[None, str, List[str]], datasets: Union[None, str, List[str]], username_pattern: str, workspace_name_pattern: str, credentials_name: str, storage_configuration: str) -> None:
+    def __init__(self, *, max_users: int, default_node_type_id: str, default_dbr: str, dbc_urls: Union[None, str, List[str]], courses: Union[None, str, List[str]], datasets: Union[None, str, List[str]], username_pattern: str, workspace_name_pattern: str, credentials_name: str, storage_configuration: str) -> None:
         """
         Creates the configuration for workspace-level settings
-        :param max_user_count: see the corresponding property
+        :param max_users: see the corresponding property
         :param default_dbr: see the corresponding property
         :param default_node_type_id: see the corresponding property
         :param courses: see the corresponding property
@@ -17,8 +17,8 @@ class WorkspaceConfig:
         :param dbc_urls: see the corresponding property
         """
 
-        assert type(max_user_count) == int, f"""The parameter "max_user_count" must be an integral value, found {type(max_user_count)}."""
-        assert max_user_count > 0, f"""The parameter "max_user_count" must be greater than zero, found "{max_user_count}"."""
+        assert type(max_users) == int, f"""The parameter "max_users" must be an integral value, found {type(max_users)}."""
+        assert max_users > 0, f"""The parameter "max_users" must be greater than zero, found "{max_users}"."""
 
         assert type(default_node_type_id) == str, f"""The parameter "default_node_type_id" must be a string value, found {type(default_node_type_id)}."""
         assert len(default_node_type_id) > 3, f"""Invalid node type, found "{default_node_type_id}"."""
@@ -67,17 +67,18 @@ class WorkspaceConfig:
         self.__datasets = datasets
         self.__default_node_type_id = default_node_type_id
         self.__default_dbr = default_dbr
-        self.__max_user_count = max_user_count
+        self.__max_users = max_users
         self.__dbc_urls = dbc_urls
         self.__username_pattern = username_pattern
         self.__workspace_name_pattern = workspace_name_pattern
 
         self.__users: List[str] = list()
-        for i in range(0, max_user_count):
+        for i in range(0, max_users):
             value = f"{i:03d}"
             self.__users.append(self.__username_pattern.format(student_number=value))  # f"class+{i:03d}@databricks.com")
 
     def init(self, *, event_config: EventConfig, workspace_number: int):
+        from dbacademy.dbgems import stable_hash
 
         assert type(workspace_number) == int, f"""The parameter "workspace_number" must be an integral value, found {type(workspace_number)}."""
         assert workspace_number > 0, f"""The parameter "workspace_number" must be greater than zero, found "{workspace_number}"."""
@@ -88,14 +89,15 @@ class WorkspaceConfig:
         if "event_id" in self.workspace_name_pattern and "workspace_number" in self.workspace_name_pattern:
             event_id_str = f"{event_config.event_id:03d}"
             workspace_number_str = f"{workspace_number:03d}"
-            self.__name = self.workspace_name_pattern.format(event_id=event_id_str, workspace_number=workspace_number_str)
-
+            name = self.workspace_name_pattern.format(event_id=event_id_str, workspace_number=workspace_number_str)
         elif "workspace_number" in self.workspace_name_pattern:
             workspace_number_str = f"{self.workspace_number:03d}"
-            self.__name = self.workspace_name_pattern.format(workspace_number=workspace_number_str)
-
+            name = self.workspace_name_pattern.format(workspace_number=workspace_number_str)
         else:
-            raise Exception("Invalid workspace_name_pattern")
+            raise Exception(f"Invalid workspace_name_pattern, found {self.workspace_name_pattern}")
+
+        hashcode = stable_hash("Databricks Lakehouse", event_config.event_id, workspace_number, length=5)
+        self.__name = f"{name}-{hashcode}".lower()
 
     @property
     def name(self) -> str:
@@ -157,8 +159,8 @@ class WorkspaceConfig:
         return self.__users
 
     @property
-    def max_user_count(self) -> int:
-        return self.__max_user_count
+    def max_users(self) -> int:
+        return self.__max_users
 
     @property
     def courses(self):

@@ -126,7 +126,9 @@ class Classroom(object):
         """
         if last_student is None:
             last_student = self.num_students
+
         existing_users = self.databricks.users.list_usernames()
+
         for i in range(first_student, last_student + 1):
             user_name = self.username_pattern.format(student_number=i)
             if user_name in existing_users:
