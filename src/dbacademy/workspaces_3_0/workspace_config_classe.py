@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Dict
 
 __all__ = ["WorkspaceConfig"]
 
@@ -75,7 +75,16 @@ class WorkspaceConfig:
         self.__users: List[str] = list()
         for i in range(0, max_users):
             value = f"{i:03d}"
-            self.__users.append(self.__username_pattern.format(student_number=value))  # f"class+{i:03d}@databricks.com")
+            self.__users.append(self.__username_pattern.format(student_number=value))
+
+        # Create the user class+analyst@databricks.com
+        analyst = "class+analyst@databricks.com"
+        self.__users.append(analyst)
+
+        # Create the group analyst and instructors
+        self.__groups = dict()
+        self.__groups["analysts"] = [analyst]
+        self.__groups["instructors"] = [self.__users[0]]
 
     def init(self, *, event_config: EventConfig, workspace_number: int):
         from dbacademy.dbgems import stable_hash
@@ -157,6 +166,10 @@ class WorkspaceConfig:
     @property
     def users(self) -> List[str]:
         return self.__users
+
+    @property
+    def groups(self) -> Dict[str, List[str]]:
+        return self.__groups
 
     @property
     def max_users(self) -> int:

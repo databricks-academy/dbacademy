@@ -90,6 +90,10 @@ class WorkspaceSetup:
         self.for_each_workspace(self.__for_workspace_create_users)
 
         #############################################################
+        # Create groups
+        self.for_each_workspace(self.__for_workspace_create_group)
+
+        #############################################################
         # Create the meta stores for each workspace
         self.for_each_workspace(self.__for_workspace_create_metastore)
 
@@ -155,7 +159,6 @@ class WorkspaceSetup:
             print(f"""Found {len(existing_users)} users for "{name}".""")
 
         for i, username in enumerate(trio.workspace_config.users):
-            # user_name = self.username_pattern.format(student_number=i)
             if username in existing_users:
                 continue
 
@@ -165,6 +168,29 @@ class WorkspaceSetup:
                 trio.classroom.databricks.groups.add_member("admins", user_name=username)
                 # TODO add user zero to the instructors group which may need to be created first
                 # trio.classroom.databricks.groups.add_member("instructors", user_name=username)
+
+    @staticmethod
+    def __for_workspace_create_group(trio: WorkspaceTrio):
+        # Just in case it's not ready
+        trio.workspace_api.wait_until_ready()
+
+        name = trio.workspace_config.name
+
+        print(f"""Creating {len(trio.workspace_config.groups)} groups for "{name}".""")
+
+        existing_groups = trio.classroom.databricks.groups.list()
+
+        if len(existing_groups) > 0:
+            print(f"""Found {len(existing_groups)} groups for "{name}".""")
+
+        for group, usernames in trio.workspace_config.groups.items():
+            # Create the group
+
+            if group not in existing_groups:
+                trio.classroom.databricks.groups.create(group)
+
+            for username in usernames:
+                trio.classroom.databricks.groups.add_member(group, user_name=username)
 
     def __for_workspace_start_universal_workspace_setup(self, trio: WorkspaceTrio):
         from dbacademy.classrooms.monitor import Commands

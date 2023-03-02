@@ -7,20 +7,23 @@ class AccountConfig:
     from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
 
     @staticmethod
-    def from_env(region: str, event_config: EventConfig, uc_storage_config: UcStorageConfig, workspace_config: WorkspaceConfig, first_workspace_number: int, ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
+    def from_env(qualifier: str, region: str, event_config: EventConfig, uc_storage_config: UcStorageConfig, workspace_config: WorkspaceConfig, first_workspace_number: int, ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
         import os
 
-        env = "WORKSPACE_SETUP_ACCOUNT_ID"
+        env = f"WORKSPACE_SETUP_{qualifier}_ACCOUNT_ID"
         account_id = os.environ.get(env)
         assert account_id is not None, f"""Failed to load the environment variable "{env}", please check your configuration and try again."""
+        print(f"Account ID ({env}): {account_id}")
 
-        env = "WORKSPACE_SETUP_PASSWORD"
+        env = f"WORKSPACE_SETUP_{qualifier}_PASSWORD"
         password = os.environ.get(env)
         assert password is not None, f"""Failed to load the environment variable "{env}", please check your configuration and try again."""
+        print(f"Password ({env}):     {password[0]}***{password[-1]}")
 
-        env = "WORKSPACE_SETUP_USERNAME"
+        env = f"WORKSPACE_SETUP_{qualifier}_USERNAME"
         username = os.environ.get(env)
         assert username is not None, f"""Failed to load the environment variable "{env}", please check your configuration and try again."""
+        print(f"Username ({env}):     {username}")
 
         return AccountConfig(region=region,
                              account_id=account_id,

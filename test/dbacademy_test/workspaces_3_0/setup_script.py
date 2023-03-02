@@ -6,7 +6,7 @@ from dbacademy.workspaces_3_0.workspace_setup_class import WorkspaceSetup
 
 
 max_workspace_users = 250
-max_event_participants = 30 * max_workspace_users
+max_event_participants = 1 * max_workspace_users
 first_workspace_number = 280
 
 event_config = EventConfig(event_id=0,
@@ -30,7 +30,8 @@ workspace_config = WorkspaceConfig(max_users=max_workspace_users,
                                    username_pattern="class+{student_number}@databricks.com",
                                    workspace_name_pattern="classroom-{workspace_number}")
 
-account = AccountConfig.from_env(first_workspace_number=first_workspace_number,
+account = AccountConfig.from_env(qualifier="CURR",  # PROSVC
+                                 first_workspace_number=first_workspace_number,
                                  region="us-west-2",
                                  event_config=event_config,
                                  uc_storage_config=storage_config,
@@ -39,4 +40,5 @@ account = AccountConfig.from_env(first_workspace_number=first_workspace_number,
 
 workspace_setup = WorkspaceSetup(account)
 workspace_setup.create_workspaces()
-workspace_setup.delete_workspaces()
+# workspace_setup.delete_workspaces()
+
