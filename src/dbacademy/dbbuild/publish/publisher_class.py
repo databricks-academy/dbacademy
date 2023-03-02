@@ -338,7 +338,7 @@ class Publisher:
 
         source_docs_path = f"{self.source_repo}/docs"
         # target_docs_path = f"{self.target_dir}/docs/v{self.build_config.version}"
-        target_docs_path = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.build_config.version}/site"
+        target_docs_path = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.build_config.version}-PENDING/site"
 
         print(f"Source: {source_docs_path}")
         print(f"Target: {target_docs_path}")
