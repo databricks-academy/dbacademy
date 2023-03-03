@@ -121,7 +121,6 @@ class WorkspaceSetup:
 
         print(f"""Completed setup for {len(provisioned_workspaces)} workspaces.""")
 
-
     @staticmethod
     def for_each_workspace(workspaces: List[WorkspaceTrio], some_action: Callable[[WorkspaceTrio], None]) -> None:
         from multiprocessing.pool import ThreadPool
@@ -176,6 +175,14 @@ class WorkspaceSetup:
 
         new_feature_status = trio.workspace_api.api("GET", "2.0/sql/config/endpoints").get(feature_name)
         assert new_feature_status == feature_status, f"""Expected "{feature_name}" to be "{feature_status}", found "{new_feature_status}"."""
+
+        trio.workspace_api.api("PATCH", "2.0/workspace-conf", {
+               "enable-X-Frame-Options": "false",  # Turn off iframe prevention
+               "intercomAdminConsent": "false",    # Turn off product welcome
+               "enableDbfsFileBrowser": "true",    # Enable DBFS UI
+               "enableWebTerminal": "true",        # Enable Web Terminal
+               "enableExportNotebook": "true"      # We will disable this in due time
+        })
 
     def __for_workspace_create_users(self, trio: WorkspaceTrio):
         # Just in case it's not ready
@@ -275,20 +282,51 @@ class WorkspaceSetup:
             trio.workspace_api.wait_until_ready()
 
             print(f"""Starting Universal-Workspace-Setup for "{name}" """)
-            result = Commands.universal_setup(trio.workspace_api,
-                                              node_type_id=workspace_config.default_node_type_id,
-                                              spark_version=workspace_config.default_dbr,
-                                              datasets=workspace_config.datasets,
-                                              lab_id=self.account_config.event_config.event_id,
-                                              description=self.account_config.event_config.description)
 
-            assert result == "SUCCESS", f"""Expected final state of Universal-Workspace-Setup to be "SUCCESS", found "{result}"."""
+            response = trio.workspace_api.api("GET", "2.1/jobs/list?limit=25&expand_tasks=false")
+            jobs = response.get("jobs", dict())
+
+            for job in jobs:
+                if job.get("settings", dict()).get("name") == "DBAcademy Workspace-Setup":
+                    job_id = job.get("job_id")
+                    response = trio.workspace_api.api("POST", "2.1/jobs/run-now", job_id=job_id)
+                    response = self.__wait_for_job_run(trio, response.get("run_id"))
+                    state = response.get("state", dict()).get("life_cycle_state")
+                    assert state == "SUCCESS", f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{state}"."""
+                    return
+
+            state = Commands.universal_setup(trio.workspace_api,
+                                             node_type_id=workspace_config.default_node_type_id,
+                                             spark_version=workspace_config.default_dbr,
+                                             datasets=workspace_config.datasets,
+                                             lab_id=self.account_config.event_config.event_id,
+                                             description=self.account_config.event_config.description)
+
+            assert state == "SUCCESS", f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{state}"."""
 
             # TODO delete the Bootstrap job if successful, leaving the log-lived job.
             print(f"""Finished Universal-Workspace-Setup for "{name}" """)
 
         except Exception as e:
             raise Exception(f"""Failed to create the workspace "{trio.workspace_config.name}".""") from e
+
+    def __wait_for_job_run(self, trio: WorkspaceTrio, run_id):
+        import time
+
+        wait = 15
+        response = trio.workspace_api.api("GET", f"2.1/jobs/runs/get?run_id={run_id}")
+
+        state = response["state"]["life_cycle_state"]
+
+        if state != "TERMINATED" and state != "INTERNAL_ERROR" and state != "SKIPPED":
+            if state == "PENDING" or state == "RUNNING":
+                time.sleep(wait)
+            else:
+                time.sleep(5)
+
+            return self.__wait_for_job_run(trio, run_id)
+
+        return response
 
     def __for_workspace_create_metastore(self, trio: WorkspaceTrio):
 
