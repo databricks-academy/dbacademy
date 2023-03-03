@@ -58,7 +58,6 @@ class AccountConfig:
 
         ignored_workspaces = ignored_workspaces or list()  # Default to an empty list if not provided.
         ParameterValidator.validate_type(list, ignored_workspaces=ignored_workspaces)
-        # ParameterValidator.validate_min_length("ignored", 0, ignored_workspaces)
 
         ParameterValidator.validate_not_none(event_config=event_config)
         ParameterValidator.validate_not_none(storage_config=uc_storage_config)
@@ -75,8 +74,9 @@ class AccountConfig:
         self.__workspace_config_template = workspace_config
         self.__ignored_workspaces = ignored_workspaces
 
-        count = math.ceil(event_config.max_participants / workspace_config.max_users)
         self.__workspaces = list()
+        count = math.ceil(event_config.max_participants / workspace_config.max_users)
+
         for workspace_number in range(first_workspace_number, first_workspace_number+count):
             workspace = WorkspaceConfig(max_users=workspace_config.max_users,
                                         courses="example-course",

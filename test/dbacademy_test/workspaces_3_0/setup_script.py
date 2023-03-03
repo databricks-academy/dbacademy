@@ -1,3 +1,4 @@
+import math
 from dbacademy.workspaces_3_0.account_config_class import AccountConfig
 from dbacademy.workspaces_3_0.event_config_class import EventConfig
 from dbacademy.workspaces_3_0.uc_storage_config_class import UcStorageConfig
@@ -6,12 +7,13 @@ from dbacademy.workspaces_3_0.workspace_setup_class import WorkspaceSetup
 
 
 max_workspace_users = 250
-max_event_participants = 1 * max_workspace_users
+max_event_participants = 40 * max_workspace_users
+total_workspaces = math.ceil(max_event_participants / max_workspace_users)
 first_workspace_number = 280
 
 event_config = EventConfig(event_id=0,
                            max_participants=max_event_participants,
-                           description="Fun and games!")
+                           description="IL Classroom")
 
 # TODO There is a bug that doesn't allow us to use the "instructors" group
 storage_config = UcStorageConfig(storage_root="s3://unity-catalogs-us-west-2/",
@@ -20,9 +22,9 @@ storage_config = UcStorageConfig(storage_root="s3://unity-catalogs-us-west-2/",
                                  owner="class+000@databricks.com")
 
 workspace_config = WorkspaceConfig(max_users=max_workspace_users,
-                                   courses="example-course",
-                                   datasets="example-course",
-                                   default_dbr="10.4.x-scala2.12",
+                                   courses=None,
+                                   datasets=None,
+                                   default_dbr="11.3.x-scala2.12",
                                    default_node_type_id="i3.xlarge",
                                    dbc_urls="https://labs.training.databricks.com/api/courses?course=example-course&version=vLATEST&artifact=lessons.dbc&token=abcd",
                                    credentials_name="default",
@@ -30,7 +32,7 @@ workspace_config = WorkspaceConfig(max_users=max_workspace_users,
                                    username_pattern="class+{student_number}@databricks.com",
                                    workspace_name_pattern="classroom-{workspace_number}")
 
-account = AccountConfig.from_env(qualifier="CURR",  # PROSVC
+account = AccountConfig.from_env(qualifier="PROSVC",  # CURR
                                  first_workspace_number=first_workspace_number,
                                  region="us-west-2",
                                  event_config=event_config,
@@ -38,7 +40,16 @@ account = AccountConfig.from_env(qualifier="CURR",  # PROSVC
                                  workspace_config=workspace_config,
                                  ignored_workspaces=["classroom-9999-001", "classroom-9999-002"])
 
-workspace_setup = WorkspaceSetup(account)
-workspace_setup.create_workspaces()
-# workspace_setup.delete_workspaces()
+workspace_setup = WorkspaceSetup(account, max_retries=100)
 
+step = 5  # We can only handle 5 at a time.
+for i in range(first_workspace_number, first_workspace_number+total_workspaces, step):
+    workspace_setup.create_workspaces(create_users=False,
+                                      create_groups=False,
+                                      create_metastore=False,
+                                      run_workspace_setup=False,
+                                      enable_features=True,
+                                      workspace_numbers=range(i, i+step))
+    break  # I want to stop
+
+# workspace_setup.delete_workspaces()

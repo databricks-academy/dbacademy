@@ -134,6 +134,7 @@ class SqlEndpointsClient(ApiContainer):
             },
             "spot_instance_policy": spot_instance_policy,
             "enable_photon": enable_photon,
+            "warehouse_type": "Pro",
             "enable_serverless_compute": enable_serverless_compute,
             "channel": {
                 "name": channel
