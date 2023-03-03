@@ -113,8 +113,6 @@ class WorkspaceSetup:
         else:
             print("Skipping enablement of workspace features")
 
-        print(f"""Completed setup for {len(provisioned_workspaces)} workspaces.""")
-
         #############################################################
         if run_workspace_setup:
             self.for_each_workspace(workspaces, self.__for_workspace_start_universal_workspace_setup)
