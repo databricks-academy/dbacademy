@@ -53,7 +53,7 @@ for i in range(first_workspace_number, first_workspace_number+total_workspaces, 
                                       enable_features=True,
                                       run_workspace_setup=True,
                                       workspace_numbers=range(i, i+step))
-    break  # I want to stop
+    # break  # I want to stop
 
 # workspace_setup.delete_workspaces()
 
