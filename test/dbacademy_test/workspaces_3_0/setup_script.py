@@ -1,10 +1,13 @@
 import math
+from datetime import datetime
 from dbacademy.workspaces_3_0.account_config_class import AccountConfig
 from dbacademy.workspaces_3_0.event_config_class import EventConfig
 from dbacademy.workspaces_3_0.uc_storage_config_class import UcStorageConfig
 from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
 from dbacademy.workspaces_3_0.workspace_setup_class import WorkspaceSetup
 
+print("-"*100)
+print(f"Starting script at {datetime.now()}")
 
 max_workspace_users = 250
 max_event_participants = 40 * max_workspace_users
@@ -53,3 +56,5 @@ for i in range(first_workspace_number, first_workspace_number+total_workspaces, 
     break  # I want to stop
 
 # workspace_setup.delete_workspaces()
+
+print(f"Completed update at {datetime.now()}")
