@@ -216,7 +216,7 @@ class ApiClient(ApiContainer):
                 return response.json()
             except ValueError:
                 return {
-                    "_status": response.text,
+                    "_status": response.status_code,
                     "_response": response.text
                 }
 
