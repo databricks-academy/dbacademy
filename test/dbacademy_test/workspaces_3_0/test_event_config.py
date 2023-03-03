@@ -31,11 +31,15 @@ class TestEventConfig(unittest.TestCase):
     def test_create_event_config_description(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
+        event_config = EventConfig(event_id=1234, max_participants=250, description=None)
+        self.assertIsNone(event_config.description)
+
+        event_config = EventConfig(event_id=1234, max_participants=250, description="")
+        self.assertIsNone(event_config.description)
+
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "description" must be a string value, found <class 'int'>.""", lambda: EventConfig(event_id=1234, max_participants=250, description=0))
+        test_assertion_error(self, """The parameter "description" must be a string value or None, found <class 'int'>.""", lambda: EventConfig(event_id=1234, max_participants=250, description=0))
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "description" must be a string value, found <class 'NoneType'>.""", lambda: EventConfig(event_id=1234, max_participants=250, description=None))
-        test_assertion_error(self, """Invalid parameter "description", found "abc".""", lambda: EventConfig(event_id=1234, max_participants=250, description="abc"))
 
 
 if __name__ == '__main__':

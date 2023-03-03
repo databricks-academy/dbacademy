@@ -75,10 +75,13 @@ class AccountConfig:
         self.__ignored_workspaces = ignored_workspaces
 
         self.__workspaces = list()
-        count = math.ceil(event_config.max_participants / workspace_config.max_users)
+
+        actual_users = len(workspace_config.usernames)
+        max_users = actual_users - 2  # Accounts for user zero, max inclusive & class+analyst@databricks.com
+        count = math.ceil(event_config.max_participants / actual_users)
 
         for workspace_number in range(first_workspace_number, first_workspace_number+count):
-            workspace = WorkspaceConfig(max_users=workspace_config.max_users,
+            workspace = WorkspaceConfig(max_users=max_users,
                                         courses=workspace_config.courses,
                                         datasets=workspace_config.datasets,
                                         default_node_type_id=workspace_config.default_node_type_id,

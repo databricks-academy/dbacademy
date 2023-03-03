@@ -67,24 +67,25 @@ class WorkspaceConfig:
         self.__datasets = datasets
         self.__default_node_type_id = default_node_type_id
         self.__default_dbr = default_dbr
-        self.__max_users = max_users + 1
         self.__dbc_urls = dbc_urls
         self.__username_pattern = username_pattern
         self.__workspace_name_pattern = workspace_name_pattern
 
-        self.__users: List[str] = list()
+        max_users += 1  # Accounts for user-zero, zero to max inclusive
+
+        self.__usernames: List[str] = list()
         for i in range(0, max_users):
             value = f"{i:03d}"
-            self.__users.append(self.__username_pattern.format(student_number=value))
+            self.__usernames.append(self.__username_pattern.format(student_number=value))
 
         # Create the user class+analyst@databricks.com
-        analyst = "class+analyst@databricks.com"
-        self.__users.append(analyst)
+        analyst_username = "class+analyst@databricks.com"
+        self.__usernames.append(analyst_username)
 
         # Create the group analyst and instructors
         self.__groups = dict()
-        self.__groups["analysts"] = [analyst]
-        self.__groups["instructors"] = [self.__users[0]]
+        self.__groups["analysts"] = [analyst_username]
+        self.__groups["instructors"] = [self.__usernames[0]]
 
     def init(self, *, event_config: EventConfig, workspace_number: int):
         from dbacademy.dbgems import stable_hash
@@ -164,16 +165,12 @@ class WorkspaceConfig:
         return self.__dbc_urls
 
     @property
-    def users(self) -> List[str]:
-        return self.__users
+    def usernames(self) -> List[str]:
+        return self.__usernames
 
     @property
     def groups(self) -> Dict[str, List[str]]:
         return self.__groups
-
-    @property
-    def max_users(self) -> int:
-        return self.__max_users
 
     @property
     def courses(self):
@@ -206,4 +203,3 @@ class WorkspaceConfig:
         :return:
         """
         return self.__storage_configuration
-

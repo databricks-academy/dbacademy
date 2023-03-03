@@ -1,4 +1,4 @@
-from typing import List, Optional, Callable, Iterable
+from typing import List, Optional, Callable, Iterable, Dict, Any
 
 from dbacademy.rest.common import DatabricksApiException
 
@@ -12,6 +12,20 @@ class WorkspaceTrio:
         self.__workspace_config = workspace_config
         self.__workspace_api = workspace_api
         self.__classroom = classroom
+
+        self.__name = workspace_config.name
+        self.__number = workspace_config.workspace_number
+
+    def __str__(self) -> str:
+        return f"{self.name} #{self.number}"
+
+    @property
+    def name(self) -> str:
+        return self.__name
+
+    @property
+    def number(self) -> int:
+        return self.__number
 
     @property
     def workspace_config(self) -> WorkspaceConfig:
@@ -31,11 +45,14 @@ class WorkspaceSetup:
 
     def __init__(self, account_config: AccountConfig, max_retries: int):
         from dbacademy.dougrest import AccountsApi
+        from dbacademy.workspaces_3_0.account_config_class import AccountConfig
 
         assert account_config is not None, f"""The parameter "account_config" must be specified."""
+        assert type(account_config) == AccountConfig, f"""The parameter "account_config" must be of type AccountConfig, found {type(account_config)}."""
         self.__account_config = account_config
-        # self.__workspaces: List[WorkspaceTrio] = list()
 
+        assert max_retries is not None, f"""The parameter "max_retries" must be specified."""
+        assert type(max_retries) == int, f"""The parameter "max_retries" must be of type int, found {type(max_retries)}."""
         self.__max_retries = max_retries
 
         self.__accounts_api = AccountsApi(account_id=self.account_config.account_id,
@@ -53,6 +70,104 @@ class WorkspaceSetup:
     @property
     def account_config(self) -> AccountConfig:
         return self.__account_config
+
+    @classmethod
+    def __for_each_workspace(cls, workspaces: List[WorkspaceTrio], some_action: Callable[[WorkspaceTrio], None]) -> None:
+        from multiprocessing.pool import ThreadPool
+
+        print("-"*100)
+
+        with ThreadPool(len(workspaces)) as pool:
+            pool.map(some_action, workspaces)
+
+        # for trio in workspaces:
+        #     some_action(trio)
+
+    def remove_metastores(self):
+        print("\n")
+        print("-"*100)
+
+        workspaces = self.__utils_create_workspace_trios()
+
+        print(f"Removing {len(workspaces)} metastores.""")
+        for trio in workspaces:
+            # Unassign the metastore from the workspace
+            print(f"""Deleting the metastore for workspace "{trio.workspace_config.name}".""")
+
+            try:
+                response = trio.workspace_api.api("GET", f"2.1/unity-catalog/current-metastore-assignment")
+            except DatabricksApiException as e:
+                if e.error_code == "METASTORE_DOES_NOT_EXIST":
+                    continue  # It doesn't exist, move on.
+                else:
+                    raise e
+
+            metastore_id = response["metastore_id"]
+            workspace_id = response["workspace_id"]
+
+            try:
+                trio.workspace_api.api("DELETE", f"2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
+                  "metastore_id": metastore_id
+                })
+            except DatabricksApiException as e:
+                if e.error_code == "METASTORE_DOES_NOT_EXIST":
+                    continue  # It doesn't exist, move on.
+                else:
+                    raise e
+
+            try:
+                # Delete the metastore, but only if there are no other workspaces attached.
+                trio.workspace_api.api("DELETE", f"2.1/unity-catalog/metastores/{metastore_id}", {
+                    "force": True
+                })
+            except DatabricksApiException as e:
+                if e.error_code == "METASTORE_DOES_NOT_EXIST":
+                    continue  # It doesn't exist, move on.
+                else:
+                    raise e
+
+    def __utils_create_workspace_trios(self) -> List[WorkspaceTrio]:
+        workspaces: List[WorkspaceTrio] = list()
+
+        for workspace_config in self.account_config.workspaces:
+            workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="ignore")
+
+            if workspace_api is not None:
+                trio = WorkspaceTrio(workspace_config, workspace_api, None)
+                workspaces.append(trio)
+
+        return workspaces
+
+    def remove_workspace_setup_jobs(self, *, remove_bootstrap_job: bool, remove_final_job: bool):
+        print("\n")
+        print("-"*100)
+
+        workspaces = self.__utils_create_workspace_trios()
+        print(f"Removing Universal-Workspace-Setup jobs (bootstrap={remove_bootstrap_job}, final={remove_final_job}) for {len(workspaces)} workspaces.""")
+
+        for trio in workspaces:
+            self.__utils_remove_workspace_setup_jobs(trio, remove_bootstrap_job=remove_bootstrap_job, remove_final_job=remove_final_job)
+
+    def delete_workspaces(self):
+        print("\n")
+        print("-"*100)
+
+        workspaces = self.__utils_create_workspace_trios()
+        self.remove_metastores()
+
+        print(f"Destroying {len(workspaces)} workspaces.""")
+        for trio in workspaces:
+            try:
+                print(f"""Deleting the workspace "{trio.workspace_config.name}".""")
+                self.accounts_api.workspaces.delete_by_name(trio.workspace_config.name)
+
+            except DatabricksApiException as e:
+                if e.http_code == 404:
+                    print(f"""Cannot delete workspace "{trio.workspace_config.name}"; it doesn't exist.""")
+                else:
+                    print("-"*80)
+                    print(f"""Failed to delete the workspace "{trio.workspace_config.name}".\n{e}""")
+                    print("-"*80)
 
     def create_workspaces(self, *, create_users: bool, create_groups: bool, create_metastore: bool, run_workspace_setup: bool, enable_features: bool, workspace_numbers: Iterable[int] = None):
         from dbacademy.classrooms.classroom import Classroom
@@ -76,7 +191,7 @@ class WorkspaceSetup:
                                                                     credentials_name=self.account_config.workspace_config_template.credentials_name,
                                                                     storage_configuration_name=self.account_config.workspace_config_template.storage_configuration)
 
-            classroom = Classroom(num_students=workspace_config.max_users,
+            classroom = Classroom(num_students=len(workspace_config.usernames),
                                   username_pattern=workspace_config.username_pattern,
                                   databricks_api=workspace_api)
 
@@ -91,81 +206,38 @@ class WorkspaceSetup:
 
         #############################################################
         if create_users:
-            self.for_each_workspace(workspaces, self.__for_workspace_create_users)
+            self.__for_each_workspace(workspaces, self.__create_workspaces_create_users)
         else:
             print("Skipping creation of users")
 
         #############################################################
         if create_groups:
-            self.for_each_workspace(workspaces, self.__for_workspace_create_group)
+            self.__for_each_workspace(workspaces, self.__create_workspaces_create_group)
         else:
             print("Skipping creation of groups")
 
         #############################################################
         if create_metastore:
-            self.for_each_workspace(workspaces, self.__for_workspace_create_metastore)
+            self.__for_each_workspace(workspaces, self.__create_workspaces_create_metastore)
         else:
             print("Skipping creation of metastore")
 
         #############################################################
         if enable_features:
-            self.for_each_workspace(workspaces, self.__for_workspace_enable_features)
+            self.__for_each_workspace(workspaces, self.__create_workspaces_enable_features)
         else:
             print("Skipping enablement of workspace features")
 
         #############################################################
         if run_workspace_setup:
-            self.for_each_workspace(workspaces, self.__for_workspace_start_universal_workspace_setup)
+            self.__for_each_workspace(workspaces, self.__create_workspaces_run_workspace_setup)
         else:
             print("Skipping run of Universal-Workspace-Setup")
 
-        print(f"""Completed setup for {len(provisioned_workspaces)} workspaces.""")
+        print(f"""Completed setup for {len(workspaces)} workspaces.""")
 
-    @staticmethod
-    def for_each_workspace(workspaces: List[WorkspaceTrio], some_action: Callable[[WorkspaceTrio], None]) -> None:
-        from multiprocessing.pool import ThreadPool
-
-        print("-"*100)
-
-        with ThreadPool(len(workspaces)) as pool:
-            pool.map(some_action, workspaces)
-
-        # for trio in workspaces:
-        #     some_action(trio)
-
-    def delete_workspaces(self):
-        print("\n")
-        print("-"*100)
-
-        workspaces: List[WorkspaceTrio] = list()
-
-        for workspace_config in self.account_config.workspaces:
-            workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="ignore")
-
-            if workspace_api is not None:
-                trio = WorkspaceTrio(workspace_config, workspace_api, None)
-                workspaces.append(trio)
-
-        print(f"Destroying {len(workspaces)} workspaces.""")
-        for trio in workspaces:
-            name = trio.workspace_config.name
-
-            self.__for_workspace_destroy_metastore(trio)
-
-            try:
-                print(f"""Deleting the workspace "{name}".""")
-                self.accounts_api.workspaces.delete_by_name(name)
-
-            except DatabricksApiException as e:
-                if e.http_code == 404:
-                    print(f"""Cannot delete workspace "{name}"; it doesn't exist.""")
-                else:
-                    print("-"*80)
-                    print(f"""Failed to delete the workspace "{name}".\n{e}""")
-                    print("-"*80)
-
-    @staticmethod
-    def __for_workspace_enable_features(trio: WorkspaceTrio):
+    @classmethod
+    def __create_workspaces_enable_features(cls, trio: WorkspaceTrio):
         # Enabling serverless endpoints.
         settings = trio.workspace_api.api("GET", "2.0/sql/config/endpoints")
         feature_name = "enable_serverless_compute"
@@ -184,32 +256,26 @@ class WorkspaceSetup:
                "enableExportNotebook": "true"      # We will disable this in due time
         })
 
-    def __for_workspace_create_users(self, trio: WorkspaceTrio):
+    def __create_workspaces_create_users(self, trio: WorkspaceTrio):
         # Just in case it's not ready
         trio.workspace_api.wait_until_ready()
 
         name = trio.workspace_config.name
-        max_users = trio.workspace_config.max_users
-
+        max_users = len(trio.workspace_config.usernames)
         print(f"""Creating {max_users} users for "{name}".""")
 
-        existing_users = self.__list_existing_users(trio)
+        existing_users = self.__utils_list_users(trio)
 
         if len(existing_users) > 1:
             print(f"""Found {len(existing_users)} users for "{name}".""")
 
-        for i, username in enumerate(trio.workspace_config.users):
+        for i, username in enumerate(trio.workspace_config.usernames):
             if username not in existing_users:
                 # TODO parameterize allow_cluster_create
                 # trio.classroom.databricks.users.create(username, allow_cluster_create=False)
-                self.__create_user(trio, username)
+                self.__utils_create_user(trio, username)
 
-                if i == 0:  # User 0 gets admin rights.
-                    trio.classroom.databricks.groups.add_member("admins", user_name=username)
-                    # TODO add user zero to the instructors group which may need to be created first
-                    # trio.classroom.databricks.groups.add_member("instructors", user_name=username)
-
-    def __create_user(self, trio: WorkspaceTrio, username) -> List[str]:
+    def __utils_create_user(self, trio: WorkspaceTrio, username) -> List[str]:
         import time, random
         from requests.exceptions import HTTPError
 
@@ -226,7 +292,7 @@ class WorkspaceSetup:
 
         raise Exception(f"""Failed to create user "{username}" for "{trio.workspace_config.name}".""")
 
-    def __list_existing_users(self, trio: WorkspaceTrio) -> List[str]:
+    def __utils_list_users(self, trio: WorkspaceTrio) -> List[str]:
         import time, random
         from requests.exceptions import HTTPError
 
@@ -249,11 +315,8 @@ class WorkspaceSetup:
         else:
             return existing_users
 
-    @staticmethod
-    def __for_workspace_create_group(trio: WorkspaceTrio):
-        # Just in case it's not ready
-        trio.workspace_api.wait_until_ready()
-
+    @classmethod
+    def __create_workspaces_create_group(cls, trio: WorkspaceTrio):
         name = trio.workspace_config.name
 
         print(f"""Creating {len(trio.workspace_config.groups)} groups for "{name}".""")
@@ -272,45 +335,80 @@ class WorkspaceSetup:
             for username in usernames:
                 trio.classroom.databricks.groups.add_member(group, user_name=username)
 
-    def __for_workspace_start_universal_workspace_setup(self, trio: WorkspaceTrio):
-        from dbacademy.classrooms.monitor import Commands
+    def __create_workspaces_run_workspace_setup(self, trio: WorkspaceTrio):
         try:
-            workspace_config = trio.workspace_config
-            name = workspace_config.name
+            print(f"""Starting Universal-Workspace-Setup for "{trio.workspace_config.name}" """)
 
-            # Just in case it's not ready
-            trio.workspace_api.wait_until_ready()
+            if self.__utils_run_existing_job(trio):
+                return  # Secondary run, using Workspace Setup job
+            else:
+                # First run, create and run Workspace Setup (Bootstrap) job.
+                self.__utils_create_workspace_setup_job(trio)
 
-            print(f"""Starting Universal-Workspace-Setup for "{name}" """)
+            self.__utils_remove_workspace_setup_jobs(trio, remove_bootstrap_job=True, remove_final_job=False)
 
-            response = trio.workspace_api.api("GET", "2.1/jobs/list?limit=25&expand_tasks=false")
-            jobs = response.get("jobs", dict())
-
-            for job in jobs:
-                if job.get("settings", dict()).get("name") == "DBAcademy Workspace-Setup":
-                    job_id = job.get("job_id")
-                    response = trio.workspace_api.api("POST", "2.1/jobs/run-now", job_id=job_id)
-                    response = self.__wait_for_job_run(trio, response.get("run_id"))
-                    state = response.get("state").get("result_state")
-                    assert state == "SUCCESS", f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{state}"."""
-                    return
-
-            state = Commands.universal_setup(trio.workspace_api,
-                                             node_type_id=workspace_config.default_node_type_id,
-                                             spark_version=workspace_config.default_dbr,
-                                             datasets=workspace_config.datasets,
-                                             lab_id=self.account_config.event_config.event_id,
-                                             description=self.account_config.event_config.description)
-
-            assert state == "SUCCESS", f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{state}"."""
-
-            # TODO delete the Bootstrap job if successful, leaving the log-lived job.
-            print(f"""Finished Universal-Workspace-Setup for "{name}" """)
+            print(f"""Finished Universal-Workspace-Setup for "{trio.workspace_config.name}" """)
 
         except Exception as e:
             raise Exception(f"""Failed to create the workspace "{trio.workspace_config.name}".""") from e
 
-    def __wait_for_job_run(self, trio: WorkspaceTrio, run_id):
+    def __utils_remove_workspace_setup_jobs(self, trio, *, remove_bootstrap_job: bool, remove_final_job: bool):
+        from dbacademy.dbhelper import WorkspaceHelper
+
+        if remove_bootstrap_job:
+            job = self.__utils_get_job_by_name(trio, WorkspaceHelper.BOOTSTRAP_JOB_NAME)
+            if job is not None:
+                # Now that we have ran the job, delete the Bootstrap job.
+                trio.workspace_api.api("POST", "2.1/jobs/delete", job_id=job.get("job_id"))
+
+        if remove_final_job:
+            job = self.__utils_get_job_by_name(trio, WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME)
+            if job is not None:
+                trio.workspace_api.api("POST", "2.1/jobs/delete", job_id=job.get("job_id"))
+
+    def __utils_create_workspace_setup_job(self, trio: WorkspaceTrio):
+        from dbacademy.classrooms.monitor import Commands
+
+        lab_id = self.account_config.event_config.event_id
+        lab_id = lab_id if lab_id > 0 else trio.workspace_config.workspace_number
+
+        description = self.account_config.event_config.description
+        description = description if description is not None and len(description.strip()) > 0 else f"Classroom {trio.workspace_config.workspace_number}"
+
+        state = Commands.universal_setup(trio.workspace_api,
+                                         node_type_id=trio.workspace_config.default_node_type_id,
+                                         spark_version=trio.workspace_config.default_dbr,
+                                         datasets=trio.workspace_config.datasets,
+                                         lab_id=lab_id,
+                                         description=description)
+
+        assert state == "SUCCESS", f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{state}" for "{trio.name}"."""
+
+    @classmethod
+    def __utils_get_job_by_name(cls, trio: WorkspaceTrio, name: str) -> Optional[Dict[str, Any]]:
+        response = trio.workspace_api.api("GET", "2.1/jobs/list?limit=25&expand_tasks=false")
+        jobs = response.get("jobs", dict())
+
+        for job in jobs:
+            if job.get("settings", dict()).get("name") == name:
+                return job  # Found it.
+
+        return None  # Not found
+
+    def __utils_run_existing_job(self, trio: WorkspaceTrio) -> bool:
+
+        job = self.__utils_get_job_by_name(trio, "DBAcademy Workspace-Setup")
+        if job is not None:
+            job_id = job.get("job_id")
+            response = trio.workspace_api.api("POST", "2.1/jobs/run-now", job_id=job_id)
+            response = self.__utils_wait_for_job_run(trio, response.get("run_id"))
+            state = response.get("state").get("result_state")
+            assert state == "SUCCESS", f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{state}" for "{trio.name}"."""
+            return True
+
+        return False  # Not found
+
+    def __utils_wait_for_job_run(self, trio: WorkspaceTrio, run_id):
         import time
 
         wait = 15
@@ -324,26 +422,26 @@ class WorkspaceSetup:
             else:
                 time.sleep(5)
 
-            return self.__wait_for_job_run(trio, run_id)
+            return self.__utils_wait_for_job_run(trio, run_id)
 
         return response
 
-    def __for_workspace_create_metastore(self, trio: WorkspaceTrio):
+    def __create_workspaces_create_metastore(self, trio: WorkspaceTrio):
 
         # Just in case it's not ready
         trio.workspace_api.wait_until_ready()
 
         # No-op if a metastore is already assigned to the workspace
-        metastore_id = self.__get_or_create_metastore(trio)
+        metastore_id = self.__utils_get_or_create_metastore(trio)
 
-        self.__enable_delta_sharing(trio, metastore_id)
+        self.__utils_enable_delta_sharing(trio, metastore_id)
 
-        self.__update_uc_permissions(trio, metastore_id)
+        self.__utils_update_uc_permissions(trio, metastore_id)
 
-        self.__assign_metastore_to_workspace(trio, metastore_id)
+        self.__utils_assign_metastore_to_workspace(trio, metastore_id)
 
-    @staticmethod
-    def __assign_metastore_to_workspace(trio: WorkspaceTrio, metastore_id: str):
+    @classmethod
+    def __utils_assign_metastore_to_workspace(cls, trio: WorkspaceTrio, metastore_id: str):
         # Assign the metastore to the workspace
         workspace_id = trio.workspace_api.get("workspace_id")
         trio.workspace_api.api("PUT", f"2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
@@ -351,8 +449,8 @@ class WorkspaceSetup:
             "default_catalog_name": "main"
         })
 
-    @staticmethod
-    def __update_uc_permissions(trio: WorkspaceTrio, metastore_id: str):
+    @classmethod
+    def __utils_update_uc_permissions(cls, trio: WorkspaceTrio, metastore_id: str):
         # Grant all users permission to create resources in the metastore
         trio.workspace_api.api("PATCH", f"2.1/unity-catalog/permissions/metastore/{metastore_id}", {
             "changes": [{
@@ -361,7 +459,7 @@ class WorkspaceSetup:
             }]
         })
 
-    def __enable_delta_sharing(self, trio: WorkspaceTrio, metastore_id: str):
+    def __utils_enable_delta_sharing(self, trio: WorkspaceTrio, metastore_id: str):
         try:
             trio.workspace_api.api("PATCH", f"2.1/unity-catalog/metastores/{metastore_id}", {
                 "owner": self.account_config.uc_storage_config.owner,
@@ -375,8 +473,8 @@ class WorkspaceSetup:
             else:
                 raise e
 
-    @staticmethod
-    def __find_metastore(trio) -> Optional[str]:
+    @classmethod
+    def __utils_find_metastore(cls, trio: WorkspaceTrio) -> Optional[str]:
         # According to the docs, there is no pagination for this call.
         response = trio.workspace_api.api("GET", "2.1/unity-catalog/metastores")
         metastores = response.get("metastores", list())
@@ -386,7 +484,7 @@ class WorkspaceSetup:
 
         return None
 
-    def __get_or_create_metastore(self, trio: WorkspaceTrio) -> str:
+    def __utils_get_or_create_metastore(self, trio: WorkspaceTrio) -> str:
         try:
             # Check to see if a metastore is assigned
             metastore = trio.workspace_api.api("GET", f"2.1/unity-catalog/current-metastore-assignment")
@@ -398,7 +496,7 @@ class WorkspaceSetup:
                 raise Exception(f"""Unexpected exception looking up metastore for workspace "{trio.workspace_config.name}".""") from e
 
         # No metastore is assigned, check to see if it exists.
-        metastore_id = self.__find_metastore(trio)
+        metastore_id = self.__utils_find_metastore(trio)
         if metastore_id is not None:
             print(f"""Found existing metastore for "{trio.workspace_config.name}".""")
             return metastore_id  # Found it.
@@ -412,24 +510,3 @@ class WorkspaceSetup:
             "region": self.account_config.uc_storage_config.region
         })
         return metastore.get("metastore_id")
-
-    @staticmethod
-    def __for_workspace_destroy_metastore(trio: WorkspaceTrio) -> None:
-        name = trio.workspace_config.name
-
-        # Unassign the metastore from the workspace
-        print(f"""Deleting the metastore for workspace "{name}".""")
-
-        response = trio.workspace_api.api("GET", f"2.1/unity-catalog/current-metastore-assignment")
-        metastore_id = response["metastore_id"]
-        workspace_id = response["workspace_id"]
-        trio.workspace_api.api("DELETE", f"2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
-          "metastore_id": metastore_id
-        })
-
-        # Delete the metastore, but only if there are no other workspaces attached.
-        trio.workspace_api.api("DELETE", f"2.1/unity-catalog/metastores/{metastore_id}", {
-            "force": True
-        })
-
-
