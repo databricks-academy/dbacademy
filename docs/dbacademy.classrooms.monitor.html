@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.classrooms.monitor</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.classrooms.html"><font color="#ffffff">classrooms</font></a>.monitor</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/doug.bateman/repos/dbacademy/src/dbacademy/classrooms/monitor.py">/Users/doug.bateman/repos/dbacademy/src/dbacademy/classrooms/monitor.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.classrooms.monitor.html#Commands">Commands</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Commands">class <strong>Commands</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Commands">Commands</a>(cluster_spec:&nbsp;Dict,&nbsp;courseware_spec:&nbsp;Dict,&nbsp;event:&nbsp;Dict)<br>
+&nbsp;<br>
+#&nbsp;noinspection&nbsp;PyPep8Naming<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Commands-__init__"><strong>__init__</strong></a>(self, cluster_spec: Dict, courseware_spec: Dict, event: Dict)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Commands-clustersCreateMissing"><strong>clustersCreateMissing</strong></a>(self, w, fix=False)</dt><dd><tt>Create&nbsp;user&nbsp;clusters&nbsp;matching&nbsp;the&nbsp;cluster&nbsp;spec&nbsp;above</tt></dd></dl>
+
+<dl><dt><a name="Commands-clustersFix"><strong>clustersFix</strong></a>(self, w)</dt><dd><tt>Check&nbsp;all&nbsp;clusters&nbsp;against&nbsp;the&nbsp;cluster&nbsp;spec&nbsp;above,&nbsp;correcting&nbsp;where&nbsp;needed.</tt></dd></dl>
+
+<dl><dt><a name="Commands-clustersVerify"><strong>clustersVerify</strong></a>(self, w, fix=False)</dt><dd><tt>Check&nbsp;all&nbsp;clusters&nbsp;against&nbsp;the&nbsp;cluster&nbsp;spec&nbsp;above</tt></dd></dl>
+
+<dl><dt><a name="Commands-fixCourseware"><strong>fixCourseware</strong></a>(self, workspace)</dt><dd><tt>Compares&nbsp;each&nbsp;user's&nbsp;home&nbsp;folder&nbsp;to&nbsp;the&nbsp;courseware_spec&nbsp;defined&nbsp;above,&nbsp;deploying&nbsp;if&nbsp;needed.</tt></dd></dl>
+
+<dl><dt><a name="Commands-policies_create"><strong>policies_create</strong></a>(self, workspace)</dt></dl>
+
+<dl><dt><a name="Commands-verifyCourseware"><strong>verifyCourseware</strong></a>(self, w, fix=False, only_students=False)</dt><dd><tt>Compares&nbsp;each&nbsp;user's&nbsp;home&nbsp;folder&nbsp;to&nbsp;the&nbsp;courseware_spec&nbsp;defined&nbsp;above.</tt></dd></dl>
+
+<dl><dt><a name="Commands-wait_for"><strong>wait_for</strong></a>(self, workspace, run_id)</dt></dl>
+
+<dl><dt><a name="Commands-workspace_setup"><strong>workspace_setup</strong></a>(self, workspace: dbacademy.dougrest.client.DatabricksApi)</dt></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="Commands-addInstructors"><strong>addInstructors</strong></a>(instructors)</dt></dl>
+
+<dl><dt><a name="Commands-allow_cluster_create"><strong>allow_cluster_create</strong></a>(w: dbacademy.dougrest.client.DatabricksApi)</dt></dl>
+
+<dl><dt><a name="Commands-clustersList"><strong>clustersList</strong></a>(w)</dt><dd><tt>List&nbsp;all&nbsp;running&nbsp;clusters</tt></dd></dl>
+
+<dl><dt><a name="Commands-clustersStart"><strong>clustersStart</strong></a>(w)</dt><dd><tt>Send&nbsp;a&nbsp;start&nbsp;command&nbsp;to&nbsp;all&nbsp;clusters</tt></dd></dl>
+
+<dl><dt><a name="Commands-clusters_no_manage"><strong>clusters_no_manage</strong></a>(ws: dbacademy.dougrest.client.DatabricksApi)</dt></dl>
+
+<dl><dt><a name="Commands-collapseACL"><strong>collapseACL</strong></a>(acl)</dt><dd><tt>Takes&nbsp;an&nbsp;ACL&nbsp;you&nbsp;read&nbsp;and&nbsp;turns&nbsp;it&nbsp;into&nbsp;an&nbsp;ACL&nbsp;you&nbsp;can&nbsp;write.</tt></dd></dl>
+
+<dl><dt><a name="Commands-countInstructors"><strong>countInstructors</strong></a>(workspace)</dt><dd><tt>Returns&nbsp;a&nbsp;count&nbsp;of&nbsp;the&nbsp;number&nbsp;of&nbsp;odl_instructor_*&nbsp;users.</tt></dd></dl>
+
+<dl><dt><a name="Commands-countUsers"><strong>countUsers</strong></a>(workspace)</dt><dd><tt>Returns&nbsp;a&nbsp;count&nbsp;of&nbsp;all&nbsp;users&nbsp;in&nbsp;the&nbsp;workspace.</tt></dd></dl>
+
+<dl><dt><a name="Commands-disableEndpoints"><strong>disableEndpoints</strong></a>(w)</dt><dd><tt>Send&nbsp;a&nbsp;stop&nbsp;command&nbsp;to&nbsp;all&nbsp;SQL&nbsp;endpoints.&nbsp;&nbsp;Disable&nbsp;auto-restart.</tt></dd></dl>
+
+<dl><dt><a name="Commands-disallow_cluster_create"><strong>disallow_cluster_create</strong></a>(w: dbacademy.dougrest.client.DatabricksApi)</dt></dl>
+
+<dl><dt><a name="Commands-disallow_databricks_sql"><strong>disallow_databricks_sql</strong></a>(w: dbacademy.dougrest.client.DatabricksApi)</dt></dl>
+
+<dl><dt><a name="Commands-endpointsCreateStarter"><strong>endpointsCreateStarter</strong></a>(workspace)</dt><dd><tt>Creates&nbsp;a&nbsp;starter&nbsp;SQL&nbsp;Endpoint.</tt></dd></dl>
+
+<dl><dt><a name="Commands-endpointsRemoveAll"><strong>endpointsRemoveAll</strong></a>(workspace)</dt><dd><tt>Deletes&nbsp;all&nbsp;SQL&nbsp;Endpoints</tt></dd></dl>
+
+<dl><dt><a name="Commands-endpointsRemoveStarter"><strong>endpointsRemoveStarter</strong></a>(workspace)</dt><dd><tt>Deletes&nbsp;the&nbsp;Starter&nbsp;Warehouse.</tt></dd></dl>
+
+<dl><dt><a name="Commands-endpointsSetPreview"><strong>endpointsSetPreview</strong></a>(workspace)</dt></dl>
+
+<dl><dt><a name="Commands-listAlarms"><strong>listAlarms</strong></a>(workspace)</dt><dd><tt>Search&nbsp;for&nbsp;any&nbsp;SQL&nbsp;Query&nbsp;alarms&nbsp;that&nbsp;might&nbsp;restart&nbsp;Warehouses</tt></dd></dl>
+
+<dl><dt><a name="Commands-listJobs"><strong>listJobs</strong></a>(w, stop=False)</dt><dd><tt>Clears&nbsp;the&nbsp;jobs&nbsp;schedules.&nbsp;&nbsp;Jobs&nbsp;currently&nbsp;running&nbsp;are&nbsp;not&nbsp;terminated.</tt></dd></dl>
+
+<dl><dt><a name="Commands-listScheduledQueries"><strong>listScheduledQueries</strong></a>(w)</dt><dd><tt>List&nbsp;scheduled&nbsp;queries.&nbsp;&nbsp;This&nbsp;may&nbsp;fail&nbsp;due&nbsp;to&nbsp;permissions&nbsp;issues.</tt></dd></dl>
+
+<dl><dt><a name="Commands-policiesFix"><strong>policiesFix</strong></a>(w)</dt></dl>
+
+<dl><dt><a name="Commands-policiesVerify"><strong>policiesVerify</strong></a>(w, fix=False)</dt><dd><tt>Verify&nbsp;cluster&nbsp;policies&nbsp;are&nbsp;correctly&nbsp;deployed&nbsp;matching&nbsp;specs.</tt></dd></dl>
+
+<dl><dt><a name="Commands-poolsList"><strong>poolsList</strong></a>(w)</dt><dd><tt>List&nbsp;defined&nbsp;cluster&nbsp;pools</tt></dd></dl>
+
+<dl><dt><a name="Commands-poolsVerify"><strong>poolsVerify</strong></a>(w)</dt><dd><tt>Verify&nbsp;cluster&nbsp;pools&nbsp;are&nbsp;correctly&nbsp;deployed&nbsp;matching&nbsp;specs.</tt></dd></dl>
+
+<dl><dt><a name="Commands-remove_da_endpoints"><strong>remove_da_endpoints</strong></a>(ws)</dt></dl>
+
+<dl><dt><a name="Commands-resetEndpoints"><strong>resetEndpoints</strong></a>(workspace, running_only=False)</dt><dd><tt>Delete&nbsp;and&nbsp;remake&nbsp;all/running&nbsp;SQL&nbsp;endpoints.</tt></dd></dl>
+
+<dl><dt><a name="Commands-resetRunningEndpoints"><strong>resetRunningEndpoints</strong></a>(workspace)</dt></dl>
+
+<dl><dt><a name="Commands-runningClusters"><strong>runningClusters</strong></a>(w)</dt><dd><tt>Lists&nbsp;all&nbsp;running&nbsp;clusters,&nbsp;including&nbsp;their&nbsp;uptime.</tt></dd></dl>
+
+<dl><dt><a name="Commands-runningEndpoints"><strong>runningEndpoints</strong></a>(w)</dt><dd><tt>Lists&nbsp;all&nbsp;running&nbsp;SQL&nbsp;Warehouses.</tt></dd></dl>
+
+<dl><dt><a name="Commands-single_user_clusters"><strong>single_user_clusters</strong></a>(ws)</dt></dl>
+
+<dl><dt><a name="Commands-stopAll"><strong>stopAll</strong></a>(w)</dt><dd><tt>Everything:&nbsp;Queries,&nbsp;Dashboards,&nbsp;Endpoints,&nbsp;Jobs,&nbsp;DLT,&nbsp;clusters,&nbsp;Warehouses.</tt></dd></dl>
+
+<dl><dt><a name="Commands-stopClusters"><strong>stopClusters</strong></a>(w)</dt><dd><tt>Stop&nbsp;all&nbsp;clusters,&nbsp;including&nbsp;running&nbsp;DLT&nbsp;pipelines&nbsp;and&nbsp;jobs.</tt></dd></dl>
+
+<dl><dt><a name="Commands-stopDLT"><strong>stopDLT</strong></a>(workspace)</dt><dd><tt>Switches&nbsp;any&nbsp;continuous&nbsp;DLT&nbsp;pipelines&nbsp;to&nbsp;standard&nbsp;triggered&nbsp;pipelines</tt></dd></dl>
+
+<dl><dt><a name="Commands-stopDashboards"><strong>stopDashboards</strong></a>(workspace)</dt><dd><tt>Attempts&nbsp;to&nbsp;unschedule&nbsp;any&nbsp;scheduled&nbsp;SQL&nbsp;Dashboard&nbsp;Refresh&nbsp;Schedules.<br>
+This&nbsp;may&nbsp;fail&nbsp;due&nbsp;to&nbsp;permissions&nbsp;issues.</tt></dd></dl>
+
+<dl><dt><a name="Commands-stopEndpoints"><strong>stopEndpoints</strong></a>(w)</dt><dd><tt>Send&nbsp;a&nbsp;stop&nbsp;command&nbsp;to&nbsp;all&nbsp;SQL&nbsp;endpoints.&nbsp;&nbsp;They&nbsp;may&nbsp;still&nbsp;automatically&nbsp;restart.</tt></dd></dl>
+
+<dl><dt><a name="Commands-stopJobs"><strong>stopJobs</strong></a>(w)</dt></dl>
+
+<dl><dt><a name="Commands-stopLongLivedClusters"><strong>stopLongLivedClusters</strong></a>(w)</dt><dd><tt>Stop&nbsp;clusters&nbsp;up&nbsp;more&nbsp;than&nbsp;12&nbsp;hours,&nbsp;including&nbsp;running&nbsp;DLT&nbsp;pipelines&nbsp;and&nbsp;jobs.</tt></dd></dl>
+
+<dl><dt><a name="Commands-stopModels"><strong>stopModels</strong></a>(workspace)</dt><dd><tt>Undeploys&nbsp;any&nbsp;ML&nbsp;Models&nbsp;being&nbsp;served</tt></dd></dl>
+
+<dl><dt><a name="Commands-stopQueries"><strong>stopQueries</strong></a>(w)</dt><dd><tt>Attempts&nbsp;to&nbsp;unschedule&nbsp;any&nbsp;scheduled&nbsp;SQL&nbsp;Query&nbsp;Refresh&nbsp;Schedules.<br>
+This&nbsp;may&nbsp;fail&nbsp;due&nbsp;to&nbsp;permissions&nbsp;issues.</tt></dd></dl>
+
+<dl><dt><a name="Commands-universal_setup"><strong>universal_setup</strong></a>(workspace: dbacademy.dougrest.client.DatabricksApi, *, node_type_id: str = None, spark_version: str = None, datasets: List[str] = None, lab_id: str = None, description: str = None)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-getWorkspace"><strong>getWorkspace</strong></a>(workspaces, *, name=None, url=None)</dt><dd><tt>#&nbsp;noinspection&nbsp;PyPep8Naming</tt></dd></dl>
+ <dl><dt><a name="-scanWorkspaces"><strong>scanWorkspaces</strong></a>(function, workspaces, *, url=None, name=None, ignoreConnectionErrors=False)</dt><dd><tt>#&nbsp;noinspection&nbsp;PyPep8Naming</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>Any</strong> = typing.Any<br>
+<strong>Dict</strong> = typing.Dict<br>
+<strong>List</strong> = typing.List</td></tr></table>
+</body></html>

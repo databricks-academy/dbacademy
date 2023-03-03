@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dbbuild.publish.artifact_validator_class</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbbuild.html"><font color="#ffffff">dbbuild</font></a>.<a href="dbacademy.dbbuild.publish.html"><font color="#ffffff">publish</font></a>.artifact_validator_class</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/doug.bateman/repos/dbacademy/src/dbacademy/dbbuild/publish/artifact_validator_class.py">/Users/doug.bateman/repos/dbacademy/src/dbacademy/dbbuild/publish/artifact_validator_class.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbbuild.publish.artifact_validator_class.html#ArtifactValidator">ArtifactValidator</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ArtifactValidator">class <strong>ArtifactValidator</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#ArtifactValidator">ArtifactValidator</a>(*,&nbsp;build_name:&nbsp;str,&nbsp;version:&nbsp;str,&nbsp;core_version:&nbsp;str,&nbsp;client:&nbsp;dbacademy.dbrest.client.DBAcademyRestClient,&nbsp;target_repo_url:&nbsp;str,&nbsp;temp_repo_dir:&nbsp;str,&nbsp;temp_work_dir:&nbsp;str,&nbsp;username:&nbsp;str,&nbsp;translation:&nbsp;dbacademy.dbbuild.publish.publishing_info_class.Translation,&nbsp;i18n:&nbsp;bool,&nbsp;common_language:&nbsp;str)&nbsp;-&amp;gt;&nbsp;None<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="ArtifactValidator-__init__"><strong>__init__</strong></a>(self, *, build_name: str, version: str, core_version: str, client: dbacademy.dbrest.client.DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str, translation: dbacademy.dbbuild.publish.publishing_info_class.Translation, i18n: bool, common_language: str) -&gt; None</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="ArtifactValidator-validate_publishing_processes"><strong>validate_publishing_processes</strong></a>(self) -&gt; None</dt></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="ArtifactValidator-from_publisher"><strong>from_publisher</strong></a>(publisher: dbacademy.dbbuild.publish.publisher_class.Publisher) -&gt; 'ArtifactValidator'</dt></dl>
+
+<dl><dt><a name="ArtifactValidator-from_translator"><strong>from_translator</strong></a>(translator: dbacademy.dbbuild.publish.translator_class.Translator) -&gt; 'ArtifactValidator'</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>DBAcademyRestClient</strong> = &lt;class 'dbacademy.dbrest.client.DBAcademyRestClient'&gt;<dd><tt>Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.</tt></dl>
+
+<dl><dt><strong>Publisher</strong> = &lt;class 'dbacademy.dbbuild.publish.publisher_class.Publisher'&gt;</dl>
+
+<dl><dt><strong>Translation</strong> = &lt;class 'dbacademy.dbbuild.publish.publishing_info_class.Translation'&gt;</dl>
+
+<dl><dt><strong>Translator</strong> = &lt;class 'dbacademy.dbbuild.publish.translator_class.Translator'&gt;</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>Optional</strong> = typing.Optional</td></tr></table>
+</body></html>
