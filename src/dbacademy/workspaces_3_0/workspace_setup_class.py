@@ -291,7 +291,7 @@ class WorkspaceSetup:
                     job_id = job.get("job_id")
                     response = trio.workspace_api.api("POST", "2.1/jobs/run-now", job_id=job_id)
                     response = self.__wait_for_job_run(trio, response.get("run_id"))
-                    state = response.get("state", dict()).get("life_cycle_state")
+                    state = response.get("state").get("result_state")
                     assert state == "SUCCESS", f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{state}"."""
                     return
 
