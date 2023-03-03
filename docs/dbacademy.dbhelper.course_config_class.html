@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dbhelper.course_config_class</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbhelper.html"><font color="#ffffff">dbhelper</font></a>.course_config_class</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbhelper%5Ccourse_config_class.py">c:\dvlp\dbacademy\src\dbacademy\dbhelper\course_config_class.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbhelper.course_config_class.html#CourseConfig">CourseConfig</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="CourseConfig">class <strong>CourseConfig</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#CourseConfig">CourseConfig</a>(*,&nbsp;course_code:&nbsp;str,&nbsp;course_name:&nbsp;str,&nbsp;data_source_name:&nbsp;str,&nbsp;data_source_version:&nbsp;str,&nbsp;install_min_time:&nbsp;str,&nbsp;install_max_time:&nbsp;str,&nbsp;remote_files:&nbsp;List[str],&nbsp;supported_dbrs:&nbsp;List[str],&nbsp;expected_dbrs:&nbsp;str)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="CourseConfig-__init__"><strong>__init__</strong></a>(self, *, course_code: str, course_name: str, data_source_name: str, data_source_version: str, install_min_time: str, install_max_time: str, remote_files: List[str], supported_dbrs: List[str], expected_dbrs: str)</dt><dd><tt>The&nbsp;<a href="#CourseConfig">CourseConfig</a>&nbsp;encapsulates&nbsp;those&nbsp;parameters&nbsp;that&nbsp;should&nbsp;never&nbsp;change&nbsp;for&nbsp;the&nbsp;entire&nbsp;duration&nbsp;of&nbsp;a&nbsp;course<br>
+compared&nbsp;to&nbsp;the&nbsp;LessonConfig&nbsp;which&nbsp;encapsulates&nbsp;parameters&nbsp;that&nbsp;may&nbsp;change&nbsp;from&nbsp;lesson&nbsp;to&nbsp;lesson<br>
+:param&nbsp;course_code:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;course_name:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;data_source_name:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;data_source_version:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;install_min_time:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;install_max_time:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;remote_files:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;supported_dbrs:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;expected_dbrs:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name</tt></dd></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="CourseConfig-to_build_name"><strong>to_build_name</strong></a>(course_name) -&gt; Optional[str]</dt><dd><tt>Utility&nbsp;method&nbsp;to&nbsp;create&nbsp;a&nbsp;"build&nbsp;name"&nbsp;from&nbsp;a&nbsp;course&nbsp;name<br>
+:param&nbsp;course_name:&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;course<br>
+:return:&nbsp;the&nbsp;build&nbsp;name&nbsp;where&nbsp;all&nbsp;non-alpha&nbsp;and&nbsp;non-digits&nbsp;are&nbsp;replaced&nbsp;with&nbsp;hyphens</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>build_name</strong></dt>
+<dd><tt>:return:&nbsp;the&nbsp;course_name&nbsp;after&nbsp;converting&nbsp;the&nbsp;value&nbsp;to&nbsp;lowercase&nbsp;and&nbsp;after&nbsp;converting&nbsp;all&nbsp;non-alpha&nbsp;and&nbsp;non-digits&nbsp;to&nbsp;a&nbsp;hyphen</tt></dd>
+</dl>
+<dl><dt><strong>course_code</strong></dt>
+<dd><tt>:return:&nbsp;the&nbsp;2-4&nbsp;character&nbsp;code&nbsp;for&nbsp;a&nbsp;course.</tt></dd>
+</dl>
+<dl><dt><strong>course_name</strong></dt>
+<dd><tt>:return:&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;course.</tt></dd>
+</dl>
+<dl><dt><strong>data_source_name</strong></dt>
+<dd><tt>This&nbsp;should&nbsp;be&nbsp;the&nbsp;same&nbsp;as&nbsp;the&nbsp;build_name&nbsp;with&nbsp;support&nbsp;for&nbsp;it&nbsp;deviating&nbsp;as&nbsp;necessary<br>
+:return:&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;dataset&nbsp;in&nbsp;the&nbsp;data&nbsp;repository.</tt></dd>
+</dl>
+<dl><dt><strong>data_source_version</strong></dt>
+<dd><tt>:return:&nbsp;the&nbsp;two-digit&nbsp;version&nbsp;number&nbsp;of&nbsp;a&nbsp;dataset&nbsp;prefixed&nbsp;by&nbsp;the&nbsp;letter&nbsp;"v"&nbsp;as&nbsp;in&nbsp;"v01"&nbsp;or&nbsp;"v02"&nbsp;(not&nbsp;to&nbsp;be&nbsp;confused&nbsp;with&nbsp;the&nbsp;version&nbsp;of&nbsp;a&nbsp;course)</tt></dd>
+</dl>
+<dl><dt><strong>expected_dbrs</strong></dt>
+<dd><tt>This&nbsp;value&nbsp;should&nbsp;always&nbsp;be&nbsp;set&nbsp;to&nbsp;"{{supported_dbrs}}".&nbsp;At&nbsp;build&nbsp;time,&nbsp;this&nbsp;value&nbsp;is&nbsp;substituted&nbsp;with&nbsp;the&nbsp;comma-seperated&nbsp;list<br>
+of&nbsp;DBRs&nbsp;that&nbsp;are&nbsp;expressed&nbsp;as&nbsp;being&nbsp;supported&nbsp;from&nbsp;the&nbsp;perspective&nbsp;of&nbsp;the&nbsp;build&nbsp;tooling.&nbsp;This&nbsp;helps&nbsp;to&nbsp;ensure&nbsp;that&nbsp;the&nbsp;final&nbsp;set<br>
+of&nbsp;supported&nbsp;DBRs&nbsp;expressed&nbsp;in&nbsp;the&nbsp;build&nbsp;tooling&nbsp;are&nbsp;always&nbsp;in&nbsp;sync&nbsp;with&nbsp;the&nbsp;published&nbsp;version&nbsp;of&nbsp;a&nbsp;course.<br>
+:return:&nbsp;a&nbsp;comma&nbsp;seperated&nbsp;string&nbsp;of&nbsp;expected&nbsp;DBRs.</tt></dd>
+</dl>
+<dl><dt><strong>install_max_time</strong></dt>
+<dd><tt>:return:&nbsp;the&nbsp;maximum&nbsp;amount&nbsp;of&nbsp;time&nbsp;required&nbsp;to&nbsp;"install"&nbsp;a&nbsp;dataset&nbsp;as&nbsp;measured&nbsp;from,&nbsp;for&nbsp;example,&nbsp;Singapore&nbsp;-&nbsp;typically&nbsp;2&nbsp;or&nbsp;3&nbsp;times&nbsp;that&nbsp;of&nbsp;CourseConfig.install_min_time</tt></dd>
+</dl>
+<dl><dt><strong>install_min_time</strong></dt>
+<dd><tt>:return:&nbsp;the&nbsp;minimum&nbsp;amount&nbsp;of&nbsp;type&nbsp;required&nbsp;to&nbsp;"install"&nbsp;a&nbsp;dataset&nbsp;as&nbsp;measured&nbsp;from&nbsp;the&nbsp;curriculum-dev&nbsp;environment.</tt></dd>
+</dl>
+<dl><dt><strong>remote_files</strong></dt>
+<dd><tt>Used&nbsp;in&nbsp;validating&nbsp;the&nbsp;dataset&nbsp;within&nbsp;the&nbsp;consumer's&nbsp;workspace&nbsp;without&nbsp;having&nbsp;to&nbsp;hit&nbsp;external&nbsp;cloud&nbsp;storage.<br>
+See&nbsp;also&nbsp;DBAcademy.validate_datasets<br>
+See&nbsp;also&nbsp;DevHelper.enumerate_remote_datasets&nbsp;(DA.dev.enumerate_remote_datasets)<br>
+See&nbsp;also&nbsp;DevHelper.enumerate_local_datasets&nbsp;(DA.dev.enumerate_local_datasets)<br>
+:return:&nbsp;The&nbsp;enumerated&nbsp;list&nbsp;of&nbsp;files&nbsp;that&nbsp;makes&nbsp;up&nbsp;the&nbsp;course's&nbsp;dataset.</tt></dd>
+</dl>
+<dl><dt><strong>supported_dbrs</strong></dt>
+<dd><tt>Evaluated&nbsp;upon&nbsp;instantiation&nbsp;of&nbsp;DBAcademyHelper,&nbsp;this&nbsp;value&nbsp;ensures&nbsp;that&nbsp;the&nbsp;consumer's&nbsp;current&nbsp;DBR&nbsp;is&nbsp;one&nbsp;of&nbsp;the&nbsp;specified&nbsp;values.<br>
+When&nbsp;an&nbsp;invalid&nbsp;DBR&nbsp;is&nbsp;used,&nbsp;a&nbsp;specific&nbsp;error&nbsp;message&nbsp;is&nbsp;generated&nbsp;for&nbsp;the&nbsp;user&nbsp;with&nbsp;explicit&nbsp;instructions&nbsp;on&nbsp;how&nbsp;to&nbsp;address&nbsp;the&nbsp;issue.<br>
+See&nbsp;also&nbsp;DBAcademyHelper.__validate_spark_version<br>
+:return:&nbsp;the&nbsp;list&nbsp;of&nbsp;DBRs&nbsp;for&nbsp;which&nbsp;this&nbsp;course&nbsp;is&nbsp;certified&nbsp;to&nbsp;run&nbsp;on.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>List</strong> = typing.List<br>
+<strong>Optional</strong> = typing.Optional</td></tr></table>
+</body></html>
