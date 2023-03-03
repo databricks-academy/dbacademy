@@ -34,14 +34,14 @@ class WarehousesHelper:
         self.workspace.do_for_all_users(self.workspace.get_usernames(configure_for), lambda username: self.delete_sql_warehouses_for(username=username))
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
-    def create_sql_warehouses(self, configure_for: str, auto_stop_mins=120, enable_serverless_compute=False):
+    def create_sql_warehouses(self, configure_for: str, auto_stop_mins=None, enable_serverless_compute=False):
         usernames = self.workspace.get_usernames(configure_for)
         self.workspace.do_for_all_users(usernames, lambda username: self.create_sql_warehouse_for(username=username,
                                                                                                   auto_stop_mins=auto_stop_mins,
                                                                                                   enable_serverless_compute=enable_serverless_compute))
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
-    def create_sql_warehouse_for(self, username, auto_stop_mins=120, enable_serverless_compute=True):
+    def create_sql_warehouse_for(self, username, auto_stop_mins=None, enable_serverless_compute=True):
         from dbacademy import dbgems
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
 
@@ -61,7 +61,7 @@ class WarehousesHelper:
                                                      org_id=dbgems.get_org_id())
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
-    def create_shared_sql_warehouse(self, name: str, auto_stop_mins=120, enable_serverless_compute=True):
+    def create_shared_sql_warehouse(self, name: str, auto_stop_mins=None, enable_serverless_compute=True):
         from dbacademy import dbgems
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
 
@@ -92,13 +92,21 @@ class WarehousesHelper:
         org_id = org_id or dbgems.get_org_id()
 
         def do_create(enable_serverless: bool):
+            if auto_stop_mins is None:
+                if enable_serverless_compute:
+                    auto_stop_mins_inner = 20
+                else:
+                    auto_stop_mins_inner = 120
+            else:
+                auto_stop_mins_inner = auto_stop_mins
+
             return client.sql.endpoints.create_or_update(
                 name=name,
                 cluster_size=CLUSTER_SIZE_2X_SMALL,
                 enable_serverless_compute=enable_serverless,
                 min_num_clusters=min_num_clusters,
                 max_num_clusters=max_num_clusters,
-                auto_stop_mins=auto_stop_mins,
+                auto_stop_mins=auto_stop_mins_inner,
                 enable_photon=True,
                 spot_instance_policy=RELIABILITY_OPTIMIZED,
                 channel=CHANNEL_NAME_CURRENT,

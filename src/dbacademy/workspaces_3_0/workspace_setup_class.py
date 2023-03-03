@@ -1,4 +1,4 @@
-from typing import List, Optional, Callable
+from typing import List, Optional, Callable, Iterable
 
 from dbacademy.rest.common import DatabricksApiException
 
@@ -29,45 +29,49 @@ class WorkspaceTrio:
 class WorkspaceSetup:
     from dbacademy.workspaces_3_0.account_config_class import AccountConfig
 
-    def __init__(self, account_config: AccountConfig):
+    def __init__(self, account_config: AccountConfig, max_retries: int):
         from dbacademy.dougrest import AccountsApi
 
         assert account_config is not None, f"""The parameter "account_config" must be specified."""
         self.__account_config = account_config
-        self.__workspaces: List[WorkspaceTrio] = list()
+        # self.__workspaces: List[WorkspaceTrio] = list()
+
+        self.__max_retries = max_retries
 
         self.__accounts_api = AccountsApi(account_id=self.account_config.account_id,
                                           user=self.account_config.username,
                                           password=self.account_config.password)
 
     @property
-    def accounts_api(self):
-        return self.__accounts_api
+    def max_retries(self):
+        return self.__max_retries
 
     @property
-    def workspaces(self) -> List[WorkspaceTrio]:
-        return self.__workspaces
+    def accounts_api(self):
+        return self.__accounts_api
 
     @property
     def account_config(self) -> AccountConfig:
         return self.__account_config
 
-    def create_workspaces(self):
+    def create_workspaces(self, *, create_users: bool, create_groups: bool, create_metastore: bool, run_workspace_setup: bool, enable_features: bool, workspace_numbers: Iterable[int] = None):
         from dbacademy.classrooms.classroom import Classroom
 
         print("\n")
         print("-"*100)
         print(f"""Creating {len(self.account_config.workspaces)} workspaces.""")
 
-        for workspace_config in self.account_config.workspaces:
-            name = workspace_config.name
-            print(f"""Creating the workspace "{name}".""")
+        provisioned_workspaces = [w for w in self.account_config.workspaces if workspace_numbers is None or w.workspace_number in workspace_numbers]
+        workspaces: List[WorkspaceTrio] = list()
 
-            workspace_api = self.accounts_api.workspaces.get_by_name(name, if_not_exists="ignore")
+        for workspace_config in provisioned_workspaces:
+            print(f"""Provisioning the workspace "{workspace_config.name}".""")
+
+            workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="ignore")
             if workspace_api is None:
                 # It doesn't exist, so go ahead and create it.
-                workspace_api = self.accounts_api.workspaces.create(workspace_name=name,
-                                                                    deployment_name=name,
+                workspace_api = self.accounts_api.workspaces.create(workspace_name=workspace_config.name,
+                                                                    deployment_name=workspace_config.name,
                                                                     region=self.account_config.region,
                                                                     credentials_name=self.account_config.workspace_config_template.credentials_name,
                                                                     storage_configuration_name=self.account_config.workspace_config_template.storage_configuration)
@@ -76,57 +80,77 @@ class WorkspaceSetup:
                                   username_pattern=workspace_config.username_pattern,
                                   databricks_api=workspace_api)
 
-            self.__workspaces.append(WorkspaceTrio(workspace_config, workspace_api, classroom))
+            workspaces.append(WorkspaceTrio(workspace_config, workspace_api, classroom))
 
         #############################################################
         # Workspaces were all created synchronously, blocking here until we confirm that all workspaces are created.
         print("-"*100)
-        for workspace in self.workspaces:
+        for workspace in workspaces:
             print(f"""Waiting for workspace "{workspace.workspace_config.name}" to finish provisioning...""")
             workspace.workspace_api.wait_until_ready()
 
         #############################################################
-        # Create users
-        self.for_each_workspace(self.__for_workspace_create_users)
+        if create_users:
+            self.for_each_workspace(workspaces, self.__for_workspace_create_users)
+        else:
+            print("Skipping creation of users")
 
         #############################################################
-        # Create groups
-        self.for_each_workspace(self.__for_workspace_create_group)
+        if create_groups:
+            self.for_each_workspace(workspaces, self.__for_workspace_create_group)
+        else:
+            print("Skipping creation of groups")
 
         #############################################################
-        # Create the meta stores for each workspace
-        self.for_each_workspace(self.__for_workspace_create_metastore)
+        if create_metastore:
+            self.for_each_workspace(workspaces, self.__for_workspace_create_metastore)
+        else:
+            print("Skipping creation of metastore")
 
         #############################################################
-        # Create workspace setup job
-        self.for_each_workspace(self.__for_workspace_start_universal_workspace_setup)
+        if enable_features:
+            self.for_each_workspace(workspaces, self.__for_workspace_enable_features)
+        else:
+            print("Skipping enablement of workspace features")
 
-        print(f"""Completed setup for {len(self.account_config.workspaces)} workspaces.""")
+        print(f"""Completed setup for {len(provisioned_workspaces)} workspaces.""")
 
-    def for_each_workspace(self, some_action: Callable[[WorkspaceTrio], None]) -> None:
+        #############################################################
+        if run_workspace_setup:
+            self.for_each_workspace(workspaces, self.__for_workspace_start_universal_workspace_setup)
+        else:
+            print("Skipping run of Universal-Workspace-Setup")
+
+        print(f"""Completed setup for {len(provisioned_workspaces)} workspaces.""")
+
+
+    @staticmethod
+    def for_each_workspace(workspaces: List[WorkspaceTrio], some_action: Callable[[WorkspaceTrio], None]) -> None:
         from multiprocessing.pool import ThreadPool
 
         print("-"*100)
 
-        with ThreadPool(len(self.workspaces)) as pool:
-            pool.map(some_action, self.workspaces)
+        with ThreadPool(len(workspaces)) as pool:
+            pool.map(some_action, workspaces)
 
-        # for trio in self.workspaces:
+        # for trio in workspaces:
         #     some_action(trio)
 
     def delete_workspaces(self):
         print("\n")
         print("-"*100)
 
+        workspaces: List[WorkspaceTrio] = list()
+
         for workspace_config in self.account_config.workspaces:
             workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="ignore")
 
             if workspace_api is not None:
                 trio = WorkspaceTrio(workspace_config, workspace_api, None)
-                self.workspaces.append(trio)
+                workspaces.append(trio)
 
-        print(f"Destroying {len(self.workspaces)} workspaces.""")
-        for trio in self.workspaces:
+        print(f"Destroying {len(workspaces)} workspaces.""")
+        for trio in workspaces:
             name = trio.workspace_config.name
 
             self.__for_workspace_destroy_metastore(trio)
@@ -144,7 +168,18 @@ class WorkspaceSetup:
                     print("-"*80)
 
     @staticmethod
-    def __for_workspace_create_users(trio: WorkspaceTrio):
+    def __for_workspace_enable_features(trio: WorkspaceTrio):
+        # Enabling serverless endpoints.
+        settings = trio.workspace_api.api("GET", "2.0/sql/config/endpoints")
+        feature_name = "enable_serverless_compute"
+        feature_status = True
+        settings[feature_name] = feature_status
+        trio.workspace_api.api("PUT", "2.0/sql/config/endpoints", settings)
+
+        new_feature_status = trio.workspace_api.api("GET", "2.0/sql/config/endpoints").get(feature_name)
+        assert new_feature_status == feature_status, f"""Expected "{feature_name}" to be "{feature_status}", found "{new_feature_status}"."""
+
+    def __for_workspace_create_users(self, trio: WorkspaceTrio):
         # Just in case it's not ready
         trio.workspace_api.wait_until_ready()
 
@@ -152,22 +187,62 @@ class WorkspaceSetup:
         max_users = trio.workspace_config.max_users
 
         print(f"""Creating {max_users} users for "{name}".""")
-        # trio.classroom.create_users()
 
-        existing_users = trio.classroom.databricks.users.list_usernames()
-        if len(existing_users) > 0:
+        existing_users = self.__list_existing_users(trio)
+
+        if len(existing_users) > 1:
             print(f"""Found {len(existing_users)} users for "{name}".""")
 
         for i, username in enumerate(trio.workspace_config.users):
-            if username in existing_users:
-                continue
+            if username not in existing_users:
+                # TODO parameterize allow_cluster_create
+                # trio.classroom.databricks.users.create(username, allow_cluster_create=False)
+                self.__create_user(trio, username)
 
-            # TODO parameterize allow_cluster_create
-            trio.classroom.databricks.users.create(username, allow_cluster_create=False)
-            if i == 0:  # User 0 gets admin rights.
-                trio.classroom.databricks.groups.add_member("admins", user_name=username)
-                # TODO add user zero to the instructors group which may need to be created first
-                # trio.classroom.databricks.groups.add_member("instructors", user_name=username)
+                if i == 0:  # User 0 gets admin rights.
+                    trio.classroom.databricks.groups.add_member("admins", user_name=username)
+                    # TODO add user zero to the instructors group which may need to be created first
+                    # trio.classroom.databricks.groups.add_member("instructors", user_name=username)
+
+    def __create_user(self, trio: WorkspaceTrio, username) -> List[str]:
+        import time, random
+        from requests.exceptions import HTTPError
+
+        for i in range(0, self.__max_retries):
+            try:
+                return trio.classroom.databricks.users.create(username, allow_cluster_create=False)
+
+            except HTTPError as e:
+                print(f"""Failed to list users for "{trio.workspace_config.name}", retrying ({i})""")
+                data = e.response.json()
+                message = data.get("detail", str(e))
+                print(f"HTTPError ({e.response.status_code}): {message}")
+                time.sleep(random.randint(5, 10))
+
+        raise Exception(f"""Failed to create user "{username}" for "{trio.workspace_config.name}".""")
+
+    def __list_existing_users(self, trio: WorkspaceTrio) -> List[str]:
+        import time, random
+        from requests.exceptions import HTTPError
+
+        existing_users = None
+        for i in range(0, self.__max_retries):
+            if existing_users is not None:
+                break
+            try:
+                existing_users = trio.classroom.databricks.users.list_usernames()
+
+            except HTTPError as e:
+                print(f"""Failed to list users for "{trio.workspace_config.name}", retrying ({i})""")
+                data = e.response.json()
+                message = data.get("detail", str(e))
+                print(f"HTTPError ({e.response.status_code}): {message}")
+                time.sleep(random.randint(5, 10))
+
+        if existing_users is None:
+            raise Exception(f"""Failed to load existing users for "{trio.workspace_config.name}".""")
+        else:
+            return existing_users
 
     @staticmethod
     def __for_workspace_create_group(trio: WorkspaceTrio):
@@ -202,12 +277,14 @@ class WorkspaceSetup:
             trio.workspace_api.wait_until_ready()
 
             print(f"""Starting Universal-Workspace-Setup for "{name}" """)
-            Commands.universal_setup(trio.workspace_api,
-                                     node_type_id=workspace_config.default_node_type_id,
-                                     spark_version=workspace_config.default_dbr,
-                                     datasets=workspace_config.datasets,
-                                     lab_id=self.account_config.event_config.event_id,
-                                     description=self.account_config.event_config.description)
+            result = Commands.universal_setup(trio.workspace_api,
+                                              node_type_id=workspace_config.default_node_type_id,
+                                              spark_version=workspace_config.default_dbr,
+                                              datasets=workspace_config.datasets,
+                                              lab_id=self.account_config.event_config.event_id,
+                                              description=self.account_config.event_config.description)
+
+            assert result == "SUCCESS", f"""Expected final state of Universal-Workspace-Setup to be "SUCCESS", found "{result}"."""
 
             # TODO delete the Bootstrap job if successful, leaving the log-lived job.
             print(f"""Finished Universal-Workspace-Setup for "{name}" """)
@@ -318,3 +395,5 @@ class WorkspaceSetup:
         trio.workspace_api.api("DELETE", f"2.1/unity-catalog/metastores/{metastore_id}", {
             "force": True
         })
+
+

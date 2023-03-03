@@ -67,7 +67,7 @@ class WorkspaceConfig:
         self.__datasets = datasets
         self.__default_node_type_id = default_node_type_id
         self.__default_dbr = default_dbr
-        self.__max_users = max_users
+        self.__max_users = max_users + 1
         self.__dbc_urls = dbc_urls
         self.__username_pattern = username_pattern
         self.__workspace_name_pattern = workspace_name_pattern
@@ -206,3 +206,4 @@ class WorkspaceConfig:
         :return:
         """
         return self.__storage_configuration
+
