@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dbrest.sql.endpoints</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbrest.html"><font color="#ffffff">dbrest</font></a>.<a href="dbacademy.dbrest.sql.html"><font color="#ffffff">sql</font></a>.endpoints</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/doug.bateman/repos/dbacademy/src/dbacademy/dbrest/sql/endpoints.py">/Users/doug.bateman/repos/dbacademy/src/dbacademy/dbrest/sql/endpoints.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbrest.sql.endpoints.html#SqlEndpointsClient">SqlEndpointsClient</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="SqlEndpointsClient">class <strong>SqlEndpointsClient</strong></a>(<a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#SqlEndpointsClient">SqlEndpointsClient</a>(client:&nbsp;dbacademy.dbrest.client.DBAcademyRestClient)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="dbacademy.dbrest.sql.endpoints.html#SqlEndpointsClient">SqlEndpointsClient</a></dd>
+<dd><a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="SqlEndpointsClient-__init__"><strong>__init__</strong></a>(self, client: dbacademy.dbrest.client.DBAcademyRestClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#SqlEndpointsClient-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="SqlEndpointsClient-create"><strong>create</strong></a>(self, name: str, cluster_size: str, enable_serverless_compute: bool, min_num_clusters: int = 1, max_num_clusters: int = 1, auto_stop_mins: int = 120, enable_photon: bool = True, spot_instance_policy: str = 'RELIABILITY_OPTIMIZED', channel: str = 'CHANNEL_NAME_CURRENT', tags: dict = None)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-create_or_update"><strong>create_or_update</strong></a>(self, name: str, cluster_size: str, enable_serverless_compute: bool, min_num_clusters: int = 1, max_num_clusters: int = 1, auto_stop_mins: int = 120, enable_photon: bool = True, spot_instance_policy: str = 'RELIABILITY_OPTIMIZED', channel: str = 'CHANNEL_NAME_CURRENT', tags: dict = None)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-create_user_endpoint"><strong>create_user_endpoint</strong></a>(self, user, naming_template: str, naming_params: dict, cluster_size: str, enable_serverless_compute: bool, min_num_clusters: int, max_num_clusters: int, auto_stop_mins: int, enable_photon: bool, spot_instance_policy: str, channel: str, tags: dict)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-create_user_endpoints"><strong>create_user_endpoints</strong></a>(self, naming_template: str, naming_params: dict, cluster_size: str, enable_serverless_compute: bool, min_num_clusters: int = 1, max_num_clusters: int = 1, auto_stop_mins: int = 120, enable_photon: bool = True, spot_instance_policy: str = 'RELIABILITY_OPTIMIZED', channel: str = 'CHANNEL_NAME_CURRENT', tags: dict = None, users: &lt;function SqlEndpointsClient.list at 0x10787c790&gt; = None)</dt><dd><tt>Creates&nbsp;one&nbsp;SQL&nbsp;endpoint&nbsp;per&nbsp;user&nbsp;in&nbsp;the&nbsp;current&nbsp;workspace.&nbsp;The&nbsp;list&nbsp;of&nbsp;users&nbsp;can&nbsp;be&nbsp;limited&nbsp;to&nbsp;a&nbsp;subset&nbsp;of&nbsp;users&nbsp;with&nbsp;the&nbsp;"users"&nbsp;parameter.<br>
+Parameters:&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;naming_template&nbsp;(str):&nbsp;The&nbsp;template&nbsp;used&nbsp;to&nbsp;name&nbsp;each&nbsp;user's&nbsp;endpoint.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;naming_params&nbsp;(str):&nbsp;The&nbsp;parameters&nbsp;used&nbsp;in&nbsp;completing&nbsp;the&nbsp;template.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cluster_size&nbsp;(str):&nbsp;The&nbsp;size&nbsp;of&nbsp;the&nbsp;cluster&nbsp;-&nbsp;see&nbsp;CLUSTER_SIZES&nbsp;for&nbsp;the&nbsp;list&nbsp;of&nbsp;valid&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;enable_serverless_compute&nbsp;(bool):&nbsp;Set&nbsp;to&nbsp;True&nbsp;to&nbsp;employ&nbsp;serverless&nbsp;compute,&nbsp;otherwise&nbsp;classic&nbsp;compute.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;min_num_clusters&nbsp;(int&nbsp;=&nbsp;1):&nbsp;The&nbsp;minimum&nbsp;number&nbsp;of&nbsp;clusters&nbsp;for&nbsp;this&nbsp;endpoint.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;max_num_clusters&nbsp;(int&nbsp;=&nbsp;1):&nbsp;The&nbsp;maximum&nbsp;number&nbsp;of&nbsp;clusters&nbsp;for&nbsp;this&nbsp;endpoint.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;auto_stop_mins&nbsp;(int&nbsp;=&nbsp;120):&nbsp;The&nbsp;number&nbsp;of&nbsp;minutes&nbsp;after&nbsp;which&nbsp;idle&nbsp;endpoints&nbsp;will&nbsp;be&nbsp;shut&nbsp;down.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;enable_photon&nbsp;(bool&nbsp;=&nbsp;True):&nbsp;Set&nbsp;to&nbsp;True&nbsp;to&nbsp;employ&nbsp;the&nbsp;Photon&nbsp;runtime&nbsp;otherwise&nbsp;classic&nbsp;runtime.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;spot_instance_policy&nbsp;(str&nbsp;=&nbsp;RELIABILITY_OPTIMIZED):&nbsp;The&nbsp;spot&nbsp;instance&nbsp;policy&nbsp;-&nbsp;see&nbsp;SPOT_POLICIES&nbsp;for&nbsp;the&nbsp;list&nbsp;of&nbsp;valid&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;channel&nbsp;(str&nbsp;=&nbsp;CHANNEL_NAME_CURRENT):&nbsp;The&nbsp;endpoint's&nbsp;channel&nbsp;-&nbsp;see&nbsp;CHANNELS&nbsp;for&nbsp;the&nbsp;list&nbsp;of&nbsp;valid&nbsp;values.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;tags&nbsp;(dict&nbsp;=&nbsp;dict()):&nbsp;The&nbsp;list&nbsp;of&nbsp;tags&nbsp;expressed&nbsp;as&nbsp;key-value&nbsp;pairs.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;users&nbsp;(list[str&nbsp;or&nbsp;dict]&nbsp;=&nbsp;None,&nbsp;str):&nbsp;unlike&nbsp;other&nbsp;parameters,&nbsp;this&nbsp;value&nbsp;is&nbsp;eventually&nbsp;converted&nbsp;to&nbsp;a&nbsp;list&nbsp;of&nbsp;user&nbsp;objects&nbsp;but&nbsp;may&nbsp;be&nbsp;specified&nbsp;as&nbsp;a&nbsp;list&nbsp;or&nbsp;single&nbsp;value&nbsp;(which&nbsp;is&nbsp;converted&nbsp;to&nbsp;a&nbsp;list).&nbsp;String&nbsp;values&nbsp;are&nbsp;assumed&nbsp;to&nbsp;be&nbsp;the&nbsp;user's&nbsp;username&nbsp;if&nbsp;it&nbsp;includes&nbsp;the&nbsp;@&nbsp;symbol&nbsp;and&nbsp;the&nbsp;user's&nbsp;ID&nbsp;otherwise.</tt></dd></dl>
+
+<dl><dt><a name="SqlEndpointsClient-delete_by_id"><strong>delete_by_id</strong></a>(self, endpoint_id)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-delete_by_name"><strong>delete_by_name</strong></a>(self, name)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-delete_user_endpoint"><strong>delete_user_endpoint</strong></a>(self, user, naming_template: str, naming_params: dict)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-delete_user_endpoints"><strong>delete_user_endpoints</strong></a>(self, naming_template: str, naming_params: dict, users: &lt;function SqlEndpointsClient.list at 0x10787c790&gt; = None)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-edit"><strong>edit</strong></a>(self, endpoint_id: str, name: str = None, cluster_size: str = None, enable_serverless_compute: bool = None, min_num_clusters: int = None, max_num_clusters: int = None, auto_stop_mins: int = None, enable_photon: bool = None, spot_instance_policy: str = None, channel: str = None, tags: dict = None)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-get_by_id"><strong>get_by_id</strong></a>(self, endpoint_id)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-get_by_name"><strong>get_by_name</strong></a>(self, name)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-list"><strong>list</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-start"><strong>start</strong></a>(self, endpoint_id)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-start_user_endpoint"><strong>start_user_endpoint</strong></a>(self, user, naming_template: str, naming_params: dict)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-start_user_endpoints"><strong>start_user_endpoints</strong></a>(self, naming_template: str, naming_params: dict, users: &lt;function SqlEndpointsClient.list at 0x10787c790&gt; = None)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-stop"><strong>stop</strong></a>(self, endpoint_id)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-stop_user_endpoint"><strong>stop_user_endpoint</strong></a>(self, user, naming_template: str, naming_params: dict)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-stop_user_endpoints"><strong>stop_user_endpoints</strong></a>(self, naming_template: str, naming_params: dict, users: &lt;function SqlEndpointsClient.list at 0x10787c790&gt; = None)</dt></dl>
+
+<dl><dt><a name="SqlEndpointsClient-update"><strong>update</strong></a>(self, endpoint_id: str, name: str = None, cluster_size: str = None, enable_serverless_compute: bool = None, min_num_clusters: int = None, max_num_clusters: int = None, auto_stop_mins: int = None, enable_photon: bool = None, spot_instance_policy: str = None, channel: str = None, tags: dict = None)</dt></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="SqlEndpointsClient-to_endpoint_name"><strong>to_endpoint_name</strong></a>(user, naming_template: str, naming_params: dict)</dt></dl>
+
+<hr>
+Methods inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
+<dl><dt><a name="SqlEndpointsClient-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
+
+<dl><dt><a name="SqlEndpointsClient-help"><strong>help</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
+<dl><dt><strong>T</strong> = ~T</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>CHANNELS</strong> = ['CHANNEL_NAME_PREVIEW', 'CHANNEL_NAME_CURRENT']<br>
+<strong>CHANNEL_NAME_CURRENT</strong> = 'CHANNEL_NAME_CURRENT'<br>
+<strong>CHANNEL_NAME_PREVIEW</strong> = 'CHANNEL_NAME_PREVIEW'<br>
+<strong>CLUSTER_SIZES</strong> = ['2X-Small', 'X-Small', 'Small', 'Medium', 'Large', 'X-Large', '2X-Large', '3X-Large', '4X-Large']<br>
+<strong>CLUSTER_SIZE_2X_LARGE</strong> = '2X-Large'<br>
+<strong>CLUSTER_SIZE_2X_SMALL</strong> = '2X-Small'<br>
+<strong>CLUSTER_SIZE_3X_LARGE</strong> = '3X-Large'<br>
+<strong>CLUSTER_SIZE_4X_LARGE</strong> = '4X-Large'<br>
+<strong>CLUSTER_SIZE_LARGE</strong> = 'Large'<br>
+<strong>CLUSTER_SIZE_MEDIUM</strong> = 'Medium'<br>
+<strong>CLUSTER_SIZE_SMALL</strong> = 'Small'<br>
+<strong>CLUSTER_SIZE_X_LARGE</strong> = 'X-Large'<br>
+<strong>CLUSTER_SIZE_X_SMALL</strong> = 'X-Small'<br>
+<strong>COST_OPTIMIZED</strong> = 'COST_OPTIMIZED'<br>
+<strong>RELIABILITY_OPTIMIZED</strong> = 'RELIABILITY_OPTIMIZED'<br>
+<strong>SPOT_POLICIES</strong> = ['COST_OPTIMIZED', 'RELIABILITY_OPTIMIZED']</td></tr></table>
+</body></html>

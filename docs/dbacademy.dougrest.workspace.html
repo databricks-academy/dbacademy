@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dougrest.workspace</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dougrest.html"><font color="#ffffff">dougrest</font></a>.workspace</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/doug.bateman/repos/dbacademy/src/dbacademy/dougrest/workspace.py">/Users/doug.bateman/repos/dbacademy/src/dbacademy/dougrest/workspace.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dougrest.workspace.html#Workspace">Workspace</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Workspace">class <strong>Workspace</strong></a>(<a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Workspace">Workspace</a>(databricks)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="dbacademy.dougrest.workspace.html#Workspace">Workspace</a></dd>
+<dd><a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Workspace-__init__"><strong>__init__</strong></a>(self, databricks)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#Workspace-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Workspace-compare"><strong>compare</strong></a>(self, source_path, target_path, target_connection=None, compare_contents=False)</dt><dd><tt>Recursively&nbsp;compare&nbsp;the&nbsp;filenames&nbsp;and&nbsp;types,&nbsp;but&nbsp;not&nbsp;contents&nbsp;of&nbsp;the&nbsp;files.<br>
+Returns&nbsp;iterator&nbsp;of&nbsp;files&nbsp;that&nbsp;don't&nbsp;have&nbsp;a&nbsp;match&nbsp;on&nbsp;the&nbsp;other&nbsp;side.<br>
+&nbsp;<br>
+compare_contents&nbsp;is&nbsp;a&nbsp;no-op&nbsp;currently&nbsp;and&nbsp;doesn't&nbsp;change&nbsp;anything.<br>
+&nbsp;<br>
+This&nbsp;methods&nbsp;signature&nbsp;and&nbsp;behavior&nbsp;is&nbsp;subject&nbsp;to&nbsp;change.&nbsp;&nbsp;Maintainers&nbsp;are&nbsp;invited&nbsp;to&nbsp;improve&nbsp;it.</tt></dd></dl>
+
+<dl><dt><a name="Workspace-copy"><strong>copy</strong></a>(self, source_path, target_path, *, target_connection=None, if_exists='overwrite', exclude=None, dry_run=False)</dt></dl>
+
+<dl><dt><a name="Workspace-delete"><strong>delete</strong></a>(self, workspace_path, recursive=True)</dt></dl>
+
+<dl><dt><a name="Workspace-exists"><strong>exists</strong></a>(self, workspace_path)</dt></dl>
+
+<dl><dt><a name="Workspace-export"><strong>export</strong></a>(self, workspace_path, format='DBC')</dt><dd><tt>#&nbsp;TODO&nbsp;Rename&nbsp;parameter&nbsp;"format"<br>
+#&nbsp;noinspection&nbsp;PyShadowingBuiltins</tt></dd></dl>
+
+<dl><dt><a name="Workspace-import_from_data"><strong>import_from_data</strong></a>(self, content, workspace_path, format='DBC', *, language=None, if_exists='error')</dt><dd><tt>#&nbsp;TODO&nbsp;Rename&nbsp;parameter&nbsp;"format"<br>
+#&nbsp;noinspection&nbsp;PyShadowingBuiltins</tt></dd></dl>
+
+<dl><dt><a name="Workspace-import_from_url"><strong>import_from_url</strong></a>(self, source_url, workspace_path, format='DBC', *, if_exists='error')</dt><dd><tt>#&nbsp;TODO&nbsp;Rename&nbsp;parameter&nbsp;"format"<br>
+#&nbsp;noinspection&nbsp;PyShadowingBuiltins</tt></dd></dl>
+
+<dl><dt><a name="Workspace-is_empty"><strong>is_empty</strong></a>(self, workspace_path)</dt></dl>
+
+<dl><dt><a name="Workspace-list"><strong>list</strong></a>(self, workspace_path, sort_key=&lt;function Workspace.&lt;lambda&gt; at 0x10792b670&gt;)</dt></dl>
+
+<dl><dt><a name="Workspace-list_names"><strong>list_names</strong></a>(self, workspace_path, sort_key=&lt;function Workspace.&lt;lambda&gt; at 0x10792b550&gt;)</dt></dl>
+
+<dl><dt><a name="Workspace-mkdirs"><strong>mkdirs</strong></a>(self, workspace_path)</dt></dl>
+
+<dl><dt><a name="Workspace-walk"><strong>walk</strong></a>(self, workspace_path, sort_key=&lt;function Workspace.&lt;lambda&gt; at 0x10792b820&gt;)</dt><dd><tt>Recursively&nbsp;list&nbsp;files&nbsp;into&nbsp;an&nbsp;iterator.&nbsp;&nbsp;Sorting&nbsp;within&nbsp;a&nbsp;directory&nbsp;is&nbsp;done&nbsp;by&nbsp;the&nbsp;provided&nbsp;sort_key.</tt></dd></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="Workspace-read_data_from_url"><strong>read_data_from_url</strong></a>(source_url, format='DBC')</dt><dd><tt>#&nbsp;TODO&nbsp;Rename&nbsp;parameter&nbsp;"format"<br>
+#&nbsp;noinspection&nbsp;PyShadowingBuiltins</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
+<dl><dt><a name="Workspace-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
+
+<dl><dt><a name="Workspace-help"><strong>help</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
+<dl><dt><strong>T</strong> = ~T</dl>
+
+</td></tr></table></td></tr></table>
+</body></html>
