@@ -25,9 +25,11 @@ class TestWorkspaceConfig(unittest.TestCase):
     def test_create_workspace_config(self):
         from dbacademy_test.workspaces_3_0 import test_index_error
 
-        workspace = WorkspaceConfig(max_users=150, courses=self.courses, datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", dbc_urls=self.dbc_urls, credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", workspace_name_pattern="classroom-{event_id}-{workspace_number}")
+        max_users = 150
+        expected_users = max_users + 2  # +2 accounts for user zero, 150 inclusive, and class+analyst@databricks.com
+        workspace = WorkspaceConfig(max_users=max_users, courses=self.courses, datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", dbc_urls=self.dbc_urls, credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", workspace_name_pattern="classroom-{event_id}-{workspace_number}")
 
-        self.assertEqual(150, workspace.max_users)
+        self.assertEqual(expected_users, len(workspace.usernames))
         self.assertEqual("11.3.x-scala2.12", workspace.default_dbr)
         self.assertEqual("i3.xlarge", workspace.default_node_type_id)
 
@@ -52,16 +54,19 @@ class TestWorkspaceConfig(unittest.TestCase):
         self.assertEqual("us-west-2", workspace.storage_configuration)
 
         # Spotcheck users
-        self.assertEqual(150, len(workspace.users))
-        self.assertEqual("class+000@databricks.com", workspace.users[0])
-        self.assertEqual("class+020@databricks.com", workspace.users[20])
-        self.assertEqual("class+040@databricks.com", workspace.users[40])
-        self.assertEqual("class+060@databricks.com", workspace.users[60])
-        self.assertEqual("class+080@databricks.com", workspace.users[80])
-        self.assertEqual("class+100@databricks.com", workspace.users[100])
-        self.assertEqual("class+120@databricks.com", workspace.users[120])
-        self.assertEqual("class+149@databricks.com", workspace.users[149])
-        test_index_error(self, lambda: workspace.users[150])
+        self.assertEqual(expected_users, len(workspace.usernames))
+        self.assertEqual("class+000@databricks.com", workspace.usernames[0])
+        self.assertEqual("class+020@databricks.com", workspace.usernames[20])
+        self.assertEqual("class+040@databricks.com", workspace.usernames[40])
+        self.assertEqual("class+060@databricks.com", workspace.usernames[60])
+        self.assertEqual("class+080@databricks.com", workspace.usernames[80])
+        self.assertEqual("class+100@databricks.com", workspace.usernames[100])
+        self.assertEqual("class+120@databricks.com", workspace.usernames[120])
+        self.assertEqual("class+149@databricks.com", workspace.usernames[149])
+
+        self.assertEqual("class+150@databricks.com", workspace.usernames[150])
+        self.assertEqual("class+analyst@databricks.com", workspace.usernames[151])
+        test_index_error(self, lambda: workspace.usernames[152])
 
     def test_create_workspace_config_username_pattern(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
@@ -69,8 +74,9 @@ class TestWorkspaceConfig(unittest.TestCase):
         workspace = WorkspaceConfig(max_users=250, courses=self.courses, datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", dbc_urls=self.dbc_urls, credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", workspace_name_pattern="classroom-{event_id}-{workspace_number}")
         self.assertEqual("class+{student_number}@databricks.com", workspace.username_pattern)
 
-        for i, user in enumerate(workspace.users):
-            self.assertEqual(f"class+{i:03d}@databricks.com", user)
+        for i, username in enumerate(workspace.usernames):
+            if username != "class+analyst@databricks.com":
+                self.assertEqual(f"class+{i:03d}@databricks.com", username)
 
         ###################################################
 
