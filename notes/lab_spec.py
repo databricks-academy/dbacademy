@@ -79,4 +79,5 @@ databricks_account_url = os.env["DATABRICKS_ACCOUNT_URL"]
 databricks_account_user = os.env["DATABRICKS_ACCOUNT_USER"]
 databricks_account_pass = os.env["DATABRICKS_ACCOUNT_PASS"]
 
-dbacademy.workspaces_3_0.vocareum_main(LabDefinition)
+if __name__=="__main__":
+    dbacademy.workspaces_3_0.vocareum_main(LabDefinition)
