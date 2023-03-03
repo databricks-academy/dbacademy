@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.workspaces_3_0.workspace_setup_class</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.workspaces_3_0.html"><font color="#ffffff">workspaces_3_0</font></a>.workspace_setup_class</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/doug.bateman/repos/dbacademy/src/dbacademy/workspaces_3_0/workspace_setup_class.py">/Users/doug.bateman/repos/dbacademy/src/dbacademy/workspaces_3_0/workspace_setup_class.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.workspaces_3_0.workspace_setup_class.html#WorkspaceSetup">WorkspaceSetup</a>
+</font></dt><dt><font face="helvetica, arial"><a href="dbacademy.workspaces_3_0.workspace_setup_class.html#WorkspaceTrio">WorkspaceTrio</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="WorkspaceSetup">class <strong>WorkspaceSetup</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#WorkspaceSetup">WorkspaceSetup</a>(account_config:&nbsp;dbacademy.workspaces_3_0.account_config_class.AccountConfig,&nbsp;max_retries:&nbsp;int)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="WorkspaceSetup-__init__"><strong>__init__</strong></a>(self, account_config: dbacademy.workspaces_3_0.account_config_class.AccountConfig, max_retries: int)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="WorkspaceSetup-create_workspaces"><strong>create_workspaces</strong></a>(self, *, create_users: bool, create_groups: bool, create_metastore: bool, run_workspace_setup: bool, enable_features: bool, workspace_numbers: Iterable[int] = None)</dt></dl>
+
+<dl><dt><a name="WorkspaceSetup-delete_workspaces"><strong>delete_workspaces</strong></a>(self)</dt></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="WorkspaceSetup-for_each_workspace"><strong>for_each_workspace</strong></a>(workspaces: List[dbacademy.workspaces_3_0.workspace_setup_class.WorkspaceTrio], some_action: Callable[[dbacademy.workspaces_3_0.workspace_setup_class.WorkspaceTrio], NoneType]) -&gt; None</dt></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>account_config</strong></dt>
+</dl>
+<dl><dt><strong>accounts_api</strong></dt>
+</dl>
+<dl><dt><strong>max_retries</strong></dt>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>AccountConfig</strong> = &lt;class 'dbacademy.workspaces_3_0.account_config_class.AccountConfig'&gt;</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="WorkspaceTrio">class <strong>WorkspaceTrio</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#WorkspaceTrio">WorkspaceTrio</a>(workspace_config:&nbsp;dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig,&nbsp;workspace_api:&nbsp;dbacademy.dougrest.accounts.workspaces.Workspace,&nbsp;classroom:&nbsp;Optional[dbacademy.classrooms.classroom.Classroom])<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="WorkspaceTrio-__init__"><strong>__init__</strong></a>(self, workspace_config: dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig, workspace_api: dbacademy.dougrest.accounts.workspaces.Workspace, classroom: Optional[dbacademy.classrooms.classroom.Classroom])</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>classroom</strong></dt>
+</dl>
+<dl><dt><strong>workspace_api</strong></dt>
+</dl>
+<dl><dt><strong>workspace_config</strong></dt>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>Classroom</strong> = &lt;class 'dbacademy.classrooms.classroom.Classroom'&gt;</dl>
+
+<dl><dt><strong>WorkspaceAPI</strong> = &lt;class 'dbacademy.dougrest.accounts.workspaces.Workspace'&gt;</dl>
+
+<dl><dt><strong>WorkspaceConfig</strong> = &lt;class 'dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig'&gt;</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>Callable</strong> = typing.Callable<br>
+<strong>Iterable</strong> = typing.Iterable<br>
+<strong>List</strong> = typing.List<br>
+<strong>Optional</strong> = typing.Optional</td></tr></table>
+</body></html>
