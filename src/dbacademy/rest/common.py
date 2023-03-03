@@ -228,10 +228,10 @@ class ApiClient(ApiContainer):
         from requests.exceptions import ConnectionError
 
         url = urlparse(url)
-        try:
-            gethostbyname(url.hostname)
-        except gaierror as e:
-            raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}".""") from e
+        # try:
+        #     gethostbyname(url.hostname)
+        # except gaierror as e:
+        #     raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}".""") from e
 
     def _throttle_calls(self):
         if self.throttle_seconds <= 0:

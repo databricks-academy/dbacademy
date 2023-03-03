@@ -79,9 +79,9 @@ class AccountConfig:
 
         for workspace_number in range(first_workspace_number, first_workspace_number+count):
             workspace = WorkspaceConfig(max_users=workspace_config.max_users,
-                                        courses="example-course",
-                                        datasets="example-course",
-                                        default_node_type_id="i3.xlarge",
+                                        courses=workspace_config.courses,
+                                        datasets=workspace_config.datasets,
+                                        default_node_type_id=workspace_config.default_node_type_id,
                                         default_dbr=workspace_config.default_dbr,
                                         dbc_urls=workspace_config.dbc_urls,
                                         credentials_name=workspace_config.credentials_name,

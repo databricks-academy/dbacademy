@@ -47,8 +47,8 @@ for i in range(first_workspace_number, first_workspace_number+total_workspaces, 
     workspace_setup.create_workspaces(create_users=False,
                                       create_groups=False,
                                       create_metastore=False,
-                                      run_workspace_setup=False,
                                       enable_features=True,
+                                      run_workspace_setup=True,
                                       workspace_numbers=range(i, i+step))
     break  # I want to stop
 
