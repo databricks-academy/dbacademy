@@ -46,6 +46,7 @@ class ApiContainer(object):
 class ApiClient(ApiContainer):
 
     url: str = None
+    dns_verify: bool = False
 
     def __init__(self,
                  url: str,
@@ -82,7 +83,6 @@ class ApiClient(ApiContainer):
         self.networks = None
         self.storage = None
         self.private_access = None
-        self.dns_verify = False
 
         # if verbose: print("ApiClient.__init__, url: " + url)
         # if verbose: print("ApiClient.__init__, client: " + str(client))
