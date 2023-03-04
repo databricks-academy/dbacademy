@@ -95,7 +95,13 @@ class Jobs(ApiContainer):
         return bool(job)
 
     def update(self, job):
-        return self.databricks.api("POST", "2.1/jobs/update", job_id=job["job_id"], new_settings=job)
+        if "new_settings" in job:
+            settings = job["new_settings"]
+        elif "settings" in job:
+            settings = job["settings"]
+        else:
+            settings = job
+        return self.databricks.api("POST", "2.1/jobs/update", job_id=job["job_id"], new_settings=settings)
 
     def delete(self, job, *, if_not_exists="error"):
         if isinstance(job, str):
