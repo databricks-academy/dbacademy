@@ -46,6 +46,7 @@ class ApiContainer(object):
 class ApiClient(ApiContainer):
 
     url: str = None
+    dns_verify: bool = False
 
     def __init__(self,
                  url: str,
@@ -185,7 +186,8 @@ class ApiClient(ApiContainer):
             _data = _data.copy()
             _data.update(data)
         _base_url: str = urljoin(self.url, _base_url)
-        self._verify_hostname(_base_url)
+        if self.dns_verify:
+            self._verify_hostname(_base_url)
         self._throttle_calls()
         if _endpoint_path.startswith(_base_url):
             _endpoint_path = _endpoint_path[len(_base_url):]
@@ -228,10 +230,10 @@ class ApiClient(ApiContainer):
         from requests.exceptions import ConnectionError
 
         url = urlparse(url)
-        # try:
-        #     gethostbyname(url.hostname)
-        # except gaierror as e:
-        #     raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}".""") from e
+        try:
+            gethostbyname(url.hostname)
+        except gaierror as e:
+            raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}".""") from e
 
     def _throttle_calls(self):
         if self.throttle_seconds <= 0:
