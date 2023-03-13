@@ -84,7 +84,11 @@ class WorkspaceConfig:
 
         # Create the group analyst and instructors
         self.__groups = dict()
+        # TODO - Azure and GCP this is OK, it woudl be global
+        # TODO - validate that the group and user exists in case CloudLabs doesn't configure properly
         self.__groups["analysts"] = [analyst_username]
+        # TODO - Azure and GCP CANNOT support this because it's dynamic
+        # TODO - Add any "odl" users to the instructors group
         self.__groups["instructors"] = [self.__usernames[0]]
 
     def init(self, *, event_config: EventConfig, workspace_number: int):
