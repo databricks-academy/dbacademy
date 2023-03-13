@@ -1,6 +1,7 @@
 from typing import Dict, Any, List
 
 from dbacademy.dougrest import DatabricksApi
+from dbacademy.dougrest.accounts.workspaces import Workspace
 from dbacademy.rest.common import DatabricksApiException
 
 
@@ -161,7 +162,7 @@ class Commands(object):
         return len(running)
 
     @staticmethod
-    def listJobs(w, stop=False):
+    def listJobs(w: Workspace, stop=False):
         """Clears the jobs schedules.  Jobs currently running are not terminated."""
         results = []
         for job in w.jobs.list():
@@ -173,6 +174,16 @@ class Commands(object):
                 if not stop:
                     results += [{"job_name": job_name, "paused": False}]
                 else:
+                    # Don't stop jobs in the following situations
+                    if "curriculum-dev" == w["deployment_name"]:
+                        results += [{"action": "Job skipped", "name": job_name, "exception": ""}]
+                        continue
+                    if "curriculum" == w["deployment_name"]:
+                        results += [{"action": "Job skipped", "name": job_name, "exception": ""}]
+                        continue
+                    if job_name == "_Monitor_Workspace":
+                        results += [{"action": "Job skipped", "name": job_name, "exception": ""}]
+                        continue
                     job["settings"]["schedule"]["pause_status"] = "PAUSED"
                     job["new_settings"] = job["settings"]
                     del job["settings"]
