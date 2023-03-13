@@ -46,12 +46,12 @@ account = AccountConfig.from_env(qualifier="PROSVC",  # CURR
 
 workspace_setup = WorkspaceSetup(account, max_retries=100)
 
-step = total_workspaces  # We can only handle 5 at a time.
+step = 5  # total_workspaces  # We can only handle 5 at a time.
 for i in range(first_workspace_number, first_workspace_number+total_workspaces, step):
-    workspace_setup.create_workspaces(create_users=False,
-                                      create_groups=False,
-                                      create_metastore=False,
-                                      enable_features=False,
+    workspace_setup.create_workspaces(create_users=True,
+                                      create_groups=True,
+                                      create_metastore=True,
+                                      enable_features=True,
                                       run_workspace_setup=True,
                                       workspace_numbers=range(i, i+step))
     # break  # I want to stop
