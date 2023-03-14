@@ -49,7 +49,7 @@ workspace_setup = WorkspaceSetup(account, max_retries=100)
 step = 5  # total_workspaces  # We can only handle 5 at a time.
 for i in range(first_workspace_number, first_workspace_number+total_workspaces, step):
     workspace_setup.create_workspaces(create_users=True,
-                                      create_groups=True,
+                                      create_groups=False,
                                       create_metastore=True,
                                       enable_features=True,
                                       run_workspace_setup=True,
