@@ -9,20 +9,49 @@ pip.main(['install', "git+https://github.com/databricks-academy/dbacademy@main"]
 lab_spec = {
     "lab_name": "data-analysis-with-databricks",
     "max_users_per_workspace": 250,
+
     "user_dbcs_to_import": {
         "data-anaysis-with-databricks": "https://..."
     },
-    "user_repos_to_import": {
-        "data-anaysis-with-databricks": "https://..."
+
+    "datasets-mount": {
+        "/mnt/dbacademy-datasets": "s3://...",
     },
+
+   "user_cluster_spec": {
+        "num_workers": 0,
+        "spark_version": "11.3.x-cpu-ml-scala2.12",
+        "spark_conf": {
+            "spark.master": "local[*, 4]",
+            "spark.databricks.cluster.profile": "singleNode"
+        },
+        "custom_tags": {
+            "ResourceClass": "SingleNode"
+        },
+        "autotermination_minutes": 120,
+        "policy_name": "DBAcademy",
+        "instance_pool_name": "DBAcademy Pool",
+        "data_security_mode": "SINGLE_USER",
+        "runtime_engine": "STANDARD",
+    },
+
     "workspace_setup_jobs": {
         "DBAcademy Workspace Setup": {...},
     },
-    "user_cluster_spec": {...}
 }
 
 
 class LabDefinition(VocareumLabDefinition):
+    def prompt_for_inputs(self):
+        """
+        Return a list of configuration values to UI should prompt the user to input.
+        """
+        return [{
+            "variable-name": "$RUNTIME_VERSION",
+            "input-name": "DBR-Version",
+            "input-type": "text",
+            "default-value": "11.3.x-cpu-ml-lt",
+        }]
     def on_lab_setup(lab_id):
         """
         Fires whenever a lab is created or a lab's settings are changed.
@@ -44,7 +73,7 @@ class LabDefinition(VocareumLabDefinition):
         Fires when the user begins using the lab.  This should start/restart the user's cluster.
         This function should be idempotent as the user can pause and resume their lab anytime.
         """
-        dbacademy.workspaces_3_0.vocareum_user_start(lab_spec)
+        dbacademy.workspaces_3_0.vocareum_user_resume(lab_spec)
 
     def on_user_lab_submission(username, step_id):
         """
@@ -58,7 +87,7 @@ class LabDefinition(VocareumLabDefinition):
         Fires when the user puts their lab on hold for the night.
         This function should be idempotent.
         """
-        dbacademy.workspaces_3_0.vocareum_user_stop(lab_spec)
+        dbacademy.workspaces_3_0.vocareum_user_pause(lab_spec)
 
     def on_user_destroy(username):
         """
