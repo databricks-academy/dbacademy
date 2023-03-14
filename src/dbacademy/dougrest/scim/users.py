@@ -8,12 +8,13 @@ class Users(ApiContainer):
         self.databricks = databricks
         self.path = "2.0/preview"
 
-    def list(self, start=1, count=1000):
+    def list(self, start=1, count=1000, *, exclude_roles=False):
+        kwargs = {"excludedAttributes": "roles"} if exclude_roles else {}
         return self.databricks.api("GET", f"{self.path}/scim/v2/Users",
-                                   startIndex=start, count=count).get("Resources", [])
+                                   startIndex=start, count=count, **kwargs).get("Resources", [])
 
     def list_usernames(self):
-        return sorted([u["userName"] for u in self.list()])
+        return sorted([u["userName"] for u in self.list(exclude_roles=True)])
 
     def list_by_username(self):
         return {u["userName"]: u for u in self.list()}
@@ -75,7 +76,7 @@ class Users(ApiContainer):
         }
         return self.set_entitlements(user, entitlements)
 
-    def create(self, username, allow_cluster_create=True, if_exists: IfExists = "error"):
+    def create(self, username, *, allow_cluster_create=True, if_exists: IfExists = "error"):
         entitlements = []
         if allow_cluster_create:
             entitlements.append({"value": "allow-cluster-create"})

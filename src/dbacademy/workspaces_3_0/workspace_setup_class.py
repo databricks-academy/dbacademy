@@ -281,7 +281,7 @@ class WorkspaceSetup:
 
         for i in range(0, self.__max_retries):
             try:
-                return trio.classroom.databricks.users.create(username, allow_cluster_create=False)
+                return trio.classroom.databricks.users.create(username, allow_cluster_create=False, if_exists="ignore")
 
             except HTTPError as e:
                 print(f"""Failed to list users for "{trio.workspace_config.name}", retrying ({i})""")
@@ -308,6 +308,7 @@ class WorkspaceSetup:
                 data = e.response.json()
                 message = data.get("detail", str(e))
                 print(f"HTTPError ({e.response.status_code}): {message}")
+                raise e
                 time.sleep(random.randint(5, 10))
 
         if existing_users is None:
