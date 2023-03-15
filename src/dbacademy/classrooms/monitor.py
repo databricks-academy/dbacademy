@@ -16,11 +16,10 @@ class Commands(object):
     @staticmethod
     def get_region(ws):
         from urllib.parse import urlparse
-        hostname = urlparse(ws.url).netloc
-        import dns
-        import dns.resolver
-        control_plane = dns.resolver.resolve(hostname, 'CNAME')[0].to_text()
+        from dns.resolver import resolve
         import re
+        hostname = urlparse(ws.url).netloc
+        control_plane = resolve(hostname, 'CNAME')[0].to_text()
         region = re.search("^[^-.]*", control_plane)[0]
         return region
 
