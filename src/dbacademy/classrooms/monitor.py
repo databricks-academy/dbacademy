@@ -13,16 +13,16 @@ class Commands(object):
         self.event = event
         self.all_users = False
 
-    # @staticmethod
-    # def get_region(ws):
-    #     from urllib.parse import urlparse
-    #     hostname = urlparse(workspaces_dbt[0].url).netloc
-    #     import dns
-    #     import dns.resolver
-    #     control_plane = dns.resolver.resolve(hostname, 'CNAME')[0].to_text()
-    #     import re
-    #     region = re.search("^[^-.]*", control_plane)[0]
-    #     return region
+    @staticmethod
+    def get_region(ws):
+        from urllib.parse import urlparse
+        hostname = urlparse(ws.url).netloc
+        import dns
+        import dns.resolver
+        control_plane = dns.resolver.resolve(hostname, 'CNAME')[0].to_text()
+        import re
+        region = re.search("^[^-.]*", control_plane)[0]
+        return region
 
     @staticmethod
     def countInstructors(workspace):
@@ -1024,6 +1024,26 @@ class Commands(object):
         with ThreadPool(100) as pool:
             results = pool.map(update_cluster, ws.clusters.list())
         return [r for r in results if r is not None]
+
+    @staticmethod
+    def add_azure_principal(ws):
+        """Add Doug's Azure Service Principal"""
+        client_id = "4d5472a4-eaa9-47bf-8a9f-e8581f865be1"
+        try:
+            ws.api("POST", "2.0/preview/scim/v2/ServicePrincipals", {
+                "schemas": ["urn:ietf:params:scim:schemas:core:2.0:ServicePrincipal"],
+                "applicationId": client_id,
+            })
+        except DatabricksApiException as e:
+            if e.http_code != 409:
+                raise e
+        ws.groups.add_member("admins", user_name=client_id)
+
+    @staticmethod
+    def add_doug(ws):
+        if "doug.bateman@databricks.com" not in ws.users.list_usernames():
+            ws.scim.users.create("doug.bateman@databricks.com")
+        ws.groups.add_member("admins", user_name="doug.bateman@databricks.com")
 
 
 # noinspection PyPep8Naming
