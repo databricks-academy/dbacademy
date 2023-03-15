@@ -10,9 +10,9 @@ print("-"*100)
 print(f"Starting script at {datetime.now()}")
 
 max_workspace_users = 250
-max_event_participants = 45 * max_workspace_users
+max_event_participants = 30 * max_workspace_users
 total_workspaces = math.ceil(max_event_participants / max_workspace_users)
-first_workspace_number = 280
+first_workspace_number = 1
 
 event_config = EventConfig(event_id=0,
                            max_participants=max_event_participants,
