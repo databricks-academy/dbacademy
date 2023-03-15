@@ -13,6 +13,17 @@ class Commands(object):
         self.event = event
         self.all_users = False
 
+    # @staticmethod
+    # def get_region(ws):
+    #     from urllib.parse import urlparse
+    #     hostname = urlparse(workspaces_dbt[0].url).netloc
+    #     import dns
+    #     import dns.resolver
+    #     control_plane = dns.resolver.resolve(hostname, 'CNAME')[0].to_text()
+    #     import re
+    #     region = re.search("^[^-.]*", control_plane)[0]
+    #     return region
+
     @staticmethod
     def countInstructors(workspace):
         """Returns a count of the number of odl_instructor_* users."""
