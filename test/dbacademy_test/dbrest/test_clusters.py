@@ -104,6 +104,7 @@ class TestClusters(unittest.TestCase):
             "disk_spec": dict(),
             "driver_instance_source": {"node_type_id": "i3.xlarge"},
             "driver_node_type_id": "i3.xlarge",
+            "driver_healthy": False,
             "effective_spark_version": "11.3.x-scala2.12",
             "enable_elastic_disk": False,
             "enable_local_disk_encryption": False,
@@ -140,9 +141,12 @@ class TestClusters(unittest.TestCase):
         actual_keys = sorted(cluster.keys())
 
         for key in expected_keys:
-            self.assertTrue(key in actual_keys, f"Missing {key} in actual_keys")
+            if key not in actual_keys:
+                self.assertTrue(False, f"Missing {key} in actual_keys")
+
         for key in actual_keys:
-            self.assertTrue(key in expected_keys, f"Missing {key} in actual_keys")
+            if key not in expected_keys:
+                self.assertTrue(False, f"Missing {key} in expected_keys")
 
         self.client.clusters.destroy_by_id(cluster_id)
 
@@ -154,6 +158,7 @@ class TestClusters(unittest.TestCase):
             node_type_id="i3.xlarge",
             num_workers=0,
             autotermination_minutes=10))
+        
         cluster = self.client.clusters.get_by_id(cluster_id)
 
         ignored = ["last_activity_time", "last_restarted_time", "last_state_loss_time", "start_time", "aws_attributes"]
@@ -174,6 +179,7 @@ class TestClusters(unittest.TestCase):
                 "ClusterId": cluster_id
             },
             "disk_spec": dict(),
+            "driver_healthy": False,
             "driver_instance_source": {"node_type_id": "i3.xlarge"},
             "driver_node_type_id": "i3.xlarge",
             "effective_spark_version": "11.3.x-scala2.12",
@@ -211,9 +217,12 @@ class TestClusters(unittest.TestCase):
         actual_keys = sorted(cluster.keys())
 
         for key in expected_keys:
-            self.assertTrue(key in actual_keys, f"Missing {key} in actual_keys")
+            if key not in actual_keys:
+                self.assertTrue(False, f"Missing {key} in actual_keys")
+
         for key in actual_keys:
-            self.assertTrue(key in expected_keys, f"Missing {key} in actual_keys")
+            if key not in expected_keys:
+                self.assertTrue(False, f"Missing {key} in expected_keys")
 
         self.client.clusters.destroy_by_id(cluster_id)
 
