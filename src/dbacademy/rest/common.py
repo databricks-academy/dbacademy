@@ -46,7 +46,7 @@ class ApiContainer(object):
 class ApiClient(ApiContainer):
 
     url: str = None
-    dns_verify: bool = False
+    dns_verify: bool = True
 
     def __init__(self,
                  url: str,
@@ -73,7 +73,7 @@ class ApiClient(ApiContainer):
         """
         super().__init__()
         import requests
-        from urllib3.util.retry import Retry
+        # from urllib3.util.retry import Retry
         from requests.adapters import HTTPAdapter
 
         # Precluding python warning.
@@ -122,14 +122,12 @@ class ApiClient(ApiContainer):
         # noinspection PyUnresolvedReferences
         # BACKOFF_MAX is not a real parameter.
         # https://stackoverflow.com/questions/47675138/how-to-override-backoff-max-while-working-with-requests-retry
-        retry = Retry(connect=Retry.BACKOFF_MAX / backoff_factor, backoff_factor=backoff_factor)
+        # retry = Retry(connect=Retry.BACKOFF_MAX / backoff_factor, backoff_factor=backoff_factor)
 
         self.session = requests.Session()
         self.session.headers = {'Authorization': authorization_header, 'Content-Type': 'text/json'}
         # noinspection HttpUrlsUsage
-        self.http_adapter = HTTPAdapter(max_retries=retry)
-
-        # noinspection HttpUrlsUsage
+        self.http_adapter = HTTPAdapter()
         self.session.mount('http://', self.http_adapter)
         self.session.mount('https://', self.http_adapter)
 
@@ -180,28 +178,39 @@ class ApiClient(ApiContainer):
         """
         import json
         from urllib.parse import urljoin
+
         if _data is None:
             _data = {}
+
         if data:
             _data = _data.copy()
             _data.update(data)
+
         _base_url: str = urljoin(self.url, _base_url)
+
         if self.dns_verify:
             self._verify_hostname(_base_url)
+
         self._throttle_calls()
+
         if _endpoint_path.startswith(_base_url):
             _endpoint_path = _endpoint_path[len(_base_url):]
+
         elif _endpoint_path.startswith("http"):
             raise ValueError(f"endpoint_path must be relative url, not {_endpoint_path !r}.")
+        
         url = _base_url + _endpoint_path.lstrip("/")
         timeout = (self.connect_timeout, self.read_timeout)
+
         if _http_method in ('GET', 'HEAD', 'OPTIONS'):
             params = {k: str(v).lower() if isinstance(v, bool) else v for k, v in _data.items()}
             response = self.session.request(_http_method, url, params=params, timeout=timeout)
         else:
             # if self.verbose: print(json.dumps(data, indent=4))
             response = self.session.request(_http_method, url, data=json.dumps(_data), timeout=timeout)
+
         self._raise_for_status(response, _expected)
+
         # TODO: Should we really return None on errors?  Kept for now for backwards compatibility.
         if not (200 <= response.status_code < 300):
             return None
@@ -221,6 +230,7 @@ class ApiClient(ApiContainer):
                     "_status": response.status_code,
                     "_response": response.text
                 }
+        # TODO - missing else clause @doug.bateman
 
     @staticmethod
     def _verify_hostname(url: str):
