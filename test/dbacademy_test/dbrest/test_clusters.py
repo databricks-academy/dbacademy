@@ -1,8 +1,5 @@
 import unittest
 
-from dbacademy.common import Cloud
-from dbacademy.dbrest.clusters import ClusterConfig
-
 unit_test_service_principle = "d8835420-9797-45f5-897b-6d81d7f80023"
 
 
@@ -33,6 +30,8 @@ class TestClusters(unittest.TestCase):
         return self.__client
 
     def test_cluster_lifecycles(self):
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
 
         cluster_id_1 = self.client.clusters.create_from_config(ClusterConfig(
             cloud=Cloud.AWS,
@@ -73,6 +72,9 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id_3)
 
     def test_default_cluster_for_single_user(self):
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
+
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
             cloud=Cloud.AWS,
             cluster_name="Default Cluster",
@@ -151,6 +153,9 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_default_cluster(self):
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
+
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
             cloud=Cloud.AWS,
             cluster_name="Default Cluster",
@@ -227,6 +232,9 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_auto_terminate(self):
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
+        
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
             cloud=Cloud.AWS,
             cluster_name="Auto Terminate 10",
@@ -250,6 +258,9 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_create_multi_node(self):
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
+        
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
             cloud=Cloud.AWS,
             cluster_name="Single-Node",
@@ -275,6 +286,9 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_create_single_user(self):
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
+        
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
             cloud=Cloud.AWS,
             cluster_name="Single User A",
@@ -328,6 +342,9 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_create_driver_node_type(self):
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
+        
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
             cloud=Cloud.AWS,
             cluster_name="Driver Node Type A",
@@ -355,6 +372,9 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_create_with_spark_conf(self):
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
+        
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
             cloud=Cloud.AWS,
             cluster_name="AWS Attributes",
@@ -369,8 +389,9 @@ class TestClusters(unittest.TestCase):
         self.assertEquals("enabled", cluster.get("spark_conf").get("dbacademy.whatever"))
 
     def test_create_with_aws_attributes_availability(self):
+        from dbacademy.common import Cloud
         from dbacademy.dbrest.clusters import ClusterConfig
-
+        
         try:
             ClusterConfig(cloud=Cloud.AWS,
                           cluster_name="AWS Attributes SPOT",
@@ -387,6 +408,7 @@ class TestClusters(unittest.TestCase):
             self.assertEquals(f"The parameter \"aws_attributes.availability\" should not be specified directly, use \"availability\" instead.", str(e))
 
     def test_create_with_availability_on_demand_and_instance_profile(self):
+        from dbacademy.common import Cloud
         from dbacademy.dbrest.clusters import ClusterConfig, Availability
 
         try:
@@ -402,6 +424,7 @@ class TestClusters(unittest.TestCase):
             self.assertEquals(f"The parameter \"availability\" cannot be specified when \"instance_pool_id\" is specified.", str(e))
 
     def test_create_with_availability_default(self):
+        from dbacademy.common import Cloud
         from dbacademy.dbrest.clusters import ClusterConfig, Availability
 
         config = ClusterConfig(cloud=Cloud.AWS,
@@ -415,6 +438,7 @@ class TestClusters(unittest.TestCase):
         self.assertEquals(Availability.ON_DEMAND.value, cluster.get("aws_attributes").get("availability"))
 
     def test_create_with_availability_ON_DEMAND(self):
+        from dbacademy.common import Cloud
         from dbacademy.dbrest.clusters import ClusterConfig, Availability
 
         config = ClusterConfig(cloud=Cloud.AWS,
@@ -454,6 +478,7 @@ class TestClusters(unittest.TestCase):
         self.assertEquals("ON_DEMAND_GCP", config.params.get("gcp_attributes").get("availability"))
 
     def test_create_with_availability_SPOT(self):
+        from dbacademy.common import Cloud
         from dbacademy.dbrest.clusters import ClusterConfig, Availability
 
         config = ClusterConfig(cloud=Cloud.AWS,
@@ -493,6 +518,7 @@ class TestClusters(unittest.TestCase):
         self.assertEquals("PREEMPTIBLE_WITH_FALLBACK_GCP", config.params.get("gcp_attributes").get("availability"))
 
     def test_create_with_availability_SPOT_WITH_FALLBACK(self):
+        from dbacademy.common import Cloud
         from dbacademy.dbrest.clusters import ClusterConfig, Availability
 
         config = ClusterConfig(cloud=Cloud.AWS,
@@ -532,6 +558,9 @@ class TestClusters(unittest.TestCase):
         self.assertEquals("PREEMPTIBLE_WITH_FALLBACK_GCP", config.params.get("gcp_attributes").get("availability"))
 
     def test_create_with_extra_params(self):
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
+        
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
             cloud=Cloud.AWS,
             cluster_name="Extra Params",
@@ -566,6 +595,9 @@ class TestClusters(unittest.TestCase):
 
     def test_terminate_by_name(self):
         import time
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
+        
 
         cluster_name = "Destroy By Name"
         self.client.clusters.create_from_config(ClusterConfig(
@@ -594,6 +626,9 @@ class TestClusters(unittest.TestCase):
         self.assertTrue(state in ["TERMINATED", "TERMINATING"], f"Found \"{state}\"")
 
     def test_destroy_by_name(self):
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
+        
         cluster_name = "Destroy By Name"
         self.client.clusters.create_from_config(ClusterConfig(
             cloud=Cloud.AWS,
@@ -608,6 +643,9 @@ class TestClusters(unittest.TestCase):
         self.assertIsNone(cluster)
 
     def test_get_by_name(self):
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
+        
         # Create and then get by name
         cluster_name = "Cluster By Name"
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
@@ -630,6 +668,9 @@ class TestClusters(unittest.TestCase):
         self.assertEquals(cluster_a, cluster_b)
 
     def test_list_deprecated(self):
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
+        
         self.client.clusters.create_from_config(ClusterConfig(
             cloud=Cloud.AWS,
             cluster_name="Deprecated List",
@@ -644,6 +685,9 @@ class TestClusters(unittest.TestCase):
             self.assertEquals("dbacademy.dbrest.clusters.cluster_client_class.list(self): Use ClustersClient.list_clusters() instead", str(e))
 
     def test_get_deprecated(self):
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.clusters import ClusterConfig
+        
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
             cloud=Cloud.AWS,
             cluster_name="Deprecated Get",
