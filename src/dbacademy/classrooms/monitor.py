@@ -110,7 +110,7 @@ class Commands(object):
         """Deletes the Starter Warehouse."""
         endpoints = workspace.sql.endpoints.list_by_name()
         for ep in endpoints.values():
-            if ep['name'] in ["Starter Endpoint", "Starter Warehouse"]:
+            if ep['name'] in ["Starter Endpoint", "Starter Warehouse", "Serverless Starter Warehouse"]:
                 workspace.sql.endpoints.delete(ep['id'])
                 return True
         return False
