@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Dict, Any, List, Optional
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import ApiContainer
 
@@ -7,7 +7,7 @@ class WorkspaceClient(ApiContainer):
     def __init__(self, client: DBAcademyRestClient):
         self.client = client
 
-    def ls(self, path, recursive=False, object_types=None):
+    def ls(self, path: str, recursive: bool = False, object_types: List[str] = None) -> Optional[List[Dict[str, Any]]]:
 
         object_types = object_types or ["NOTEBOOK"]
 
@@ -41,16 +41,16 @@ class WorkspaceClient(ApiContainer):
 
             return entities
 
-    def mkdirs(self, path) -> dict:
+    def mkdirs(self, path: str) -> Dict[str, Any]:
         params = {"path": path}
         return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/mkdirs", params)
 
-    def delete_path(self, path) -> dict:
+    def delete_path(self, path: str) -> Dict[str, Any]:
         payload = {"path": path, "recursive": True}
         expected = [200, 404]
         return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/delete", payload, _expected=expected)
 
-    def import_html_file(self, html_path: str, content: str, overwrite=True) -> dict:
+    def import_html_file(self, html_path: str, content: str, overwrite: bool = True) -> Dict[str, Any]:
         import base64
 
         payload = {
@@ -62,7 +62,7 @@ class WorkspaceClient(ApiContainer):
         }
         return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/import", payload)
 
-    def import_dbc_files(self, target_path, source_url=None, overwrite=True, local_file_path=None):
+    def import_dbc_files(self, target_path: str, source_url: str, overwrite: bool = True, local_file_path: str = None) -> Dict[str, Any]:
         import os, base64
         from urllib import request
 
@@ -95,7 +95,7 @@ class WorkspaceClient(ApiContainer):
         }
         return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/import", payload)
 
-    def import_notebook(self, language: str, notebook_path: str, content: str, overwrite=True) -> dict:
+    def import_notebook(self, language: str, notebook_path: str, content: str, overwrite: bool = True) -> Dict[str, Any]:
         import base64
 
         payload = {
@@ -108,11 +108,15 @@ class WorkspaceClient(ApiContainer):
         return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/import", payload)
 
     def export_notebook(self, path: str) -> str:
-        return self.client.api("GET", "2.0/workspace/export", path=path, format="SOURCE",
+        return self.client.api("GET", "2.0/workspace/export",
+                               path=path,
+                               format="SOURCE",
                                direct_download=True, _result_type=str)
 
-    def export_dbc(self, path):
-        return self.client.api("GET", "2.0/workspace/export", path=path, format="DBC",
+    def export_dbc(self, path: str) -> bytes:
+        return self.client.api("GET", "2.0/workspace/export",
+                               path=path,
+                               format="DBC",
                                direct_download=True, _result_type=bytes)
 
     def get_status(self, path: str) -> Union[None, dict]:
