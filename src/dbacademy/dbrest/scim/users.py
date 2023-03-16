@@ -1,3 +1,4 @@
+from typing import Dict, Any, Union, List
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import ApiContainer
 
@@ -7,7 +8,7 @@ class ScimUsersClient(ApiContainer):
     def __init__(self, client: DBAcademyRestClient):
         self.client = client      # Client API exposing other operations to this class
 
-    def list(self):
+    def list(self) -> List[Dict[str, Any]]:
         response = self.client.api("GET", f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users")
         users = response.get("Resources", list())
         total_results = response.get("totalResults")
@@ -15,32 +16,34 @@ class ScimUsersClient(ApiContainer):
             f"The totalResults ({total_results}) does not match the number of records ({len(users)}) returned"
         return users
 
-    def get_by_id(self, user_id):
+    def get_by_id(self, user_id: str) -> Dict[str, Any]:
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
         return self.client.api("GET", url)
 
-    def get_by_username(self, username):
+    def get_by_username(self, username: str) -> Dict[str, Any]:
         return self.get_by_name(username)
 
-    def get_by_name(self, name):
+    def get_by_name(self, name: str) -> Dict[str, Any]:
         for user in self.list():
             if name == user.get("userName"):
                 return user
 
         return None
 
-    def delete_by_id(self, user_id):
+    def delete_by_id(self, user_id: str) -> None:
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
         return self.client.api("DELETE", url, _expected=204)
 
-    def delete_by_username(self, username):
+    def delete_by_username(self, username: str) -> None:
         for user in self.list():
             if username == user.get("userName"):
                 return self.delete_by_id(user.get("id"))
 
         return None
 
-    def create(self, username):
+    def create(self, username: str) -> Dict[str, Any]:
+        import requests
+
         payload = {
             "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
             "userName": username,
@@ -50,7 +53,7 @@ class ScimUsersClient(ApiContainer):
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users"
         return self.client.api("POST", url, payload, _expected=(200, 201))
 
-    def to_users_list(self, users):
+    def to_users_list(self, users: Union[None,str, Dict[str, Any]]) -> List[Dict[str, Any]]:
 
         # One way or the other, we will use the full list
         all_users = self.list()
@@ -60,7 +63,7 @@ class ScimUsersClient(ApiContainer):
         elif type(users) == str or type(users) == dict:
             users = [users]  # Convert single argument users to a list
         else:
-            assert type(users) == list, f"Expected the parameter \"users\" to be a list, found {type(users)}"
+            assert type(users) == list, f"Expected the parameter \"users\" to be None, str or Dict, found {type(users)}"
 
         new_users = list()
 
@@ -80,7 +83,7 @@ class ScimUsersClient(ApiContainer):
 
         return new_users
     
-    def add_entitlement(self, user_id, entitlement):
+    def add_entitlement(self, user_id: str, entitlement: str) -> Dict[str, Any]:
         payload = {
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
             "Operations": [
@@ -98,7 +101,7 @@ class ScimUsersClient(ApiContainer):
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
         return self.client.api("PATCH", url, payload)
 
-    def remove_entitlement(self, user_id, entitlement):
+    def remove_entitlement(self, user_id: str, entitlement: str) -> Dict[str, Any]:
         payload = {
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
             "Operations": [

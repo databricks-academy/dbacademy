@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Any
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import ApiContainer
 
@@ -9,37 +9,37 @@ class ScimGroupsClient(ApiContainer):
         self.client = client      # Client API exposing other operations to this class
         self.base_uri = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Groups"
 
-    def list(self):
+    def list(self) -> List[Dict[str, Any]]:
         response = self.client.api("GET", f"{self.base_uri}")
         users = response.get("Resources", list())
         total_results = response.get("totalResults")
         assert len(users) == int(total_results), f"The totalResults ({total_results}) does not match the number of records ({len(users)}) returned"
         return users
 
-    def get_by_id(self, id_value):
+    def get_by_id(self, id_value: str) -> Dict[str, Any]:
         url = f"{self.base_uri}/{id_value}"
         return self.client.api("GET", url, _expected=[200, 404])
 
-    def get_by_name(self, name):
+    def get_by_name(self, name: str) -> Dict[str, Any]:
         for group in self.list():
             if name == group.get("displayName"):
                 return group
 
         return None
 
-    def delete_by_id(self, id_value):
+    def delete_by_id(self, id_value: str) -> None:
         url = f"{self.base_uri}/{id_value}"
         self.client.api("DELETE", url, _expected=204)
         return None
 
-    def delete_by_name(self, name):
+    def delete_by_name(self, name: str) -> None:
         for group in self.list():
             if name == group.get("displayName"):
                 return self.delete_by_id(group.get("id"))
 
         return None
 
-    def add_member(self, group_id: str, member_id: str):
+    def add_member(self, group_id: str, member_id: str) -> Dict[str, Any]:
         data = {
                   "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
                   "Operations": [
@@ -57,7 +57,7 @@ class ScimGroupsClient(ApiContainer):
                }
         self.client.api("PATCH", f"{self.base_uri}/{group_id}", data)
 
-    def create(self, name: str, *, members: List[str] = None, entitlements: List[str] = None):
+    def create(self, name: str, *, members: List[str] = None, entitlements: List[str] = None) -> Dict[str, Any]:
 
         members = members or list()
         members_list: List[Dict[str, str]] = list()
@@ -80,7 +80,7 @@ class ScimGroupsClient(ApiContainer):
 
         return self.client.api("POST", self.base_uri, params)
 
-    def add_entitlement(self, group_id, entitlement):
+    def add_entitlement(self, group_id: str, entitlement: str) -> Dict[str, Any]:
         params = {
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
             "Operations": [
@@ -98,7 +98,7 @@ class ScimGroupsClient(ApiContainer):
         url = f"{self.base_uri}/{group_id}"
         return self.client.api("PATCH", url, params)
 
-    def remove_entitlement(self, group_id, entitlement):
+    def remove_entitlement(self, group_id: str, entitlement: str) -> Dict[str, Any]:
         params = {
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
             "Operations": [
