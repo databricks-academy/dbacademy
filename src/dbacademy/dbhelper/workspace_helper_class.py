@@ -118,7 +118,7 @@ class WorkspaceHelper:
 
                 exists = client.workspace.ls(install_dir) is not None
                 if exists:
-                    print(" - Skipping, course alread exists.")
+                    print(" - Skipping, course already exists.")
                 else:
                     print(" - Missing")
                     client.workspace.import_dbc_files(install_dir, download_url)
