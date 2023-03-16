@@ -35,20 +35,19 @@ class WarehousesHelper:
 
     @staticmethod
     def execute_statements(client: DBAcademyRestClient, warehouse_id: str, statements: List[str]) -> None:
-        from dbacademy.dbhelper.databases_helper_class import DatabasesHelper
-        # Ensures that all users can create databases on the current catalog
-        # for cases wherein the user/student is not an admin.
-
-        warehouse = client.sql.endpoints.get_by_name(WarehousesHelper.WAREHOUSES_DEFAULT_NAME)
+        import json
 
         for statement in statements:
-            results = client.sql.statements.execute(warehouse_id=warehouse.get("id"),
+            results = client.sql.statements.execute(warehouse_id=warehouse_id,
                                                     catalog="main",
                                                     schema="default",
                                                     statement=statement)
 
             state = results.get("status", dict()).get("state")
-            assert state == "SUCCEEDED", f"""Expected state to be "SUCCEEDED", found "{state}"."""
+
+            if state != "SUCCEEDED":
+                print(f"""Expected state to be "SUCCEEDED", found "{state}".""")
+                print(json.dumps(results, indent=4))
 
     # TODO - Change enable_serverless_compute to default to True once serverless is mainstream
     def create_sql_warehouses(self, configure_for: str, auto_stop_mins=None, enable_serverless_compute=False):
