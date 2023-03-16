@@ -149,7 +149,8 @@ class ApiClient(ApiContainer):
         #
         # retry = Retry(connect=connection_retries, backoff_factor=backoff_factor, status=connection_retries)
 
-        retry = Retry(connect=connection_retries, backoff_factor=backoff_factor)
+        retry = Retry(connect=connection_retries,
+                      backoff_factor=backoff_factor)
 
         self.session = requests.Session()
         self.session.headers = {'Authorization': authorization_header, 'Content-Type': 'text/json'}
