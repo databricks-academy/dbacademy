@@ -68,6 +68,57 @@ class WorkspaceHelper:
         return dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION)
 
     @staticmethod
+    def install_datasets(installed_datasets: str):
+        from dbacademy.dbgems import dbutils
+        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
+
+        if installed_datasets is not None and installed_datasets.strip() not in ("", "null", "None"):
+            datasets = installed_datasets.split(",")
+            print(f"Installing " + ", ".join(datasets) + " datasets...")
+        else:
+            print(f"Installing all datasets...")
+            datasets = [
+                "example-course",
+                "apache-spark-programming-with-databricks",
+                "data-analysis-with-databricks",
+                "data-engineer-learning-path",
+                "data-engineering-with-databricks",
+                "deep-learning-with-databricks",
+                "introduction-to-python-for-data-science-and-data-engineering",
+                "ml-in-production",
+                "scalable-machine-learning-with-apache-spark",
+            ]
+
+        for dataset in datasets:
+            if ":" in dataset:
+                dataset, data_source_version = dataset.split(":")
+            else:
+                data_source_version = None
+
+            if not data_source_version:
+                datasets_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}"
+                data_source_version = sorted([f.name[:-1] for f in dbutils.fs.ls(datasets_uri)])[-1]
+
+            datasets_path = f"dbfs:/mnt/dbacademy-datasets/{dataset}/{data_source_version}"
+            data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}/{data_source_version}"
+
+            print(f"| {data_source_uri}")
+            print(f"| {datasets_path}")
+
+            remote_files = DatasetManager.list_r(data_source_uri)
+
+            dataset_manager = DatasetManager(data_source_uri=data_source_uri,
+                                             staging_source_uri=None,
+                                             datasets_path=datasets_path,
+                                             remote_files=remote_files)
+
+            dataset_manager.install_dataset(install_min_time=None,
+                                            install_max_time=None,
+                                            reinstall_datasets=False)
+
+            print("\n" + ("-" * 100) + "\n")
+
+    @staticmethod
     def uninstall_courseware(client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
 
         course_defs = [c.strip() for c in courses_arg.split(",")]
