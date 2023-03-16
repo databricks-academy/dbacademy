@@ -183,6 +183,8 @@ class WorkspaceHelper:
                 else:
                     client.workspace.import_dbc_files(install_dir, download_url)
                     print(f" - Installed.")
+                    for file in files:
+                        print(f" - {file}")
 
             print("-" * 80)
 
