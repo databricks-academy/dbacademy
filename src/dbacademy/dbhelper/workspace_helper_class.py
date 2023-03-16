@@ -180,11 +180,11 @@ class WorkspaceHelper:
                 count = 0 if files is None else len(files)
                 if count > 0:
                     print(f" - Skipping, course already exists.")
+                    for file in files or list():
+                        print(f" - {file}")
                 else:
                     client.workspace.import_dbc_files(install_dir, download_url)
                     print(f" - Installed.")
-                    for file in files:
-                        print(f" - {file}")
 
             print("-" * 80)
 
