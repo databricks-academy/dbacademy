@@ -74,7 +74,7 @@ class WorkspaceHelper:
         usernames = usernames or [u.get("userName") for u in client.scim.users.list()]
 
         for username in usernames:
-            print(f"Username: {username}")
+            print(f"Uninstalling courses for {username}")
 
             for course_def in course_defs:
                 url, course, version, artifact, token = WorkspaceHelper.__parse_course_args(course_def)
@@ -127,7 +127,7 @@ class WorkspaceHelper:
 
                 files = client.workspace.ls(install_dir)
                 count = 0 if files is None else len(files)
-                if count == 0:
+                if count > 0:
                     print(f" - Skipping, course already exists ({count}).")
                 else:
                     client.workspace.import_dbc_files(install_dir, download_url)
