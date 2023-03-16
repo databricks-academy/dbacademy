@@ -14,7 +14,7 @@ class WorkspaceClient(ApiContainer):
         if not recursive:
             try:
                 results = self.client.api("GET", f"{self.client.endpoint}/api/2.0/workspace/list", _expected=(200, 404), path=path)
-                
+
                 if results is None:
                     return None
                 else:
