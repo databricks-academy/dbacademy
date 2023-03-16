@@ -132,9 +132,9 @@ class ApiClient(ApiContainer):
         self.verbose = verbose
 
         backoff_factor = self.connect_timeout                            # Default is 5
-        connection_retries = Retry.DEFAULT_BACKOFF_MAX / backoff_factor  # Should be 24
         # noinspection PyUnresolvedReferences
-        # BACKOFF_MAX is not a real parameter.
+        # BACKOFF_MAX is not a real parameter but the documented parameter advertised DEFAULT_BACKOFF_MAX doesn't actually exist.
+        connection_retries = Retry.BACKOFF_MAX / backoff_factor  # Should be 24
         # https://stackoverflow.com/questions/47675138/how-to-override-backoff-max-while-working-with-requests-retry
         retry = Retry(connect=connection_retries,                  # Retry Connect errors N times
                       backoff_factor=backoff_factor,               # A backoff factor to apply between attempts after the second try
