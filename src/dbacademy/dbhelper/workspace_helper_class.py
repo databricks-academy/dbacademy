@@ -132,7 +132,6 @@ class WorkspaceHelper:
                 if exists:
                     print(" - Skipping, course already exists.")
                 else:
-                    print(" - Missing")
                     client.workspace.import_dbc_files(install_dir, download_url)
                     print(" - Installed")
 
