@@ -125,12 +125,13 @@ class WorkspaceHelper:
 
                 print(f" - {install_dir}")
 
-                exists = client.workspace.ls(install_dir) is not None
-                if exists:
-                    print(" - Skipping, course already exists.")
+                files = client.workspace.ls(install_dir)
+                count = 0 if files is None else len(files)
+                if count == 0:
+                    print(f" - Skipping, course already exists ({count}).")
                 else:
                     client.workspace.import_dbc_files(install_dir, download_url)
-                    print(" - Installed")
+                    print(f" - Installed ({count}).")
 
             print("-" * 80)
 
