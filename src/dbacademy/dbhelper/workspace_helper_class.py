@@ -77,8 +77,6 @@ class WorkspaceHelper:
             print(f"Username: {username}")
 
             for course_def in course_defs:
-                print()
-
                 url, course, version, artifact, token = WorkspaceHelper.__parse_course_args(course_def)
 
                 if subdirectory is None:
@@ -88,7 +86,6 @@ class WorkspaceHelper:
 
                 print(install_dir)
                 client.workspace.delete_path(install_dir)
-                print(" - Uninstalled")
 
             print("-" * 80)
 
