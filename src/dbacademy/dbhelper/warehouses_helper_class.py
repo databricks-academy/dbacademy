@@ -169,3 +169,5 @@ class WarehousesHelper:
             See <a href="/sql/warehouses/{warehouse_id}" target="_blank">{name} ({warehouse_id})</a>
         </div></body></html>
         """)
+
+        return warehouse_id
