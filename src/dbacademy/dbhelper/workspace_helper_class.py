@@ -28,6 +28,21 @@ class WorkspaceHelper:
     CONFIGURE_FOR_OPTIONS = ["", CONFIGURE_FOR_ALL_USERS, CONFIGURE_FOR_MISSING_USERS_ONLY, CONFIGURE_FOR_CURRENT_USER_ONLY]
     CONFIGURE_FOR_VALID_OPTIONS = CONFIGURE_FOR_OPTIONS[1:]  # all but empty-string
 
+    def __init__(self, da: DBAcademyHelper):
+        from dbacademy.dbhelper.warehouses_helper_class import WarehousesHelper
+        from dbacademy.dbhelper.databases_helper_class import DatabasesHelper
+        from dbacademy.dbhelper.clusters_helper_class import ClustersHelper
+
+        self.da = da
+        self.client = da.client
+        self.warehouses = WarehousesHelper(self, da)
+        self.databases = DatabasesHelper(self, da)
+        self.clusters = ClustersHelper(self, da)
+
+        self._usernames = None
+        self.__existing_databases = None
+        self.__existing_catalogs = None
+
     @staticmethod
     def get_spark_version():
         from dbacademy import dbgems
@@ -52,20 +67,64 @@ class WorkspaceHelper:
 
         return dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION)
 
-    def __init__(self, da: DBAcademyHelper):
-        from dbacademy.dbhelper.warehouses_helper_class import WarehousesHelper
-        from dbacademy.dbhelper.databases_helper_class import DatabasesHelper
-        from dbacademy.dbhelper.clusters_helper_class import ClustersHelper
+    @staticmethod
+    def install_courseware(client: DBAcademyRestClient, courses_arg: str, usernames: List[str] = None) -> None:
+        from dbacademy.dbgems import dbutils
 
-        self.da = da
-        self.client = da.client
-        self.warehouses = WarehousesHelper(self, da)
-        self.databases = DatabasesHelper(self, da)
-        self.clusters = ClustersHelper(self, da)
+        if courses_arg is None or courses_arg.strip() in ("", "null", "None"):
+            print("No courses specified for installation.")
+            return
 
-        self._usernames = None
-        self.__existing_databases = None
-        self.__existing_catalogs = None
+        course_defs = [c.strip() for c in courses_arg.split(",")]
+        token = dbutils.secrets.get("workspace-setup", "token")
+        usernames = usernames or [u.get("userName") for u in client.scim.users.list()]
+
+        for username in usernames:
+
+            print(f"Username: {username}")
+
+            for course_def in course_defs:
+                print()
+
+                parts = course_def.split("?")
+                if len(parts) == 1:
+                    url = f"https://labs.training.databricks.com/api/v1/courses/download.dbc"
+                    query = parts[0]
+                elif len(parts) == 2:
+                    url = parts[0]
+                    query = parts[1]
+                else:
+                    raise Exception(f"""Invalid course definition, found "{course_def}".""")
+
+                params = {p.split("=")[0]: p.split("=")[1] for p in query.split("&")}
+                course = params.get("course")
+                version = params.get("version")
+                artifact = params.get("artifact")
+                token_x = token or params.get("token")
+
+                download_url = f"{url}?course={course}"
+
+                if version is not None:
+                    download_url += f"&version={version}"
+
+                if artifact is not None:
+                    download_url += f"&artifact={artifact}"
+
+                download_url += f"&token={token_x}"
+
+                print(download_url)
+                install_dir = f"/Users/{username}/dbacademy/{course}"
+                print(f" - {install_dir}")
+
+                exists = client.workspace.ls(install_dir) is not None
+                if exists:
+                    print(" - Skipping, course alread exists.")
+                else:
+                    print(" - Missing")
+                    client.workspace.import_dbc_files(install_dir, download_url)
+                    print(" - Installed")
+
+            print("-" * 80)
 
     @staticmethod
     def add_entitlement_allow_instance_pool_create(client: DBAcademyRestClient):
