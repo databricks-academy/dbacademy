@@ -15,4 +15,7 @@ class SqlClient(ApiContainer):
         from dbacademy.dbrest.sql.queries import SqlQueriesClient
         self.queries = SqlQueriesClient(self.client)
 
+        from dbacademy.dbrest.sql.statements import StatementsClient
+        self.statements = StatementsClient(self.client)
+
         self.permissions = client.permissions.sql
