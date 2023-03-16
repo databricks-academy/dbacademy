@@ -68,7 +68,7 @@ class WorkspaceHelper:
         return dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION)
 
     @staticmethod
-    def install_courseware(client: DBAcademyRestClient, courses_arg: str, usernames: List[str] = None) -> None:
+    def install_courseware(client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
         from dbacademy.dbgems import dbutils
 
         if courses_arg is None or courses_arg.strip() in ("", "null", "None"):
@@ -111,9 +111,13 @@ class WorkspaceHelper:
                     download_url += f"&artifact={artifact}"
 
                 download_url += f"&token={token_x}"
-
                 print(download_url)
-                install_dir = f"/Users/{username}/dbacademy/{course}"
+
+                if subdirectory is None:
+                    install_dir = f"/Users/{username}/{course}"
+                else:
+                    install_dir = f"/Users/{username}/{subdirectory}/{course}"
+
                 print(f" - {install_dir}")
 
                 exists = client.workspace.ls(install_dir) is not None
