@@ -181,7 +181,8 @@ class WorkspaceHelper:
                 if count > 0:
                     print(f" - Skipping, course already exists.")
                     for file in files or list():
-                        print(f" - {file}")
+                        path = file.get("path")
+                        print(f" - {path}")
                 else:
                     client.workspace.import_dbc_files(install_dir, download_url)
                     print(f" - Installed.")
