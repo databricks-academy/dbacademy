@@ -90,6 +90,8 @@ class AccountConfig:
                                         credentials_name=workspace_config.credentials_name,
                                         storage_configuration=workspace_config.storage_configuration,
                                         username_pattern=workspace_config.username_pattern,
+                                        entitlements=workspace_config.entitlements,
+                                        groups=workspace_config.groups,
                                         workspace_name_pattern=workspace_config.workspace_name_pattern)
 
             workspace.init(event_config=event_config, workspace_number=workspace_number)
