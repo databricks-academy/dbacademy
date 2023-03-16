@@ -34,7 +34,12 @@ workspace_config = WorkspaceConfig(max_users=max_users_per_workspace,
                                    credentials_name="default",
                                    storage_configuration="us-west-2",  # Not region, just named after the region.
                                    username_pattern="class+{student_number}@databricks.com",
-                                   entitlements={"allow_cluster_create": True},
+                                   entitlements={
+                                       "allow_cluster_create": True,
+                                       "databricks-sql-access": True,
+                                       "workspace-access": True,
+                                       "allow-instance-pool-create": True,
+                                   },
                                    workspace_name_pattern="classroom-{workspace_number}",
                                    groups={
                                        "analysts": ["class+analyst@databricks.com"],
