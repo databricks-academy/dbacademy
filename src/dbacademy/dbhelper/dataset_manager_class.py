@@ -10,7 +10,7 @@ class DatasetManager:
                               datasets_path=da.paths.datasets,
                               remote_files=da.course_config.remote_files)
 
-    def __init__(self, *, data_source_uri: str, staging_source_uri: str, datasets_path: str, remote_files: List[str]):
+    def __init__(self, *, data_source_uri: str, staging_source_uri: Optional[str], datasets_path: str, remote_files: List[str]):
         """
         Creates an instance of DatasetManager
         :param data_source_uri: See DBAcademy.data_source_uri
@@ -48,7 +48,7 @@ class DatasetManager:
     def repaired_paths(self) -> List[str]:
         return self.__repaired_paths
 
-    def install_dataset(self, *, install_min_time: str, install_max_time: str, reinstall_datasets: bool = False) -> None:
+    def install_dataset(self, *, install_min_time: Optional[str], install_max_time: Optional[str], reinstall_datasets: bool = False) -> None:
         """
         Install the datasets used by this course to DBFS.
 
