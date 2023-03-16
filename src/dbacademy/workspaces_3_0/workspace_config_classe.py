@@ -6,7 +6,19 @@ __all__ = ["WorkspaceConfig"]
 class WorkspaceConfig:
     from dbacademy.workspaces_3_0.event_config_class import EventConfig
 
-    def __init__(self, *, max_users: int, default_node_type_id: str, default_dbr: str, dbc_urls: Union[None, str, List[str]], courses: Union[None, str, List[str]], datasets: Union[None, str, List[str]], username_pattern: str, workspace_name_pattern: str, credentials_name: str, storage_configuration: str) -> None:
+    def __init__(self, *,
+                 max_users: int,
+                 default_node_type_id: str,
+                 default_dbr: str,
+                 dbc_urls: Union[None, str, List[str]],
+                 courses: Union[None, str, List[str]],
+                 datasets: Union[None, str, List[str]],
+                 username_pattern: str,
+                 entitlements: Dict[str, bool],
+                 workspace_name_pattern: str,
+                 credentials_name: str,
+                 storage_configuration: str,
+                 groups: Dict[str, List]) -> None:
         """
         Creates the configuration for workspace-level settings
         :param max_users: see the corresponding property
@@ -37,6 +49,9 @@ class WorkspaceConfig:
         dbc_urls = dbc_urls or list()  # Convert none to empty list
         dbc_urls = [dbc_urls] if type(dbc_urls) == str else dbc_urls  # Convert single string to list of strings
         assert type(dbc_urls) == list, f"""The parameter "dbc_urls" must be a list of strings, found {type(dbc_urls)}."""
+
+        assert type(entitlements) == dict, f"""The parameter "entitlements" must be a dictionary value, found {type(entitlements)}."""
+        # assert len(entitlements) > 3, f"""The parameter "entitlements" must have a length > 0, found "{username_pattern}"."""
 
         assert type(username_pattern) == str, f"""The parameter "username_pattern" must be a string value, found {type(username_pattern)}."""
         assert len(username_pattern) > 3, f"""The parameter "username_pattern" must have a length > 0, found "{username_pattern}"."""
@@ -71,25 +86,33 @@ class WorkspaceConfig:
         self.__username_pattern = username_pattern
         self.__workspace_name_pattern = workspace_name_pattern
 
-        max_users += 1  # Accounts for user-zero, zero to max inclusive
+        self.__entitlements = entitlements
 
         self.__usernames: List[str] = list()
-        for i in range(0, max_users):
+        for i in range(0, max_users+1):
+            # Zero to max inclusive; the +1 accounts for user-zero as the instructor
             value = f"{i:03d}"
             self.__usernames.append(self.__username_pattern.format(student_number=value))
 
-        # Create the user class+analyst@databricks.com
-        analyst_username = "class+analyst@databricks.com"
-        self.__usernames.append(analyst_username)
-
         # Create the group analyst and instructors
         self.__groups = dict()
-        # TODO - Azure and GCP this is OK, it woudl be global
-        # TODO - validate that the group and user exists in case CloudLabs doesn't configure properly
-        self.__groups["analysts"] = [analyst_username]
-        # TODO - Azure and GCP CANNOT support this because it's dynamic
-        # TODO - Add any "odl" users to the instructors group
-        self.__groups["instructors"] = [self.__usernames[0]]
+
+        # Start by initializing groups as an empty list
+        for group_name in groups:
+            self.__groups[group_name] = []
+
+        for group_name, usernames in groups.items():
+            for username in usernames:
+                if type(username) == int:
+                    # We are identifying the user by the Nth user in usernames
+                    username = self.__usernames[username]
+
+                elif username not in self.__usernames:
+                    # Specified a user that doesn't exist in the default set of users
+                    self.__usernames.append(username)
+
+                # Add each user to their group
+                self.__groups.get(group_name).append(username)
 
     def init(self, *, event_config: EventConfig, workspace_number: int):
         from dbacademy.dbgems import stable_hash
@@ -118,6 +141,10 @@ class WorkspaceConfig:
         return self.__name
 
     @property
+    def entitlements(self) -> Dict[str, bool]:
+        return self.__entitlements
+
+    @property
     def username_pattern(self) -> str:
         return self.__username_pattern
 
@@ -132,37 +159,6 @@ class WorkspaceConfig:
     @property
     def event_config(self) -> EventConfig:
         return self.__event_config
-
-    @classmethod
-    def __validate_url(cls, i: int, dbc_url: str) -> None:
-        assert type(dbc_url) == str, f"""Item {i} of the parameter "dbc_urls" must be a strings, found {type(dbc_url)}."""
-        prefix = "https://labs.training.databricks.com/api/courses?"
-        assert dbc_url.startswith(prefix), f"""Item {i} for the parameter "dbc_urls" must start with "{prefix}", found "{dbc_url}"."""
-
-        pos = dbc_url.find("?")
-        assert pos >= 0, f"""Item {i} for the parameter "dbc_urls" is missing its query parameters: course, version, artifact, token."""
-        query = dbc_url[pos+1:]
-        params = query.split("&")
-
-        found_course = False
-        found_version = False
-        found_artifact = False
-        found_token = False
-
-        for param in params:
-            if param.startswith("course="):
-                found_course = True
-            if param.startswith("version="):
-                found_version = True
-            if param.startswith("artifact="):
-                found_artifact = True
-            if param.startswith("token="):
-                found_token = True
-
-        assert found_course, f"""Item {i} for the parameter "dbc_url" is missing the "course" query parameter, found "{dbc_url}"."""
-        assert found_version, f"""Item {i} for the parameter "dbc_url" is missing the "version" query parameter, found "{dbc_url}"."""
-        assert found_artifact, f"""Item {i} for the parameter "dbc_url" is missing the "artifact" query parameter, found "{dbc_url}"."""
-        assert found_token, f"""Item {i} for the parameter "dbc_url" is missing the "token" query parameter, found "{dbc_url}"."""
 
     @property
     def dbc_urls(self) -> List[str]:
@@ -207,3 +203,34 @@ class WorkspaceConfig:
         :return:
         """
         return self.__storage_configuration
+
+    @classmethod
+    def __validate_url(cls, i: int, dbc_url: str) -> None:
+        assert type(dbc_url) == str, f"""Item {i} of the parameter "dbc_urls" must be a strings, found {type(dbc_url)}."""
+        prefix = "https://labs.training.databricks.com/api/courses?"
+        assert dbc_url.startswith(prefix), f"""Item {i} for the parameter "dbc_urls" must start with "{prefix}", found "{dbc_url}"."""
+
+        pos = dbc_url.find("?")
+        assert pos >= 0, f"""Item {i} for the parameter "dbc_urls" is missing its query parameters: course, version, artifact, token."""
+        query = dbc_url[pos+1:]
+        params = query.split("&")
+
+        found_course = False
+        found_version = False
+        found_artifact = False
+        found_token = False
+
+        for param in params:
+            if param.startswith("course="):
+                found_course = True
+            if param.startswith("version="):
+                found_version = True
+            if param.startswith("artifact="):
+                found_artifact = True
+            if param.startswith("token="):
+                found_token = True
+
+        assert found_course, f"""Item {i} for the parameter "dbc_url" is missing the "course" query parameter, found "{dbc_url}"."""
+        assert found_version, f"""Item {i} for the parameter "dbc_url" is missing the "version" query parameter, found "{dbc_url}"."""
+        assert found_artifact, f"""Item {i} for the parameter "dbc_url" is missing the "artifact" query parameter, found "{dbc_url}"."""
+        assert found_token, f"""Item {i} for the parameter "dbc_url" is missing the "token" query parameter, found "{dbc_url}"."""

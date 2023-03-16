@@ -9,9 +9,9 @@ from dbacademy.workspaces_3_0.workspace_setup_class import WorkspaceSetup
 print("-"*100)
 print(f"Starting script at {datetime.now()}")
 
-max_workspace_users = 250
-max_event_participants = 30 * max_workspace_users
-total_workspaces = math.ceil(max_event_participants / max_workspace_users)
+max_users_per_workspace = 2
+max_event_participants = 2 * max_users_per_workspace
+total_workspaces = math.ceil(max_event_participants / max_users_per_workspace)
 first_workspace_number = 1
 
 event_config = EventConfig(event_id=0,
@@ -25,7 +25,7 @@ storage_config = UcStorageConfig(storage_root="s3://unity-catalogs-us-west-2/",
                                  region="us-west-2",
                                  owner=owner)
 
-workspace_config = WorkspaceConfig(max_users=max_workspace_users,
+workspace_config = WorkspaceConfig(max_users=max_users_per_workspace,
                                    courses=None,
                                    datasets=None,
                                    default_dbr="11.3.x-cpu-ml-scala2.12",
@@ -34,9 +34,14 @@ workspace_config = WorkspaceConfig(max_users=max_workspace_users,
                                    credentials_name="default",
                                    storage_configuration="us-west-2",  # Not region, just named after the region.
                                    username_pattern="class+{student_number}@databricks.com",
-                                   workspace_name_pattern="classroom-{workspace_number}")
+                                   entitlements={"allow_cluster_create": True},
+                                   workspace_name_pattern="classroom-{workspace_number}",
+                                   groups={
+                                       "analysts": ["class+analyst@databricks.com"],
+                                       "instructors": [0],
+                                   })
 
-account = AccountConfig.from_env(qualifier="PROSVC",  # CURR
+account = AccountConfig.from_env(qualifier="CURR",  # PROSVC, CURR
                                  first_workspace_number=first_workspace_number,
                                  region="us-west-2",
                                  event_config=event_config,
@@ -54,7 +59,6 @@ for i in range(first_workspace_number, first_workspace_number+total_workspaces, 
                                       enable_features=True,
                                       run_workspace_setup=True,
                                       workspace_numbers=range(i, i+step))
-    # break  # I want to stop
 
 # workspace_setup.remove_workspace_setup_jobs(remove_bootstrap_job=True, remove_final_job=True)
 # workspace_setup.delete_workspaces()

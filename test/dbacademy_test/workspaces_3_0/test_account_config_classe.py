@@ -13,7 +13,7 @@ class TestAccountConfig(unittest.TestCase):
         self.uc_storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", owner="instructors")
 
         dbc_urls = ["https://labs.training.databricks.com/api/courses?course=example-course&version=vLATEST&artifact=lessons.dbc&token=abcd"]
-        self.workspace_config = WorkspaceConfig(max_users=100, courses="example-course", datasets="example-course", default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", dbc_urls=dbc_urls, credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", workspace_name_pattern="classroom-{event_id}-{workspace_number}")
+        self.workspace_config = WorkspaceConfig(max_users=100, courses="example-course", datasets="example-course", default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", dbc_urls=dbc_urls, credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), groups=dict(), workspace_name_pattern="classroom-{event_id}-{workspace_number}")
 
     def test_from_env(self):
         account = AccountConfig.from_env(qualifier="CURR", first_workspace_number=1, region="us-west-2", event_config=self.event_config, uc_storage_config=self.uc_storage_config, workspace_config=self.workspace_config)
@@ -50,7 +50,7 @@ class TestAccountConfig(unittest.TestCase):
 
         # Test with different class name template
 
-        workspace_config = WorkspaceConfig(max_users=100, courses="example-course", datasets="example-course", default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", dbc_urls=list(), credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", workspace_name_pattern="Random-{workspace_number}")
+        workspace_config = WorkspaceConfig(max_users=100, courses="example-course", datasets="example-course", default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", dbc_urls=list(), credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), groups=dict(), workspace_name_pattern="Random-{workspace_number}")
         account = AccountConfig(first_workspace_number=7, region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", event_config=self.event_config, uc_storage_config=self.uc_storage_config, workspace_config=workspace_config)
 
         self.assertEqual(3, len(account.workspaces))

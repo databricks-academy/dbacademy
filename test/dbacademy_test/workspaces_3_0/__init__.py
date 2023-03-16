@@ -15,7 +15,7 @@ def test_assertion_error(test: unittest.TestCase, expected_msg: str, test_lambda
 def test_index_error(test: unittest.TestCase, test_lambda: Callable):
     try:
         test_lambda()
-        raise Exception("Expected an AssertionError")
+        raise Exception("Expected an IndexError")
 
     except IndexError as e:
         if "list index out of range" != str(e):

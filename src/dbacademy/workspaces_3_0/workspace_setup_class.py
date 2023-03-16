@@ -267,21 +267,28 @@ class WorkspaceSetup:
         existing_users = self.__utils_list_users(trio)
 
         if len(existing_users) > 1:
+            # More than one because "this" account is automatically added
             print(f"""Found {len(existing_users)} users for "{name}".""")
 
         for i, username in enumerate(trio.workspace_config.usernames):
             if username not in existing_users:
-                # TODO parameterize allow_cluster_create
-                # trio.classroom.databricks.users.create(username, allow_cluster_create=False)
-                self.__utils_create_user(trio, username)
+                entitlements = trio.workspace_config.entitlements
+                self.__utils_create_user(trio, username, entitlements)
 
-    def __utils_create_user(self, trio: WorkspaceTrio, username) -> List[str]:
+    def __utils_create_user(self, trio: WorkspaceTrio, username: str, entitlements: Dict[str, bool]) -> List[str]:
         import time, random
         from requests.exceptions import HTTPError
 
+        allow_cluster_create = False
+        for entitlement_name, entitlement_value in entitlements:
+            if "allow_cluster_create" == entitlement_name:
+                allow_cluster_create = entitlement_value
+            else:
+                raise ValueError(f"Unsupported entitlement, found {entitlement_name}")
+
         for i in range(0, self.__max_retries):
             try:
-                return trio.classroom.databricks.users.create(username, allow_cluster_create=False, if_exists="ignore")
+                return trio.classroom.databricks.users.create(username, allow_cluster_create=allow_cluster_create, if_exists="ignore")
 
             except HTTPError as e:
                 print(f"""Failed to list users for "{trio.workspace_config.name}", retrying ({i})""")
@@ -327,14 +334,14 @@ class WorkspaceSetup:
         if len(existing_groups) > 0:
             print(f"""Found {len(existing_groups)} groups for "{name}".""")
 
-        for group, usernames in trio.workspace_config.groups.items():
-            # Create the group
-
-            if group not in existing_groups:
-                trio.classroom.databricks.groups.create(group)
+        for group_name, usernames in trio.workspace_config.groups.items():
+            if group_name not in existing_groups:
+                # Create the group
+                trio.classroom.databricks.groups.create(group_name)
 
             for username in usernames:
-                trio.classroom.databricks.groups.add_member(group, user_name=username)
+                # Add the user as a member of that group
+                trio.classroom.databricks.groups.add_member(group_name, user_name=username)
 
     def __create_workspaces_run_workspace_setup(self, trio: WorkspaceTrio):
         try:
