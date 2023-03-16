@@ -68,15 +68,36 @@ class WorkspaceHelper:
         return dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION)
 
     @staticmethod
-    def install_courseware(client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
-        from dbacademy.dbgems import dbutils
+    def uninstall_courseware(client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
 
+        course_defs = [c.strip() for c in courses_arg.split(",")]
+        usernames = usernames or [u.get("userName") for u in client.scim.users.list()]
+
+        for username in usernames:
+            print(f"Username: {username}")
+
+            for course_def in course_defs:
+
+                url, course, version, artifact, token = WorkspaceHelper.__parse_course_args(course_def)
+
+                if subdirectory is None:
+                    install_dir = f"/Users/{username}/{course}"
+                else:
+                    install_dir = f"/Users/{username}/{subdirectory}/{course}"
+
+                print(install_dir)
+                client.workspace.delete_path(install_dir)
+                print(" - Uninstalled")
+                
+            print("-" * 80)
+
+    @staticmethod
+    def install_courseware(client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
         if courses_arg is None or courses_arg.strip() in ("", "null", "None"):
             print("No courses specified for installation.")
             return
 
         course_defs = [c.strip() for c in courses_arg.split(",")]
-        token = dbutils.secrets.get("workspace-setup", "token")
         usernames = usernames or [u.get("userName") for u in client.scim.users.list()]
 
         for username in usernames:
@@ -86,21 +107,7 @@ class WorkspaceHelper:
             for course_def in course_defs:
                 print()
 
-                parts = course_def.split("?")
-                if len(parts) == 1:
-                    url = f"https://labs.training.databricks.com/api/v1/courses/download.dbc"
-                    query = parts[0]
-                elif len(parts) == 2:
-                    url = parts[0]
-                    query = parts[1]
-                else:
-                    raise Exception(f"""Invalid course definition, found "{course_def}".""")
-
-                params = {p.split("=")[0]: p.split("=")[1] for p in query.split("&")}
-                course = params.get("course")
-                version = params.get("version")
-                artifact = params.get("artifact")
-                token_x = token or params.get("token")
+                url, course, version, artifact, token = WorkspaceHelper.__parse_course_args(course_def)
 
                 download_url = f"{url}?course={course}"
 
@@ -110,8 +117,8 @@ class WorkspaceHelper:
                 if artifact is not None:
                     download_url += f"&artifact={artifact}"
 
-                download_url += f"&token={token_x}"
                 print(download_url)
+                download_url += f"&token={token}"
 
                 if subdirectory is None:
                     install_dir = f"/Users/{username}/{course}"
@@ -129,6 +136,30 @@ class WorkspaceHelper:
                     print(" - Installed")
 
             print("-" * 80)
+
+    @staticmethod
+    def __parse_course_args(course_def: str) -> (str, str, str, str, str):
+        from dbacademy.dbgems import dbutils
+
+        token = dbutils.secrets.get("workspace-setup", "token")
+
+        parts = course_def.split("?")
+        if len(parts) == 1:
+            url = f"https://labs.training.databricks.com/api/v1/courses/download.dbc"
+            query = parts[0]
+        elif len(parts) == 2:
+            url = parts[0]
+            query = parts[1]
+        else:
+            raise Exception(f"""Invalid course definition, found "{course_def}".""")
+
+        params = {p.split("=")[0]: p.split("=")[1] for p in query.split("&")}
+        course = params.get("course")
+        version = params.get("version")
+        artifact = params.get("artifact")
+        token = token or params.get("token")
+
+        return url, course, version, artifact, token
 
     @staticmethod
     def add_entitlement_allow_instance_pool_create(client: DBAcademyRestClient):
