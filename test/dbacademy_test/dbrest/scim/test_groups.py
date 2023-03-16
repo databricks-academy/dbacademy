@@ -46,9 +46,9 @@ class TestGroups(unittest.TestCase):
 
     def test_get_by_id(self):
         for group in self.client.scim.groups.list():
-            id = group.get("id")
-            g = self.client.scim.groups.get_by_id(id)
-            self.assertEqual(id, g.get("id"))
+            group_id = group.get("id")
+            g = self.client.scim.groups.get_by_id(group_id)
+            self.assertEqual(group_id, g.get("id"))
 
     def test_get_by_name(self):
         for group in self.client.scim.groups.list():
@@ -61,10 +61,10 @@ class TestGroups(unittest.TestCase):
         group = self.client.scim.groups.get_by_name(name)
         group = group or self.client.scim.groups.create(name)
 
-        id = group.get("id")
-        self.client.scim.groups.delete_by_id(id)
+        group_id = group.get("id")
+        self.client.scim.groups.delete_by_id(group_id)
 
-        group = self.client.scim.groups.get_by_id(id)
+        group = self.client.scim.groups.get_by_id(group_id)
         self.assertIsNone(group)
 
     def test_delete_by_name(self):
