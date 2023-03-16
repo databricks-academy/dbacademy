@@ -154,8 +154,8 @@ class ApiClient(ApiContainer):
         self.session = requests.Session()
         self.session.headers = {'Authorization': authorization_header, 'Content-Type': 'text/json'}
         
-        # noinspection HttpUrlsUsage
         self.http_adapter = HTTPAdapter(max_retries=retry)
+        # noinspection HttpUrlsUsage
         self.session.mount('http://', self.http_adapter)
         self.session.mount('https://', self.http_adapter)
 
