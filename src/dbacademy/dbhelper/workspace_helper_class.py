@@ -16,6 +16,7 @@ class WorkspaceHelper:
     PARAM_NODE_TYPE_ID = "node_type_id"
     PARAM_SPARK_VERSION = "spark_version"
     PARAM_DATASETS = "datasets"
+    PARAM_COURSES = "courses"
     PARAM_SOURCE = "source"
     PARAM_ORG_ID = "org_id"
     PARAM_WORKSPACE_NAME = "workspace_name"
