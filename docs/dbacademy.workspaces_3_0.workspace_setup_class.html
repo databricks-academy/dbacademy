@@ -44,9 +44,9 @@
 
 <dl><dt><a name="WorkspaceSetup-delete_workspaces"><strong>delete_workspaces</strong></a>(self)</dt></dl>
 
-<hr>
-Static methods defined here:<br>
-<dl><dt><a name="WorkspaceSetup-for_each_workspace"><strong>for_each_workspace</strong></a>(workspaces: List[dbacademy.workspaces_3_0.workspace_setup_class.WorkspaceTrio], some_action: Callable[[dbacademy.workspaces_3_0.workspace_setup_class.WorkspaceTrio], NoneType]) -&gt; None</dt></dl>
+<dl><dt><a name="WorkspaceSetup-remove_metastores"><strong>remove_metastores</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="WorkspaceSetup-remove_workspace_setup_jobs"><strong>remove_workspace_setup_jobs</strong></a>(self, *, remove_bootstrap_job: bool, remove_final_job: bool)</dt></dl>
 
 <hr>
 Readonly properties defined here:<br>
@@ -82,9 +82,15 @@ Data and other attributes defined here:<br>
 <td width="100%">Methods defined here:<br>
 <dl><dt><a name="WorkspaceTrio-__init__"><strong>__init__</strong></a>(self, workspace_config: dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig, workspace_api: dbacademy.dougrest.accounts.workspaces.Workspace, classroom: Optional[dbacademy.classrooms.classroom.Classroom])</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
+<dl><dt><a name="WorkspaceTrio-__str__"><strong>__str__</strong></a>(self) -&gt; str</dt><dd><tt>Return&nbsp;str(self).</tt></dd></dl>
+
 <hr>
 Readonly properties defined here:<br>
 <dl><dt><strong>classroom</strong></dt>
+</dl>
+<dl><dt><strong>name</strong></dt>
+</dl>
+<dl><dt><strong>number</strong></dt>
 </dl>
 <dl><dt><strong>workspace_api</strong></dt>
 </dl>
@@ -113,7 +119,9 @@ Data and other attributes defined here:<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>Callable</strong> = typing.Callable<br>
+<td width="100%"><strong>Any</strong> = typing.Any<br>
+<strong>Callable</strong> = typing.Callable<br>
+<strong>Dict</strong> = typing.Dict<br>
 <strong>Iterable</strong> = typing.Iterable<br>
 <strong>List</strong> = typing.List<br>
 <strong>Optional</strong> = typing.Optional</td></tr></table>

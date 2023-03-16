@@ -45,23 +45,23 @@
 Methods defined here:<br>
 <dl><dt><a name="WorkspaceClient-__init__"><strong>__init__</strong></a>(self, client: dbacademy.dbrest.client.DBAcademyRestClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#WorkspaceClient-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="WorkspaceClient-delete_path"><strong>delete_path</strong></a>(self, path) -&gt; dict</dt></dl>
+<dl><dt><a name="WorkspaceClient-delete_path"><strong>delete_path</strong></a>(self, path: str) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="WorkspaceClient-export_dbc"><strong>export_dbc</strong></a>(self, path)</dt></dl>
+<dl><dt><a name="WorkspaceClient-export_dbc"><strong>export_dbc</strong></a>(self, path: str) -&gt; bytes</dt></dl>
 
 <dl><dt><a name="WorkspaceClient-export_notebook"><strong>export_notebook</strong></a>(self, path: str) -&gt; str</dt></dl>
 
 <dl><dt><a name="WorkspaceClient-get_status"><strong>get_status</strong></a>(self, path: str) -&gt; Optional[dict]</dt></dl>
 
-<dl><dt><a name="WorkspaceClient-import_dbc_files"><strong>import_dbc_files</strong></a>(self, target_path, source_url=None, overwrite=True, local_file_path=None)</dt></dl>
+<dl><dt><a name="WorkspaceClient-import_dbc_files"><strong>import_dbc_files</strong></a>(self, target_path: str, source_url: str, overwrite: bool = True, local_file_path: str = None) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="WorkspaceClient-import_html_file"><strong>import_html_file</strong></a>(self, html_path: str, content: str, overwrite=True) -&gt; dict</dt></dl>
+<dl><dt><a name="WorkspaceClient-import_html_file"><strong>import_html_file</strong></a>(self, html_path: str, content: str, overwrite: bool = True) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="WorkspaceClient-import_notebook"><strong>import_notebook</strong></a>(self, language: str, notebook_path: str, content: str, overwrite=True) -&gt; dict</dt></dl>
+<dl><dt><a name="WorkspaceClient-import_notebook"><strong>import_notebook</strong></a>(self, language: str, notebook_path: str, content: str, overwrite: bool = True) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="WorkspaceClient-ls"><strong>ls</strong></a>(self, path, recursive=False, object_types=None)</dt></dl>
+<dl><dt><a name="WorkspaceClient-ls"><strong>ls</strong></a>(self, path: str, recursive: bool = False, object_types: List[str] = None) -&gt; Optional[List[Dict[str, Any]]]</dt></dl>
 
-<dl><dt><a name="WorkspaceClient-mkdirs"><strong>mkdirs</strong></a>(self, path) -&gt; dict</dt></dl>
+<dl><dt><a name="WorkspaceClient-mkdirs"><strong>mkdirs</strong></a>(self, path: str) -&gt; Dict[str, Any]</dt></dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
@@ -88,5 +88,9 @@ Data and other attributes inherited from <a href="dbacademy.rest.common.html#Api
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>Union</strong> = typing.Union</td></tr></table>
+<td width="100%"><strong>Any</strong> = typing.Any<br>
+<strong>Dict</strong> = typing.Dict<br>
+<strong>List</strong> = typing.List<br>
+<strong>Optional</strong> = typing.Optional<br>
+<strong>Union</strong> = typing.Union</td></tr></table>
 </body></html>

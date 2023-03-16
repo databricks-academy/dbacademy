@@ -48,7 +48,7 @@ Methods defined here:<br>
 
 <hr>
 Methods inherited from <a href="dbacademy.dougrest.scim.users.html#Users">dbacademy.dougrest.scim.users.Users</a>:<br>
-<dl><dt><a name="Users-create"><strong>create</strong></a>(self, username, allow_cluster_create=True, if_exists: Literal['create', 'error', 'ignore', 'overwrite', 'update'] = 'error')</dt></dl>
+<dl><dt><a name="Users-create"><strong>create</strong></a>(self, username, *, allow_cluster_create=True, if_exists: Literal['create', 'error', 'ignore', 'overwrite', 'update'] = 'error')</dt></dl>
 
 <dl><dt><a name="Users-delete_by_id"><strong>delete_by_id</strong></a>(self, id)</dt><dd><tt>#&nbsp;TODO&nbsp;Rename&nbsp;parameter&nbsp;"id"&nbsp;to&nbsp;"user_id"<br>
 #&nbsp;noinspection&nbsp;PyShadowingBuiltins</tt></dd></dl>
@@ -60,7 +60,7 @@ Methods inherited from <a href="dbacademy.dougrest.scim.users.html#Users">dbacad
 
 <dl><dt><a name="Users-get_by_username"><strong>get_by_username</strong></a>(self, username, if_not_exists='ignore')</dt></dl>
 
-<dl><dt><a name="Users-list"><strong>list</strong></a>(self, start=1, count=1000)</dt></dl>
+<dl><dt><a name="Users-list"><strong>list</strong></a>(self, start=1, count=1000, *, exclude_roles=False)</dt></dl>
 
 <dl><dt><a name="Users-list_by_username"><strong>list_by_username</strong></a>(self)</dt></dl>
 

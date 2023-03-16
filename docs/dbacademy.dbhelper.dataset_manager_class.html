@@ -32,17 +32,17 @@
 <font color="#000000" face="helvetica, arial"><a name="DatasetManager">class <strong>DatasetManager</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#DatasetManager">DatasetManager</a>(*,&nbsp;data_source_uri:&nbsp;str,&nbsp;staging_source_uri:&nbsp;str,&nbsp;datasets_path:&nbsp;str,&nbsp;remote_files:&nbsp;List[str])<br>
+<td colspan=2><tt><a href="#DatasetManager">DatasetManager</a>(*,&nbsp;data_source_uri:&nbsp;str,&nbsp;staging_source_uri:&nbsp;Optional[str],&nbsp;datasets_path:&nbsp;str,&nbsp;remote_files:&nbsp;List[str])<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="DatasetManager-__init__"><strong>__init__</strong></a>(self, *, data_source_uri: str, staging_source_uri: str, datasets_path: str, remote_files: List[str])</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;<a href="#DatasetManager">DatasetManager</a><br>
+<dl><dt><a name="DatasetManager-__init__"><strong>__init__</strong></a>(self, *, data_source_uri: str, staging_source_uri: Optional[str], datasets_path: str, remote_files: List[str])</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;<a href="#DatasetManager">DatasetManager</a><br>
 :param&nbsp;data_source_uri:&nbsp;See&nbsp;DBAcademy.data_source_uri<br>
 :param&nbsp;staging_source_uri:&nbsp;See&nbsp;DBAcademy.staging_source_uri<br>
 :param&nbsp;datasets_path:&nbsp;See&nbsp;DBAcademy.paths.datasets,&nbsp;Paths</tt></dd></dl>
 
-<dl><dt><a name="DatasetManager-install_dataset"><strong>install_dataset</strong></a>(self, *, install_min_time: str, install_max_time: str, reinstall_datasets: bool = False) -&gt; None</dt><dd><tt>Install&nbsp;the&nbsp;datasets&nbsp;used&nbsp;by&nbsp;this&nbsp;course&nbsp;to&nbsp;DBFS.<br>
+<dl><dt><a name="DatasetManager-install_dataset"><strong>install_dataset</strong></a>(self, *, install_min_time: Optional[str], install_max_time: Optional[str], reinstall_datasets: bool = False) -&gt; None</dt><dd><tt>Install&nbsp;the&nbsp;datasets&nbsp;used&nbsp;by&nbsp;this&nbsp;course&nbsp;to&nbsp;DBFS.<br>
 &nbsp;<br>
 This&nbsp;ensures&nbsp;that&nbsp;data&nbsp;and&nbsp;compute&nbsp;are&nbsp;in&nbsp;the&nbsp;same&nbsp;region&nbsp;which&nbsp;subsequently&nbsp;mitigates&nbsp;performance&nbsp;issues<br>
 when&nbsp;the&nbsp;storage&nbsp;and&nbsp;compute&nbsp;are,&nbsp;for&nbsp;example,&nbsp;on&nbsp;opposite&nbsp;sides&nbsp;of&nbsp;the&nbsp;world.</tt></dd></dl>
