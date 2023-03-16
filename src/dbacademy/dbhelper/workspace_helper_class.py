@@ -100,7 +100,7 @@ class WorkspaceHelper:
 
         for username in usernames:
 
-            print(f"Username: {username}")
+            print(f"Installing courses for {username}")
 
             for course_def in course_defs:
                 print()
