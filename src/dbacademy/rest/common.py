@@ -38,15 +38,22 @@ class ApiContainer(object):
 
     def help(self):
         for member_name in dir(self):
-            if member_name.startswith("__"):
+            
+            if member_name.startswith("__") or member_name in ["T"]:
                 continue
+            
             member = getattr(self, member_name)
-            if isinstance(ApiContainer, member):
+
+            if isinstance(member, ApiContainer):
                 print(f"{member_name}")
-            if isinstance(deprecated, member):
-                pass
-            elif callable(member):
-                print(f"{member_name}()")
+
+            # if isinstance(member, deprecated):
+            #     pass
+            # elif callable(member):
+            #    print(f"{member_name}()")
+
+            if callable(member):
+               print(f"{member_name}()")
 
 
 class ApiClient(ApiContainer):
@@ -124,7 +131,7 @@ class ApiClient(ApiContainer):
         self._last_request_timestamp = 0
         self.verbose = verbose
 
-        backoff_factor = self.connect_timeout
+        # backoff_factor = self.connect_timeout
         # noinspection PyUnresolvedReferences
         # BACKOFF_MAX is not a real parameter.
         # https://stackoverflow.com/questions/47675138/how-to-override-backoff-max-while-working-with-requests-retry
@@ -132,6 +139,7 @@ class ApiClient(ApiContainer):
 
         self.session = requests.Session()
         self.session.headers = {'Authorization': authorization_header, 'Content-Type': 'text/json'}
+        
         # noinspection HttpUrlsUsage
         self.http_adapter = HTTPAdapter()
         self.session.mount('http://', self.http_adapter)
