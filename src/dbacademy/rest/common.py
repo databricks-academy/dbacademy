@@ -136,12 +136,12 @@ class ApiClient(ApiContainer):
         # BACKOFF_MAX is not a real parameter but the documented parameter advertised DEFAULT_BACKOFF_MAX doesn't actually exist.
         connection_retries = Retry.BACKOFF_MAX / backoff_factor  # Should be 24
         # https://stackoverflow.com/questions/47675138/how-to-override-backoff-max-while-working-with-requests-retry
-        retry = Retry(connect=connection_retries,                  # Retry Connect errors N times
-                      backoff_factor=backoff_factor,               # A backoff factor to apply between attempts after the second try
-                      total = 10,                                  # Overrides all other retyr counts
-                      allowed_methods = ["GET", "DELETE", "PUT"],  # Only retry for idempotent verbs
-                      status = 10,                                 # Retry for status_forcelist errors N times
-                      status_forcelist=[429])                      # list of codes to force a retry for
+        retry = Retry(connect=connection_retries,                # Retry Connect errors N times
+                      backoff_factor=backoff_factor,             # A backoff factor to apply between attempts after the second try
+                      total=connection_retries,                                  # Overrides all other retry counts
+                      allowed_methods=["GET", "DELETE", "PUT"],  # Only retry for idempotent verbs
+                      status=connection_retries,                                 # Retry for status_forcelist errors N times
+                      status_forcelist=[429])                    # list of codes to force a retry for
         # retry = Retry(total=4, backoff_factor=1, allowed_methods=None, status_forcelist=[429, 500, 502, 503, 504])
 
         self.session = requests.Session()
