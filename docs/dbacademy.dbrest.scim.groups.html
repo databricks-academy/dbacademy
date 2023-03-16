@@ -45,23 +45,23 @@
 Methods defined here:<br>
 <dl><dt><a name="ScimGroupsClient-__init__"><strong>__init__</strong></a>(self, client: dbacademy.dbrest.client.DBAcademyRestClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#ScimGroupsClient-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="ScimGroupsClient-add_entitlement"><strong>add_entitlement</strong></a>(self, group_id, entitlement)</dt></dl>
+<dl><dt><a name="ScimGroupsClient-add_entitlement"><strong>add_entitlement</strong></a>(self, group_id: str, entitlement: str) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="ScimGroupsClient-add_member"><strong>add_member</strong></a>(self, group_id: str, member_id: str)</dt></dl>
+<dl><dt><a name="ScimGroupsClient-add_member"><strong>add_member</strong></a>(self, group_id: str, member_id: str) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="ScimGroupsClient-create"><strong>create</strong></a>(self, name: str, *, members: List[str] = None, entitlements: List[str] = None)</dt></dl>
+<dl><dt><a name="ScimGroupsClient-create"><strong>create</strong></a>(self, name: str, *, members: List[str] = None, entitlements: List[str] = None) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="ScimGroupsClient-delete_by_id"><strong>delete_by_id</strong></a>(self, id_value)</dt></dl>
+<dl><dt><a name="ScimGroupsClient-delete_by_id"><strong>delete_by_id</strong></a>(self, id_value: str) -&gt; None</dt></dl>
 
-<dl><dt><a name="ScimGroupsClient-delete_by_name"><strong>delete_by_name</strong></a>(self, name)</dt></dl>
+<dl><dt><a name="ScimGroupsClient-delete_by_name"><strong>delete_by_name</strong></a>(self, name: str) -&gt; None</dt></dl>
 
-<dl><dt><a name="ScimGroupsClient-get_by_id"><strong>get_by_id</strong></a>(self, id_value)</dt></dl>
+<dl><dt><a name="ScimGroupsClient-get_by_id"><strong>get_by_id</strong></a>(self, id_value: str) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="ScimGroupsClient-get_by_name"><strong>get_by_name</strong></a>(self, name)</dt></dl>
+<dl><dt><a name="ScimGroupsClient-get_by_name"><strong>get_by_name</strong></a>(self, name: str) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="ScimGroupsClient-list"><strong>list</strong></a>(self)</dt></dl>
+<dl><dt><a name="ScimGroupsClient-list"><strong>list</strong></a>(self) -&gt; List[Dict[str, Any]]</dt></dl>
 
-<dl><dt><a name="ScimGroupsClient-remove_entitlement"><strong>remove_entitlement</strong></a>(self, group_id, entitlement)</dt></dl>
+<dl><dt><a name="ScimGroupsClient-remove_entitlement"><strong>remove_entitlement</strong></a>(self, group_id: str, entitlement: str) -&gt; Dict[str, Any]</dt></dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
@@ -88,6 +88,7 @@ Data and other attributes inherited from <a href="dbacademy.rest.common.html#Api
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>Dict</strong> = typing.Dict<br>
+<td width="100%"><strong>Any</strong> = typing.Any<br>
+<strong>Dict</strong> = typing.Dict<br>
 <strong>List</strong> = typing.List</td></tr></table>
 </body></html>

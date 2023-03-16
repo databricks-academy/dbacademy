@@ -65,6 +65,12 @@ Static methods defined here:<br>
 
 <dl><dt><a name="WorkspaceHelper-get_workspace_name"><strong>get_workspace_name</strong></a>()</dt></dl>
 
+<dl><dt><a name="WorkspaceHelper-install_courseware"><strong>install_courseware</strong></a>(client: dbacademy.dbrest.client.DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -&gt; None</dt></dl>
+
+<dl><dt><a name="WorkspaceHelper-install_datasets"><strong>install_datasets</strong></a>(installed_datasets: str)</dt></dl>
+
+<dl><dt><a name="WorkspaceHelper-uninstall_courseware"><strong>uninstall_courseware</strong></a>(client: dbacademy.dbrest.client.DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -&gt; None</dt></dl>
+
 <hr>
 Readonly properties defined here:<br>
 <dl><dt><strong>description</strong></dt>
@@ -106,6 +112,8 @@ Data and other attributes defined here:<br>
 <dl><dt><strong>DBAcademyRestClient</strong> = &lt;class 'dbacademy.dbrest.client.DBAcademyRestClient'&gt;<dd><tt>Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.</tt></dl>
 
 <dl><dt><strong>PARAM_CONFIGURE_FOR</strong> = 'configure_for'</dl>
+
+<dl><dt><strong>PARAM_COURSES</strong> = 'courses'</dl>
 
 <dl><dt><strong>PARAM_DATASETS</strong> = 'datasets'</dl>
 

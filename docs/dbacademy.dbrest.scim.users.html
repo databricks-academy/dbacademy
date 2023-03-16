@@ -45,25 +45,25 @@
 Methods defined here:<br>
 <dl><dt><a name="ScimUsersClient-__init__"><strong>__init__</strong></a>(self, client: dbacademy.dbrest.client.DBAcademyRestClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#ScimUsersClient-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="ScimUsersClient-add_entitlement"><strong>add_entitlement</strong></a>(self, user_id, entitlement)</dt></dl>
+<dl><dt><a name="ScimUsersClient-add_entitlement"><strong>add_entitlement</strong></a>(self, user_id: str, entitlement: str) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="ScimUsersClient-create"><strong>create</strong></a>(self, username)</dt></dl>
+<dl><dt><a name="ScimUsersClient-create"><strong>create</strong></a>(self, username: str) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="ScimUsersClient-delete_by_id"><strong>delete_by_id</strong></a>(self, user_id)</dt></dl>
+<dl><dt><a name="ScimUsersClient-delete_by_id"><strong>delete_by_id</strong></a>(self, user_id: str) -&gt; None</dt></dl>
 
-<dl><dt><a name="ScimUsersClient-delete_by_username"><strong>delete_by_username</strong></a>(self, username)</dt></dl>
+<dl><dt><a name="ScimUsersClient-delete_by_username"><strong>delete_by_username</strong></a>(self, username: str) -&gt; None</dt></dl>
 
-<dl><dt><a name="ScimUsersClient-get_by_id"><strong>get_by_id</strong></a>(self, user_id)</dt></dl>
+<dl><dt><a name="ScimUsersClient-get_by_id"><strong>get_by_id</strong></a>(self, user_id: str) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="ScimUsersClient-get_by_name"><strong>get_by_name</strong></a>(self, name)</dt></dl>
+<dl><dt><a name="ScimUsersClient-get_by_name"><strong>get_by_name</strong></a>(self, name: str) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="ScimUsersClient-get_by_username"><strong>get_by_username</strong></a>(self, username)</dt></dl>
+<dl><dt><a name="ScimUsersClient-get_by_username"><strong>get_by_username</strong></a>(self, username: str) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="ScimUsersClient-list"><strong>list</strong></a>(self)</dt></dl>
+<dl><dt><a name="ScimUsersClient-list"><strong>list</strong></a>(self) -&gt; List[Dict[str, Any]]</dt></dl>
 
-<dl><dt><a name="ScimUsersClient-remove_entitlement"><strong>remove_entitlement</strong></a>(self, user_id, entitlement)</dt></dl>
+<dl><dt><a name="ScimUsersClient-remove_entitlement"><strong>remove_entitlement</strong></a>(self, user_id: str, entitlement: str) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="ScimUsersClient-to_users_list"><strong>to_users_list</strong></a>(self, users)</dt></dl>
+<dl><dt><a name="ScimUsersClient-to_users_list"><strong>to_users_list</strong></a>(self, users: Union[NoneType, str, Dict[str, Any]]) -&gt; List[Dict[str, Any]]</dt></dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
@@ -83,5 +83,15 @@ Data descriptors inherited from <a href="dbacademy.rest.common.html#ApiContainer
 Data and other attributes inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
 <dl><dt><strong>T</strong> = ~T</dl>
 
-</td></tr></table></td></tr></table>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>Any</strong> = typing.Any<br>
+<strong>Dict</strong> = typing.Dict<br>
+<strong>List</strong> = typing.List<br>
+<strong>Union</strong> = typing.Union</td></tr></table>
 </body></html>
