@@ -86,7 +86,7 @@ class ApiClient(ApiContainer):
         """
         super().__init__()
         import requests
-        # from urllib3.util.retry import Retry
+        from urllib3.util.retry import Retry
         from requests.adapters import HTTPAdapter
 
         # Precluding python warning.
@@ -131,17 +131,24 @@ class ApiClient(ApiContainer):
         self._last_request_timestamp = 0
         self.verbose = verbose
 
-        # backoff_factor = self.connect_timeout
+        backoff_factor = self.connect_timeout
         # noinspection PyUnresolvedReferences
         # BACKOFF_MAX is not a real parameter.
         # https://stackoverflow.com/questions/47675138/how-to-override-backoff-max-while-working-with-requests-retry
-        # retry = Retry(connect=Retry.BACKOFF_MAX / backoff_factor, backoff_factor=backoff_factor)
+        retry = Retry(connect=Retry.BACKOFF_MAX / backoff_factor, 
+                      backoff_factor=backoff_factor, 
+                      total = 10,                                  # Overrides all other retyr counts
+                      connect = 10,                                # Retry Connect errors N times
+                      allowed_methods = ["GET", "DELETE", "PUT"],  # Only retry for idempotent verbs
+                      status = 10,                                 # Retry for status_forcelist errors N times
+                      status_forcelist=[429])                      # list of codes to force a retry for
+        # retry = Retry(total=4, backoff_factor=1, allowed_methods=None, status_forcelist=[429, 500, 502, 503, 504])
 
         self.session = requests.Session()
         self.session.headers = {'Authorization': authorization_header, 'Content-Type': 'text/json'}
         
         # noinspection HttpUrlsUsage
-        self.http_adapter = HTTPAdapter()
+        self.http_adapter = HTTPAdapter(max_retries=retry)
         self.session.mount('http://', self.http_adapter)
         self.session.mount('https://', self.http_adapter)
 
