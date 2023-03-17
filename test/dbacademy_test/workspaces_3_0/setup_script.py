@@ -1,4 +1,5 @@
 import math
+import os
 from datetime import datetime
 from dbacademy.workspaces_3_0.account_config_class import AccountConfig
 from dbacademy.workspaces_3_0.event_config_class import EventConfig
@@ -28,17 +29,18 @@ storage_config = UcStorageConfig(storage_root="s3://unity-catalogs-us-west-2/",
 workspace_config = WorkspaceConfig(max_users=max_users_per_workspace,
                                    course_definitions=[
                                        "course=welcome",
-                                       "course=example-course&version=vCURRENT",
+                                       "course=example-course&version=v1.1.8",
                                        "course=template-course&version=v1.0.0&artifact=template-course.dbc",
-                                       "https://dev.training.databricks.com/api/v1/courses/download.dbc?course=ml-in-production"],
-                                   datasets=None,
+                                       "https://labs.training.databricks.com/api/v1/courses/download.dbc?course=ml-in-production"],
+                                   cds_api_token=os.environ.get("WORKSPACE_SETUP_CDS_API_TOKEN"),
+                                   datasets=None,  # defined via course_definitions
                                    default_dbr="11.3.x-cpu-ml-scala2.12",
                                    default_node_type_id="i3.xlarge",
                                    credentials_name="default",
                                    storage_configuration="us-west-2",  # Not region, just named after the region.
                                    username_pattern="class+{student_number}@databricks.com",
                                    entitlements={
-                                       "allow_cluster_create": True,
+                                       "allow-cluster-create": True,
                                        "databricks-sql-access": True,
                                        "workspace-access": True,
                                        "allow-instance-pool-create": True,
@@ -62,10 +64,12 @@ workspace_setup = WorkspaceSetup(account, max_retries=100)
 step = 5  # total_workspaces  # We can only handle 5 at a time.
 for i in range(first_workspace_number, first_workspace_number+total_workspaces, step):
     workspace_setup.create_workspaces(create_users=True,
-                                      create_groups=False,
+                                      create_groups=True,
                                       create_metastore=True,
                                       enable_features=True,
                                       run_workspace_setup=True,
+                                      uninstall_courseware=False,
+                                      install_courseware=True,
                                       workspace_numbers=range(i, i+step))
 
 # workspace_setup.remove_workspace_setup_jobs(remove_bootstrap_job=True, remove_final_job=True)

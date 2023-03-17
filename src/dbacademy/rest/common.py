@@ -124,12 +124,15 @@ class ApiClient(ApiContainer):
             print_warning("WARNING", f"Requests are being throttled by {throttle_seconds} second{s} per request.")
 
         self.url = url
+        self.token = token
         self.user = user
+        self.password = password
         self.throttle_seconds = throttle_seconds
         self.read_timeout = 300   # seconds
         self.connect_timeout = 5  # seconds
         self._last_request_timestamp = 0
         self.verbose = verbose
+        self.authorization_header = authorization_header
 
         # Reference information for this backoff/retry issues
         # https://stackoverflow.com/questions/47675138/how-to-override-backoff-max-while-working-with-requests-retry
@@ -153,7 +156,7 @@ class ApiClient(ApiContainer):
                       backoff_factor=backoff_factor)
 
         self.session = requests.Session()
-        self.session.headers = {'Authorization': authorization_header, 'Content-Type': 'text/json'}
+        self.session.headers = {'Authorization': self.authorization_header, 'Content-Type': 'text/json'}
         
         self.http_adapter = HTTPAdapter(max_retries=retry)
         # noinspection HttpUrlsUsage

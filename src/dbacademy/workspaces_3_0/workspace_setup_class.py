@@ -169,7 +169,7 @@ class WorkspaceSetup:
                     print(f"""Failed to delete the workspace "{trio.workspace_config.name}".\n{e}""")
                     print("-"*80)
 
-    def create_workspaces(self, *, create_users: bool, create_groups: bool, create_metastore: bool, run_workspace_setup: bool, enable_features: bool, workspace_numbers: Iterable[int] = None):
+    def create_workspaces(self, *, create_users: bool, create_groups: bool, create_metastore: bool, run_workspace_setup: bool, enable_features: bool, install_courseware: bool, uninstall_courseware: bool = False, workspace_numbers: Iterable[int] = None):
         from dbacademy.classrooms.classroom import Classroom
 
         print("\n")
@@ -229,12 +229,105 @@ class WorkspaceSetup:
             print("Skipping enablement of workspace features")
 
         #############################################################
+        if uninstall_courseware:
+            self.__for_each_workspace(workspaces, self.__uninstall_courseware)
+        else:
+            print("Skipping uninstall of courseware")
+
+        #############################################################
+        if install_courseware:
+            self.__for_each_workspace(workspaces, self.__install_courseware)
+        else:
+            print("Skipping install of courseware")
+
+        #############################################################
         if run_workspace_setup:
             self.__for_each_workspace(workspaces, self.__create_workspaces_run_workspace_setup)
         else:
             print("Skipping run of Universal-Workspace-Setup")
 
         print(f"""Completed setup for {len(workspaces)} workspaces.""")
+
+    @classmethod
+    def __install_courseware(cls, trio: WorkspaceTrio):
+        import os
+        from dbacademy.dbrest import DBAcademyRestClient
+        from dbacademy.dbhelper import WorkspaceHelper
+
+        if trio.workspace_api.url.endswith("/api/"):
+            endpoint = trio.workspace_api.url[:-5]
+        elif trio.workspace_api.url.endswith("/"):
+            endpoint = trio.workspace_api.url[:-1]
+        else:
+            endpoint = trio.workspace_api.url
+
+        client = DBAcademyRestClient(authorization_header=trio.workspace_api.authorization_header, endpoint=endpoint, throttle_seconds=1)
+
+        for username in trio.workspace_config.usernames:
+
+            print(f"Installing courses for {username}")
+
+            for course_def in trio.workspace_config.course_definitions:
+                print()
+
+                url, course, version, artifact, token = WorkspaceHelper.parse_course_args(course_def)
+                download_url = WorkspaceHelper.compose_courseware_url(url, course, version, artifact, trio.workspace_config.cds_api_token)
+
+                if trio.workspace_config.courseware_subdirectory is None:
+                    install_dir = f"/Users/{username}/{course}"
+                else:
+                    install_dir = f"/Users/{username}/{trio.workspace_config.courseware_subdirectory}/{course}"
+
+                print(f" - {install_dir}")
+
+                files = client.workspace.ls(install_dir)
+                count = 0 if files is None else len(files)
+                if count > 0:
+                    print(f" - Skipping, course already exists.")
+                else:
+                    files = [f.lower() for f in os.listdir("/")]
+                    if "tmp" in files:
+                        local_file_path = "/tmp/download.dbc"
+                    elif "temp" in files:
+                        local_file_path = "/temp/download.dbc"
+                    else:
+                        local_file_path = "/download.dbc"
+
+                    client.workspace.import_dbc_files(install_dir, download_url, local_file_path=local_file_path)
+                    print(f" - Installed.")
+
+            print("-" * 80)
+
+    @classmethod
+    def __uninstall_courseware(cls, trio: WorkspaceTrio):
+        from dbacademy.dbrest import DBAcademyRestClient
+        from dbacademy.dbhelper import WorkspaceHelper
+
+        if trio.workspace_api.url.endswith("/api/"):
+            endpoint = trio.workspace_api.url[:-5]
+        elif trio.workspace_api.url.endswith("/"):
+            endpoint = trio.workspace_api.url[:-1]
+        else:
+            endpoint = trio.workspace_api.url
+
+        client = DBAcademyRestClient(authorization_header=trio.workspace_api.authorization_header, endpoint=endpoint, throttle_seconds=1)
+        usernames = [u.get("userName") for u in client.scim.users.list()]
+
+        for username in usernames:
+            print(f"Uninstalling courses for {username}")
+
+            for course_def in trio.workspace_config.course_definitions:
+                url, course, version, artifact, token = WorkspaceHelper.parse_course_args(course_def)
+
+                if trio.workspace_config.courseware_subdirectory is None:
+                    install_dir = f"/Users/{username}/{course}"
+                else:
+                    install_dir = f"/Users/{username}/{trio.workspace_config.courseware_subdirectory}/{course}"
+
+                print(install_dir)
+                client.workspace.delete_path(install_dir)
+
+            print("-" * 80)
 
     @classmethod
     def __create_workspaces_enable_features(cls, trio: WorkspaceTrio):
@@ -279,17 +372,20 @@ class WorkspaceSetup:
         import time, random
         from requests.exceptions import HTTPError
 
-        allow_cluster_create = False
-        for entitlement_name, entitlement_value in entitlements:
-            if "allow_cluster_create" == entitlement_name:
-                allow_cluster_create = entitlement_value
+        entitlements_list = list()
+
+        for entitlement_name, entitlement_value in entitlements.items():
+            if entitlement_value is True:
+                entitlements_list.append(entitlement_name)
             else:
-                raise ValueError(f"Unsupported entitlement, found {entitlement_name}")
+                raise Exception("Entitlement removal is not yet supported.")
 
         for i in range(0, self.__max_retries):
             try:
-                return trio.classroom.databricks.users.create(username, allow_cluster_create=allow_cluster_create, if_exists="ignore")
-
+                return trio.classroom.databricks.users.create(username=username,
+                                                              allow_cluster_create=False,
+                                                              entitlements=entitlements_list,
+                                                              if_exists="ignore")
             except HTTPError as e:
                 print(f"""Failed to list users for "{trio.workspace_config.name}", retrying ({i})""")
                 data = e.response.json()
@@ -315,8 +411,8 @@ class WorkspaceSetup:
                 data = e.response.json()
                 message = data.get("detail", str(e))
                 print(f"HTTPError ({e.response.status_code}): {message}")
-                raise e
                 time.sleep(random.randint(5, 10))
+                raise e
 
         if existing_users is None:
             raise Exception(f"""Failed to load existing users for "{trio.workspace_config.name}".""")
@@ -388,7 +484,8 @@ class WorkspaceSetup:
                                          spark_version=trio.workspace_config.default_dbr,
                                          datasets=trio.workspace_config.datasets,
                                          lab_id=lab_id,
-                                         description=description)
+                                         description=description,
+                                         courses=trio.workspace_config.dbc_urls)
 
         assert state == "SUCCESS", f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{state}" for "{trio.name}"."""
 

@@ -18,6 +18,7 @@ class WorkspaceConfig:
                  credentials_name: str,
                  storage_configuration: str,
                  cds_api_token: str = None,
+                 courseware_subdirectory: str = None,
                  groups: Dict[str, List]) -> None:
         """
         Creates the configuration for workspace-level settings
@@ -39,7 +40,8 @@ class WorkspaceConfig:
         assert len(default_dbr) > 3, f"""Invalid DBR format, found "{default_dbr}"."""
 
         assert cds_api_token is None or type(cds_api_token) == str, f"""The parameter "cds_api_token" must be None or a string value, found {type(default_dbr)}."""
-        # assert len(cds_api_token) > 3, f"""Invalid DBR format, found "{default_dbr}"."""
+
+        assert courseware_subdirectory is None or type(courseware_subdirectory) == str, f"""The parameter "courseware_subdirectory" must be None or a string value, found {type(courseware_subdirectory)}."""
 
         course_definitions = course_definitions or list()  # Convert none to empty list
         assert type(course_definitions) == list or type(course_definitions) == str, f"""The parameter "course_definitions" must be a string value or a list of strings, found {type(course_definitions)}."""
@@ -76,8 +78,8 @@ class WorkspaceConfig:
         self.__name = None
 
         self.__course_definitions = course_definitions
+        self.__courseware_subdirectory = courseware_subdirectory
         self.__cds_api_token = cds_api_token
-        self.__datasets = datasets
         self.__default_node_type_id = default_node_type_id
         self.__default_dbr = default_dbr
         self.__username_pattern = username_pattern
@@ -87,8 +89,11 @@ class WorkspaceConfig:
         self.__cds_api_token = cds_api_token
 
         self.__dbc_urls = list()
+        self.__datasets = datasets or list()
+
         for course_def in self.course_definitions:
             url, course, version, artifact, token = WorkspaceHelper.parse_course_args(course_def=course_def)
+            self.__datasets.append(course)
             if token is not None:
                 raise AssertionError(f"""The CDS API token should not be specified in the courseware definition, please use the "cds_api_token" parameter" instead.""")
 
@@ -189,6 +194,10 @@ class WorkspaceConfig:
     @property
     def course_definitions(self):
         return self.__course_definitions
+
+    @property
+    def courseware_subdirectory(self):
+        return self.__courseware_subdirectory
 
     @property
     def datasets(self):
