@@ -55,6 +55,8 @@ Static methods defined here:<br>
 
 <dl><dt><a name="WorkspaceHelper-add_entitlement_workspace_access"><strong>add_entitlement_workspace_access</strong></a>(client: dbacademy.dbrest.client.DBAcademyRestClient)</dt></dl>
 
+<dl><dt><a name="WorkspaceHelper-compose_courseware_url"><strong>compose_courseware_url</strong></a>(url: str, course: str, version: Optional[str], artifact: Optional[str], token: str) -&gt; str</dt></dl>
+
 <dl><dt><a name="WorkspaceHelper-do_for_all_users"><strong>do_for_all_users</strong></a>(usernames: List[str], f: Callable[[str], ~T]) -&gt; List[~T]</dt></dl>
 
 <dl><dt><a name="WorkspaceHelper-get_lab_id"><strong>get_lab_id</strong></a>()</dt></dl>
@@ -68,6 +70,8 @@ Static methods defined here:<br>
 <dl><dt><a name="WorkspaceHelper-install_courseware"><strong>install_courseware</strong></a>(client: dbacademy.dbrest.client.DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -&gt; None</dt></dl>
 
 <dl><dt><a name="WorkspaceHelper-install_datasets"><strong>install_datasets</strong></a>(installed_datasets: str)</dt></dl>
+
+<dl><dt><a name="WorkspaceHelper-parse_course_args"><strong>parse_course_args</strong></a>(course_def: str) -&gt; (&lt;class 'str'&gt;, &lt;class 'str'&gt;, &lt;class 'str'&gt;, &lt;class 'str'&gt;, &lt;class 'str'&gt;)</dt></dl>
 
 <dl><dt><a name="WorkspaceHelper-uninstall_courseware"><strong>uninstall_courseware</strong></a>(client: dbacademy.dbrest.client.DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -&gt; None</dt></dl>
 
@@ -143,5 +147,6 @@ Data and other attributes defined here:<br>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><strong>Callable</strong> = typing.Callable<br>
-<strong>List</strong> = typing.List</td></tr></table>
+<strong>List</strong> = typing.List<br>
+<strong>Optional</strong> = typing.Optional</td></tr></table>
 </body></html>

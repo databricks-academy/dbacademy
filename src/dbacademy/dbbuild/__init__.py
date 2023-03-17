@@ -1,3 +1,6 @@
+"""
+This module contains utilities for building and publishing courseware classically composed of Databricks Notebooks, Google Slides, etc. and serves a key integration point to the Content Distribution System.
+"""
 from dbacademy.dbbuild.build_config_class import BuildConfig
 
 
