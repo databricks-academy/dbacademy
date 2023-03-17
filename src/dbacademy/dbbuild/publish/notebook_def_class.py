@@ -271,7 +271,7 @@ class NotebookDef:
             padding = " "*len(prefix)
             return self.warn(lambda: False, template.format(prefix=prefix, what=what, padding=padding, line=line))
 
-    def test_source_cells(self, language: str, command: str, i: int):
+    def test_source_cells(self, language: str, command: str, i: int) -> str:
 
         if language not in ["python", "scala", "sql", "java", "r"]:
             return command
@@ -295,6 +295,7 @@ class NotebookDef:
 
         parts = line_0.strip().split(" ")
         for index, part in enumerate(parts):
+            # Remove all "parts" that are empty strings
             if part.strip() == "":
                 del parts[index]
 
@@ -349,6 +350,7 @@ class NotebookDef:
         self.validate_html_link(i, command)
 
         if not self.i18n:
+            # This is the deprecated form, still need to validate it until fully replaced
             self.test(lambda: "--i18n-" not in command, f"Cmd #{i+1} | Found the \"--i18n-\" marker but i18n processing is disabled.")
             return command
         else:
@@ -574,11 +576,9 @@ For more current information, please see <a href="https://files.training.databri
 
             command = commands[i].lstrip()
 
-            command = self._test_i18n(language, command, i)
-
             if not self.i18n:
                 # If we are not translating, then this feature must be excluded.
-                self.test(lambda: "DBTITLE" not in command, f"Cmd #{i+1} | Unsupported Cell-Title found")
+                self.test(lambda: "DBTITLE" not in command, f"Cmd #{i+1} | Cell titles are only supported for translated courses, please remove to continue.")
 
             # Misc tests for language specific cells
             command = self.test_source_cells(language, command, i)
