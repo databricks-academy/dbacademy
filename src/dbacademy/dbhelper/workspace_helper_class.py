@@ -151,6 +151,7 @@ class WorkspaceHelper:
 
     @staticmethod
     def install_courseware(client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
+
         if courses_arg is None or courses_arg.strip() in ("", "null", "None"):
             print("No courses specified for installation.")
             return

@@ -261,7 +261,7 @@ class WorkspaceSetup:
         else:
             endpoint = trio.workspace_api.url
 
-        client = DBAcademyRestClient(authorization_header=trio.workspace_api.authorization_header, endpoint=endpoint, throttle_seconds=1)
+        client = DBAcademyRestClient(authorization_header=trio.workspace_api.authorization_header, endpoint=endpoint)
 
         for username in trio.workspace_config.usernames:
 
@@ -310,7 +310,7 @@ class WorkspaceSetup:
         else:
             endpoint = trio.workspace_api.url
 
-        client = DBAcademyRestClient(authorization_header=trio.workspace_api.authorization_header, endpoint=endpoint, throttle_seconds=1)
+        client = DBAcademyRestClient(authorization_header=trio.workspace_api.authorization_header, endpoint=endpoint)
         usernames = [u.get("userName") for u in client.scim.users.list()]
 
         for username in usernames:

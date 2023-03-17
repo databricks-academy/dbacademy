@@ -8,7 +8,7 @@ class DBAcademyRestClient(ApiClient):
     def __init__(self,
                  token: str = None,
                  endpoint: str = None,
-                 throttle_seconds: int = 0,
+                 throttle_seconds: int = 1,  # TODO We want the default to be 0, but Databricks is rate limiting us and this is the safest, albeit, poorest option. Intelligent retries would be better.
                  *,
                  user: str = None,
                  password: str = None,

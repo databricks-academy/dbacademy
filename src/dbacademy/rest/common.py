@@ -119,9 +119,11 @@ class ApiClient(ApiContainer):
         if not url.endswith("/"):
             url += "/"
 
-        if throttle_seconds > 0:
-            s = "" if throttle_seconds == 1 else "s"
-            print_warning("WARNING", f"Requests are being throttled by {throttle_seconds} second{s} per request.")
+        # TODO @jacob: We are having production issues where Databricks is rate limiting us. As a result,
+        #   we need to apply a throttle but we don't want to be advertising that to students.
+        # if throttle_seconds > 0:
+        #     s = "" if throttle_seconds == 1 else "s"
+        #     print_warning("WARNING", f"Requests are being throttled by {throttle_seconds} second{s} per request.")
 
         self.url = url
         self.token = token
