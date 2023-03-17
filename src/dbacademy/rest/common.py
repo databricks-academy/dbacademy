@@ -222,7 +222,7 @@ class ApiClient(ApiContainer):
 
         connection_errors = 0
         import time
-        for attempt in range(self.retries):
+        for attempt in range(self.retries+1):
             try:
                 if _http_method in ('GET', 'HEAD', 'OPTIONS'):
                     params = {k: str(v).lower() if isinstance(v, bool) else v for k, v in _data.items()}
