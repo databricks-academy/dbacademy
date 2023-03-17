@@ -7,8 +7,9 @@ rmdir /s/q .\src\dbacademy.egg-info
 
 RMDIR /q docs /Q /S
 MKDIR docs
+COPY .\docs_src\index.html .\docs\index.html
+
 CD docs
 SET PYTHONPATH=..\src
 python -m pydoc -w ..\src\
-COPY dbacademy.html index.html
 
