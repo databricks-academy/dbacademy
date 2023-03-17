@@ -186,10 +186,7 @@ class Commands(object):
                     results += [{"job_name": job_name, "paused": False}]
                 else:
                     # Don't stop jobs in the following situations
-                    if "curriculum-dev" == w["deployment_name"]:
-                        results += [{"action": "Job skipped", "name": job_name, "exception": ""}]
-                        continue
-                    if "curriculum" == w["deployment_name"]:
+                    if w["deployment_name"] in ["curriculum-dev", "curriculum", "curriculum-operations"]:
                         results += [{"action": "Job skipped", "name": job_name, "exception": ""}]
                         continue
                     if job_name == "_Monitor_Workspace":
