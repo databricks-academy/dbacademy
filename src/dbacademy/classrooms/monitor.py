@@ -681,7 +681,6 @@ class Commands(object):
                     "base_parameters": {
                         WorkspaceHelper.PARAM_LAB_ID: lab_id or "Unknown",
                         WorkspaceHelper.PARAM_DESCRIPTION: description or "Unknown",
-                        WorkspaceHelper.PARAM_CONFIGURE_FOR: WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY,
                         WorkspaceHelper.PARAM_NODE_TYPE_ID: node_type_id,
                         WorkspaceHelper.PARAM_SPARK_VERSION: spark_version,
                         WorkspaceHelper.PARAM_DATASETS: ",".join(datasets),

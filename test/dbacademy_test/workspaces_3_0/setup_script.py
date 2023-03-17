@@ -33,7 +33,7 @@ workspace_config = WorkspaceConfig(max_users=max_users_per_workspace,
                                        "course=template-course&version=v1.0.0&artifact=template-course.dbc",
                                        "https://labs.training.databricks.com/api/v1/courses/download.dbc?course=ml-in-production"],
                                    cds_api_token=os.environ.get("WORKSPACE_SETUP_CDS_API_TOKEN"),
-                                   datasets=None,  # defined via course_definitions
+                                   datasets=None,  # defined via course_definitions, otherwise appends
                                    default_dbr="11.3.x-cpu-ml-scala2.12",
                                    default_node_type_id="i3.xlarge",
                                    credentials_name="default",
