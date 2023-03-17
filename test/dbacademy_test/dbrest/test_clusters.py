@@ -8,12 +8,13 @@ class TestClusters(unittest.TestCase):
     def setUp(self) -> None:
         import os
         from dbacademy.dbrest import DBAcademyRestClient
+        from dbacademy.common.unit_tests import DBACADEMY_UNIT_TESTS_API_TOKEN, DBACADEMY_UNIT_TESTS_API_ENDPOINT
 
-        token = os.getenv("DBACADEMY_UNIT_TESTS_API_TOKEN", None)
-        endpoint = os.getenv("DBACADEMY_UNIT_TESTS_API_ENDPOINT", None)
+        token = os.getenv(DBACADEMY_UNIT_TESTS_API_TOKEN)
+        endpoint = os.getenv(DBACADEMY_UNIT_TESTS_API_ENDPOINT)
 
         if token is None or endpoint is None:
-            self.skipTest("Missing DBACADEMY_UNIT_TESTS_API_TOKEN or DBACADEMY_UNIT_TESTS_API_ENDPOINT environment variables")
+            self.skipTest(f"Missing {DBACADEMY_UNIT_TESTS_API_TOKEN} or {DBACADEMY_UNIT_TESTS_API_ENDPOINT} environment variables")
 
         self.__client = DBAcademyRestClient(token=token, endpoint=endpoint)
 
@@ -165,7 +166,7 @@ class TestClusters(unittest.TestCase):
         
         cluster = self.client.clusters.get_by_id(cluster_id)
 
-        ignored = ["last_activity_time", "last_restarted_time", "last_state_loss_time", "start_time", "aws_attributes"]
+        ignored = ["last_activity_time", "last_restarted_time", "last_state_loss_time", "start_time", "aws_attributes", "state_message"]
 
         expected = {
             "autotermination_minutes": 10,
@@ -199,7 +200,6 @@ class TestClusters(unittest.TestCase):
             },
             "spark_version": "11.3.x-scala2.12",
             "state": "PENDING",
-            "state_message": "",
         }
 
         for key in ignored:
@@ -567,7 +567,7 @@ class TestClusters(unittest.TestCase):
             node_type_id="i3.xlarge",
             num_workers=0,
             autotermination_minutes=10,
-            custom_tags={"dbacademy.smoke_tests": True}))
+            custom_tags={"dbacademy.smoke_tests": "true"}))
         cluster = self.client.clusters.get_by_id(cluster_id)
         self.assertEquals("true", cluster.get("custom_tags").get("dbacademy.smoke_tests"))
 
@@ -596,7 +596,6 @@ class TestClusters(unittest.TestCase):
         import time
         from dbacademy.common import Cloud
         from dbacademy.dbrest.clusters import ClusterConfig
-        
 
         cluster_name = "Destroy By Name"
         self.client.clusters.create_from_config(ClusterConfig(

@@ -574,7 +574,11 @@ For more current information, please see <a href="https://files.training.databri
 
             command = commands[i].lstrip()
 
-            self.test(lambda: "DBTITLE" not in command, f"Cmd #{i+1} | Unsupported Cell-Title found")
+            command = self._test_i18n(language, command, i)
+
+            if not self.i18n:
+                # If we are not translating, then this feature must be excluded.
+                self.test(lambda: "DBTITLE" not in command, f"Cmd #{i+1} | Unsupported Cell-Title found")
 
             # Misc tests for language specific cells
             command = self.test_source_cells(language, command, i)

@@ -8,12 +8,13 @@ class TestUsers(unittest.TestCase):
     def setUp(self) -> None:
         import os
         from dbacademy.dbrest import DBAcademyRestClient
+        from dbacademy.common.unit_tests import DBACADEMY_UNIT_TESTS_API_TOKEN, DBACADEMY_UNIT_TESTS_API_ENDPOINT
 
-        token = os.getenv("DBACADEMY_UNIT_TESTS_API_TOKEN", None)
-        endpoint = os.getenv("DBACADEMY_UNIT_TESTS_API_ENDPOINT", None)
+        token = os.getenv(DBACADEMY_UNIT_TESTS_API_TOKEN)
+        endpoint = os.getenv(DBACADEMY_UNIT_TESTS_API_ENDPOINT)
 
         if token is None or endpoint is None:
-            self.skipTest("Missing DBACADEMY_UNIT_TESTS_API_TOKEN or DBACADEMY_UNIT_TESTS_API_ENDPOINT environment variables")
+            self.skipTest(f"Missing {DBACADEMY_UNIT_TESTS_API_TOKEN} or {DBACADEMY_UNIT_TESTS_API_ENDPOINT} environment variables")
 
         self.__client = DBAcademyRestClient(token=token, endpoint=endpoint)
 
