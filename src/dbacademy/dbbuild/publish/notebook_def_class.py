@@ -12,6 +12,26 @@ class NotebookError:
         return self.message
 
 
+class StateVariables:
+    def __init__(self):
+        # Stateful values that get reset during publishing.
+        self.students_commands = list()
+        self.solutions_commands = list()
+
+        # Reset counters
+        self.todo_count = 0
+        self.answer_count = 0
+        self.skipped = 0
+
+        # Reset header flags
+        self.include_header = False
+        self.found_header_directive = False
+
+        # Reset footer flags
+        self.include_footer = False
+        self.found_footer_directive = False
+
+
 class NotebookDef:
     from dbacademy.dbbuild.build_config_class import BuildConfig
 
@@ -289,7 +309,7 @@ class NotebookDef:
 
         return command
 
-    def replace_guid(self, cm: str, command: str, i: int, i18n_guid_map: dict):
+    def replace_guid_body(self, cm: str, command: str, i: int, i18n_guid_map: dict):
         lines = command.strip().split("\n")
         line_0 = lines[0][7+len(cm):]
 
@@ -336,7 +356,54 @@ class NotebookDef:
 
         return command
 
-    def update_md_cells(self, language: str, command: str, i: int, i18n_guid_map: dict, other_notebooks: list):
+    def replace_guid_title(self, cm: str, command: str, i: int, i18n_guid_map: dict):
+        lines = command.strip().split("\n")
+        line_0 = lines[0][7+len(cm):]
+
+        parts = line_0.strip().split(" ")
+        for index, part in enumerate(parts):
+            # Remove all "parts" that are empty strings
+            if part.strip() == "":
+                del parts[index]
+
+        md_tag = None if len(parts) < 1 else parts[0]
+        guid = None if len(parts) < 2 else parts[1].strip()
+
+        debug_info = line_0
+
+        passed = self.test(lambda: len(lines) > 1, f"Cmd #{i + 1} | Expected MD to have more than 1 line of code with i18n enabled: {debug_info}")
+
+        if len(parts) == 1:
+            passed = passed and self.test(lambda: False, f"Cmd #{i + 1} | Missing the i18n directive: {debug_info}")
+        else:
+            passed = passed and self.test(lambda: len(parts) == 2, f"Cmd #{i + 1} | Expected the first line of MD to have only two words, found {len(parts)}: {debug_info}")
+            passed = passed and self.test(lambda: parts[0] in ["%md", "%md-sandbox"], f"Cmd #{i + 1} | Expected word[0] of the first line of MD to be \"%md\" or \"%md-sandbox\", found {parts[0]}: {debug_info}")
+            passed = passed and self.test(lambda: guid.startswith("--i18n-"), f"Cmd #{i + 1} | Expected word[1] of the first line of MD to start with \"--i18n-\", found {guid}: {debug_info}")
+
+        if passed:
+            passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Cmd #{i + 1} | Duplicate i18n GUID found: {guid}")
+
+        if passed:
+            self.i18n_guids.append(guid)
+
+            if not self.i18n_language:
+                # This is a "standard" publish, just remove the i18n directive
+                del lines[0]  # Remove the i18n directive
+            else:
+                # We must confirm that the replacement GUID actually exists
+                if self.warn(lambda: guid in i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
+                    lines = i18n_guid_map.get(guid).split("\n")
+
+            if self.build_config.i18n_xml_tag_disabled:
+                lines.insert(0, f"{cm} MAGIC {md_tag}")
+            else:
+                lines.insert(0, f"{cm} MAGIC {md_tag} <i18n value=\"{guid[7:]}\"/>")
+
+            command = "\n".join(lines)
+
+        return command
+
+    def update_md_cells(self, language: str, command: str, i: int, i18n_guid_map: dict, other_notebooks: list) -> str:
 
         # First verify that the specified command is a mark-down cell
         cm = self.get_comment_marker(language)
@@ -354,10 +421,9 @@ class NotebookDef:
             self.test(lambda: "--i18n-" not in command, f"Cmd #{i+1} | Found the \"--i18n-\" marker but i18n processing is disabled.")
             return command
         else:
-            return self.replace_guid(cm=cm,
-                                     command=command,
-                                     i=i,
-                                     i18n_guid_map=i18n_guid_map)
+            # command = self.replace_guid_title(cm=cm, command=command, i=i, i18n_guid_map=i18n_guid_map)
+            command = self.replace_guid_body(cm=cm, command=command, i=i, i18n_guid_map=i18n_guid_map)
+            return command
 
     def create_resource_bundle(self, natural_language: str, source_dir: str, target_dir: str) -> None:
         natural_language = None if natural_language is None else natural_language.lower()
@@ -553,163 +619,35 @@ For more current information, please see <a href="https://files.training.databri
         i18n_source = self.load_i18n_source(i18n_resources_dir)
         i18n_guid_map = self.load_i18n_guid_map(i18n_source)
 
-        skipped = 0
-        students_commands = []
-        solutions_commands = []
+        state = StateVariables()
 
         cmd_delim = self.get_cmd_delim(language)
         commands = raw_source.split(cmd_delim)
-
-        todo_count = 0
-        answer_count = 0
-
-        include_header = False
-        found_header_directive = False
-
-        include_footer = False
-        found_footer_directive = False
 
         for i in range(len(commands)):
             if debugging:
                 print("\n" + ("=" * 80))
                 print(f"Debug Command {i + 1}")
 
-            command = commands[i].lstrip()
+            self.update_command(state=state,
+                                language=language,
+                                command=commands[i].lstrip(),
+                                i=i,
+                                i18n_guid_map=i18n_guid_map,
+                                other_notebooks=other_notebooks,
+                                debugging=debugging)
 
-            if not self.i18n:
-                # If we are not translating, then this feature must be excluded.
-                self.test(lambda: "DBTITLE" not in command, f"Cmd #{i+1} | Cell titles are only supported for translated courses, please remove to continue.")
+        self.test(lambda: state.found_header_directive, f"One of the two header directives ({NotebookDef.D_INCLUDE_HEADER_TRUE} or {NotebookDef.D_INCLUDE_HEADER_FALSE}) were not found.")
+        self.test(lambda: state.found_footer_directive, f"One of the two footer directives ({NotebookDef.D_INCLUDE_FOOTER_TRUE} or {NotebookDef.D_INCLUDE_FOOTER_FALSE}) were not found.")
+        self.test(lambda: state.answer_count >= state.todo_count, f"Found more {NotebookDef.D_TODO} commands ({state.todo_count}) than {NotebookDef.D_ANSWER} commands ({state.answer_count})")
 
-            # Misc tests for language specific cells
-            command = self.test_source_cells(language, command, i)
+        if state.include_header is True:
+            state.students_commands.insert(0, self.get_header_cell(language))
+            state.solutions_commands.insert(0, self.get_header_cell(language))
 
-            # Misc tests specific to %md cells along with i18n specific rewrites
-            command = self.update_md_cells(language, command, i, i18n_guid_map, other_notebooks)
-
-            # Misc tests specific to %run cells
-            self.test_run_cells(language, command, i, other_notebooks)
-
-            # Misc tests specific to %pip cells
-            command = self.test_pip_cells(language, command, i)
-
-            # Extract the leading comments and then the directives
-            leading_comments = self.get_leading_comments(language, command.strip())
-            directives = self.parse_directives(i, leading_comments)
-
-            if debugging:
-                if len(leading_comments) > 0:
-                    print("   |-LEADING COMMENTS --" + ("-" * 57))
-                    for comment in leading_comments:
-                        print("   |" + comment)
-                else:
-                    print("   |-NO LEADING COMMENTS --" + ("-" * 54))
-
-                if len(directives) > 0:
-                    print("   |-DIRECTIVES --" + ("-" * 62))
-                    for directive in directives:
-                        print("   |" + directive)
-                else:
-                    print("   |-NO DIRECTIVES --" + ("-" * 59))
-
-            # Update flags to indicate if we found the required header and footer directives
-            include_header = True if NotebookDef.D_INCLUDE_HEADER_TRUE in directives else include_header
-            found_header_directive = True if NotebookDef.D_INCLUDE_HEADER_TRUE in directives or NotebookDef.D_INCLUDE_HEADER_FALSE in directives else found_header_directive
-
-            include_footer = True if NotebookDef.D_INCLUDE_FOOTER_TRUE in directives else include_footer
-            found_footer_directive = True if NotebookDef.D_INCLUDE_FOOTER_TRUE in directives or NotebookDef.D_INCLUDE_FOOTER_FALSE in directives else found_footer_directive
-
-            # Make sure we have one and only one directive in this command (ignoring the header directives)
-            directive_count = 0
-            for directive in directives:
-                if directive not in [NotebookDef.D_INCLUDE_HEADER_TRUE, NotebookDef.D_INCLUDE_HEADER_FALSE, NotebookDef.D_INCLUDE_FOOTER_TRUE, NotebookDef.D_INCLUDE_FOOTER_FALSE]:
-                    directive_count += 1
-            self.test(lambda: directive_count <= 1, f"Cmd #{i+1} | Found multiple directives ({directive_count}): {directives}")
-
-            # Process the various directives
-            if command.strip() == "":
-                skipped += self.skipping(i, "Empty Cell")
-            elif NotebookDef.D_SOURCE_ONLY in directives:
-                skipped += self.skipping(i, None)
-            elif NotebookDef.D_INCLUDE_HEADER_TRUE in directives:
-                skipped += self.skipping(i, None)
-            elif NotebookDef.D_INCLUDE_HEADER_FALSE in directives:
-                skipped += self.skipping(i, None)
-            elif NotebookDef.D_INCLUDE_FOOTER_TRUE in directives:
-                skipped += self.skipping(i, None)
-            elif NotebookDef.D_INCLUDE_FOOTER_FALSE in directives:
-                skipped += self.skipping(i, None)
-
-            elif NotebookDef.D_TODO in directives:
-                # This is a TO-DO cell, exclude from solution notebooks
-                todo_count += 1
-                command = self.clean_todo_cell(language, command, i)
-                students_commands.append(command)
-
-            elif NotebookDef.D_ANSWER in directives:
-                # This is an ANSWER cell, exclude from lab notebooks
-                answer_count += 1
-                solutions_commands.append(command)
-
-            elif NotebookDef.D_DUMMY in directives:
-                students_commands.append(command)
-                solutions_commands.append(command.replace("DUMMY", "DUMMY: Ya, that wasn't too smart. Then again, this is just a dummy-directive"))
-
-            elif NotebookDef.D_INSTALL_LIBRARIES in directives:
-                new_command = self.build_install_libraries_cell(command, i)
-                students_commands.append(new_command)
-                solutions_commands.append(new_command)
-
-            elif NotebookDef.D_TROUBLESHOOTING_CONTENT in directives:
-                self.build_troubleshooting_cells(students_commands, solutions_commands)
-
-            else:
-                # Not a TO-DO or ANSWER, just append to both
-                self.append_both(students_commands, solutions_commands, command)
-
-            # Check the command for BDC markers
-            bdc_tokens = ["IPYTHON_ONLY", "DATABRICKS_ONLY",
-                          "AMAZON_ONLY", "AZURE_ONLY", "TEST", "PRIVATE_TEST", "INSTRUCTOR_NOTE", "INSTRUCTOR_ONLY",
-                          "SCALA_ONLY", "PYTHON_ONLY", "SQL_ONLY", "R_ONLY"
-                                                                   "VIDEO", "ILT_ONLY", "SELF_PACED_ONLY", "INLINE",
-                          "NEW_PART", "{dbr}"]
-
-            for token in bdc_tokens:
-                self.test(lambda: token not in command, f"""Cmd #{i+1} | Found the token "{token}" """)
-
-            cm = self.get_comment_marker(language)
-            if not command.startswith(f"{cm} MAGIC %md"):
-                if language.lower() == "python":
-                    if "lang-python" not in self.ignoring:
-                        self.warn(lambda: "%python" not in command, f"""Cmd #{i+1} | Found "%python" in a Python notebook""")
-                elif language.lower() == "sql":
-                    if "lang-sql" not in self.ignoring:
-                        self.warn(lambda: "%sql" not in command, f"""Cmd #{i+1} | Found "%sql" in a SQL notebook""")
-                elif language.lower() == "scala":
-                    if "lang-scala" not in self.ignoring:
-                        self.warn(lambda: "%scala" not in command, f"""Cmd #{i+1} | Found "%scala" in a Scala notebook""")
-                elif language.lower() == "r":
-                    # We have to check both cases so as not to catch %run by accident
-                    if "lang-r" not in self.ignoring:
-                        self.warn(lambda: "%r " not in command,  f"""Cmd #{i+1} | Found "%r" in an R notebook""")
-                        self.warn(lambda: "%r\n" not in command, f"""Cmd #{i+1} | Found "%r" in an R notebook""")
-                else:
-                    raise Exception(f"The language {language} is not supported")
-
-            for year in range(2017, 2999):
-                tag = f"{year} Databricks, Inc"
-                self.test(lambda: tag not in command, f"""Cmd #{i+1} | Found copyright ({tag}) """)
-
-        self.test(lambda: found_header_directive, f"One of the two header directives ({NotebookDef.D_INCLUDE_HEADER_TRUE} or {NotebookDef.D_INCLUDE_HEADER_FALSE}) were not found.")
-        self.test(lambda: found_footer_directive, f"One of the two footer directives ({NotebookDef.D_INCLUDE_FOOTER_TRUE} or {NotebookDef.D_INCLUDE_FOOTER_FALSE}) were not found.")
-        self.test(lambda: answer_count >= todo_count, f"Found more {NotebookDef.D_TODO} commands ({todo_count}) than {NotebookDef.D_ANSWER} commands ({answer_count})")
-
-        if include_header is True:
-            students_commands.insert(0, self.get_header_cell(language))
-            solutions_commands.insert(0, self.get_header_cell(language))
-
-        if include_footer is True:
-            students_commands.append(self.get_footer_cell(language))
-            solutions_commands.append(self.get_footer_cell(language))
+        if state.include_footer is True:
+            state.students_commands.append(self.get_footer_cell(language))
+            state.solutions_commands.append(self.get_footer_cell(language))
 
         for key in ["\"", "*", "<", ">", "?", "\\", "|", ":"]:
             # Not checking for forward slash as the platform itself enforces this.
@@ -718,15 +656,143 @@ For more current information, please see <a href="https://files.training.databri
         # Create the student's notebooks
         students_notebook_path = f"{target_dir}/{self.path}"
         BuildUtils.print_if(verbose, students_notebook_path)
-        BuildUtils.print_if(verbose, f"...publishing {len(students_commands)} commands")
-        self.publish_notebook(language, students_commands, students_notebook_path, print_warnings=True)
+        BuildUtils.print_if(verbose, f"...publishing {len(state.students_commands)} commands")
+        self.publish_notebook(language, state.students_commands, students_notebook_path, print_warnings=True)
 
         # Create the solutions notebooks
         if self.include_solution:
             solutions_notebook_path = f"{target_dir}/Solutions/{self.path}"
             BuildUtils.print_if(verbose, solutions_notebook_path)
-            BuildUtils.print_if(verbose, f"...publishing {len(solutions_commands)} commands")
-            self.publish_notebook(language, solutions_commands, solutions_notebook_path, print_warnings=False)
+            BuildUtils.print_if(verbose, f"...publishing {len(state.solutions_commands)} commands")
+            self.publish_notebook(language, state.solutions_commands, solutions_notebook_path, print_warnings=False)
+
+    def update_command(self, *, state: StateVariables, language: str, command: str, i: int, i18n_guid_map: dict, other_notebooks: list, debugging: bool) -> str:
+        if not self.i18n:
+            # If we are not translating, then this feature must be excluded.
+            self.test(lambda: "DBTITLE" not in command, f"Cmd #{i + 1} | Cell titles are only supported for translated courses, please remove to continue.")
+        else:
+            pass
+
+        # Misc tests for language specific cells
+        command = self.test_source_cells(language, command, i)
+
+        # Misc tests specific to %md cells along with i18n specific rewrites
+        command = self.update_md_cells(language, command, i, i18n_guid_map, other_notebooks)
+
+        # Misc tests specific to %run cells
+        self.test_run_cells(language, command, i, other_notebooks)
+
+        # Misc tests specific to %pip cells
+        command = self.test_pip_cells(language, command, i)
+
+        # Extract the leading comments and then the directives
+        leading_comments = self.get_leading_comments(language, command.strip())
+        directives = self.parse_directives(i, leading_comments)
+
+        if debugging:
+            if len(leading_comments) > 0:
+                print("   |-LEADING COMMENTS --" + ("-" * 57))
+                for comment in leading_comments:
+                    print("   |" + comment)
+            else:
+                print("   |-NO LEADING COMMENTS --" + ("-" * 54))
+
+            if len(directives) > 0:
+                print("   |-DIRECTIVES --" + ("-" * 62))
+                for directive in directives:
+                    print("   |" + directive)
+            else:
+                print("   |-NO DIRECTIVES --" + ("-" * 59))
+
+        # Update flags to indicate if we found the required header and footer directives
+        state.include_header = True if NotebookDef.D_INCLUDE_HEADER_TRUE in directives else state.include_header
+        state.found_header_directive = True if NotebookDef.D_INCLUDE_HEADER_TRUE in directives or NotebookDef.D_INCLUDE_HEADER_FALSE in directives else state.found_header_directive
+
+        state.include_footer = True if NotebookDef.D_INCLUDE_FOOTER_TRUE in directives else state.include_footer
+        state.found_footer_directive = True if NotebookDef.D_INCLUDE_FOOTER_TRUE in directives or NotebookDef.D_INCLUDE_FOOTER_FALSE in directives else state.found_footer_directive
+
+        # Make sure we have one and only one directive in this command (ignoring the header directives)
+        directive_count = 0
+        for directive in directives:
+            if directive not in [NotebookDef.D_INCLUDE_HEADER_TRUE, NotebookDef.D_INCLUDE_HEADER_FALSE, NotebookDef.D_INCLUDE_FOOTER_TRUE, NotebookDef.D_INCLUDE_FOOTER_FALSE]:
+                directive_count += 1
+        self.test(lambda: directive_count <= 1, f"Cmd #{i + 1} | Found multiple directives ({directive_count}): {directives}")
+
+        # Process the various directives
+        if command.strip() == "":
+            state.skipped += self.skipping(i, "Empty Cell")
+        elif NotebookDef.D_SOURCE_ONLY in directives:
+            state.skipped += self.skipping(i, None)
+        elif NotebookDef.D_INCLUDE_HEADER_TRUE in directives:
+            state.skipped += self.skipping(i, None)
+        elif NotebookDef.D_INCLUDE_HEADER_FALSE in directives:
+            state.skipped += self.skipping(i, None)
+        elif NotebookDef.D_INCLUDE_FOOTER_TRUE in directives:
+            state.skipped += self.skipping(i, None)
+        elif NotebookDef.D_INCLUDE_FOOTER_FALSE in directives:
+            state.skipped += self.skipping(i, None)
+
+        elif NotebookDef.D_TODO in directives:
+            # This is a TO-DO cell, exclude from solution notebooks
+            state.todo_count += 1
+            command = self.clean_todo_cell(language, command, i)
+            state.students_commands.append(command)
+
+        elif NotebookDef.D_ANSWER in directives:
+            # This is an ANSWER cell, exclude from lab notebooks
+            state.answer_count += 1
+            state.solutions_commands.append(command)
+
+        elif NotebookDef.D_DUMMY in directives:
+            state.students_commands.append(command)
+            state.solutions_commands.append(command.replace("DUMMY", "DUMMY: Ya, that wasn't too smart. Then again, this is just a dummy-directive"))
+
+        elif NotebookDef.D_INSTALL_LIBRARIES in directives:
+            new_command = self.build_install_libraries_cell(command, i)
+            state.students_commands.append(new_command)
+            state.solutions_commands.append(new_command)
+
+        elif NotebookDef.D_TROUBLESHOOTING_CONTENT in directives:
+            self.build_troubleshooting_cells(state.students_commands, state.solutions_commands)
+
+        else:
+            # Not a TO-DO or ANSWER, just append to both
+            self.append_both(state.students_commands, state.solutions_commands, command)
+
+        # Check the command for BDC markers
+        bdc_tokens = ["IPYTHON_ONLY", "DATABRICKS_ONLY",
+                      "AMAZON_ONLY", "AZURE_ONLY", "TEST", "PRIVATE_TEST", "INSTRUCTOR_NOTE", "INSTRUCTOR_ONLY",
+                      "SCALA_ONLY", "PYTHON_ONLY", "SQL_ONLY", "R_ONLY"
+                                                               "VIDEO", "ILT_ONLY", "SELF_PACED_ONLY", "INLINE",
+                      "NEW_PART", "{dbr}"]
+
+        for token in bdc_tokens:
+            self.test(lambda: token not in command, f"""Cmd #{i + 1} | Found the token "{token}" """)
+
+        cm = self.get_comment_marker(language)
+        if not command.startswith(f"{cm} MAGIC %md"):
+            if language.lower() == "python":
+                if "lang-python" not in self.ignoring:
+                    self.warn(lambda: "%python" not in command, f"""Cmd #{i + 1} | Found "%python" in a Python notebook""")
+            elif language.lower() == "sql":
+                if "lang-sql" not in self.ignoring:
+                    self.warn(lambda: "%sql" not in command, f"""Cmd #{i + 1} | Found "%sql" in a SQL notebook""")
+            elif language.lower() == "scala":
+                if "lang-scala" not in self.ignoring:
+                    self.warn(lambda: "%scala" not in command, f"""Cmd #{i + 1} | Found "%scala" in a Scala notebook""")
+            elif language.lower() == "r":
+                # We have to check both cases so as not to catch %run by accident
+                if "lang-r" not in self.ignoring:
+                    self.warn(lambda: "%r " not in command, f"""Cmd #{i + 1} | Found "%r" in an R notebook""")
+                    self.warn(lambda: "%r\n" not in command, f"""Cmd #{i + 1} | Found "%r" in an R notebook""")
+            else:
+                raise Exception(f"The language {language} is not supported")
+
+        for year in range(2017, 2999):
+            tag = f"{year} Databricks, Inc"
+            self.test(lambda: tag not in command, f"""Cmd #{i + 1} | Found copyright ({tag}) """)
+
+        return command
 
     def publish_resource(self, language: str, md_commands: list, target_dir: str, natural_language: str) -> None:
         import os
