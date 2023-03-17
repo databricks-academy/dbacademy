@@ -82,11 +82,11 @@ class AccountConfig:
 
         for workspace_number in range(first_workspace_number, first_workspace_number+count):
             workspace = WorkspaceConfig(max_users=max_users,
-                                        courses=workspace_config.courses,
+                                        course_definitions=workspace_config.course_definitions,
+                                        cds_api_token=workspace_config.cds_api_token,
                                         datasets=workspace_config.datasets,
                                         default_node_type_id=workspace_config.default_node_type_id,
                                         default_dbr=workspace_config.default_dbr,
-                                        dbc_urls=workspace_config.dbc_urls,
                                         credentials_name=workspace_config.credentials_name,
                                         storage_configuration=workspace_config.storage_configuration,
                                         username_pattern=workspace_config.username_pattern,

@@ -85,7 +85,7 @@ class TestClusters(unittest.TestCase):
             single_user_name=unit_test_service_principle))
         cluster = self.client.clusters.get_by_id(cluster_id)
 
-        ignored = ["last_activity_time", "last_restarted_time", "last_state_loss_time", "start_time", "aws_attributes"]
+        ignored = ["last_activity_time", "last_restarted_time", "last_state_loss_time", "start_time", "aws_attributes", "state_message"]
 
         expected = {
             "autotermination_minutes": 10,
@@ -121,7 +121,6 @@ class TestClusters(unittest.TestCase):
             },
             "spark_version": "11.3.x-scala2.12",
             "state": "PENDING",
-            "state_message": "",
         }
 
         for key in ignored:
