@@ -93,7 +93,8 @@ class WorkspaceConfig:
 
         for course_def in self.course_definitions:
             url, course, version, artifact, token = WorkspaceHelper.parse_course_args(course_def=course_def)
-            self.__datasets.append(course)
+            if course not in self.__datasets:
+                self.__datasets.append(course)
             if token is not None:
                 raise AssertionError(f"""The CDS API token should not be specified in the courseware definition, please use the "cds_api_token" parameter" instead.""")
 
