@@ -231,18 +231,20 @@ class TestWorkspaceConfig(unittest.TestCase):
 
         workspace = WorkspaceConfig(max_users=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=None, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), groups=dict(), workspace_name_pattern="classroom-{event_id}-{workspace_number}")
         self.assertEqual(list, type(workspace.datasets))
-        self.assertEqual([], workspace.datasets)
+        self.assertEqual(["example-course", "machine-learning-in-production"], workspace.datasets)
 
         workspace = WorkspaceConfig(max_users=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), groups=dict(), workspace_name_pattern="classroom-{event_id}-{workspace_number}")
         self.assertEqual(list, type(workspace.datasets))
         self.assertEqual(2, len(workspace.datasets))
         self.assertEqual("example-course", workspace.datasets[0])
+        self.assertEqual("machine-learning-in-production", workspace.datasets[1])
 
         workspace = WorkspaceConfig(max_users=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=["example-course", "whatever"], default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), groups=dict(), workspace_name_pattern="classroom-{event_id}-{workspace_number}")
         self.assertEqual(list, type(workspace.datasets))
-        self.assertEqual(2, len(workspace.datasets))
+        self.assertEqual(3, len(workspace.datasets))
         self.assertEqual("example-course", workspace.datasets[0])
         self.assertEqual("whatever", workspace.datasets[1])
+        self.assertEqual("machine-learning-in-production", workspace.datasets[2])
 
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "datasets" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_users=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=1, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), groups=dict(), workspace_name_pattern="classroom-{event_id}-{workspace_number}"))
