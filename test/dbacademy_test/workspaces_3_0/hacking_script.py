@@ -13,16 +13,16 @@ print(f"Starting script at {datetime.now()}")
 # endpoint = os.environ.get("WORKSPACE_UNIT_TESTS_API_ENDPOINT")
 # token = os.environ.get("WORKSPACE_UNIT_TESTS_API_TOKEN")
 
-endpoint = os.environ.get("WORKSPACE_CURR_DEV_API_ENDPOINT")
-token = os.environ.get("WORKSPACE_CURR_DEV_API_TOKEN")
-
-client = DBAcademyRestClient(token=token, endpoint=endpoint)
-
-results = client.sql.statements.execute(warehouse_id="65f30dc5b33acd5c",
-                                        catalog="jacob_parr",
-                                        schema="default",
-                                        statement="SHOW DATABASES")
-print(json.dumps(results, indent=4))
+# endpoint = os.environ.get("WORKSPACE_CURR_DEV_API_ENDPOINT")
+# token = os.environ.get("WORKSPACE_CURR_DEV_API_TOKEN")
+#
+# client = DBAcademyRestClient(token=token, endpoint=endpoint)
+#
+# results = client.sql.statements.execute(warehouse_id="65f30dc5b33acd5c",
+#                                         catalog="jacob_parr",
+#                                         schema="default",
+#                                         statement="SHOW DATABASES")
+# print(json.dumps(results, indent=4))
 
 # state = results.get("status", dict()).get("state")
 # assert state == "SUCCEEDED", f"""Expected state to be "SUCCEEDED", found "{state}"."""
