@@ -15,6 +15,7 @@ class Commands(object):
 
     @staticmethod
     def get_region(ws):
+        """In order to use this function, you must have pre-installed dnspython."""
         from urllib.parse import urlparse
         from dns.resolver import resolve
         import re
