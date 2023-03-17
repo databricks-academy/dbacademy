@@ -76,17 +76,25 @@ class Users(ApiContainer):
         }
         return self.set_entitlements(user, entitlements)
 
-    def create(self, username, *, allow_cluster_create=True, if_exists: IfExists = "error"):
-        entitlements = []
+    # TODO - remove allow_cluster_create, use entitlements instead
+    def create(self, username, *, allow_cluster_create=True, if_exists: IfExists = "error", entitlements: List[str] = None):
+
+        entitlements_data = list()
+        entitlements = entitlements or list()
+
+        for entitlement in entitlements:
+            entitlements_data.append({"value": entitlement})
+
         if allow_cluster_create:
-            entitlements.append({"value": "allow-cluster-create"})
-            entitlements.append({"value": "allow-instance-pool-create"})
+            entitlements_data.append({"value": "allow-cluster-create"})
+            entitlements_data.append({"value": "allow-instance-pool-create"})
+
         data = {
             "schemas": [
                 "urn:ietf:params:scim:schemas:core:2.0:User"
             ],
             "userName": username,
-            "entitlements": entitlements
+            "entitlements": entitlements_data
         }
         expected = 409 if if_exists in ["ignore", "overwrite"] else None
         return self.databricks.api("POST", f"{self.path}/scim/v2/Users", _data=data, _expected=expected)

@@ -95,9 +95,18 @@ class WorkspaceHelper:
             else:
                 data_source_version = None
 
+            inventory_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net"
+            datasets_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}"
+
+            inventory = dbutils.fs.ls(inventory_uri)
+            if dataset not in inventory:
+                print(f"""| Dataset "{dataset}" not found: "{inventory}".""")
+                continue
+
             if not data_source_version:
-                datasets_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}"
-                data_source_version = sorted([f.name[:-1] for f in dbutils.fs.ls(datasets_uri)])[-1]
+                # TODO this can technically fail if the dataset exists, but it is empty
+                files = dbutils.fs.ls(datasets_uri)
+                data_source_version = sorted([f.name[:-1] for f in files])[-1]
 
             datasets_path = f"dbfs:/mnt/dbacademy-datasets/{dataset}/{data_source_version}"
             data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}/{data_source_version}"
@@ -188,8 +197,6 @@ class WorkspaceHelper:
 
         if artifact is not None:
             download_url += f"&artifact={artifact}"
-
-        print(download_url)
 
         if token is None:
             raise AssertionError(f"The CDS API token must be specified.")

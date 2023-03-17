@@ -15,17 +15,26 @@ class DatabricksApi(dict, ApiClient):
 
     def __init__(self, hostname=None, *, token=None, user=None, password=None, authorization_header=None, deployment_name=None):
         from dbacademy import dbgems
+
         if hostname:
             url = f'https://{hostname}/api/'
         else:
             url = dbgems.get_notebooks_api_endpoint() + "/api/"
+
         if not any((authorization_header, token, password)):
             token = dbgems.get_notebooks_api_token()
-        super(dict, self).__init__(url, token=token, user=user, password=password,
+
+        super(dict, self).__init__(url,
+                                   token=token,
+                                   user=user,
+                                   password=password,
                                    authorization_header=authorization_header)
+
         if deployment_name is None:
             deployment_name = hostname[0:hostname.find(".")]
+
         self["deployment_name"] = deployment_name
+
         if hostname.endswith(".cloud.databricks.com"):
             self.cloud = "AWS"
         elif hostname.endswith(".gcp.databricks.com"):
@@ -34,27 +43,38 @@ class DatabricksApi(dict, ApiClient):
             self.cloud = "Azure"
         else:
             raise ValueError(f"Unknown cloud for hostname: {hostname}")
+
         self.default_machine_type = DatabricksApi.default_machine_types[self.cloud]
         self.default_preloaded_versions = ["11.3.x-cpu-ml-scala2.12", "11.3.x-cpu-scala2.12"]
         self.default_spark_version = self.default_preloaded_versions[0]
+
         from dbacademy.dougrest.clusters import Clusters
         self.clusters = Clusters(self)
+
         from dbacademy.dougrest.groups import Groups
         self.groups = Groups(self)
+
         from dbacademy.dougrest.jobs import Jobs
         self.jobs = Jobs(self)
+
         from dbacademy.dougrest.mlflow import MLFlow
         self.mlflow = MLFlow(self)
+
         from dbacademy.dougrest.pools import Pools
         self.pools = Pools(self)
+
         from dbacademy.dougrest.repos import Repos
         self.repos = Repos(self)
+
         from dbacademy.dougrest.scim import SCIM, Users
         self.scim = SCIM(self)
         self.users = Users(self)
+
         from dbacademy.dougrest.sql import Sql
         self.sql = Sql(self)
+
         from dbacademy.dougrest.workspace import Workspace
         self.workspace = Workspace(self)
+
         from dbacademy.rest.permissions import Permissions
         self.permissions = Permissions(self)
