@@ -32,7 +32,7 @@
 <font color="#000000" face="helvetica, arial"><a name="DBAcademyRestClient">class <strong>DBAcademyRestClient</strong></a>(<a href="dbacademy.rest.common.html#ApiClient">dbacademy.rest.common.ApiClient</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#DBAcademyRestClient">DBAcademyRestClient</a>(token:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;endpoint:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;'int'&nbsp;=&nbsp;0,&nbsp;*,&nbsp;user:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;password:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;client:&nbsp;'<a href="dbacademy.rest.common.html#ApiClient">ApiClient</a>'&nbsp;=&nbsp;None,&nbsp;verbose:&nbsp;'bool'&nbsp;=&nbsp;False)<br>
+<td colspan=2><tt><a href="#DBAcademyRestClient">DBAcademyRestClient</a>(token:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;endpoint:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;'int'&nbsp;=&nbsp;1,&nbsp;*,&nbsp;user:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;password:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;client:&nbsp;'<a href="dbacademy.rest.common.html#ApiClient">ApiClient</a>'&nbsp;=&nbsp;None,&nbsp;verbose:&nbsp;'bool'&nbsp;=&nbsp;False)<br>
 &nbsp;<br>
 Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -44,7 +44,7 @@ Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.<br>&nbsp;</tt></td></tr>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="DBAcademyRestClient-__init__"><strong>__init__</strong></a>(self, token: 'str' = None, endpoint: 'str' = None, throttle_seconds: 'int' = 0, *, user: 'str' = None, password: 'str' = None, authorization_header: 'str' = None, client: 'ApiClient' = None, verbose: 'bool' = False)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
+<dl><dt><a name="DBAcademyRestClient-__init__"><strong>__init__</strong></a>(self, token: 'str' = None, endpoint: 'str' = None, throttle_seconds: 'int' = 1, *, user: 'str' = None, password: 'str' = None, authorization_header: 'str' = None, client: 'ApiClient' = None, verbose: 'bool' = False)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
 &nbsp;<br>
 This&nbsp;is&nbsp;similar&nbsp;to&nbsp;<a href="dbacademy.rest.common.html#ApiClient">ApiClient</a>.__init__&nbsp;except&nbsp;the&nbsp;parameter&nbsp;order&nbsp;is&nbsp;different&nbsp;to&nbsp;ensure&nbsp;backwards&nbsp;compatibility.<br>
 &nbsp;<br>
