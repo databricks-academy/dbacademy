@@ -10,8 +10,9 @@ pyspark==3.3.*
 databricks-feature-store
 pytest~=7.2.0
 pytest-cov
+# The client must provide all these below.  They won't be automatically installed with this library.
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
+dnspython                   # Used only in dbacademy.classrooms.monitor.Commands.get_region
 setuptools~=65.5.0
-dnspython
