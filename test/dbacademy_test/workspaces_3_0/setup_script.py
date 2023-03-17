@@ -26,11 +26,14 @@ storage_config = UcStorageConfig(storage_root="s3://unity-catalogs-us-west-2/",
                                  owner=owner)
 
 workspace_config = WorkspaceConfig(max_users=max_users_per_workspace,
-                                   courses=None,
+                                   course_definitions=[
+                                       "course=welcome",
+                                       "course=example-course&version=vCURRENT",
+                                       "course=template-course&version=v1.0.0&artifact=template-course.dbc",
+                                       "https://dev.training.databricks.com/api/v1/courses/download.dbc?course=ml-in-production"],
                                    datasets=None,
                                    default_dbr="11.3.x-cpu-ml-scala2.12",
                                    default_node_type_id="i3.xlarge",
-                                   dbc_urls="https://labs.training.databricks.com/api/courses?course=example-course&version=vLATEST&artifact=lessons.dbc&token=abcd",
                                    credentials_name="default",
                                    storage_configuration="us-west-2",  # Not region, just named after the region.
                                    username_pattern="class+{student_number}@databricks.com",

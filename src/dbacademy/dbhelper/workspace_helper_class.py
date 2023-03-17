@@ -1,4 +1,4 @@
-from typing import Callable, List, TypeVar
+from typing import Callable, List, TypeVar, Optional
 
 
 class WorkspaceHelper:
@@ -128,7 +128,7 @@ class WorkspaceHelper:
             print(f"Uninstalling courses for {username}")
 
             for course_def in course_defs:
-                url, course, version, artifact, token = WorkspaceHelper.__parse_course_args(course_def)
+                url, course, version, artifact, token = WorkspaceHelper.parse_course_args(course_def)
 
                 if subdirectory is None:
                     install_dir = f"/Users/{username}/{course}"
@@ -156,18 +156,8 @@ class WorkspaceHelper:
             for course_def in course_defs:
                 print()
 
-                url, course, version, artifact, token = WorkspaceHelper.__parse_course_args(course_def)
-
-                download_url = f"{url}?course={course}"
-
-                if version is not None:
-                    download_url += f"&version={version}"
-
-                if artifact is not None:
-                    download_url += f"&artifact={artifact}"
-
-                print(download_url)
-                download_url += f"&token={token}"
+                url, course, version, artifact, token = WorkspaceHelper.parse_course_args(course_def)
+                download_url = WorkspaceHelper.compose_courseware_url(url, course, version, artifact, token)
 
                 if subdirectory is None:
                     install_dir = f"/Users/{username}/{course}"
@@ -190,10 +180,31 @@ class WorkspaceHelper:
             print("-" * 80)
 
     @staticmethod
-    def __parse_course_args(course_def: str) -> (str, str, str, str, str):
-        from dbacademy.dbgems import dbutils
+    def compose_courseware_url(url: str, course: str, version: Optional[str], artifact: Optional[str], token: str) -> str:
+        download_url = f"{url}?course={course}"
 
-        token = dbutils.secrets.get("workspace-setup", "token")
+        if version is not None:
+            download_url += f"&version={version}"
+
+        if artifact is not None:
+            download_url += f"&artifact={artifact}"
+
+        print(download_url)
+
+        if token is None:
+            raise AssertionError(f"The CDS API token must be specified.")
+        download_url += f"&token={token}"
+
+        return download_url
+
+    @staticmethod
+    def parse_course_args(course_def: str) -> (str, str, str, str, str):
+
+        try:
+            from dbacademy.dbgems import dbutils
+            token = dbutils.secrets.get("workspace-setup", "token")
+        except:
+            token = None
 
         parts = course_def.split("?")
         if len(parts) == 1:
@@ -205,13 +216,16 @@ class WorkspaceHelper:
         else:
             raise Exception(f"""Invalid course definition, found "{course_def}".""")
 
-        params = {p.split("=")[0]: p.split("=")[1] for p in query.split("&")}
-        course = params.get("course")
-        version = params.get("version")
-        artifact = params.get("artifact")
-        token = token or params.get("token")
+        try:
+            params = {p.split("=")[0]: p.split("=")[1] for p in query.split("&")}
+            course = params.get("course")
+            version = params.get("version")
+            artifact = params.get("artifact")
+            token = token or params.get("token")
 
-        return url, course, version, artifact, token
+            return url, course, version, artifact, token
+        except Exception as e:
+            raise Exception(f"""Unexpected exception parsing query parameters "{query}".""") from e
 
     @staticmethod
     def add_entitlement_allow_instance_pool_create(client: DBAcademyRestClient):

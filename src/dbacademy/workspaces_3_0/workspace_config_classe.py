@@ -10,24 +10,24 @@ class WorkspaceConfig:
                  max_users: int,
                  default_node_type_id: str,
                  default_dbr: str,
-                 dbc_urls: Union[None, str, List[str]],
-                 courses: Union[None, str, List[str]],
+                 course_definitions: Union[None, str, List[str]],
                  datasets: Union[None, str, List[str]],
                  username_pattern: str,
                  entitlements: Dict[str, bool],
                  workspace_name_pattern: str,
                  credentials_name: str,
                  storage_configuration: str,
+                 cds_api_token: str = None,
                  groups: Dict[str, List]) -> None:
         """
         Creates the configuration for workspace-level settings
         :param max_users: see the corresponding property
         :param default_dbr: see the corresponding property
         :param default_node_type_id: see the corresponding property
-        :param courses: see the corresponding property
+        :param course_definitions: see the corresponding property
         :param datasets: see the corresponding property
-        :param dbc_urls: see the corresponding property
         """
+        from dbacademy.dbhelper import WorkspaceHelper
 
         assert type(max_users) == int, f"""The parameter "max_users" must be an integral value, found {type(max_users)}."""
         assert max_users > 0, f"""The parameter "max_users" must be greater than zero, found "{max_users}"."""
@@ -38,17 +38,17 @@ class WorkspaceConfig:
         assert type(default_dbr) == str, f"""The parameter "default_dbr" must be a string value, found {type(default_dbr)}."""
         assert len(default_dbr) > 3, f"""Invalid DBR format, found "{default_dbr}"."""
 
-        courses = courses or list()  # Convert none to empty list
-        courses = [courses] if type(courses) == str else courses  # Convert single string to list of strings
-        assert type(courses) == list, f"""The parameter "courses" must be a string value, found {type(courses)}."""
+        assert cds_api_token is None or type(cds_api_token) == str, f"""The parameter "cds_api_token" must be None or a string value, found {type(default_dbr)}."""
+        # assert len(cds_api_token) > 3, f"""Invalid DBR format, found "{default_dbr}"."""
+
+        course_definitions = course_definitions or list()  # Convert none to empty list
+        assert type(course_definitions) == list or type(course_definitions) == str, f"""The parameter "course_definitions" must be a string value or a list of strings, found {type(course_definitions)}."""
+        course_definitions = [course_definitions] if type(course_definitions) == str else course_definitions  # Convert single string to list of strings
+        assert type(course_definitions) == list, f"""The parameter "course_definitions" must be a string value, found {type(course_definitions)}."""
 
         datasets = datasets or list()  # Convert none to empty list
         datasets = [datasets] if type(datasets) == str else datasets  # Convert single string to list of strings
         assert type(datasets) == list, f"""The parameter "datasets" must be a string value, found {type(datasets)}."""
-
-        dbc_urls = dbc_urls or list()  # Convert none to empty list
-        dbc_urls = [dbc_urls] if type(dbc_urls) == str else dbc_urls  # Convert single string to list of strings
-        assert type(dbc_urls) == list, f"""The parameter "dbc_urls" must be a list of strings, found {type(dbc_urls)}."""
 
         assert type(entitlements) == dict, f"""The parameter "entitlements" must be a dictionary value, found {type(entitlements)}."""
         # assert len(entitlements) > 3, f"""The parameter "entitlements" must have a length > 0, found "{username_pattern}"."""
@@ -75,18 +75,28 @@ class WorkspaceConfig:
         self.__workspace_number = None
         self.__name = None
 
-        for i, dbc_url in enumerate(dbc_urls):
-            self.__validate_url(i, dbc_url)
-
-        self.__courses = courses
+        self.__course_definitions = course_definitions
+        self.__cds_api_token = cds_api_token
         self.__datasets = datasets
         self.__default_node_type_id = default_node_type_id
         self.__default_dbr = default_dbr
-        self.__dbc_urls = dbc_urls
         self.__username_pattern = username_pattern
         self.__workspace_name_pattern = workspace_name_pattern
-
         self.__entitlements = entitlements
+
+        self.__cds_api_token = cds_api_token
+
+        self.__dbc_urls = list()
+        for course_def in self.course_definitions:
+            url, course, version, artifact, token = WorkspaceHelper.parse_course_args(course_def=course_def)
+            if token is not None:
+                raise AssertionError(f"""The CDS API token should not be specified in the courseware definition, please use the "cds_api_token" parameter" instead.""")
+
+            dbc_url = WorkspaceHelper.compose_courseware_url(url, course, version, artifact, self.cds_api_token)
+            self.__dbc_urls.append(dbc_url)
+
+        for i, dbc_url in enumerate(self.dbc_urls):
+            self.__validate_url(i, dbc_url)
 
         self.__usernames: List[str] = list()
         for i in range(0, max_users+1):
@@ -173,8 +183,12 @@ class WorkspaceConfig:
         return self.__groups
 
     @property
-    def courses(self):
-        return self.__courses
+    def cds_api_token(self):
+        return self.__cds_api_token
+
+    @property
+    def course_definitions(self):
+        return self.__course_definitions
 
     @property
     def datasets(self):
@@ -207,7 +221,7 @@ class WorkspaceConfig:
     @classmethod
     def __validate_url(cls, i: int, dbc_url: str) -> None:
         assert type(dbc_url) == str, f"""Item {i} of the parameter "dbc_urls" must be a strings, found {type(dbc_url)}."""
-        prefix = "https://labs.training.databricks.com/api/courses?"
+        prefix = "https://labs.training.databricks.com/api/v1/courses/download.dbc?"
         assert dbc_url.startswith(prefix), f"""Item {i} for the parameter "dbc_urls" must start with "{prefix}", found "{dbc_url}"."""
 
         pos = dbc_url.find("?")
@@ -216,21 +230,21 @@ class WorkspaceConfig:
         params = query.split("&")
 
         found_course = False
-        found_version = False
-        found_artifact = False
+        # found_version = False
+        # found_artifact = False
         found_token = False
 
         for param in params:
             if param.startswith("course="):
                 found_course = True
-            if param.startswith("version="):
-                found_version = True
-            if param.startswith("artifact="):
-                found_artifact = True
+            # if param.startswith("version="):
+            #     found_version = True
+            # if param.startswith("artifact="):
+            #     found_artifact = True
             if param.startswith("token="):
                 found_token = True
 
         assert found_course, f"""Item {i} for the parameter "dbc_url" is missing the "course" query parameter, found "{dbc_url}"."""
-        assert found_version, f"""Item {i} for the parameter "dbc_url" is missing the "version" query parameter, found "{dbc_url}"."""
-        assert found_artifact, f"""Item {i} for the parameter "dbc_url" is missing the "artifact" query parameter, found "{dbc_url}"."""
+        # assert found_version, f"""Item {i} for the parameter "dbc_url" is missing the "version" query parameter, found "{dbc_url}"."""
+        # assert found_artifact, f"""Item {i} for the parameter "dbc_url" is missing the "artifact" query parameter, found "{dbc_url}"."""
         assert found_token, f"""Item {i} for the parameter "dbc_url" is missing the "token" query parameter, found "{dbc_url}"."""
