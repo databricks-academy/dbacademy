@@ -98,7 +98,7 @@ class WorkspaceHelper:
             inventory_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net"
             datasets_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}"
 
-            inventory = [i.name for i in dbutils.fs.ls(inventory_uri)]
+            inventory = [i.name.split("/")[0] for i in dbutils.fs.ls(inventory_uri)]
             if dataset not in inventory:
                 print(f"""| Dataset "{dataset}" not found.""")
                 continue
