@@ -100,7 +100,7 @@ class WorkspaceHelper:
 
             inventory = dbutils.fs.ls(inventory_uri)
             if dataset not in inventory:
-                print(f"""| Dataset "{dataset}" not found: "{inventory}".""")
+                print(f"""| Dataset "{dataset}" not found.""")
                 continue
 
             if not data_source_version:
