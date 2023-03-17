@@ -4,8 +4,13 @@ unit_test_service_principle = "d8835420-9797-45f5-897b-6d81d7f80023"
 
 
 class StatementTests(unittest.TestCase):
+    from dbacademy.dbrest import DBAcademyRestClient
 
-    def setUp(self) -> None:
+    warehouse_id: str = None
+    client: DBAcademyRestClient = None
+
+    @classmethod
+    def setUpClass(cls) -> None:
         import os
         from dbacademy.dbhelper import WorkspaceHelper
         from dbacademy.dbrest import DBAcademyRestClient
@@ -16,11 +21,11 @@ class StatementTests(unittest.TestCase):
         endpoint = os.getenv(DBACADEMY_UNIT_TESTS_API_ENDPOINT)
 
         if token is None or endpoint is None:
-            self.skipTest(f"Missing {DBACADEMY_UNIT_TESTS_API_TOKEN} or {DBACADEMY_UNIT_TESTS_API_ENDPOINT} environment variables")
+            raise AssertionError(f"Missing {DBACADEMY_UNIT_TESTS_API_TOKEN} or {DBACADEMY_UNIT_TESTS_API_ENDPOINT} environment variables")
 
-        self.client = DBAcademyRestClient(token=token, endpoint=endpoint)
+        cls.client = DBAcademyRestClient(token=token, endpoint=endpoint)
 
-        warehouse = self.client.sql.endpoints.create_or_update(
+        warehouse = cls.client.sql.endpoints.create_or_update(
             name="Unit-Tests Warehouse",
             cluster_size=CLUSTER_SIZE_2X_SMALL,
             enable_serverless_compute=True,
@@ -37,10 +42,11 @@ class StatementTests(unittest.TestCase):
                 f"dbacademy.org_id": "2967772011441968",
                 f"dbacademy.source": "DBAcademy Library Unit-Tests",
             })
-        self.warehouse_id = warehouse.get("id")
+        cls.warehouse_id = warehouse.get("id")
 
-    def tearDown(self) -> None:
-        self.client.sql.endpoints.delete_by_id(self.warehouse_id)
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.client.sql.endpoints.delete_by_id(cls.warehouse_id)
 
     def test_execute(self):
         results = self.client.sql.statements.execute(warehouse_id=self.warehouse_id,
