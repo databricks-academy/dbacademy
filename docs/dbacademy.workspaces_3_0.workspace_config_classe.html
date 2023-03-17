@@ -32,12 +32,12 @@
 <font color="#000000" face="helvetica, arial"><a name="WorkspaceConfig">class <strong>WorkspaceConfig</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#WorkspaceConfig">WorkspaceConfig</a>(*,&nbsp;max_users:&nbsp;int,&nbsp;default_node_type_id:&nbsp;str,&nbsp;default_dbr:&nbsp;str,&nbsp;course_definitions:&nbsp;Union[NoneType,&nbsp;str,&nbsp;List[str]],&nbsp;datasets:&nbsp;Union[NoneType,&nbsp;str,&nbsp;List[str]],&nbsp;username_pattern:&nbsp;str,&nbsp;entitlements:&nbsp;Dict[str,&nbsp;bool],&nbsp;workspace_name_pattern:&nbsp;str,&nbsp;credentials_name:&nbsp;str,&nbsp;storage_configuration:&nbsp;str,&nbsp;cds_api_token:&nbsp;str&nbsp;=&nbsp;None,&nbsp;groups:&nbsp;Dict[str,&nbsp;List])&nbsp;-&amp;gt;&nbsp;None<br>
+<td colspan=2><tt><a href="#WorkspaceConfig">WorkspaceConfig</a>(*,&nbsp;max_users:&nbsp;int,&nbsp;default_node_type_id:&nbsp;str,&nbsp;default_dbr:&nbsp;str,&nbsp;course_definitions:&nbsp;Union[NoneType,&nbsp;str,&nbsp;List[str]],&nbsp;datasets:&nbsp;Union[NoneType,&nbsp;str,&nbsp;List[str]],&nbsp;username_pattern:&nbsp;str,&nbsp;entitlements:&nbsp;Dict[str,&nbsp;bool],&nbsp;workspace_name_pattern:&nbsp;str,&nbsp;credentials_name:&nbsp;str,&nbsp;storage_configuration:&nbsp;str,&nbsp;cds_api_token:&nbsp;str&nbsp;=&nbsp;None,&nbsp;courseware_subdirectory:&nbsp;str&nbsp;=&nbsp;None,&nbsp;groups:&nbsp;Dict[str,&nbsp;List])&nbsp;-&amp;gt;&nbsp;None<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="WorkspaceConfig-__init__"><strong>__init__</strong></a>(self, *, max_users: int, default_node_type_id: str, default_dbr: str, course_definitions: Union[NoneType, str, List[str]], datasets: Union[NoneType, str, List[str]], username_pattern: str, entitlements: Dict[str, bool], workspace_name_pattern: str, credentials_name: str, storage_configuration: str, cds_api_token: str = None, groups: Dict[str, List]) -&gt; None</dt><dd><tt>Creates&nbsp;the&nbsp;configuration&nbsp;for&nbsp;workspace-level&nbsp;settings<br>
+<dl><dt><a name="WorkspaceConfig-__init__"><strong>__init__</strong></a>(self, *, max_users: int, default_node_type_id: str, default_dbr: str, course_definitions: Union[NoneType, str, List[str]], datasets: Union[NoneType, str, List[str]], username_pattern: str, entitlements: Dict[str, bool], workspace_name_pattern: str, credentials_name: str, storage_configuration: str, cds_api_token: str = None, courseware_subdirectory: str = None, groups: Dict[str, List]) -&gt; None</dt><dd><tt>Creates&nbsp;the&nbsp;configuration&nbsp;for&nbsp;workspace-level&nbsp;settings<br>
 :param&nbsp;max_users:&nbsp;see&nbsp;the&nbsp;corresponding&nbsp;property<br>
 :param&nbsp;default_dbr:&nbsp;see&nbsp;the&nbsp;corresponding&nbsp;property<br>
 :param&nbsp;default_node_type_id:&nbsp;see&nbsp;the&nbsp;corresponding&nbsp;property<br>
@@ -51,6 +51,8 @@ Readonly properties defined here:<br>
 <dl><dt><strong>cds_api_token</strong></dt>
 </dl>
 <dl><dt><strong>course_definitions</strong></dt>
+</dl>
+<dl><dt><strong>courseware_subdirectory</strong></dt>
 </dl>
 <dl><dt><strong>credentials_name</strong></dt>
 <dd><tt>This&nbsp;is&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;credentials&nbsp;for&nbsp;a&nbsp;workspaces'&nbsp;storage&nbsp;configuration&nbsp;(e.g.&nbsp;DBFS).<br>
