@@ -28,10 +28,11 @@ storage_config = UcStorageConfig(storage_root="s3://unity-catalogs-us-west-2/",
 
 workspace_config = WorkspaceConfig(max_users=max_users_per_workspace,
                                    course_definitions=[
-                                       "course=welcome",
-                                       "course=example-course&version=v1.1.8",
-                                       "course=template-course&version=v1.0.0&artifact=template-course.dbc",
-                                       "https://labs.training.databricks.com/api/v1/courses/download.dbc?course=ml-in-production"],
+                                       # "course=welcome",
+                                       # "course=example-course&version=v1.1.8",
+                                       # "course=template-course&version=v1.0.0&artifact=template-course.dbc",
+                                       # "https://labs.training.databricks.com/api/v1/courses/download.dbc?course=ml-in-production"
+                                   ],
                                    cds_api_token=os.environ.get("WORKSPACE_SETUP_CDS_API_TOKEN"),
                                    datasets=None,  # defined via course_definitions, otherwise appends
                                    default_dbr="11.3.x-cpu-ml-scala2.12",
@@ -47,8 +48,9 @@ workspace_config = WorkspaceConfig(max_users=max_users_per_workspace,
                                    },
                                    workspace_name_pattern="classroom-{workspace_number}",
                                    groups={
-                                       "analysts": ["class+analyst@databricks.com"],
+                                       "admins": [0],
                                        "instructors": [0],
+                                       "analysts": ["class+analyst@databricks.com"],
                                    })
 
 account = AccountConfig.from_env(qualifier="CURR",  # PROSVC, CURR
