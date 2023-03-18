@@ -222,6 +222,7 @@ class ApiClient(ApiContainer):
         timeout = (self.connect_timeout, self.read_timeout)
         connection_errors = 0
         response = None
+        attempt = 0
 
         for attempt in range(self.retries+1):
             try:
@@ -244,6 +245,9 @@ class ApiClient(ApiContainer):
             duration = math.ceil(attempt * attempt / 2)
             print(f"Retrying after {duration}s")
             time.sleep(duration)
+
+        if attempt > 0:
+            print(f"Print success after {attempt} attempts")
 
         # TODO: Should we really return None on errors?  Kept for now for backwards compatibility.
         if response is None:
