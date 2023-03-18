@@ -101,40 +101,6 @@ Returns:<br>
 Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;requests.HTTPError:&nbsp;If&nbsp;the&nbsp;API&nbsp;returns&nbsp;an&nbsp;error&nbsp;and&nbsp;on_error='raise'.</tt></dd></dl>
 
-<dl><dt><a name="AccountsApi-api_raw"><strong>api_raw</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', _data=None, *, _expected: 'HttpStatusCodes' = None) -&gt; 'requests.Response'</dt><dd><tt>DEPRECATED:&nbsp;Use&nbsp;DatabricksApi.<a href="#AccountsApi-api">api</a>(_result_type=requests.Response)</tt></dd></dl>
-
-<dl><dt><a name="AccountsApi-api_simple"><strong>api_simple</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', *, _expected: 'HttpStatusCodes' = None, **data) -&gt; 'Union[str, Dict]'</dt><dd><tt>DEPRECATED:&nbsp;Use&nbsp;DatabricksApi.<a href="#AccountsApi-api">api</a>()</tt></dd></dl>
-
-<dl><dt><a name="AccountsApi-execute_delete"><strong>execute_delete</strong></a>(self, url: 'str', expected=(200, 404))</dt></dl>
-
-<dl><dt><a name="AccountsApi-execute_delete_json"><strong>execute_delete_json</strong></a>(self, url: 'str', expected=(200, 404)) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="AccountsApi-execute_get"><strong>execute_get</strong></a>(self, url: 'str', expected=200)</dt></dl>
-
-<dl><dt><a name="AccountsApi-execute_get_json"><strong>execute_get_json</strong></a>(self, url: 'str', expected=200) -&gt; 'Union[dict, None]'</dt></dl>
-
-<dl><dt><a name="AccountsApi-execute_patch"><strong>execute_patch</strong></a>(self, url: 'str', params: 'dict', expected=200)</dt></dl>
-
-<dl><dt><a name="AccountsApi-execute_patch_json"><strong>execute_patch_json</strong></a>(self, url: 'str', params: 'dict', expected=200) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="AccountsApi-execute_post"><strong>execute_post</strong></a>(self, url: 'str', params: 'dict', expected=200)</dt></dl>
-
-<dl><dt><a name="AccountsApi-execute_post_json"><strong>execute_post_json</strong></a>(self, url: 'str', params: 'dict', expected=200) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="AccountsApi-execute_put"><strong>execute_put</strong></a>(self, url: 'str', params: 'dict', expected=200)</dt></dl>
-
-<dl><dt><a name="AccountsApi-execute_put_json"><strong>execute_put_json</strong></a>(self, url: 'str', params: 'dict', expected=200) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="AccountsApi-simple_delete"><strong>simple_delete</strong></a>(self, url: 'str', expected=200, **data) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="AccountsApi-simple_get"><strong>simple_get</strong></a>(self, url: 'str', expected: 'Union[int, List[int]]' = 200, **data) -&gt; 'Union[None, str, Dict]'</dt></dl>
-
-<dl><dt><a name="AccountsApi-simple_patch"><strong>simple_patch</strong></a>(self, url: 'str', expected=200, **data) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="AccountsApi-simple_post"><strong>simple_post</strong></a>(self, url: 'str', expected=200, **data) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="AccountsApi-simple_put"><strong>simple_put</strong></a>(self, url: 'str', expected=200, **data) -&gt; 'dict'</dt></dl>
-
 <hr>
 Data and other attributes inherited from <a href="dbacademy.rest.common.html#ApiClient">dbacademy.rest.common.ApiClient</a>:<br>
 <dl><dt><strong>__annotations__</strong> = {'dns_verify': 'bool', 'url': 'str'}</dl>

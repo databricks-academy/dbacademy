@@ -23,6 +23,7 @@
 <dl>
 <dt><font face="helvetica, arial"><a href="dbacademy.dbbuild.publish.notebook_def_class.html#NotebookDef">NotebookDef</a>
 </font></dt><dt><font face="helvetica, arial"><a href="dbacademy.dbbuild.publish.notebook_def_class.html#NotebookError">NotebookError</a>
+</font></dt><dt><font face="helvetica, arial"><a href="dbacademy.dbbuild.publish.notebook_def_class.html#StateVariables">StateVariables</a>
 </font></dt></dl>
 </dd>
 </dl>
@@ -60,7 +61,7 @@
 
 <dl><dt><a name="NotebookDef-get_leading_comments"><strong>get_leading_comments</strong></a>(self, language, command) -&gt; list</dt></dl>
 
-<dl><dt><a name="NotebookDef-load_i18n_guid_map"><strong>load_i18n_guid_map</strong></a>(self, i18n_source: str)</dt></dl>
+<dl><dt><a name="NotebookDef-load_i18n_guid_map"><strong>load_i18n_guid_map</strong></a>(self, i18n_source: str) -&gt; Dict[str, str]</dt></dl>
 
 <dl><dt><a name="NotebookDef-load_i18n_source"><strong>load_i18n_source</strong></a>(self, i18n_resources_dir)</dt></dl>
 
@@ -74,7 +75,9 @@
 
 <dl><dt><a name="NotebookDef-replace_contents"><strong>replace_contents</strong></a>(self, contents: str)</dt></dl>
 
-<dl><dt><a name="NotebookDef-replace_guid"><strong>replace_guid</strong></a>(self, cm: str, command: str, i: int, i18n_guid_map: dict)</dt></dl>
+<dl><dt><a name="NotebookDef-replace_guid_body"><strong>replace_guid_body</strong></a>(self, state: dbacademy.dbbuild.publish.notebook_def_class.StateVariables, cm: str, command: str, i: int)</dt></dl>
+
+<dl><dt><a name="NotebookDef-replace_guid_title"><strong>replace_guid_title</strong></a>(self, state: dbacademy.dbbuild.publish.notebook_def_class.StateVariables, cm: str, command: str, i: int, cell_title: str)</dt></dl>
 
 <dl><dt><a name="NotebookDef-test"><strong>test</strong></a>(self, assertion: Callable[[], bool], message: str) -&gt; bool</dt></dl>
 
@@ -93,11 +96,13 @@
 :param&nbsp;other_notebooks:&nbsp;A&nbsp;complete&nbsp;list&nbsp;of&nbsp;notebooks&nbsp;for&nbsp;cross-validation<br>
 :return:&nbsp;None</tt></dd></dl>
 
-<dl><dt><a name="NotebookDef-test_source_cells"><strong>test_source_cells</strong></a>(self, language: str, command: str, i: int)</dt></dl>
+<dl><dt><a name="NotebookDef-test_source_cells"><strong>test_source_cells</strong></a>(self, language: str, command: str, i: int) -&gt; str</dt></dl>
 
 <dl><dt><a name="NotebookDef-test_source_for"><strong>test_source_for</strong></a>(self, command: str, i: int, what: str, template: str) -&gt; bool</dt></dl>
 
-<dl><dt><a name="NotebookDef-update_md_cells"><strong>update_md_cells</strong></a>(self, language: str, command: str, i: int, i18n_guid_map: dict, other_notebooks: list)</dt></dl>
+<dl><dt><a name="NotebookDef-update_command"><strong>update_command</strong></a>(self, *, state: dbacademy.dbbuild.publish.notebook_def_class.StateVariables, language: str, command: str, i: int, other_notebooks: list, debugging: bool) -&gt; str</dt></dl>
+
+<dl><dt><a name="NotebookDef-update_md_cells"><strong>update_md_cells</strong></a>(self, state: dbacademy.dbbuild.publish.notebook_def_class.StateVariables, cm: str, command: str, i: int, other_notebooks: list, cell_title: str) -&gt; str</dt></dl>
 
 <dl><dt><a name="NotebookDef-validate_html_link"><strong>validate_html_link</strong></a>(self, i, command)</dt><dd><tt>Test&nbsp;all&nbsp;HTML&nbsp;links&nbsp;to&nbsp;ensure&nbsp;they&nbsp;have&nbsp;a&nbsp;target&nbsp;set&nbsp;to&nbsp;_blank</tt></dd></dl>
 
@@ -181,6 +186,24 @@ Data descriptors defined here:<br>
 <dl><dt><strong>__weakref__</strong></dt>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="StateVariables">class <strong>StateVariables</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="StateVariables-__init__"><strong>__init__</strong></a>(self)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
@@ -189,6 +212,7 @@ Data descriptors defined here:<br>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><strong>Callable</strong> = typing.Callable<br>
+<strong>Dict</strong> = typing.Dict<br>
 <strong>List</strong> = typing.List<br>
 <strong>Union</strong> = typing.Union</td></tr></table>
 </body></html>

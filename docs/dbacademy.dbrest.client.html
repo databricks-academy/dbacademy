@@ -32,7 +32,7 @@
 <font color="#000000" face="helvetica, arial"><a name="DBAcademyRestClient">class <strong>DBAcademyRestClient</strong></a>(<a href="dbacademy.rest.common.html#ApiClient">dbacademy.rest.common.ApiClient</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#DBAcademyRestClient">DBAcademyRestClient</a>(token:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;endpoint:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;'int'&nbsp;=&nbsp;1,&nbsp;*,&nbsp;user:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;password:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;client:&nbsp;'<a href="dbacademy.rest.common.html#ApiClient">ApiClient</a>'&nbsp;=&nbsp;None,&nbsp;verbose:&nbsp;'bool'&nbsp;=&nbsp;False)<br>
+<td colspan=2><tt><a href="#DBAcademyRestClient">DBAcademyRestClient</a>(token:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;endpoint:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;'int'&nbsp;=&nbsp;0,&nbsp;*,&nbsp;user:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;password:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;client:&nbsp;'<a href="dbacademy.rest.common.html#ApiClient">ApiClient</a>'&nbsp;=&nbsp;None,&nbsp;verbose:&nbsp;'bool'&nbsp;=&nbsp;False)<br>
 &nbsp;<br>
 Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -44,7 +44,7 @@ Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.<br>&nbsp;</tt></td></tr>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="DBAcademyRestClient-__init__"><strong>__init__</strong></a>(self, token: 'str' = None, endpoint: 'str' = None, throttle_seconds: 'int' = 1, *, user: 'str' = None, password: 'str' = None, authorization_header: 'str' = None, client: 'ApiClient' = None, verbose: 'bool' = False)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
+<dl><dt><a name="DBAcademyRestClient-__init__"><strong>__init__</strong></a>(self, token: 'str' = None, endpoint: 'str' = None, throttle_seconds: 'int' = 0, *, user: 'str' = None, password: 'str' = None, authorization_header: 'str' = None, client: 'ApiClient' = None, verbose: 'bool' = False)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
 &nbsp;<br>
 This&nbsp;is&nbsp;similar&nbsp;to&nbsp;<a href="dbacademy.rest.common.html#ApiClient">ApiClient</a>.__init__&nbsp;except&nbsp;the&nbsp;parameter&nbsp;order&nbsp;is&nbsp;different&nbsp;to&nbsp;ensure&nbsp;backwards&nbsp;compatibility.<br>
 &nbsp;<br>
@@ -85,40 +85,6 @@ Returns:<br>
 &nbsp;<br>
 Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;requests.HTTPError:&nbsp;If&nbsp;the&nbsp;API&nbsp;returns&nbsp;an&nbsp;error&nbsp;and&nbsp;on_error='raise'.</tt></dd></dl>
-
-<dl><dt><a name="DBAcademyRestClient-api_raw"><strong>api_raw</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', _data=None, *, _expected: 'HttpStatusCodes' = None) -&gt; 'requests.Response'</dt><dd><tt>DEPRECATED:&nbsp;Use&nbsp;DatabricksApi.<a href="#DBAcademyRestClient-api">api</a>(_result_type=requests.Response)</tt></dd></dl>
-
-<dl><dt><a name="DBAcademyRestClient-api_simple"><strong>api_simple</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', *, _expected: 'HttpStatusCodes' = None, **data) -&gt; 'Union[str, Dict]'</dt><dd><tt>DEPRECATED:&nbsp;Use&nbsp;DatabricksApi.<a href="#DBAcademyRestClient-api">api</a>()</tt></dd></dl>
-
-<dl><dt><a name="DBAcademyRestClient-execute_delete"><strong>execute_delete</strong></a>(self, url: 'str', expected=(200, 404))</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-execute_delete_json"><strong>execute_delete_json</strong></a>(self, url: 'str', expected=(200, 404)) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-execute_get"><strong>execute_get</strong></a>(self, url: 'str', expected=200)</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-execute_get_json"><strong>execute_get_json</strong></a>(self, url: 'str', expected=200) -&gt; 'Union[dict, None]'</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-execute_patch"><strong>execute_patch</strong></a>(self, url: 'str', params: 'dict', expected=200)</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-execute_patch_json"><strong>execute_patch_json</strong></a>(self, url: 'str', params: 'dict', expected=200) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-execute_post"><strong>execute_post</strong></a>(self, url: 'str', params: 'dict', expected=200)</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-execute_post_json"><strong>execute_post_json</strong></a>(self, url: 'str', params: 'dict', expected=200) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-execute_put"><strong>execute_put</strong></a>(self, url: 'str', params: 'dict', expected=200)</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-execute_put_json"><strong>execute_put_json</strong></a>(self, url: 'str', params: 'dict', expected=200) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-simple_delete"><strong>simple_delete</strong></a>(self, url: 'str', expected=200, **data) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-simple_get"><strong>simple_get</strong></a>(self, url: 'str', expected: 'Union[int, List[int]]' = 200, **data) -&gt; 'Union[None, str, Dict]'</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-simple_patch"><strong>simple_patch</strong></a>(self, url: 'str', expected=200, **data) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-simple_post"><strong>simple_post</strong></a>(self, url: 'str', expected=200, **data) -&gt; 'dict'</dt></dl>
-
-<dl><dt><a name="DBAcademyRestClient-simple_put"><strong>simple_put</strong></a>(self, url: 'str', expected=200, **data) -&gt; 'dict'</dt></dl>
 
 <hr>
 Data and other attributes inherited from <a href="dbacademy.rest.common.html#ApiClient">dbacademy.rest.common.ApiClient</a>:<br>
