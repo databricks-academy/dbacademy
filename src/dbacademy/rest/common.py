@@ -233,7 +233,6 @@ class ApiClient(ApiContainer):
                     response = self.session.request(_http_method, url, data=json.dumps(_data), timeout=timeout)
 
                 if response.status_code not in [429]:
-                    self._raise_for_status(response, _expected)
                     reties = attempt
                     break  # Don't retry, either we failed or we passed
 
@@ -247,13 +246,17 @@ class ApiClient(ApiContainer):
             print(f"Retrying after {duration}s")
             time.sleep(duration)
 
+        if response is None:
+            raise Exception("Unexpected processing error; the final response was None")
+        else:
+            # Always verify that response.
+            self._raise_for_status(response, _expected)
+
         if reties > 0:
             print(f"Print success after {reties} reties")
 
         # TODO: Should we really return None on errors?  Kept for now for backwards compatibility.
-        if response is None:
-            raise Exception("Unexpected processing error; response is None")
-        elif not (200 <= response.status_code < 300):
+        if not (200 <= response.status_code < 300):
             return None
         if _result_type == requests.Response:
             return response
