@@ -242,7 +242,7 @@ class ApiClient(ApiContainer):
 
             # Attempt 1=1s, 2=1s, 3=5s, 4=16s, 5=13s, etc...
             duration = math.ceil(attempt * attempt / 2)
-            print("Retrying after {duration}s")
+            print(f"Retrying after {duration}s")
             time.sleep(duration)
 
         # TODO: Should we really return None on errors?  Kept for now for backwards compatibility.
