@@ -222,8 +222,9 @@ class ApiClient(ApiContainer):
         timeout = (self.connect_timeout, self.read_timeout)
         connection_errors = 0
 
+        verbose = False  # Enabling debug prints
         response = None  # Precluding warning
-        # attempts = 0     # Counter for debugging
+        attempts = 0     # Counter for debugging
 
         for attempt in range(self.retries+1):
             try:
@@ -233,9 +234,13 @@ class ApiClient(ApiContainer):
                 else:
                     response = self.session.request(_http_method, url, data=json.dumps(_data), timeout=timeout)
 
-                if response.status_code not in [429]:
-                    # attempts = attempt
-                    break  # Don't retry, either we failed or we passed
+                if response.status_code == 500:
+                    if "REQUEST_LIMIT_EXCEEDED" not in response.text:
+                        attempts = attempt
+                        break  # Don't retry, this is a hard fail, not rate-limited
+                elif response.status_code not in [429]:
+                    attempts = attempt
+                    break  # Don't retry, either we passed or it's a hard fail.
 
             except requests.exceptions.ConnectionError as e:
                 connection_errors += 1
@@ -244,16 +249,17 @@ class ApiClient(ApiContainer):
 
             # Attempt 1=1s, 2=1s, 3=5s, 4=16s, 5=13s, etc...
             duration = math.ceil(attempt * attempt / 2)
-            # print(f"Retrying after {duration}s, attempt {attempt+1} of {self.retries+1}: {url}")
+            if verbose:
+                print(f"Retrying after {duration}s, attempt {attempt+1} of {self.retries+1}: {_http_method} {url}")
             time.sleep(duration)
 
-        if response is None:  # Should never happen
+        if response is None:  # "None" should never happen
             raise Exception("Unexpected processing error; the final response was None")
         else:  # Always validate the final response
             self._raise_for_status(response, _expected)
 
-        # if attempts > 0:
-        #     print(f"Print success after {attempts} reties")
+        if attempts > 0 and verbose:
+            print(f"Success after {attempts} reties")
 
         # TODO: Should we really return None on errors?  Kept for now for backwards compatibility.
         if not (200 <= response.status_code < 300):

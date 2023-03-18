@@ -80,9 +80,6 @@ class WorkspaceSetup:
         with ThreadPool(len(workspaces)) as pool:
             pool.map(some_action, workspaces)
 
-        # for trio in workspaces:
-        #     some_action(trio)
-
     def remove_metastores(self):
         print("\n")
         print("-"*100)
@@ -369,8 +366,8 @@ class WorkspaceSetup:
                 self.__utils_create_user(trio, username, entitlements)
 
     def __utils_create_user(self, trio: WorkspaceTrio, username: str, entitlements: Dict[str, bool]) -> List[str]:
-        import time, random
-        from requests.exceptions import HTTPError
+        # import time, random
+        # from requests.exceptions import HTTPError
 
         entitlements_list = list()
 
@@ -381,38 +378,38 @@ class WorkspaceSetup:
                 raise Exception("Entitlement removal is not yet supported.")
 
         for i in range(0, self.__max_retries):
-            try:
-                return trio.classroom.databricks.users.create(username=username,
-                                                              allow_cluster_create=False,
-                                                              entitlements=entitlements_list,
-                                                              if_exists="ignore")
-            except HTTPError as e:
-                print(f"""Failed to list users for "{trio.workspace_config.name}", retrying ({i})""")
-                data = e.response.json()
-                message = data.get("detail", str(e))
-                print(f"HTTPError ({e.response.status_code}): {message}")
-                time.sleep(random.randint(5, 10))
+            # try:
+            return trio.classroom.databricks.users.create(username=username,
+                                                          allow_cluster_create=False,
+                                                          entitlements=entitlements_list,
+                                                          if_exists="ignore")
+            # except HTTPError as e:
+            #     print(f"""Failed to list users for "{trio.workspace_config.name}", retrying ({i})""")
+            #     data = e.response.json()
+            #     message = data.get("detail", str(e))
+            #     print(f"HTTPError ({e.response.status_code}): {message}")
+            #     time.sleep(random.randint(5, 10))
 
         raise Exception(f"""Failed to create user "{username}" for "{trio.workspace_config.name}".""")
 
     def __utils_list_users(self, trio: WorkspaceTrio) -> List[str]:
-        import time, random
-        from requests.exceptions import HTTPError
+        # import time, random
+        # from requests.exceptions import HTTPError
 
         existing_users = None
         for i in range(0, self.__max_retries):
             if existing_users is not None:
                 break
-            try:
-                existing_users = trio.classroom.databricks.users.list_usernames()
+            # try:
+            existing_users = trio.classroom.databricks.users.list_usernames()
 
-            except HTTPError as e:
-                print(f"""Failed to list users for "{trio.workspace_config.name}", retrying ({i})""")
-                data = e.response.json()
-                message = data.get("detail", str(e))
-                print(f"HTTPError ({e.response.status_code}): {message}")
-                time.sleep(random.randint(5, 10))
-                raise e
+            # except HTTPError as e:
+            #     print(f"""Failed to list users for "{trio.workspace_config.name}", retrying ({i})""")
+            #     data = e.response.json()
+            #     message = data.get("detail", str(e))
+            #     print(f"HTTPError ({e.response.status_code}): {message}")
+            #     time.sleep(random.randint(5, 10))
+            #     raise e
 
         if existing_users is None:
             raise Exception(f"""Failed to load existing users for "{trio.workspace_config.name}".""")
