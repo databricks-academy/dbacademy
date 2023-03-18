@@ -186,10 +186,7 @@ class Commands(object):
                     results += [{"job_name": job_name, "paused": False}]
                 else:
                     # Don't stop jobs in the following situations
-                    if "curriculum-dev" == w["deployment_name"]:
-                        results += [{"action": "Job skipped", "name": job_name, "exception": ""}]
-                        continue
-                    if "curriculum" == w["deployment_name"]:
+                    if w["deployment_name"] in ["curriculum-dev", "curriculum", "curriculum-operations"]:
                         results += [{"action": "Job skipped", "name": job_name, "exception": ""}]
                         continue
                     if job_name == "_Monitor_Workspace":
@@ -1040,10 +1037,11 @@ class Commands(object):
         ws.groups.add_member("admins", user_name=client_id)
 
     @staticmethod
-    def add_doug(ws):
-        if "doug.bateman@databricks.com" not in ws.users.list_usernames():
-            ws.scim.users.create("doug.bateman@databricks.com")
-        ws.groups.add_member("admins", user_name="doug.bateman@databricks.com")
+    def add_admin_user(username: str):
+        def do_add_admin_user(ws: Workspace):
+            ws.scim.users.create("doug.bateman@databricks.com", if_exists="ignore")
+            ws.groups.add_member("admins", user_name="doug.bateman@databricks.com")
+        return do_add_admin_user
 
 
 # noinspection PyPep8Naming
