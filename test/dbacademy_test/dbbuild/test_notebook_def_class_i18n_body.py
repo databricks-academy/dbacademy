@@ -1,7 +1,7 @@
 import unittest
 
 
-class TestNotebookDefI18NDeprecated(unittest.TestCase):
+class TestNotebookDefI18NBody(unittest.TestCase):
     from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
 
     def __init__(self, method_name):
@@ -211,7 +211,7 @@ class TestNotebookDefI18NDeprecated(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
 
-        expected = """# MAGIC %md <i18n value="a6e39b59-1715-4750-bd5d-5d638cf57c3a"/>\n# MAGIC # Some Title""".strip()
+        expected = """# DBTITLE 0,--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a\n# MAGIC %md\n# MAGIC # Some Title""".strip()
         self.assertEqual(expected, actual)
 
     def test_md_sandbox_i18n_guid_replacement(self):
@@ -229,7 +229,7 @@ class TestNotebookDefI18NDeprecated(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
 
-        expected = """# MAGIC %md-sandbox <i18n value="a6e39b59-1715-4750-bd5d-5d638cf57c3a"/>\n# MAGIC # Some Title""".strip()
+        expected = """# DBTITLE 0,--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a\n# MAGIC %md-sandbox\n# MAGIC # Some Title""".strip()
         self.assertEqual(expected, actual)
 
     def test_i18n_sql(self):
@@ -245,7 +245,7 @@ class TestNotebookDefI18NDeprecated(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
 
-        expected = """-- MAGIC %md-sandbox <i18n value="a6e39b59-1715-4750-bd5d-5d638cf57c3a"/>\n-- MAGIC # Some Title""".strip()
+        expected = """-- DBTITLE 0,--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a\n-- MAGIC %md-sandbox\n-- MAGIC # Some Title""".strip()
         self.assertEqual(expected, actual)
 
     def test_i18n_single_line(self):

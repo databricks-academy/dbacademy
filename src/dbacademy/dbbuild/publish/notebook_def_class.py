@@ -349,7 +349,8 @@ class NotebookDef:
                 if self.warn(lambda: guid in state.i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
                     lines = state.i18n_guid_map.get(guid).split("\n")
 
-            lines.insert(0, f"{cm} MAGIC {md_tag} <i18n value=\"{guid[7:]}\"/>")
+            lines.insert(0, f"{cm} MAGIC {md_tag}")
+            lines.insert(0, f"{cm} DBTITLE 0,{guid}")
             command = "\n".join(lines)
 
         return command
