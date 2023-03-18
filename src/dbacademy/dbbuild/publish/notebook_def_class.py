@@ -1,4 +1,4 @@
-from typing import Callable, Union, List
+from typing import Callable, Union, List, Dict
 
 
 class NotebookError:
@@ -14,6 +14,8 @@ class NotebookError:
 
 class StateVariables:
     def __init__(self):
+        self.i18n_guid_map: Dict[str, str] = dict()
+
         # Stateful values that get reset during publishing.
         self.students_commands = list()
         self.solutions_commands = list()
@@ -309,7 +311,7 @@ class NotebookDef:
 
         return command
 
-    def replace_guid_body(self, cm: str, command: str, i: int, i18n_guid_map: dict):
+    def replace_guid_body(self, state: StateVariables, cm: str, command: str, i: int):
         lines = command.strip().split("\n")
         line_0 = lines[0][7+len(cm):]
 
@@ -344,69 +346,46 @@ class NotebookDef:
                 del lines[0]  # Remove the i18n directive
             else:
                 # We must confirm that the replacement GUID actually exists
-                if self.warn(lambda: guid in i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
-                    lines = i18n_guid_map.get(guid).split("\n")
+                if self.warn(lambda: guid in state.i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
+                    lines = state.i18n_guid_map.get(guid).split("\n")
 
-            if self.build_config.i18n_xml_tag_disabled:
-                lines.insert(0, f"{cm} MAGIC {md_tag}")
-            else:
-                lines.insert(0, f"{cm} MAGIC {md_tag} <i18n value=\"{guid[7:]}\"/>")
-
+            lines.insert(0, f"{cm} MAGIC {md_tag} <i18n value=\"{guid[7:]}\"/>")
             command = "\n".join(lines)
 
         return command
 
-    def replace_guid_title(self, cm: str, command: str, i: int, i18n_guid_map: dict):
-        lines = command.strip().split("\n")
-        line_0 = lines[0][7+len(cm):]
-
-        parts = line_0.strip().split(" ")
-        for index, part in enumerate(parts):
-            # Remove all "parts" that are empty strings
-            if part.strip() == "":
-                del parts[index]
-
-        md_tag = None if len(parts) < 1 else parts[0]
-        guid = None if len(parts) < 2 else parts[1].strip()
-
-        debug_info = line_0
-
-        passed = self.test(lambda: len(lines) > 1, f"Cmd #{i + 1} | Expected MD to have more than 1 line of code with i18n enabled: {debug_info}")
-
+    def replace_guid_title(self, state: StateVariables, cm: str, command: str, i: int, cell_title: str):
+        parts = cell_title.split(",")
         if len(parts) == 1:
-            passed = passed and self.test(lambda: False, f"Cmd #{i + 1} | Missing the i18n directive: {debug_info}")
-        else:
-            passed = passed and self.test(lambda: len(parts) == 2, f"Cmd #{i + 1} | Expected the first line of MD to have only two words, found {len(parts)}: {debug_info}")
-            passed = passed and self.test(lambda: parts[0] in ["%md", "%md-sandbox"], f"Cmd #{i + 1} | Expected word[0] of the first line of MD to be \"%md\" or \"%md-sandbox\", found {parts[0]}: {debug_info}")
-            passed = passed and self.test(lambda: guid.startswith("--i18n-"), f"Cmd #{i + 1} | Expected word[1] of the first line of MD to start with \"--i18n-\", found {guid}: {debug_info}")
+            self.test(lambda: False, f"Cmd #{i + 1} | Missing the i18n directive, no title.")
+            return command
 
-        if passed:
+        guid = parts[1].strip()
+        if len(guid) == 0:
+            self.test(lambda: False, f"Cmd #{i + 1} | Missing the i18n directive, no title.")
+            return command
+
+        guid_parts = guid.split(" ")
+        if self.test(lambda: len(guid_parts) == 1, f"""Cmd #{i + 1} | Expected the title to have only one word, found {len(guid_parts)}: {guid}"""):
+
+            passed = self.test(lambda: guid.startswith("--i18n-"), f"Cmd #{i + 1} | Expected the cell title to start with \"--i18n-\", found {guid}: {cell_title}")
             passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Cmd #{i + 1} | Duplicate i18n GUID found: {guid}")
 
-        if passed:
-            self.i18n_guids.append(guid)
+            if passed:
+                self.i18n_guids.append(guid)
 
-            if not self.i18n_language:
-                # This is a "standard" publish, just remove the i18n directive
-                del lines[0]  # Remove the i18n directive
-            else:
-                # We must confirm that the replacement GUID actually exists
-                if self.warn(lambda: guid in i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
-                    lines = i18n_guid_map.get(guid).split("\n")
+                if self.i18n_language:
+                    # We must confirm that the replacement GUID actually exists
+                    if self.warn(lambda: guid in state.i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
+                        command = state.i18n_guid_map.get(guid)
 
-            if self.build_config.i18n_xml_tag_disabled:
-                lines.insert(0, f"{cm} MAGIC {md_tag}")
-            else:
-                lines.insert(0, f"{cm} MAGIC {md_tag} <i18n value=\"{guid[7:]}\"/>")
-
-            command = "\n".join(lines)
+                command = f"{cm} DBTITLE 0,{guid}\n{command}"
 
         return command
 
-    def update_md_cells(self, language: str, command: str, i: int, i18n_guid_map: dict, other_notebooks: list) -> str:
+    def update_md_cells(self, state: StateVariables, cm: str, command: str, i: int, other_notebooks: list, cell_title: str) -> str:
 
         # First verify that the specified command is a mark-down cell
-        cm = self.get_comment_marker(language)
         if not command.startswith(f"{cm} MAGIC %md"):
             return command
             
@@ -419,11 +398,12 @@ class NotebookDef:
         if not self.i18n:
             # This is the deprecated form, still need to validate it until fully replaced
             self.test(lambda: "--i18n-" not in command, f"Cmd #{i+1} | Found the \"--i18n-\" marker but i18n processing is disabled.")
+            self.test(lambda: "--i18n-" not in cell_title, f"Cmd #{i+1} | Found the \"--i18n-\" marker but i18n processing is disabled.")
             return command
+        elif cell_title is None:
+            return self.replace_guid_body(state=state, cm=cm, command=command, i=i)
         else:
-            # command = self.replace_guid_title(cm=cm, command=command, i=i, i18n_guid_map=i18n_guid_map)
-            command = self.replace_guid_body(cm=cm, command=command, i=i, i18n_guid_map=i18n_guid_map)
-            return command
+            return self.replace_guid_title(state=state, cm=cm, command=command, i=i, cell_title=cell_title)
 
     def create_resource_bundle(self, natural_language: str, source_dir: str, target_dir: str) -> None:
         natural_language = None if natural_language is None else natural_language.lower()
@@ -476,7 +456,7 @@ class NotebookDef:
 
         return None
 
-    def load_i18n_guid_map(self, i18n_source: str):
+    def load_i18n_guid_map(self, i18n_source: str) -> Dict[str, str]:
         import re
 
         if i18n_source is None:
@@ -616,10 +596,9 @@ For more current information, please see <a href="https://files.training.databri
 
         raw_source = self.client.workspace().export_notebook(source_notebook_path)
 
-        i18n_source = self.load_i18n_source(i18n_resources_dir)
-        i18n_guid_map = self.load_i18n_guid_map(i18n_source)
-
         state = StateVariables()
+        i18n_source = self.load_i18n_source(i18n_resources_dir)
+        state.i18n_guid_map = self.load_i18n_guid_map(i18n_source)
 
         cmd_delim = self.get_cmd_delim(language)
         commands = raw_source.split(cmd_delim)
@@ -633,7 +612,6 @@ For more current information, please see <a href="https://files.training.databri
                                 language=language,
                                 command=commands[i].lstrip(),
                                 i=i,
-                                i18n_guid_map=i18n_guid_map,
                                 other_notebooks=other_notebooks,
                                 debugging=debugging)
 
@@ -666,18 +644,25 @@ For more current information, please see <a href="https://files.training.databri
             BuildUtils.print_if(verbose, f"...publishing {len(state.solutions_commands)} commands")
             self.publish_notebook(language, state.solutions_commands, solutions_notebook_path, print_warnings=False)
 
-    def update_command(self, *, state: StateVariables, language: str, command: str, i: int, i18n_guid_map: dict, other_notebooks: list, debugging: bool) -> str:
+    def update_command(self, *, state: StateVariables, language: str, command: str, i: int, other_notebooks: list, debugging: bool) -> str:
+
+        cell_title = None
+        cm = self.get_comment_marker(language)
+
         if not self.i18n:
             # If we are not translating, then this feature must be excluded.
             self.test(lambda: "DBTITLE" not in command, f"Cmd #{i + 1} | Cell titles are only supported for translated courses, please remove to continue.")
-        else:
-            pass
+        elif command.startswith(f"{cm} DBTITLE "):
+            lines = command.split("\n")           # Split the command into lines
+            cell_title = lines[0].strip()         # The title is the first line
+            del lines[0]                          # Delete the tile from the lines
+            command = ("\n".join(lines)).strip()  # Rebuild the command
 
         # Misc tests for language specific cells
         command = self.test_source_cells(language, command, i)
 
         # Misc tests specific to %md cells along with i18n specific rewrites
-        command = self.update_md_cells(language, command, i, i18n_guid_map, other_notebooks)
+        command = self.update_md_cells(state, cm, command, i, other_notebooks, cell_title)
 
         # Misc tests specific to %run cells
         self.test_run_cells(language, command, i, other_notebooks)
@@ -769,7 +754,6 @@ For more current information, please see <a href="https://files.training.databri
         for token in bdc_tokens:
             self.test(lambda: token not in command, f"""Cmd #{i + 1} | Found the token "{token}" """)
 
-        cm = self.get_comment_marker(language)
         if not command.startswith(f"{cm} MAGIC %md"):
             if language.lower() == "python":
                 if "lang-python" not in self.ignoring:

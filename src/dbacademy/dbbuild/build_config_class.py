@@ -124,7 +124,6 @@ class BuildConfig:
                  include_solutions: bool = True,
                  i18n: bool = False,
                  i18n_language: str = None,
-                 i18n_xml_tag_disabled: bool = False,
                  ignoring: list = None,
                  publishing_info: dict = None):
 
@@ -150,7 +149,6 @@ class BuildConfig:
         self.ignoring = [] if ignoring is None else ignoring
 
         self.i18n = i18n
-        self.i18n_xml_tag_disabled = i18n_xml_tag_disabled
         self.i18n_language = i18n_language
 
         self.test_type = None
