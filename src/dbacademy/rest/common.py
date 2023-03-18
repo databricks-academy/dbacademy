@@ -243,7 +243,7 @@ class ApiClient(ApiContainer):
 
             # Attempt 1=1s, 2=1s, 3=5s, 4=16s, 5=13s, etc...
             duration = math.ceil(attempt * attempt / 2)
-            print(f"Retrying after {duration}s, attempt {attempt+1} of {self.retries+1}")
+            print(f"Retrying after {duration}s, attempt {attempt+1} of {self.retries+1}: {url}")
             time.sleep(duration)
 
         if response is None:
