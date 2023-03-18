@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Container, Dict, List, Type, TypeVar, Union
+from typing import Any, Container, Dict, Type, TypeVar, Union
 
 try:
     from typing import Literal
@@ -8,7 +8,6 @@ except ImportError:
     from typing_extensions import Literal
 
 from pprint import pformat
-from dbacademy.common import deprecated, print_warning
 import requests
 
 __all__ = ["ApiContainer", "ApiClient", "DatabricksApiException",
@@ -53,7 +52,7 @@ class ApiContainer(object):
             #    print(f"{member_name}()")
 
             if callable(member):
-               print(f"{member_name}()")
+                print(f"{member_name}()")
 
 
 class ApiClient(ApiContainer):
@@ -86,7 +85,7 @@ class ApiClient(ApiContainer):
         """
         super().__init__()
         import requests
-        from urllib3.util.retry import Retry
+        # from urllib3.util.retry import Retry
         from requests.adapters import HTTPAdapter
 
         # Precluding python warning.
@@ -140,28 +139,30 @@ class ApiClient(ApiContainer):
         # Reference information for this backoff/retry issues
         # https://stackoverflow.com/questions/47675138/how-to-override-backoff-max-while-working-with-requests-retry
 
-        backoff_factor = self.connect_timeout                            # Default is 5
+        # backoff_factor = self.connect_timeout                            # Default is 5
 
         # noinspection PyUnresolvedReferences
         # BACKOFF_MAX is not a real parameter but the documented parameter advertised DEFAULT_BACKOFF_MAX doesn't actually exist.
-        connection_retries = Retry.BACKOFF_MAX / backoff_factor  # Should be 24
+        # connection_retries = Retry.BACKOFF_MAX / backoff_factor  # Should be 24
 
         # retry = Retry(connect=connection_retries,                # Retry Connect errors N times
         #               backoff_factor=backoff_factor,             # A backoff factor to apply between attempts after the second try
         #               total=connection_retries,                  # Overrides all other retry counts
-        #               allowed_methods=["GET", "DELETE", "PUT"],  # Only retry for idempotent verbs
+        #               allowed_methods=["GET", "DELETE", "PUT"],  # Only retry for idempotent http-verbs
         #               status=connection_retries,                 # Retry for status_forcelist errors N times
         #               status_forcelist=[429])                    # list of codes to force a retry for
         #
         # retry = Retry(connect=connection_retries, backoff_factor=backoff_factor, status=connection_retries)
 
-        retry = Retry(connect=connection_retries,
-                      backoff_factor=backoff_factor)
+        # retry = Retry(connect=connection_retries,
+        #               backoff_factor=backoff_factor)
 
         self.session = requests.Session()
         self.session.headers = {'Authorization': self.authorization_header, 'Content-Type': 'text/json'}
         
-        self.http_adapter = HTTPAdapter(max_retries=retry)
+        self.http_adapter = HTTPAdapter()
+        # self.http_adapter = HTTPAdapter(max_retries=retry)
+
         # noinspection HttpUrlsUsage
         self.session.mount('http://', self.http_adapter)
         self.session.mount('https://', self.http_adapter)
@@ -194,7 +195,7 @@ class ApiClient(ApiContainer):
         Raises:
             requests.HTTPError: If the API returns an error and on_error='raise'.
         """
-        import json
+        import json, time, math
         from urllib.parse import urljoin
 
         if _data is None:
@@ -219,32 +220,35 @@ class ApiClient(ApiContainer):
         
         url = _base_url + _endpoint_path.lstrip("/")
         timeout = (self.connect_timeout, self.read_timeout)
-
         connection_errors = 0
-        import time
+        response = None
+
         for attempt in range(self.retries+1):
             try:
                 if _http_method in ('GET', 'HEAD', 'OPTIONS'):
                     params = {k: str(v).lower() if isinstance(v, bool) else v for k, v in _data.items()}
                     response = self.session.request(_http_method, url, params=params, timeout=timeout)
                 else:
-                    # if self.verbose: print(json.dumps(data, indent=4))
                     response = self.session.request(_http_method, url, data=json.dumps(_data), timeout=timeout)
-                if response.status_code in [429]:
-                    pass # Retry
-                else:
-                    break # Don't Retry
+
+                if response.status_code not in [429]:
+                    self._raise_for_status(response, _expected)
+                    break  # Don't retry, either we failed or we passed
+
             except requests.exceptions.ConnectionError as e:
                 connection_errors += 1
                 if connection_errors >= 2:
                     raise e
-            time.sleep(1)
 
-
-        self._raise_for_status(response, _expected)
+            # Attempt 1=1s, 2=1s, 3=5s, 4=16s, 5=13s, etc...
+            duration = math.ceil(attempt * attempt / 2)
+            print("Retrying after {duration}s")
+            time.sleep(duration)
 
         # TODO: Should we really return None on errors?  Kept for now for backwards compatibility.
-        if not (200 <= response.status_code < 300):
+        if response is None:
+            raise Exception("Unexpected processing error; response is None")
+        elif not (200 <= response.status_code < 300):
             return None
         if _result_type == requests.Response:
             return response
@@ -262,7 +266,7 @@ class ApiClient(ApiContainer):
                     "_status": response.status_code,
                     "_response": response.text
                 }
-        # TODO - missing else clause @doug.bateman
+        # TODO @doug.bateman: missing else clause
 
     @staticmethod
     def _verify_hostname(url: str):
