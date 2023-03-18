@@ -12,7 +12,6 @@ class TestAccountConfig(unittest.TestCase):
         self.event_config = EventConfig(event_id=999, max_participants=300, description="Fun times!")
         self.uc_storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", owner="instructors")
 
-        dbc_urls = ["https://labs.training.databricks.com/api/courses?course=example-course&version=vLATEST&artifact=lessons.dbc&token=abcd"]
         self.workspace_config = WorkspaceConfig(max_users=100, course_definitions="course=example-course", cds_api_token="asdf1234", datasets="example-course", default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), groups=dict(), workspace_name_pattern="classroom-{event_id}-{workspace_number}")
 
     def test_from_env(self):
@@ -21,8 +20,8 @@ class TestAccountConfig(unittest.TestCase):
 
         self.assertEqual("b6e87bd6-c65c-46d3-abde-6840bf706d39", account.account_id)
         self.assertEqual("class+curriculum@databricks.com", account.username)
-        self.assertTrue(account.password.startswith("54"))
-        self.assertTrue(account.password.endswith("V1"))
+        self.assertTrue(account.password.startswith("xR"))
+        self.assertTrue(account.password.endswith("gx"))
 
     def test_create_account_config(self):
 
