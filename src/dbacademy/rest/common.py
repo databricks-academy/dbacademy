@@ -134,7 +134,7 @@ class ApiClient(ApiContainer):
         self._last_request_timestamp = 0
         self.verbose = verbose
         self.authorization_header = authorization_header
-        self.retries = 0
+        self.retries = 24  # 24 to match the previous max
 
         # Reference information for this backoff/retry issues
         # https://stackoverflow.com/questions/47675138/how-to-override-backoff-max-while-working-with-requests-retry
