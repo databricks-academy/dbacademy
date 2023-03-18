@@ -222,7 +222,7 @@ class ApiClient(ApiContainer):
         timeout = (self.connect_timeout, self.read_timeout)
         connection_errors = 0
         response = None
-        attempt = 0
+        reties = 0
 
         for attempt in range(self.retries+1):
             try:
@@ -234,6 +234,7 @@ class ApiClient(ApiContainer):
 
                 if response.status_code not in [429]:
                     self._raise_for_status(response, _expected)
+                    reties = attempt
                     break  # Don't retry, either we failed or we passed
 
             except requests.exceptions.ConnectionError as e:
@@ -246,8 +247,8 @@ class ApiClient(ApiContainer):
             print(f"Retrying after {duration}s")
             time.sleep(duration)
 
-        if attempt > 0:
-            print(f"Print success after {attempt} attempts")
+        if reties > 0:
+            print(f"Print success after {reties} reties")
 
         # TODO: Should we really return None on errors?  Kept for now for backwards compatibility.
         if response is None:
