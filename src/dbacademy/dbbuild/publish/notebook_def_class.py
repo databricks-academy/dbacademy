@@ -399,7 +399,7 @@ class NotebookDef:
         if not self.i18n:
             # This is the deprecated form, still need to validate it until fully replaced
             self.test(lambda: "--i18n-" not in command, f"Cmd #{i+1} | Found the \"--i18n-\" marker but i18n processing is disabled.")
-            self.test(lambda: "--i18n-" not in cell_title, f"Cmd #{i+1} | Found the \"--i18n-\" marker but i18n processing is disabled.")
+            self.test(lambda: cell_title is None or "--i18n-" not in cell_title, f"Cmd #{i+1} | Found the \"--i18n-\" marker in the cell title but i18n processing is disabled.")
             return command
         elif cell_title is None:
             return self.replace_guid_body(state=state, cm=cm, command=command, i=i)
