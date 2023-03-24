@@ -153,7 +153,7 @@ class DatabasesHelper:
         params = {
             "name": job_name,
             "tags": {
-                "dbacademy.source": common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else WorkspaceHelper.get_lab_id())
+                # "dbacademy.source": common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else WorkspaceHelper.get_lab_id())
             },
             "email_notifications": {},
             "timeout_seconds": 7200,
