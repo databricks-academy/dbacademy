@@ -493,9 +493,6 @@ class NotebookDef:
         guid = f"--i18n-{part[0:pos]}".strip()
         value = part[pos+1:]
 
-        count = len(value.split("\n"))
-        print(f"""| {guid}: {count} lines""")
-
         return guid, value
 
     @staticmethod
