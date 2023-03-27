@@ -349,7 +349,6 @@ class Translator:
                                                       notebook_path=target_notebook_path,
                                                       content=raw_source,
                                                       overwrite=True)
-                print(f"| Skipping {file}")
                 continue
 
             commands = source.split(cmd_delim)
@@ -362,18 +361,11 @@ class Translator:
 
                 if guid is None:
                     new_commands.append(command)                            # No GUID, it's %python or other type of command, not MD
-                    # print(f"processed as-is.")
+                    print(f"| Processed as-is.")
                 else:
                     assert guid in i18n_guid_map, f"The GUID \"{guid}\" was not found in \"{file}\"."
-                    # print(f"processed {guid}.")
+                    print(f"| Processed {guid}.")
                     replacements = i18n_guid_map[guid].strip().split("\n")  # Get the replacement text for the specified GUID
-
-                    # DEBUGGING
-                    for r in replacements:
-                        print(f"| {r}")
-                    print("-"*80)
-                    # END-DEBUGGING
-
                     cmd_lines = [f"{cm} MAGIC {x}" for x in replacements]   # Prefix the magic command to each line
 
                     lines = [line_zero, ""]                                 # The first line doesn't exist in the guid map
