@@ -255,15 +255,23 @@ class Translator:
             self.assert_no_changes_in_target_repo()
 
     @staticmethod
-    def __extract_i18n_guid(command):
+    def __extract_i18n_guid(cm: str, command: str) -> (str, str):
         line_zero = command.strip().split("\n")[0]
 
-        prefix = "<i18n value=\""
+        prefix = f"{cm} DBTITLE 0,"
+        if line_zero.startswith(prefix):
+            # This is the new method, use the same prefix and suffix is end-of-=line
+            suffix = "\n"
+        else:
+            # This is the old method, use the xml/html prefix and suffix
+            prefix = "<i18n value=\""
+            suffix = "/>"
+
         pos_a = line_zero.find(prefix)
         if pos_a == -1:
             return None, line_zero
 
-        pos_b = line_zero.find("/>")
+        pos_b = line_zero.find(suffix)
         guid = f"--i18n-{line_zero[pos_a+len(prefix):pos_b - 1]}"
         return guid, line_zero
 
@@ -348,7 +356,7 @@ class Translator:
             for i, command in enumerate(commands):
                 # print(f"| command #{i+1}: ", end="...")
                 command = command.strip()
-                guid, line_zero = self.__extract_i18n_guid(command)
+                guid, line_zero = self.__extract_i18n_guid(cm, command)
 
                 # DEBUGGING
                 print(f"[{guid} == {line_zero}]")
