@@ -320,13 +320,6 @@ class Translator:
             print(f"/{file}")
             source = self._load_i18n_source(file)
             i18n_guid_map = self._load_i18n_guid_map(file, source)
-            print(f""" - Found {len(i18n_guid_map)} entries in the i18n_guid_map.""")
-            if len(i18n_guid_map) > 0:
-                for guid, value in i18n_guid_map.items():
-                    print(f"[{guid}]")
-                    for line in value.split("\n"):
-                        print(f"""| {line}""")
-                print("-"*80)
 
             # Compute the source and target directories
             source_notebook_path = f"{self.source_dir}/{file}"
