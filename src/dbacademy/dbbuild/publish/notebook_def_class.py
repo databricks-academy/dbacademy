@@ -493,6 +493,8 @@ class NotebookDef:
         guid = f"--i18n-{part[0:pos]}".strip()
         value = part[pos+1:]
 
+        print(f"[{guid}: {value}]")
+
         return guid, value
 
     @staticmethod
