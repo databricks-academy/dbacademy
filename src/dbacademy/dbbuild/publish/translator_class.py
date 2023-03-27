@@ -320,7 +320,7 @@ class Translator:
             source = self._load_i18n_source(file)
             i18n_guid_map = self._load_i18n_guid_map(file, source)
             print(f""" - Found {len(i18n_guid_map)} entries in the i18n_guid_map.""")
-            last = i18n_guid_map[i18n_guid_map.keys()[-1]]
+            last = i18n_guid_map[list(i18n_guid_map.keys())[-1]]
             print(f"""{last}""")
             print("-"*80)
 
