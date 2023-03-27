@@ -273,6 +273,8 @@ class Translator:
 
         pos_b = line_zero.find(suffix)
         guid = f"--i18n-{line_zero[pos_a+len(prefix):pos_b - 1]}"
+
+        print(f"| {guid}")
         return guid, line_zero
 
     def assert_validated(self):
