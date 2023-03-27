@@ -171,8 +171,10 @@ class CRUD(ApiContainer, metaclass=ABCMeta):
             DatabricksApiException: If not found and `if_not_exists=="error"`.
         """
         result = next((item for item in self._list() if item[self.name_key] == item_name), None)
+
         if result is None and if_not_exists == "error":
             raise DatabricksApiException(f"{self.singular} with name '{item_name}' not found", 404)
+
         return self._refresh(result)
 
     def get_by_example(self, item: Item, if_not_exists: IfNotExists = "error") -> Item:

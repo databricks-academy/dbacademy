@@ -15,7 +15,7 @@ class TestAccountConfig(unittest.TestCase):
         self.workspace_config = WorkspaceConfig(max_users=100, course_definitions="course=example-course", cds_api_token="asdf1234", datasets="example-course", default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), groups=dict(), workspace_name_pattern="classroom-{event_id}-{workspace_number}")
 
     def test_from_env(self):
-        account = AccountConfig.from_env(qualifier="CURR", first_workspace_number=1, region="us-west-2", event_config=self.event_config, uc_storage_config=self.uc_storage_config, workspace_config=self.workspace_config)
+        account = AccountConfig.from_env(account_name="CURR", first_workspace_number=1, region="us-west-2", event_config=self.event_config, uc_storage_config=self.uc_storage_config, workspace_config=self.workspace_config)
         self.assertIsNotNone(account)
 
         self.assertEqual("b6e87bd6-c65c-46d3-abde-6840bf706d39", account.account_id)
