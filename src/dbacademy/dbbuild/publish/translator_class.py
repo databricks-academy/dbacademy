@@ -197,15 +197,6 @@ class Translator:
 
         for part in parts[1:]:
             guid, value = NotebookDef.parse_guid_and_value(part)
-
-            # DEBUGGING
-            print("-"*80)
-            print(f"[{guid}]")
-            for line in value.split("\n"):
-                print(f"[{line}]")
-            print("-"*80)
-            # END-DEBUGGING
-
             i18n_guid_map[guid] = value
 
         return i18n_guid_map
@@ -371,9 +362,13 @@ class Translator:
                     assert guid in i18n_guid_map, f"The GUID \"{guid}\" was not found in \"{file}\"."
                     # print(f"processed {guid}.")
                     replacements = i18n_guid_map[guid].strip().split("\n")  # Get the replacement text for the specified GUID
+
+                    # DEBUGGING
                     for r in replacements:
                         print(f"| {r}")
                     print("-"*80)
+                    # END-DEBUGGING
+
                     cmd_lines = [f"{cm} MAGIC {x}" for x in replacements]   # Prefix the magic command to each line
 
                     lines = [line_zero, ""]                                 # The first line doesn't exist in the guid map
