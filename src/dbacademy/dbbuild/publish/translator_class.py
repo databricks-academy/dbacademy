@@ -315,7 +315,6 @@ class Translator:
 
         print(f"\nProcessing {len(source_files)} notebooks:")
         for file in source_files:
-            print("="*80)
             print(f"/{file}")
             source = self._load_i18n_source(file)
             i18n_guid_map = self._load_i18n_guid_map(file, source)
