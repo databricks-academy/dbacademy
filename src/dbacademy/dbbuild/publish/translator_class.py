@@ -319,10 +319,16 @@ class Translator:
             print(f"/{file}")
             source = self._load_i18n_source(file)
             i18n_guid_map = self._load_i18n_guid_map(file, source)
+            print(f""" - Found {len(i18n_guid_map)} entries in the i18n_guid_map.""")
+            last = i18n_guid_map[i18n_guid_map.keys()[-1]]
+            print(f"""{last}""")
+            print("-"*80)
 
             # Compute the source and target directories
             source_notebook_path = f"{self.source_dir}/{file}"
             target_notebook_path = f"{self.target_dir}/{file}"
+            print(f" - {source_notebook_path}")
+            print(f" - {target_notebook_path}")
 
             source_info = self.client.workspace().get_status(source_notebook_path)
             language = source_info["language"].lower()
@@ -357,6 +363,9 @@ class Translator:
                     assert guid in i18n_guid_map, f"The GUID \"{guid}\" was not found in \"{file}\"."
                     # print(f"processed {guid}.")
                     replacements = i18n_guid_map[guid].strip().split("\n")  # Get the replacement text for the specified GUID
+                    for r in replacements:
+                        print(f" - {r}")
+                    print("-"*80)
                     cmd_lines = [f"{cm} MAGIC {x}" for x in replacements]   # Prefix the magic command to each line
 
                     lines = [line_zero, ""]                                 # The first line doesn't exist in the guid map
