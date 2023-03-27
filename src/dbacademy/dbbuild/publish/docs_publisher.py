@@ -43,7 +43,7 @@ class DocsPublisher:
         name = file.get("name")
         file_name = self.google_client.to_file_name(file)
 
-        print(f"| Processing {index + 1} or {total}: {name}")
+        print(f"| Processing {index + 1} of {total}: {name}")
 
         file_bytes = self.google_client.file_export(gdoc_id)
 
