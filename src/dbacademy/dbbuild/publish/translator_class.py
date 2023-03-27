@@ -329,8 +329,6 @@ class Translator:
             # Compute the source and target directories
             source_notebook_path = f"{self.source_dir}/{file}"
             target_notebook_path = f"{self.target_dir}/{file}"
-            print(f" - {source_notebook_path}")
-            print(f" - {target_notebook_path}")
 
             source_info = self.client.workspace().get_status(source_notebook_path)
             language = source_info["language"].lower()
