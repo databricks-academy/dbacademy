@@ -358,10 +358,6 @@ class Translator:
                 command = command.strip()
                 guid, line_zero = self.__extract_i18n_guid(cm, command)
 
-                # DEBUGGING
-                print(f"[{guid} == {line_zero}]")
-                # END-DEBUGGING
-
                 if guid is None:
                     new_commands.append(command)                            # No GUID, it's %python or other type of command, not MD
                     # print(f"processed as-is.")
