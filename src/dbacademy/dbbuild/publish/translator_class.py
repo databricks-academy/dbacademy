@@ -364,7 +364,7 @@ class Translator:
                     # print(f"processed {guid}.")
                     replacements = i18n_guid_map[guid].strip().split("\n")  # Get the replacement text for the specified GUID
                     for r in replacements:
-                        print(f" - {r}")
+                        print(f"| {r}")
                     print("-"*80)
                     cmd_lines = [f"{cm} MAGIC {x}" for x in replacements]   # Prefix the magic command to each line
 
