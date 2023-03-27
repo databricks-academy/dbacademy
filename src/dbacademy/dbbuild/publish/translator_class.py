@@ -323,7 +323,7 @@ class Translator:
             print(f""" - Found {len(i18n_guid_map)} entries in the i18n_guid_map.""")
             if len(i18n_guid_map) > 0:
                 last = i18n_guid_map[list(i18n_guid_map.keys())[-1]]
-                print(f"""{last}""")
+                print(f"""| {last}""")
                 print("-"*80)
 
             # Compute the source and target directories
