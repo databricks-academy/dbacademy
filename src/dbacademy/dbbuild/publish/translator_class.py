@@ -197,11 +197,15 @@ class Translator:
 
         for part in parts[1:]:
             guid, value = NotebookDef.parse_guid_and_value(part)
+
+            # DEBUGGING
             print("-"*80)
             print(f"[{guid}]")
             for line in value.split("\n"):
                 print(f"[{line}]")
             print("-"*80)
+            # END-DEBUGGING
+
             i18n_guid_map[guid] = value
 
         return i18n_guid_map
@@ -345,7 +349,7 @@ class Translator:
                                                       notebook_path=target_notebook_path,
                                                       content=raw_source,
                                                       overwrite=True)
-                # print("| skipping\n")
+                print(f"| Skipping {file}")
                 continue
 
             commands = source.split(cmd_delim)
@@ -355,6 +359,11 @@ class Translator:
                 # print(f"| command #{i+1}: ", end="...")
                 command = command.strip()
                 guid, line_zero = self.__extract_i18n_guid(command)
+
+                # DEBUGGING
+                print(f"[{guid} == {line_zero}]")
+                # END-DEBUGGING
+
                 if guid is None:
                     new_commands.append(command)                            # No GUID, it's %python or other type of command, not MD
                     # print(f"processed as-is.")
