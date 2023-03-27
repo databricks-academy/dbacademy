@@ -322,8 +322,10 @@ class Translator:
             i18n_guid_map = self._load_i18n_guid_map(file, source)
             print(f""" - Found {len(i18n_guid_map)} entries in the i18n_guid_map.""")
             if len(i18n_guid_map) > 0:
-                last = i18n_guid_map[list(i18n_guid_map.keys())[-1]]
-                print(f"""| {last}""")
+                for guid, value in i18n_guid_map.items():
+                    print(f"[{guid}]")
+                    for line in value.split("\n"):
+                        print(f"""| {line}""")
                 print("-"*80)
 
             # Compute the source and target directories
