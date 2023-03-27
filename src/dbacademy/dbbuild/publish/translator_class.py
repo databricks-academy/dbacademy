@@ -197,7 +197,11 @@ class Translator:
 
         for part in parts[1:]:
             guid, value = NotebookDef.parse_guid_and_value(part)
-
+            print("-"*80)
+            print(f"[{guid}]")
+            for line in value.split("\n"):
+                print(f"[{line}]")
+            print("-"*80)
             i18n_guid_map[guid] = value
 
         return i18n_guid_map
