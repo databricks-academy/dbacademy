@@ -61,10 +61,25 @@ class DatabasesHelper:
             print(f"Catalog not drop for {username}")
 
     def create_databases(self, configure_for: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
+
+        # Refactored to process only 50 at a time.
+        groups = list()
         usernames = self.workspace.get_usernames(configure_for)
-        self.workspace.do_for_all_users(usernames, lambda username: self.__create_database_for(username=username,
-                                                                                               drop_existing=drop_existing,
-                                                                                               post_create=post_create))
+
+        curr_list = list()
+        for username in usernames:
+            if len(curr_list) == 50:
+                # create a new set of 50
+                groups.append(curr_list)
+                curr_list = list()
+
+            curr_list.append(username)
+
+        for i, group in enumerate(groups):
+            print(f"| Processing group {i+1} of {len(groups)}; {len(group)} usernames")
+            self.workspace.do_for_all_users(group, lambda user: self.__create_database_for(username=user,
+                                                                                           drop_existing=drop_existing,
+                                                                                           post_create=post_create))
         # Clear the list of databases (and derived users) to force a refresh
         self.workspace._usernames = None
 
@@ -139,9 +154,8 @@ class DatabasesHelper:
     @staticmethod
     def configure_permissions(client: DBAcademyRestClient, notebook_name: str, spark_version: str):
         from dbacademy import dbgems
-        from dbacademy import common
         from dbacademy.common import Cloud
-        from dbacademy.dbhelper import DBAcademyHelper, WorkspaceHelper
+        from dbacademy.dbhelper import DBAcademyHelper
 
         job_name = f"""DBAcademy {notebook_name.split("/")[-1]}"""
         print(f"Starting job \"{job_name}\" to update catalog and schema specific permissions")
