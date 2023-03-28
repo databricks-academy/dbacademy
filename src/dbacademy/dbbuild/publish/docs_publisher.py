@@ -131,7 +131,6 @@ class DocsPublisher:
 
         html += "\nTools/Docs<ul>"
         html += f"""\n<li><a href="{self.translation.published_docs_folder}" target="_blank">Published Folder</a></li>"""
-        html += f"""\n<li><a href="{self.translation.publishing_script}" target="_blank">Publishing Script</a></li>"""
 
         links = self.translation.document_links
 
