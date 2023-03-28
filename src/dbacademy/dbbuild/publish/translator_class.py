@@ -365,10 +365,15 @@ class Translator:
 
                 if guid is None:
                     new_commands.append(command)                            # No GUID, it's %python or other type of command, not MD
-                    print(f"| Processed as-is.")
+                    print(f"| Processing as-is.")
                 else:
-                    assert guid in i18n_guid_map, f"The GUID \"{guid}\" was not found in \"{file}\"."
-                    print(f"| Processed {guid}.")
+                    print(f"| Processing {guid}.")
+
+                    if guid not in i18n_guid_map.keys():
+                        for key in i18n_guid_map.keys():
+                            print(f"| {key}")
+                        raise AssertionError(f"The GUID \"{guid}\" was not found in \"{file}\".")
+
                     replacements = i18n_guid_map[guid].strip().split("\n")  # Get the replacement text for the specified GUID
                     cmd_lines = [f"{cm} MAGIC {x}" for x in replacements]   # Prefix the magic command to each line
 
