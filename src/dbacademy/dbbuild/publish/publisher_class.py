@@ -394,7 +394,7 @@ class Publisher:
 
         start = int(time.time())
 
-        path = f"../Source/{notebook.path}"
+        path = f"{self.source_dir}/{notebook.path}"
         dbgems.dbutils.notebook.run(path, timeout_seconds=60 * 5, arguments={
             "version": self.build_config.version,
             dbgems.GENERATING_DOCS: "true"
