@@ -210,7 +210,7 @@ class BuildConfig:
         self.publishing_info = publishing_info or {}
 
     @staticmethod
-    def default_source_repo(source_repo: str) -> str:
+    def default_source_repo(source_repo: str = None) -> str:
         """
         Computes the default value for the source_repo.
 
@@ -222,7 +222,7 @@ class BuildConfig:
         return dbgems.get_notebook_dir(offset=-2) if source_repo is None else source_repo
 
     @staticmethod
-    def default_source_dir(source_repo: str, source_dir: str) -> str:
+    def default_source_dir(source_repo: str, source_dir: str = None) -> str:
         """
         Computes the default value for the source_dir given the current source_repo.
 
