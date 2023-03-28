@@ -333,10 +333,24 @@ class Publisher:
         Generates the HTML docs and writes them to the GitHub repo under /docs
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
-        import os, shutil
-
         source_docs_path = f"{self.source_repo}/docs"
-        target_docs_path = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.build_config.version}-PENDING/site"
+        
+        target_docs_path_1 = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.build_config.version}-PENDING/site"
+        self.__copy_doc_files(source_docs_path, target_docs_path_1)
+
+        target_docs_path_2 = f"{self.target_dir}/docs"
+        self.__copy_doc_files(source_docs_path, target_docs_path_2)
+
+        html = f"""<html><body style="font-size:16px">
+                         <div>Contents written to...</div>
+                         <div>{target_docs_path_1}</div>
+                         <div>{target_docs_path_2}</div>
+                   </body></html>"""
+        return html
+
+    @staticmethod
+    def __copy_doc_files(source_docs_path: str, target_docs_path: str) -> None:
+        import os, shutil
 
         print(f"Source: {source_docs_path}")
         print(f"Target: {target_docs_path}")
@@ -350,12 +364,6 @@ class Publisher:
         print("-" * 80)
         for file in os.listdir(target_docs_path):
             print(file)
-
-        html = f"""<html><body style="font-size:16px">
-                         <div>Contents written to...</div>
-                         <div>{target_docs_path}</div>
-                   </body></html>"""
-        return html
 
     # Used by notebooks
     # TODO Cannot define return type without circular dependencies
