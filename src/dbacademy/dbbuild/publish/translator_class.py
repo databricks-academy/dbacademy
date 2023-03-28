@@ -272,6 +272,7 @@ class Translator:
         print(f"| line_zero: {line_zero}")
         pos_a = line_zero.find(prefix)
         if pos_a == -1:
+            print("| Not found\n")
             return None, line_zero
 
         prefix_len = len(prefix)
@@ -279,7 +280,7 @@ class Translator:
         guid = f"{extra}{line_zero[pos_a+prefix_len:pos_b]}"
         guid = None if len(guid.strip()) == 0 else guid
 
-        print(f"| {guid} {line_zero}")
+        print(f"| {guid} {line_zero}\n")
         return guid, line_zero
 
     def assert_validated(self):
