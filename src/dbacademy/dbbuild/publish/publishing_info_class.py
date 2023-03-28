@@ -42,7 +42,6 @@ class Translation:
         self.__release_repo = common.validate_type(data.get("release_repo"), "release_repo", str)
 
         self.__published_docs_folder = common.validate_type(data.get("published_docs_folder"), "published_docs_folder", str)
-        self.__publishing_script = common.validate_type(data.get("publishing_script"), "publishing_script", str)
 
         self.__document_links = common.validate_type(data.get("document_links"), "document_links", List)
         common.validate_element_type(self.__document_links, "links", str)
@@ -58,10 +57,6 @@ class Translation:
     @property
     def published_docs_folder(self) -> str:
         return self.__published_docs_folder
-
-    @property
-    def publishing_script(self) -> str:
-        return self.__publishing_script
 
     @property
     def document_links(self) -> List[str]:
