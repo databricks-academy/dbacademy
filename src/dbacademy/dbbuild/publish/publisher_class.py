@@ -328,7 +328,7 @@ class Publisher:
 
         self.__validated_repo_reset = True
 
-    def copy_repo_docs(self, dest_cds: bool = False, dest_repo: bool = False) -> str:
+    def copy_repository_docs(self, dest_cds: bool = False, dest_repo: bool = False) -> str:
         """
         Generates the HTML docs and writes them to the GitHub repo under /docs
         :param dest_cds: True if docs should be copied to the cds
