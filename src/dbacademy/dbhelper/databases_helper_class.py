@@ -122,7 +122,7 @@ class DatabasesHelper:
 
         dbgems.sql(f"CREATE DATABASE IF NOT EXISTS {db_name} LOCATION '{db_path}';")
 
-        msg = f"| Created schema \"{db_name}\" for \"{username}\", dropped existing: {drop_existing}"
+        msg = f"|\n| Created schema \"{db_name}\" for \"{username}\", dropped existing: {drop_existing}"
 
         if post_create:
             # Call the post-create init function if defined
