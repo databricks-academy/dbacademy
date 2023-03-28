@@ -328,26 +328,29 @@ class Publisher:
 
         self.__validated_repo_reset = True
 
-    def generate_published_docs(self) -> str:
+    def copy_repo_docs(self, dest_cds: bool = False, dest_repo: bool = False) -> str:
         """
         Generates the HTML docs and writes them to the GitHub repo under /docs
+        :param dest_cds: True if docs should be copied to the cds
+        :param dest_repo: True if docs should be copied to the repo
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
         source_docs_path = f"{self.source_repo}/docs"
 
-        target_docs_path_1 = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.build_config.version}-PENDING/site"
-        self.__copy_doc_files(source_docs_path, target_docs_path_1)
+        html = """<html><body style="font-size:16px">
+                         <div>Contents written to...</div>\n"""
 
-        print("-" * 80)
+        if dest_cds:
+            target_docs_path = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.build_config.version}-PENDING/site"
+            self.__copy_doc_files(source_docs_path, target_docs_path)
+            html += f"<div>{target_docs_path}</div>"
 
-        target_docs_path_2 = f"{self.target_dir}/docs"
-        self.__copy_doc_files(source_docs_path, target_docs_path_2)
+        if dest_repo:
+            target_docs_path = f"{self.target_dir}/docs"
+            self.__copy_doc_files(source_docs_path, target_docs_path)
+            html += f"<div>{target_docs_path}</div>"
 
-        html = f"""<html><body style="font-size:16px">
-                         <div>Contents written to...</div>
-                         <div>{target_docs_path_1}</div>
-                         <div>{target_docs_path_2}</div>
-                   </body></html>"""
+        html += "</body></html>"
         return html
 
     @staticmethod
