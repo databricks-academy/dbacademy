@@ -278,8 +278,6 @@ class Translator:
         prefix_len = len(prefix)
         pos_b = len(line_zero) if suffix is None else line_zero.find(suffix)-1
 
-        print(f"| {pos_a} | {pos_b} | {prefix_len} |")
-
         guid = f"{extra}{line_zero[pos_a+prefix_len:pos_b]}"
         guid = None if len(guid.strip()) == 0 else guid
 
@@ -385,6 +383,10 @@ class Translator:
 
                     lines = [line_zero, ""]                                 # The first line doesn't exist in the guid map
                     lines.extend(cmd_lines)                                 # Convert to a set of lines and append
+
+                    print(f"Replacements: {len(replacements)}")
+                    for line in lines:
+                        print(f"| {line}")
 
                     new_command = "\n".join(lines)                          # Combine all the lines into a new command
                     new_commands.append(new_command.strip())                # Append the new command to set of commands
