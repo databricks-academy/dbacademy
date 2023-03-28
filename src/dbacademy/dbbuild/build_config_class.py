@@ -231,7 +231,8 @@ class BuildConfig:
         :param source_dir: Usually None, otherwise the directory name (not the full path) of the "Source" directory.
         :return: the path to the source directory
         """
-        return f"{source_repo}/Source" if source_dir is None else source_dir
+        source_dir = source_dir or "Source"
+        return f"{source_repo}/{source_dir}"
 
     @property
     def client(self) -> DBAcademyRestClient:
