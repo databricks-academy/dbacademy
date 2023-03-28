@@ -34,7 +34,7 @@ class DatabasesHelper:
                 dbgems.spark.sql(f"DROP DATABASE {schema_name} CASCADE;")
 
         if not dropped:
-            print(f"Database not drop for {username}")
+            print(f"Database not droped for {username}")
 
     def drop_catalogs(self, configure_for: str):
         self.workspace.do_for_all_users(self.workspace.get_usernames(configure_for), lambda username: self.__drop_catalogs_for(username=username))
