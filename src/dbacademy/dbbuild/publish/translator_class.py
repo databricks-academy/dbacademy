@@ -261,7 +261,7 @@ class Translator:
         prefix = f"{cm} DBTITLE 0,"
         if line_zero.startswith(prefix):
             # This is the new method, use the same prefix and suffix is end-of-=line
-            suffix = "\n"
+            suffix = None
             extra = ""
         else:
             # This is the old method, use the xml/html prefix and suffix
@@ -276,7 +276,7 @@ class Translator:
             return None, line_zero
 
         prefix_len = len(prefix)
-        pos_b = line_zero.find(suffix)+1  # -len(suffix)
+        pos_b = len(line_zero) if suffix is None else line_zero.find(suffix)-1
 
         print(f"| {pos_a} | {pos_b} | {prefix_len} |")
 
