@@ -12,7 +12,7 @@ class BuildConfig:
     VERSIONS_LIST = [VERSION_BUILD, VERSION_TEST, VERSION_TRANSLATION]
 
     @staticmethod
-    def load(file: str, *, version: str) -> Any:
+    def load(file: str, *, version: str, **kwargs) -> Any:
         """
         Loads the configuration for this course from the specified JSON file.
         See also BuildConfig.VERSION_TEST
@@ -30,10 +30,10 @@ class BuildConfig:
         common.validate_type(version, "version", str)
 
         with open(file) as f:
-            return BuildConfig.load_config(config=json.load(f), version=version)
+            return BuildConfig.load_config(config=json.load(f), version=version, **kwargs)
 
     @staticmethod
-    def load_config(config: Dict[str, Any], version: str) -> Any:
+    def load_config(config: Dict[str, Any], version: str, **kwargs) -> Any:
         """
         Called by BuildConfig.load(), this method loads a build configuration from a dictionary
         :param config: The dictionary of configuration parameters
@@ -44,6 +44,10 @@ class BuildConfig:
 
         common.validate_type(config, "config", Dict)
         common.validate_type(version, "version", str)
+
+        if kwargs is not None:
+            for k, v in kwargs.items():
+                config[k] = v
 
         configurations = config.get("notebook_config", dict())
         if "notebook_config" in config:
