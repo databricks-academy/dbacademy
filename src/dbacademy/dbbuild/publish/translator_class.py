@@ -262,10 +262,12 @@ class Translator:
         if line_zero.startswith(prefix):
             # This is the new method, use the same prefix and suffix is end-of-=line
             suffix = "\n"
+            extra = ""
         else:
             # This is the old method, use the xml/html prefix and suffix
             prefix = "<i18n value=\""
             suffix = "/>"
+            extra = "--i18n-"
 
         print(f"| line_zero: {line_zero}")
         pos_a = line_zero.find(prefix)
@@ -273,7 +275,7 @@ class Translator:
             return None, line_zero
 
         pos_b = line_zero.find(suffix)
-        guid = f"--i18n-{line_zero[pos_a+len(prefix):pos_b - 1]}"
+        guid = f"{extra}{line_zero[pos_a+len(prefix):pos_b - 1]}"
 
         print(f"| {guid} {line_zero}")
         return guid, line_zero
@@ -356,13 +358,8 @@ class Translator:
 
             commands = source.split(cmd_delim)
             new_commands = [commands.pop(0)]  # The title?
-            print("-"*80)
-            print(new_commands[0])
 
             for i, command in enumerate(commands):
-                print("-" * 80)
-                print(command[i])
-
                 command = command.strip()
                 guid, line_zero = self.__extract_i18n_guid(cm, command)
 
