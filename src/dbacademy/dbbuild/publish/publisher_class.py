@@ -334,9 +334,11 @@ class Publisher:
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
         source_docs_path = f"{self.source_repo}/docs"
-        
+
         target_docs_path_1 = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.build_config.version}-PENDING/site"
         self.__copy_doc_files(source_docs_path, target_docs_path_1)
+
+        print("-" * 80)
 
         target_docs_path_2 = f"{self.target_dir}/docs"
         self.__copy_doc_files(source_docs_path, target_docs_path_2)
