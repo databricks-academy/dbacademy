@@ -836,7 +836,6 @@ class Commands(object):
             run_id = response["run_id"]
 
         # Poll for job completion
-        from time import sleep
         response = self.wait_for(workspace, run_id)
         if response.get("state").get("life_cycle_state") == "TERMINATED":
             print("The job completed successfully.")
@@ -1037,7 +1036,7 @@ class Commands(object):
         ws.groups.add_member("admins", user_name=client_id)
 
     @staticmethod
-    def add_admin_user(username: str):
+    def add_admin_user():
         def do_add_admin_user(ws: Workspace):
             ws.scim.users.create("doug.bateman@databricks.com", if_exists="ignore")
             ws.groups.add_member("admins", user_name="doug.bateman@databricks.com")

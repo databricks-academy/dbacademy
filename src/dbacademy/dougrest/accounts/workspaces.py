@@ -68,12 +68,14 @@ class Workspace(DatabricksApi):
 
 class Workspaces(AccountsCRUD):
     # Cannot be imported due to circular dependency
-    # from dbacademy.dougrest.accounts import AccountsApi
 
     # noinspection PyUnresolvedReferences
     def __init__(self, client: "AccountsApi"):
+        from dbacademy.dougrest.accounts import AccountsApi
         super().__init__(client, "/workspaces", "workspace")
-        self.client = client
+
+        # noinspection PyTypeChecker
+        self.client: AccountsApi = client
 
     @overrides
     def _wrap(self, item: dict) -> Workspace:
