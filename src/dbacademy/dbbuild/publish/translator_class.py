@@ -267,6 +267,7 @@ class Translator:
             prefix = "<i18n value=\""
             suffix = "/>"
 
+        print(f"| line_zero: {line_zero}")
         pos_a = line_zero.find(prefix)
         if pos_a == -1:
             return None, line_zero
