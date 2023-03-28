@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import ApiContainer
 
@@ -20,7 +20,7 @@ class ScimGroupsClient(ApiContainer):
         url = f"{self.base_uri}/{id_value}"
         return self.client.api("GET", url, _expected=[200, 404])
 
-    def get_by_name(self, name: str) -> Dict[str, Any]:
+    def get_by_name(self, name: str) -> Optional[Dict[str, Any]]:
         for group in self.list():
             if name == group.get("displayName"):
                 return group
@@ -55,7 +55,7 @@ class ScimGroupsClient(ApiContainer):
                     }
                   ]
                }
-        self.client.api("PATCH", f"{self.base_uri}/{group_id}", data)
+        return self.client.api("PATCH", f"{self.base_uri}/{group_id}", data)
 
     def create(self, name: str, *, members: List[str] = None, entitlements: List[str] = None) -> Dict[str, Any]:
 

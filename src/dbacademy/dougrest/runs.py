@@ -1,4 +1,4 @@
-from typing import Union, Optional, List
+from typing import Union, Optional
 
 try:
     from typing import Literal

@@ -160,10 +160,6 @@ class ClustersHelper:
 
     @staticmethod
     def create_jobs_policy(*, client: DBAcademyRestClient, instance_pool_id: str, spark_version: str) -> None:
-        from dbacademy import common, dbgems
-        from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
-
         definition = {
             "cluster_type": {
                 "type": "fixed",

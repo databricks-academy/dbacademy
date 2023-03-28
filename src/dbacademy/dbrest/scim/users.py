@@ -1,4 +1,4 @@
-from typing import Dict, Any, Union, List
+from typing import Dict, Any, Union, List, Optional
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import ApiContainer
 
@@ -23,7 +23,7 @@ class ScimUsersClient(ApiContainer):
     def get_by_username(self, username: str) -> Dict[str, Any]:
         return self.get_by_name(username)
 
-    def get_by_name(self, name: str) -> Dict[str, Any]:
+    def get_by_name(self, name: str) -> Optional[Dict[str, Any]]:
         for user in self.list():
             if name == user.get("userName"):
                 return user
@@ -42,8 +42,6 @@ class ScimUsersClient(ApiContainer):
         return None
 
     def create(self, username: str) -> Dict[str, Any]:
-        import requests
-
         payload = {
             "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
             "userName": username,
@@ -53,7 +51,7 @@ class ScimUsersClient(ApiContainer):
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users"
         return self.client.api("POST", url, payload, _expected=(200, 201))
 
-    def to_users_list(self, users: Union[None,str, Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def to_users_list(self, users: Union[None, str, Dict[str, Any]]) -> List[Dict[str, Any]]:
 
         # One way or the other, we will use the full list
         all_users = self.list()

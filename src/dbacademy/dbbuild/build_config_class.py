@@ -226,7 +226,7 @@ class BuildConfig:
         """
         Computes the default value for the source_dir given the current source_repo.
 
-        Refactoed as a static method so that it can be called from notebooks during the initialization of the BuildConfig.
+        Refactored as a static method so that it can be called from notebooks during the initialization of the BuildConfig.
         :param source_repo: The path to repo; see also default_source_repo()
         :param source_dir: Usually None, otherwise the directory name (not the full path) of the "Source" directory.
         :return: the path to the source directory

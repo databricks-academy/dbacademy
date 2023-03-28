@@ -58,7 +58,6 @@ class InstancePoolsClient(ApiContainer):
         return self.get_by_id(instance_pool_id)
 
     def create(self, name: str, definition: dict, tags: list = None):
-        from dbacademy import dbgems
         from dbacademy.common import Cloud
         assert type(name) == str, f"Expected name to be of type str, found {type(name)}"
         assert type(definition) == dict, f"Expected definition to be of type dict, found {type(definition)}"
