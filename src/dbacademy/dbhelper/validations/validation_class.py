@@ -35,7 +35,7 @@ class Validation(object):
         self.test_function = test_function
         self.actual_value = actual_value
 
-        depends_on = depends_on or [suite.last_test_id()]
+        depends_on = depends_on if depends_on is not None else [suite.last_test_id()]
         self.depends_on = depends_on if type(depends_on) is list else [depends_on]
 
     def update_hint(self):
