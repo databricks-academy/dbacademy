@@ -326,7 +326,9 @@ class Translator:
 
         print(f"\nProcessing {len(source_files)} notebooks:")
         for file in source_files:
+            print("="*80)
             print(f"/{file}")
+
             source = self._load_i18n_source(file)
             i18n_guid_map = self._load_i18n_guid_map(file, source)
 
@@ -353,10 +355,14 @@ class Translator:
                 continue
 
             commands = source.split(cmd_delim)
-            new_commands = [commands.pop(0)]
+            new_commands = [commands.pop(0)]  # The title?
+            print("-"*80)
+            print(new_commands[0])
 
             for i, command in enumerate(commands):
-                # print(f"| command #{i+1}: ", end="...")
+                print("-" * 80)
+                print(command[i])
+
                 command = command.strip()
                 guid, line_zero = self.__extract_i18n_guid(cm, command)
 
