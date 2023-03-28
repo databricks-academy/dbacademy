@@ -361,7 +361,7 @@ class Translator:
                 continue
 
             commands = source.split(cmd_delim)
-            new_commands = [commands.pop(0)]  # The title?
+            new_commands = [commands.pop(0)]  # Should be the header directives(?)
 
             for i, command in enumerate(commands):
                 command = command.strip()
@@ -381,13 +381,12 @@ class Translator:
                     replacements = i18n_guid_map[guid].strip().split("\n")  # Get the replacement text for the specified GUID
                     cmd_lines = [f"{cm} MAGIC {x}" for x in replacements]   # Prefix the magic command to each line
 
-                    lines = [line_zero, ""]                                 # The first line doesn't exist in the guid map
+                    lines = [line_zero]                                     # The first line doesn't exist in the guid map
+                    if "DBTITLE" in command:
+                        # This is the new format, add %md or %md-sandbox
+                        lines.append("%md-sandbox" if "%md-sandbox" in command else "%md")
+
                     lines.extend(cmd_lines)                                 # Convert to a set of lines and append
-
-                    print(f"Replacements: {len(replacements)}")
-                    for line in lines:
-                        print(f"| {line}")
-
                     new_command = "\n".join(lines)                          # Combine all the lines into a new command
                     new_commands.append(new_command.strip())                # Append the new command to set of commands
 
