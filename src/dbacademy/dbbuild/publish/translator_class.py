@@ -277,6 +277,9 @@ class Translator:
 
         prefix_len = len(prefix)
         pos_b = line_zero.find(suffix)+1  # -len(suffix)
+
+        print(f"| {pos_a} | {pos_b} | {prefix_len} |")
+
         guid = f"{extra}{line_zero[pos_a+prefix_len:pos_b]}"
         guid = None if len(guid.strip()) == 0 else guid
 
