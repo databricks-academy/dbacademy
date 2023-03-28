@@ -24,7 +24,6 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual("english", trans.language)
         self.assertEqual("https://github.com/databricks-academy/scalable-machine-learning-with-apache-spark-english/releases", trans.release_repo)
         self.assertEqual("https://drive.google.com/drive/folders/1w5Y_iMapcF1M_u3pt6_xl4NtoQ9tO6e_", trans.published_docs_folder)
-        self.assertEqual("https://script.google.com/home/projects/17JUWGbZ44ConZUc8J9kfozX59hVVNNX3W5r6MyH871RtFhLT_Um057ma/edit", trans.publishing_script)
         self.assertEqual(1, len(trans.document_links))
         self.assertEqual("https://docs.google.com/presentation/d/1f7cjBndkJjefN53lfq46zk7keNv91b2U7MeRMJ6mjfE/edit", trans.document_links[0])
 
@@ -34,7 +33,6 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual("japanese", trans.language)
         self.assertEqual("https://github.com/databricks-academy/scalable-machine-learning-with-apache-spark-japanese/releases", trans.release_repo)
         self.assertEqual("https://drive.google.com/drive/folders/1w5Y_iMapcF1M_u3pt6_xl4NtoQ9tO6e_", trans.published_docs_folder)
-        self.assertEqual("https://script.google.com/home/projects/1MuuKrXvX3m7oB8m4SO_-xndiBmU9pcWw1UsJLQqeSxFizUnaAlxXAXmE/edit", trans.publishing_script)
         self.assertEqual(2, len(trans.document_links))
         self.assertEqual("https://docs.google.com/presentation/d/1KiA6p6N941dqgXoxxGestRr6bZZvjhBqz8auOKkJNjs/edit", trans.document_links[0])
         self.assertEqual("https://docs.google.com/presentation/d/jdlq34jrlq3j4rlq3jrlq3ijrl3r4jrlqjf4qli4jrfl/edit", trans.document_links[1])
@@ -54,7 +52,6 @@ valid_sample = {
         "english": {
             "release_repo": "https://github.com/databricks-academy/scalable-machine-learning-with-apache-spark-english/releases",
             "published_docs_folder": "https://drive.google.com/drive/folders/1w5Y_iMapcF1M_u3pt6_xl4NtoQ9tO6e_",
-            "publishing_script": "https://script.google.com/home/projects/17JUWGbZ44ConZUc8J9kfozX59hVVNNX3W5r6MyH871RtFhLT_Um057ma/edit",
             "document_links": [
                 "https://docs.google.com/presentation/d/1f7cjBndkJjefN53lfq46zk7keNv91b2U7MeRMJ6mjfE/edit"
             ]
@@ -62,7 +59,6 @@ valid_sample = {
         "japanese": {
             "release_repo": "https://github.com/databricks-academy/scalable-machine-learning-with-apache-spark-japanese/releases",
             "published_docs_folder": "https://drive.google.com/drive/folders/1w5Y_iMapcF1M_u3pt6_xl4NtoQ9tO6e_",
-            "publishing_script": "https://script.google.com/home/projects/1MuuKrXvX3m7oB8m4SO_-xndiBmU9pcWw1UsJLQqeSxFizUnaAlxXAXmE/edit",
             "document_links": [
                 "https://docs.google.com/presentation/d/1KiA6p6N941dqgXoxxGestRr6bZZvjhBqz8auOKkJNjs/edit",
                 "https://docs.google.com/presentation/d/jdlq34jrlq3j4rlq3jrlq3ijrl3r4jrlqjf4qli4jrfl/edit"
