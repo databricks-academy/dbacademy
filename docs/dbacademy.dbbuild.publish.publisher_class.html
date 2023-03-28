@@ -66,6 +66,11 @@
 :param&nbsp;branch:&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;branch&nbsp;to&nbsp;publish&nbsp;to<br>
 :return:&nbsp;None</tt></dd></dl>
 
+<dl><dt><a name="Publisher-copy_repository_docs"><strong>copy_repository_docs</strong></a>(self, dest_cds: bool = False, dest_repo: bool = False) -&gt; str</dt><dd><tt>Generates&nbsp;the&nbsp;HTML&nbsp;docs&nbsp;and&nbsp;writes&nbsp;them&nbsp;to&nbsp;the&nbsp;GitHub&nbsp;repo&nbsp;under&nbsp;/docs<br>
+:param&nbsp;dest_cds:&nbsp;True&nbsp;if&nbsp;docs&nbsp;should&nbsp;be&nbsp;copied&nbsp;to&nbsp;the&nbsp;cds<br>
+:param&nbsp;dest_repo:&nbsp;True&nbsp;if&nbsp;docs&nbsp;should&nbsp;be&nbsp;copied&nbsp;to&nbsp;the&nbsp;repo<br>
+:return:&nbsp;The&nbsp;HTML&nbsp;results&nbsp;that&nbsp;should&nbsp;be&nbsp;rendered&nbsp;with&nbsp;displayHTML()&nbsp;from&nbsp;the&nbsp;calling&nbsp;notebook</tt></dd></dl>
+
 <dl><dt><a name="Publisher-create_dbcs"><strong>create_dbcs</strong></a>(self) -&gt; str</dt><dd><tt>Exports&nbsp;the&nbsp;DBC&nbsp;files&nbsp;from&nbsp;the&nbsp;published&nbsp;directory&nbsp;and&nbsp;then&nbsp;saves&nbsp;the&nbsp;corresponding&nbsp;DBC&nbsp;file.<br>
 Depending&nbsp;on&nbsp;the&nbsp;configuration,&nbsp;one&nbsp;copy&nbsp;can&nbsp;be&nbsp;written&nbsp;to&nbsp;a&nbsp;version-specific&nbsp;folder&nbsp;of&nbsp;the&nbsp;distribution&nbsp;system,<br>
 one&nbsp;copy&nbsp;can&nbsp;be&nbsp;written&nbsp;to&nbsp;the&nbsp;"latest"&nbsp;folder&nbsp;of&nbsp;the&nbsp;distribution&nbsp;system,&nbsp;one&nbsp;copy&nbsp;will&nbsp;be&nbsp;written&nbsp;to&nbsp;dbfs:/FileStore<br>
@@ -88,9 +93,6 @@ by&nbsp;copying&nbsp;those&nbsp;raw&nbsp;Google-Docs&nbsp;to&nbsp;the&nbsp;Publi
 :param&nbsp;skip_generation:&nbsp;Overrides&nbsp;the&nbsp;default&nbsp;behavior&nbsp;and&nbsp;skips&nbsp;generation&nbsp;of&nbsp;the&nbsp;notebook<br>
 :param&nbsp;verbose:&nbsp;True&nbsp;of&nbsp;verbose&nbsp;logging<br>
 :param&nbsp;debugging:&nbsp;True&nbsp;for&nbsp;debug&nbsp;logging<br>
-:return:&nbsp;The&nbsp;HTML&nbsp;results&nbsp;that&nbsp;should&nbsp;be&nbsp;rendered&nbsp;with&nbsp;displayHTML()&nbsp;from&nbsp;the&nbsp;calling&nbsp;notebook</tt></dd></dl>
-
-<dl><dt><a name="Publisher-generate_published_docs"><strong>generate_published_docs</strong></a>(self) -&gt; str</dt><dd><tt>Generates&nbsp;the&nbsp;HTML&nbsp;docs&nbsp;and&nbsp;writes&nbsp;them&nbsp;to&nbsp;the&nbsp;GitHub&nbsp;repo&nbsp;under&nbsp;/docs<br>
 :return:&nbsp;The&nbsp;HTML&nbsp;results&nbsp;that&nbsp;should&nbsp;be&nbsp;rendered&nbsp;with&nbsp;displayHTML()&nbsp;from&nbsp;the&nbsp;calling&nbsp;notebook</tt></dd></dl>
 
 <dl><dt><a name="Publisher-generate_source_docs"><strong>generate_source_docs</strong></a>(self, asynchronous: bool = True) -&gt; None</dt><dd><tt>For&nbsp;courses&nbsp;like&nbsp;DAWD&nbsp;that&nbsp;produce&nbsp;HTML&nbsp;output,&nbsp;run&nbsp;each&nbsp;notebook&nbsp;to&nbsp;generate&nbsp;those&nbsp;assets&nbsp;and&nbsp;write&nbsp;them&nbsp;to&nbsp;the&nbsp;/docs&nbsp;sub-folder&nbsp;in&nbsp;the&nbsp;source&nbsp;repository.<br>
