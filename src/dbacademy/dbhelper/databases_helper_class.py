@@ -1,4 +1,4 @@
-from typing import Callable, TypeVar
+from typing import Callable, TypeVar, List
 
 
 class DatabasesHelper:
@@ -14,13 +14,18 @@ class DatabasesHelper:
         self.workspace = workspace
 
     def drop_databases(self, configure_for: str):
-        self.workspace.do_for_all_users(self.workspace.get_usernames(configure_for), lambda username: self.__drop_databases_for(username=username))
+        usernames = self.workspace.get_usernames(configure_for)
+        groups = self.__to_group_of(usernames, 50)
+
+        for i, group in enumerate(groups):
+            print(f"| Processing group {i+1} of {len(groups)}; {len(group)} usernames")
+            self.workspace.do_for_all_users(group, lambda username: self.__drop_databases_for(index=usernames.index(username), count=len(usernames), username=username))
 
         # Clear the list of databases (and derived users) to force a refresh
         self.workspace._usernames = None
         self.workspace.clear_existing_databases()
 
-    def __drop_databases_for(self, username: str):
+    def __drop_databases_for(self, index: int, count: int, username: str) -> None:
         from dbacademy import dbgems
 
         dropped = False
@@ -29,12 +34,12 @@ class DatabasesHelper:
 
         for schema_name in self.workspace.existing_databases:
             if schema_name.startswith(prefix):
-                print(f"Dropping the database \"{schema_name}\" for {username}")
+                print(f"| ({index+1}/{count}) Dropping the database \"{schema_name}\" for {username}")
                 dropped = True
                 dbgems.spark.sql(f"DROP DATABASE {schema_name} CASCADE;")
 
         if not dropped:
-            print(f"Database not droped for {username}")
+            print(f"| ({index+1}/{count}) Database not dropped for {username}")
 
     def drop_catalogs(self, configure_for: str):
         self.workspace.do_for_all_users(self.workspace.get_usernames(configure_for), lambda username: self.__drop_catalogs_for(username=username))
@@ -60,26 +65,31 @@ class DatabasesHelper:
         if not dropped:
             print(f"Catalog not drop for {username}")
 
-    def create_databases(self, configure_for: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
-        print(f"| Creating user-specific databases.")
-
-        # Refactored to process only 50 at a time.
+    @staticmethod
+    def __to_group_of(usernames: List[str], max_group_size: int) -> List[List[str]]:
         groups = list()
-        usernames = self.workspace.get_usernames(configure_for)
-        print(f"| Found {len(usernames)} users ({configure_for}).")
 
         curr_list = list()
         groups.append(curr_list)
 
         for username in usernames:
-            if len(curr_list) == 50:
-                # create a new set of 50
+            if len(curr_list) == max_group_size:
+                # create a new set of max_group_size
                 groups.append(curr_list)
                 curr_list = list()
 
             curr_list.append(username)
 
-        print(f"| Processing {len(groups)} groups.")
+        return groups
+
+    def create_databases(self, configure_for: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
+        print(f"| Creating user-specific databases.")
+
+        usernames = self.workspace.get_usernames(configure_for)
+        groups = self.__to_group_of(usernames, 50)
+
+        # Refactored to process only 50 at a time.
+        print(f"| Processing {len(usernames)} users as {len(groups)} groups.")
 
         for i, group in enumerate(groups):
             print(f"| Processing group {i+1} of {len(groups)}; {len(group)} usernames")
@@ -103,11 +113,11 @@ class DatabasesHelper:
             if drop_existing:
                 dbgems.spark.sql(f"DROP DATABASE IF EXISTS {db_name} CASCADE;")
             else:
-                return print(f"Skipping existing schema \"{db_name}\" for {username}")
+                return print(f"| Skipping existing schema \"{db_name}\" for {username}")
 
         dbgems.sql(f"CREATE DATABASE IF NOT EXISTS {db_name} LOCATION '{db_path}';")
 
-        msg = f"Created schema \"{db_name}\" for \"{username}\", dropped existing: {drop_existing}"
+        msg = f"| Created schema \"{db_name}\" for \"{username}\", dropped existing: {drop_existing}"
 
         if post_create:
             # Call the post-create init function if defined
