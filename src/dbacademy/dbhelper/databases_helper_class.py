@@ -21,6 +21,9 @@ class DatabasesHelper:
             print(f"| Processing group {i+1} of {len(groups)} ({len(group)} users)")
             self.workspace.do_for_all_users(group, lambda username: self.__drop_databases_for(index=group.index(username), count=len(group), username=username))
 
+            print("-" * 80)
+            print()
+
         # Clear the list of databases (and derived users) to force a refresh
         self.workspace._usernames = None
         self.workspace.clear_existing_databases()
@@ -96,6 +99,8 @@ class DatabasesHelper:
             self.workspace.do_for_all_users(group, lambda user: self.__create_database_for(username=user,
                                                                                            drop_existing=drop_existing,
                                                                                            post_create=post_create))
+            print("-" * 80)
+            print()
         # Clear the list of databases (and derived users) to force a refresh
         self.workspace._usernames = None
 
