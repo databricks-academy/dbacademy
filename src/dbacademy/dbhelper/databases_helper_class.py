@@ -61,6 +61,7 @@ class DatabasesHelper:
             print(f"Catalog not drop for {username}")
 
     def create_databases(self, configure_for: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
+        print(f"| Creating user-specific databases.")
 
         # Refactored to process only 50 at a time.
         groups = list()
