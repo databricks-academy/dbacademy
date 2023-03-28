@@ -38,9 +38,11 @@ class DatabasesHelper:
         for schema_name in self.workspace.existing_databases:
             if schema_name.startswith(prefix):
                 print(f"| ({index+1}/{count}) Dropping the database \"{schema_name}\" for {username}")
-                dropped = True
-                dbgems.spark.sql(f"DROP DATABASE {schema_name} CASCADE;")
-
+                try:
+                    dbgems.spark.sql(f"DROP DATABASE {schema_name} CASCADE;")
+                    dropped = True
+                except:
+                    pass  # I don't care if it didn't exist.
         if not dropped:
             print(f"| ({index+1}/{count}) Database not dropped for {username}")
 
