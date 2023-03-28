@@ -83,11 +83,24 @@ The&nbsp;callable&nbsp;takes&nbsp;two&nbsp;parameters,&nbsp;the&nbsp;first&nbsp;
 
 <hr>
 Static methods defined here:<br>
+<dl><dt><a name="BuildConfig-default_source_dir"><strong>default_source_dir</strong></a>(source_repo: str, source_dir: str = None) -&gt; str</dt><dd><tt>Computes&nbsp;the&nbsp;default&nbsp;value&nbsp;for&nbsp;the&nbsp;source_dir&nbsp;given&nbsp;the&nbsp;current&nbsp;source_repo.<br>
+&nbsp;<br>
+Refactoed&nbsp;as&nbsp;a&nbsp;static&nbsp;method&nbsp;so&nbsp;that&nbsp;it&nbsp;can&nbsp;be&nbsp;called&nbsp;from&nbsp;notebooks&nbsp;during&nbsp;the&nbsp;initialization&nbsp;of&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>.<br>
+:param&nbsp;source_repo:&nbsp;The&nbsp;path&nbsp;to&nbsp;repo;&nbsp;see&nbsp;also&nbsp;<a href="#BuildConfig-default_source_repo">default_source_repo</a>()<br>
+:param&nbsp;source_dir:&nbsp;Usually&nbsp;None,&nbsp;otherwise&nbsp;the&nbsp;directory&nbsp;name&nbsp;(not&nbsp;the&nbsp;full&nbsp;path)&nbsp;of&nbsp;the&nbsp;"Source"&nbsp;directory.<br>
+:return:&nbsp;the&nbsp;path&nbsp;to&nbsp;the&nbsp;source&nbsp;directory</tt></dd></dl>
+
+<dl><dt><a name="BuildConfig-default_source_repo"><strong>default_source_repo</strong></a>(source_repo: str = None) -&gt; str</dt><dd><tt>Computes&nbsp;the&nbsp;default&nbsp;value&nbsp;for&nbsp;the&nbsp;source_repo.<br>
+&nbsp;<br>
+Refactored&nbsp;as&nbsp;a&nbsp;static&nbsp;method&nbsp;so&nbsp;that&nbsp;it&nbsp;can&nbsp;be&nbsp;called&nbsp;from&nbsp;notebooks&nbsp;ultimately&nbsp;overriding&nbsp;the&nbsp;default&nbsp;source_dir&nbsp;during&nbsp;the&nbsp;initialization&nbsp;of&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>.<br>
+:param&nbsp;source_repo:&nbsp;Usually&nbsp;None,&nbsp;otherwise&nbsp;the&nbsp;path&nbsp;to&nbsp;the&nbsp;repo&nbsp;of&nbsp;the&nbsp;calling&nbsp;Notebook.<br>
+:return:&nbsp;the&nbsp;path&nbsp;to&nbsp;the&nbsp;source&nbsp;repository</tt></dd></dl>
+
 <dl><dt><a name="BuildConfig-get_lesson_number"><strong>get_lesson_number</strong></a>(notebook_path: str)</dt><dd><tt>Utility&nbsp;function&nbsp;to&nbsp;return&nbsp;the&nbsp;notebook's&nbsp;2-character&nbsp;numerical&nbsp;prefix.<br>
 :param&nbsp;notebook_path:&nbsp;the&nbsp;path&nbsp;to&nbsp;the&nbsp;notebook.<br>
 :return:&nbsp;the&nbsp;notebook's&nbsp;numerical&nbsp;prefix&nbsp;if&nbsp;the&nbsp;2-character&nbsp;prefix&nbsp;is&nbsp;numerical,&nbsp;else&nbsp;-1.</tt></dd></dl>
 
-<dl><dt><a name="BuildConfig-load"><strong>load</strong></a>(file: str, *, version: str) -&gt; Any</dt><dd><tt>Loads&nbsp;the&nbsp;configuration&nbsp;for&nbsp;this&nbsp;course&nbsp;from&nbsp;the&nbsp;specified&nbsp;JSON&nbsp;file.<br>
+<dl><dt><a name="BuildConfig-load"><strong>load</strong></a>(file: str, *, version: str, **kwargs) -&gt; Any</dt><dd><tt>Loads&nbsp;the&nbsp;configuration&nbsp;for&nbsp;this&nbsp;course&nbsp;from&nbsp;the&nbsp;specified&nbsp;JSON&nbsp;file.<br>
 See&nbsp;also&nbsp;<a href="#BuildConfig">BuildConfig</a>.VERSION_TEST<br>
 See&nbsp;also&nbsp;<a href="#BuildConfig">BuildConfig</a>.VERSION_BUILD<br>
 See&nbsp;also&nbsp;<a href="#BuildConfig">BuildConfig</a>.VERSION_TRANSLATION<br>
@@ -96,7 +109,7 @@ See&nbsp;also&nbsp;<a href="#BuildConfig">BuildConfig</a>.VERSIONS_LIST<br>
 :param&nbsp;version:&nbsp;The&nbsp;current&nbsp;version&nbsp;being&nbsp;published.&nbsp;Expected&nbsp;to&nbsp;be&nbsp;one&nbsp;of&nbsp;<a href="#BuildConfig">BuildConfig</a>.VERSIONS_LIST&nbsp;or&nbsp;an&nbsp;actual&nbsp;version&nbsp;number&nbsp;in&nbsp;the&nbsp;form&nbsp;of&nbsp;"vX.Y.Z"<br>
 :return:</tt></dd></dl>
 
-<dl><dt><a name="BuildConfig-load_config"><strong>load_config</strong></a>(config: Dict[str, Any], version: str) -&gt; Any</dt><dd><tt>Called&nbsp;by&nbsp;<a href="#BuildConfig">BuildConfig</a>.<a href="#BuildConfig-load">load</a>(),&nbsp;this&nbsp;method&nbsp;loads&nbsp;a&nbsp;build&nbsp;configuration&nbsp;from&nbsp;a&nbsp;dictionary<br>
+<dl><dt><a name="BuildConfig-load_config"><strong>load_config</strong></a>(config: Dict[str, Any], version: str, **kwargs) -&gt; Any</dt><dd><tt>Called&nbsp;by&nbsp;<a href="#BuildConfig">BuildConfig</a>.<a href="#BuildConfig-load">load</a>(),&nbsp;this&nbsp;method&nbsp;loads&nbsp;a&nbsp;build&nbsp;configuration&nbsp;from&nbsp;a&nbsp;dictionary<br>
 :param&nbsp;config:&nbsp;The&nbsp;dictionary&nbsp;of&nbsp;configuration&nbsp;parameters<br>
 :param&nbsp;version:&nbsp;The&nbsp;current&nbsp;version&nbsp;being&nbsp;published.&nbsp;Expected&nbsp;to&nbsp;be&nbsp;one&nbsp;of&nbsp;<a href="#BuildConfig">BuildConfig</a>.VERSIONS_LIST&nbsp;or&nbsp;an&nbsp;actual&nbsp;version&nbsp;number&nbsp;in&nbsp;the&nbsp;form&nbsp;of&nbsp;"vX.Y.Z"<br>
 :return:</tt></dd></dl>
