@@ -195,8 +195,8 @@ class BuildConfig:
         # The libraries to be attached to the cluster
         self.libraries = libraries or list()
 
-        self.source_repo = dbgems.get_notebook_dir(offset=-2) if source_repo is None else source_repo
-        self.source_dir = f"{self.source_repo}/Source" if source_dir is None else source_dir
+        self.source_repo = self.default_source_repo(source_repo)
+        self.source_dir = self.default_source_dir(source_repo, source_dir)
         self.source_dir = source_dir or f"{self.source_repo}/Source"
 
         self.__readme_file_name = readme_file_name or "README.md"
@@ -208,6 +208,30 @@ class BuildConfig:
 
         self.change_log = None
         self.publishing_info = publishing_info or {}
+
+    @staticmethod
+    def default_source_repo(source_repo: str) -> str:
+        """
+        Computes the default value for the source_repo.
+
+        Refactored as a static method so that it can be called from notebooks ultimately overriding the default source_dir during the initialization of the BuildConfig.
+        :param source_repo: Usually None, otherwise the path to the repo of the calling Notebook.
+        :return: the path to the source repository
+        """
+        from dbacademy import dbgems
+        return dbgems.get_notebook_dir(offset=-2) if source_repo is None else source_repo
+
+    @staticmethod
+    def default_source_dir(source_repo: str, source_dir: str) -> str:
+        """
+        Computes the default value for the source_dir given the current source_repo.
+
+        Refactoed as a static method so that it can be called from notebooks during the initialization of the BuildConfig.
+        :param source_repo: The path to repo; see also default_source_repo()
+        :param source_dir: Usually None, otherwise the directory name (not the full path) of the "Source" directory.
+        :return: the path to the source directory
+        """
+        return f"{source_repo}/Source" if source_dir is None else source_dir
 
     @property
     def client(self) -> DBAcademyRestClient:
