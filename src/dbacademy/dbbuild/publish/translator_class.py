@@ -274,8 +274,9 @@ class Translator:
         if pos_a == -1:
             return None, line_zero
 
-        pos_b = line_zero.find(suffix)
-        guid = f"{extra}{line_zero[pos_a+len(prefix):pos_b - 1]}"
+        prefix_len = len(prefix)
+        pos_b = line_zero.find(suffix) # -len(suffix)
+        guid = f"{extra}{line_zero[pos_a+prefix_len:pos_b]}"
 
         print(f"| {guid} {line_zero}")
         return guid, line_zero
