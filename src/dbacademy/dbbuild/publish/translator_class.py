@@ -269,10 +269,8 @@ class Translator:
             suffix = "/>"
             extra = "--i18n-"
 
-        print(f"| line_zero: {line_zero}")
         pos_a = line_zero.find(prefix)
         if pos_a == -1:
-            print("| Not found\n")
             return None, line_zero
 
         prefix_len = len(prefix)
@@ -280,8 +278,6 @@ class Translator:
 
         guid = f"{extra}{line_zero[pos_a+prefix_len:pos_b]}"
         guid = None if len(guid.strip()) == 0 else guid
-
-        print(f"| {guid} {line_zero}\n")
         return guid, line_zero
 
     def assert_validated(self):
@@ -369,10 +365,7 @@ class Translator:
 
                 if guid is None:
                     new_commands.append(command)                            # No GUID, it's %python or other type of command, not MD
-                    print(f"| Processing as-is.")
                 else:
-                    print(f"| Processing {guid}.")
-
                     if guid not in i18n_guid_map.keys():
                         for key in i18n_guid_map.keys():
                             print(f"| {key}")
@@ -389,8 +382,6 @@ class Translator:
                     lines.extend(cmd_lines)                                 # Convert to a set of lines and append
                     new_command = "\n".join(lines)                          # Combine all the lines into a new command
                     new_commands.append(new_command.strip())                # Append the new command to set of commands
-
-            # print()
 
             new_source = f"{header}\n"                           # Add the Databricks Notebook Header
             new_source += f"\n{cmd_delim}\n".join(new_commands)  # Join all the new_commands into one
