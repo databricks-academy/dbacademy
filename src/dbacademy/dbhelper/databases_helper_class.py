@@ -65,8 +65,11 @@ class DatabasesHelper:
         # Refactored to process only 50 at a time.
         groups = list()
         usernames = self.workspace.get_usernames(configure_for)
+        print(f"| Found {len(usernames)} users ({configure_for}).")
 
         curr_list = list()
+        groups.append(curr_list)
+
         for username in usernames:
             if len(curr_list) == 50:
                 # create a new set of 50
@@ -74,6 +77,8 @@ class DatabasesHelper:
                 curr_list = list()
 
             curr_list.append(username)
+
+        print(f"| Processing {len(groups)} groups.")
 
         for i, group in enumerate(groups):
             print(f"| Processing group {i+1} of {len(groups)}; {len(group)} usernames")
