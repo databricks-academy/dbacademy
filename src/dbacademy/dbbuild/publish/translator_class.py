@@ -448,12 +448,12 @@ class Translator:
         BuildUtils.write_file(data=data,
                               overwrite=False,
                               target_name="Distributions System (versioned)",
-                              target_file=f"dbfs:/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc")
+                              target_file=f"dbfs:/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.version}-PENDING/{self.build_name}-v{self.version}-notebooks.dbc")
 
         BuildUtils.write_file(data=data,
                               overwrite=True,
                               target_name="Workspace-Local FileStore",
-                              target_file=f"dbfs:/FileStore/tmp/{self.build_name}-v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc")
+                              target_file=f"dbfs:/FileStore/tmp/{self.build_name}-v{self.version}-PENDING/{self.build_name}-v{self.version}-notebooks.dbc")
 
         url = f"/files/tmp/{self.build_name}-v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
