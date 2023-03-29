@@ -344,12 +344,13 @@ class Publisher:
         if dest_cds:
             target_docs_path = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.build_config.version}-PENDING/site"
             self.__copy_doc_files(source_docs_path, target_docs_path)
-            html += f"""<div><a href="https://labs.training.databricks.com/courses/{self.build_name}/v{self.build_config.version}-PENDING/site/index.html" target="_blank">See /docs/{self.build_config.version}/index.html</a></div>"""
+            url = f"https://labs.training.databricks.com/courses/{self.build_name}/v{self.build_config.version}-PENDING/site/index.html"
+            html += f"""<div>See <a href="{url}" target="_blank">{url}</a></div>"""
 
         if dest_repo:
             target_docs_path = f"/Workspace{self.target_dir}/docs/v{self.build_config.version}"
             self.__copy_doc_files(source_docs_path, target_docs_path)
-            html += f"""<div><a href="{dbgems.get_workspace_url()}#workspace{self.target_dir}/docs/v{self.build_config.version}/index.html" target="_blank">See /docs/{self.build_config.version}/index.html</a></div>"""
+            html += f"""<div>See <a href="{dbgems.get_workspace_url()}#workspace{self.target_dir}/docs/v{self.build_config.version}/index.html" target="_blank">/docs/{self.build_config.version}/index.html</a></div>"""
 
         html += "</body></html>"
         return html
