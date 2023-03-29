@@ -347,7 +347,7 @@ class Publisher:
             html += f"""<div><a href="https://labs.training.databricks.com/admin/courses/{self.build_name}/v{self.build_config.version}-PENDING/site/index.html" target="_blank">See /docs/{self.build_config.version}/index.html</a></div>"""
 
         if dest_repo:
-            target_docs_path = f"Workspace{self.target_dir}/docs/v{self.build_config.version}"
+            target_docs_path = f"/Workspace{self.target_dir}/docs/v{self.build_config.version}"
             self.__copy_doc_files(source_docs_path, target_docs_path)
             html += f"""<div><a href="{dbgems.get_workspace_url()}#workspace{target_docs_path}/index.html" target="_blank">See /docs/{self.build_config.version}/index.html</a></div>"""
 
