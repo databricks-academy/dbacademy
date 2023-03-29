@@ -91,9 +91,9 @@ class WorkspaceHelper:
 
         for dataset in datasets:
             if ":" in dataset:
-                dataset, data_source_version = dataset.split(":")
+                dataset, dataset_version = dataset.split(":")
             else:
-                data_source_version = None
+                dataset_version = None
 
             inventory_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net"
             datasets_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}"
@@ -103,27 +103,43 @@ class WorkspaceHelper:
                 print(f"""| Dataset "{dataset}" not found.""")
                 continue
 
-            if not data_source_version:
+            # We may have to install more than one version due to the
+            # fact that we often teach the latest and latest-1 for a season.
+            versions = list()
+
+            if dataset_version is not None:
+                # We were told which one to use.
+                versions.append(dataset_version)
+            else:
                 # TODO this can technically fail if the dataset exists, but it is empty
-                files = dbutils.fs.ls(datasets_uri)
-                data_source_version = sorted([f.name[:-1] for f in files])[-1]
+                files = sorted(dbutils.fs.ls(datasets_uri))
+                if len(files) > 1:
+                    # There are at least two versions, so we need to install the last two just in case.
+                    versions.append(files[-1].name[:-1])  # dropping the trailing /
+                    versions.append(files[-2].name[:-1])
+                elif len(files) > 0:
+                    # There is only one version, just use the last one.
+                    versions.append(files[-1].name[:-1])
 
-            datasets_path = f"dbfs:/mnt/dbacademy-datasets/{dataset}/{data_source_version}"
-            data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}/{data_source_version}"
+            for version in enumerate(versions):
+                datasets_path = f"dbfs:/mnt/dbacademy-datasets/{dataset}/{version}"
+                data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}/{version}"
 
-            print(f"| {data_source_uri}")
-            print(f"| {datasets_path}")
+                print(f"| {data_source_uri}")
+                print(f"| {datasets_path}")
 
-            remote_files = DatasetManager.list_r(data_source_uri)
+                remote_files = DatasetManager.list_r(data_source_uri)
 
-            dataset_manager = DatasetManager(data_source_uri=data_source_uri,
-                                             staging_source_uri=None,
-                                             datasets_path=datasets_path,
-                                             remote_files=remote_files)
+                dataset_manager = DatasetManager(data_source_uri=data_source_uri,
+                                                 staging_source_uri=None,
+                                                 datasets_path=datasets_path,
+                                                 remote_files=remote_files)
 
-            dataset_manager.install_dataset(install_min_time=None,
-                                            install_max_time=None,
-                                            reinstall_datasets=False)
+                dataset_manager.install_dataset(install_min_time=None,
+                                                install_max_time=None,
+                                                reinstall_datasets=False)
+                if version == versions[-1]:
+                    print(("-" * 100))
 
             print("\n" + ("-" * 100) + "\n")
 
