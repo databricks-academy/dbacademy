@@ -46,11 +46,11 @@ class ClustersHelper:
         org_id = org_id or dbgems.get_org_id()
 
         tags = [
-            (f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}", common.clean_string(lab_id)),
-            (f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}", common.clean_string(workspace_description)),
-            (f"dbacademy.{WorkspaceHelper.PARAM_WORKSPACE_NAME}", common.clean_string(workspace_name)),
-            (f"dbacademy.{WorkspaceHelper.PARAM_ORG_ID}", common.clean_string(org_id)),
-            (f"dbacademy.{WorkspaceHelper.PARAM_SOURCE}", common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else lab_id))
+            (f"dbacademy.pool.{WorkspaceHelper.PARAM_LAB_ID}", common.clean_string(lab_id)),
+            (f"dbacademy.pool.{WorkspaceHelper.PARAM_DESCRIPTION}", common.clean_string(workspace_description)),
+            (f"dbacademy.pool.{WorkspaceHelper.PARAM_WORKSPACE_NAME}", common.clean_string(workspace_name)),
+            (f"dbacademy.pool.{WorkspaceHelper.PARAM_ORG_ID}", common.clean_string(org_id)),
+            (f"dbacademy.pool.{WorkspaceHelper.PARAM_SOURCE}", common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else lab_id))
         ]
 
         # We cannot update some pool attributes once they are created.
