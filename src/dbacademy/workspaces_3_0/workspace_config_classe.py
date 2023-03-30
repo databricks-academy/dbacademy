@@ -1,37 +1,42 @@
-from typing import List, Union, Dict
+from typing import List, Union, Dict, Optional
 
 __all__ = ["WorkspaceConfig"]
 
 
 class WorkspaceConfig:
-    from dbacademy.workspaces_3_0.event_config_class import EventConfig
-
     def __init__(self, *,
-                 max_users: int,
+                 max_participants: int,
                  default_node_type_id: str,
                  default_dbr: str,
                  course_definitions: Union[None, str, List[str]],
                  datasets: Union[None, str, List[str]],
                  username_pattern: str,
-                 entitlements: Dict[str, bool],
+                 entitlements: Optional[Dict[str, bool]],
                  workspace_name_pattern: str,
                  credentials_name: str,
                  storage_configuration: str,
+                 workspace_number: int = None,
                  cds_api_token: str = None,
                  courseware_subdirectory: str = None,
-                 groups: Dict[str, List]) -> None:
+                 aws_iam_role_arn: str = None,
+                 msa_access_connector_id: str = None,
+                 workspace_group: Optional[Dict[str, List]]) -> None:
         """
         Creates the configuration for workspace-level settings
-        :param max_users: see the corresponding property
+        :param max_participants: see the corresponding property
         :param default_dbr: see the corresponding property
         :param default_node_type_id: see the corresponding property
         :param course_definitions: see the corresponding property
         :param datasets: see the corresponding property
         """
+        from dbacademy.dbgems import stable_hash
         from dbacademy.dbhelper import WorkspaceHelper
+        from dbacademy import common
 
-        assert type(max_users) == int, f"""The parameter "max_users" must be an integral value, found {type(max_users)}."""
-        assert max_users > 0, f"""The parameter "max_users" must be greater than zero, found "{max_users}"."""
+        self.__max_participants = common.verify_type(int, min_value=1, max_participants=max_participants)
+
+        assert workspace_number is None or type(workspace_number) == int, f"""The parameter "workspace_number" must be None or an integral value, found {type(workspace_number)}."""
+        assert workspace_number is None or workspace_number > 0, f"""The parameter "workspace_number" must be None or greater than zero, found "{workspace_number}"."""
 
         assert type(default_node_type_id) == str, f"""The parameter "default_node_type_id" must be a string value, found {type(default_node_type_id)}."""
         assert len(default_node_type_id) > 3, f"""Invalid node type, found "{default_node_type_id}"."""
@@ -52,8 +57,9 @@ class WorkspaceConfig:
         datasets = [datasets] if type(datasets) == str else datasets  # Convert single string to list of strings
         assert type(datasets) == list, f"""The parameter "datasets" must be a string value, found {type(datasets)}."""
 
-        assert type(entitlements) == dict, f"""The parameter "entitlements" must be a dictionary value, found {type(entitlements)}."""
+        # assert type(entitlements) == dict, f"""The parameter "entitlements" must be a dictionary value, found {type(entitlements)}."""
         # assert len(entitlements) > 3, f"""The parameter "entitlements" must have a length > 0, found "{username_pattern}"."""
+        self.__entitlements = common.verify_type(dict, non_none=True, entitlements=entitlements)
 
         assert type(username_pattern) == str, f"""The parameter "username_pattern" must be a string value, found {type(username_pattern)}."""
         assert len(username_pattern) > 3, f"""The parameter "username_pattern" must have a length > 0, found "{username_pattern}"."""
@@ -70,12 +76,12 @@ class WorkspaceConfig:
         assert "{student_number}" in username_pattern, f"""Expected the parameter "username_pattern" to contain "{{student_number}}", found "{username_pattern}"."""
         assert "{workspace_number}" in workspace_name_pattern, f"""Expected the parameter "workspace_name_pattern" to contain "{{workspace_number}}", found "{workspace_name_pattern}"."""
 
+        assert aws_iam_role_arn is not None and msa_access_connector_id is not None, f"""One of the two parameters, "aws_iam_role_arn" or "msa_access_connector_id", must be specified, found None for both."""
+        self.__aws_iam_role_arn = common.verify_type(str, aws_iam_role_arn=aws_iam_role_arn)
+        self.__msa_access_connector_id = common.verify_type(str, msa_access_connector_id=msa_access_connector_id)
+
         self.__credentials_name = credentials_name
         self.__storage_configuration = storage_configuration
-
-        self.__event_config = None
-        self.__workspace_number = None
-        self.__name = None
 
         self.__course_definitions = course_definitions
         self.__courseware_subdirectory = courseware_subdirectory
@@ -84,7 +90,6 @@ class WorkspaceConfig:
         self.__default_dbr = default_dbr
         self.__username_pattern = username_pattern
         self.__workspace_name_pattern = workspace_name_pattern
-        self.__entitlements = entitlements
 
         self.__cds_api_token = cds_api_token
 
@@ -104,20 +109,21 @@ class WorkspaceConfig:
         for i, dbc_url in enumerate(self.dbc_urls):
             self.__validate_url(i, dbc_url)
 
+        # Zero to max inclusive; the +1 accounts for user-zero as the instructor
         self.__usernames: List[str] = list()
-        for i in range(0, max_users+1):
-            # Zero to max inclusive; the +1 accounts for user-zero as the instructor
+        for i in range(0, self.max_participants+1):
             value = f"{i:03d}"
             self.__usernames.append(self.__username_pattern.format(student_number=value))
 
         # Create the group analyst and instructors
-        self.__groups = dict()
+        self.__workspace_group = dict()
+        workspace_group = common.verify_type(dict, non_none=True, workspace_group=workspace_group)
 
         # Start by initializing groups as an empty list
-        for group_name in groups:
-            self.__groups[group_name] = []
+        for group_name in workspace_group:
+            self.__workspace_group[group_name] = []
 
-        for group_name, usernames in groups.items():
+        for group_name, usernames in workspace_group.items():
             for username in usernames:
                 if type(username) == int:
                     # We are identifying the user by the Nth user in usernames
@@ -128,29 +134,22 @@ class WorkspaceConfig:
                     self.__usernames.append(username)
 
                 # Add each user to their group
-                self.__groups.get(group_name).append(username)
+                self.__workspace_group.get(group_name).append(username)
 
-    def init(self, *, event_config: EventConfig, workspace_number: int):
-        from dbacademy.dbgems import stable_hash
+        if workspace_number is None:
+            # This is a template instance
+            self.__name = None
+            self.__workspace_number = None
+        else:
+            # This is not our template, need to configure the workspace
+            self.__workspace_number = workspace_number
 
-        assert type(workspace_number) == int, f"""The parameter "workspace_number" must be an integral value, found {type(workspace_number)}."""
-        assert workspace_number > 0, f"""The parameter "workspace_number" must be greater than zero, found "{workspace_number}"."""
-
-        self.__event_config = event_config
-        self.__workspace_number = workspace_number
-
-        if "event_id" in self.workspace_name_pattern and "workspace_number" in self.workspace_name_pattern:
-            event_id_str = f"{event_config.event_id:03d}"
-            workspace_number_str = f"{workspace_number:03d}"
-            name = self.workspace_name_pattern.format(event_id=event_id_str, workspace_number=workspace_number_str)
-        elif "workspace_number" in self.workspace_name_pattern:
             workspace_number_str = f"{self.workspace_number:03d}"
             name = self.workspace_name_pattern.format(workspace_number=workspace_number_str)
-        else:
-            raise Exception(f"Invalid workspace_name_pattern, found {self.workspace_name_pattern}")
 
-        hashcode = stable_hash("Databricks Lakehouse", event_config.event_id, workspace_number, length=5)
-        self.__name = f"{name}-{hashcode}".lower()
+            event_id = 0  # This use to be pre-defined, but was always zero. Hard coding zero for backwards compatibility for workspaces < 375
+            hashcode = stable_hash("Databricks Lakehouse", event_id, workspace_number, length=5)
+            self.__name = f"{name}-{hashcode}".lower()
 
     @property
     def name(self) -> str:
@@ -173,20 +172,20 @@ class WorkspaceConfig:
         return self.__workspace_number
 
     @property
-    def event_config(self) -> EventConfig:
-        return self.__event_config
-
-    @property
     def dbc_urls(self) -> List[str]:
         return self.__dbc_urls
+
+    @property
+    def max_participants(self) -> int:
+        return self.__max_participants
 
     @property
     def usernames(self) -> List[str]:
         return self.__usernames
 
     @property
-    def groups(self) -> Dict[str, List[str]]:
-        return self.__groups
+    def workspace_group(self) -> Dict[str, List[str]]:
+        return self.__workspace_group
 
     @property
     def cds_api_token(self):
@@ -211,6 +210,14 @@ class WorkspaceConfig:
     @property
     def default_dbr(self) -> str:
         return self.__default_dbr
+
+    @property
+    def aws_iam_role_arn(self) -> str:
+        return self.__aws_iam_role_arn
+
+    @property
+    def msa_access_connector_id(self) -> str:
+        return self.__msa_access_connector_id
 
     @property
     def credentials_name(self):

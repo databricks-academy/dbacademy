@@ -2,91 +2,65 @@ from typing import List, Union
 
 
 class AccountConfig:
-    from dbacademy.workspaces_3_0.event_config_class import EventConfig
     from dbacademy.workspaces_3_0.uc_storage_config_class import UcStorageConfig
     from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
 
     @staticmethod
-    def from_env(account_name: str, region: str, event_config: EventConfig, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, first_workspace_number: int, ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
+    def from_env(*, account_id_env_name, account_password_env_name, account_username_env_name, region: str, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, first_workspace_number: int, total_workspaces: int, ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
         import os
         print()
 
-        env = f"WORKSPACE_SETUP_{account_name}_ACCOUNT_ID"
-        account_id = os.environ.get(env)
-        assert account_id is not None, f"""Failed to load the environment variable "{env}", please check your configuration and try again."""
-        print(f"Account ID ({env}): {account_id}")
+        account_id = os.environ.get(account_id_env_name)
+        assert account_id is not None, f"""Failed to load the environment variable "{account_id_env_name}", please check your configuration and try again."""
 
-        env = f"WORKSPACE_SETUP_{account_name}_PASSWORD"
-        password = os.environ.get(env)
-        assert password is not None, f"""Failed to load the environment variable "{env}", please check your configuration and try again."""
-        print(f"Password   ({env}):   {password[0]}***{password[-1]}")
+        password = os.environ.get(account_password_env_name)
+        assert password is not None, f"""Failed to load the environment variable "{account_password_env_name}", please check your configuration and try again."""
 
-        env = f"WORKSPACE_SETUP_{account_name}_USERNAME"
-        username = os.environ.get(env)
-        assert username is not None, f"""Failed to load the environment variable "{env}", please check your configuration and try again."""
-        print(f"Username   ({env}):   {username}")
+        username = os.environ.get(account_username_env_name)
+        assert username is not None, f"""Failed to load the environment variable "{account_username_env_name}", please check your configuration and try again."""
 
         return AccountConfig(region=region,
                              account_id=account_id,
                              username=username,
                              password=password,
-                             event_config=event_config,
                              uc_storage_config=uc_storage_config,
                              workspace_config_template=workspace_config_template,
                              ignored_workspaces=ignored_workspaces,
-                             first_workspace_number=first_workspace_number)
+                             first_workspace_number=first_workspace_number,
+                             total_workspaces=total_workspaces)
 
-    def __init__(self, *, region: str, account_id: str, username: str, password: str, event_config: EventConfig, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, ignored_workspaces: List[Union[int, str]] = None, first_workspace_number: int) -> None:
+    def __init__(self, *, region: str, account_id: str, username: str, password: str, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, ignored_workspaces: List[Union[int, str]] = None, first_workspace_number: int, total_workspaces: int) -> None:
         """
         Creates the configuration for account-level settings.
         """
-        import math
-        from dbacademy.workspaces_3_0 import ParameterValidator
+        from dbacademy import common
+        from dbacademy.workspaces_3_0.uc_storage_config_class import UcStorageConfig
+        from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
 
-        assert type(region) == str, f"""The parameter "region" must be a string value, found {type(region)}."""
-        assert len(region) > 0, f"""The parameter "region" must be specified, found "{region}"."""
+        self.__account_id = common.verify_type(str, min_length=1, account_id=account_id)
+        self.__password = common.verify_type(str, min_length=1, password=password)
+        self.__username = common.verify_type(str, min_length=1, username=username)
 
-        assert type(account_id) == str, f"""The parameter "account_id" must be a string value, found {type(account_id)}."""
-        assert len(account_id) > 0, f"""The parameter "account_id" must be specified, found "{account_id}"."""
+        print(f"Account ID: {account_id}")
+        print(f"Password:   {password[0]}***{password[-1]}")
+        print(f"Username:   {username}")
 
-        assert type(username) == str, f"""The parameter "username" must be a string value, found {type(username)}."""
-        assert len(username) > 0, f"""The parameter "username" must be specified, found "{username}"."""
-
-        ParameterValidator.validate_type(str, password=password)
-        # assert type(password) == str, f"""The parameter "password" must be a string value, found {type(password)}."""
-        assert len(password) > 0, f"""The parameter "password" must be specified, found "{password}"."""
-
-        ignored_workspaces = ignored_workspaces or list()  # Default to an empty list if not provided.
-        ParameterValidator.validate_type(list, ignored_workspaces=ignored_workspaces)
-
-        ParameterValidator.validate_not_none(event_config=event_config)
-        ParameterValidator.validate_not_none(storage_config=uc_storage_config)
-        ParameterValidator.validate_not_none(workspace_config=workspace_config_template)
-
-        self.__region = region
-
-        self.__account_id = account_id
-        self.__username = username
-        self.__password = password
-
-        self.__event_config = event_config
-        self.__uc_storage_config = uc_storage_config
-        self.__workspace_config_template = workspace_config_template
-        self.__ignored_workspaces = ignored_workspaces
+        self.__region = common.verify_type(str, min_length=1, region=region)
+        self.__ignored_workspaces = common.verify_type(list, non_none=True, ignored_workspaces=ignored_workspaces)
+        self.__uc_storage_config = common.verify_type(UcStorageConfig, non_none=True, uc_storage_config=uc_storage_config)
+        self.__workspace_config_template = common.verify_type(WorkspaceConfig, non_none=True, workspace_config_template=workspace_config_template)
 
         self.__workspaces = list()
 
-        actual_users = len(workspace_config_template.usernames)
-        self.__max_users = actual_users - 2  # Accounts for user zero, max inclusive & class+analyst@databricks.com
-        count = math.ceil(event_config.max_participants / actual_users)
+        for workspace_number in range(first_workspace_number, first_workspace_number+total_workspaces):
+            self.create_workspace_config(template=workspace_config_template,
+                                         workspace_number=workspace_number)
 
-        for workspace_number in range(first_workspace_number, first_workspace_number+count):
-            self.create_workspace_config(event_config, workspace_config_template, workspace_number, self.max_users)
-
-    def create_workspace_config(self, event_config: EventConfig, template: WorkspaceConfig, workspace_number: int, max_users: int) -> WorkspaceConfig:
+    def create_workspace_config(self, *, template: WorkspaceConfig, workspace_number: int) -> WorkspaceConfig:
         from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
 
-        workspace = WorkspaceConfig(max_users=max_users,
+        workspace = WorkspaceConfig(workspace_number=workspace_number,
+                                    max_participants=template.max_participants,
                                     course_definitions=template.course_definitions,
                                     cds_api_token=template.cds_api_token,
                                     datasets=template.datasets,
@@ -96,10 +70,8 @@ class AccountConfig:
                                     storage_configuration=template.storage_configuration,
                                     username_pattern=template.username_pattern,
                                     entitlements=template.entitlements,
-                                    groups=template.groups,
+                                    workspace_group=template.workspace_group,
                                     workspace_name_pattern=template.workspace_name_pattern)
-
-        workspace.init(event_config=event_config, workspace_number=workspace_number)
 
         if workspace.name in self.ignored_workspaces:
             print(f"Skipping workspace #{workspace.name}")
@@ -109,10 +81,6 @@ class AccountConfig:
             self.__workspaces.append(workspace)
 
         return workspace
-
-    @property
-    def max_users(self) -> int:
-        return self.__max_users
 
     @property
     def ignored_workspaces(self) -> List[Union[int, str]]:
@@ -137,10 +105,6 @@ class AccountConfig:
     @property
     def password(self) -> str:
         return self.__password
-
-    @property
-    def event_config(self) -> EventConfig:
-        return self.__event_config
 
     @property
     def uc_storage_config(self) -> UcStorageConfig:

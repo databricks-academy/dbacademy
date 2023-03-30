@@ -2,9 +2,9 @@ import unittest
 from dbacademy.workspaces_3_0.uc_storage_config_class import UcStorageConfig
 
 
-class TestEventConfig(unittest.TestCase):
+class TestUCStorageConfig(unittest.TestCase):
 
-    def test_create_event_config(self):
+    def test_create(self):
         storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", owner="instructors")
         self.assertIsNone(storage_config.meta_store_name)
         self.assertEqual("def", storage_config.storage_root)
