@@ -121,7 +121,7 @@ class WorkspaceHelper:
                     # There is only one version, just use the last one.
                     versions.append(files[-1].name[:-1])
 
-            for version in enumerate(versions):
+            for version in versions:
                 datasets_path = f"dbfs:/mnt/dbacademy-datasets/{dataset}/{version}"
                 data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}/{version}"
 
