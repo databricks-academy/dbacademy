@@ -18,7 +18,7 @@ class WorkspaceConfig:
                  workspace_number: int = None,
                  cds_api_token: str = None,
                  courseware_subdirectory: str = None,
-                 aws_iam_role_arn: str = None,
+                 aws_iam_role_arn: str,
                  msa_access_connector_id: str = None,
                  workspace_group: Optional[Dict[str, List]]) -> None:
         """
