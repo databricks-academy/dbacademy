@@ -32,22 +32,22 @@
 <font color="#000000" face="helvetica, arial"><a name="WorkspaceConfig">class <strong>WorkspaceConfig</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#WorkspaceConfig">WorkspaceConfig</a>(*,&nbsp;max_users:&nbsp;int,&nbsp;default_node_type_id:&nbsp;str,&nbsp;default_dbr:&nbsp;str,&nbsp;course_definitions:&nbsp;Union[NoneType,&nbsp;str,&nbsp;List[str]],&nbsp;datasets:&nbsp;Union[NoneType,&nbsp;str,&nbsp;List[str]],&nbsp;username_pattern:&nbsp;str,&nbsp;entitlements:&nbsp;Dict[str,&nbsp;bool],&nbsp;workspace_name_pattern:&nbsp;str,&nbsp;credentials_name:&nbsp;str,&nbsp;storage_configuration:&nbsp;str,&nbsp;cds_api_token:&nbsp;str&nbsp;=&nbsp;None,&nbsp;courseware_subdirectory:&nbsp;str&nbsp;=&nbsp;None,&nbsp;groups:&nbsp;Dict[str,&nbsp;List])&nbsp;-&amp;gt;&nbsp;None<br>
+<td colspan=2><tt><a href="#WorkspaceConfig">WorkspaceConfig</a>(*,&nbsp;max_participants:&nbsp;int,&nbsp;default_node_type_id:&nbsp;str,&nbsp;default_dbr:&nbsp;str,&nbsp;course_definitions:&nbsp;Union[NoneType,&nbsp;str,&nbsp;List[str]],&nbsp;datasets:&nbsp;Union[NoneType,&nbsp;str,&nbsp;List[str]],&nbsp;username_pattern:&nbsp;str,&nbsp;entitlements:&nbsp;Optional[Dict[str,&nbsp;bool]],&nbsp;workspace_name_pattern:&nbsp;str,&nbsp;credentials_name:&nbsp;str,&nbsp;storage_configuration:&nbsp;str,&nbsp;workspace_number:&nbsp;int&nbsp;=&nbsp;None,&nbsp;cds_api_token:&nbsp;str&nbsp;=&nbsp;None,&nbsp;courseware_subdirectory:&nbsp;str&nbsp;=&nbsp;None,&nbsp;aws_iam_role_arn:&nbsp;str&nbsp;=&nbsp;None,&nbsp;msa_access_connector_id:&nbsp;str&nbsp;=&nbsp;None,&nbsp;workspace_group:&nbsp;Optional[Dict[str,&nbsp;List]])&nbsp;-&amp;gt;&nbsp;None<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="WorkspaceConfig-__init__"><strong>__init__</strong></a>(self, *, max_users: int, default_node_type_id: str, default_dbr: str, course_definitions: Union[NoneType, str, List[str]], datasets: Union[NoneType, str, List[str]], username_pattern: str, entitlements: Dict[str, bool], workspace_name_pattern: str, credentials_name: str, storage_configuration: str, cds_api_token: str = None, courseware_subdirectory: str = None, groups: Dict[str, List]) -&gt; None</dt><dd><tt>Creates&nbsp;the&nbsp;configuration&nbsp;for&nbsp;workspace-level&nbsp;settings<br>
-:param&nbsp;max_users:&nbsp;see&nbsp;the&nbsp;corresponding&nbsp;property<br>
+<dl><dt><a name="WorkspaceConfig-__init__"><strong>__init__</strong></a>(self, *, max_participants: int, default_node_type_id: str, default_dbr: str, course_definitions: Union[NoneType, str, List[str]], datasets: Union[NoneType, str, List[str]], username_pattern: str, entitlements: Optional[Dict[str, bool]], workspace_name_pattern: str, credentials_name: str, storage_configuration: str, workspace_number: int = None, cds_api_token: str = None, courseware_subdirectory: str = None, aws_iam_role_arn: str = None, msa_access_connector_id: str = None, workspace_group: Optional[Dict[str, List]]) -&gt; None</dt><dd><tt>Creates&nbsp;the&nbsp;configuration&nbsp;for&nbsp;workspace-level&nbsp;settings<br>
+:param&nbsp;max_participants:&nbsp;see&nbsp;the&nbsp;corresponding&nbsp;property<br>
 :param&nbsp;default_dbr:&nbsp;see&nbsp;the&nbsp;corresponding&nbsp;property<br>
 :param&nbsp;default_node_type_id:&nbsp;see&nbsp;the&nbsp;corresponding&nbsp;property<br>
 :param&nbsp;course_definitions:&nbsp;see&nbsp;the&nbsp;corresponding&nbsp;property<br>
 :param&nbsp;datasets:&nbsp;see&nbsp;the&nbsp;corresponding&nbsp;property</tt></dd></dl>
 
-<dl><dt><a name="WorkspaceConfig-init"><strong>init</strong></a>(self, *, event_config: dbacademy.workspaces_3_0.event_config_class.EventConfig, workspace_number: int)</dt></dl>
-
 <hr>
 Readonly properties defined here:<br>
+<dl><dt><strong>aws_iam_role_arn</strong></dt>
+</dl>
 <dl><dt><strong>cds_api_token</strong></dt>
 </dl>
 <dl><dt><strong>course_definitions</strong></dt>
@@ -68,9 +68,9 @@ Readonly properties defined here:<br>
 </dl>
 <dl><dt><strong>entitlements</strong></dt>
 </dl>
-<dl><dt><strong>event_config</strong></dt>
+<dl><dt><strong>max_participants</strong></dt>
 </dl>
-<dl><dt><strong>groups</strong></dt>
+<dl><dt><strong>msa_access_connector_id</strong></dt>
 </dl>
 <dl><dt><strong>name</strong></dt>
 </dl>
@@ -81,6 +81,8 @@ Readonly properties defined here:<br>
 <dl><dt><strong>username_pattern</strong></dt>
 </dl>
 <dl><dt><strong>usernames</strong></dt>
+</dl>
+<dl><dt><strong>workspace_group</strong></dt>
 </dl>
 <dl><dt><strong>workspace_name_pattern</strong></dt>
 </dl>
@@ -94,10 +96,6 @@ Data descriptors defined here:<br>
 <dl><dt><strong>__weakref__</strong></dt>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
-<hr>
-Data and other attributes defined here:<br>
-<dl><dt><strong>EventConfig</strong> = &lt;class 'dbacademy.workspaces_3_0.event_config_class.EventConfig'&gt;</dl>
-
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
