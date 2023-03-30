@@ -2,7 +2,14 @@ __all__ = ["UcStorageConfig"]
 
 
 class UcStorageConfig:
-    def __init__(self, *, storage_root: str, storage_root_credential_id: str, region: str, owner: str):
+    def __init__(self, *,
+                 storage_root: str,
+                 storage_root_credential_id: str,
+                 region: str,
+                 owner: str,
+                 aws_iam_role_arn: str,
+                 msa_access_connector_id: str = None):
+        from dbacademy import common
 
         assert type(storage_root) == str, f"""The parameter "storage_root" must be a string value, found {type(storage_root)}."""
         assert len(storage_root) > 0, f"""The parameter "storage_root" must be specified, found "{storage_root}"."""
@@ -15,6 +22,10 @@ class UcStorageConfig:
 
         assert type(owner) == str, f"""The parameter "owner" must be a string value, found {type(owner)}."""
         assert len(owner) > 0, f"""The parameter "owner" must be specified, found "{owner}"."""
+
+        self.__aws_iam_role_arn = common.verify_type(str, aws_iam_role_arn=aws_iam_role_arn)
+        self.__msa_access_connector_id = common.verify_type(str, msa_access_connector_id=msa_access_connector_id)
+        # assert aws_iam_role_arn is not None or msa_access_connector_id is not None, f"""One of the two parameters, "aws_iam_role_arn" or "msa_access_connector_id", must be specified, found None for both."""
 
         self.__meta_store_name = None
         self.__storage_root = storage_root
@@ -41,3 +52,11 @@ class UcStorageConfig:
     @property
     def owner(self):
         return self.__owner
+
+    @property
+    def aws_iam_role_arn(self) -> str:
+        return self.__aws_iam_role_arn
+
+    @property
+    def msa_access_connector_id(self) -> str:
+        return self.__msa_access_connector_id

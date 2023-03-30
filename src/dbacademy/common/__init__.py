@@ -90,7 +90,9 @@ E_MIN_L = "Error-Min-Len"
 E_MIN_V = "Error-Min-Value"
 
 
-def verify_type(parameter_type: Any, *, min_length: int = None, non_none: bool = None, min_value=None, **kwargs):
+def verify_type(parameter_type: Any, *, min_length: int = None, non_none: Any = None, min_value=None, **kwargs):
+    import numbers
+
     assert len(kwargs) == 1, f"validate_type_2() expects two and only two parameters."
 
     parameter_name = list(kwargs)[0]
@@ -108,20 +110,32 @@ def verify_type(parameter_type: Any, *, min_length: int = None, non_none: bool =
         elif parameter_type == dict and value is None:
             value = dict()
 
-        assert value is not None, f"""{E_NOT_NONE}| The parameter "{parameter_name}" must  not be "None"."""
+        if value is None:
+            raise AssertionError(f"""{E_NOT_NONE}| The parameter "{parameter_name}" must  not be "None".""")
 
-    # No issues with it being None, now verify the actual type
-    msg = f"""{E_TYPE}| Expected the parameter "{parameter_name}" to be of type {parameter_type}, found {type(value)}"""
-    assert type(value) == parameter_type, msg
+        # No issues with it being None, now verify the actual type
+        if type(value) != parameter_type:
+            msg = f"""{E_TYPE}| Expected the parameter "{parameter_name}" to be of type {parameter_type}, found {type(value)}"""
+            raise AssertionError(msg)
+    else:
+        # Already expected that "value" can be None
+        if value is not None and type(value) != parameter_type:
+            msg = f"""{E_TYPE}| Expected the parameter "{parameter_name}" to be None or of type {parameter_type}, found {type(value)}"""
+            raise AssertionError(msg)
 
     # No issues with the type, now verify value attributes.
     if min_length is not None:
         assert type(min_length) == int, f"""Expected the parameter "min_length" to be of type int, found {type(min_length)}"""
-        assert len(value) >= min_length, f"""{E_MIN_L}| The parameter "{parameter_name}" must have a minimum length of {min_length}, found "{len(value)}"."""
+        if len(value) < min_length:
+            raise AssertionError(f"""{E_MIN_L}| The parameter "{parameter_name}" must have a minimum length of {min_length}, found "{len(value)}".""")
 
     if min_value is not None:
         assert type(min_value) == int, f"""Expected the parameter "min_value" to be of type int, found {type(min_value)}"""
-        assert value >= min_value, f"""{E_MIN_V}| The parameter "{parameter_name}" must have a minimum value of {min_value}, found "{value}"."""
+        if not isinstance(value, numbers.Number):
+            raise AssertionError(f"""{E_TYPE}| The parameter "{parameter_name}" must be numerical, found "{type(value)}".""")
+
+        if value < min_value:
+            raise AssertionError(f"""{E_MIN_V}| The parameter "{parameter_name}" must have a minimum value of {min_value}, found "{value}".""")
 
     return value
 

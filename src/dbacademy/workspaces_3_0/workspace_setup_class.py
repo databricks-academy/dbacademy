@@ -411,7 +411,7 @@ class WorkspaceSetup:
             # try:
             user = trio.classroom.databricks.users.create(username=username,
                                                           allow_cluster_create=False,  # Set via entitlements
-                                                          entitlements=None,           # Don't add any on create, we have to make another call for remove anyways.
+                                                          entitlements=None,           # Don't add any on create, we have to make another call for remove regardless.
                                                           if_exists="ignore")
 
             if len(entitlements) > 0:
@@ -582,14 +582,14 @@ class WorkspaceSetup:
             "read_only": False,
         }
 
-        if trio.workspace_config.aws_iam_role_arn is not None:
+        if trio.workspace_config.storage_configuration.aws_iam_role_arn is not None:
             credentials["aws_iam_role"] = {
-                "role_arn": trio.workspace_config.aws_iam_role_arn
+                "role_arn": trio.workspace_config.storage_configuration.aws_iam_role_arn
             }
 
-        if trio.workspace_config.msa_access_connector_id is not None:
+        if trio.workspace_config.storage_configuration.msa_access_connector_id is not None:
             credentials["azure_managed_identity"] = {
-                "access_connector_id": trio.workspace_config.msa_access_connector_id
+                "access_connector_id": trio.workspace_config.storage_configuration.msa_access_connector_id
             }
 
         storage_root_credential_id = trio.workspace_api.api("POST", "2.1/unity-catalog/storage-credentials", credentials).get("id")

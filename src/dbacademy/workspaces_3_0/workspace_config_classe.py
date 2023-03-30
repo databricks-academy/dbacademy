@@ -18,8 +18,6 @@ class WorkspaceConfig:
                  workspace_number: int = None,
                  cds_api_token: str = None,
                  courseware_subdirectory: str = None,
-                 aws_iam_role_arn: str,
-                 msa_access_connector_id: str = None,
                  workspace_group: Optional[Dict[str, List]]) -> None:
         """
         Creates the configuration for workspace-level settings
@@ -75,10 +73,6 @@ class WorkspaceConfig:
 
         assert "{student_number}" in username_pattern, f"""Expected the parameter "username_pattern" to contain "{{student_number}}", found "{username_pattern}"."""
         assert "{workspace_number}" in workspace_name_pattern, f"""Expected the parameter "workspace_name_pattern" to contain "{{workspace_number}}", found "{workspace_name_pattern}"."""
-
-        assert aws_iam_role_arn is not None and msa_access_connector_id is not None, f"""One of the two parameters, "aws_iam_role_arn" or "msa_access_connector_id", must be specified, found None for both."""
-        self.__aws_iam_role_arn = common.verify_type(str, aws_iam_role_arn=aws_iam_role_arn)
-        self.__msa_access_connector_id = common.verify_type(str, msa_access_connector_id=msa_access_connector_id)
 
         self.__credentials_name = credentials_name
         self.__storage_configuration = storage_configuration
@@ -210,14 +204,6 @@ class WorkspaceConfig:
     @property
     def default_dbr(self) -> str:
         return self.__default_dbr
-
-    @property
-    def aws_iam_role_arn(self) -> str:
-        return self.__aws_iam_role_arn
-
-    @property
-    def msa_access_connector_id(self) -> str:
-        return self.__msa_access_connector_id
 
     @property
     def credentials_name(self):

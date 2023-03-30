@@ -45,7 +45,8 @@ owner = "instructors"
 storage_config = UcStorageConfig(storage_root="s3://unity-catalogs-us-west-2/",
                                  storage_root_credential_id="be2549d1-3f5b-40db-900d-1b0fcdb419ee",  # ARN
                                  region="us-west-2",
-                                 owner=owner)
+                                 owner=owner,
+                                 aws_iam_role_arn="arn:aws:iam::981174701421:role/Unity-Catalog-Role")
 
 workspace_config_template = WorkspaceConfig(max_participants=max_participants,
                                             datasets=None,  # Appended to based on course_definitions; Only needs to be defined for DAWD
