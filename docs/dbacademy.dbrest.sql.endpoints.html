@@ -51,7 +51,7 @@ Methods defined here:<br>
 
 <dl><dt><a name="SqlEndpointsClient-create_user_endpoint"><strong>create_user_endpoint</strong></a>(self, user, naming_template: str, naming_params: dict, cluster_size: str, enable_serverless_compute: bool, min_num_clusters: int, max_num_clusters: int, auto_stop_mins: int, enable_photon: bool, spot_instance_policy: str, channel: str, tags: dict)</dt></dl>
 
-<dl><dt><a name="SqlEndpointsClient-create_user_endpoints"><strong>create_user_endpoints</strong></a>(self, naming_template: str, naming_params: dict, cluster_size: str, enable_serverless_compute: bool, min_num_clusters: int = 1, max_num_clusters: int = 1, auto_stop_mins: int = 120, enable_photon: bool = True, spot_instance_policy: str = 'RELIABILITY_OPTIMIZED', channel: str = 'CHANNEL_NAME_CURRENT', tags: dict = None, users: &lt;function SqlEndpointsClient.list at 0x00000229AA5F9C10&gt; = None)</dt><dd><tt>Creates&nbsp;one&nbsp;SQL&nbsp;endpoint&nbsp;per&nbsp;user&nbsp;in&nbsp;the&nbsp;current&nbsp;workspace.&nbsp;The&nbsp;list&nbsp;of&nbsp;users&nbsp;can&nbsp;be&nbsp;limited&nbsp;to&nbsp;a&nbsp;subset&nbsp;of&nbsp;users&nbsp;with&nbsp;the&nbsp;"users"&nbsp;parameter.<br>
+<dl><dt><a name="SqlEndpointsClient-create_user_endpoints"><strong>create_user_endpoints</strong></a>(self, naming_template: str, naming_params: dict, cluster_size: str, enable_serverless_compute: bool, min_num_clusters: int = 1, max_num_clusters: int = 1, auto_stop_mins: int = 120, enable_photon: bool = True, spot_instance_policy: str = 'RELIABILITY_OPTIMIZED', channel: str = 'CHANNEL_NAME_CURRENT', tags: dict = None, users: &lt;function SqlEndpointsClient.list at 0x000001E65FFC0E50&gt; = None)</dt><dd><tt>Creates&nbsp;one&nbsp;SQL&nbsp;endpoint&nbsp;per&nbsp;user&nbsp;in&nbsp;the&nbsp;current&nbsp;workspace.&nbsp;The&nbsp;list&nbsp;of&nbsp;users&nbsp;can&nbsp;be&nbsp;limited&nbsp;to&nbsp;a&nbsp;subset&nbsp;of&nbsp;users&nbsp;with&nbsp;the&nbsp;"users"&nbsp;parameter.<br>
 Parameters:&nbsp;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;naming_template&nbsp;(str):&nbsp;The&nbsp;template&nbsp;used&nbsp;to&nbsp;name&nbsp;each&nbsp;user's&nbsp;endpoint.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;naming_params&nbsp;(str):&nbsp;The&nbsp;parameters&nbsp;used&nbsp;in&nbsp;completing&nbsp;the&nbsp;template.<br>
@@ -72,7 +72,7 @@ Parameters:&nbsp;<br>
 
 <dl><dt><a name="SqlEndpointsClient-delete_user_endpoint"><strong>delete_user_endpoint</strong></a>(self, user, naming_template: str, naming_params: dict)</dt></dl>
 
-<dl><dt><a name="SqlEndpointsClient-delete_user_endpoints"><strong>delete_user_endpoints</strong></a>(self, naming_template: str, naming_params: dict, users: &lt;function SqlEndpointsClient.list at 0x00000229AA5F9C10&gt; = None)</dt></dl>
+<dl><dt><a name="SqlEndpointsClient-delete_user_endpoints"><strong>delete_user_endpoints</strong></a>(self, naming_template: str, naming_params: dict, users: &lt;function SqlEndpointsClient.list at 0x000001E65FFC0E50&gt; = None)</dt></dl>
 
 <dl><dt><a name="SqlEndpointsClient-edit"><strong>edit</strong></a>(self, endpoint_id: str, name: str = None, cluster_size: str = None, enable_serverless_compute: bool = None, min_num_clusters: int = None, max_num_clusters: int = None, auto_stop_mins: int = None, enable_photon: bool = None, spot_instance_policy: str = None, channel: str = None, tags: dict = None)</dt></dl>
 
@@ -86,13 +86,13 @@ Parameters:&nbsp;<br>
 
 <dl><dt><a name="SqlEndpointsClient-start_user_endpoint"><strong>start_user_endpoint</strong></a>(self, user, naming_template: str, naming_params: dict)</dt></dl>
 
-<dl><dt><a name="SqlEndpointsClient-start_user_endpoints"><strong>start_user_endpoints</strong></a>(self, naming_template: str, naming_params: dict, users: &lt;function SqlEndpointsClient.list at 0x00000229AA5F9C10&gt; = None)</dt></dl>
+<dl><dt><a name="SqlEndpointsClient-start_user_endpoints"><strong>start_user_endpoints</strong></a>(self, naming_template: str, naming_params: dict, users: &lt;function SqlEndpointsClient.list at 0x000001E65FFC0E50&gt; = None)</dt></dl>
 
 <dl><dt><a name="SqlEndpointsClient-stop"><strong>stop</strong></a>(self, endpoint_id)</dt></dl>
 
 <dl><dt><a name="SqlEndpointsClient-stop_user_endpoint"><strong>stop_user_endpoint</strong></a>(self, user, naming_template: str, naming_params: dict)</dt></dl>
 
-<dl><dt><a name="SqlEndpointsClient-stop_user_endpoints"><strong>stop_user_endpoints</strong></a>(self, naming_template: str, naming_params: dict, users: &lt;function SqlEndpointsClient.list at 0x00000229AA5F9C10&gt; = None)</dt></dl>
+<dl><dt><a name="SqlEndpointsClient-stop_user_endpoints"><strong>stop_user_endpoints</strong></a>(self, naming_template: str, naming_params: dict, users: &lt;function SqlEndpointsClient.list at 0x000001E65FFC0E50&gt; = None)</dt></dl>
 
 <dl><dt><a name="SqlEndpointsClient-update"><strong>update</strong></a>(self, endpoint_id: str, name: str = None, cluster_size: str = None, enable_serverless_compute: bool = None, min_num_clusters: int = None, max_num_clusters: int = None, auto_stop_mins: int = None, enable_photon: bool = None, spot_instance_policy: str = None, channel: str = None, tags: dict = None)</dt></dl>
 

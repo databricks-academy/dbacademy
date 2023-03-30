@@ -32,28 +32,24 @@
 <font color="#000000" face="helvetica, arial"><a name="AccountConfig">class <strong>AccountConfig</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#AccountConfig">AccountConfig</a>(*,&nbsp;region:&nbsp;str,&nbsp;account_id:&nbsp;str,&nbsp;username:&nbsp;str,&nbsp;password:&nbsp;str,&nbsp;event_config:&nbsp;dbacademy.workspaces_3_0.event_config_class.EventConfig,&nbsp;uc_storage_config:&nbsp;dbacademy.workspaces_3_0.uc_storage_config_class.UcStorageConfig,&nbsp;workspace_config_template:&nbsp;dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig,&nbsp;ignored_workspaces:&nbsp;List[Union[int,&nbsp;str]]&nbsp;=&nbsp;None,&nbsp;first_workspace_number:&nbsp;int)&nbsp;-&amp;gt;&nbsp;None<br>
+<td colspan=2><tt><a href="#AccountConfig">AccountConfig</a>(*,&nbsp;region:&nbsp;str,&nbsp;account_id:&nbsp;str,&nbsp;username:&nbsp;str,&nbsp;password:&nbsp;str,&nbsp;uc_storage_config:&nbsp;dbacademy.workspaces_3_0.uc_storage_config_class.UcStorageConfig,&nbsp;workspace_config_template:&nbsp;dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig,&nbsp;ignored_workspaces:&nbsp;List[Union[int,&nbsp;str]]&nbsp;=&nbsp;None,&nbsp;first_workspace_number:&nbsp;int,&nbsp;total_workspaces:&nbsp;int)&nbsp;-&amp;gt;&nbsp;None<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="AccountConfig-__init__"><strong>__init__</strong></a>(self, *, region: str, account_id: str, username: str, password: str, event_config: dbacademy.workspaces_3_0.event_config_class.EventConfig, uc_storage_config: dbacademy.workspaces_3_0.uc_storage_config_class.UcStorageConfig, workspace_config_template: dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig, ignored_workspaces: List[Union[int, str]] = None, first_workspace_number: int) -&gt; None</dt><dd><tt>Creates&nbsp;the&nbsp;configuration&nbsp;for&nbsp;account-level&nbsp;settings.</tt></dd></dl>
+<dl><dt><a name="AccountConfig-__init__"><strong>__init__</strong></a>(self, *, region: str, account_id: str, username: str, password: str, uc_storage_config: dbacademy.workspaces_3_0.uc_storage_config_class.UcStorageConfig, workspace_config_template: dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig, ignored_workspaces: List[Union[int, str]] = None, first_workspace_number: int, total_workspaces: int) -&gt; None</dt><dd><tt>Creates&nbsp;the&nbsp;configuration&nbsp;for&nbsp;account-level&nbsp;settings.</tt></dd></dl>
 
-<dl><dt><a name="AccountConfig-create_workspace_config"><strong>create_workspace_config</strong></a>(self, event_config: dbacademy.workspaces_3_0.event_config_class.EventConfig, template: dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig, workspace_number: int, max_users: int) -&gt; dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig</dt></dl>
+<dl><dt><a name="AccountConfig-create_workspace_config"><strong>create_workspace_config</strong></a>(self, *, template: dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig, workspace_number: int) -&gt; dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig</dt></dl>
 
 <hr>
 Static methods defined here:<br>
-<dl><dt><a name="AccountConfig-from_env"><strong>from_env</strong></a>(account_name: str, region: str, event_config: dbacademy.workspaces_3_0.event_config_class.EventConfig, uc_storage_config: dbacademy.workspaces_3_0.uc_storage_config_class.UcStorageConfig, workspace_config_template: dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig, first_workspace_number: int, ignored_workspaces: List[Union[int, str]] = None) -&gt; 'AccountConfig'</dt></dl>
+<dl><dt><a name="AccountConfig-from_env"><strong>from_env</strong></a>(*, account_id_env_name, account_password_env_name, account_username_env_name, region: str, uc_storage_config: dbacademy.workspaces_3_0.uc_storage_config_class.UcStorageConfig, workspace_config_template: dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig, first_workspace_number: int, total_workspaces: int, ignored_workspaces: List[Union[int, str]] = None) -&gt; 'AccountConfig'</dt></dl>
 
 <hr>
 Readonly properties defined here:<br>
 <dl><dt><strong>account_id</strong></dt>
 </dl>
-<dl><dt><strong>event_config</strong></dt>
-</dl>
 <dl><dt><strong>ignored_workspaces</strong></dt>
-</dl>
-<dl><dt><strong>max_users</strong></dt>
 </dl>
 <dl><dt><strong>password</strong></dt>
 </dl>
@@ -77,8 +73,6 @@ Data descriptors defined here:<br>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>EventConfig</strong> = &lt;class 'dbacademy.workspaces_3_0.event_config_class.EventConfig'&gt;</dl>
-
 <dl><dt><strong>UcStorageConfig</strong> = &lt;class 'dbacademy.workspaces_3_0.uc_storage_config_class.UcStorageConfig'&gt;</dl>
 
 <dl><dt><strong>WorkspaceConfig</strong> = &lt;class 'dbacademy.workspaces_3_0.workspace_config_classe.WorkspaceConfig'&gt;</dl>
