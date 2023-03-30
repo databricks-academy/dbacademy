@@ -33,7 +33,7 @@ class TestUtils(unittest.TestCase):
             self.test_deprecated_ignore()
             return
         try:
-            result = self.add_error(1, 3)
+            self.add_error(1, 3)
             self.fail("DeprecationWarning exception expected.")
         except DeprecationWarning:
             pass

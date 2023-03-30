@@ -46,8 +46,7 @@ class TestWorkspaceConfig(unittest.TestCase):
                                     username_pattern="class+{student_number}@databricks.com",
                                     entitlements=entitlements,
                                     workspace_group=workspace_group,
-                                    workspace_name_pattern="classroom-{workspace_number}",
-                                    aws_iam_role_arn="abc")
+                                    workspace_name_pattern="classroom-{workspace_number}")
 
         self.assertEqual(expected_users, len(workspace.usernames))
         self.assertEqual("11.3.x-scala2.12", workspace.default_dbr)
@@ -116,8 +115,7 @@ class TestWorkspaceConfig(unittest.TestCase):
                                     username_pattern="class+{student_number}@databricks.com",
                                     entitlements=None,
                                     workspace_group=None,
-                                    workspace_name_pattern="classroom-{workspace_number}",
-                                    aws_iam_role_arn="abc")
+                                    workspace_name_pattern="classroom-{workspace_number}")
         self.assertEqual("class+{student_number}@databricks.com", workspace.username_pattern)
 
         for i, username in enumerate(workspace.usernames):
@@ -127,10 +125,10 @@ class TestWorkspaceConfig(unittest.TestCase):
         ###################################################
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "username_pattern" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern=0, workspace_group=None, entitlements=dict(), workspace_name_pattern="classroom-{workspace_number}", aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "username_pattern" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern=0, workspace_group=None, entitlements=dict(), workspace_name_pattern="classroom-{workspace_number}"))
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "username_pattern" must be a string value, found <class 'NoneType'>.""", lambda: WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern=None, workspace_group=None, entitlements=dict(), workspace_name_pattern="classroom-{workspace_number}", aws_iam_role_arn="abc"))
-        test_assertion_error(self, """The parameter "username_pattern" must have a length > 0, found "".""", lambda: WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="", workspace_group=None, entitlements=dict(), workspace_name_pattern="classroom-{workspace_number}", aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "username_pattern" must be a string value, found <class 'NoneType'>.""", lambda: WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern=None, workspace_group=None, entitlements=dict(), workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, """The parameter "username_pattern" must have a length > 0, found "".""", lambda: WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="", workspace_group=None, entitlements=dict(), workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_workspace_pattern(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
