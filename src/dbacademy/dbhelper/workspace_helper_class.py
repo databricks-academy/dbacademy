@@ -74,7 +74,7 @@ class WorkspaceHelper:
 
         if installed_datasets is not None and installed_datasets.strip() not in ("", "null", "None"):
             datasets = installed_datasets.split(",")
-            print(f"Installing " + ", ".join(datasets) + " datasets...")
+            print(f"Installing {len(datasets)} datasets...")
         else:
             print(f"Installing all datasets...")
             datasets = [
@@ -88,6 +88,9 @@ class WorkspaceHelper:
                 "ml-in-production",
                 "scalable-machine-learning-with-apache-spark",
             ]
+            print(f"Installing all instructor-led ({len(datasets)}) datasets...")
+
+        print("\n" + ("=" * 100) + "\n")
 
         for dataset in datasets:
             if ":" in dataset:
@@ -141,8 +144,6 @@ class WorkspaceHelper:
 
                 if version == versions[-1] and len(versions) > 1:
                     print("\n" + ("-" * 100) + "\n")
-
-            print("\n" + ("=" * 100) + "\n")
 
     @staticmethod
     def uninstall_courseware(client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
