@@ -138,10 +138,11 @@ class WorkspaceHelper:
                 dataset_manager.install_dataset(install_min_time=None,
                                                 install_max_time=None,
                                                 reinstall_datasets=False)
-                if version == versions[-1]:
-                    print(("-" * 100))
 
-            print("\n" + ("-" * 100) + "\n")
+                if version == versions[-1] and len(versions) > 1:
+                    print("\n" + ("-" * 100) + "\n")
+
+            print("\n" + ("=" * 100) + "\n")
 
     @staticmethod
     def uninstall_courseware(client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
