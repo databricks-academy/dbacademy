@@ -19,10 +19,8 @@ class Users(ApiContainer):
     def list_by_username(self):
         return {u["userName"]: u for u in self.list()}
 
-    # TODO Rename parameter "id" to "user_id"
-    # noinspection PyShadowingBuiltins
-    def get_by_id(self, id):
-        return self.databricks.api("GET", f"{self.path}/scim/v2/Users/{id}")
+    def get_by_id(self, user_id):
+        return self.databricks.api("GET", f"{self.path}/scim/v2/Users/{user_id}")
 
     def get_by_username(self, username, if_not_exists="ignore"):
         for u in self.list():
