@@ -40,7 +40,7 @@
 <td width="100%">Methods defined here:<br>
 <dl><dt><a name="WorkspaceSetup-__init__"><strong>__init__</strong></a>(self, account_config: dbacademy.workspaces_3_0.account_config_class.AccountConfig, max_retries: int)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="WorkspaceSetup-create_workspaces"><strong>create_workspaces</strong></a>(self, *, create_users: bool, create_groups: bool, remove_metastore: bool, create_metastore: bool, run_workspace_setup: bool, enable_features: bool, install_courseware: bool, uninstall_courseware: bool = False, workspace_numbers: Iterable[int] = None)</dt></dl>
+<dl><dt><a name="WorkspaceSetup-create_workspaces"><strong>create_workspaces</strong></a>(self, *, remove_users: bool, create_users: bool, update_entitlements: bool, create_groups: bool, remove_metastore: bool, create_metastore: bool, run_workspace_setup: bool, enable_features: bool, install_courseware: bool, uninstall_courseware: bool = False, workspace_numbers: Iterable[int] = None)</dt></dl>
 
 <dl><dt><a name="WorkspaceSetup-delete_workspace"><strong>delete_workspace</strong></a>(self, workspace_number: int)</dt></dl>
 
@@ -57,8 +57,6 @@ Readonly properties defined here:<br>
 <dl><dt><strong>account_config</strong></dt>
 </dl>
 <dl><dt><strong>accounts_api</strong></dt>
-</dl>
-<dl><dt><strong>max_retries</strong></dt>
 </dl>
 <hr>
 Data descriptors defined here:<br>
@@ -88,9 +86,13 @@ Data and other attributes defined here:<br>
 
 <dl><dt><a name="WorkspaceTrio-__str__"><strong>__str__</strong></a>(self) -&gt; str</dt><dd><tt>Return&nbsp;str(self).</tt></dd></dl>
 
+<dl><dt><a name="WorkspaceTrio-get_by_username"><strong>get_by_username</strong></a>(self, username) -&gt; Dict[str, Any]</dt></dl>
+
 <hr>
 Readonly properties defined here:<br>
 <dl><dt><strong>classroom</strong></dt>
+</dl>
+<dl><dt><strong>client</strong></dt>
 </dl>
 <dl><dt><strong>name</strong></dt>
 </dl>
@@ -107,6 +109,8 @@ Data descriptors defined here:<br>
 </dl>
 <dl><dt><strong>__weakref__</strong></dt>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>existing_users</strong></dt>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
