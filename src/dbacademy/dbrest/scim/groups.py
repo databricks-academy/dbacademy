@@ -103,13 +103,8 @@ class ScimGroupsClient(ApiContainer):
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
             "Operations": [
                 {
-                    "op": "delete",
-                    "path": "entitlements",
-                    "value": [
-                        {
-                            "value": entitlement
-                        }
-                    ]
+                    "op": "remove",
+                    "path": f"""entitlements[value eq "{entitlement}"]""",
                 }
             ]
         }

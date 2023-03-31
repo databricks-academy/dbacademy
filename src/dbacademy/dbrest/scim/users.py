@@ -100,19 +100,14 @@ class ScimUsersClient(ApiContainer):
         return self.client.api("PATCH", url, payload)
 
     def remove_entitlement(self, user_id: str, entitlement: str) -> Dict[str, Any]:
-        payload = {
+        params = {
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
             "Operations": [
                 {
-                    "op": "delete",
-                    "path": "entitlements",
-                    "value": [
-                        {
-                            "value": entitlement
-                        }
-                    ]
+                    "op": "remove",
+                    "path": f"""entitlements[value eq "{entitlement}"]""",
                 }
             ]
         }
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
-        return self.client.api("PATCH", url, payload)
+        return self.client.api("PATCH", url, params)
