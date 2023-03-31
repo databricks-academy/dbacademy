@@ -466,11 +466,9 @@ class Publisher:
         base_dir = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_config.build_name}"
         version_dir = f"{base_dir}/v{self.build_config.version}-PENDING"
 
-        try:
-            dbgems.dbutils.fs.ls(version_dir.replace("/dbfs/", "dbfs:/"))
-        except:
-            # It doesn't really exist, just delete here to clear the file cache.
-            shutil.rmtree(version_dir, ignore_errors=True)
+        # In all cases, we want to delete the target directory.
+        # This is Ok because the course is still in its PENDING state.
+        shutil.rmtree(version_dir, ignore_errors=True)
 
         assert not os.path.exists(version_dir), f"Cannot publish v{self.version}; it already exists."
 
