@@ -454,10 +454,10 @@ class WorkspaceSetup:
                 except:
                     raise Exception(f"Failed to create user {username} for {name}")
 
-            if username != self.account_config.username:
-                self.__remove_entitlement(trio, user, "allow-cluster-create")
-                self.__remove_entitlement(trio, user, "databricks-sql-access")
-                self.__remove_entitlement(trio, user, "workspace-access")
+            # if username != self.account_config.username:
+            #     self.__remove_entitlement(trio, user, "allow-cluster-create")
+            #     self.__remove_entitlement(trio, user, "databricks-sql-access")
+            #     self.__remove_entitlement(trio, user, "workspace-access")
 
     @staticmethod
     def __remove_entitlement(trio: WorkspaceTrio, user: Dict[str, Any], entitlement: str):
