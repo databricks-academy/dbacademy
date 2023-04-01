@@ -214,7 +214,7 @@ class WorkspaceConfig:
         return self.__credentials_name
 
     @property
-    def storage_configuration(self):
+    def storage_configuration(self) -> str:
         """
         This is the name of the storage configuration for a workspace (e.g. DBFS)
         :return:
