@@ -30,11 +30,13 @@ env_id = read_str("""Please select an environment such as "PROSVC" or "CURR"."""
 # specific_workspace_numbers = [343, 344, 345, 346]
 
 # noinspection PyRedeclaration
-specific_workspace_numbers = [281]
-specific_workspace_numbers.extend([325, 326, 327, 331, 332])
-specific_workspace_numbers.extend([333, 334, 335, 336, 337])
-specific_workspace_numbers.extend([338, 339, 340, 341, 342])
-specific_workspace_numbers.extend([343, 344, 345, 346])
+# specific_workspace_numbers = [281]
+# specific_workspace_numbers.extend([325, 326, 327, 331, 332])
+# specific_workspace_numbers.extend([333, 334, 335, 336, 337])
+# specific_workspace_numbers.extend([338, 339, 340, 341, 342])
+# specific_workspace_numbers.extend([343, 344, 345, 346])
+
+specific_workspace_numbers = list(range(400, 425))
 
 """
 
