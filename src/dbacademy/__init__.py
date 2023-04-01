@@ -1,7 +1,7 @@
 """
-The dbacademy package is the super package to a broad number of systems.
+The dbacademy package is the super package to a broad number of systems as enumerated below.
 
-common: package for functionality that is generic and used across all other packages.
+<strong>common:</strong> package for functionality that is generic and used across all other packages.
 
 Courseware Development
 dbbuild: Courseware build tools.
