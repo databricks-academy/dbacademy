@@ -1,5 +1,6 @@
 from typing import List, Optional, Callable, Iterable, Dict, Any
 
+from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import DatabricksApiException
 
 
@@ -9,15 +10,48 @@ class WorkspaceTrio:
     from dbacademy.classrooms.classroom import Classroom
 
     def __init__(self, workspace_config: WorkspaceConfig, workspace_api: WorkspaceAPI, classroom: Optional[Classroom]):
+        from dbacademy.dbrest import DBAcademyRestClient
+
         self.__workspace_config = workspace_config
         self.__workspace_api = workspace_api
         self.__classroom = classroom
 
         self.__name = workspace_config.name
         self.__number = workspace_config.workspace_number
+        self.__existing_users: Optional[Dict[str, Any]] = None
+
+        if self.workspace_api.url.endswith("/api/"):
+            endpoint = self.workspace_api.url[:-5]
+        elif self.workspace_api.url.endswith("/"):
+            endpoint = self.workspace_api.url[:-1]
+        else:
+            endpoint = self.workspace_api.url
+
+        self.__client = DBAcademyRestClient(authorization_header=self.workspace_api.authorization_header, endpoint=endpoint)
 
     def __str__(self) -> str:
         return f"{self.name} #{self.number}"
+
+    @property
+    def client(self) -> DBAcademyRestClient:
+        return self.__client
+
+    def get_by_username(self, username) -> Optional[Dict[str, Any]]:
+        for user in self.existing_users:
+            if username == user.get("userName"):
+                return user
+        return None
+
+    @property
+    def existing_users(self) -> Optional[Dict[str, Any]]:
+        if self.__existing_users is None:
+            self.__existing_users = self.client.scim.users.list()
+
+        return self.__existing_users
+
+    @existing_users.setter
+    def existing_users(self, existing_users: Optional[Dict[str, Any]]) -> None:
+        self.__existing_users = existing_users
 
     @property
     def name(self) -> str:
@@ -43,7 +77,7 @@ class WorkspaceTrio:
 class WorkspaceSetup:
     from dbacademy.workspaces_3_0.account_config_class import AccountConfig
 
-    def __init__(self, account_config: AccountConfig, max_retries: int):
+    def __init__(self, account_config: AccountConfig):
         from dbacademy.dougrest import AccountsApi
         from dbacademy.workspaces_3_0.account_config_class import AccountConfig
 
@@ -51,17 +85,9 @@ class WorkspaceSetup:
         assert type(account_config) == AccountConfig, f"""The parameter "account_config" must be of type AccountConfig, found {type(account_config)}."""
         self.__account_config = account_config
 
-        assert max_retries is not None, f"""The parameter "max_retries" must be specified."""
-        assert type(max_retries) == int, f"""The parameter "max_retries" must be of type int, found {type(max_retries)}."""
-        self.__max_retries = max_retries
-
         self.__accounts_api = AccountsApi(account_id=self.account_config.account_id,
                                           user=self.account_config.username,
                                           password=self.account_config.password)
-
-    @property
-    def max_retries(self):
-        return self.__max_retries
 
     @property
     def accounts_api(self):
@@ -119,6 +145,8 @@ class WorkspaceSetup:
                 raise e
 
     def remove_metastore(self, workspace_number: int):
+        assert workspace_number >= 0, f"Invalid workspace number: {workspace_number}"
+
         print("\n")
         print("-"*100)
 
@@ -179,6 +207,8 @@ class WorkspaceSetup:
                 print("-"*80)
 
     def delete_workspace(self, workspace_number: int):
+        assert workspace_number >= 0, f"Invalid workspace number: {workspace_number}"
+
         print("\n")
         print("-"*100)
 
@@ -205,17 +235,16 @@ class WorkspaceSetup:
             self.__remove_metastore(trio)
             self.__delete_workspace(trio)
 
-    def create_workspaces(self, *, create_users: bool, create_groups: bool, remove_metastore: bool, create_metastore: bool, run_workspace_setup: bool, enable_features: bool, install_courseware: bool, uninstall_courseware: bool = False, workspace_numbers: Iterable[int] = None):
+    def create_workspaces(self, *, remove_users: bool, create_users: bool, update_entitlements: bool, create_groups: bool, remove_metastore: bool, create_metastore: bool, run_workspace_setup: bool, enable_features: bool, install_courseware: bool, uninstall_courseware: bool = False):
         from dbacademy.classrooms.classroom import Classroom
 
         print("\n")
         print("-"*100)
         print(f"""Creating {len(self.account_config.workspaces)} workspaces.""")
 
-        provisioned_workspaces = [w for w in self.account_config.workspaces if workspace_numbers is None or w.workspace_number in workspace_numbers]
         workspaces: List[WorkspaceTrio] = list()
 
-        for workspace_config in provisioned_workspaces:
+        for workspace_config in self.account_config.workspaces:
             print(workspace_config.name)
             workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="ignore")
             if workspace_api is None:
@@ -240,14 +269,29 @@ class WorkspaceSetup:
             workspace.workspace_api.wait_until_ready()
 
         #############################################################
+        # Remove any users before doing anything like adding them.
+        if remove_users:
+            self.__for_each_workspace(workspaces, self.__remove_users)
+        else:
+            print("Skipping removal of users")
+
+        #############################################################
+        # Processed before adding users to minimize overhead for new workspaces
+        # Do to a piece of logic that is loading all users for backwards compatability.
+        if update_entitlements:
+            self.__for_each_workspace(workspaces, self.__update_entitlements)
+        else:
+            print("Skipping update of entitlements")
+
+        #############################################################
         if create_users:
-            self.__for_each_workspace(workspaces, self.__create_workspaces_create_users)
+            self.__for_each_workspace(workspaces, self.__create_users)
         else:
             print("Skipping creation of users")
 
         #############################################################
         if create_groups:
-            self.__for_each_workspace(workspaces, self.__create_workspaces_create_group)
+            self.__for_each_workspace(workspaces, self.__create_group)
         else:
             print("Skipping creation of groups")
 
@@ -292,17 +336,8 @@ class WorkspaceSetup:
     @classmethod
     def __install_courseware(cls, trio: WorkspaceTrio):
         import os
-        from dbacademy.dbrest import DBAcademyRestClient
         from dbacademy.dbhelper import WorkspaceHelper
 
-        if trio.workspace_api.url.endswith("/api/"):
-            endpoint = trio.workspace_api.url[:-5]
-        elif trio.workspace_api.url.endswith("/"):
-            endpoint = trio.workspace_api.url[:-1]
-        else:
-            endpoint = trio.workspace_api.url
-
-        client = DBAcademyRestClient(authorization_header=trio.workspace_api.authorization_header, endpoint=endpoint)
         for course_def in trio.workspace_config.course_definitions:
 
             for username in trio.workspace_config.usernames:
@@ -318,7 +353,7 @@ class WorkspaceSetup:
 
                 print(f" - {install_dir}")
 
-                files = client.workspace.ls(install_dir)
+                files = trio.client.workspace.ls(install_dir)
                 count = 0 if files is None else len(files)
                 if count > 0:
                     print(f" - Skipping, course already exists.")
@@ -331,25 +366,16 @@ class WorkspaceSetup:
                     else:
                         local_file_path = "/download.dbc"
 
-                    client.workspace.import_dbc_files(install_dir, download_url, local_file_path=local_file_path)
+                    trio.client.workspace.import_dbc_files(install_dir, download_url, local_file_path=local_file_path)
                     print(f" - Installed.")
 
             print("-" * 80)
 
     @classmethod
     def __uninstall_courseware(cls, trio: WorkspaceTrio):
-        from dbacademy.dbrest import DBAcademyRestClient
         from dbacademy.dbhelper import WorkspaceHelper
 
-        if trio.workspace_api.url.endswith("/api/"):
-            endpoint = trio.workspace_api.url[:-5]
-        elif trio.workspace_api.url.endswith("/"):
-            endpoint = trio.workspace_api.url[:-1]
-        else:
-            endpoint = trio.workspace_api.url
-
-        client = DBAcademyRestClient(authorization_header=trio.workspace_api.authorization_header, endpoint=endpoint)
-        usernames = [u.get("userName") for u in client.scim.users.list()]
+        usernames = [u.get("userName") for u in trio.client.scim.users.list()]
 
         for username in usernames:
             print(f"Uninstalling courses for {username}")
@@ -363,7 +389,7 @@ class WorkspaceSetup:
                     install_dir = f"/Users/{username}/{trio.workspace_config.courseware_subdirectory}/{course}"
 
                 print(install_dir)
-                client.workspace.delete_path(install_dir)
+                trio.client.workspace.delete_path(install_dir)
 
             print("-" * 80)
 
@@ -387,83 +413,100 @@ class WorkspaceSetup:
                "enableExportNotebook": "true"      # We will disable this in due time
         })
 
-    def __create_workspaces_create_users(self, trio: WorkspaceTrio):
+    def __remove_users(self, trio: WorkspaceTrio):
+        # Just in case it's not ready
+        trio.workspace_api.wait_until_ready()
+
+        name = trio.workspace_config.name
+        print(f"""Removing {len(trio.existing_users)} users for "{name}".""")
+
+        for user in trio.existing_users:
+            user_id = user.get("id")
+            username = user.get("userName")
+            if username != self.account_config.username:
+                trio.classroom.databricks.users.delete_by_id(user_id)
+
+        trio.existing_users = None
+
+    def __create_users(self, trio: WorkspaceTrio):
         # Just in case it's not ready
         trio.workspace_api.wait_until_ready()
 
         name = trio.workspace_config.name
         max_users = len(trio.workspace_config.usernames)
-        print(f"""Creating {max_users} users for "{name}".""")
+        print(f"""Configuring {max_users} users for "{name}", listing existing users...""", end="")
 
-        existing_users = self.__utils_list_users(trio)
+        existing_usernames = [u.get("userName") for u in trio.existing_users]
+        print("done.")
 
-        if len(existing_users) > 1:
-            # More than one because "this" account is automatically added
-            print(f"""Found {len(existing_users)} users for "{name}".""")
+        if len(existing_usernames) > 1:
+            # More than one because user actual count is max_participants+1
+            existing_count = len(existing_usernames)
+            remaining_count = max_users-len(existing_usernames)+1
+            print(f"""Found {existing_count} users, creating {remaining_count} users for "{name}".""")
 
-        for i, username in enumerate(trio.workspace_config.usernames):
-            if username not in existing_users:
-                entitlements = trio.workspace_config.entitlements
-                self.__utils_create_user(trio, username, entitlements)
+        for username in trio.workspace_config.usernames:
+            if username in existing_usernames:
+                user = trio.get_by_username(username)
+            else:
+                try:
+                    user = trio.client.scim.users.create(username)
+                except:
+                    raise Exception(f"Failed to create user {username} for {name}")
 
-    def __utils_create_user(self, trio: WorkspaceTrio, username: str, entitlements: Dict[str, bool]) -> List[str]:
-        for i in range(0, self.__max_retries+1):
-            # try:
-            user = trio.classroom.databricks.users.create(username=username,
-                                                          allow_cluster_create=False,  # Set via entitlements
-                                                          entitlements=None,           # Don't add any on create, we have to make another call for remove regardless.
-                                                          if_exists="ignore")
+            if username != self.account_config.username:
+                self.__remove_entitlement(trio, user, "allow-cluster-create")
+                self.__remove_entitlement(trio, user, "databricks-sql-access")
+                self.__remove_entitlement(trio, user, "workspace-access")
 
-            if len(entitlements) > 0:
-                trio.classroom.databricks.users.set_entitlements(user, entitlements)
+    @staticmethod
+    def __remove_entitlement(trio: WorkspaceTrio, user: Dict[str, Any], entitlement: str):
+        username = user.get("userName")
+        entitlements = [e.get("value") for e in user.get("entitlements", list())]
+        if entitlement in entitlements:
+            try:
+                trio.client.scim.users.remove_entitlement(user.get("id"), entitlement)
+            except Exception as e:
+                raise Exception(f"Exception removing entitlement {entitlement} from {username}") from e
 
-            return user
+    @staticmethod
+    def __update_entitlements(trio: WorkspaceTrio):
+        # Just in case it's not ready
+        trio.workspace_api.wait_until_ready()
 
-        raise Exception(f"""Failed to create user "{username}" for "{trio.workspace_config.name}".""")
+        name = trio.workspace_config.name
+        print(f"""Updating all-users entitlements for "{name}".""")
 
-    def __utils_list_users(self, trio: WorkspaceTrio) -> List[str]:
-        # import time, random
-        # from requests.exceptions import HTTPError
+        group = trio.client.scim.groups.get_by_name("users")
 
-        existing_users = None
-        for i in range(0, self.__max_retries+1):
-            if existing_users is not None:
-                break
-            # try:
-            existing_users = trio.classroom.databricks.users.list_usernames()
-
-            # except HTTPError as e:
-            #     print(f"""Failed to list users for "{trio.workspace_config.name}", retrying ({i})""")
-            #     data = e.response.json()
-            #     message = data.get("detail", str(e))
-            #     print(f"HTTPError ({e.response.status_code}): {message}")
-            #     time.sleep(random.randint(5, 10))
-            #     raise e
-
-        if existing_users is None:
-            raise Exception(f"""Failed to load existing users for "{trio.workspace_config.name}".""")
-        else:
-            return existing_users
+        for name, value in trio.workspace_config.entitlements.items():
+            if value is True:
+                trio.client.scim.groups.add_entitlement(group.get("id"), name)
+            else:
+                trio.client.scim.groups.remove_entitlement(group.get("id"), name)
 
     @classmethod
-    def __create_workspaces_create_group(cls, trio: WorkspaceTrio):
+    def __create_group(cls, trio: WorkspaceTrio):
         name = trio.workspace_config.name
 
         print(f"""Creating {len(trio.workspace_config.workspace_group)} groups for "{name}".""")
-
-        existing_groups = trio.classroom.databricks.groups.list()
+        existing_groups = trio.client.scim.groups.list()
+        existing_groups_name = [g.get("displayName") for g in existing_groups]
 
         if len(existing_groups) > 0:
             print(f"""Found {len(existing_groups)} groups for "{name}".""")
 
         for group_name, usernames in trio.workspace_config.workspace_group.items():
-            if group_name not in existing_groups:
-                # Create the group
-                trio.classroom.databricks.groups.create(group_name)
+            if group_name not in existing_groups_name:
+                trio.client.scim.groups.create(group_name)
 
-            for username in usernames:
-                # Add the user as a member of that group
-                trio.classroom.databricks.groups.add_member(group_name, user_name=username)
+            if group_name != "users":
+                # We still have to add the specified user to this group (User #0 to "admins" in our case)
+                group = trio.client.scim.groups.get_by_name(group_name)
+                for username in usernames:
+                    # Add the user as a member of that group
+                    user = trio.get_by_username(username)
+                    trio.client.scim.groups.add_member(group.get("id"), user.get("id"))
 
     def __create_workspaces_run_workspace_setup(self, trio: WorkspaceTrio):
         try:
@@ -568,31 +611,31 @@ class WorkspaceSetup:
 
         self.__create_storage_credentials(trio, metastore_id)
 
-    @classmethod
-    def __create_storage_credentials(cls, trio: WorkspaceTrio, metastore_id: str):
+    def __create_storage_credentials(self, trio: WorkspaceTrio, metastore_id: str):
         # Create a storage credential for the access_connector
-        # TODO the ARN needs to be parameterized
 
-        # def (self) -> str:
-        # def (self) -> str:
+        credentials = trio.workspace_api.api("GET", f"2.1/unity-catalog/storage-credentials/{trio.name}", _expected=[200, 404])
 
-        credentials = {
-            "name": trio.workspace_config.name,
-            "skip_validation": False,
-            "read_only": False,
-        }
-
-        if trio.workspace_config.storage_configuration.aws_iam_role_arn is not None:
-            credentials["aws_iam_role"] = {
-                "role_arn": trio.workspace_config.storage_configuration.aws_iam_role_arn
+        if credentials is None:
+            credentials = {
+                "name": trio.workspace_config.name,
+                "skip_validation": False,
+                "read_only": False,
             }
 
-        if trio.workspace_config.storage_configuration.msa_access_connector_id is not None:
-            credentials["azure_managed_identity"] = {
-                "access_connector_id": trio.workspace_config.storage_configuration.msa_access_connector_id
-            }
+            if self.account_config.uc_storage_config.aws_iam_role_arn is not None:
+                credentials["aws_iam_role"] = {
+                    "role_arn": self.account_config.uc_storage_config.aws_iam_role_arn
+                }
 
-        storage_root_credential_id = trio.workspace_api.api("POST", "2.1/unity-catalog/storage-credentials", credentials).get("id")
+            if self.account_config.uc_storage_config.msa_access_connector_id is not None:
+                credentials["azure_managed_identity"] = {
+                    "access_connector_id": self.account_config.uc_storage_config.msa_access_connector_id
+                }
+
+            credentials = trio.workspace_api.api("POST", "2.1/unity-catalog/storage-credentials", credentials)
+
+        storage_root_credential_id = credentials.get("id")
 
         # Set storage root credential.
         trio.workspace_api.api("PATCH", f"2.1/unity-catalog/metastores/{metastore_id}", {
@@ -624,7 +667,7 @@ class WorkspaceSetup:
     def __utils_enable_delta_sharing(self, trio: WorkspaceTrio, metastore_id: str):
         try:
             trio.workspace_api.api("PATCH", f"2.1/unity-catalog/metastores/{metastore_id}", {
-                "owner": self.account_config.uc_storage_config.owner,
+                "owner": self.account_config.uc_storage_config.meta_store_owner,
                 "delta_sharing_scope": "INTERNAL_AND_EXTERNAL",
                 "delta_sharing_recipient_token_lifetime_in_seconds": 90 * 24 * 60 * 60,
                 "delta_sharing_organization_name": trio.workspace_config.name
