@@ -9,11 +9,13 @@ class ScimUsersClient(ApiContainer):
         self.client = client      # Client API exposing other operations to this class
 
     def list(self) -> List[Dict[str, Any]]:
-        response = self.client.api("GET", f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users")
+        response = self.client.api("GET", f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users?excludedAttributes=roles")
+
         users = response.get("Resources", list())
         total_results = response.get("totalResults")
-        assert len(users) == int(total_results),\
-            f"The totalResults ({total_results}) does not match the number of records ({len(users)}) returned"
+
+        assert len(users) == int(total_results), f"The totalResults ({total_results}) does not match the number of records ({len(users)}) returned"
+
         return users
 
     def get_by_id(self, user_id: str) -> Dict[str, Any]:
