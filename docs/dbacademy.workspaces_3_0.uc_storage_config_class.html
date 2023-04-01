@@ -32,12 +32,12 @@
 <font color="#000000" face="helvetica, arial"><a name="UcStorageConfig">class <strong>UcStorageConfig</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#UcStorageConfig">UcStorageConfig</a>(*,&nbsp;storage_root:&nbsp;str,&nbsp;storage_root_credential_id:&nbsp;str,&nbsp;region:&nbsp;str,&nbsp;owner:&nbsp;str,&nbsp;aws_iam_role_arn:&nbsp;str,&nbsp;msa_access_connector_id:&nbsp;str&nbsp;=&nbsp;None)<br>
+<td colspan=2><tt><a href="#UcStorageConfig">UcStorageConfig</a>(*,&nbsp;storage_root:&nbsp;str,&nbsp;storage_root_credential_id:&nbsp;str,&nbsp;region:&nbsp;str,&nbsp;meta_store_owner:&nbsp;str,&nbsp;aws_iam_role_arn:&nbsp;Optional[str],&nbsp;msa_access_connector_id:&nbsp;Optional[str])<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="UcStorageConfig-__init__"><strong>__init__</strong></a>(self, *, storage_root: str, storage_root_credential_id: str, region: str, owner: str, aws_iam_role_arn: str, msa_access_connector_id: str = None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="UcStorageConfig-__init__"><strong>__init__</strong></a>(self, *, storage_root: str, storage_root_credential_id: str, region: str, meta_store_owner: str, aws_iam_role_arn: Optional[str], msa_access_connector_id: Optional[str])</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <hr>
 Readonly properties defined here:<br>
@@ -45,9 +45,9 @@ Readonly properties defined here:<br>
 </dl>
 <dl><dt><strong>meta_store_name</strong></dt>
 </dl>
-<dl><dt><strong>msa_access_connector_id</strong></dt>
+<dl><dt><strong>meta_store_owner</strong></dt>
 </dl>
-<dl><dt><strong>owner</strong></dt>
+<dl><dt><strong>msa_access_connector_id</strong></dt>
 </dl>
 <dl><dt><strong>region</strong></dt>
 </dl>
