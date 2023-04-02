@@ -1,9 +1,9 @@
 from typing import Dict, Any, Union, List, Optional
-from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import ApiContainer
 
 
 class ScimUsersClient(ApiContainer):
+    from dbacademy.dbrest import DBAcademyRestClient
 
     def __init__(self, client: DBAcademyRestClient):
         self.client = client      # Client API exposing other operations to this class
@@ -14,7 +14,7 @@ class ScimUsersClient(ApiContainer):
         users = response.get("Resources", list())
         total_results = response.get("totalResults")
 
-        assert len(users) == int(total_results), f"The totalResults ({total_results}) does not match the number of records ({len(users)}) returned"
+        assert len(users) == int(total_results), f"""The returned value "totalResults" ({total_results}) does not match the number of records ({len(users)}) returned."""
 
         return users
 
@@ -22,8 +22,22 @@ class ScimUsersClient(ApiContainer):
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
         return self.client.api("GET", url)
 
-    def get_by_username(self, username: str) -> Dict[str, Any]:
-        return self.get_by_name(username)
+    def get_by_username(self, username: str) -> Optional[Dict[str, Any]]:
+        import urllib.parse
+        # return self.get_by_name(username)
+
+        name = urllib.parse.quote(username)
+
+        response = self.client.api("GET", f"""{self.client.endpoint}/api/2.0/preview/scim/v2/Users?excludedAttributes=roles&filter=userName eq "{name}""")
+        users = response.get("Resources", list())
+        total_results = response.get("totalResults")
+        assert len(users) == int(total_results), f"""The returned value "totalResults" ({total_results}) does not match the number of records ({len(users)}) returned."""
+
+        for user in users:
+            if username == user.get("userName"):
+                return user
+
+        return None
 
     def get_by_name(self, name: str) -> Optional[Dict[str, Any]]:
         for user in self.list():
@@ -44,14 +58,28 @@ class ScimUsersClient(ApiContainer):
         return None
 
     def create(self, username: str) -> Dict[str, Any]:
+        from dbacademy.rest.common import DatabricksApiException
+
         payload = {
             "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
             "userName": username,
             "groups": [],
             "entitlements": []
         }
-        url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users"
-        return self.client.api("POST", url, payload, _expected=(200, 201))
+
+        try:
+            url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users"
+            return self.client.api("POST", url, payload, _expected=(200, 201))
+        except DatabricksApiException as e:
+            if e.http_code == 409:
+                # TODO Remove this once ES-645542 is fixed
+                # 100% convinced this is throttling masking itself as a 409 & the list here will help that a bit.
+                user = self.get_by_name(username)
+                if user is not None:
+                    return user
+
+            # If we didn't mitigate, re-raise the exception.
+            raise Exception(f"""Exception creating the user "{username}".""") from e
 
     def to_users_list(self, users: Union[None, str, Dict[str, Any]]) -> List[Dict[str, Any]]:
 
