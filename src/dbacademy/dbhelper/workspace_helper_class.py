@@ -69,6 +69,7 @@ class WorkspaceHelper:
 
     @staticmethod
     def install_datasets(installed_datasets: str):
+        from dbacademy import dbgems
         from dbacademy.dbgems import dbutils
         from dbacademy.dbhelper.dataset_manager_class import DatasetManager
 
@@ -125,13 +126,17 @@ class WorkspaceHelper:
                     versions.append(files[-1].name[:-1])
 
             for version in versions:
+
                 datasets_path = f"dbfs:/mnt/dbacademy-datasets/{dataset}/{version}"
                 data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}/{version}"
 
                 print(f"| {data_source_uri}")
                 print(f"| {datasets_path}")
+                print("| listing remote files", end="...")
 
+                start = dbgems.clock_start()
                 remote_files = DatasetManager.list_r(data_source_uri)
+                print(dbgems.clock_stopped(start))
 
                 dataset_manager = DatasetManager(data_source_uri=data_source_uri,
                                                  staging_source_uri=None,
