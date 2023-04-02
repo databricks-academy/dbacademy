@@ -59,6 +59,7 @@ class ApiClient(ApiContainer):
 
     url: str = None
     dns_verify: bool = True
+    dns_retry: bool = False
 
     def __init__(self,
                  url: str,
@@ -283,30 +284,31 @@ class ApiClient(ApiContainer):
                 }
         # TODO @doug.bateman: missing else clause
 
-    @staticmethod
-    def _verify_hostname(url: str) -> None:
+    def _verify_hostname(self, url: str) -> None:
         """Verify the host for the url-endpoint exists.  Throws socket.gaierror if it does not."""
+        import time
         from urllib.parse import urlparse
         from socket import gethostbyname, gaierror
         from requests.exceptions import ConnectionError
 
-        url = urlparse(url)
-        try:
-            gethostbyname(url.hostname)
-        except gaierror as e:
-            raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}".""") from e
-
-        # retries = 10
-        # last_exception = None
-        # url = urlparse(url)
-        # for i in range(0, retries):
-        #     try:
-        #         gethostbyname(url.hostname)
-        #         return
-        #     except gaierror as e:
-        #         last_exception = e
-        #         time.sleep(i*2)
-        # raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}" after {retries}.""") from last_exception
+        if not self.dns_retry:
+            url = urlparse(url)
+            try:
+                gethostbyname(url.hostname)
+            except gaierror as e:
+                raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}".""") from e
+        else:
+            retries = 10
+            last_exception = None
+            url = urlparse(url)
+            for i in range(0, retries):
+                try:
+                    gethostbyname(url.hostname)
+                    return
+                except gaierror as e:
+                    last_exception = e
+                    time.sleep(i*2)
+            raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}" after {retries}.""") from last_exception
 
     def _throttle_calls(self):
         if self.throttle_seconds <= 0:
