@@ -255,8 +255,6 @@ class WorkspaceSetup:
         for workspace_config in self.account_config.workspaces:
             print(workspace_config.name)
 
-        print(f"""\nConfiguring {len(self.account_config.workspaces)} workspaces.""")
-
         #############################################################
         from multiprocessing.pool import ThreadPool
         print("-"*100)
@@ -480,14 +478,8 @@ class WorkspaceSetup:
         max_users = len(trio.workspace_config.usernames)
 
         existing_usernames = [u.get("userName") for u in trio.existing_users]
-
-        if len(existing_usernames) > 1:
-            # More than one because user actual count is max_participants+1
-            existing_count = len(existing_usernames)
-            remaining_count = max_users-len(existing_usernames)+1
-            user_numbers = [u[6:9] for u in existing_usernames]
-            print(f"""Configuring {remaining_count} users for "{name}".""")
-            print(f"""Found {existing_count} users, creating {remaining_count} users for "{name}" {user_numbers}.""")
+        remaining_count = max_users-len(existing_usernames)+1
+        print(f"""Configuring {remaining_count} of {max_users+1} users for "{name}".""")
 
         for username in trio.workspace_config.usernames:
             if username in existing_usernames:
@@ -622,8 +614,8 @@ class WorkspaceSetup:
                 if result_state != "SUCCESS":
                     raise Exception(f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{result_state}" for "{trio.name}" | {state_message}""")
 
-            duration = (time.time() - start) / 60 / 60
-            print(f"""Finished Universal-Workspace-Setup (job #{job_id}, run #{run_id}) for "{trio.name}" ({duration} min).""")
+            duration = int((time.time() - start) / 60)
+            print(f"""Finished Universal-Workspace-Setup (job #{job_id}, run #{run_id}) for "{trio.name}" ({duration} minutes).""")
 
         except Exception as e:
             self.log_error(f"""Failed executing Universal-Workspace-Setup for "{trio.workspace_config.name}".\n{str(e)}\n{traceback.format_exc()}""")
