@@ -308,7 +308,7 @@ class ApiClient(ApiContainer):
                 except gaierror as e:
                     last_exception = e
                     time.sleep(i*2)
-            raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}" after {retries}.""") from last_exception
+            raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}" after {retries} retries.""") from last_exception
 
     def _throttle_calls(self):
         if self.throttle_seconds <= 0:
