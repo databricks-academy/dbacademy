@@ -22,25 +22,31 @@ print(f"Starting script at {datetime.now()}")
 
 env_id = read_str("""Please select an environment such as "PROSVC" or "CURR".""", "PROSVC").upper()
 
-# specific_workspace_numbers = [281]
 # specific_workspace_numbers = [287, 313, 314, 316, 318]
 # specific_workspace_numbers = [325, 326, 327, 331, 332]
 # specific_workspace_numbers = [333, 334, 335, 336, 337]
 # specific_workspace_numbers = [338, 339, 340, 341, 342]
-# specific_workspace_numbers = [343, 344, 345, 346]
+# specific_workspace_numbers = [343, 344, 345, 346, 281]
 
 # noinspection PyRedeclaration
 # specific_workspace_numbers = [281]
 # specific_workspace_numbers.extend([325, 326, 327, 331, 332])
 # specific_workspace_numbers.extend([333, 334, 335, 336, 337])
 # specific_workspace_numbers.extend([338, 339, 340, 341, 342])
-# specific_workspace_numbers.extend([343, 344, 345, 346])
+# specific_workspace_numbers.extend([343, 344, 345, 346, 281])
 
-specific_workspace_numbers = list(range(400, 425))
+# specific_workspace_numbers = [400]
+# specific_workspace_numbers = list(range(400, 500))
 
-"""
+# Need to repair
+specific_workspace_numbers = set()
+specific_workspace_numbers.update([287, 332, 316, 334, 325, 326, 333, 335, 336, 314])  # Week 14
+specific_workspace_numbers.update([327, 325, 326, 313, 338, 340, 339, 331, 341, 342, 343, 346, 345])  # Week 15
+specific_workspace_numbers.update([327, 325, 326, 313])  # Week 16
+specific_workspace_numbers.update([313, 327, 325, 326])  # Week 17
+specific_workspace_numbers.update([327])  # Week 18
+specific_workspace_numbers = list(specific_workspace_numbers)
 
-"""
 if specific_workspace_numbers is not None:
     total_workspaces = 0
     first_workspace_number = 0
