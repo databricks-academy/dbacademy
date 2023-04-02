@@ -232,7 +232,8 @@ class ApiClient(ApiContainer):
                     params = {k: str(v).lower() if isinstance(v, bool) else v for k, v in _data.items()}
                     response = self.session.request(_http_method, url, params=params, timeout=timeout)
                 else:
-                    response = self.session.request(_http_method, url, data=json.dumps(_data), timeout=timeout)
+                    json_data = json.dumps(_data)
+                    response = self.session.request(_http_method, url, data=json_data, timeout=timeout)
 
                 if response.status_code == 500:
                     if "REQUEST_LIMIT_EXCEEDED" not in response.text:
@@ -283,17 +284,25 @@ class ApiClient(ApiContainer):
         # TODO @doug.bateman: missing else clause
 
     @staticmethod
-    def _verify_hostname(url: str):
+    def _verify_hostname(url: str) -> None:
         """Verify the host for the url-endpoint exists.  Throws socket.gaierror if it does not."""
+        import time
         from urllib.parse import urlparse
         from socket import gethostbyname, gaierror
         from requests.exceptions import ConnectionError
 
+        retries = 10
+        last_exception = None
         url = urlparse(url)
-        try:
-            gethostbyname(url.hostname)
-        except gaierror as e:
-            raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}".""") from e
+        for i in range(0, retries):
+            try:
+                gethostbyname(url.hostname)
+                return
+            except gaierror as e:
+                last_exception = e
+                time.sleep(i*2)
+
+        raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}" after {retries}.""") from last_exception
 
     def _throttle_calls(self):
         if self.throttle_seconds <= 0:
