@@ -470,8 +470,6 @@ class Publisher:
         # This is Ok because the course is still in its PENDING state.
         shutil.rmtree(version_dir, ignore_errors=True)
 
-        assert not os.path.exists(version_dir), f"Cannot publish v{self.version}; it already exists."
-
         meta = {
             "created_at": str(datetime.datetime.now(datetime.timezone.utc)),
             "created_by": self.username,
