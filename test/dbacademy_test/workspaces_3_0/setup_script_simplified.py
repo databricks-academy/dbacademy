@@ -1,13 +1,12 @@
 import os
 import re
 import time
-from dbacademy.dbrest import DBAcademyRestClient
-from dbacademy.dougrest import AccountsApi
-from dbacademy.rest.common import DatabricksApiException
+from dbacademy.dougrest import AccountsApi, DatabricksApiException
 
 
 class Config(object):
     """An all-purpose struct for grouping together configuration values."""
+
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
 
@@ -16,27 +15,21 @@ class Config(object):
 env_id = "PROSVC"
 cds_api_token = os.environ.get("WORKSPACE_SETUP_CDS_API_TOKEN") or "X"
 account_id = os.environ.get(f"WORKSPACE_SETUP_{env_id}_ACCOUNT_ID") or ""
-password = os.environ.get(f"WORKSPACE_SETUP_{env_id}_PASSWORD")
-username = os.environ.get(f"WORKSPACE_SETUP_{env_id}_USERNAME")
+account_username = os.environ.get(f"WORKSPACE_SETUP_{env_id}_USERNAME")
+account_password = os.environ.get(f"WORKSPACE_SETUP_{env_id}_PASSWORD")
 assert account_id is not None, f"""Failed to load the environment variable "{f"WORKSPACE_SETUP_{env_id}_ACCOUNT_ID"}", please check your configuration and try again."""
-assert password is not None, f"""Failed to load the environment variable "{f"WORKSPACE_SETUP_{env_id}_PASSWORD"}", please check your configuration and try again."""
-assert username is not None, f"""Failed to load the environment variable "{f"WORKSPACE_SETUP_{env_id}_USERNAME"}", please check your configuration and try again."""
+assert account_username is not None, f"""Failed to load the environment variable "{f"WORKSPACE_SETUP_{env_id}_USERNAME"}", please check your configuration and try again."""
+assert account_password is not None, f"""Failed to load the environment variable "{f"WORKSPACE_SETUP_{env_id}_PASSWORD"}", please check your configuration and try again."""
 
 # Accounts console client
 accounts_api = AccountsApi(account_id=account_id,
-                           user=username,
-                           password=password)
+                           user=account_username,
+                           password=account_password)
 
 # Configuration
 cloud = "AWS"
 region = "us-west-2"
-lab_id = 910  # on-demand lab id
-
-uc_storage_config = Config(
-    region=region,
-    storage_root=f"s3://unity-catalogs-{region}/",
-    aws_iam_role_arn="arn:aws:iam::981174701421:role/Unity-Catalog-Role",
-    msa_access_connector_id=None)
+lab_id = 901  # on-demand lab id
 
 workspace_config = Config(
     lab_id=lab_id,
@@ -47,7 +40,11 @@ workspace_config = Config(
     credentials_name="default",
     storage_configuration=region,  # Not region, just named after the region.
     region=region,
-    uc_storage_config=uc_storage_config,
+    uc_storage_config=Config(
+        region=region,
+        storage_root=f"s3://unity-catalogs-{region}/",
+        aws_iam_role_arn="arn:aws:iam::981174701421:role/Unity-Catalog-Role",
+        msa_access_connector_id=None),
     entitlements={
         "allow-cluster-create": False,  # False to enforce policy
         "allow-instance-pool-create": False,  # False to enforce policy
@@ -57,102 +54,108 @@ workspace_config = Config(
     courseware={
         "ml-in-prod": f"https://labs.training.databricks.com/api/v1/courses/download.dbc?course=ml-in-production&token={cds_api_token}"
     },
-    datasets=[]  # Appended to based on course_definitions; Only needs to be defined for DAWD
+    datasets=[],  # Appended to based on course_definitions; Only needs to be defined for DAWD
+    instructors=["class+000@databricks.com"],
+    users=["class+001@databricks.com"]
 )
 
 
-def create_workspace():
+def create_workspace(config: Config):
     # Get or Create Workspace
     # Azure: Query for existing workspace (created using ARM templates)
-    workspace_api = accounts_api.workspaces.get_by_name(workspace_config.workspace_name, if_not_exists="ignore")
-    if workspace_api is None:
+    workspace = accounts_api.workspaces.get_by_name(config.workspace_name, if_not_exists="ignore")
+    if workspace is None:
         # AWS: Create workspace
-        workspace_api = accounts_api.workspaces.create(workspace_name=workspace_config.workspace_name,
-                                                       deployment_name=workspace_config.workspace_name,
-                                                       region=workspace_config.region,
-                                                       credentials_name=workspace_config.credentials_name,
-                                                       storage_configuration_name=workspace_config.storage_configuration)
+        workspace = accounts_api.workspaces.create(workspace_name=config.workspace_name,
+                                                   deployment_name=config.workspace_name,
+                                                   region=config.region,
+                                                   credentials_name=config.credentials_name,
+                                                   storage_configuration_name=config.storage_configuration)
 
-    # Create API Clients
-    client = DBAcademyRestClient(authorization_header=workspace_api.authorization_header, endpoint=workspace_api.url[:-5])
-    # Trio
-    workspace = Config(workspace_config=workspace_config,
-                       workspace_api=workspace_api,
-                       client=client)
-
-    # Workspaces were all created synchronously, blocking here until we confirm that all workspaces are created
+    # Workspaces are created synchronously, block here until the workspace creation is complete.
     print("Waiting until the workspace is ready.")
-    workspace.workspace_api.wait_until_ready()
+    workspace.wait_until_ready()
+
+    # Determine group id for users and admins
+    all_groups = workspace.api("GET", "/2.0/preview/scim/v2/Groups").get("Resources", [])
+    users_group = next((g for g in all_groups if g.get("displayName") == "users"))
+    users_group_id = users_group["id"]
+    admins_group = next((g for g in all_groups if g.get("displayName") == "admins"))
+    admins_group_id = admins_group["id"]
 
     # Configure the entitlements for the group "users"
     print("Configure the entitlements for the group 'users'")
-    users_group_id = workspace.client.scim.groups.get_by_name("users")["id"]
-    for name, value in workspace_config.entitlements.items():
-        if value:
-            workspace.client.scim.groups.add_entitlement(users_group_id, name)
+    # NOTE to JACOB: You may wish to do the entitlements update in one call like this
+    # Hack: Seed at least 1 entitlement to work around a Databricks bug when there are no current entitlements
+    operations = [{"op": "add", "value": {"entitlements": [{"value": "workspace-access"}]}}]
+    for entitlement, keep in config.entitlements.items():
+        if keep:
+            operations.append({"op": "add", "value": {"entitlements": [{"value": entitlement}]}})
         else:
-            workspace.client.scim.groups.remove_entitlement(users_group_id, name)
+            operations.append({"op": "remove", "path": f'entitlements[value eq "{entitlement}"'})
+    workspace.api("PATCH", f"/2.0/preview/scim/v2/Groups/{users_group_id}", {
+        "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
+        "Operations": operations
+    })
+
+    # Add instructors to the workspace as admins
+    print("Add instructors to the workspace as admins")
+    for username in config.instructors:
+        workspace.api("POST", "2.0/preview/scim/v2/Users", {
+            "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
+            "userName": username,
+            "groups": [{"value": "admins"}]
+        })
 
     # Add users to the workspace
     print("Add users to the workspace")
-    usernames = []  # Put list of usernames to create here
+    usernames = set(config.users) - set(config.users)  # Avoid duplicates
     for username in usernames:
-        workspace.client.scim.users.create(username)
-
-    # Create an instructors group at the account-level for the metastore
-    print("Create an instructors group at the account-level for the metastore")
-    instructors = ["class+000@databricks.com"]  # Provide the list of instructors here.
-    instructors_group_name = f"instructors-{workspace_config.workspace_name}"
-    response = accounts_api.api("GET", "scim/v2/Users", count=1000)
-    users = {u["userName"]: u for u in response["Resources"]}
-    group_members = [{"values": users[instructor]["id"]} for instructor in instructors]
-    groups = accounts_api.api("GET", "scim/v2/Groups")["Resources"]
-    # TODO: Cleanup
-    instructors_group = next((g for g in groups if g["displayName"] == instructors_group_name), None)
-    if instructors_group is None:
-        instructors_group = accounts_api.api("POST", "/scim/v2/Groups", {
-            "displayName": instructors_group_name,
-            "schemas": ["urn:ietf:params:scim:schemas:core:2.0:Group"],
-            "members": group_members,
+        workspace.api("POST", "2.0/preview/scim/v2/Users", {
+            "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
+            "userName": username,
         })
 
-    # Add instructors as workspace admins
-    print("Add instructors as workspace admins")
-    admins_group_id = workspace.client.scim.groups.get_by_name("admins")["id"]
-    # TODO: Can we just add the instructors group to the admins group?
-    workspace.client.scim.groups.add_member(admins_group_id, instructors_group["id"])
-    for user_name in instructors:
-        user_id = workspace.workspace_api.users.create(user_name, allow_cluster_create=False)["id"]
-        workspace.client.scim.groups.add_member(admins_group_id, user_id)
+    # Create an instructors group at the account-level to serve as the metastore owner
+    print("Create an instructors group at the account-level for the metastore")
+    instructors_group_name = f"instructors-{config.workspace_name}"
+    response = accounts_api.api("GET", "scim/v2/Users", count=1000)
+    users = {u["userName"]: u for u in response["Resources"]}
+    group_members = [{"values": users[instructor]["id"]} for instructor in config.instructors]
+    instructors_group = accounts_api.api("POST", "/scim/v2/Groups", {
+        "displayName": instructors_group_name,
+        "schemas": ["urn:ietf:params:scim:schemas:core:2.0:Group"],
+        "members": group_members,
+    })
 
     # Create a new metastore
     print("Create a new metastore")
-    metastore_id = workspace.workspace_api.api("POST", "2.1/unity-catalog/metastores", {
-        "name": workspace.workspace_config.workspace_name,
-        "storage_root": uc_storage_config.storage_root,
-        "region": uc_storage_config.region
+    metastore_id = workspace.api("POST", "2.1/unity-catalog/metastores", {
+        "name": config.workspace_name,
+        "storage_root": config.uc_storage_config.storage_root,
+        "region": config.uc_storage_config.region
     })["metastore_id"]
 
     # Configure the metastore settings
     print("Configure the metastore settings")
-    workspace.workspace_api.api("PATCH", f"2.1/unity-catalog/metastores/{metastore_id}", {
+    workspace.api("PATCH", f"2.1/unity-catalog/metastores/{metastore_id}", {
         "owner": instructors_group["displayName"],
         "delta_sharing_scope": "INTERNAL_AND_EXTERNAL",
         "delta_sharing_recipient_token_lifetime_in_seconds": 90 * 24 * 60 * 60,  # 90 days
-        "delta_sharing_organization_name": workspace.workspace_config.workspace_name
+        "delta_sharing_organization_name": config.workspace_name
     })
 
     # Assign the metastore to the workspace
     print("Assign the metastore to the workspace")
-    workspace_id = workspace.workspace_api["workspace_id"]
-    workspace.workspace_api.api("PUT", f"2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
+    workspace_id = workspace["workspace_id"]
+    workspace.api("PUT", f"2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
         "metastore_id": metastore_id,
         "default_catalog_name": "main"
     })
 
     # Grant all users the permissions to create resources in the metastore
     print("Grant all users the permissions to create resources in the metastore")
-    workspace.workspace_api.api("PATCH", f"2.1/unity-catalog/permissions/metastore/{metastore_id}", {
+    workspace.api("PATCH", f"2.1/unity-catalog/permissions/metastore/{metastore_id}", {
         "changes": [{
             "principal": "account users",
             "add": ["CREATE CATALOG", "CREATE EXTERNAL LOCATION", "CREATE SHARE", "CREATE RECIPIENT", "CREATE PROVIDER"]
@@ -162,32 +165,33 @@ def create_workspace():
     # Create the storage credential for the metastore
     print("Create the storage credential for the metastore")
     credentials_spec = {
-        "name": workspace.workspace_config.workspace_name,
+        "name": config.workspace_name,
         "skip_validation": False,
         "read_only": False,
     }
-    if uc_storage_config.aws_iam_role_arn is not None:
+    if config.uc_storage_config.aws_iam_role_arn is not None:
         credentials_spec["aws_iam_role"] = {
-            "role_arn": uc_storage_config.aws_iam_role_arn
+            "role_arn": config.uc_storage_config.aws_iam_role_arn
         }
-    if uc_storage_config.msa_access_connector_id is not None:
+    if config.uc_storage_config.msa_access_connector_id is not None:
         credentials_spec["azure_managed_identity"] = {
-            "access_connector_id": uc_storage_config.msa_access_connector_id
+            "access_connector_id": config.uc_storage_config.msa_access_connector_id
         }
-    credentials = workspace.workspace_api.api("POST", "2.1/unity-catalog/storage-credentials", credentials_spec)
+    credentials = workspace.api("POST", "2.1/unity-catalog/storage-credentials", credentials_spec)
     storage_root_credential_id = credentials["id"]
-    workspace.workspace_api.api("PATCH", f"2.1/unity-catalog/metastores/{metastore_id}", {
+    workspace.api("PATCH", f"2.1/unity-catalog/metastores/{metastore_id}", {
         "storage_root_credential_id": storage_root_credential_id
     })
 
     # Enable serverless SQL Warehouses
     print("Enable serverless SQL Warehouses")
-    settings = workspace.workspace_api.api("GET", "2.0/sql/config/endpoints")
+    settings = workspace.api("GET", "2.0/sql/config/endpoints")
     settings["enable_serverless_compute"] = True
+    workspace.api("POST", "2.0/sql/config/endpoints", settings)
 
     # Configure workspace feature flags
     print("Configure workspace feature flags")
-    workspace.workspace_api.api("PATCH", "2.0/workspace-conf", {
+    workspace.api("PATCH", "2.0/workspace-conf", {
         "enable-X-Frame-Options": "false",  # Turn off iframe prevention
         "intercomAdminConsent": "false",  # Turn off product welcome
         "enableDbfsFileBrowser": "true",  # Enable DBFS UI
@@ -200,7 +204,7 @@ def create_workspace():
 
     # Cloud specific settings for the Universal Workspace-Setup
     print("Cloud specific settings for the Universal Workspace-Setup")
-    if ".cloud.databricks.com" in workspace_api.url:  # AWS
+    if ".cloud.databricks.com" in workspace.url:  # AWS
         cloud_attributes = {
             "node_type_id": "i3.xlarge",
             "aws_attributes": {
@@ -209,7 +213,7 @@ def create_workspace():
                 "spot_bid_price_percent": 100
             },
         }
-    elif ".gcp.databricks.com" in workspace_api.url:  # GCP
+    elif ".gcp.databricks.com" in workspace.url:  # GCP
         cloud_attributes = {
             "node_type_id": "n1-highmem-4",
             "gcp_attributes": {
@@ -217,7 +221,7 @@ def create_workspace():
                 "availability": "PREEMPTIBLE_WITH_FALLBACK_GCP",
             },
         }
-    elif ".azuredatabricks.net" in workspace_api.url:  # Azure
+    elif ".azuredatabricks.net" in workspace.url:  # Azure
         cloud_attributes = {
             "node_type_id": "Standard_DS3_v2",
             "azure_attributes": {
@@ -230,7 +234,7 @@ def create_workspace():
 
     # Run the Universal Workspace-Setup
     print("Run the Universal Workspace-Setup")
-    workspace_hostname = re.match("https://([^/]+)/api/", workspace_api.url)[1]
+    workspace_hostname = re.match("https://([^/]+)/api/", workspace.url)[1]
     job_spec = {
         "name": "DBAcademy Workspace-Setup",
         "timeout_seconds": 60 * 60 * 6,  # 6 hours
@@ -240,12 +244,12 @@ def create_workspace():
             "notebook_task": {
                 "notebook_path": "Workspace-Setup",
                 "base_parameters": {
-                    "lab_id": f"Classroom #{workspace.workspace_config.lab_id}",
-                    "description": f"Classroom #{workspace.workspace_config.lab_description}",
-                    "node_type_id": workspace.workspace_config.default_node_type_id,
-                    "spark_version": workspace.workspace_config.default_dbr,
-                    "datasets": ",".join(workspace.workspace_config.datasets),
-                    "courses": ",".join(workspace.workspace_config.courseware.values()),
+                    "lab_id": f"Classroom #{config.lab_id}",
+                    "description": f"Classroom #{config.lab_description}",
+                    "node_type_id": config.default_node_type_id,
+                    "spark_version": config.default_dbr,
+                    "datasets": ",".join(config.datasets),
+                    "courses": ",".join(config.courseware.values()),
                 },
                 "source": "GIT"
             },
@@ -283,13 +287,13 @@ def create_workspace():
         "format": "MULTI_TASK"
     }
     job_spec["job_clusters"][0]["new_cluster"].update(cloud_attributes)
-    job_id = workspace_api.jobs.create_multi_task_job(**job_spec)
-    run_id = workspace_api.jobs.run(job_id)["run_id"]
+    job_id = workspace.jobs.create_multi_task_job(**job_spec)
+    run_id = workspace.jobs.run(job_id)["run_id"]
 
     # Wait for job completion
     print("Wait for job completion")
     while True:
-        response = workspace_api.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
+        response = workspace.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
         life_cycle_state = response.get("state").get("life_cycle_state")
         if life_cycle_state not in ["PENDING", "RUNNING", "TERMINATING"]:
             job_state = response.get("state", {})
@@ -299,36 +303,29 @@ def create_workspace():
         time.sleep(60)  # seconds
     if job_result != "SUCCESS":
         raise Exception(
-            f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{job_result}" for "{workspace_config.workspace_name}" | {job_message}""")
+            f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{job_result}" for "{config.workspace_name}" | {job_message}""")
 
     # All done
     print("Done")
 
 
-def remove_workspace():
+def remove_workspace(workspace_name):
     # Get the Workspace
-    workspace_api = accounts_api.workspaces.get_by_name(workspace_config.workspace_name, if_not_exists="ignore")
+    workspace_api = accounts_api.workspaces.get_by_name(workspace_name, if_not_exists="ignore")
     if not workspace_api:
         print("Workspace already removed.")
         return
 
-    # Create API Clients
-    client = DBAcademyRestClient(authorization_header=workspace_api.authorization_header, endpoint=workspace_api.url[:-5])
-    # Trio
-    workspace = Config(workspace_config=workspace_config,
-                       workspace_api=workspace_api,
-                       client=client)
-
-    # Delete the Metastore
+    # Remove the Metastore
     print("Remove the metastore")
     try:
-        response = workspace.workspace_api.api("GET", f"2.1/unity-catalog/current-metastore-assignment")
+        response = workspace_api.api("GET", f"2.1/unity-catalog/current-metastore-assignment")
         metastore_id = response["metastore_id"]
         workspace_id = response["workspace_id"]
-        workspace.workspace_api.api("DELETE", f"2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
+        workspace_api.api("DELETE", f"2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
             "metastore_id": metastore_id
         })
-        workspace.workspace_api.api("DELETE", f"2.1/unity-catalog/metastores/{metastore_id}", {
+        workspace_api.api("DELETE", f"2.1/unity-catalog/metastores/{metastore_id}", {
             "force": True
         })
     except DatabricksApiException as e:
@@ -337,15 +334,16 @@ def remove_workspace():
 
     # Remove the instructors group
     print("Remove the instructors group")
-    instructors_group_name = f"instructors-{workspace_config.workspace_name}"
     groups = accounts_api.api("GET", "scim/v2/Groups")["Resources"]
+    instructors_group_name = f"instructors-{workspace_config.workspace_name}"
     instructors_group = next((g for g in groups if g["displayName"] == instructors_group_name), None)
     if instructors_group is not None:
-        instructors_group = accounts_api.api("DELETE", f"/scim/v2/Groups/{instructors_group['id']}")
+        accounts_api.api("DELETE", f"/scim/v2/Groups/{instructors_group['id']}")
 
     # Remove the Workspace
     print("Remove the workspace")
-    accounts_api.workspaces.delete_by_name(workspace_config.workspace_name)
+    accounts_api.workspaces.delete_by_name(workspace_config.workspace_name, if_not_exists="ignore")
 
 
-remove_workspace()
+create_workspace(workspace_config)
+# remove_workspace(workspace_config.workspace_name)
