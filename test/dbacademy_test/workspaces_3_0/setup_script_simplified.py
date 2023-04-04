@@ -65,7 +65,7 @@ class WorkspaceConfig:
             self.datasets = []
 
 
-lab_id = 902
+lab_id = 903
 workspace_config = WorkspaceConfig(
     cloud="AWS",
     lab_id=lab_id,
@@ -332,13 +332,22 @@ def create_workspace(config: WorkspaceConfig):
 
 
 def remove_workspace(workspace_name):
-    # Get the Workspace
+    # Remove the instructors group
+    print("Remove the instructors group")
+    groups = accounts_api.api("GET", "scim/v2/Groups")["Resources"]
+    instructors_group_name = f"instructors-{workspace_config.workspace_name}"
+    instructors_group = next((g for g in groups if g["displayName"] == instructors_group_name), None)
+    instructors_group_id = instructors_group["id"]
+    if instructors_group is not None:
+        accounts_api.api("DELETE", f"/scim/v2/Groups/{instructors_group_id}")
+
+    # Get the workspace
     workspace_api = accounts_api.workspaces.get_by_name(workspace_name, if_not_exists="ignore")
     if not workspace_api:
         print("Workspace already removed.")
         return
 
-    # Remove the Metastore
+    # Remove the metastore
     print("Remove the metastore")
     try:
         response = workspace_api.api("GET", f"2.1/unity-catalog/current-metastore-assignment")
@@ -353,14 +362,6 @@ def remove_workspace(workspace_name):
     except DatabricksApiException as e:
         if e.error_code != "METASTORE_DOES_NOT_EXIST":
             raise e
-
-    # Remove the instructors group
-    print("Remove the instructors group")
-    groups = accounts_api.api("GET", "scim/v2/Groups")["Resources"]
-    instructors_group_name = f"instructors-{workspace_config.workspace_name}"
-    instructors_group = next((g for g in groups if g["displayName"] == instructors_group_name), None)
-    if instructors_group is not None:
-        accounts_api.api("DELETE", f"/scim/v2/Groups/{instructors_group['id']}")
 
     # Remove the Workspace
     print("Remove the workspace")
