@@ -1,3 +1,7 @@
+"""
+This module includes helper functions specifically aimed at code developed in and maintained in Notebooks.
+Examples include wrappers around tags, notebook state variables, and the full body of functions exposed by dbutils.
+"""
 from typing import Union, Any, Callable, Optional
 
 # The one import I can't shake!!! JDP
