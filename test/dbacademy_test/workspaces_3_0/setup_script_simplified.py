@@ -45,7 +45,11 @@ class WorkspaceConfig:
             "databricks-sql-access": True,
             "workspace-access": True,
         }))
-    courseware: dict[str, str] = field(default_factory=dict)
+    courseware: dict[str, str] = field(default_factory=lambda: dict(
+        {
+            # "folder_name": "https://..../import_url.dbc"
+        }
+    ))
     datasets: list[str] = None  # Appended to based on course_definitions; Only needs to be defined for DAWD
 
     def __post_init__(self):
