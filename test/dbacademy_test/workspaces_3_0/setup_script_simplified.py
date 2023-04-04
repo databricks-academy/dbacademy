@@ -22,7 +22,6 @@ accounts_api = AccountsApi(account_id=account_id,
                            password=account_password)
 
 
-# Configuration
 @dataclass
 class WorkspaceConfig:
     cloud: str
@@ -66,35 +65,10 @@ class WorkspaceConfig:
             self.datasets = []
 
 
-lab_id = 900
-workspace_config = WorkspaceConfig(
-    cloud="AWS",
-    lab_id=lab_id,
-    lab_description=f"Example lab test-{lab_id}",
-    workspace_name=f"test-{lab_id}",
-    region="us-west-2",
-    courseware={
-        "ml-in-prod": f"https://labs.training.databricks.com/api/v1/courses/download.dbc?"
-                      f"course=ml-in-production&token={cds_api_token}"
-    },
-    instructors=["class+000@databricks.com"],
-    users=["class+001@databricks.com"],
-    # All items below would get good defaults, but adding here for completeness.
-    default_dbr="11.3.x-cpu-ml-scala2.12",
-    default_node_type_id="i3.xlarge",
-    credentials_name="default",
-    storage_configuration="us-west-2",  # Not region, just named after the region.
-    uc_storage_root=f"s3://unity-catalogs-us-west-2/",
-    uc_aws_iam_role_arn="arn:aws:iam::981174701421:role/Unity-Catalog-Role",
-    uc_msa_access_connector_id=None,
-    entitlements={
-        "allow-cluster-create": False,  # False to enforce policy
-        "allow-instance-pool-create": False,  # False to enforce policy
-        "databricks-sql-access": True,
-        "workspace-access": True,
-    },
-    datasets=[]  # Only needs to be defined for DAWD
-)
+def generate_usernames(first: int, last: int = None, pattern: str = "class+{num:03d}@databricks.com") -> list[str]:
+    if last is None:
+        last = first
+    return [pattern.format(num=i) for i in range(first, last + 1)]
 
 
 def create_workspace(config: WorkspaceConfig):
@@ -353,9 +327,8 @@ def remove_workspace(workspace_name):
     groups = accounts_api.api("GET", "scim/v2/Groups")["Resources"]
     instructors_group_name = f"instructors-{workspace_config.workspace_name}"
     instructors_group = next((g for g in groups if g["displayName"] == instructors_group_name), None)
-    instructors_group_id = instructors_group["id"]
     if instructors_group is not None:
-        accounts_api.api("DELETE", f"/scim/v2/Groups/{instructors_group_id}")
+        accounts_api.api("DELETE", f"/scim/v2/Groups/{instructors_group['id']}")
 
     # Get the workspace
     workspace_api = accounts_api.workspaces.get_by_name(workspace_name, if_not_exists="ignore")
@@ -382,6 +355,38 @@ def remove_workspace(workspace_name):
     # Remove the Workspace
     print("Remove the workspace")
     accounts_api.workspaces.delete_by_name(workspace_config.workspace_name, if_not_exists="ignore")
+
+
+# Configuration
+lab_id = 900
+workspace_config = WorkspaceConfig(
+    cloud="AWS",
+    lab_id=lab_id,
+    lab_description=f"Example lab test-{lab_id}",
+    workspace_name=f"test-{lab_id}",
+    region="us-west-2",
+    courseware={
+        "ml-in-prod": f"https://labs.training.databricks.com/api/v1/courses/download.dbc?"
+                      f"course=ml-in-production&token={cds_api_token}"
+    },
+    instructors=["class+000@databricks.com"],
+    users=generate_usernames(1, 250),
+    # All items below would get good defaults, but adding here for completeness.
+    default_dbr="11.3.x-cpu-ml-scala2.12",
+    default_node_type_id="i3.xlarge",
+    credentials_name="default",
+    storage_configuration="us-west-2",  # Not region, just named after the region.
+    uc_storage_root=f"s3://unity-catalogs-us-west-2/",
+    uc_aws_iam_role_arn="arn:aws:iam::981174701421:role/Unity-Catalog-Role",
+    uc_msa_access_connector_id=None,
+    entitlements={
+        "allow-cluster-create": False,  # False to enforce policy
+        "allow-instance-pool-create": False,  # False to enforce policy
+        "databricks-sql-access": True,
+        "workspace-access": True,
+    },
+    datasets=[]  # Only needs to be defined for DAWD
+)
 
 
 create_workspace(workspace_config)
