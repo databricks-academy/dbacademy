@@ -177,7 +177,7 @@ def create_workspace(config: WorkspaceConfig):
     # Configure the metastore settings
     print("Configure the metastore settings")
     workspace.api("PATCH", f"2.1/unity-catalog/metastores/{metastore_id}", {
-        "owner": instructors_group["displayName"],
+        "owner": instructors_group_name,
         "delta_sharing_scope": "INTERNAL_AND_EXTERNAL",
         "delta_sharing_recipient_token_lifetime_in_seconds": 90 * 24 * 60 * 60,  # 90 days
         "delta_sharing_organization_name": config.workspace_name
