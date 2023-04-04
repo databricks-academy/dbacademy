@@ -1,6 +1,5 @@
 import os
 from typing import Optional
-from datetime import datetime
 from dbacademy.workspaces_3_0.account_config_class import AccountConfig
 from dbacademy.workspaces_3_0.uc_storage_config_class import UcStorageConfig
 from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
@@ -18,36 +17,9 @@ def read_str(prompt: str, default_value: Optional[str] = "") -> str:
 
 
 print("-"*100)
-print(f"Starting script at {datetime.now()}")
-
 env_id = read_str("""Please select an environment such as "PROSVC" or "CURR".""", "PROSVC").upper()
 
-# specific_workspace_numbers = [287, 313, 314, 316, 318]
-# specific_workspace_numbers = [325, 326, 327, 331, 332]
-# specific_workspace_numbers = [333, 334, 335, 336, 337]
-# specific_workspace_numbers = [338, 339, 340, 341, 342]
-# specific_workspace_numbers = [343, 344, 345, 346, 281]
-
-# noinspection PyRedeclaration
-# specific_workspace_numbers = [281]
-# specific_workspace_numbers.extend([325, 326, 327, 331, 332])
-# specific_workspace_numbers.extend([333, 334, 335, 336, 337])
-# specific_workspace_numbers.extend([338, 339, 340, 341, 342])
-# specific_workspace_numbers.extend([343, 344, 345, 346, 281])
-
-# specific_workspace_numbers = [400]
-
-# specific_workspace_numbers = list(range(400, 500))
 specific_workspace_numbers = list(range(500, 600))
-
-# Workspaces to be repaired
-# specific_workspace_numbers = set()
-# specific_workspace_numbers.update([287, 332, 316, 334, 325, 326, 333, 335, 336, 314])  # Week 14
-# specific_workspace_numbers.update([327, 325, 326, 313, 338, 340, 339, 331, 341, 342, 343, 346, 345])  # Week 15
-# specific_workspace_numbers.update([327, 325, 326, 313])  # Week 16
-# specific_workspace_numbers.update([313, 327, 325, 326])  # Week 17
-# specific_workspace_numbers.update([327])  # Week 18
-# specific_workspace_numbers = list(specific_workspace_numbers)
 
 if specific_workspace_numbers is not None:
     total_workspaces = 0
@@ -125,24 +97,19 @@ account = AccountConfig.from_env(account_id_env_name=f"WORKSPACE_SETUP_{env_id}_
                                      # 9, 11, 24
                                  ])
 
-# Retries introduced to fix a throttling issues created by Databricks Eng.
 workspace_setup = WorkspaceSetup(account)
+confirmations = ["c", "confirm", "confirmed", "y", "yes", "1"]
 
-if action == 3:
-    workspace_number = read_int("Enter the workspace number of the metastore to remove", 0)
-    while workspace_number > 0:
+if action == 3 and read_str("""Please confirm you wish to REMOVE these metastores""", "abort").lower() in confirmations:
+    for workspace_number in specific_workspace_numbers:
         workspace_setup.remove_metastore(workspace_number)
-        workspace_number = read_int("Enter the workspace number of the metastore to remove", 0)
 
-if action == 2:
-    delete_workspace_number = read_int("Enter the workspace number to delete", 0)
-    while delete_workspace_number > 0:
-        workspace_setup.delete_workspace(delete_workspace_number)
-        delete_workspace_number = read_int("Enter the workspace number to delete", 0)
+if action == 2 and read_str("""Please confirm you wish to DELETE these workspaces""", "abort").lower() in confirmations:
+    for workspace_number in specific_workspace_numbers:
+        workspace_setup.delete_workspace(workspace_number)
 
-elif action == 1 and read_str("""Please "confirm" you wish to create these workspaces""", "no").lower() in ["c", "confirm", "confirmed", "y", "yes", "1"]:
-
-    FALSE = False
+elif action == 1 and read_str("""Please confirm you wish to create these workspaces""", "abort").lower() in confirmations:
+    FALSE = False  # easier for my eyes to recognize
     workspace_setup.create_workspaces(remove_users=FALSE,          # This really should always be False
                                       create_users=True,
                                       update_entitlements=True,
@@ -150,8 +117,6 @@ elif action == 1 and read_str("""Please "confirm" you wish to create these works
                                       remove_metastore=FALSE,      # This really should always be False
                                       create_metastore=True,
                                       enable_features=True,
-                                      run_workspace_setup=True,    # <<<
+                                      run_workspace_setup=FALSE,    # <<<
                                       uninstall_courseware=FALSE,  # This really should always be False
                                       install_courseware=True)
-
-    print(f"Completed update at {datetime.now()}")
