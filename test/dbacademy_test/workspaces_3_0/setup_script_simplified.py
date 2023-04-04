@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from dbacademy.dougrest import AccountsApi, DatabricksApiException
+from dbacademy.dougrest.accounts.workspaces import Workspace
 
 # Read environment variables
 env_id = "PROSVC"
@@ -73,19 +74,45 @@ def generate_usernames(first: int, last: int = None, pattern: str = "class+{num:
 
 def create_workspace(config: WorkspaceConfig):
     # Get or Create Workspace
+    print("Get or Create Workspace")
     # Azure: Query for existing workspace (created using ARM templates)
-    workspace = accounts_api.workspaces.get_by_name(config.workspace_name, if_not_exists="ignore")
-    if workspace is None:
+    for workspace in accounts_api.api("GET", "/workspaces"):
+        if workspace["workspace_name"] == config.workspace_name:
+            # Found existing workspace
+            break
+    else:
         # AWS: Create workspace
-        workspace = accounts_api.workspaces.create(workspace_name=config.workspace_name,
-                                                   deployment_name=config.workspace_name,
-                                                   region=config.region,
-                                                   credentials_name=config.credentials_name,
-                                                   storage_configuration_name=config.storage_configuration)
+        for c in accounts_api.api("GET", "/credentials"):
+            if c["credentials_name"] == config.credentials_name:
+                credentials_id = c["credentials_id"]
+                break
+        else:
+            raise ValueError(f"Credentials '{config.credentials_name} does not exist.")
+        for s in accounts_api.api("GET", "/storage-configurations"):
+            if s["storage_configuration_name"] == config.storage_configuration:
+                storage_configuration_id = s["storage_configuration_id"]
+                break
+        else:
+            raise ValueError(f"Storage Configuration '{config.storage_configuration} does not exist.")
+        workspace = accounts_api.api("POST", "/workspaces", {
+            "workspace_name": config.workspace_name,
+            "deployment_name": config.workspace_name,
+            "aws_region": config.region,
+            "credentials_id": credentials_id,
+            "storage_configuration_id": storage_configuration_id
+        })
 
-    # Workspaces are created synchronously, block here until the workspace creation is complete.
-    print("Waiting until the workspace is ready.")
-    workspace.wait_until_ready()
+    # Workspaces are created asynchronously, wait here until the workspace creation is complete.
+    print("Waiting until the workspace is ready", end="")
+    while workspace["workspace_status"] == "PROVISIONING":
+        workspace_id = workspace["workspace_id"]
+        response = accounts_api.api("GET", f"/workspaces/{workspace_id}")
+        workspace.update(response)
+        if workspace["workspace_status"] == "PROVISIONING":
+            print(".", end="")
+            time.sleep(15)
+    print()
+    workspace = Workspace(workspace, accounts_api)
 
     # Determine group id for users and admins
     all_groups = workspace.api("GET", "/2.0/preview/scim/v2/Groups").get("Resources", [])
@@ -302,7 +329,7 @@ def create_workspace(config: WorkspaceConfig):
     run_id = workspace.jobs.run(job_id)["run_id"]
 
     # Wait for job completion
-    print("Wait for job completion")
+    print("Wait for job completion", end="")
     while True:
         response = workspace.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
         life_cycle_state = response.get("state").get("life_cycle_state")
@@ -311,7 +338,9 @@ def create_workspace(config: WorkspaceConfig):
             job_result = job_state.get("result_state")
             job_message = job_state.get("state_message", "Unknown")
             break
-        time.sleep(60)  # seconds
+        time.sleep(60)  # timeout_seconds
+        print(".", end="")
+    print()
     if job_result != "SUCCESS":
         raise Exception(
             f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", """
@@ -358,7 +387,7 @@ def remove_workspace(workspace_name):
 
 
 # Configuration
-lab_id = 900
+lab_id = 901
 workspace_config = WorkspaceConfig(
     cloud="AWS",
     lab_id=lab_id,
