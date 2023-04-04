@@ -73,15 +73,15 @@ def generate_usernames(first: int, last: int = None, pattern: str = "class+{num:
 
 
 def create_workspace(config: WorkspaceConfig):
-    # Get or Create Workspace
-    print("Get or Create Workspace")
     # Azure: Query for existing workspace (created using ARM templates)
+    print("Check for existing workspace")
     for workspace in accounts_api.api("GET", "/workspaces"):
         if workspace["workspace_name"] == config.workspace_name:
             # Found existing workspace
             break
     else:
         # AWS: Create workspace
+        print("Create workspace")
         for c in accounts_api.api("GET", "/credentials"):
             if c["credentials_name"] == config.credentials_name:
                 credentials_id = c["credentials_id"]
@@ -352,6 +352,7 @@ def create_workspace(config: WorkspaceConfig):
 
 def remove_workspace(workspace_name):
     # Remove the instructors group
+    print(f"Steps to remove workspace '{workspace_name}:")
     print("Remove the instructors group")
     groups = accounts_api.api("GET", "scim/v2/Groups")["Resources"]
     instructors_group_name = f"instructors-{workspace_config.workspace_name}"
@@ -387,7 +388,7 @@ def remove_workspace(workspace_name):
 
 
 # Configuration
-lab_id = 901
+lab_id = 900
 workspace_config = WorkspaceConfig(
     cloud="AWS",
     lab_id=lab_id,
