@@ -1,66 +1,83 @@
 import os
 import re
 import time
+from dataclasses import dataclass, field
+
 from dbacademy.dougrest import AccountsApi, DatabricksApiException
-
-
-class Config(object):
-    """An all-purpose struct for grouping together configuration values."""
-
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
-
 
 # Read environment variables
 env_id = "PROSVC"
-cds_api_token = os.environ.get("WORKSPACE_SETUP_CDS_API_TOKEN") or "X"
-account_id = os.environ.get(f"WORKSPACE_SETUP_{env_id}_ACCOUNT_ID") or ""
+cds_api_token = os.environ.get("WORKSPACE_SETUP_CDS_API_TOKEN")
+account_id = os.environ.get(f"WORKSPACE_SETUP_{env_id}_ACCOUNT_ID")
 account_username = os.environ.get(f"WORKSPACE_SETUP_{env_id}_USERNAME")
 account_password = os.environ.get(f"WORKSPACE_SETUP_{env_id}_PASSWORD")
-assert account_id is not None, f"""Failed to load the environment variable "{f"WORKSPACE_SETUP_{env_id}_ACCOUNT_ID"}", please check your configuration and try again."""
-assert account_username is not None, f"""Failed to load the environment variable "{f"WORKSPACE_SETUP_{env_id}_USERNAME"}", please check your configuration and try again."""
-assert account_password is not None, f"""Failed to load the environment variable "{f"WORKSPACE_SETUP_{env_id}_PASSWORD"}", please check your configuration and try again."""
+assert account_id is not None, f"""Set environment variable "{f"WORKSPACE_SETUP_{env_id}_ACCOUNT_ID"}"."""
+assert account_username is not None, f"""Set environment variable "{f"WORKSPACE_SETUP_{env_id}_USERNAME"}"."""
+assert account_password is not None, f"""Set environment variable "{f"WORKSPACE_SETUP_{env_id}_PASSWORD"}"."""
 
 # Accounts console client
 accounts_api = AccountsApi(account_id=account_id,
                            user=account_username,
                            password=account_password)
 
-# Configuration
-cloud = "AWS"
-region = "us-west-2"
-lab_id = 901  # on-demand lab id
 
-workspace_config = Config(
+# Configuration
+@dataclass
+class WorkspaceConfig:
+    cloud: str
+    lab_id: int
+    lab_description: str
+    workspace_name: str
+    region: str
+    instructors: list[str]
+    users: list[str]
+    default_dbr: str = "11.3.x-cpu-ml-scala2.12"
+    default_node_type_id: str = "i3.xlarge"
+    credentials_name: str = "default"
+    storage_configuration: str = None
+    uc_storage_root: str = None
+    uc_aws_iam_role_arn: str = "arn:aws:iam::981174701421:role/Unity-Catalog-Role"
+    uc_msa_access_connector_id: str = None
+    entitlements: dict[str, bool] = field(default_factory=lambda: dict(
+        {
+            "allow-cluster-create": False,  # False to enforce policy
+            "allow-instance-pool-create": False,  # False to enforce policy
+            "databricks-sql-access": True,
+            "workspace-access": True,
+        }))
+    courseware: dict[str, str] = field(default_factory=dict)
+    datasets: list[str] = None  # Appended to based on course_definitions; Only needs to be defined for DAWD
+
+    def __post_init__(self):
+        if self.lab_description is None:
+            self.lab_description = f"Lab {self.lab_id:03d}"
+        if self.workspace_name is None:
+            self.workspace_name = f"training-{self.lab_id:03d}"
+        if self.storage_configuration is None:
+            self.storage_configuration = self.region  # Not region, just named after the region.
+        if self.uc_storage_root is None:
+            self.uc_storage_root = f"s3://unity-catalogs-{self.region}/"
+        if self.datasets is None:
+            self.datasets = []
+
+
+lab_id = 902
+workspace_config = WorkspaceConfig(
+    cloud="AWS",
     lab_id=lab_id,
     lab_description=f"Example lab test-{lab_id}",
     workspace_name=f"test-{lab_id}",
-    default_dbr="11.3.x-cpu-ml-scala2.12",
-    default_node_type_id="i3.xlarge",
-    credentials_name="default",
-    storage_configuration=region,  # Not region, just named after the region.
-    region=region,
-    uc_storage_config=Config(
-        region=region,
-        storage_root=f"s3://unity-catalogs-{region}/",
-        aws_iam_role_arn="arn:aws:iam::981174701421:role/Unity-Catalog-Role",
-        msa_access_connector_id=None),
-    entitlements={
-        "allow-cluster-create": False,  # False to enforce policy
-        "allow-instance-pool-create": False,  # False to enforce policy
-        "databricks-sql-access": True,
-        "workspace-access": True,
-    },
+    region="us-west-2",
     courseware={
-        "ml-in-prod": f"https://labs.training.databricks.com/api/v1/courses/download.dbc?course=ml-in-production&token={cds_api_token}"
+        "ml-in-prod": f"https://labs.training.databricks.com/api/v1/courses/download.dbc?"
+                      f"course=ml-in-production&token={cds_api_token}"
     },
-    datasets=[],  # Appended to based on course_definitions; Only needs to be defined for DAWD
     instructors=["class+000@databricks.com"],
-    users=["class+001@databricks.com"]
+    users=["class+001@databricks.com"],
 )
 
 
-def create_workspace(config: Config):
+def create_workspace(config: WorkspaceConfig):
     # Get or Create Workspace
     # Azure: Query for existing workspace (created using ARM templates)
     workspace = accounts_api.workspaces.get_by_name(config.workspace_name, if_not_exists="ignore")
@@ -104,7 +121,7 @@ def create_workspace(config: Config):
         workspace.api("POST", "2.0/preview/scim/v2/Users", {
             "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
             "userName": username,
-            "groups": [{"value": "admins"}]
+            "groups": [{"value": admins_group_id}]
         })
 
     # Add users to the workspace
@@ -132,8 +149,8 @@ def create_workspace(config: Config):
     print("Create a new metastore")
     metastore_id = workspace.api("POST", "2.1/unity-catalog/metastores", {
         "name": config.workspace_name,
-        "storage_root": config.uc_storage_config.storage_root,
-        "region": config.uc_storage_config.region
+        "storage_root": config.uc_storage_root,
+        "region": config.region
     })["metastore_id"]
 
     # Configure the metastore settings
@@ -169,13 +186,13 @@ def create_workspace(config: Config):
         "skip_validation": False,
         "read_only": False,
     }
-    if config.uc_storage_config.aws_iam_role_arn is not None:
+    if config.uc_aws_iam_role_arn is not None:
         credentials_spec["aws_iam_role"] = {
-            "role_arn": config.uc_storage_config.aws_iam_role_arn
+            "role_arn": config.uc_aws_iam_role_arn
         }
-    if config.uc_storage_config.msa_access_connector_id is not None:
+    if config.uc_msa_access_connector_id is not None:
         credentials_spec["azure_managed_identity"] = {
-            "access_connector_id": config.uc_storage_config.msa_access_connector_id
+            "access_connector_id": config.uc_msa_access_connector_id
         }
     credentials = workspace.api("POST", "2.1/unity-catalog/storage-credentials", credentials_spec)
     storage_root_credential_id = credentials["id"]
@@ -187,7 +204,7 @@ def create_workspace(config: Config):
     print("Enable serverless SQL Warehouses")
     settings = workspace.api("GET", "2.0/sql/config/endpoints")
     settings["enable_serverless_compute"] = True
-    workspace.api("POST", "2.0/sql/config/endpoints", settings)
+    workspace.api("PUT", "2.0/sql/config/endpoints", settings)
 
     # Configure workspace feature flags
     print("Configure workspace feature flags")
@@ -303,7 +320,8 @@ def create_workspace(config: Config):
         time.sleep(60)  # seconds
     if job_result != "SUCCESS":
         raise Exception(
-            f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{job_result}" for "{config.workspace_name}" | {job_message}""")
+            f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", """
+            f"""found "{job_result}" for "{config.workspace_name}" | {job_message}""")
 
     # All done
     print("Done")
