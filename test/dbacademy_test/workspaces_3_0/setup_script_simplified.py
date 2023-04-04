@@ -2,6 +2,7 @@ import os
 import re
 import time
 from dataclasses import dataclass, field
+from typing import Optional
 
 from dbacademy.dougrest import AccountsApi, DatabricksApiException
 
@@ -36,8 +37,8 @@ class WorkspaceConfig:
     credentials_name: str = "default"
     storage_configuration: str = None
     uc_storage_root: str = None
-    uc_aws_iam_role_arn: str = "arn:aws:iam::981174701421:role/Unity-Catalog-Role"
-    uc_msa_access_connector_id: str = None
+    uc_aws_iam_role_arn: Optional[str] = "arn:aws:iam::981174701421:role/Unity-Catalog-Role"
+    uc_msa_access_connector_id: Optional[str] = None
     entitlements: dict[str, bool] = field(default_factory=lambda: dict(
         {
             "allow-cluster-create": False,  # False to enforce policy
@@ -50,7 +51,7 @@ class WorkspaceConfig:
             # "folder_name": "https://..../import_url.dbc"
         }
     ))
-    datasets: list[str] = None  # Appended to based on course_definitions; Only needs to be defined for DAWD
+    datasets: list[str] = None  # Only needs to be defined for DAWD
 
     def __post_init__(self):
         if self.lab_description is None:
@@ -65,7 +66,7 @@ class WorkspaceConfig:
             self.datasets = []
 
 
-lab_id = 903
+lab_id = 900
 workspace_config = WorkspaceConfig(
     cloud="AWS",
     lab_id=lab_id,
@@ -78,6 +79,21 @@ workspace_config = WorkspaceConfig(
     },
     instructors=["class+000@databricks.com"],
     users=["class+001@databricks.com"],
+    # All items below would get good defaults, but adding here for completeness.
+    default_dbr="11.3.x-cpu-ml-scala2.12",
+    default_node_type_id="i3.xlarge",
+    credentials_name="default",
+    storage_configuration="us-west-2",  # Not region, just named after the region.
+    uc_storage_root=f"s3://unity-catalogs-us-west-2/",
+    uc_aws_iam_role_arn="arn:aws:iam::981174701421:role/Unity-Catalog-Role",
+    uc_msa_access_connector_id=None,
+    entitlements={
+        "allow-cluster-create": False,  # False to enforce policy
+        "allow-instance-pool-create": False,  # False to enforce policy
+        "databricks-sql-access": True,
+        "workspace-access": True,
+    },
+    datasets=[]  # Only needs to be defined for DAWD
 )
 
 
