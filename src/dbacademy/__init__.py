@@ -1,12 +1,12 @@
 """
 The dbacademy package is the super package to a broad number of systems as enumerated below.
 
-<strong style="color: green">common:</strong> package for functionality that is generic and used across all other packages.
+* common: package for functionality that is generic and used across all other packages.
 
 Courseware Development
-dbbuild: Courseware build tools.
-dbgems: Wrappers around misc utility functions used from within a notebook.
-dbhelper: Primary entry point for Notebook based curriculum and the DBAcademyHelper (DA) object.
+* dbbuild: Courseware build tools.
+* dbgems: Wrappers around misc utility functions used from within a notebook.
+* dbhelper: Primary entry point for Notebook based curriculum and the DBAcademyHelper (DA) object.
 
 Automation & REST APIs
 * classrooms:
