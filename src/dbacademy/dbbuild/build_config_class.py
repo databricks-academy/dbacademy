@@ -117,6 +117,7 @@ class BuildConfig:
                  spark_version: str = None,
                  cloud: str = None,
                  instance_pool_id: str = None,
+                 single_user_name: str = None,
                  workers: int = None,
                  libraries: list = None,
                  client: DBAcademyRestClient = None,
@@ -181,8 +182,9 @@ class BuildConfig:
         # We can use local-mode clusters here
         self.workers = 0 if workers is None else workers
 
-        # The instance pool from which to obtain VMs - lazily evaluated via property
-        self.__instance_pool_id = instance_pool_id
+        self.__current_cluster = None
+        self.__instance_pool_id = instance_pool_id      # The cluster's instance pool from which to obtain VMs - lazily evaluated via property
+        self.__single_user_name = single_user_name      # The cluster's single-user name - lazily evaluated via property
 
         # Spark configuration parameters
         self.spark_conf = dict() if spark_conf is None else spark_conf
@@ -404,25 +406,48 @@ class BuildConfig:
         return self.__readme_file_name
 
     @property
+    def current_cluster(self):
+        """
+        Utility method that loads various cluster properties in one REST request to the current cluster vs one per property initialization
+        :return: a dictionary of the cluster's properties
+        """
+        if self.__current_cluster is None:
+            self.__current_cluster = self.client.clusters().get_current()
+
+        return self.__current_cluster
+
+    @property
     def instance_pool_id(self) -> str:
         """
         The instance pool to use for testing.
-        :return: The instance pool id
+        :return: the cluster's instance_pool_id
         """
         if self.__instance_pool_id is None:  # This may have not been specified upon instantiation
-            self.__instance_pool_id = self.client.clusters().get_current_instance_pool_id()
-            assert self.__instance_pool_id is not None, f"The current cluster is not configured to use an instance pool which is required for execution of smoke-tests"
+            self.__instance_pool_id = self.current_cluster.get("instance_pool_id")
+            assert self.__instance_pool_id is not None, f"The current cluster is not configured to use an instance pool which is required for execution of smoke-tests."
 
         return self.__instance_pool_id
+
+    @property
+    def single_user_name(self) -> str:
+        """
+        The single-user name.
+        :return: The cluster's single_user_name
+        """
+        if self.__single_user_name is None:  # This may have not been specified upon instantiation
+            self.__single_user_name = self.current_cluster.get("single_user_name")
+            assert self.__single_user_name is not None, f"The current cluster is not configured for execution as single-user which is required for execution of smoke-tests."
+
+        return self.__single_user_name
 
     @property
     def spark_version(self) -> str:
         """
         The spark version to use for testing; defaults to the current cluster's spark-version
-        :return: The spark version
+        :return: The cluster's spark_version
         """
         if self.__spark_version is None:  # This may have not been specified upon instantiation
-            self.__spark_version = self.client.clusters().get_current_spark_version()
+            self.__spark_version = self.current_cluster.get("spark_version")
 
         return self.__spark_version
 
