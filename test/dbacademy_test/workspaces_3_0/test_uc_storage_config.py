@@ -5,7 +5,7 @@ from dbacademy.workspaces_3_0.uc_storage_config_class import UcStorageConfig
 class TestUCStorageConfig(unittest.TestCase):
 
     def test_create(self):
-        storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", owner="instructors", aws_iam_role_arn="abc")
+        storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc")
         self.assertIsNone(storage_config.meta_store_name)
         self.assertEqual("def", storage_config.storage_root)
         self.assertEqual("ghi", storage_config.storage_root_credential_id)
@@ -24,37 +24,37 @@ class TestUCStorageConfig(unittest.TestCase):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "storage_root" must be a string value, found <class 'int'>.""", lambda: UcStorageConfig(storage_root=0, storage_root_credential_id="ghi", region="jkl", owner="instructors", aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "storage_root" must be a string value, found <class 'int'>.""", lambda: UcStorageConfig(storage_root=0, storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc"))
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "storage_root" must be a string value, found <class 'NoneType'>.""", lambda: UcStorageConfig(storage_root=None, storage_root_credential_id="ghi", region="jkl", owner="instructors", aws_iam_role_arn="abc"))
-        test_assertion_error(self, """The parameter "storage_root" must be specified, found "".""", lambda: UcStorageConfig(storage_root="", storage_root_credential_id="ghi", region="jkl", owner="instructors", aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "storage_root" must be a string value, found <class 'NoneType'>.""", lambda: UcStorageConfig(storage_root=None, storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "storage_root" must be specified, found "".""", lambda: UcStorageConfig(storage_root="", storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc"))
 
     def test_create_storage_root_credential_id(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "storage_root_credential_id" must be a string value, found <class 'int'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id=0, region="jkl", owner="instructors", aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "storage_root_credential_id" must be a string value, found <class 'int'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id=0, region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc"))
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "storage_root_credential_id" must be a string value, found <class 'NoneType'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id=None, region="jkl", owner="instructors", aws_iam_role_arn="abc"))
-        test_assertion_error(self, """The parameter "storage_root_credential_id" must be specified, found "".""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="", region="jkl", owner="instructors", aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "storage_root_credential_id" must be a string value, found <class 'NoneType'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id=None, region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "storage_root_credential_id" must be specified, found "".""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc"))
 
     def test_create_region(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "region" must be a string value, found <class 'int'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region=0, owner="instructors", aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "region" must be a string value, found <class 'int'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region=0, meta_store_owner="instructors", aws_iam_role_arn="abc"))
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "region" must be a string value, found <class 'NoneType'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region=None, owner="instructors", aws_iam_role_arn="abc"))
-        test_assertion_error(self, """The parameter "region" must be specified, found "".""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="", owner="instructors", aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "region" must be a string value, found <class 'NoneType'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region=None, meta_store_owner="instructors", aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "region" must be specified, found "".""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="", meta_store_owner="instructors", aws_iam_role_arn="abc"))
 
     def test_create_owner(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "owner" must be a string value, found <class 'int'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", owner=0, aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "meta_store_owner" must be a string value, found <class 'int'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner=0, aws_iam_role_arn="abc"))
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "owner" must be a string value, found <class 'NoneType'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", owner=None, aws_iam_role_arn="abc"))
-        test_assertion_error(self, """The parameter "owner" must be specified, found "".""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", owner="", aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "meta_store_owner" must be a string value, found <class 'NoneType'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner=None, aws_iam_role_arn="abc"))
+        test_assertion_error(self, """The parameter "meta_store_owner" must be specified, found "".""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner="", aws_iam_role_arn="abc"))
 
 
 if __name__ == '__main__':

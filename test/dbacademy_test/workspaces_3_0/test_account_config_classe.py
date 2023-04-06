@@ -8,7 +8,7 @@ class TestAccountConfig(unittest.TestCase):
 
     @pytest.fixture(autouse=True)
     def setup_test(self):
-        self.uc_storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", owner="instructors", aws_iam_role_arn="abc")
+        self.uc_storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc")
 
         self.workspace_config = WorkspaceConfig(max_participants=100, course_definitions="course=example-course", cds_api_token="asdf1234", datasets="example-course", default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=None, workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
 
