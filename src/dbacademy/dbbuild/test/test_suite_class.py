@@ -99,6 +99,7 @@ class TestSuite:
                                           spark_conf=self.build_config.spark_conf,
                                           node_type_id=None,  # Expecting to have an instance pool when testing
                                           instance_pool_id=self.build_config.instance_pool_id,
+                                          single_user_name=self.build_config.single_user_name,
                                           policy_id=policy_id,
                                           autotermination_minutes=None,
                                           spark_env_vars={"WSFS_ENABLE_WRITE_SUPPORT": "true"})
