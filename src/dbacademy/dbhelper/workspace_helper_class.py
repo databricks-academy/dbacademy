@@ -179,7 +179,7 @@ class WorkspaceHelper:
             print("No courses specified for installation.")
             return
 
-        course_defs = [c.strip() for c in courses_arg.split(",")]
+        course_defs = set(c.strip() for c in courses_arg.split(","))
         usernames = usernames or [u.get("userName") for u in client.scim.users.list()]
 
         for username in usernames:
