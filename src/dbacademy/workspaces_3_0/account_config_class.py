@@ -6,7 +6,7 @@ class AccountConfig:
     from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
 
     @staticmethod
-    def from_env(*, account_id_env_name, account_password_env_name, account_username_env_name, region: str, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, first_workspace_number: int, total_workspaces: int, specific_workspace_numbers: Optional[List[int]], ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
+    def from_env(*, account_id_env_name, account_password_env_name, account_username_env_name, region: str, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, workspace_numbers: Optional[List[int]], ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
         import os
         print()
 
@@ -26,11 +26,9 @@ class AccountConfig:
                              uc_storage_config=uc_storage_config,
                              workspace_config_template=workspace_config_template,
                              ignored_workspaces=ignored_workspaces,
-                             first_workspace_number=first_workspace_number,
-                             specific_workspace_numbers=specific_workspace_numbers,
-                             total_workspaces=total_workspaces)
+                             workspace_numbers=workspace_numbers)
 
-    def __init__(self, *, region: str, account_id: str, username: str, password: str, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, ignored_workspaces: List[Union[int, str]] = None, first_workspace_number: int, total_workspaces: int, specific_workspace_numbers: List[int]) -> None:
+    def __init__(self, *, region: str, account_id: str, username: str, password: str, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, ignored_workspaces: List[Union[int, str]] = None, workspace_numbers: List[int]) -> None:
         """
         Creates the configuration for account-level settings.
         """
@@ -53,12 +51,7 @@ class AccountConfig:
 
         self.__workspaces = list()
 
-        if specific_workspace_numbers is None:
-            assert total_workspaces == 0, f"""The parameter "total_workspaces" must be 0 if the parameter "total_workspaces" is non-None."""
-            assert first_workspace_number == 0, f"""The parameter "first_workspace_number" must be 0 if the parameter "specific_workspace_numbers" is non-None."""
-            specific_workspace_numbers = range(first_workspace_number, first_workspace_number+total_workspaces)
-
-        for workspace_number in specific_workspace_numbers:
+        for workspace_number in workspace_numbers:
             self.create_workspace_config(template=workspace_config_template,
                                          workspace_number=workspace_number)
 

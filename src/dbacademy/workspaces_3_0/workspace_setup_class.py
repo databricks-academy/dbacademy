@@ -242,7 +242,7 @@ class WorkspaceSetup:
 
         except DatabricksApiException as e:
             if e.http_code == 404:
-                print(f"Skipping deletion of workspace #{workspace_number} for {workspace_config.name}""")
+                print(f"Skipping deletion, workspace #{workspace_number} was not found for {workspace_config.name}""")
             else:
                 raise e
 
@@ -257,7 +257,7 @@ class WorkspaceSetup:
             self.__remove_metastore(trio)
             self.__delete_workspace(trio)
 
-    def create_workspaces(self, *, remove_users: bool, create_users: bool, update_entitlements: bool, create_groups: bool, remove_metastore: bool, create_metastore: bool, run_workspace_setup: bool, enable_features: bool, install_courseware: bool, uninstall_courseware: bool = False):
+    def create_workspaces(self, *, remove_users: bool, remove_metastore: bool, run_workspace_setup: bool, uninstall_courseware: bool = False):
 
         print("\n")
         print("-"*100)
@@ -294,27 +294,18 @@ class WorkspaceSetup:
 
         #############################################################
         print("-"*100)
-        if update_entitlements:
-            print(f"""Configuring the entitlements for the group "users" in each workspace.""")
-            self.__for_each_workspace(self.__workspaces, self.__update_entitlements)
-        else:
-            print("Skipping update of entitlements")
+        print(f"""Configuring the entitlements for the group "users" in each workspace.""")
+        self.__for_each_workspace(self.__workspaces, self.__update_entitlements)
 
         #############################################################
         print("-"*100)
-        if create_users:
-            print(f"""Configuring users in each workspace.""")
-            self.__for_each_workspace(self.__workspaces, self.__create_users)
-        else:
-            print("Skipping creation of users")
+        print(f"""Configuring users in each workspace.""")
+        self.__for_each_workspace(self.__workspaces, self.__create_users)
 
         #############################################################
         print("-"*100)
-        if create_groups:
-            print(f"""Configuring groups in each workspace.""")
-            self.__for_each_workspace(self.__workspaces, self.__create_group)
-        else:
-            print("Skipping creation of groups")
+        print(f"""Configuring groups in each workspace.""")
+        self.__for_each_workspace(self.__workspaces, self.__create_group)
 
         #############################################################
         print("-"*100)
@@ -326,19 +317,13 @@ class WorkspaceSetup:
 
         #############################################################
         print("-"*100)
-        if create_metastore:
-            print(f"""Configuring the metastore in each workspace.""")
-            self.__for_each_workspace(self.__workspaces, self.__create_metastore)
-        else:
-            print("Skipping creation of metastore")
+        print(f"""Configuring the metastore in each workspace.""")
+        self.__for_each_workspace(self.__workspaces, self.__create_metastore)
 
         #############################################################
         print("-"*100)
-        if enable_features:
-            print(f"""Configuring features in each workspace.""")
-            self.__for_each_workspace(self.__workspaces, self.__enable_features)
-        else:
-            print("Skipping enablement of workspace features")
+        print(f"""Configuring features in each workspace.""")
+        self.__for_each_workspace(self.__workspaces, self.__enable_features)
 
         #############################################################
         print("-"*100)
@@ -350,11 +335,8 @@ class WorkspaceSetup:
 
         #############################################################
         print("-"*100)
-        if install_courseware:
-            print(f"""Installing courseware for all users in each workspace.""")
-            self.__for_each_workspace(self.__workspaces, self.__install_courseware)
-        else:
-            print("Skipping install of courseware")
+        print(f"""Installing courseware for all users in each workspace.""")
+        self.__for_each_workspace(self.__workspaces, self.__install_courseware)
 
         #############################################################
         print("-"*100)
@@ -589,7 +571,6 @@ class WorkspaceSetup:
                 return self.log_error(f"""The cluster policy "{policy_name}" was not found for {trio.name}""")
 
     def __validate_workspace_setup_job(self, trio: WorkspaceTrio):
-        import json
         from dbacademy.dbhelper import WorkspaceHelper
 
         # Check the Workspace Setup job should be last
@@ -637,7 +618,7 @@ class WorkspaceSetup:
 
                 task_config = job_config.add_task(task_key="Workspace-Setup", description="This job is used to configure the workspace per Databricks Academy's courseware requirements")
                 task_config.task.notebook("Workspace-Setup", source="GIT", base_parameters={
-                    WorkspaceHelper.PARAM_LAB_ID: f"Classroom #{trio.workspace_config.workspace_number}",
+                    WorkspaceHelper.PARAM_LAB_ID: trio.workspace_config.workspace_number,
                     WorkspaceHelper.PARAM_DESCRIPTION: f"Classroom #{trio.workspace_config.workspace_number}",
                     WorkspaceHelper.PARAM_NODE_TYPE_ID: trio.workspace_config.default_node_type_id,
                     WorkspaceHelper.PARAM_SPARK_VERSION: trio.workspace_config.default_dbr,
