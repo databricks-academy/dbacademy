@@ -60,7 +60,6 @@ class ClusterConfig:
         if single_user_name is not None:
             extra_params["single_user_name"] = single_user_name
             extra_params["data_security_mode"] = "SINGLE_USER"
-            extra_params["spark.databricks.passthrough.enabled"] = "true"
 
         if driver_node_type_id is not None:
             extra_params["driver_node_type_id"] = driver_node_type_id
@@ -137,7 +136,7 @@ class JobClusterConfig(ClusterConfig):
                  policy_id: str = None,
                  num_workers: int,
                  autotermination_minutes: Optional[int],
-                 # single_user_name: str = None,
+                 single_user_name: str = None,
                  availability: Availability = None,
                  spark_conf: Optional[Dict[str, str]] = None,
                  spark_env_vars: Optional[Dict[str, str]] = None,
@@ -153,7 +152,7 @@ class JobClusterConfig(ClusterConfig):
                          policy_id=policy_id,
                          num_workers=num_workers,
                          autotermination_minutes=autotermination_minutes,
-                         single_user_name=None,
+                         single_user_name=single_user_name,
                          spark_conf=spark_conf,
                          spark_env_vars=spark_env_vars,
                          custom_tags=custom_tags,
