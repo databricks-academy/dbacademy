@@ -116,15 +116,23 @@ class ClustersClient(ApiContainer):
 
         return None
 
+    def get_current(self, cluster_id: str = None) -> Dict[str, Any]:
+        """
+        Retrieves the current cluster
+        :param cluster_id: The specified cluster_id or the cluster_id returned by `dbgems.get_tags().get("clusterId")`
+        :return: The spark version
+        """
+        from dbacademy import dbgems
+        cluster_id = cluster_id or dbgems.get_tags().get("clusterId")
+        return self.get_by_id(cluster_id)
+
     def get_current_spark_version(self, cluster_id: str = None) -> Optional[str]:
         """
         Retrieves the corresponding cluster's spark version
         :param cluster_id: The specified cluster_id or the cluster_id returned by `dbgems.get_tags().get("clusterId")`
         :return: The spark version
         """
-        from dbacademy import dbgems
-        cluster_id = cluster_id or dbgems.get_tags().get("clusterId")
-        return self.get_by_id(cluster_id).get("spark_version", None)
+        return self.get_current(cluster_id).get("spark_version", None)
 
     def get_current_instance_pool_id(self, cluster_id: str = None) -> Optional[str]:
         """
@@ -132,9 +140,23 @@ class ClustersClient(ApiContainer):
         :param cluster_id: The specified cluster_id or the cluster_id returned by `dbgems.get_tags().get("clusterId")`
         :return: The instance pool id
         """
-        from dbacademy import dbgems
-        cluster_id = cluster_id or dbgems.get_tags()["clusterId"]
-        return self.get_by_id(cluster_id).get("instance_pool_id", None)
+        return self.get_current(cluster_id).get("instance_pool_id", None)
+
+    def get_current_data_security_mode(self, cluster_id: str = None) -> Optional[str]:
+        """
+        Retrieves the corresponding cluster's data_security_mode
+        :param cluster_id: The specified cluster_id or the cluster_id returned by `dbgems.get_tags().get("clusterId")`
+        :return: The data security mode
+        """
+        return self.get_current(cluster_id).get("data_security_mode", None)
+
+    def get_current_single_user_name(self, cluster_id: str = None) -> Optional[str]:
+        """
+        Retrieves the corresponding cluster's single_user_name
+        :param cluster_id: The specified cluster_id or the cluster_id returned by `dbgems.get_tags().get("clusterId")`
+        :return: The data security mode
+        """
+        return self.get_current(cluster_id).get("single_user_name", None)
 
     def get_current_node_type_id(self, cluster_id: str = None) -> Optional[str]:
         """
@@ -142,6 +164,4 @@ class ClustersClient(ApiContainer):
         :param cluster_id: The specified cluster_id or the cluster_id returned by `dbgems.get_tags().get("clusterId")`
         :return: The instance pool id
         """
-        from dbacademy import dbgems
-        cluster_id = cluster_id or dbgems.get_tags().get("clusterId")
-        return self.get_by_id(cluster_id).get("node_type_id", None)
+        return self.get_current(cluster_id).get("node_type_id", None)
