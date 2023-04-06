@@ -118,7 +118,9 @@ class WorkspaceSetup:
     def __remove_metastore(trio: WorkspaceTrio):
         # Unassign the metastore from the workspace
         try:
+            print(f"Removing metastore {trio.name}")
             response = trio.workspace_api.api("GET", f"2.1/unity-catalog/current-metastore-assignment")
+
         except DatabricksApiException as e:
             if e.error_code == "METASTORE_DOES_NOT_EXIST":
                 return  # It doesn't exist, move on.
@@ -234,10 +236,7 @@ class WorkspaceSetup:
             trio = WorkspaceTrio(workspace_config, workspace_api, None)
             print(f"Destroying workspace #{workspace_number}: {trio.workspace_config.name}""")
 
-            print(f"| Removing metastore")
             self.__remove_metastore(trio)
-
-            print(f"| Deleting workspace")
             self.__delete_workspace(trio)
 
         except DatabricksApiException as e:
@@ -258,6 +257,19 @@ class WorkspaceSetup:
             self.__delete_workspace(trio)
 
     def create_workspaces(self, *, remove_users: bool, remove_metastore: bool, run_workspace_setup: bool, uninstall_courseware: bool = False):
+
+        if not run_workspace_setup or remove_metastore or remove_users or uninstall_courseware:
+            print()
+            if not run_workspace_setup:
+                print("WARNING: Not configured to run the Workspace-Setup job.")
+            if remove_metastore:
+                print("WARNING: Not configured to run the Workspace-Setup job.")
+            if remove_users:
+                print("WARNING: Not configured to run the Workspace-Setup job.")
+            if uninstall_courseware:
+                print("WARNING: Not configured to run the Workspace-Setup job.")
+            if input(f"Please confirm running with this abnormal configuration (y/n):").lower() not in ["1", "y", "yes"]:
+                return print("Execution aborted.")
 
         print("\n")
         print("-"*100)
