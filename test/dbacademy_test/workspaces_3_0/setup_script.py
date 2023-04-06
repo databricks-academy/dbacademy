@@ -16,10 +16,17 @@ def read_str(prompt: str, default_value: Optional[str] = "") -> str:
     return default_value if value.strip() == "" else value
 
 
+def advertise(name: str, items: list):
+    if len(items) > 0:
+        print(f"{name}: ")
+        for item in items:
+            print(f"    {item}")
+
+
 print("-"*100)
 env_code = read_str("""Please select an environment such as "PROSVC" or "CURR".""", "CURR").upper()
 
-workspace_numbers = [6, 7]
+workspace_numbers = list({325, 326, 327, 328, 329, 400, 401, 402, 403, 404, 404, 901})
 # workspace_numbers = list(range(500, 600))
 
 print("1) Create workspaces.")
@@ -61,8 +68,8 @@ workspace_config_template = WorkspaceConfig(max_participants=max_participants,
                                             storage_configuration="us-west-2",                         # Not region, just named after the region.
                                             username_pattern="class+{student_number}@databricks.com",  # student_number defaults to 3 digits, zero prefixed
                                             entitlements={
-                                                "allow-cluster-create": False,        # Removed to enforce policy
-                                                "allow-instance-pool-create": False,  # Removed to enforce policy
+                                                "allow-cluster-create": False,          # Removed to enforce policy
+                                                # "allow-instance-pool-create": False,  # TODO Can’t be granted to individual users or service principals nor removed from workspace admins. See https://docs.databricks.com/administration-guide/users-groups/service-principals.html#manage-entitlements-for-a-service-principal
                                                 "databricks-sql-access": True,
                                                 "workspace-access": True,
                                             },
@@ -90,19 +97,24 @@ account = AccountConfig.from_env(account_id_env_name=f"WORKSPACE_SETUP_{env_code
                                  ])
 
 workspace_setup = WorkspaceSetup(account)
-confirmations = ["c", "confirm", "confirmed", "y", "yes", "1"]
+confirmations = ["y", "yes", "1"]
 
-if action == 3 and read_str("""Please confirm you wish to REMOVE these metastores""", "abort").lower() in confirmations:
+if action == 3 and read_str("""Please confirm you wish to REMOVE these metastores""", "y/n").lower() in confirmations:
     for workspace_number in workspace_numbers:
         workspace_setup.remove_metastore(workspace_number)
 
-if action == 2 and read_str("""Please confirm you wish to DELETE these workspaces""", "abort").lower() in confirmations:
+if action == 2 and read_str("""Please confirm you wish to DELETE these workspaces""", "y/n").lower() in confirmations:
     for workspace_number in workspace_numbers:
         workspace_setup.delete_workspace(workspace_number)
 
-elif action == 1 and read_str("""Please confirm you wish to create these workspaces""", "abort").lower() in confirmations:
-    FALSE = False  # easier for my eyes to recognize
-    workspace_setup.create_workspaces(run_workspace_setup=True,    # <<<
-                                      remove_metastore=FALSE,      # This should always be False
-                                      remove_users=FALSE,          # This should always be False
-                                      uninstall_courseware=FALSE)  # This should always be False
+elif action == 1:
+    if read_str("""Please confirm you wish to create these workspaces""", "y/n").lower() in confirmations:
+        advertise("Courses", workspace_config_template.course_definitions)
+        advertise("Datasets", workspace_config_template.datasets)
+        advertise("Ignored", account.ignored_workspaces)
+
+        FALSE = False  # easier for my eyes to recognize
+        workspace_setup.create_workspaces(run_workspace_setup=FALSE,   # <<< TRUE
+                                          remove_metastore=FALSE,      # This should always be False
+                                          remove_users=FALSE,          # This should always be False
+                                          uninstall_courseware=FALSE)  # This should always be False
