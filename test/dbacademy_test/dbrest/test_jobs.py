@@ -32,6 +32,7 @@ class TestJobsClient(unittest.TestCase):
         return self.__client
 
     def test_create_git_job(self):
+        import json
         from dbacademy.dbrest.jobs import JobConfig
         from dbacademy.dbrest.clusters import JobClusterConfig
         from dbacademy.dbhelper import WorkspaceHelper
@@ -55,6 +56,7 @@ class TestJobsClient(unittest.TestCase):
                                                  spark_version="11.3.x-scala2.12",
                                                  node_type_id="i3.xlarge",
                                                  num_workers=0,
+                                                 single_user_name="jacob.parr@databricks.com",
                                                  autotermination_minutes=None))
 
         job_id = self.client.jobs.create_from_config(config)
@@ -110,10 +112,16 @@ class TestJobsClient(unittest.TestCase):
                 "ResourceClass": "SingleNode"
             },
             "enable_elastic_disk": False,
+            "single_user_name": "jacob.parr@databricks.com",
             "data_security_mode": "SINGLE_USER",
             "num_workers": 0
         }
-        self.assertEquals(expected_cluster, actual_cluster)
+        if expected_cluster != actual_cluster:
+            print("-"*100)
+            print(json.dumps(expected_cluster, indent=4))
+            print("-"*100)
+            print(json.dumps(actual_cluster, indent=4))
+            self.assertEquals(expected_cluster, actual_cluster)
 
 
 if __name__ == "__main__":

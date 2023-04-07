@@ -73,9 +73,9 @@ class AccountConfig:
                                     workspace_name_pattern=template.workspace_name_pattern)
 
         if workspace.name in self.ignored_workspaces:
-            print(f"Skipping workspace #{workspace.name}")
+            print(f"Skipping:   {workspace.name}")
         elif workspace_number in self.ignored_workspaces:
-            print(f"Skipping workspace #{workspace_number}")
+            print(f"Skipping    #{workspace_number}")
         else:
             self.__workspaces.append(workspace)
 

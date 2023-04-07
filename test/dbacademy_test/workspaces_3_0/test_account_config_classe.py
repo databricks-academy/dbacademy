@@ -8,7 +8,7 @@ class TestAccountConfig(unittest.TestCase):
 
     @pytest.fixture(autouse=True)
     def setup_test(self):
-        self.uc_storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc")
+        self.uc_storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc", msa_access_connector_id=None)
 
         self.workspace_config = WorkspaceConfig(max_participants=100, course_definitions="course=example-course", cds_api_token="asdf1234", datasets="example-course", default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=None, workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
 
@@ -21,8 +21,7 @@ class TestAccountConfig(unittest.TestCase):
         account = AccountConfig.from_env(account_id_env_name=account_id_env_name,
                                          account_password_env_name=account_password_env_name,
                                          account_username_env_name=account_username_env_name,
-                                         first_workspace_number=1,
-                                         total_workspaces=3,
+                                         workspace_numbers=[1, 2, 3],
                                          region="us-west-2",
                                          uc_storage_config=self.uc_storage_config,
                                          workspace_config_template=self.workspace_config)
@@ -34,9 +33,8 @@ class TestAccountConfig(unittest.TestCase):
         self.assertTrue(account.password.endswith("gx"))
 
     def test_create_account_config(self):
-
-        account = AccountConfig(first_workspace_number=3,
-                                total_workspaces=3,
+        
+        account = AccountConfig(workspace_numbers=[3, 4, 5],
                                 region="us-west-2",
                                 account_id="asdf",
                                 username="mickey.mouse@disney.com",
@@ -78,8 +76,7 @@ class TestAccountConfig(unittest.TestCase):
                                            workspace_group=None,
                                            workspace_name_pattern="Random-{workspace_number}")
 
-        account = AccountConfig(first_workspace_number=7,
-                                total_workspaces=3,
+        account = AccountConfig(workspace_numbers=[7, 8, 9],
                                 region="us-west-2",
                                 account_id="asdf",
                                 username="mickey.mouse@disney.com",
@@ -95,8 +92,7 @@ class TestAccountConfig(unittest.TestCase):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
         # None
-        account = AccountConfig(first_workspace_number=1,
-                                total_workspaces=7,
+        account = AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7],
                                 region="us-west-2",
                                 account_id="asdf",
                                 username="mickey.mouse@disney.com",
@@ -106,8 +102,7 @@ class TestAccountConfig(unittest.TestCase):
         self.assertEqual(0, len(account.ignored_workspaces))
 
         # Empty
-        account = AccountConfig(first_workspace_number=1,
-                                total_workspaces=7,
+        account = AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7],
                                 region="us-west-2",
                                 account_id="asdf",
                                 username="mickey.mouse@disney.com",
@@ -118,95 +113,95 @@ class TestAccountConfig(unittest.TestCase):
         self.assertEqual(0, len(account.ignored_workspaces))
 
         # One Int
-        account = AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=[1])
+        account = AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=[1])
         self.assertEqual(1, len(account.ignored_workspaces))
         self.assertEqual(1, account.ignored_workspaces[0])
 
         # Two ints
-        account = AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=[1, 2])
+        account = AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=[1, 2])
         self.assertEqual(2, len(account.ignored_workspaces))
         self.assertEqual(1, account.ignored_workspaces[0])
         self.assertEqual(2, account.ignored_workspaces[1])
 
         # One String
-        account = AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=["apple"])
+        account = AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=["apple"])
         self.assertEqual(1, len(account.ignored_workspaces))
         self.assertEqual("apple", account.ignored_workspaces[0])
 
         # Two Strings
-        account = AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=["apple", "banana"])
+        account = AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=["apple", "banana"])
         self.assertEqual("apple", account.ignored_workspaces[0])
         self.assertEqual("banana", account.ignored_workspaces[1])
 
         # Ints & Strings
-        account = AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=[1, "apple"])
+        account = AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=[1, "apple"])
         self.assertEqual(2, len(account.ignored_workspaces))
         self.assertEqual(1, account.ignored_workspaces[0])
         self.assertEqual("apple", account.ignored_workspaces[1])
 
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "ignored_workspaces" must be of type <class 'list'>, found <class 'float'>.""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=1.0))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=1.0))
 
     def test_create_account_config_region(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "region" must be a string value, found <class \'int\'>.""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region=0, account_id="1234", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region=0, account_id="1234", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "region" must be a string value, found <class \'NoneType\'>.""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region=None, account_id="1234", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region=None, account_id="1234", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
         test_assertion_error(self, """The parameter "region" must be specified, found "".""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region="", account_id="1234", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="", account_id="1234", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
 
     def test_create_account_config_account_id(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "account_id" must be a string value, found <class \'int\'>.""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id=0, username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id=0, username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "account_id" must be a string value, found <class \'NoneType\'>.""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id=None, username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id=None, username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
         test_assertion_error(self, """The parameter "account_id" must be specified, found "".""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
 
     def test_create_account_config_username(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "username" must be a string value, found <class \'int\'>.""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="1234", username=0, password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="1234", username=0, password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "username" must be a string value, found <class \'NoneType\'>.""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="1234", username=None, password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="1234", username=None, password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
         test_assertion_error(self, """The parameter "username" must be specified, found "".""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="1234", username="", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="1234", username="", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
 
     def test_create_account_password(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "password" must be of type <class 'str'>, found <class 'int'>.""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password=0, uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password=0, uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "password" must be of type <class 'str'>, found <class 'NoneType'>.""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password=None, uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password=None, uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
         test_assertion_error(self, """The parameter "password" must be specified, found "".""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password="", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password="", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config))
 
     def test_create_account_storage_config(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
         test_assertion_error(self, """The parameter "storage_config" must be specified.""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=None, workspace_config_template=self.workspace_config))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=None, workspace_config_template=self.workspace_config))
 
     def test_create_account_workspace_config(self):
         from dbacademy_test.workspaces_3_0 import test_assertion_error
 
         test_assertion_error(self, """The parameter "workspace_config" must be specified.""",
-                             lambda: AccountConfig(first_workspace_number=1, total_workspaces=7, region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=None))
+                             lambda: AccountConfig(workspace_numbers=[1, 2, 3, 4, 5, 6, 7], region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=None))
 
 
 if __name__ == '__main__':

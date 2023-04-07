@@ -67,19 +67,8 @@ class ScimUsersClient(ApiContainer):
             "entitlements": []
         }
 
-        try:
-            url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users"
-            return self.client.api("POST", url, payload, _expected=(200, 201))
-        except DatabricksApiException as e:
-            if e.http_code == 409:
-                # TODO Remove this once ES-645542 is fixed
-                # 100% convinced this is throttling masking itself as a 409 & the list here will help that a bit.
-                user = self.get_by_name(username)
-                if user is not None:
-                    return user
-
-            # If we didn't mitigate, re-raise the exception.
-            raise Exception(f"""Exception creating the user "{username}".""") from e
+        url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users"
+        return self.client.api("POST", url, payload, _expected=(200, 201))
 
     def to_users_list(self, users: Union[None, str, Dict[str, Any]]) -> List[Dict[str, Any]]:
 

@@ -29,7 +29,7 @@ class WorkspaceTrio:
             endpoint = self.workspace_api.url
 
         self.__client = DBAcademyRestClient(authorization_header=self.workspace_api.authorization_header, endpoint=endpoint)
-        self.__client.dns_retry = True
+        # self.__client.dns_retry = True
 
     def __str__(self) -> str:
         return f"{self.name} #{self.number}"
@@ -91,7 +91,7 @@ class WorkspaceSetup:
         self.__accounts_api = AccountsApi(account_id=self.account_config.account_id,
                                           user=self.account_config.username,
                                           password=self.account_config.password)
-        self.__accounts_api.dns_retry = True
+        # self.__accounts_api.dns_retry = True
 
     def log_error(self, msg):
         self.__errors.append(msg)
@@ -162,7 +162,7 @@ class WorkspaceSetup:
                                                                        workspace_number=workspace_number)
 
         workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="error")
-        workspace_api.dns_retry = True
+        # workspace_api.dns_retry = True
 
         trio = WorkspaceTrio(workspace_config, workspace_api, None)
 
@@ -185,9 +185,8 @@ class WorkspaceSetup:
         for workspace_config in self.account_config.workspaces:
             if workspace_number == 0 or workspace_number == workspace_config.workspace_number:
                 workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="ignore")
-                workspace_api.dns_retry = True
-
                 if workspace_api is not None:
+                    # workspace_api.dns_retry = True
                     trio = WorkspaceTrio(workspace_config, workspace_api, None)
                     workspaces.append(trio)
 
@@ -224,26 +223,26 @@ class WorkspaceSetup:
                 msg += "="*100
                 print(msg)
 
-    def delete_workspace(self, workspace_number: int):
-        assert workspace_number >= 0, f"Invalid workspace number: {workspace_number}"
-
-        print("-"*100)
-        workspace_config = self.account_config.create_workspace_config(template=self.account_config.workspace_config_template,
-                                                                       workspace_number=workspace_number)
-        try:
-            workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="error")
-            workspace_api.dns_retry = True
-            trio = WorkspaceTrio(workspace_config, workspace_api, None)
-            print(f"Destroying workspace #{workspace_number}: {trio.workspace_config.name}""")
-
-            self.__remove_metastore(trio)
-            self.__delete_workspace(trio)
-
-        except DatabricksApiException as e:
-            if e.http_code == 404:
-                print(f"Skipping deletion, workspace #{workspace_number} was not found for {workspace_config.name}""")
-            else:
-                raise e
+    # def delete_workspace(self, workspace_number: int):
+    #     assert workspace_number >= 0, f"Invalid workspace number: {workspace_number}"
+    #
+    #     print("-"*100)
+    #     workspace_config = self.account_config.create_workspace_config(template=self.account_config.workspace_config_template,
+    #                                                                    workspace_number=workspace_number)
+    #     try:
+    #         workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="error")
+    #         workspace_api.dns_retry = True
+    #         trio = WorkspaceTrio(workspace_config, workspace_api, None)
+    #         print(f"Destroying workspace #{workspace_number}: {trio.workspace_config.name}""")
+    #
+    #         self.__remove_metastore(trio)
+    #         self.__delete_workspace(trio)
+    #
+    #     except DatabricksApiException as e:
+    #         if e.http_code == 404:
+    #             print(f"Skipping deletion, workspace #{workspace_number} was not found for {workspace_config.name}""")
+    #         else:
+    #             raise e
 
     def delete_workspaces(self):
         print("\n")
@@ -253,13 +252,18 @@ class WorkspaceSetup:
         print(f"Deleting {len(workspaces)} workspaces.""")
 
         for trio in workspaces:
+            print("-"*100)
             self.__remove_metastore(trio)
             self.__delete_workspace(trio)
 
     def create_workspaces(self, *, remove_users: bool, remove_metastore: bool, run_workspace_setup: bool, uninstall_courseware: bool = False):
 
-        if not run_workspace_setup or remove_metastore or remove_users or uninstall_courseware:
+        naming_pattern = self.account_config.workspace_config_template.workspace_name_pattern
+        not_using_classroom = not naming_pattern.startswith("classroom-")
+
+        if not run_workspace_setup or remove_metastore or remove_users or uninstall_courseware or not_using_classroom:
             print()
+            print("-"*100)
             if not run_workspace_setup:
                 print("WARNING: Not configured to run the Workspace-Setup job.")
             if remove_metastore:
@@ -268,7 +272,9 @@ class WorkspaceSetup:
                 print("WARNING: Not configured to run the Workspace-Setup job.")
             if uninstall_courseware:
                 print("WARNING: Not configured to run the Workspace-Setup job.")
-            if input(f"Please confirm running with this abnormal configuration (y/n):").lower() not in ["1", "y", "yes"]:
+            if not_using_classroom:
+                print(f"""WARNING: The workspace naming pattern doesn't start with "classroom", found "{naming_pattern}".""")
+            if input(f"\nPlease confirm running with this abnormal configuration (y/n):").lower() not in ["1", "y", "yes"]:
                 return print("Execution aborted.")
 
         print("\n")
@@ -576,11 +582,11 @@ class WorkspaceSetup:
         from dbacademy.dbhelper import ClustersHelper
 
         if trio.client.instance_pools.get_by_name(ClustersHelper.POOL_DEFAULT_NAME) is None:
-            return self.log_error(f"""The instance pool "{ClustersHelper.POOL_DEFAULT_NAME}" was not found for {trio.name}""")
+            self.log_error(f"""The instance pool "{ClustersHelper.POOL_DEFAULT_NAME}" was not found for {trio.name}""")
 
         for policy_name in [ClustersHelper.POLICY_ALL_PURPOSE, ClustersHelper.POLICY_JOBS_ONLY, ClustersHelper.POLICY_DLT_ONLY]:
             if trio.client.cluster_policies.get_by_name(policy_name) is None:
-                return self.log_error(f"""The cluster policy "{policy_name}" was not found for {trio.name}""")
+                self.log_error(f"""The cluster policy "{policy_name}" was not found for {trio.name}""")
 
     def __validate_workspace_setup_job(self, trio: WorkspaceTrio):
         from dbacademy.dbhelper import WorkspaceHelper

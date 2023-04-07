@@ -26,8 +26,8 @@ def advertise(name: str, items: list):
 print("-"*100)
 env_code = read_str("""Please select an environment such as "PROSVC" or "CURR".""", "CURR").upper()
 
-workspace_numbers = list({325, 326, 327, 328, 329, 400, 401, 402, 403, 404, 404, 901})
-# workspace_numbers = list(range(500, 600))
+# workspace_numbers = list({99})
+workspace_numbers = list(range(100, 200))
 
 print("1) Create workspaces.")
 print("2) Delete a workspace.")
@@ -74,7 +74,7 @@ workspace_config_template = WorkspaceConfig(max_participants=max_participants,
                                                 "workspace-access": True,
                                             },
                                             # Cloud Labs needs are different here because they have a list of users, not a range of users.
-                                            workspace_name_pattern="classroom-{workspace_number}",  # workspace_number defaults to 3 digits, zero prefixed
+                                            workspace_name_pattern="es-645542-{workspace_number}",  # workspace_number defaults to 3 digits, zero prefixed
                                             workspace_group={                                       # User class+000@ should always be an admin
                                                 "admins": [0],                                      # Defined as user "0" or by full username.
                                                 # The instructor's group is defined at the account level to be
@@ -90,25 +90,24 @@ account = AccountConfig.from_env(account_id_env_name=f"WORKSPACE_SETUP_{env_code
                                  region="us-west-2",
                                  uc_storage_config=uc_storage_config,
                                  workspace_config_template=workspace_config_template,
-                                 ignored_workspaces=[  # Either the number or name (not domain) to skip
+                                 ignored_workspaces=[                                                 # Either the number or name (not domain) to skip
+                                     146
                                      # "classroom-005-9j1zg",
                                      # "classroom-007-t8yxo",
-                                     # 9, 11, 24
                                  ])
 
 workspace_setup = WorkspaceSetup(account)
 confirmations = ["y", "yes", "1"]
 
-if action == 3 and read_str("""Please confirm you wish to REMOVE these metastores""", "y/n").lower() in confirmations:
+if action == 3 and read_str("""\nPlease confirm you wish to REMOVE these metastores""", "y/n").lower() in confirmations:
     for workspace_number in workspace_numbers:
         workspace_setup.remove_metastore(workspace_number)
 
-if action == 2 and read_str("""Please confirm you wish to DELETE these workspaces""", "y/n").lower() in confirmations:
-    for workspace_number in workspace_numbers:
-        workspace_setup.delete_workspace(workspace_number)
+if action == 2 and read_str("""\nPlease confirm you wish to DELETE these workspaces""", "y/n").lower() in confirmations:
+    workspace_setup.delete_workspaces()
 
 elif action == 1:
-    if read_str("""Please confirm you wish to create these workspaces""", "y/n").lower() in confirmations:
+    if read_str("""\nPlease confirm you wish to create these workspaces""", "y/n").lower() in confirmations:
         advertise("Courses", workspace_config_template.course_definitions)
         advertise("Datasets", workspace_config_template.datasets)
         advertise("Ignored", account.ignored_workspaces)
