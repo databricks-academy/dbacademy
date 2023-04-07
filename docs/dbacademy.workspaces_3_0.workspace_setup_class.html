@@ -40,23 +40,25 @@
 <td width="100%">Methods defined here:<br>
 <dl><dt><a name="WorkspaceSetup-__init__"><strong>__init__</strong></a>(self, account_config: dbacademy.workspaces_3_0.account_config_class.AccountConfig)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="WorkspaceSetup-create_workspaces"><strong>create_workspaces</strong></a>(self, *, remove_users: bool, create_users: bool, update_entitlements: bool, create_groups: bool, remove_metastore: bool, create_metastore: bool, run_workspace_setup: bool, enable_features: bool, install_courseware: bool, uninstall_courseware: bool = False)</dt></dl>
-
-<dl><dt><a name="WorkspaceSetup-delete_workspace"><strong>delete_workspace</strong></a>(self, workspace_number: int)</dt></dl>
+<dl><dt><a name="WorkspaceSetup-create_workspaces"><strong>create_workspaces</strong></a>(self, *, remove_users: bool, remove_metastore: bool, run_workspace_setup: bool, uninstall_courseware: bool = False)</dt></dl>
 
 <dl><dt><a name="WorkspaceSetup-delete_workspaces"><strong>delete_workspaces</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="WorkspaceSetup-log_error"><strong>log_error</strong></a>(self, msg)</dt></dl>
 
 <dl><dt><a name="WorkspaceSetup-remove_metastore"><strong>remove_metastore</strong></a>(self, workspace_number: int)</dt></dl>
 
 <dl><dt><a name="WorkspaceSetup-remove_metastores"><strong>remove_metastores</strong></a>(self)</dt></dl>
 
-<dl><dt><a name="WorkspaceSetup-remove_workspace_setup_jobs"><strong>remove_workspace_setup_jobs</strong></a>(self, *, remove_bootstrap_job: bool, remove_final_job: bool)</dt></dl>
+<dl><dt><a name="WorkspaceSetup-remove_workspace_setup_jobs"><strong>remove_workspace_setup_jobs</strong></a>(self)</dt></dl>
 
 <hr>
 Readonly properties defined here:<br>
 <dl><dt><strong>account_config</strong></dt>
 </dl>
 <dl><dt><strong>accounts_api</strong></dt>
+</dl>
+<dl><dt><strong>errors</strong></dt>
 </dl>
 <hr>
 Data descriptors defined here:<br>
@@ -130,7 +132,6 @@ Data and other attributes defined here:<br>
 <td width="100%"><strong>Any</strong> = typing.Any<br>
 <strong>Callable</strong> = typing.Callable<br>
 <strong>Dict</strong> = typing.Dict<br>
-<strong>Iterable</strong> = typing.Iterable<br>
 <strong>List</strong> = typing.List<br>
 <strong>Optional</strong> = typing.Optional</td></tr></table>
 </body></html>
