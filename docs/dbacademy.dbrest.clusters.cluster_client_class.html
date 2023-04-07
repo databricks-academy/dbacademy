@@ -61,6 +61,14 @@ Methods defined here:<br>
 
 <dl><dt><a name="ClustersClient-get_by_name"><strong>get_by_name</strong></a>(self, cluster_name) -&gt; Optional[Dict[str, Any]]</dt></dl>
 
+<dl><dt><a name="ClustersClient-get_current"><strong>get_current</strong></a>(self, cluster_id: str = None) -&gt; Dict[str, Any]</dt><dd><tt>Retrieves&nbsp;the&nbsp;current&nbsp;cluster<br>
+:param&nbsp;cluster_id:&nbsp;The&nbsp;specified&nbsp;cluster_id&nbsp;or&nbsp;the&nbsp;cluster_id&nbsp;returned&nbsp;by&nbsp;`dbgems.get_tags().<a href="#ClustersClient-get">get</a>("clusterId")`<br>
+:return:&nbsp;The&nbsp;spark&nbsp;version</tt></dd></dl>
+
+<dl><dt><a name="ClustersClient-get_current_data_security_mode"><strong>get_current_data_security_mode</strong></a>(self, cluster_id: str = None) -&gt; Optional[str]</dt><dd><tt>Retrieves&nbsp;the&nbsp;corresponding&nbsp;cluster's&nbsp;data_security_mode<br>
+:param&nbsp;cluster_id:&nbsp;The&nbsp;specified&nbsp;cluster_id&nbsp;or&nbsp;the&nbsp;cluster_id&nbsp;returned&nbsp;by&nbsp;`dbgems.get_tags().<a href="#ClustersClient-get">get</a>("clusterId")`<br>
+:return:&nbsp;The&nbsp;data&nbsp;security&nbsp;mode</tt></dd></dl>
+
 <dl><dt><a name="ClustersClient-get_current_instance_pool_id"><strong>get_current_instance_pool_id</strong></a>(self, cluster_id: str = None) -&gt; Optional[str]</dt><dd><tt>Retrieves&nbsp;the&nbsp;corresponding&nbsp;cluster's&nbsp;instance_pool_id<br>
 :param&nbsp;cluster_id:&nbsp;The&nbsp;specified&nbsp;cluster_id&nbsp;or&nbsp;the&nbsp;cluster_id&nbsp;returned&nbsp;by&nbsp;`dbgems.get_tags().<a href="#ClustersClient-get">get</a>("clusterId")`<br>
 :return:&nbsp;The&nbsp;instance&nbsp;pool&nbsp;id</tt></dd></dl>
@@ -68,6 +76,10 @@ Methods defined here:<br>
 <dl><dt><a name="ClustersClient-get_current_node_type_id"><strong>get_current_node_type_id</strong></a>(self, cluster_id: str = None) -&gt; Optional[str]</dt><dd><tt>Retrieves&nbsp;the&nbsp;corresponding&nbsp;cluster's&nbsp;node_type_id<br>
 :param&nbsp;cluster_id:&nbsp;The&nbsp;specified&nbsp;cluster_id&nbsp;or&nbsp;the&nbsp;cluster_id&nbsp;returned&nbsp;by&nbsp;`dbgems.get_tags().<a href="#ClustersClient-get">get</a>("clusterId")`<br>
 :return:&nbsp;The&nbsp;instance&nbsp;pool&nbsp;id</tt></dd></dl>
+
+<dl><dt><a name="ClustersClient-get_current_single_user_name"><strong>get_current_single_user_name</strong></a>(self, cluster_id: str = None) -&gt; Optional[str]</dt><dd><tt>Retrieves&nbsp;the&nbsp;corresponding&nbsp;cluster's&nbsp;single_user_name<br>
+:param&nbsp;cluster_id:&nbsp;The&nbsp;specified&nbsp;cluster_id&nbsp;or&nbsp;the&nbsp;cluster_id&nbsp;returned&nbsp;by&nbsp;`dbgems.get_tags().<a href="#ClustersClient-get">get</a>("clusterId")`<br>
+:return:&nbsp;The&nbsp;data&nbsp;security&nbsp;mode</tt></dd></dl>
 
 <dl><dt><a name="ClustersClient-get_current_spark_version"><strong>get_current_spark_version</strong></a>(self, cluster_id: str = None) -&gt; Optional[str]</dt><dd><tt>Retrieves&nbsp;the&nbsp;corresponding&nbsp;cluster's&nbsp;spark&nbsp;version<br>
 :param&nbsp;cluster_id:&nbsp;The&nbsp;specified&nbsp;cluster_id&nbsp;or&nbsp;the&nbsp;cluster_id&nbsp;returned&nbsp;by&nbsp;`dbgems.get_tags().<a href="#ClustersClient-get">get</a>("clusterId")`<br>

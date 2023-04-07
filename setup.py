@@ -2,7 +2,7 @@ import setuptools
 from setuptools import find_packages
 
 setuptools.setup(
-    version="v3.0.68",
+    version="v3.0.69",
     name="dbacademy",
     author="Databricks, Inc",
     maintainer="Databricks Academy",
