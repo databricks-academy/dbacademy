@@ -295,6 +295,7 @@ class Commands(object):
     def resetRunningEndpoints(workspace):
         return Commands.resetEndpoints(workspace, running_only=True)
 
+    # TODO Remove this command per doug.bateman@databricks.com
     @staticmethod
     def disableEndpoints(w):
         """Send a stop command to all SQL endpoints.  Disable auto-restart."""
