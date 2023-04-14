@@ -73,9 +73,7 @@ class DatabasesHelper:
     @staticmethod
     def __to_group_of(usernames: List[str], max_group_size: int) -> List[List[str]]:
         groups = list()
-
         curr_list = list()
-        groups.append(curr_list)
 
         for username in usernames:
             if len(curr_list) == max_group_size:
@@ -85,6 +83,7 @@ class DatabasesHelper:
 
             curr_list.append(username)
 
+        groups.append(curr_list)
         return groups
 
     def create_databases(self, configure_for: str, drop_existing: bool, post_create: Callable[[str, str], None] = None):
