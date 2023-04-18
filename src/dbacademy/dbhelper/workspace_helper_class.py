@@ -334,13 +334,25 @@ class WorkspaceHelper:
                     prefix = self.da.to_catalog_name_prefix(username=username)
                     for catalog_name in self.existing_catalogs:
                         if catalog_name.startswith(prefix):
-                            missing_users.add(username)
+                            break
+                    else:
+                        missing_users.add(username)
+
+                    # for catalog_name in self.existing_catalogs:
+                    #     if catalog_name.startswith(prefix):
+                    #         missing_users.add(username)
             else:
                 for username in self._usernames:
                     prefix = self.da.to_schema_name_prefix(username=username, course_code=self.da.course_config.course_code)
                     for schema_name in self.existing_databases:
                         if schema_name.startswith(prefix):
-                            missing_users.add(username)
+                            break
+                    else:
+                        missing_users.add(username)
+
+                    # for schema_name in self.existing_databases:
+                    #     if schema_name.startswith(prefix):
+                    #         missing_users.add(username)
 
             missing_users = list(missing_users)
             missing_users.sort()
