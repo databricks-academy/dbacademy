@@ -85,14 +85,8 @@ class Translator:
         # This hack just happens to work for japanese and korean
         self.common_language = self.i18n_language.split("-")[0]
 
-    def __reset_published_repo(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None):
-        from dbacademy import common
+    def __reset_published_repo(self):
         from dbacademy.dbbuild.build_utils_class import BuildUtils
-
-        username = common.clean_string(self.username, replacement="_")
-        self.source_branch = source_branch or f"published-v{self.core_version}"
-        self.source_dir = source_dir or f"/Repos/Temp/{username}-{self.build_name}-english-{self.source_branch}"
-        self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
 
         BuildUtils.reset_git_repo(client=self.client,
                                   directory=self.source_dir,
@@ -100,14 +94,8 @@ class Translator:
                                   branch=self.source_branch,
                                   which="published")
 
-    def __reset_target_repo(self, target_dir: str = None, target_repo_url: str = None, target_branch: str = None):
-        from dbacademy import common
+    def __reset_target_repo(self):
         from dbacademy.dbbuild.build_utils_class import BuildUtils
-
-        username = common.clean_string(self.username, replacement="_")
-        self.target_branch = target_branch or "published"
-        self.target_dir = target_dir or f"/Repos/Temp/{username}-{self.build_name}-{self.common_language}"
-        self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
 
         BuildUtils.reset_git_repo(client=self.client,
                                   directory=self.target_dir,
@@ -146,13 +134,39 @@ class Translator:
 
         self.__validated_artifacts = True
 
-    def validate(self):
+    def validate(self,
+                 source_dir: str = None,
+                 source_repo_url: str = None,
+                 source_branch: str = None,
+                 target_dir: str = None,
+                 target_repo_url: str = None,
+                 target_branch: str = None):
+        from dbacademy import common
+
         print("Translation Details:")
         print(f"| Version:          {self.version}")
         print(f"| Core_version:     {self.core_version}")
         print(f"| Common_language:  {self.common_language}")
         print(f"| Resources_folder: {self.resources_folder}")
         print()
+        print(f"| Source Dir:       {self.source_dir}")
+        print(f"| Source Repo URL:  {self.source_repo_url}")
+        print(f"| Source Branch:    {self.source_branch}")
+        print()
+        print(f"| Target Dir:       {self.target_dir}")
+        print(f"| Target Repo URL:  {self.target_repo_url}")
+        print(f"| Target Branch:    {self.target_branch}")
+        print()
+
+        username = common.clean_string(self.username, replacement="_")
+        self.source_branch = source_branch or f"published-v{self.core_version}"
+        self.source_dir = source_dir or f"/Repos/Temp/{username}-{self.build_name}-english-{self.source_branch}"
+        self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
+
+        username = common.clean_string(self.username, replacement="_")
+        self.target_branch = target_branch or "published"
+        self.target_dir = target_dir or f"/Repos/Temp/{username}-{self.build_name}-{self.common_language}"
+        self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
 
         self.__reset_published_repo()
         print()
