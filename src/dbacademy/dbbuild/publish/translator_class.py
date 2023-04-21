@@ -143,6 +143,16 @@ class Translator:
                  target_branch: str = None):
         from dbacademy import common
 
+        username = common.clean_string(self.username, replacement="_")
+        self.source_branch = source_branch or f"published-v{self.core_version}"
+        self.source_dir = source_dir or f"/Repos/Temp/{username}-{self.build_name}-english-{self.source_branch}"
+        self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
+
+        username = common.clean_string(self.username, replacement="_")
+        self.target_branch = target_branch or "published"
+        self.target_dir = target_dir or f"/Repos/Temp/{username}-{self.build_name}-{self.common_language}"
+        self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
+
         print("Translation Details:")
         print(f"| Version:          {self.version}")
         print(f"| Core_version:     {self.core_version}")
@@ -157,16 +167,6 @@ class Translator:
         print(f"| Target Repo URL:  {self.target_repo_url}")
         print(f"| Target Branch:    {self.target_branch}")
         print()
-
-        username = common.clean_string(self.username, replacement="_")
-        self.source_branch = source_branch or f"published-v{self.core_version}"
-        self.source_dir = source_dir or f"/Repos/Temp/{username}-{self.build_name}-english-{self.source_branch}"
-        self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
-
-        username = common.clean_string(self.username, replacement="_")
-        self.target_branch = target_branch or "published"
-        self.target_dir = target_dir or f"/Repos/Temp/{username}-{self.build_name}-{self.common_language}"
-        self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
 
         self.__reset_published_repo()
         print()
