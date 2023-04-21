@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dbhelper.lesson_config_class</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbhelper.html"><font color="#ffffff">dbhelper</font></a>.lesson_config_class</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbhelper%5Clesson_config_class.py">c:\dvlp\dbacademy\src\dbacademy\dbhelper\lesson_config_class.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbhelper.lesson_config_class.html#LessonConfig">LessonConfig</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="LessonConfig">class <strong>LessonConfig</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#LessonConfig">LessonConfig</a>(*,&nbsp;name:&nbsp;Optional[str],&nbsp;create_schema:&nbsp;bool,&nbsp;create_catalog:&nbsp;bool,&nbsp;requires_uc:&nbsp;bool,&nbsp;installing_datasets:&nbsp;bool,&nbsp;enable_streaming_support:&nbsp;bool,&nbsp;enable_ml_support:&nbsp;bool,&nbsp;mocks:&nbsp;Optional[Dict[str,&nbsp;Any]]&nbsp;=&nbsp;None)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="LessonConfig-__init__"><strong>__init__</strong></a>(self, *, name: Optional[str], create_schema: bool, create_catalog: bool, requires_uc: bool, installing_datasets: bool, enable_streaming_support: bool, enable_ml_support: bool, mocks: Optional[Dict[str, Any]] = None)</dt><dd><tt>The&nbsp;<a href="#LessonConfig">LessonConfig</a>&nbsp;encapsulates&nbsp;those&nbsp;parameters&nbsp;that&nbsp;may&nbsp;change&nbsp;from&nbsp;one&nbsp;lesson&nbsp;to&nbsp;another&nbsp;compared&nbsp;to&nbsp;the&nbsp;CourseConfig&nbsp;which<br>
+encapsulates&nbsp;parameters&nbsp;that&nbsp;should&nbsp;never&nbsp;change&nbsp;for&nbsp;the&nbsp;entire&nbsp;duration&nbsp;of&nbsp;a&nbsp;course.<br>
+&nbsp;<br>
+This&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;mutable&nbsp;until&nbsp;DBAcademyHelper.init()&nbsp;is&nbsp;called&nbsp;at&nbsp;which&nbsp;time&nbsp;mutations&nbsp;are&nbsp;prohibited.&nbsp;This&nbsp;behavior&nbsp;aims&nbsp;to<br>
+avoid&nbsp;situations&nbsp;where&nbsp;parameters&nbsp;are&nbsp;changed&nbsp;but&nbsp;not&nbsp;reflected&nbsp;in&nbsp;the&nbsp;DBAcademyHelper&nbsp;instance<br>
+:param&nbsp;name:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;create_schema:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;create_catalog:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;requires_uc:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;installing_datasets:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;enable_streaming_support:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;enable_ml_support:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;mocks:&nbsp;Used&nbsp;for&nbsp;testing,&nbsp;allows&nbsp;for&nbsp;mocking&nbsp;out&nbsp;the&nbsp;parameters&nbsp;__username,&nbsp;__initial_schema&nbsp;and&nbsp;__initial_catalog</tt></dd></dl>
+
+<dl><dt><a name="LessonConfig-assert_valid"><strong>assert_valid</strong></a>(self) -&gt; None</dt></dl>
+
+<dl><dt><a name="LessonConfig-lock_mutations"><strong>lock_mutations</strong></a>(self) -&gt; None</dt><dd><tt>Called&nbsp;by&nbsp;DBAcademy.init()&nbsp;to&nbsp;lock&nbsp;this&nbsp;<a href="builtins.html#object">object</a>&nbsp;from&nbsp;future&nbsp;mutations.<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="LessonConfig-to_clean_lesson_name"><strong>to_clean_lesson_name</strong></a>(name: Optional[str]) -&gt; Optional[str]</dt><dd><tt>Utility&nbsp;function&nbsp;to&nbsp;create&nbsp;a&nbsp;"clean"&nbsp;lesson&nbsp;name.<br>
+&nbsp;<br>
+See&nbsp;also&nbsp;<a href="#LessonConfig">LessonConfig</a>.name<br>
+:param&nbsp;name:&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;lesson<br>
+:return:&nbsp;the&nbsp;"clean"&nbsp;version&nbsp;of&nbsp;the&nbsp;specified&nbsp;lesson's&nbsp;name</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>clean_name</strong></dt>
+<dd><tt>A&nbsp;"clean"&nbsp;version&nbsp;of&nbsp;LessonConfig.name&nbsp;wherein&nbsp;all&nbsp;non-alpha&nbsp;characters&nbsp;and&nbsp;non-digits&nbsp;replaced&nbsp;with&nbsp;an&nbsp;underscore.<br>
+:return:&nbsp;the&nbsp;"clean"&nbsp;version&nbsp;of&nbsp;teh&nbsp;lesson's&nbsp;name</tt></dd>
+</dl>
+<dl><dt><strong>initial_catalog</strong></dt>
+<dd><tt>:return:&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;catalog&nbsp;at&nbsp;the&nbsp;moment&nbsp;LessonConfig&nbsp;was&nbsp;instantiated.</tt></dd>
+</dl>
+<dl><dt><strong>initial_schema</strong></dt>
+<dd><tt>:return:&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;schema&nbsp;at&nbsp;the&nbsp;moment&nbsp;LessonConfig&nbsp;was&nbsp;instantiated.</tt></dd>
+</dl>
+<dl><dt><strong>is_uc_enabled_workspace</strong></dt>
+<dd><tt>Returns&nbsp;True&nbsp;if&nbsp;the&nbsp;current&nbsp;workspace&nbsp;is&nbsp;Unity&nbsp;Catalog&nbsp;(UC)&nbsp;enabled&nbsp;and&nbsp;False&nbsp;if&nbsp;not.&nbsp;Absent&nbsp;a&nbsp;more&nbsp;"stable"&nbsp;flag,&nbsp;the<br>
+implementation&nbsp;actually&nbsp;returns&nbsp;True&nbsp;if&nbsp;the&nbsp;catalog&nbsp;is&nbsp;anything&nbsp;other&nbsp;than&nbsp;"spark_catalog",&nbsp;the&nbsp;name<br>
+default&nbsp;catalog&nbsp;name&nbsp;for&nbsp;non-UC&nbsp;environments.<br>
+:return:&nbsp;True&nbsp;if&nbsp;this&nbsp;is&nbsp;a&nbsp;UC&nbsp;environment</tt></dd>
+</dl>
+<dl><dt><strong>username</strong></dt>
+<dd><tt>:return:&nbsp;the&nbsp;current&nbsp;user's&nbsp;name&nbsp;as&nbsp;determined&nbsp;by&nbsp;invoking&nbsp;"SELECT&nbsp;current_user()"&nbsp;in&nbsp;the&nbsp;consumer's&nbsp;workspace.</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>create_catalog</strong></dt>
+<dd><tt>:return:&nbsp;A&nbsp;flag&nbsp;indicating&nbsp;if&nbsp;DBAcademyHelper&nbsp;should&nbsp;create&nbsp;a&nbsp;user-specific&nbsp;catalog&nbsp;upon&nbsp;invocation&nbsp;of&nbsp;DBAcademyHelper.init()</tt></dd>
+</dl>
+<dl><dt><strong>create_schema</strong></dt>
+<dd><tt>:return:&nbsp;A&nbsp;flag&nbsp;indicating&nbsp;if&nbsp;DBAcademyHelper&nbsp;should&nbsp;create&nbsp;a&nbsp;user-specific&nbsp;schema&nbsp;upon&nbsp;invocation&nbsp;of&nbsp;DBAcademyHelper.init()</tt></dd>
+</dl>
+<dl><dt><strong>enable_ml_support</strong></dt>
+<dd><tt>A&nbsp;flag&nbsp;that&nbsp;indicates&nbsp;if&nbsp;support&nbsp;for&nbsp;managing&nbsp;ML&nbsp;&amp;&nbsp;MLflow&nbsp;artifacts.&nbsp;The&nbsp;primary&nbsp;usage&nbsp;is&nbsp;to<br>
+purge&nbsp;Feature&nbsp;Tables,&nbsp;Experiments&nbsp;(mainly&nbsp;those&nbsp;created&nbsp;under&nbsp;test),&nbsp;ML&nbsp;Models&nbsp;and&nbsp;Serving&nbsp;Endpoints</tt></dd>
+</dl>
+<dl><dt><strong>enable_streaming_support</strong></dt>
+<dd><tt>A&nbsp;flag&nbsp;that&nbsp;indicates&nbsp;if&nbsp;support&nbsp;for&nbsp;structure&nbsp;streaming&nbsp;should&nbsp;be&nbsp;provided.&nbsp;The&nbsp;primary&nbsp;usage&nbsp;is&nbsp;to&nbsp;declare&nbsp;a&nbsp;single<br>
+checkpoint&nbsp;super-directory&nbsp;that&nbsp;all&nbsp;steaming&nbsp;checkpoints&nbsp;can&nbsp;be&nbsp;located&nbsp;in&nbsp;for&nbsp;the&nbsp;sake&nbsp;of&nbsp;consistency.<br>
+:return:&nbsp;True&nbsp;if&nbsp;DBAcademyHelper&nbsp;should&nbsp;add&nbsp;support&nbsp;for&nbsp;streaming&nbsp;lessons.</tt></dd>
+</dl>
+<dl><dt><strong>installing_datasets</strong></dt>
+<dd><tt>Indicates&nbsp;that&nbsp;the&nbsp;DBAcademyHelper&nbsp;object&nbsp;should&nbsp;install&nbsp;datasets&nbsp;upon&nbsp;invoking&nbsp;DBAcademyHelper.init()</tt></dd>
+</dl>
+<dl><dt><strong>name</strong></dt>
+<dd><tt>In&nbsp;most&nbsp;cases&nbsp;the&nbsp;name&nbsp;of&nbsp;a&nbsp;lesson&nbsp;is&nbsp;set&nbsp;to&nbsp;None.&nbsp;In&nbsp;instances&nbsp;where&nbsp;the&nbsp;application&nbsp;state&nbsp;(e.g.&nbsp;databases,&nbsp;working&nbsp;directories,&nbsp;etc.)<br>
+need&nbsp;to&nbsp;be&nbsp;kept&nbsp;from&nbsp;one&nbsp;notebook&nbsp;to&nbsp;the&nbsp;next,&nbsp;specifying&nbsp;the&nbsp;lesson's&nbsp;name&nbsp;ensures&nbsp;that&nbsp;assets&nbsp;like&nbsp;the&nbsp;database&nbsp;name&nbsp;remains<br>
+the&nbsp;same&nbsp;between&nbsp;multiple&nbsp;notebooks.<br>
+&nbsp;<br>
+When&nbsp;running&nbsp;under&nbsp;test,&nbsp;see&nbsp;DBAcademyHelper.is_smoke_test,&nbsp;a&nbsp;random&nbsp;lesson&nbsp;name&nbsp;will&nbsp;be&nbsp;applied&nbsp;to&nbsp;each&nbsp;lesson,&nbsp;unless&nbsp;one&nbsp;is&nbsp;specifically<br>
+specified,&nbsp;so&nbsp;that&nbsp;testing&nbsp;can&nbsp;run&nbsp;asynchronously&nbsp;without&nbsp;resource&nbsp;contentions&nbsp;between,&nbsp;for&nbsp;example,&nbsp;two&nbsp;lessons&nbsp;attempting&nbsp;to&nbsp;modify<br>
+the&nbsp;same&nbsp;database.<br>
+&nbsp;<br>
+See&nbsp;also&nbsp;DBAcademyHelper.schema_name&nbsp;&amp;&nbsp;DBAcademyHelper.catalog_name<br>
+&nbsp;<br>
+:return:&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;lesson.</tt></dd>
+</dl>
+<dl><dt><strong>requires_uc</strong></dt>
+<dd><tt>A&nbsp;flag&nbsp;that&nbsp;indicates&nbsp;if&nbsp;the&nbsp;lesson&nbsp;requires&nbsp;support&nbsp;for&nbsp;Unity&nbsp;Catalog.&nbsp;When&nbsp;set&nbsp;to&nbsp;True&nbsp;and&nbsp;when&nbsp;LessonConfig.is_uc_enabled_workspace&nbsp;is&nbsp;False,<br>
+an&nbsp;exception&nbsp;with&nbsp;be&nbsp;throwing&nbsp;with&nbsp;additional&nbsp;instructions&nbsp;on&nbsp;the&nbsp;nature&nbsp;of&nbsp;the&nbsp;error&nbsp;and&nbsp;ultimately&nbsp;directions&nbsp;to&nbsp;remedy&nbsp;the&nbsp;problem.<br>
+:return:&nbsp;True&nbsp;if&nbsp;the&nbsp;lesson&nbsp;requires&nbsp;Unity&nbsp;Catalog</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>Any</strong> = typing.Any<br>
+<strong>Dict</strong> = typing.Dict<br>
+<strong>Optional</strong> = typing.Optional</td></tr></table>
+</body></html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dbhelper.dbacademy_helper_class</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbhelper.html"><font color="#ffffff">dbhelper</font></a>.dbacademy_helper_class</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbhelper%5Cdbacademy_helper_class.py">c:\dvlp\dbacademy\src\dbacademy\dbhelper\dbacademy_helper_class.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbhelper.dbacademy_helper_class.html#DBAcademyHelper">DBAcademyHelper</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DBAcademyHelper">class <strong>DBAcademyHelper</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#DBAcademyHelper">DBAcademyHelper</a>(course_config:&nbsp;dbacademy.dbhelper.course_config_class.CourseConfig,&nbsp;lesson_config:&nbsp;dbacademy.dbhelper.lesson_config_class.LessonConfig,&nbsp;debug:&nbsp;bool&nbsp;=&nbsp;False)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="DBAcademyHelper-__init__"><strong>__init__</strong></a>(self, course_config: dbacademy.dbhelper.course_config_class.CourseConfig, lesson_config: dbacademy.dbhelper.lesson_config_class.LessonConfig, debug: bool = False)</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>&nbsp;from&nbsp;the&nbsp;specified&nbsp;course&nbsp;and&nbsp;lesson&nbsp;config<br>
+:param&nbsp;course_config:&nbsp;Those&nbsp;configuration&nbsp;parameters&nbsp;that&nbsp;remain&nbsp;consistent&nbsp;from&nbsp;the&nbsp;duration&nbsp;of&nbsp;a&nbsp;course<br>
+:param&nbsp;lesson_config:&nbsp;Those&nbsp;configuration&nbsp;parameters&nbsp;that&nbsp;may&nbsp;change&nbsp;from&nbsp;lesson&nbsp;to&nbsp;lesson<br>
+:param&nbsp;debug:&nbsp;Enables&nbsp;debug&nbsp;print&nbsp;messages.<br>
+See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.dprint</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-cleanup"><strong>cleanup</strong></a>(self, validate_datasets: bool = True) -&gt; None</dt><dd><tt>Cleans&nbsp;up&nbsp;the&nbsp;user&nbsp;environment&nbsp;by&nbsp;stopping&nbsp;any&nbsp;active&nbsp;streams,<br>
+dropping&nbsp;the&nbsp;database&nbsp;created&nbsp;by&nbsp;the&nbsp;call&nbsp;to&nbsp;<a href="#DBAcademyHelper-init">init</a>(),<br>
+cleaning&nbsp;out&nbsp;the&nbsp;user-specific&nbsp;catalog,&nbsp;and&nbsp;removing&nbsp;the&nbsp;user's<br>
+lesson-specific&nbsp;working&nbsp;directory&nbsp;and&nbsp;any&nbsp;assets&nbsp;created&nbsp;in&nbsp;that&nbsp;directory.</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-clock_start"><strong>clock_start</strong></a>(self) -&gt; int</dt></dl>
+
+<dl><dt><a name="DBAcademyHelper-clock_stopped"><strong>clock_stopped</strong></a>(self, start: int, end: str = '') -&gt; str</dt></dl>
+
+<dl><dt><a name="DBAcademyHelper-conclude_setup"><strong>conclude_setup</strong></a>(self) -&gt; None</dt><dd><tt>Concludes&nbsp;the&nbsp;setup&nbsp;of&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>&nbsp;by&nbsp;advertising&nbsp;to&nbsp;the&nbsp;student&nbsp;the&nbsp;new&nbsp;state&nbsp;of&nbsp;the&nbsp;environment&nbsp;such&nbsp;as&nbsp;predefined&nbsp;path&nbsp;variables,&nbsp;databases&nbsp;and&nbsp;tables&nbsp;created&nbsp;on&nbsp;behalf&nbsp;of&nbsp;the&nbsp;student&nbsp;and&nbsp;the&nbsp;total&nbsp;setup&nbsp;time.&nbsp;Additionally,&nbsp;all&nbsp;path&nbsp;attributes&nbsp;are&nbsp;pushed&nbsp;to&nbsp;the&nbsp;Spark&nbsp;context&nbsp;for&nbsp;reference&nbsp;in&nbsp;SQL&nbsp;statements.</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-dprint"><strong>dprint</strong></a>(self, message: str) -&gt; None</dt><dd><tt>Prints&nbsp;the&nbsp;specified&nbsp;message&nbsp;if&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>&nbsp;was&nbsp;initialized&nbsp;with&nbsp;debug=True<br>
+:param&nbsp;message:&nbsp;The&nbsp;message&nbsp;to&nbsp;be&nbsp;printed<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-init"><strong>init</strong></a>(self) -&gt; None</dt><dd><tt>Initializes&nbsp;the&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>&nbsp;<a href="builtins.html#object">object</a>&nbsp;allowing&nbsp;for&nbsp;customization&nbsp;of&nbsp;the&nbsp;initialization&nbsp;processes&nbsp;such&nbsp;as&nbsp;calling&nbsp;DBAcademy.<a href="#DBAcademyHelper-reset_lesson">reset_lesson</a>()<br>
+after&nbsp;instantiation&nbsp;but&nbsp;before&nbsp;initialization.<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-init_mlflow_as_job"><strong>init_mlflow_as_job</strong></a>(self) -&gt; None</dt><dd><tt>Used&nbsp;to&nbsp;initialize&nbsp;MLflow&nbsp;with&nbsp;the&nbsp;job&nbsp;ID&nbsp;when&nbsp;ran&nbsp;under&nbsp;test.</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-install_datasets"><strong>install_datasets</strong></a>(self, reinstall_datasets: bool = False) -&gt; None</dt></dl>
+
+<dl><dt><a name="DBAcademyHelper-print_copyrights"><strong>print_copyrights</strong></a>(self, mappings: Optional[Dict[str, str]] = None) -&gt; None</dt><dd><tt>Discovers&nbsp;the&nbsp;datasets&nbsp;used&nbsp;by&nbsp;this&nbsp;course&nbsp;and&nbsp;then&nbsp;prints&nbsp;their&nbsp;corresponding&nbsp;README&nbsp;files&nbsp;which&nbsp;should&nbsp;include&nbsp;the&nbsp;corresponding&nbsp;copyrights.<br>
+:param&nbsp;mappings:&nbsp;Allows&nbsp;for&nbsp;redefinition&nbsp;of&nbsp;the&nbsp;location&nbsp;of&nbsp;the&nbsp;README.md&nbsp;file<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-reset_learning_environment"><strong>reset_learning_environment</strong></a>(self) -&gt; None</dt><dd><tt>Used&nbsp;almost&nbsp;exclusively&nbsp;by&nbsp;the&nbsp;Reset&nbsp;notebook,&nbsp;invocation&nbsp;drops&nbsp;all&nbsp;databases,&nbsp;installed&nbsp;datasets&nbsp;and&nbsp;remove&nbsp;all&nbsp;working&nbsp;directories.<br>
+Usage&nbsp;of&nbsp;this&nbsp;method&nbsp;is&nbsp;generally&nbsp;reserved&nbsp;for&nbsp;a&nbsp;"full"&nbsp;reset&nbsp;of&nbsp;a&nbsp;course&nbsp;which&nbsp;is&nbsp;common&nbsp;before&nbsp;invoke&nbsp;smoke&nbsp;tests.<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-reset_lesson"><strong>reset_lesson</strong></a>(self) -&gt; None</dt><dd><tt>Resets&nbsp;the&nbsp;lesson&nbsp;by&nbsp;calling&nbsp;DBAcademy.clean(validate_datasets=False)<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-run_high_availability_job"><strong>run_high_availability_job</strong></a>(self, job_name: str, notebook_path: str) -&gt; None</dt><dd><tt>Creates&nbsp;a&nbsp;job&nbsp;using&nbsp;the&nbsp;specified&nbsp;notebook&nbsp;path&nbsp;and&nbsp;job&nbsp;name&nbsp;and&nbsp;then&nbsp;executes&nbsp;it&nbsp;in&nbsp;a&nbsp;"secure"&nbsp;context&nbsp;that&nbsp;allows<br>
+for&nbsp;configuring&nbsp;user&nbsp;specific&nbsp;permissions.&nbsp;This&nbsp;is&nbsp;a&nbsp;hack&nbsp;to&nbsp;our&nbsp;inability&nbsp;to&nbsp;programmatically&nbsp;invoke&nbsp;SQL&nbsp;queries,&nbsp;namely&nbsp;GRANT&nbsp;statements<br>
+against&nbsp;a&nbsp;SQL&nbsp;Warehouse&nbsp;and&nbsp;wherein&nbsp;those&nbsp;same&nbsp;queries&nbsp;executed&nbsp;in&nbsp;a&nbsp;notebook&nbsp;has&nbsp;no&nbsp;affect<br>
+:param&nbsp;job_name:&nbsp;The&nbsp;name&nbsp;to&nbsp;be&nbsp;given&nbsp;to&nbsp;the&nbsp;job<br>
+:param&nbsp;notebook_path:&nbsp;The&nbsp;path&nbsp;to&nbsp;the&nbsp;notebook<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-unique_name"><strong>unique_name</strong></a>(self, sep: str) -&gt; str</dt><dd><tt>See&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.to_unique_name<br>
+:param&nbsp;sep:&nbsp;The&nbsp;seperator&nbsp;to&nbsp;use&nbsp;between&nbsp;words<br>
+:return:&nbsp;a&nbsp;unique&nbsp;name&nbsp;consisting&nbsp;of&nbsp;the&nbsp;consumer's&nbsp;username,&nbsp;and&nbsp;the&nbsp;course&nbsp;code.</tt></dd></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="DBAcademyHelper-block_until_stream_is_ready"><strong>block_until_stream_is_ready</strong></a>(query: Union[str, pyspark.sql.streaming.StreamingQuery], min_batches: int = 2, delay_seconds: int = 5) -&gt; None</dt><dd><tt>A&nbsp;utility&nbsp;method&nbsp;used&nbsp;in&nbsp;streaming&nbsp;notebooks&nbsp;to&nbsp;block&nbsp;until&nbsp;the&nbsp;stream&nbsp;has&nbsp;processed&nbsp;n&nbsp;batches.&nbsp;This&nbsp;method&nbsp;serves&nbsp;one&nbsp;main&nbsp;purpose&nbsp;in&nbsp;two&nbsp;different&nbsp;use&nbsp;cases.<br>
+&nbsp;<br>
+The&nbsp;first&nbsp;use&nbsp;case&nbsp;is&nbsp;in&nbsp;jobs&nbsp;where&nbsp;the&nbsp;stream&nbsp;is&nbsp;started&nbsp;in&nbsp;one&nbsp;cell&nbsp;but&nbsp;execution&nbsp;of&nbsp;subsequent&nbsp;cells&nbsp;start&nbsp;prematurely.<br>
+&nbsp;<br>
+The&nbsp;purpose&nbsp;is&nbsp;to&nbsp;block&nbsp;the&nbsp;current&nbsp;command&nbsp;until&nbsp;the&nbsp;state&nbsp;of&nbsp;the&nbsp;stream&nbsp;is&nbsp;ready&nbsp;and&nbsp;thus&nbsp;allowing&nbsp;the&nbsp;next&nbsp;command&nbsp;to&nbsp;execute&nbsp;against&nbsp;the&nbsp;properly&nbsp;initialized&nbsp;stream.<br>
+&nbsp;<br>
+The&nbsp;second&nbsp;use&nbsp;case&nbsp;is&nbsp;to&nbsp;slow&nbsp;down&nbsp;students&nbsp;who&nbsp;likewise&nbsp;attempt&nbsp;to&nbsp;execute&nbsp;subsequent&nbsp;cells&nbsp;before&nbsp;the&nbsp;stream&nbsp;is&nbsp;in&nbsp;a&nbsp;valid&nbsp;state&nbsp;either&nbsp;by&nbsp;invoking&nbsp;subsequent&nbsp;cells&nbsp;directly&nbsp;or&nbsp;by&nbsp;execute&nbsp;the&nbsp;Run-All&nbsp;Command.<br>
+:param&nbsp;query:<br>
+:param&nbsp;min_batches:<br>
+:param&nbsp;delay_seconds:<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-get_dbacademy_datasets_path"><strong>get_dbacademy_datasets_path</strong></a>() -&gt; str</dt><dd><tt>This&nbsp;method&nbsp;encapsulates&nbsp;the&nbsp;value&nbsp;resolution&nbsp;for&nbsp;the&nbsp;DBAcademy&nbsp;datasets.&nbsp;By&nbsp;convention,&nbsp;this&nbsp;should&nbsp;always&nbsp;be&nbsp;"dbfs:/mnt/dbacademy-datasets"<br>
+however,&nbsp;to&nbsp;support&nbsp;those&nbsp;environments&nbsp;that&nbsp;require&nbsp;that&nbsp;the&nbsp;datasets&nbsp;be&nbsp;hosted&nbsp;at&nbsp;another&nbsp;location,&nbsp;this&nbsp;default&nbsp;value&nbsp;can&nbsp;be&nbsp;overridden<br>
+by&nbsp;specifying&nbsp;the&nbsp;spark&nbsp;configuration&nbsp;parameter&nbsp;identified&nbsp;by&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.SPARK_CONF_PATHS_DATASETS<br>
+:return:&nbsp;the&nbsp;location&nbsp;of&nbsp;the&nbsp;DBAcademy&nbsp;datasets.</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-get_dbacademy_datasets_staging"><strong>get_dbacademy_datasets_staging</strong></a>() -&gt; str</dt><dd><tt>This&nbsp;location&nbsp;is&nbsp;inspected&nbsp;upon&nbsp;initialization&nbsp;to&nbsp;determine&nbsp;where&nbsp;datasets&nbsp;should&nbsp;be&nbsp;loaded&nbsp;from.&nbsp;If&nbsp;a&nbsp;corresponding&nbsp;dataset&nbsp;is&nbsp;found&nbsp;in&nbsp;this&nbsp;location,<br>
+under&nbsp;the&nbsp;CourseConfig.data_source_name&nbsp;and&nbsp;CourseConfig.data_source_version&nbsp;folders,&nbsp;then&nbsp;data&nbsp;will&nbsp;be&nbsp;installed&nbsp;from&nbsp;this&nbsp;staging&nbsp;repo&nbsp;enabling<br>
+authoring&nbsp;of&nbsp;both&nbsp;courseware&nbsp;content&nbsp;and&nbsp;courseware&nbsp;datasets&nbsp;without&nbsp;the&nbsp;overhead&nbsp;of&nbsp;premature&nbsp;publishing&nbsp;of&nbsp;a&nbsp;dataset&nbsp;for&nbsp;a&nbsp;course&nbsp;under&nbsp;active&nbsp;development.<br>
+:return:&nbsp;The&nbsp;location&nbsp;of&nbsp;the&nbsp;staging&nbsp;datasets.</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-get_dbacademy_users_path"><strong>get_dbacademy_users_path</strong></a>() -&gt; str</dt><dd><tt>This&nbsp;method&nbsp;encapsulates&nbsp;the&nbsp;value&nbsp;resolution&nbsp;for&nbsp;the&nbsp;DBAcademy&nbsp;user's&nbsp;directory.&nbsp;By&nbsp;convention,&nbsp;this&nbsp;should&nbsp;always&nbsp;be&nbsp;"dbfs:/mnt/dbacademy-users"<br>
+however,&nbsp;to&nbsp;support&nbsp;those&nbsp;environments&nbsp;that&nbsp;require&nbsp;that&nbsp;the&nbsp;datasets&nbsp;be&nbsp;hosted&nbsp;at&nbsp;another&nbsp;location,&nbsp;this&nbsp;default&nbsp;value&nbsp;can&nbsp;be&nbsp;overridden<br>
+by&nbsp;specifying&nbsp;the&nbsp;spark&nbsp;configuration&nbsp;parameter&nbsp;identified&nbsp;by&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.SPARK_CONF_PATHS_USERS<br>
+:return:&nbsp;the&nbsp;location&nbsp;of&nbsp;the&nbsp;DBAcademy&nbsp;user's&nbsp;directory.</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-is_smoke_test"><strong>is_smoke_test</strong></a>() -&gt; bool</dt><dd><tt>Helper&nbsp;method&nbsp;to&nbsp;indentify&nbsp;when&nbsp;we&nbsp;are&nbsp;running&nbsp;as&nbsp;a&nbsp;smoke&nbsp;test<br>
+:return:&nbsp;Returns&nbsp;true&nbsp;if&nbsp;the&nbsp;notebook&nbsp;is&nbsp;running&nbsp;as&nbsp;a&nbsp;smoke&nbsp;test.</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-monkey_patch"><strong>monkey_patch</strong></a>(function_ref, delete=True)</dt><dd><tt>This&nbsp;function&nbsp;"monkey&nbsp;patches"&nbsp;the&nbsp;specified&nbsp;function&nbsp;to&nbsp;the&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>&nbsp;class.&nbsp;While&nbsp;not&nbsp;100%&nbsp;necessary,<br>
+this&nbsp;pattern&nbsp;does&nbsp;allow&nbsp;each&nbsp;function&nbsp;to&nbsp;be&nbsp;defined&nbsp;in&nbsp;its&nbsp;own&nbsp;cell&nbsp;which&nbsp;makes&nbsp;authoring&nbsp;notebooks&nbsp;a&nbsp;little&nbsp;easier.</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-to_catalog_name"><strong>to_catalog_name</strong></a>(*, username: str, lesson_name: Optional[str]) -&gt; str</dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;unique&nbsp;catalog&nbsp;name.&nbsp;The&nbsp;pattern&nbsp;consist&nbsp;of&nbsp;the&nbsp;local&nbsp;part&nbsp;of&nbsp;the&nbsp;email&nbsp;address,<br>
+a&nbsp;4-character&nbsp;hash&nbsp;and&nbsp;"da"&nbsp;for&nbsp;DBAcademy&nbsp;and&nbsp;the&nbsp;lesson_name.&nbsp;The&nbsp;value&nbsp;is&nbsp;then&nbsp;converted&nbsp;to&nbsp;lower&nbsp;case&nbsp;after&nbsp;which<br>
+all&nbsp;non-alpha&nbsp;and&nbsp;non-digits&nbsp;are&nbsp;replaced&nbsp;with&nbsp;underscores.<br>
+See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.catalog_name<br>
+:param&nbsp;username:&nbsp;The&nbsp;full&nbsp;email&nbsp;address&nbsp;of&nbsp;a&nbsp;user.&nbsp;See&nbsp;also&nbsp;`LessonConfig.username`<br>
+:param&nbsp;lesson_name:&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;lesson.&nbsp;See&nbsp;also&nbsp;LessonConfig.name<br>
+:return:&nbsp;The&nbsp;unique&nbsp;name&nbsp;composited&nbsp;from&nbsp;the&nbsp;specified&nbsp;username&nbsp;and&nbsp;lesson</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-to_catalog_name_prefix"><strong>to_catalog_name_prefix</strong></a>(*, username: str) -&gt; str</dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;catalog&nbsp;name&nbsp;prefix.&nbsp;The&nbsp;pattern&nbsp;consist&nbsp;of&nbsp;the&nbsp;local&nbsp;part&nbsp;of&nbsp;the&nbsp;email&nbsp;address,<br>
+a&nbsp;4-character&nbsp;hash&nbsp;and&nbsp;"da"&nbsp;for&nbsp;DBAcademy.&nbsp;The&nbsp;value&nbsp;is&nbsp;then&nbsp;converted&nbsp;to&nbsp;lower&nbsp;case&nbsp;after&nbsp;which&nbsp;all&nbsp;non-alpha&nbsp;and<br>
+non-digits&nbsp;are&nbsp;replaced&nbsp;with&nbsp;underscores.<br>
+See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.catalog_name_prefix<br>
+:param&nbsp;username:&nbsp;The&nbsp;full&nbsp;email&nbsp;address&nbsp;of&nbsp;a&nbsp;user.&nbsp;See&nbsp;also&nbsp;`LessonConfig.username`<br>
+:return:&nbsp;The&nbsp;catalog&nbsp;name&nbsp;composited&nbsp;from&nbsp;the&nbsp;specified&nbsp;username</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-to_schema_name"><strong>to_schema_name</strong></a>(*, username: str, course_code: str, lesson_name: Optional[str]) -&gt; str</dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;unique&nbsp;schema&nbsp;name.&nbsp;The&nbsp;pattern&nbsp;consist&nbsp;of&nbsp;the&nbsp;local&nbsp;part&nbsp;of&nbsp;the&nbsp;email&nbsp;address,<br>
+a&nbsp;4-character&nbsp;hash&nbsp;and&nbsp;"da"&nbsp;for&nbsp;DBAcademy,&nbsp;course's&nbsp;code&nbsp;and&nbsp;the&nbsp;lesson_name.&nbsp;The&nbsp;value&nbsp;is&nbsp;then&nbsp;converted&nbsp;to&nbsp;lower&nbsp;case&nbsp;after&nbsp;which<br>
+all&nbsp;non-alpha&nbsp;and&nbsp;non-digits&nbsp;are&nbsp;replaced&nbsp;with&nbsp;underscores.<br>
+See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.catalog_name<br>
+:param&nbsp;username:&nbsp;The&nbsp;full&nbsp;email&nbsp;address&nbsp;of&nbsp;a&nbsp;user.&nbsp;See&nbsp;also&nbsp;`LessonConfig.username`<br>
+:param&nbsp;course_code:&nbsp;The&nbsp;course's&nbsp;code.&nbsp;See&nbsp;also&nbsp;CourseConfig.course_code<br>
+:param&nbsp;lesson_name:&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;lesson.&nbsp;See&nbsp;also&nbsp;LessonConfig.name<br>
+:return:&nbsp;The&nbsp;unique&nbsp;name&nbsp;composited&nbsp;from&nbsp;the&nbsp;specified&nbsp;username&nbsp;and&nbsp;lesson</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-to_schema_name_prefix"><strong>to_schema_name_prefix</strong></a>(*, username: str, course_code: str) -&gt; str</dt><dd><tt>Shorthand&nbsp;for&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.<a href="#DBAcademyHelper-to_schema_name">to_schema_name</a>(username=username,&nbsp;course_code=course_code,&nbsp;lesson_name=None)<br>
+:param&nbsp;username:&nbsp;The&nbsp;full&nbsp;email&nbsp;address&nbsp;of&nbsp;a&nbsp;user.&nbsp;See&nbsp;also&nbsp;`LessonConfig.username`<br>
+:param&nbsp;course_code:&nbsp;The&nbsp;course's&nbsp;code.&nbsp;See&nbsp;also&nbsp;CourseConfig.course_code<br>
+:return:&nbsp;The&nbsp;schema&nbsp;name&nbsp;composited&nbsp;from&nbsp;the&nbsp;specified&nbsp;username&nbsp;and&nbsp;course_code</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-to_unique_name"><strong>to_unique_name</strong></a>(*, username: str, course_code: str, lesson_name: Optional[str], sep: str) -&gt; str</dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;unique&nbsp;name&nbsp;to&nbsp;be&nbsp;used&nbsp;in&nbsp;creating&nbsp;jobs,&nbsp;warehouses,&nbsp;DLT&nbsp;pipelines,&nbsp;experiments&nbsp;and&nbsp;other&nbsp;user&nbsp;&amp;&nbsp;course&nbsp;specific&nbsp;artifacts.<br>
+The&nbsp;pattern&nbsp;consist&nbsp;of&nbsp;the&nbsp;local&nbsp;part&nbsp;of&nbsp;the&nbsp;email&nbsp;address,&nbsp;a&nbsp;4-character&nbsp;hash,&nbsp;"da"&nbsp;for&nbsp;DBAcademy&nbsp;and&nbsp;the&nbsp;course's&nbsp;code.&nbsp;The&nbsp;value&nbsp;is&nbsp;then&nbsp;converted&nbsp;to&nbsp;lower&nbsp;case<br>
+after&nbsp;which&nbsp;all&nbsp;non-alpha&nbsp;and&nbsp;non-digits&nbsp;are&nbsp;replaced&nbsp;with&nbsp;hyphens.<br>
+See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.unique_name<br>
+:param&nbsp;username:&nbsp;The&nbsp;full&nbsp;email&nbsp;address&nbsp;of&nbsp;a&nbsp;user.&nbsp;See&nbsp;also&nbsp;`LessonConfig.username`<br>
+:param&nbsp;course_code:&nbsp;The&nbsp;course's&nbsp;code.&nbsp;See&nbsp;also&nbsp;`CourseConfig.course_code`<br>
+:param&nbsp;lesson_name:&nbsp;The&nbsp;lesson's&nbsp;name&nbsp;(usually&nbsp;None).&nbsp;See&nbsp;also&nbsp;`LessonConfig.name`<br>
+:param&nbsp;sep:&nbsp;The&nbsp;seperator&nbsp;to&nbsp;use&nbsp;between&nbsp;words,&nbsp;defaults&nbsp;to&nbsp;a&nbsp;hyphen<br>
+:return:&nbsp;The&nbsp;unique&nbsp;name&nbsp;composited&nbsp;from&nbsp;the&nbsp;specified&nbsp;username&nbsp;and&nbsp;course_code</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>catalog_name</strong></dt>
+<dd><tt>Unlike&nbsp;DBAcademy.schema_name,&nbsp;this&nbsp;value&nbsp;is&nbsp;not&nbsp;course&nbsp;specific&nbsp;providing&nbsp;for&nbsp;one&nbsp;catalog&nbsp;per&nbsp;user&nbsp;for&nbsp;all&nbsp;courses.<br>
+See&nbsp;also&nbsp;DBAcademyHelper.to_catalog_name<br>
+:return:&nbsp;the&nbsp;prescribed&nbsp;name&nbsp;of&nbsp;the&nbsp;catalog&nbsp;that&nbsp;the&nbsp;consumer&nbsp;is&nbsp;expected&nbsp;to&nbsp;use.</tt></dd>
+</dl>
+<dl><dt><strong>catalog_name_prefix</strong></dt>
+<dd><tt>See&nbsp;also&nbsp;DBAcademyHelper.to_catalog_name_prefix<br>
+:return:&nbsp;the&nbsp;prefix&nbsp;for&nbsp;all&nbsp;catalog&nbsp;names&nbsp;that&nbsp;may&nbsp;be&nbsp;created&nbsp;for&nbsp;this&nbsp;consumer&nbsp;during&nbsp;the&nbsp;usage&nbsp;of&nbsp;a&nbsp;course.</tt></dd>
+</dl>
+<dl><dt><strong>course_config</strong></dt>
+<dd><tt>:return:&nbsp;the&nbsp;course's&nbsp;general&nbsp;configuration</tt></dd>
+</dl>
+<dl><dt><strong>current_catalog</strong></dt>
+<dd><tt>:return:&nbsp;spark.sql("SELECT&nbsp;current_catalog()").first()[0]</tt></dd>
+</dl>
+<dl><dt><strong>current_dbr</strong></dt>
+<dd><tt>This&nbsp;value&nbsp;is&nbsp;obtained&nbsp;from&nbsp;a&nbsp;number&nbsp;of&nbsp;different&nbsp;locations,&nbsp;falling&nbsp;back&nbsp;to&nbsp;more&nbsp;expensive&nbsp;REST&nbsp;calls&nbsp;if&nbsp;preferred&nbsp;methods&nbsp;fails.&nbsp;This&nbsp;is&nbsp;due<br>
+to&nbsp;a&nbsp;long-old&nbsp;bug&nbsp;in&nbsp;which&nbsp;the&nbsp;spark&nbsp;version&nbsp;(DBR)&nbsp;expressed&nbsp;in&nbsp;the&nbsp;tags'&nbsp;collection&nbsp;is&nbsp;not&nbsp;always&nbsp;available&nbsp;at&nbsp;the&nbsp;time&nbsp;of&nbsp;execution&nbsp;of&nbsp;a&nbsp;course<br>
+making&nbsp;use&nbsp;of&nbsp;this&nbsp;value&nbsp;flaky.<br>
+&nbsp;<br>
+Primary&nbsp;location:&nbsp;&nbsp;dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_CLUSTER_TAG_SPARK_VERSION,&nbsp;None)<br>
+Secondary&nbsp;location:&nbsp;dbgems.get_tag("sparkVersion",&nbsp;None)<br>
+Trinary&nbsp;location:&nbsp;DBAcademyHelper.client.clusters.get_current_spark_version()<br>
+:return:&nbsp;the&nbsp;current&nbsp;DBR&nbsp;for&nbsp;the&nbsp;consumer's&nbsp;cluster.</tt></dd>
+</dl>
+<dl><dt><strong>current_schema</strong></dt>
+<dd><tt>:return:&nbsp;spark.sql("SELECT&nbsp;current_database()").first()[0]</tt></dd>
+</dl>
+<dl><dt><strong>data_source_uri</strong></dt>
+<dd><tt>The&nbsp;location&nbsp;of&nbsp;the&nbsp;datasets&nbsp;for&nbsp;this&nbsp;course.&nbsp;This&nbsp;is&nbsp;the&nbsp;path&nbsp;from&nbsp;which&nbsp;all&nbsp;datasets&nbsp;will&nbsp;be&nbsp;installed<br>
+from&nbsp;to&nbsp;bring&nbsp;data&nbsp;into&nbsp;the&nbsp;workspace&nbsp;and&nbsp;avoid&nbsp;cloud-cloud&nbsp;file&nbsp;reads&nbsp;through&nbsp;the&nbsp;entire&nbsp;course.<br>
+:return:</tt></dd>
+</dl>
+<dl><dt><strong>lesson_config</strong></dt>
+<dd><tt>:return:&nbsp;the&nbsp;lesson&nbsp;specific&nbsp;configuration</tt></dd>
+</dl>
+<dl><dt><strong>schema_name</strong></dt>
+<dd><tt>See&nbsp;also&nbsp;DBAcademyHelper.to_schema_name<br>
+:return:&nbsp;the&nbsp;prescribed&nbsp;name&nbsp;of&nbsp;the&nbsp;schema&nbsp;that&nbsp;the&nbsp;consumer&nbsp;is&nbsp;expected&nbsp;to&nbsp;use&nbsp;or&nbsp;DBAcademyHelper.SCHEMA_DEFAULT&nbsp;if&nbsp;LessonConfig.create_catalog&nbsp;=&nbsp;True</tt></dd>
+</dl>
+<dl><dt><strong>schema_name_prefix</strong></dt>
+<dd><tt>See&nbsp;also&nbsp;DBAcademyHelper.to_schema_name_prefix<br>
+:return:&nbsp;the&nbsp;prefix&nbsp;for&nbsp;all&nbsp;schema&nbsp;names&nbsp;that&nbsp;may&nbsp;be&nbsp;created&nbsp;for&nbsp;this&nbsp;consumer&nbsp;during&nbsp;the&nbsp;usage&nbsp;of&nbsp;a&nbsp;course&nbsp;or&nbsp;DBAcademyHelper.SCHEMA_DEFAULT&nbsp;if&nbsp;LessonConfig.create_catalog&nbsp;=&nbsp;True</tt></dd>
+</dl>
+<dl><dt><strong>staging_source_uri</strong></dt>
+<dd><tt>The&nbsp;location&nbsp;of&nbsp;the&nbsp;staging&nbsp;dataset&nbsp;for&nbsp;this&nbsp;course.&nbsp;When&nbsp;data&nbsp;is&nbsp;found&nbsp;at&nbsp;this&nbsp;location,&nbsp;this&nbsp;data&nbsp;will&nbsp;be<br>
+loaded&nbsp;and&nbsp;validated&nbsp;against&nbsp;as&nbsp;compared&nbsp;to&nbsp;the&nbsp;datasets&nbsp;in&nbsp;the&nbsp;more&nbsp;repository&nbsp;that&nbsp;is&nbsp;typically&nbsp;installed.<br>
+:return:</tt></dd>
+</dl>
+<dl><dt><strong>working_dir_root</strong></dt>
+<dd><tt>This&nbsp;is&nbsp;the&nbsp;common&nbsp;super-directory&nbsp;for&nbsp;each&nbsp;lesson,&nbsp;removal&nbsp;of&nbsp;which&nbsp;is&nbsp;designed&nbsp;to&nbsp;ensure<br>
+that&nbsp;all&nbsp;assets&nbsp;created&nbsp;by&nbsp;students&nbsp;is&nbsp;removed.&nbsp;As&nbsp;such,&nbsp;it&nbsp;is&nbsp;not&nbsp;attached&nbsp;to&nbsp;the&nbsp;path<br>
+object&nbsp;to&nbsp;hide&nbsp;it&nbsp;from&nbsp;students.&nbsp;Used&nbsp;almost&nbsp;exclusively&nbsp;in&nbsp;the&nbsp;Rest&nbsp;notebook.<br>
+:return:&nbsp;the&nbsp;location&nbsp;of&nbsp;the&nbsp;working&nbsp;directory&nbsp;root</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>CATALOG_SPARK_DEFAULT</strong> = 'spark_catalog'</dl>
+
+<dl><dt><strong>CATALOG_UC_DEFAULT</strong> = 'hive_metastore'</dl>
+
+<dl><dt><strong>CourseConfig</strong> = &lt;class 'dbacademy.dbhelper.course_config_class.CourseConfig'&gt;</dl>
+
+<dl><dt><strong>LessonConfig</strong> = &lt;class 'dbacademy.dbhelper.lesson_config_class.LessonConfig'&gt;</dl>
+
+<dl><dt><strong>SCHEMA_DEFAULT</strong> = 'default'</dl>
+
+<dl><dt><strong>SCHEMA_INFORMATION</strong> = 'information_schema'</dl>
+
+<dl><dt><strong>SPARK_CONF_CLUSTER_TAG_SPARK_VERSION</strong> = 'spark.databricks.clusterUsageTags.sparkVersion'</dl>
+
+<dl><dt><strong>SPARK_CONF_DATA_SOURCE_URI</strong> = 'dbacademy.data-source-uri'</dl>
+
+<dl><dt><strong>SPARK_CONF_PATHS_DATASETS</strong> = 'dbacademy.paths.datasets'</dl>
+
+<dl><dt><strong>SPARK_CONF_PATHS_USERS</strong> = 'dbacademy.paths.users'</dl>
+
+<dl><dt><strong>SPARK_CONF_PROTECTED_EXECUTION</strong> = 'dbacademy.protected-execution'</dl>
+
+<dl><dt><strong>SPARK_CONF_SMOKE_TEST</strong> = 'dbacademy.smoke-test'</dl>
+
+<dl><dt><strong>StreamingQuery</strong> = &lt;class 'pyspark.sql.streaming.StreamingQuery'&gt;<dd><tt>A&nbsp;handle&nbsp;to&nbsp;a&nbsp;query&nbsp;that&nbsp;is&nbsp;executing&nbsp;continuously&nbsp;in&nbsp;the&nbsp;background&nbsp;as&nbsp;new&nbsp;data&nbsp;arrives.<br>
+All&nbsp;these&nbsp;methods&nbsp;are&nbsp;thread-safe.<br>
+&nbsp;<br>
+..&nbsp;versionadded::&nbsp;2.0.0<br>
+&nbsp;<br>
+Notes<br>
+-----<br>
+This&nbsp;API&nbsp;is&nbsp;evolving.</tt></dl>
+
+<dl><dt><strong>TROUBLESHOOT_ERROR_TEMPLATE</strong> = '{error} Please see the "Troubleshooting | {secti...the "Version Info" notebook for more information.'</dl>
+
+<dl><dt><strong>common</strong> = &lt;module 'dbacademy.common' from 'C:\\dvlp\\dbacademy\\src\\dbacademy\\common\\__init__.py'&gt;<dd><tt>Common&nbsp;libraries&nbsp;that&nbsp;do&nbsp;not&nbsp;depend&nbsp;on&nbsp;other&nbsp;libraries.<br>
+This&nbsp;was&nbsp;moved&nbsp;out&nbsp;of&nbsp;dbgems&nbsp;because&nbsp;dbgems&nbsp;has&nbsp;a&nbsp;dependency&nbsp;on&nbsp;pyspark.</tt></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>Dict</strong> = typing.Dict<br>
+<strong>Optional</strong> = typing.Optional<br>
+<strong>Union</strong> = typing.Union</td></tr></table>
+</body></html>

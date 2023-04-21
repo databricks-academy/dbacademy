@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dbhelper.validations.validation_suite_class</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbhelper.html"><font color="#ffffff">dbhelper</font></a>.<a href="dbacademy.dbhelper.validations.html"><font color="#ffffff">validations</font></a>.validation_suite_class</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbhelper%5Cvalidations%5Cvalidation_suite_class.py">c:\dvlp\dbacademy\src\dbacademy\dbhelper\validations\validation_suite_class.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbhelper.validations.validation_suite_class.html#ValidationSuite">ValidationSuite</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ValidationSuite">class <strong>ValidationSuite</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#ValidationSuite">ValidationSuite</a>(name)&nbsp;-&amp;gt;&nbsp;None<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="ValidationSuite-__init__"><strong>__init__</strong></a>(self, name) -&gt; None</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="ValidationSuite-add_test"><strong>add_test</strong></a>(self, test_case: dbacademy.dbhelper.validations.validation_class.Validation)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-display_results"><strong>display_results</strong></a>(self) -&gt; None</dt></dl>
+
+<dl><dt><a name="ValidationSuite-fail"><strong>fail</strong></a>(self, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-fail_pre_req"><strong>fail_pre_req</strong></a>(self, *, test_case_id: str, e: Exception, depends_on: Iterable[str] = None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-grade"><strong>grade</strong></a>(self) -&gt; int</dt></dl>
+
+<dl><dt><a name="ValidationSuite-last_test_id"><strong>last_test_id</strong></a>(self) -&gt; bool</dt></dl>
+
+<dl><dt><a name="ValidationSuite-lazy_property"><strong>lazy_property</strong></a>(fn)</dt><dd><tt>Decorator&nbsp;that&nbsp;makes&nbsp;a&nbsp;property&nbsp;lazy-evaluated.</tt></dd></dl>
+
+<dl><dt><a name="ValidationSuite-run_tests"><strong>run_tests</strong></a>(self) -&gt; List[dbacademy.dbhelper.validations.validation_result_class.ValidationResult]</dt></dl>
+
+<dl><dt><a name="ValidationSuite-test"><strong>test</strong></a>(self, test_function: Callable[[], Any], actual_value: Callable[[], Any], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-test_contains"><strong>test_contains</strong></a>(self, actual_value: Callable[[], Any], expected_values: Iterable[Any], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-test_data_frames"><strong>test_data_frames</strong></a>(self, actual_value: Callable[[], pyspark.sql.dataframe.DataFrame], expected_value: pyspark.sql.dataframe.DataFrame, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-test_equals"><strong>test_equals</strong></a>(self, actual_value: Callable[[], Any], expected_value: Any, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-test_false"><strong>test_false</strong></a>(self, actual_value: Callable[[], bool], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-test_floats"><strong>test_floats</strong></a>(self, actual_value: Callable[[], float], expected_value: Any, description: str, *, test_case_id: str = None, tolerance=0.01, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-test_is_none"><strong>test_is_none</strong></a>(self, actual_value: Callable[[], Any], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-test_length"><strong>test_length</strong></a>(self, actual_value: Callable[[], Sized], expected_length: int, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-test_not_none"><strong>test_not_none</strong></a>(self, actual_value: Callable[[], Any], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-test_rows"><strong>test_rows</strong></a>(self, actual_value: Callable[[], pyspark.sql.types.Row], expected_value: pyspark.sql.types.Row, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-test_schema_field"><strong>test_schema_field</strong></a>(self, struct_type: Callable[[], pyspark.sql.types.StructType], expected_name: str, expected_type: str, expected_nullable: str = None, *, description: str = None, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-test_sequence"><strong>test_sequence</strong></a>(self, actual_value: Callable[[], list], expected_value: list, test_column_order: bool, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-test_true"><strong>test_true</strong></a>(self, actual_value: Callable[[], bool], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-testing"><strong>testing</strong></a>(self)</dt></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="ValidationSuite-compare_data_frames"><strong>compare_data_frames</strong></a>(df_a: pyspark.sql.dataframe.DataFrame, df_b: pyspark.sql.dataframe.DataFrame)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-compare_floats"><strong>compare_floats</strong></a>(value_a: float, value_b: float, tolerance: float = 0.01)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-compare_lists"><strong>compare_lists</strong></a>(value_a: list, value_b: list, test_column_order: bool)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-compare_row"><strong>compare_row</strong></a>(row_a: pyspark.sql.types.Row, row_b: pyspark.sql.types.Row)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-compare_rows"><strong>compare_rows</strong></a>(row_a: pyspark.sql.types.Row, row_b: pyspark.sql.types.Row)</dt></dl>
+
+<dl><dt><a name="ValidationSuite-compare_schemas"><strong>compare_schemas</strong></a>(schema_a: pyspark.sql.types.StructType, schema_b: pyspark.sql.types.StructType, test_column_order: bool)</dt></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>max_score</strong></dt>
+</dl>
+<dl><dt><strong>passed</strong></dt>
+</dl>
+<dl><dt><strong>percentage</strong></dt>
+</dl>
+<dl><dt><strong>score</strong></dt>
+</dl>
+<dl><dt><strong>test_results</strong></dt>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>Validation</strong> = &lt;class 'dbacademy.dbhelper.validations.validation_class.Validation'&gt;</dl>
+
+<dl><dt><strong>ValidationResult</strong> = &lt;class 'dbacademy.dbhelper.validations.validation_result_class.ValidationResult'&gt;</dl>
+
+<dl><dt><strong>pyspark</strong> = &lt;module 'pyspark' from 'C:\\Users\\jacob.parr\\A...ademy\\lib\\site-packages\\pyspark\\__init__.py'&gt;<dd><tt>PySpark&nbsp;is&nbsp;the&nbsp;Python&nbsp;API&nbsp;for&nbsp;Spark.<br>
+&nbsp;<br>
+Public&nbsp;classes:<br>
+&nbsp;<br>
+&nbsp;&nbsp;-&nbsp;:class:`SparkContext`:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Main&nbsp;entry&nbsp;point&nbsp;for&nbsp;Spark&nbsp;functionality.<br>
+&nbsp;&nbsp;-&nbsp;:class:`RDD`:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;Resilient&nbsp;Distributed&nbsp;Dataset&nbsp;(RDD),&nbsp;the&nbsp;basic&nbsp;abstraction&nbsp;in&nbsp;Spark.<br>
+&nbsp;&nbsp;-&nbsp;:class:`Broadcast`:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;broadcast&nbsp;variable&nbsp;that&nbsp;gets&nbsp;reused&nbsp;across&nbsp;tasks.<br>
+&nbsp;&nbsp;-&nbsp;:class:`Accumulator`:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An&nbsp;"add-only"&nbsp;shared&nbsp;variable&nbsp;that&nbsp;tasks&nbsp;can&nbsp;only&nbsp;add&nbsp;values&nbsp;to.<br>
+&nbsp;&nbsp;-&nbsp;:class:`SparkConf`:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;configuring&nbsp;Spark.<br>
+&nbsp;&nbsp;-&nbsp;:class:`SparkFiles`:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Access&nbsp;files&nbsp;shipped&nbsp;with&nbsp;jobs.<br>
+&nbsp;&nbsp;-&nbsp;:class:`StorageLevel`:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Finer-grained&nbsp;cache&nbsp;persistence&nbsp;levels.<br>
+&nbsp;&nbsp;-&nbsp;:class:`TaskContext`:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information&nbsp;about&nbsp;the&nbsp;current&nbsp;running&nbsp;task,&nbsp;available&nbsp;on&nbsp;the&nbsp;workers&nbsp;and&nbsp;experimental.<br>
+&nbsp;&nbsp;-&nbsp;:class:`RDDBarrier`:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wraps&nbsp;an&nbsp;RDD&nbsp;under&nbsp;a&nbsp;barrier&nbsp;stage&nbsp;for&nbsp;barrier&nbsp;execution.<br>
+&nbsp;&nbsp;-&nbsp;:class:`BarrierTaskContext`:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;:class:`TaskContext`&nbsp;that&nbsp;provides&nbsp;extra&nbsp;info&nbsp;and&nbsp;tooling&nbsp;for&nbsp;barrier&nbsp;execution.<br>
+&nbsp;&nbsp;-&nbsp;:class:`BarrierTaskInfo`:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information&nbsp;about&nbsp;a&nbsp;barrier&nbsp;task.<br>
+&nbsp;&nbsp;-&nbsp;:class:`InheritableThread`:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;inheritable&nbsp;thread&nbsp;to&nbsp;use&nbsp;in&nbsp;Spark&nbsp;when&nbsp;the&nbsp;pinned&nbsp;thread&nbsp;mode&nbsp;is&nbsp;on.</tt></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>Any</strong> = typing.Any<br>
+<strong>Callable</strong> = typing.Callable<br>
+<strong>Iterable</strong> = typing.Iterable<br>
+<strong>List</strong> = typing.List<br>
+<strong>Sized</strong> = typing.Sized</td></tr></table>
+</body></html>
