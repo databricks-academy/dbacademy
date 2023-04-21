@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dbhelper.warehouses_helper_class</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbhelper.html"><font color="#ffffff">dbhelper</font></a>.warehouses_helper_class</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbhelper%5Cwarehouses_helper_class.py">c:\dvlp\dbacademy\src\dbacademy\dbhelper\warehouses_helper_class.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbhelper.warehouses_helper_class.html#WarehousesHelper">WarehousesHelper</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="WarehousesHelper">class <strong>WarehousesHelper</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#WarehousesHelper">WarehousesHelper</a>(workspace:&nbsp;dbacademy.dbhelper.workspace_helper_class.WorkspaceHelper,&nbsp;da:&nbsp;dbacademy.dbhelper.dbacademy_helper_class.DBAcademyHelper)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="WarehousesHelper-__init__"><strong>__init__</strong></a>(self, workspace: dbacademy.dbhelper.workspace_helper_class.WorkspaceHelper, da: dbacademy.dbhelper.dbacademy_helper_class.DBAcademyHelper)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="WarehousesHelper-create_shared_sql_warehouse"><strong>create_shared_sql_warehouse</strong></a>(self, name: str, auto_stop_mins=None, enable_serverless_compute=True)</dt><dd><tt>#&nbsp;TODO&nbsp;-&nbsp;Change&nbsp;enable_serverless_compute&nbsp;to&nbsp;default&nbsp;to&nbsp;True&nbsp;once&nbsp;serverless&nbsp;is&nbsp;mainstream</tt></dd></dl>
+
+<dl><dt><a name="WarehousesHelper-create_sql_warehouse_for"><strong>create_sql_warehouse_for</strong></a>(self, username, auto_stop_mins=None, enable_serverless_compute=True)</dt><dd><tt>#&nbsp;TODO&nbsp;-&nbsp;Change&nbsp;enable_serverless_compute&nbsp;to&nbsp;default&nbsp;to&nbsp;True&nbsp;once&nbsp;serverless&nbsp;is&nbsp;mainstream</tt></dd></dl>
+
+<dl><dt><a name="WarehousesHelper-create_sql_warehouses"><strong>create_sql_warehouses</strong></a>(self, configure_for: str, auto_stop_mins=None, enable_serverless_compute=False)</dt><dd><tt>#&nbsp;TODO&nbsp;-&nbsp;Change&nbsp;enable_serverless_compute&nbsp;to&nbsp;default&nbsp;to&nbsp;True&nbsp;once&nbsp;serverless&nbsp;is&nbsp;mainstream</tt></dd></dl>
+
+<dl><dt><a name="WarehousesHelper-delete_sql_warehouses"><strong>delete_sql_warehouses</strong></a>(self, configure_for: str)</dt></dl>
+
+<dl><dt><a name="WarehousesHelper-delete_sql_warehouses_for"><strong>delete_sql_warehouses_for</strong></a>(self, username)</dt></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="WarehousesHelper-create_sql_warehouse"><strong>create_sql_warehouse</strong></a>(*, client: dbacademy.dbrest.client.DBAcademyRestClient, name: str, auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None, for_user: Optional[str] = None)</dt></dl>
+
+<dl><dt><a name="WarehousesHelper-execute_statements"><strong>execute_statements</strong></a>(client: dbacademy.dbrest.client.DBAcademyRestClient, warehouse_id: str, statements: List[str]) -&gt; None</dt></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>autoscale_max</strong></dt>
+</dl>
+<dl><dt><strong>autoscale_min</strong></dt>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>DBAcademyHelper</strong> = &lt;class 'dbacademy.dbhelper.dbacademy_helper_class.DBAcademyHelper'&gt;</dl>
+
+<dl><dt><strong>DBAcademyRestClient</strong> = &lt;class 'dbacademy.dbrest.client.DBAcademyRestClient'&gt;<dd><tt>Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.</tt></dl>
+
+<dl><dt><strong>WAREHOUSES_DEFAULT_NAME</strong> = 'DBAcademy Warehouse'</dl>
+
+<dl><dt><strong>WorkspaceHelper</strong> = &lt;class 'dbacademy.dbhelper.workspace_helper_class.WorkspaceHelper'&gt;</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>List</strong> = typing.List<br>
+<strong>Union</strong> = typing.Union</td></tr></table>
+</body></html>
