@@ -109,6 +109,34 @@ class Commands(object):
         return len(warehouses)
 
     @staticmethod
+    def warehouses_count(ws: Workspace):
+        endpoints = ws.sql.endpoints.list()
+        return len(endpoints) or -1
+
+    @staticmethod
+    def warehouses_create_shared(ws: Workspace):
+        from dbacademy.dbrest import DBAcademyRestClient
+        from dbacademy.dbhelper.warehouses_helper_class import WarehousesHelper
+        endpoints = ws.sql.endpoints.list()
+        client=DBAcademyRestClient(endpoint=ws.url[:-len("/api/")], authorization_header=ws.authorization_header)
+        if not endpoints:
+            WarehousesHelper.create_sql_warehouse(
+                client=client,
+                name=WarehousesHelper.WAREHOUSES_DEFAULT_NAME,
+                for_user=None,
+                auto_stop_mins=None,
+                min_num_clusters=2,
+                max_num_clusters=20,
+                enable_serverless_compute=True,
+                lab_id="Unknown",
+                workspace_description="Unknown",
+                workspace_name="Unknown",
+                org_id="Unknown")
+            return True
+        else:
+            return False
+
+    @staticmethod
     def users_count(workspace):
         """Returns a count of all users in the workspace."""
         users = workspace.users.list_usernames()
