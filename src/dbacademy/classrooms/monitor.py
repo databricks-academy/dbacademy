@@ -157,6 +157,11 @@ class Commands(object):
                 c["state"] != "TERMINATED"]
 
     @staticmethod
+    def warehouses_list(ws: Workspace):
+        """Lists all running SQL Warehouses."""
+        return [c["name"] for c in ws.sql.warehouses.list()]
+
+    @staticmethod
     def warehouses_list_running(ws: Workspace):
         """Lists all running SQL Warehouses."""
         return [c["name"] for c in ws.sql.warehouses.list() if c["state"] != "STOPPED"]
