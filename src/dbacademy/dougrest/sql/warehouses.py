@@ -5,21 +5,19 @@ class Warehouses(ApiContainer):
     def __init__(self, databricks):
         self.databricks = databricks
 
-    # TODO Rename parameter "endpoint_id"
-    # noinspection PyShadowingBuiltins
-    def get_by_id(self, id):
-        return self.databricks.api("GET", f"2.0/sql/endpoints/{id}")
+    def get_by_id(self, warehouse_id):
+        return self.databricks.api("GET", f"2.0/sql/warehouses/{warehouse_id}")
 
     def get_by_name(self, name):
         return next((ep for ep in self.list() if ep["name"] == name), None)
 
     def list(self):
-        response = self.databricks.api("GET", "2.0/sql/endpoints/")
-        return response.get("endpoints", [])
+        response = self.databricks.api("GET", "2.0/sql/warehouses/")
+        return response.get("warehouses", [])
 
     def list_by_name(self):
-        endpoints = self.list()
-        return {e["name"]: e for e in endpoints}
+        warehouses = self.list()
+        return {e["name"]: e for e in warehouses}
 
     def create(self, name, size="XSMALL", min_num_clusters=1, max_num_clusters=1, timeout_minutes=120,
                photon=False, spot=False, preview_channel=False, **spec):
@@ -36,12 +34,12 @@ class Warehouses(ApiContainer):
         if timeout_minutes and timeout_minutes > 0:
             data["auto_stop_mins"] = timeout_minutes
         data.update(spec)
-        response = self.databricks.api("POST", "2.0/sql/endpoints/", data)
+        response = self.databricks.api("POST", "2.0/sql/warehouses/", data)
         return response["id"]
 
-    def edit(self, endpoint):
-        endpoint_id = endpoint["id"]
-        response = self.databricks.api("POST", f"2.0/sql/endpoints/{endpoint_id}/edit", endpoint)
+    def edit(self, warehouse):
+        warehouse_id = warehouse["id"]
+        response = self.databricks.api("POST", f"2.0/sql/warehouses/{warehouse_id}/edit", warehouse)
         return response
 
     # TODO Remove noinspection PyUnusedLocal once tested
@@ -64,23 +62,17 @@ class Warehouses(ApiContainer):
             data["auto_stop_mins"] = timeout_minutes
         if preview_channel:
             data["channel"] = {"name": "CHANNEL_NAME_PREVIEW"}
-        response = self.databricks.api("POST", f"2.0/sql/endpoints/{id}/edit", data)
+        response = self.databricks.api("POST", f"2.0/sql/warehouses/{id}/edit", data)
         return response["id"]
 
-    # TODO Rename parameter "endpoint_id"
-    # noinspection PyShadowingBuiltins
-    def start(self, id):
-        response = self.databricks.api("POST", f"2.0/sql/endpoints/{id}/start")
+    def start(self, warehouse_id):
+        response = self.databricks.api("POST", f"2.0/sql/warehouses/{warehouse_id}/start")
         return response
 
-    # TODO Rename parameter "endpoint_id"
-    # noinspection PyShadowingBuiltins
-    def stop(self, id):
-        response = self.databricks.api("POST", f"2.0/sql/endpoints/{id}/stop")
+    def stop(self, warehouse_id):
+        response = self.databricks.api("POST", f"2.0/sql/warehouses/{warehouse_id}/stop")
         return response
 
-    # TODO Rename parameter "endpoint_id"
-    # noinspection PyShadowingBuiltins
-    def delete(self, id):
-        response = self.databricks.api("DELETE", f"2.0/sql/endpoints/{id}")
+    def delete(self, warehouse_id):
+        response = self.databricks.api("DELETE", f"2.0/sql/warehouses/{warehouse_id}")
         return response
