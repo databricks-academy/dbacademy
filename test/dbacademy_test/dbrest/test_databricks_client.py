@@ -52,7 +52,7 @@ class TestDatabricksApiClient(unittest.TestCase):
 
     def testSqlWarehouses(self):
         ws = dougrest_factory.test_client()
-        result = ws.sql.endpoints.list()
+        result = ws.sql.warehouses.list()
         self.assertIsInstance(result, list)
 
     def testScim(self):

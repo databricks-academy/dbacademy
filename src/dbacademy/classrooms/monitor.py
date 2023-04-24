@@ -110,14 +110,14 @@ class Commands(object):
 
     @staticmethod
     def warehouses_count(ws: Workspace):
-        endpoints = ws.sql.endpoints.list()
+        endpoints = ws.sql.warehouses.list()
         return len(endpoints) or -1
 
     @staticmethod
     def warehouses_create_shared(ws: Workspace):
         from dbacademy.dbrest import DBAcademyRestClient
         from dbacademy.dbhelper.warehouses_helper_class import WarehousesHelper
-        endpoints = ws.sql.endpoints.list()
+        endpoints = ws.sql.warehouses.list()
         client = DBAcademyRestClient(endpoint=ws.url[:-len("/api/")], authorization_header=ws.authorization_header)
         if not endpoints:
             WarehousesHelper.create_sql_warehouse(
