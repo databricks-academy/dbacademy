@@ -28,7 +28,7 @@ class WarehousesHelper:
                                       course_code=self.da.course_config.course_code,
                                       lesson_name=self.da.lesson_config.name,
                                       sep="-")
-        self.client.sql.endpoints.delete_by_name(name=name)
+        self.client.sql.warehouses.delete_by_name(name=name)
 
     def delete_sql_warehouses(self, configure_for: str):
         self.workspace.do_for_all_users(self.workspace.get_usernames(configure_for), lambda username: self.delete_sql_warehouses_for(username=username))
@@ -119,7 +119,7 @@ class WarehousesHelper:
             else:
                 auto_stop_mins_inner = auto_stop_mins
 
-            return client.sql.endpoints.create_or_update(
+            return client.sql.warehouses.create_or_update(
                 name=name,
                 cluster_size=CLUSTER_SIZE_2X_SMALL,
                 enable_serverless_compute=enable_serverless,

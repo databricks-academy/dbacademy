@@ -25,7 +25,7 @@ class StatementTests(unittest.TestCase):
 
         cls.client = DBAcademyRestClient(token=token, endpoint=endpoint)
 
-        warehouse = cls.client.sql.endpoints.create_or_update(
+        warehouse = cls.client.sql.warehouses.create_or_update(
             name="Unit-Tests Warehouse",
             cluster_size=CLUSTER_SIZE_2X_SMALL,
             enable_serverless_compute=True,
@@ -46,7 +46,7 @@ class StatementTests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        cls.client.sql.endpoints.delete_by_id(cls.warehouse_id)
+        cls.client.sql.warehouses.delete_by_id(cls.warehouse_id)
 
     def test_execute(self):
         results = self.client.sql.statements.execute(warehouse_id=self.warehouse_id,

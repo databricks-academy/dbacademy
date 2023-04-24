@@ -71,7 +71,7 @@ class TestDBAcademyRestClient(unittest.TestCase):
 
     def testSqlWarehouses(self):
         ws = dbrest_factory.test_client()
-        result = ws.sql.endpoints.list()
+        result = ws.sql.warehouses.list()
         self.assertIsInstance(result, list)
 
     def testTokens(self):

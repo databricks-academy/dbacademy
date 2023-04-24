@@ -30,7 +30,7 @@ CLUSTER_SIZES = [CLUSTER_SIZE_2X_SMALL,
                  CLUSTER_SIZE_4X_LARGE]
 
 
-class SqlEndpointsClient(ApiContainer):
+class SqlWarehousesClient(ApiContainer):
 
     def __init__(self, client: DBAcademyRestClient):
         self.client = client
@@ -295,7 +295,7 @@ class SqlEndpointsClient(ApiContainer):
         
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
-        for endpoint in self.client.sql().endpoints().list():
+        for endpoint in self.client.sql().warehouses().list():
             if endpoint.get("name") == endpoint_name:
                 print(f"Skipping creation of the endpoint \"{endpoint_name}\" for the user \"{username}\":\n - The endpoint already exists\n")
                 return
@@ -315,7 +315,7 @@ class SqlEndpointsClient(ApiContainer):
 
         # Give the user CAN_MANAGE to their new endpoint
         endpoint_id = endpoint.get("id")
-        self.client.permissions().sql().endpoints().update_user(endpoint_id, username, "CAN_MANAGE")
+        self.client.permissions().sql().warehouses().update_user(endpoint_id, username, "CAN_MANAGE")
 
     def delete_user_endpoints(self, naming_template: str, naming_params: dict, users: list = None):
         for user in self.client.scim().users().to_users_list(users):
@@ -325,7 +325,7 @@ class SqlEndpointsClient(ApiContainer):
         username = user.get("userName")
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
-        for endpoint in self.client.sql().endpoints().list():
+        for endpoint in self.client.sql().warehouses().list():
             if endpoint.get("name") == endpoint_name:
                 print(f"Deleting the endpoint \"{endpoint_name}\" for the user \"{username}\"")
                 self.delete_by_id(endpoint.get("id"))
@@ -341,7 +341,7 @@ class SqlEndpointsClient(ApiContainer):
         username = user.get("userName")
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
-        for endpoint in self.client.sql().endpoints().list():
+        for endpoint in self.client.sql().warehouses().list():
             if endpoint.get("name") == endpoint_name:
                 print(f"Starting the endpoint \"{endpoint_name}\" for the user \"{username}\"")
                 self.start(endpoint.get("id"))
@@ -357,7 +357,7 @@ class SqlEndpointsClient(ApiContainer):
         username = user.get("userName")
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
-        for endpoint in self.client.sql().endpoints().list():
+        for endpoint in self.client.sql().warehouses().list():
             if endpoint.get("name") == endpoint_name:
                 print(f"Stopping the endpoint \"{endpoint_name}\" for the user \"{username}\"")
                 self.stop(endpoint.get("id"))

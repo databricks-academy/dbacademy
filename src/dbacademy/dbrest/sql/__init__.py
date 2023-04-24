@@ -9,8 +9,9 @@ class SqlClient(ApiContainer):
         from dbacademy.dbrest.sql.config import SqlConfigClient
         self.config = SqlConfigClient(self.client)
 
-        from dbacademy.dbrest.sql.endpoints import SqlEndpointsClient
-        self.endpoints = SqlEndpointsClient(self.client)
+        from dbacademy.dbrest.sql.endpoints import SqlWarehousesClient
+        self.warehouses = SqlWarehousesClient(self.client)
+        self.endpoints = SqlWarehousesClient(self.client)  # Backwards Compatibility
 
         from dbacademy.dbrest.sql.queries import SqlQueriesClient
         self.queries = SqlQueriesClient(self.client)
