@@ -82,46 +82,32 @@ class Commands(object):
         return self.verifyCourseware(workspace, fix=True)
 
     @staticmethod
-    def endpointsSetPreview(workspace):
-        #   import re
-        #   users=workspace.users.list_usernames()
-        #   user=next(u for u in users if "odl_user" in u)
-        #   workspace['user']=user
-        #   workspace['userNum']=re.match('odl_user_([0-9]+)@databrickslabs\.com', workspace['user'])[1]
-        #   c = workspace.sql.endpoints.list_by_name()["my-endpoint-" + workspace['userNum']]
-        c = workspace.sql.endpoints.list_by_name()["my-endpoint"]
-        if not c.get('channel', {}).get('name') == "CHANNEL_NAME_PREVIEW":
-            c['channel'] = {'name': 'CHANNEL_NAME_PREVIEW'}
-            workspace.sql.endpoints.edit(c)
-        return None
-
-    @staticmethod
-    def endpointsCreateStarter(workspace):
+    def warehousesCreateStarter(workspace):
         """Creates a starter SQL Endpoint."""
-        endpoint_id = workspace.sql.endpoints.create(name="Class Warehouse", min_num_clusters=1, max_num_clusters=1,
+        warehouse_id = workspace.sql.warehouses.create(name="Class Warehouse", min_num_clusters=1, max_num_clusters=1,
                                                      photon=True, preview_channel=False, spot=True, size="XXSMALL",
                                                      timeout_minutes=45)
-        workspace.sql.endpoints.stop(endpoint_id)
-        workspace.permissions.sql.endpoints.update_group(endpoint_id, "users", "CAN_USE")
+        workspace.sql.warehouses.stop(warehouse_id)
+        workspace.permissions.sql.warehouses.update_group(warehouse_id, "users", "CAN_USE")
         return True
 
     @staticmethod
-    def endpointsRemoveStarter(workspace):
+    def warehousesRemoveStarter(workspace):
         """Deletes the Starter Warehouse."""
-        endpoints = workspace.sql.endpoints.list_by_name()
-        for ep in endpoints.values():
+        warehouses = workspace.sql.warehouses.list_by_name()
+        for ep in warehouses.values():
             if ep['name'] in ["Starter Endpoint", "Starter Warehouse", "Serverless Starter Warehouse"]:
-                workspace.sql.endpoints.delete(ep['id'])
+                workspace.sql.warehouses.delete(ep['id'])
                 return True
         return False
 
     @staticmethod
-    def endpointsRemoveAll(workspace):
-        """Deletes all SQL Endpoints"""
-        endpoints = workspace.sql.endpoints.list_by_name()
-        for ep in endpoints.values():
-            workspace.sql.endpoints.delete(ep['id'])
-        return len(endpoints)
+    def warehousesRemoveAll(workspace):
+        """Deletes all SQL Warehouses"""
+        warehouses = workspace.sql.warehouses.list_by_name()
+        for ep in warehouses.values():
+            workspace.sql.warehouses.delete(ep['id'])
+        return len(warehouses)
 
     @staticmethod
     def countUsers(workspace):
@@ -144,9 +130,9 @@ class Commands(object):
                 c["state"] != "TERMINATED"]
 
     @staticmethod
-    def runningEndpoints(w):
+    def runningWarehouses(w):
         """Lists all running SQL Warehouses."""
-        return [c["name"] for c in w.sql.endpoints.list() if c["state"] != "STOPPED"]
+        return [c["name"] for c in w.sql.warehouses.list() if c["state"] != "STOPPED"]
 
     @staticmethod
     def stopLongLivedClusters(w):
@@ -228,29 +214,29 @@ class Commands(object):
         return count
 
     @staticmethod
-    def stopDashboards(workspace):
+    def stopDashboards(ws):
         """
         Attempts to unschedule any scheduled SQL Dashboard Refresh Schedules.
         This may fail due to permissions issues.
         """
         results = []
-        for dashboard in workspace.api("GET", "2.0/preview/sql/dashboards").get("results", []):
+        for dashboard in ws.api("GET", "2.0/preview/sql/dashboards").get("results", []):
             if dashboard.get("refresh_schedules"):
                 results.append(dashboard["name"])
                 dashboard["refresh_schedules"] = []
-                workspace.api("POST", f"2.0/preview/sql/dashboards/{dashboard['id']}", dashboard)
+                ws.api("POST", f"2.0/preview/sql/dashboards/{dashboard['id']}", dashboard)
         return results
 
     @staticmethod
-    def stopEndpoints(w):
-        """Send a stop command to all SQL endpoints.  They may still automatically restart."""
-        endpoints = w.sql.endpoints.list()
+    def warehousesStop(ws):
+        """Send a stop command to all SQL Warehouses.  They may still automatically restart."""
+        warehouses = ws.sql.warehouses.list()
         count = 0
-        for ep in endpoints:
-            if ep.get("state") == "STOPPED":
+        for warehouse in warehouses:
+            if warehouse.get("state") == "STOPPED":
                 continue
-            w.sql.endpoints.edit(ep)
-            w.sql.endpoints.stop(ep["id"])
+            ws.sql.warehouses.edit(warehouse)
+            ws.sql.warehouses.stop(warehouse["id"])
             count += 1
         return count
 
@@ -271,44 +257,29 @@ class Commands(object):
         return results
 
     @staticmethod
-    def resetEndpoints(workspace, running_only=False):
-        """Delete and remake all/running SQL endpoints."""
-        endpoints = workspace.sql.endpoints.list()
+    def warehousesReset(workspace, running_only=False):
+        """Delete and remake all/running SQL Warehouses.  This will prevent scheduled queries from running."""
+        warehouses = workspace.sql.warehouses.list()
         count = 0
-        for ep in endpoints:
+        for ep in warehouses:
             if running_only and ep.get("state") == "STOPPED":
                 continue
-            endpoint_id1 = ep.pop("id")
-            acl = workspace.permissions.sql.endpoints.get(endpoint_id1)["access_control_list"]
+            warehouse_id1 = ep.pop("id")
+            acl = workspace.permissions.sql.warehouses.get(warehouse_id1)["access_control_list"]
             acl = Commands.collapseACL(acl)
-            workspace.sql.endpoints.delete(endpoint_id1)
+            workspace.sql.warehouses.delete(warehouse_id1)
             from time import sleep
             sleep(1)
-            endpoint_id2 = workspace.sql.endpoints.create(**ep)
-            assert endpoint_id1 != endpoint_id2
-            workspace.sql.endpoints.stop(endpoint_id2)
-            workspace.permissions.sql.endpoints.replace(endpoint_id2, acl)
+            warehouse_id2 = workspace.sql.warehouses.create(**ep)
+            assert warehouse_id1 != warehouse_id2
+            workspace.sql.warehouses.stop(warehouse_id2)
+            workspace.permissions.sql.warehouses.replace(warehouse_id2, acl)
             count += 1
         return count
 
     @staticmethod
-    def resetRunningEndpoints(workspace):
-        return Commands.resetEndpoints(workspace, running_only=True)
-
-    # TODO Remove this command per doug.bateman@databricks.com
-    @staticmethod
-    def disableEndpoints(w):
-        """Send a stop command to all SQL endpoints.  Disable auto-restart."""
-        endpoints = w.sql.endpoints.list()
-        count = 0
-        for ep in endpoints:
-            if ep.get("state") == "STOPPED":
-                continue
-            ep["auto_resume"] = False
-            w.sql.endpoints.edit(ep)
-            w.sql.endpoints.stop(ep["id"])
-            count += 1
-        return count
+    def warehousesResetRunning(workspace):
+        return Commands.warehousesReset(workspace, running_only=True)
 
     @staticmethod
     def stopDLT(workspace):
@@ -360,10 +331,10 @@ class Commands(object):
 
     @staticmethod
     def stopAll(w):
-        """Everything: Queries, Dashboards, Endpoints, Jobs, DLT, clusters, Warehouses."""
+        """Everything: Queries, Dashboards, Warehouses, Jobs, DLT, clusters, Warehouses."""
         result = {}
-        for cmd in [Commands.stopQueries, Commands.stopDashboards, Commands.stopEndpoints, Commands.stopJobs,
-                    Commands.stopDLT, Commands.stopClusters, Commands.resetRunningEndpoints]:
+        for cmd in [Commands.stopQueries, Commands.stopDashboards, Commands.warehousesStop, Commands.stopJobs,
+                    Commands.stopDLT, Commands.stopClusters, Commands.warehousesResetRunning]:
             try:
                 result[cmd.__name__] = cmd(w)
             except Exception as e:
@@ -377,7 +348,7 @@ class Commands(object):
         import base64
         from dbacademy.dbgems import dbutils
         results = []
-        for ep in workspace.sql.endpoints.list():
+        for ep in workspace.sql.warehouses.list():
             username = ep.get("creator_name", "class+000@databricks.com")
             password = "BigDataSimple#1" if "class+000" not in username else dbutils.secrets.get("admin", "class000")
             encoded_auth = (username + ":" + password).encode()
@@ -610,11 +581,11 @@ class Commands(object):
         return changed
 
     @staticmethod
-    def remove_da_endpoints(ws):
-        endpoints = ws.sql.endpoints.list()
+    def warehouses_remove_da(ws):
+        endpoints = ws.sql.warehouses.list()
         for ep in endpoints:
             if ep["name"].startswith("da-"):
-                ws.sql.endpoints.delete(ep["id"])
+                ws.sql.warehouses.delete(ep["id"])
 
     @staticmethod
     def _cloud_specific_attributes(workspace):

@@ -1,7 +1,7 @@
 from dbacademy.rest.common import ApiContainer
 
 
-class Endpoints(ApiContainer):
+class Warehouses(ApiContainer):
     def __init__(self, databricks):
         self.databricks = databricks
 
