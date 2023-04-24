@@ -265,17 +265,22 @@ class Commands(object):
         for ep in warehouses:
             if running_only and ep.get("state") == "STOPPED":
                 continue
-            warehouse_id1 = ep.pop("id")
-            acl = workspace.permissions.sql.warehouses.get(warehouse_id1)["access_control_list"]
-            acl = Commands._collapse_acl(acl)
-            workspace.sql.warehouses.delete(warehouse_id1)
-            from time import sleep
-            sleep(1)
-            warehouse_id2 = workspace.sql.warehouses.create(**ep)
-            assert warehouse_id1 != warehouse_id2
-            workspace.sql.warehouses.stop(warehouse_id2)
-            workspace.permissions.sql.warehouses.replace(warehouse_id2, acl)
-            count += 1
+            for tag in ep["tags"].get("custom_tags", []):
+                if tag["key"] == "monitor" and tag["value"] in ["false", "False"]:
+                    # Don't reset warehouses tagged with monitor=false
+                    break
+            else:
+                warehouse_id1 = ep.pop("id")
+                acl = workspace.permissions.sql.warehouses.get(warehouse_id1)["access_control_list"]
+                acl = Commands._collapse_acl(acl)
+                workspace.sql.warehouses.delete(warehouse_id1)
+                from time import sleep
+                sleep(1)
+                warehouse_id2 = workspace.sql.warehouses.create(**ep)
+                assert warehouse_id1 != warehouse_id2
+                workspace.sql.warehouses.stop(warehouse_id2)
+                workspace.permissions.sql.warehouses.replace(warehouse_id2, acl)
+                count += 1
         return count
 
     @staticmethod
