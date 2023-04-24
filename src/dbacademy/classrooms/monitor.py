@@ -247,7 +247,7 @@ class Commands(object):
         results = []
         for ac in acl:
             for ac_type, name in ac.items():
-                if ac_type == "all_permissions":
+                if ac_type not in ["user_name", "group_name"]:
                     continue
                 for perm in ac["all_permissions"]:
                     if perm.get("inherited"):
