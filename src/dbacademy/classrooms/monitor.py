@@ -159,7 +159,10 @@ class Commands(object):
     @staticmethod
     def warehouses_list(ws: Workspace):
         """Lists all running SQL Warehouses."""
-        return [c["name"] for c in ws.sql.warehouses.list()]
+        return [{
+                   "name": c["name"],
+                   "settings": c,
+               } for c in ws.sql.warehouses.list()]
 
     @staticmethod
     def warehouses_list_running(ws: Workspace):
