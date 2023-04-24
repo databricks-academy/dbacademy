@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Callable, cast, Optional
 
 from dbacademy.dougrest import DatabricksApi
 from dbacademy.dougrest.accounts.workspaces import Workspace
@@ -13,7 +13,7 @@ class Commands(object):
         self.all_users = False
 
     @staticmethod
-    def get_region(ws):
+    def get_region(ws: Workspace):
         """In order to use this function, you must have pre-installed dnspython."""
         from urllib.parse import urlparse
         from dns.resolver import resolve
@@ -24,14 +24,14 @@ class Commands(object):
         return region
 
     @staticmethod
-    def users_count_instructors(workspace):
+    def users_count_instructors(ws: Workspace):
         """Returns a count of the number of odl_instructor_* users."""
-        users = workspace.users.list_usernames()
+        users = ws.users.list_usernames()
         return len([u for u in users if "odl_instructor" in u])
 
-    def courseware_verify(self, w, fix=False, only_students=False):
+    def courseware_verify(self, ws: Workspace, fix: bool = False, only_students: bool = False):
         """Compares each user's home folder to the courseware_spec defined above."""
-        users = w.users.list_usernames()
+        users = ws.users.list_usernames()
         results = []
         correct_file_count = -1
 
@@ -42,7 +42,7 @@ class Commands(object):
             if "dbc" in self.courseware_spec:
                 workspace_path = f"/Users/{user}/{folder_name}"
                 try:
-                    file_count = len(list(w.workspace.walk(workspace_path)))
+                    file_count = len(list(ws.workspace.walk(workspace_path)))
                     if correct_file_count < 0:
                         correct_file_count = file_count
                         continue
@@ -54,58 +54,58 @@ class Commands(object):
                     elif file_count < correct_file_count:
                         results.append(user + ", half imported")
                         if fix:
-                            w.workspace.delete(workspace_path, recursive=True)
+                            ws.workspace.delete(workspace_path, recursive=True)
                         else:
                             continue
                 except DatabricksApiException:
                     pass
                 if fix:
-                    w.workspace.import_from_url(self.courseware_spec["dbc"], workspace_path)
+                    ws.workspace.import_from_url(self.courseware_spec["dbc"], workspace_path)
                 results.append(user)
             if "repo" in self.courseware_spec:
                 workspace_path = f"/Repos/{user}/{folder_name}"
                 workspace_path2 = f"/Repos/{user}/{folder_name.lower()}"
-                if w.repos.exists(workspace_path):
+                if ws.repos.exists(workspace_path):
                     continue
-                if w.repos.exists(workspace_path2):
+                if ws.repos.exists(workspace_path2):
                     continue
                 # Comment out the w.repos.list() if you want all users to have a cluster.
-                if fix and not w.repos.list():
+                if fix and not ws.repos.list():
                     #           w.workspace.mkdirs(f"/Repos/{user}")
-                    w.repos.create(self.courseware_spec["repo"], workspace_path)
+                    ws.repos.create(self.courseware_spec["repo"], workspace_path)
                 results.append(user)
         return results
 
-    def courseware_fix(self, workspace):
+    def courseware_fix(self, ws: Workspace):
         """Compares each user's home folder to the courseware_spec defined above, deploying if needed."""
-        return self.courseware_verify(workspace, fix=True)
+        return self.courseware_verify(ws, fix=True)
 
     @staticmethod
-    def warehouses_create_starter(workspace):
+    def warehouses_create_starter(ws: Workspace):
         """Creates a starter SQL Endpoint."""
-        warehouse_id = workspace.sql.warehouses.create(name="Class Warehouse", min_num_clusters=1, max_num_clusters=1,
-                                                       photon=True, preview_channel=False, spot=True, size="XXSMALL",
-                                                       timeout_minutes=45)
-        workspace.sql.warehouses.stop(warehouse_id)
-        workspace.permissions.sql.warehouses.update_group(warehouse_id, "users", "CAN_USE")
+        warehouse_id = ws.sql.warehouses.create(name="Class Warehouse", min_num_clusters=1, max_num_clusters=1,
+                                                photon=True, preview_channel=False, spot=True, size="XXSMALL",
+                                                timeout_minutes=45)
+        ws.sql.warehouses.stop(warehouse_id)
+        ws.permissions.sql.warehouses.update_group(warehouse_id, "users", "CAN_USE")
         return True
 
     @staticmethod
-    def warehouses_remove_starter(workspace):
+    def warehouses_remove_starter(ws: Workspace):
         """Deletes the Starter Warehouse."""
-        warehouses = workspace.sql.warehouses.list_by_name()
+        warehouses = ws.sql.warehouses.list_by_name()
         for ep in warehouses.values():
             if ep['name'] in ["Starter Endpoint", "Starter Warehouse", "Serverless Starter Warehouse"]:
-                workspace.sql.warehouses.delete(ep['id'])
+                ws.sql.warehouses.delete(ep['id'])
                 return True
         return False
 
     @staticmethod
-    def warehouses_remove_all(workspace):
+    def warehouses_remove_all(ws: Workspace):
         """Deletes all SQL Warehouses"""
-        warehouses = workspace.sql.warehouses.list_by_name()
+        warehouses = ws.sql.warehouses.list_by_name()
         for ep in warehouses.values():
-            workspace.sql.warehouses.delete(ep['id'])
+            ws.sql.warehouses.delete(ep['id'])
         return len(warehouses)
 
     @staticmethod
@@ -118,7 +118,7 @@ class Commands(object):
         from dbacademy.dbrest import DBAcademyRestClient
         from dbacademy.dbhelper.warehouses_helper_class import WarehousesHelper
         endpoints = ws.sql.endpoints.list()
-        client=DBAcademyRestClient(endpoint=ws.url[:-len("/api/")], authorization_header=ws.authorization_header)
+        client = DBAcademyRestClient(endpoint=ws.url[:-len("/api/")], authorization_header=ws.authorization_header)
         if not endpoints:
             WarehousesHelper.create_sql_warehouse(
                 client=client,
@@ -137,32 +137,32 @@ class Commands(object):
             return False
 
     @staticmethod
-    def users_count(workspace):
+    def users_count(ws: Workspace):
         """Returns a count of all users in the workspace."""
-        users = workspace.users.list_usernames()
+        users = ws.users.list_usernames()
         return len([u for u in users if "odl_user" in u])
 
     @staticmethod
-    def clusters_list_running(w):
+    def clusters_list_running(ws: Workspace):
         """Lists all running clusters, including their uptime."""
 
-        def uptime(cluster):
+        def uptime(cluster: Dict) -> float:
             from datetime import datetime
             now_utime = datetime.now().timestamp()
             start_utime = cluster.get("driver", {}).get("start_timestamp", 0) / 1000 or now_utime
             hours = (now_utime - start_utime) / 60 / 60
             return round(hours, 1)
 
-        return [{"cluster_name": c["cluster_name"], "up_hours": uptime(c)} for c in w.clusters.list() if
+        return [{"cluster_name": c["cluster_name"], "up_hours": uptime(c)} for c in ws.clusters.list() if
                 c["state"] != "TERMINATED"]
 
     @staticmethod
-    def warehouses_list_running(w):
+    def warehouses_list_running(ws: Workspace):
         """Lists all running SQL Warehouses."""
-        return [c["name"] for c in w.sql.warehouses.list() if c["state"] != "STOPPED"]
+        return [c["name"] for c in ws.sql.warehouses.list() if c["state"] != "STOPPED"]
 
     @staticmethod
-    def clusters_stop_long_lived(w):
+    def clusters_stop_long_lived(ws: Workspace):
         """Stop clusters up more than 12 hours, including running DLT pipelines and jobs."""
 
         def uptime(cluster: Dict) -> float:
@@ -172,21 +172,21 @@ class Commands(object):
             hours = (now_utime - start_utime) / 60 / 60
             return round(hours, 1)
 
-        running = [c for c in w.clusters.list() if c["state"] != "TERMINATED" and uptime(c) > 12]
+        running = [c for c in ws.clusters.list() if c["state"] != "TERMINATED" and uptime(c) > 12]
         for c in running:
-            w.clusters.terminate(c["cluster_id"])
+            ws.clusters.terminate(c["cluster_id"])
         return len(running)
 
     @staticmethod
-    def clusters_stop(w):
+    def clusters_stop(ws: Workspace):
         """Stop all clusters, including running DLT pipelines and jobs."""
-        running = [c for c in w.clusters.list() if c["state"] != "TERMINATED"]
+        running = [c for c in ws.clusters.list() if c["state"] != "TERMINATED"]
         for c in running:
-            w.clusters.terminate(c["cluster_id"])
+            ws.clusters.terminate(c["cluster_id"])
         return len(running)
 
     @staticmethod
-    def jobs_list(w: Workspace, stop=False):
+    def jobs_list(w: Workspace, stop: bool = False):
         """Clears the jobs schedules.  Jobs currently running are not terminated."""
         results = []
         for job in w.jobs.list():
@@ -217,11 +217,11 @@ class Commands(object):
         return results
 
     @staticmethod
-    def jobs_stop(w):
-        return Commands.jobs_list(w, stop=True)
+    def jobs_stop(ws: Workspace):
+        return Commands.jobs_list(ws, stop=True)
 
     @staticmethod
-    def warehouses_stop(ws):
+    def warehouses_stop(ws: Workspace):
         """Send a stop command to all SQL Warehouses.  They may still automatically restart."""
         warehouses = ws.sql.warehouses.list()
         count = 0
@@ -234,7 +234,7 @@ class Commands(object):
         return count
 
     @staticmethod
-    def _collapse_acl(acl):
+    def _collapse_acl(acl: List[Dict]) -> List[Dict]:
         """Takes an ACL you read and turns it into an ACL you can write."""
         results = []
         for ac in acl:
@@ -271,102 +271,102 @@ class Commands(object):
         return count
 
     @staticmethod
-    def warehouses_reset_running(workspace):
-        return Commands.warehouses_reset(workspace, running_only=True)
+    def warehouses_reset_running(ws: Workspace):
+        return Commands.warehouses_reset(ws, running_only=True)
 
     @staticmethod
-    def jobs_stop_dlt(workspace):
+    def jobs_stop_dlt(ws: Workspace):
         """Switches any continuous DLT pipelines to standard triggered pipelines"""
         import dateutil.parser as dp
         from time import time as now
         results = []
         page_token = ""
         while True:
-            response = workspace.api("GET", "2.0/pipelines", page_token=page_token)
+            response = ws.api("GET", "2.0/pipelines", page_token=page_token)
             for pipe in response.get("statuses", {}):
                 if pipe["state"] == "IDLE":
                     continue
-                pipe = workspace.api("GET", f"2.0/pipelines/{pipe['pipeline_id']}")
+                pipe = ws.api("GET", f"2.0/pipelines/{pipe['pipeline_id']}")
                 if pipe["spec"]["continuous"]:
                     print("CONTINUOUS", pipe['pipeline_id'])
                     pipe["spec"]["continuous"] = False
-                    workspace.api("PUT", f"2.0/pipelines/{pipe['pipeline_id']}", pipe["spec"])
+                    ws.api("PUT", f"2.0/pipelines/{pipe['pipeline_id']}", pipe["spec"])
                     results.append({"pipeline": pipe["name"], "action": "Cancel continuous"})
             if "next_page_token" in response:
                 page_token = response["next_page_token"]
             else:
                 break
-        for cluster in workspace.clusters.list():
+        for cluster in ws.clusters.list():
             if cluster.get("cluster_source") in ["PIPELINE", "PIPELINE_MAINTENANCE"] and cluster.get(
                     "cluster_name").startswith("dlt-execution-"):
                 pipeline_id = cluster["cluster_name"][len("dlt-execution-"):]
-                pipeline = workspace.api("GET", f"2.0/pipelines/{pipeline_id}")
+                pipeline = ws.api("GET", f"2.0/pipelines/{pipeline_id}")
                 if "latest_updates" in pipeline:
-                    lastrun_str = workspace.api("GET", f"2.0/pipelines/{pipeline_id}").get("latest_updates", [{}])[
+                    lastrun_str = ws.api("GET", f"2.0/pipelines/{pipeline_id}").get("latest_updates", [{}])[
                         0].get("creation_time")
                     lastrun = dp.parse(lastrun_str).timestamp() if lastrun_str else None
                 else:
                     lastrun = None
                 if not lastrun or (now() - lastrun) / 60 > 30:  # If it's been 30 minutes since last DLT run
-                    workspace.clusters.terminate(cluster["cluster_id"])
+                    ws.clusters.terminate(cluster["cluster_id"])
                     results.append({"pipeline": pipeline["name"], "action": "Terminate stale cluster"})
         return results
 
     @staticmethod
-    def models_stop(workspace):
-        """Undeploys any ML Models being served"""
+    def models_stop(ws: Workspace):
+        """Undeploy any ML Models being served"""
         results = []
-        model_endpoints = workspace.api("GET", "2.0/preview/mlflow/endpoints/list").get("endpoints", [])
+        model_endpoints = ws.api("GET", "2.0/preview/mlflow/endpoints/list").get("endpoints", [])
         for ep in model_endpoints:
-            workspace.api("POST", "2.0/preview/mlflow/endpoints/disable", _data=ep)
+            ws.api("POST", "2.0/preview/mlflow/endpoints/disable", _data=ep)
             results.append(ep)
         return results
 
     @staticmethod
-    def stop_all(w):
-        """Everything: Queries, Dashboards, Warehouses, Jobs, DLT, clusters, Warehouses."""
+    def stop_all(ws: Workspace):
+        """Everything: Warehouses, Jobs, DLT, clusters, Warehouses."""
         result = {}
         for cmd in [Commands.jobs_stop, Commands.jobs_stop_dlt,
                     Commands.clusters_stop, Commands.warehouses_reset_running]:
             try:
-                result[cmd.__name__] = cmd(w)
+                result[cmd.__name__] = cmd(ws)
             except Exception as e:
                 result[cmd.__name__ + "_Error"] = e
         return result
 
     @staticmethod
-    def pools_list(w):
+    def pools_list(ws: Workspace):
         """List defined cluster pools"""
-        return [{"pool_name": p["instance_pool_name"], "pool": p} for p in w.pools.list()]
+        return [{"pool_name": p["instance_pool_name"], "pool": p} for p in ws.pools.list()]
 
     @staticmethod
-    def pools_verify(w):
+    def pools_verify(ws: Workspace):
         """Verify cluster pools are correctly deployed matching specs."""
         results = []
-        pools = w.pools.list()
+        pools = ws.pools.list()
         assert len(pools) == 1
         for pool in pools:
             if pool["instance_pool_name"].startswith("Student"):
-                acl = w.permissions.pools.get(pool["instance_pool_id"])
+                acl = ws.permissions.pools.get(pool["instance_pool_id"])
                 perms = acl["access_control_list"]
                 for p in perms:
                     if p.get("group_name") == "users":
                         if p["all_permissions"][0]["permission_level"] == "CAN_ATTACH_TO":
                             break
                 else:
-                    w.permissions.pools.update_group(pool["instance_pool_id"], "users", "CAN_ATTACH_TO")
+                    ws.permissions.pools.update_group(pool["instance_pool_id"], "users", "CAN_ATTACH_TO")
                     results.append(pool["instance_pool_name"])
         return results
 
     @staticmethod
-    def policies_verify(w, fix=False):
+    def policies_verify(ws: Workspace, fix: bool = False):
         """Verify cluster policies are correctly deployed matching specs."""
         results = []
-        policies = w.clusters.policies.list()
+        policies = ws.clusters.policies.list()
         assert len(policies) == 3
-        pools = w.pools.list()
+        pools = ws.pools.list()
         assert len(pools) == 1
-        pool_id = w.pools.list()[0]["instance_pool_id"]
+        pool_id = ws.pools.list()[0]["instance_pool_id"]
         for policy in policies:
             import json
             spec = json.loads(policy["definition"])
@@ -374,7 +374,7 @@ class Commands(object):
                     "value") == pool_id:
                 results.append(policy["name"])
             if policy["name"].startswith("Student"):
-                acl = w.permissions.clusters.policies.get(policy["policy_id"])
+                acl = ws.permissions.clusters.policies.get(policy["policy_id"])
                 perms = acl["access_control_list"]
                 for p in perms:
                     if p.get("group_name") == "users":
@@ -382,20 +382,20 @@ class Commands(object):
                             break
                 else:  # If not break
                     if fix:
-                        w.permissions.clusters.policies.update_group(policy["policy_id"], "users", "CAN_USE")
+                        ws.permissions.clusters.policies.update_group(policy["policy_id"], "users", "CAN_USE")
                         results.append({"policy": policy["name"], "error": "Fixed users access"})
                     else:
                         results.append({"policy": policy["name"], "error": "Missing users access"})
         return results
 
     @staticmethod
-    def policies_fix(w):
-        Commands.policies_verify(w, True)
+    def policies_fix(ws: Workspace):
+        Commands.policies_verify(ws, True)
 
     @staticmethod
-    def clusters_list(w):
+    def clusters_list(ws: Workspace):
         """List all running clusters"""
-        return [{"cluster_name": c["cluster_name"], "cluster": c} for c in w.clusters.list()]
+        return [{"cluster_name": c["cluster_name"], "cluster": c} for c in ws.clusters.list()]
 
     @staticmethod
     def clusters_no_manage(ws: DatabricksApi):
@@ -412,14 +412,14 @@ class Commands(object):
                 count += 1
         return count
 
-    def clusters_create_missing(self, w, fix=False):
+    def clusters_create_missing(self, ws: Workspace, fix: bool = False):
         """Create user clusters matching the cluster spec above"""
         import re
         pattern = re.compile(r"\D")
-        clusters = w.clusters.list()
+        clusters = ws.clusters.list()
         clusters = [c for c in clusters if c["cluster_name"][0:4] not in ("dlt-", "job-")]
         clusters_map = {pattern.subn("", c["cluster_name"])[0]: c for c in clusters}
-        usernames = w.users.list_usernames()
+        usernames = ws.users.list_usernames()
         results = []
         for user in usernames:
             c = dict(self.cluster_spec)
@@ -432,18 +432,18 @@ class Commands(object):
                 #           results.append({"cluster_name": c["cluster_name"], "error": "Setting ACL"})
                 elif fix:
                     c["cluster_name"] = "my_cluster_" + number
-                    c = w.clusters.create(**c)
+                    c = ws.clusters.create(**c)
                     cluster_id = c["cluster_id"]
-                    w.clusters.terminate(cluster_id)
-                    w.clusters.set_acl(cluster_id, user_permissions={user: "CAN_MANAGE"})
+                    ws.clusters.terminate(cluster_id)
+                    ws.clusters.set_acl(cluster_id, user_permissions={user: "CAN_MANAGE"})
                     results.append({"cluster_name": c["cluster_name"], "error": "Creating cluster"})
                 else:
                     results.append({"cluster_name": c["cluster_name"], "error": "Missing cluster"})
         return results
 
-    def clusters_verify(self, w, fix=False):
+    def clusters_verify(self, ws: Workspace, fix: bool = False):
         """Check all clusters against the cluster spec above"""
-        clusters = w.clusters.list()
+        clusters = ws.clusters.list()
         clusters = [c for c in clusters if
                     c["cluster_name"][0:4] not in ("dlt-", "job-") and c["cluster_name"] != "my_cluster"]
         if not clusters:
@@ -487,82 +487,82 @@ class Commands(object):
                     if k.startswith("ebs_"):
                         del c["aws_attributes"][k]
                 try:
-                    w.clusters.update(c)
+                    ws.clusters.update(c)
                 except Exception as e:
                     import json
                     errors.append({"cluster_name": c["cluster_name"], "error": str(e) + json.dumps(c)})
         #         w.clusters.terminate(c["cluster_id"])
         return errors
 
-    def clusters_fix(self, w):
+    def clusters_fix(self, ws: Workspace):
         """Check all clusters against the cluster spec above, correcting where needed."""
-        return self.clusters_verify(w, fix=True)
+        return self.clusters_verify(ws, fix=True)
 
     @staticmethod
-    def clusters_start(w):
+    def clusters_start(ws: Workspace):
         """Send a start command to all clusters"""
         count = 0
-        for cluster in w.clusters.list():
+        for cluster in ws.clusters.list():
             if cluster["state"] == "TERMINATED" and cluster["cluster_source"] != "JOB":
-                w.clusters.start(cluster["cluster_id"])
+                ws.clusters.start(cluster["cluster_id"])
                 count += 1
         return count
 
     @staticmethod
-    def instructors_add(instructors):
-        def do_add_instructors(ws):
+    def instructors_add(instructors: List[str]):
+        def do_add_instructors(ws: Workspace):
             for user in instructors:
                 ws.users.create(user)
                 ws.groups.add_member("admins", user_name=user)
         return do_add_instructors
 
     @staticmethod
-    def users_allow_cluster_create(w: DatabricksApi):
-        return w.scim.groups.users_allow_cluster_create(True, group_name="users")
+    def users_allow_cluster_create(ws: DatabricksApi):
+        return ws.scim.groups.users_allow_cluster_create(True, group_name="users")
 
     @staticmethod
-    def users_disallow_cluster_create(w: DatabricksApi):
+    def users_disallow_cluster_create(ws: DatabricksApi):
         changed = False
-        for u in w.users.list():
+        for u in ws.users.list():
             entitlements = {e["value"] for e in u.get("entitlements", [])}
             groups = {g["display"] for g in u.get("groups", [])}
             if "allow-cluster-create" in entitlements and "admins" not in groups:
                 changed = True
-                w.users.set_cluster_create(u, cluster_create=False, pool_create=False)
-        g = w.scim.groups.get(group_name="users")
+                ws.users.set_cluster_create(u, cluster_create=False, pool_create=False)
+        g = ws.scim.groups.get(group_name="users")
         entitlements = {e["value"] for e in g.get("entitlements", [])}
         if "allow-cluster-create" in entitlements:
             changed = True
-            w.scim.groups.users_allow_cluster_create(False, group_name="users")
+            ws.scim.groups.users_allow_cluster_create(False, group_name="users")
         return changed
 
     @staticmethod
-    def users_disallow_databricks_sql(w: DatabricksApi):
+    def users_disallow_databricks_sql(ws: DatabricksApi):
         changed = False
-        for u in w.users.list():
+        for u in ws.users.list():
             entitlements = {e["value"] for e in u.get("entitlements", [])}
             groups = {g["display"] for g in u.get("groups", [])}
             if "databricks-sql-access" in entitlements and "admins" not in groups:
                 changed = True
-                w.users.set_entitlements(u, {"databricks-sql-access": False})
-        g = w.scim.groups.get(group_name="users")
+                ws.users.set_entitlements(u, {"databricks-sql-access": False})
+        g = ws.scim.groups.get(group_name="users")
         entitlements = {e["value"] for e in g.get("entitlements", [])}
         if "databricks-sql-access" in entitlements:
             changed = True
-            w.scim.groups.remove_entitlement("databricks-sql-access", group=g)
+            ws.scim.groups.remove_entitlement("databricks-sql-access", group=g)
         return changed
 
     @staticmethod
-    def warehouses_remove_da(ws):
+    def warehouses_remove_da(ws: Workspace):
         endpoints = ws.sql.warehouses.list()
         for ep in endpoints:
             if ep["name"].startswith("da-"):
                 ws.sql.warehouses.delete(ep["id"])
 
     @staticmethod
-    def _cloud_specific_attributes(workspace):
+    def _cloud_specific_attributes(ws: Workspace):
         # Cloud specific values
-        if ".cloud.databricks.com" in workspace.url:
+        if ".cloud.databricks.com" in ws.url:
             cloud_attributes = {
                 "node_type_id": "i3.xlarge",
                 "aws_attributes": {
@@ -571,7 +571,7 @@ class Commands(object):
                     "spot_bid_price_percent": 100
                 },
             }
-        elif ".gcp.databricks.com" in workspace.url:
+        elif ".gcp.databricks.com" in ws.url:
             cloud_attributes = {
                 "node_type_id": "n1-highmem-4",
                 "gcp_attributes": {
@@ -579,7 +579,7 @@ class Commands(object):
                     "availability": "PREEMPTIBLE_WITH_FALLBACK_GCP",
                 },
             }
-        elif ".azuredatabricks.net" in workspace.url:
+        elif ".azuredatabricks.net" in ws.url:
             cloud_attributes = {
                 "node_type_id": "Standard_DS3_v2",
                 "azure_attributes": {
@@ -592,22 +592,23 @@ class Commands(object):
         return cloud_attributes
 
     @staticmethod
-    def universal_setup(workspace: DatabricksApi, *, node_type_id: str = None, spark_version: str = None,
+    def universal_setup(ws: DatabricksApi, *, node_type_id: str = None, spark_version: str = None,
                         datasets: List[str] = None, lab_id: str = None, description: str = None,
                         courses: List[str] = None):
+        ws: Workspace = cast(Workspace, ws)
         from dbacademy.dbhelper import WorkspaceHelper
-        if workspace.cloud == "AWS":
+        if ws.cloud == "AWS":
             node_type_id = node_type_id or "i3.xlarge"
-        elif workspace.cloud == "MSA":
+        elif ws.cloud == "MSA":
             node_type_id = node_type_id or "Standard_DS3_v2"
-        elif workspace.cloud == "GCP":
+        elif ws.cloud == "GCP":
             node_type_id = node_type_id or "n1-standard-4"
         else:
-            raise Exception(f"The cloud {workspace.cloud} is not supported.")
+            raise Exception(f"The cloud {ws.cloud} is not supported.")
         spark_version = spark_version or "11.3.x-cpu-ml-scala2.12"
 
         import re
-        workspace_hostname = re.match("https://([^/]+)/api/", workspace.url)[1]
+        workspace_hostname = re.match("https://([^/]+)/api/", ws.url)[1]
 
         if datasets is None:
             datasets = list()
@@ -667,36 +668,36 @@ class Commands(object):
         }
 
         # Append cloud specific attributes the job_clusters spec.
-        cloud_attributes = Commands._cloud_specific_attributes(workspace)
+        cloud_attributes = Commands._cloud_specific_attributes(ws)
         job_spec["job_clusters"][0]["new_cluster"].update(cloud_attributes)
 
-        job = workspace.jobs.get(job_spec["name"], if_not_exists="ignore") or {}
+        job = ws.jobs.get(job_spec["name"], if_not_exists="ignore") or {}
         if job:
             job_id = job["job_id"]
-            workspace.jobs.runs.delete_all(job_id)
+            ws.jobs.runs.delete_all(job_id)
             job_spec["job_id"] = job_id
-            workspace.jobs.update(job_spec)
+            ws.jobs.update(job_spec)
         else:
-            job_id = workspace.jobs.create_multi_task_job(**job_spec)
+            job_id = ws.jobs.create_multi_task_job(**job_spec)
 
-        runs = workspace.jobs.runs.list(job_id=job_id, active_only=True)
+        runs = ws.jobs.runs.list(job_id=job_id, active_only=True)
         if runs:
             run_id = runs[0]["run_id"]
         else:
-            response = workspace.api("POST", "/2.1/jobs/run-now", {"job_id": job_id})
+            response = ws.api("POST", "/2.1/jobs/run-now", {"job_id": job_id})
             run_id = response["run_id"]
 
         # Poll for job completion
         from time import sleep
         while True:
-            response = workspace.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
+            response = ws.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
             life_cycle_state = response.get("state").get("life_cycle_state")
             if life_cycle_state not in ["PENDING", "RUNNING", "TERMINATING"]:
                 result = response.get("state").get("result_state")
                 return result
             sleep(60)  # seconds
 
-    def workspace_setup(self, workspace: DatabricksApi):
+    def workspace_setup(self, ws: Workspace):
         import requests as web
         from dbacademy.dbhelper import WorkspaceHelper
 
@@ -706,7 +707,7 @@ class Commands(object):
             return "No Workspace-Setup found."
 
         import re
-        workspace_hostname = re.match("https://([^/]+)/api/", workspace.url)[1]
+        workspace_hostname = re.match("https://([^/]+)/api/", ws.url)[1]
 
         # Spec for the job to run
         if self.all_users:
@@ -762,27 +763,27 @@ class Commands(object):
         }
 
         # Append cloud specific attributes the job_clusters spec.
-        cloud_attributes = Commands._cloud_specific_attributes(workspace)
+        cloud_attributes = Commands._cloud_specific_attributes(ws)
         job_spec["job_clusters"][0]["new_cluster"].update(cloud_attributes)
 
-        job = workspace.jobs.get(job_spec["name"], if_not_exists="ignore") or {}
+        job = ws.jobs.get(job_spec["name"], if_not_exists="ignore") or {}
         if job:
             job_id = job["job_id"]
-            workspace.jobs.runs.delete_all(job_id)
+            ws.jobs.runs.delete_all(job_id)
             job_spec["job_id"] = job_id
-            workspace.jobs.update(job_spec)
+            ws.jobs.update(job_spec)
         else:
-            job_id = workspace.jobs.create_multi_task_job(**job_spec)
+            job_id = ws.jobs.create_multi_task_job(**job_spec)
 
-        runs = workspace.jobs.runs.list(job_id=job_id, active_only=True)
+        runs = ws.jobs.runs.list(job_id=job_id, active_only=True)
         if runs:
             run_id = runs[0]["run_id"]
         else:
-            response = workspace.api("POST", "/2.1/jobs/run-now", {"job_id": job_id})
+            response = ws.api("POST", "/2.1/jobs/run-now", {"job_id": job_id})
             run_id = response["run_id"]
 
         # Poll for job completion
-        response = self._wait_for(workspace, run_id)
+        response = self._wait_for(ws, run_id)
         if response.get("state").get("life_cycle_state") == "TERMINATED":
             print("The job completed successfully.")
         else:
@@ -795,11 +796,11 @@ class Commands(object):
         #         return result
         #     sleep(60)  # seconds
 
-    def _wait_for(self, workspace, run_id):
+    def _wait_for(self, ws: Workspace, run_id: int):
         import time
 
         wait = 60  # seconds
-        response = workspace.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
+        response = ws.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
         state = response["state"]["life_cycle_state"]
         job_id = response.get("job_id", 0)
 
@@ -811,13 +812,13 @@ class Commands(object):
                 print(f" - Job #{job_id}-{run_id} is {state}, checking again in 5 seconds")
                 time.sleep(5)
 
-            return self._wait_for(workspace, run_id)
+            return self._wait_for(ws, run_id)
 
         return response
 
-    def policies_create(self, workspace):
+    def policies_create(self, ws: Workspace):
         import re
-        workspace_hostname = re.match(r"^https://([^/]+)/.*$", workspace.url)[1]
+        workspace_hostname = re.match(r"^https://([^/]+)/.*$", ws.url)[1]
         machine_type = self.cluster_spec["node_type_id"]
         autotermination = self.cluster_spec["autotermination_minutes"]
         spark_version = self.cluster_spec["spark_version"]
@@ -838,13 +839,13 @@ class Commands(object):
             'preloaded_spark_versions': [spark_version],
         }
 
-        instance_pool = workspace.pools.get_by_name(instance_pool_name, if_not_exists="ignore")
+        instance_pool = ws.pools.get_by_name(instance_pool_name, if_not_exists="ignore")
         if not instance_pool:
-            instance_pool = workspace.api("POST", "2.0/instance-pools/create", instance_pool_spec)
+            instance_pool = ws.api("POST", "2.0/instance-pools/create", instance_pool_spec)
             instance_pool_id = instance_pool["instance_pool_id"]
         else:
             instance_pool_id = instance_pool["instance_pool_id"]
-        workspace.permissions.pools.update_group(instance_pool_id, "users", "CAN_ATTACH_TO")
+        ws.permissions.pools.update_group(instance_pool_id, "users", "CAN_ATTACH_TO")
 
         tags_policy = {
             f"custom_tags.{tag_name}": {
@@ -896,10 +897,10 @@ class Commands(object):
             },
         }
         all_purpose_policy.update(cluster_policy)
-        all_purpose_policy = workspace.clusters.policies.create_or_update("DBAcademy",
-                                                                          all_purpose_policy)
+        all_purpose_policy = ws.clusters.policies.create_or_update("DBAcademy",
+                                                                   all_purpose_policy)
         all_purpose_policy_id = all_purpose_policy.get("policy_id")
-        workspace.permissions.clusters.policies.update(all_purpose_policy_id, "group_name", "users", "CAN_USE")
+        ws.permissions.clusters.policies.update(all_purpose_policy_id, "group_name", "users", "CAN_USE")
 
         jobs_policy: Dict[str, Any] = {
             "cluster_type": {
@@ -908,9 +909,9 @@ class Commands(object):
             },
         }
         jobs_policy.update(cluster_policy)
-        jobs_policy = workspace.clusters.policies.create_or_update("DBAcademy Jobs", jobs_policy)
+        jobs_policy = ws.clusters.policies.create_or_update("DBAcademy Jobs", jobs_policy)
         jobs_policy_id = jobs_policy.get("policy_id")
-        workspace.permissions.clusters.policies.update(jobs_policy_id, "group_name", "users", "CAN_USE")
+        ws.permissions.clusters.policies.update(jobs_policy_id, "group_name", "users", "CAN_USE")
         dlt_policy: Dict[str, Any] = {
             "cluster_type": {
                 "type": "fixed",
@@ -926,13 +927,13 @@ class Commands(object):
             if forbidden in dlt_policy:
                 del dlt_policy[forbidden]
         dlt_policy.update(tags_policy)
-        dlt_policy = workspace.clusters.policies.create_or_update("DBAcademy DLT", dlt_policy)
+        dlt_policy = ws.clusters.policies.create_or_update("DBAcademy DLT", dlt_policy)
         dlt_policy_id = dlt_policy.get("policy_id")
-        workspace.permissions.clusters.policies.update(dlt_policy_id, "group_name", "users", "CAN_USE")
+        ws.permissions.clusters.policies.update(dlt_policy_id, "group_name", "users", "CAN_USE")
 
     @staticmethod
-    def clusters_set_single_user(ws):
-        def get_owners(cluster):
+    def clusters_set_single_user(ws: Workspace):
+        def get_owners(cluster: Dict) -> List[str]:
             cluster_id = cluster["cluster_id"]
             acl = ws.permissions.clusters.get(cluster_id).get("access_control_list", [])
             owners = [perm["user_name"] for perm in acl if
@@ -942,7 +943,7 @@ class Commands(object):
                       ]
             return owners
 
-        def update_cluster(cluster):
+        def update_cluster(cluster: Dict) -> Optional[Dict]:
             #     if "lab-cluster" not in cluster["cluster_name"]:
             #       return
             if cluster.get("data_security_mode") == "SINGLE_USER" and cluster.get("spark_conf", {}).get(
@@ -968,7 +969,7 @@ class Commands(object):
         return [r for r in results if r is not None]
 
     @staticmethod
-    def users_add_azure_principal(ws):
+    def users_add_azure_principal(ws: Workspace):
         """Add Doug's Azure Service Principal"""
         client_id = "4d5472a4-eaa9-47bf-8a9f-e8581f865be1"
         try:
@@ -982,14 +983,16 @@ class Commands(object):
         ws.groups.add_member("admins", user_name=client_id)
 
     @staticmethod
-    def users_add_admin_user():
-        def do_add_admin_user(ws: Workspace):
-            ws.scim.users.create("doug.bateman@databricks.com", if_exists="ignore")
-            ws.groups.add_member("admins", user_name="doug.bateman@databricks.com")
-        return do_add_admin_user
+    def users_add_admins(admins: List[str]):
+        def do_add_admins(ws: Workspace):
+            for username in admins:
+                ws.scim.users.create(username, if_exists="ignore")
+                ws.groups.add_member("admins", user_name=username)
+        return do_add_admins
 
 
-def find_workspace(workspaces, *, name=None, url=None):
+def find_workspace(workspaces: List[DatabricksApi], *, name: str = None, url: str = None) -> Workspace:
+    workspaces: List[Workspace] = cast(List[Workspace], workspaces)
     if name:
         return next(w for w in workspaces if w["workspace_name"] == name)
     elif url:
@@ -998,7 +1001,8 @@ def find_workspace(workspaces, *, name=None, url=None):
         raise Exception("getWorkspace: must provide workspace name or url")
 
 
-def scan_workspaces(function, workspaces, *, url=None, name=None, ignore_connection_errors=False):
+def scan_workspaces(function: Callable[[Workspace], Any], workspaces: List[DatabricksApi], *,
+                    url: str = None, name: str = None, ignore_connection_errors: bool = False):
     from requests.exceptions import ConnectionError, HTTPError
     from collections.abc import Mapping, Iterable
     from itertools import chain
@@ -1009,9 +1013,9 @@ def scan_workspaces(function, workspaces, *, url=None, name=None, ignore_connect
     elif url:
         workspaces = (w for w in workspaces if url in w.url)
 
-    def check_workspace(w):
+    def check_workspace(ws: Workspace):
         try:
-            result = function(w)
+            result = function(ws)
             # Standardize results as an iterator of OrderedDict.
             if not result:
                 result = ()
@@ -1020,15 +1024,14 @@ def scan_workspaces(function, workspaces, *, url=None, name=None, ignore_connect
             for r in result:
                 if not isinstance(r, Mapping):
                     r = {"result": r}
-                yield w, r, None
+                yield ws, r, None
         except DatabricksApiException as e:
-            if not (e.http_code == 401 and ("tfclass" in w.url)):
-                yield w, None, e
+            yield ws, None, e
         except ConnectionError as e:
             if not ignore_connection_errors:
-                yield w, None, e
+                yield ws, None, e
         except HTTPError as e:
-            yield w, None, e
+            yield ws, None, e
 
     #     except Exception as e:
     #       yield (w, None, e)

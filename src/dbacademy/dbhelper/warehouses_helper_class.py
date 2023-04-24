@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Union, List, Optional
 
 
 class WarehousesHelper:
@@ -94,7 +94,10 @@ class WarehousesHelper:
                                                      org_id=dbgems.get_org_id())
 
     @staticmethod
-    def create_sql_warehouse(*, client: DBAcademyRestClient, name: str, auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None, for_user: Union[str, None] = None):
+    def create_sql_warehouse(*, client: DBAcademyRestClient, name: str, auto_stop_mins: Optional[int],
+                             min_num_clusters, max_num_clusters, enable_serverless_compute: bool, lab_id: str = None,
+                             workspace_description: str = None, workspace_name: str = None,
+                             org_id: str = None, for_user: Union[str, None] = None):
         from dbacademy import dbgems
         from dbacademy import common
         from dbacademy.rest.common import DatabricksApiException
