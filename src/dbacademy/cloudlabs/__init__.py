@@ -9,19 +9,31 @@ __all__ = ["CloudlabsApi", "Tenant"]
 
 
 class Tenant(ApiClient):
-    def __init__(self, client: CloudlabsApi, tenant: Dict):
-        super().__init__(client.url, token=client.token)
+    def __init__(self, cloudlabs: CloudlabsApi, tenant: Dict):
+        super().__init__(cloudlabs.url, token=cloudlabs.token)
         self.__dict__.update(tenant)
+        self.cloudlabs = cloudlabs
         self.name = tenant["Name"]
         self.session.headers['roleid'] = tenant["InternalRoleId"]
         self.session.headers['tenantid'] = tenant["InternalPartnerId"]
         from dbacademy.cloudlabs.labs import Labs
         self.labs = Labs(self)
+        from dbacademy.cloudlabs.instructors import Instructors
+        self.instructors = Instructors(self)
+
+    @property
+    def threadpool(self):
+        return self.cloudlabs.threadpool
+
+    def do_batch(self, f, items):
+        return self.threadpool.map(f, items)
 
 
 class CloudlabsApi(ApiClient):
     def __init__(self, token):
         super().__init__("https://api.cloudlabs.ai", token=token)
+        from multiprocessing.pool import ThreadPool
+        self.threadpool = ThreadPool(100)
 
     @cached_property
     def tenants(self) -> Dict[str, Tenant]:

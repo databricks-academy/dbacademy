@@ -10,6 +10,15 @@ class Labs(ApiContainer):
     def __init__(self, client: CloudlabsApi):
         self.client = client
 
+    @staticmethod
+    def to_id(lab: Union[int, Lab]) -> int:
+        if isinstance(lab, int):
+            return lab
+        elif isinstance(lab, dict):
+            return lab["Id"]
+        else:
+            raise ValueError(f"lab must be int or dict, found {type(lab)}")
+
     def list(self) -> List[Lab]:
         labs = self.client.api("POST", "/api/OnDemandLab/GetOnDemandLabs", {
             "State": "1",
