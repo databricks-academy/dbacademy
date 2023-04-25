@@ -8,8 +8,8 @@ Instructor = Dict[str, Any]
 
 
 class Instructors(ApiContainer):
-    def __init__(self, client: Tenant):
-        self.client = client
+    def __init__(self, tenant: Tenant):
+        self.client = tenant
 
     @staticmethod
     def to_id(instructor: Union[int, Instructor]) -> int:

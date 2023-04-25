@@ -7,8 +7,8 @@ Lab = Dict[str, Any]
 
 
 class Labs(ApiContainer):
-    def __init__(self, client: CloudlabsApi):
-        self.client = client
+    def __init__(self, tenant: Tenant):
+        self.client = tenant
 
     @staticmethod
     def to_id(lab: Union[int, Lab]) -> int:
@@ -36,9 +36,9 @@ class Labs(ApiContainer):
         else:
             raise DatabricksApiException(f"No lab found with {key}={value!r}", 404)
 
-    def find_all_by_key(self, key: str, value: Union[str, int]) -> Lab:
+    def find_all_by_key(self, key: str, value: Union[str, int]) -> List[Lab]:
         labs = self.list()
-        return [lab for lab in labs if lab[key]==value]
+        return [lab for lab in labs if lab[key] == value]
 
     def get_by_id(self, lab_id: int) -> Lab:
         return self.find_one_by_key("Id", lab_id)
