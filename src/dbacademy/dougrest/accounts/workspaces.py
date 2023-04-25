@@ -79,6 +79,8 @@ class Workspaces(AccountsCRUD):
 
     @overrides
     def _wrap(self, item: dict) -> Workspace:
+        if "workspace_id" not in item:
+            raise ValueError("Invalid response.  Expected workspace dict, found: " + item)
         return Workspace(item, self.client) if item is not None else None
 
     def get_by_deployment_name(self, name, if_not_exists: IfNotExists = "error"):
