@@ -9,7 +9,7 @@ Instructor = Dict[str, Any]
 
 class Instructors(ApiContainer):
     def __init__(self, tenant: Tenant):
-        self.client = tenant
+        self.tenant = tenant
 
     @staticmethod
     def to_id(instructor: Union[int, Instructor]) -> int:
@@ -22,9 +22,9 @@ class Instructors(ApiContainer):
 
     def get_instructors_for_lab(self, lab: Union[int, Lab], fetch_creds=False) -> List[Instructor]:
         lab_id = Labs.to_id(lab)
-        instructors = self.client.api("GET", "/api/Instructor/GetODLInstructors", eventId=lab_id)
+        instructors = self.tenant.api("GET", "/api/Instructor/GetODLInstructors", eventId=lab_id)
         if fetch_creds:
-            creds_list = self.client.do_batch(lambda i: self.get_instructor_creds(lab, i), instructors)
+            creds_list = self.tenant.do_batch(lambda i: self.get_instructor_creds(lab, i), instructors)
             for instructor, creds in zip(instructors, creds_list):
                 instructor["UserName"] = creds["AADEmail"]
                 instructor["Password"] = creds["TempPassword"]
@@ -33,4 +33,4 @@ class Instructors(ApiContainer):
     def get_instructor_creds(self, lab: Union[int, Lab], instructor: Union[int, Instructor]) -> Dict[str, Any]:
         lab_id = Labs.to_id(lab)
         instructor_id = Instructors.to_id(instructor)
-        return self.client.api("GET", f"/api/Instructor/GetEventInstructorCloudUser/{lab_id}/{instructor_id}")
+        return self.tenant.api("GET", f"/api/Instructor/GetEventInstructorCloudUser/{lab_id}/{instructor_id}")

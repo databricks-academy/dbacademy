@@ -2,6 +2,7 @@ import unittest
 from typing import Dict
 
 from dbacademy.cloudlabs import CloudlabsApi
+from dbacademy.dougrest import DatabricksApi
 
 
 class TestCloudlabsApi(unittest.TestCase):
@@ -43,3 +44,19 @@ class TestCloudlabsApi(unittest.TestCase):
         if result:
             self.assertIsNotNone(result[0]["UserName"])
             self.assertIsNotNone(result[0]["Password"])
+
+    def testGetWorkspaces(self):
+        cloudlabs = CloudlabsApi.curl_auth(self.curl_login)
+        tenant = cloudlabs.tenants["Databricks – User Success"]
+        lab = tenant.labs.get_by_id(31559)
+        workspaces = tenant.labs.workspaces(lab)
+        self.assertTrue(len(workspaces) != 0)
+        result = workspaces[0].workspace.list("/")
+        self.assertTrue(len(result) != 0)
+
+    def testGetWorkspacesEmpty(self):
+        cloudlabs = CloudlabsApi.curl_auth(self.curl_login)
+        tenant = cloudlabs.tenants["Databricks – User Success"]
+        lab = tenant.labs.get_by_id(29900)
+        workspaces = tenant.labs.workspaces(lab)
+        self.assertTrue(len(workspaces) == 0)
