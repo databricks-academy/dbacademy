@@ -20,7 +20,8 @@ class AccountsApi(ApiClient):
 
     def __init__(self, account_id: str, *,
                  user: str = None, password: str = None,
-                 token: str = None, cloud: Cloud = "AWS") -> None:
+                 token: str = None,
+                 cloud: Cloud = "AWS") -> None:
         if cloud == "AWS":
             url = f'https://accounts.cloud.databricks.com/api/2.0/accounts/{account_id}'
         elif cloud == "GCP":
