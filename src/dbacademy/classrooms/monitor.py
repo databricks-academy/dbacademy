@@ -951,6 +951,7 @@ class Commands(object):
             acl = ws.permissions.clusters.get(cluster_id).get("access_control_list", [])
             owners = [perm["user_name"] for perm in acl if
                       "user_name" in perm and
+                      perm["user_name"] not in ["databricksadmin@databrickslabs.onmicrosoft.com"] and
                       perm["all_permissions"][0]["inherited"] is False and
                       perm["all_permissions"][0]["permission_level"] in ["CAN_MANAGE", "CAN_RESTART"]
                       ]
