@@ -19,9 +19,11 @@ class Labs(ApiContainer):
         else:
             raise ValueError(f"lab must be int or dict, found {type(lab)}")
 
-    def list(self) -> List[Lab]:
+    def list(self, include_expired: bool = False, include_test: bool = False) -> List[Lab]:
+        state = 4 if include_expired else 1
+        state += 1 if include_test else 0
         labs = self.client.api("POST", "/api/OnDemandLab/GetOnDemandLabs", {
-            "State": "1",
+            "State": str(state),
             "InstructorId": None,
             "StartIndex": 1000,  # Page size
             "PageCount": 1,
