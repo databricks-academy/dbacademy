@@ -27,7 +27,7 @@ class Labs(ApiContainer):
         labs = self.tenant.api("POST", "/api/OnDemandLab/GetOnDemandLabs", {
             "State": str(state),
             "InstructorId": None,
-            "StartIndex": 1000,  # Page size
+            "StartIndex": 1000,  # This is the page size
             "PageCount": 1,
         })
         return labs

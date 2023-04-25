@@ -1,5 +1,6 @@
 **/__pycache__
 **/.DS_Store
+**/.curl_login
 .idea/workspace.xml
 /dist/
 /build/
