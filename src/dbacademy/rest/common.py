@@ -60,6 +60,7 @@ class ApiClient(ApiContainer):
     url: str = None
     dns_verify: bool = True
     dns_retry: bool = False
+    trace: bool = False
 
     def __init__(self,
                  url: str,
@@ -231,9 +232,13 @@ class ApiClient(ApiContainer):
             try:
                 if _http_method in ('GET', 'HEAD', 'OPTIONS'):
                     params = {k: str(v).lower() if isinstance(v, bool) else v for k, v in _data.items()}
+                    if self.trace:
+                        print(f"{_http_method} {url}: {params=}")
                     response = self.session.request(_http_method, url, params=params, timeout=timeout)
                 else:
                     json_data = json.dumps(_data)
+                    if self.trace:
+                        print(f"{_http_method} {url}: data={json_data}")
                     response = self.session.request(_http_method, url, data=json_data, timeout=timeout)
 
                 if response.status_code == 500:
