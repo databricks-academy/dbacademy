@@ -184,17 +184,24 @@ class ApiClientFactory(Generic[ApiType]):
 
         return clients
 
-    @staticmethod
-    def azure_account(account_id: str, directory_id: str,
-                      client_id: str, client_secret: str) -> AccountsApi:
+    @classmethod
+    def azure_token(cls, directory_id: str, principal_id: str, secret: str) -> str:
+        """Do Azure Sign-In with Service Principal"""
         import requests
         azure_databricks_scope = "2ff814a6-3304-4ab8-85cb-cd0e6f879c1d/.default"
         token = requests.post(f"https://login.microsoftonline.com/{directory_id}/oauth2/v2.0/token", data={
-            'client_id': client_id,
+            'client_id': principal_id,
             'grant_type': 'client_credentials',
             'scope': azure_databricks_scope,
-            'client_secret': client_secret
+            'client_secret': secret
         }).json()["access_token"]
+        return token
+
+    @classmethod
+    def azure_account(cls, account_id: str, directory_id: str,
+                      principal_id: str, secret: str) -> AccountsApi:
+        """Return an AccountsApi client on Azure using a service principal"""
+        token = cls.azure_token(directory_id, principal_id, secret)
         return AccountsApi(account_id, token=token, cloud="MSA")
 
 
