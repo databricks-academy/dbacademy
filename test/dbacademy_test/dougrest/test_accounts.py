@@ -28,7 +28,13 @@ class TestAccountsApi(unittest.TestCase):
 
     def testListUsers(self):
         account = dougrest_factory.test_account()
-        print(account.users.list(count=10))
+        result = account.users.list(count=10)
+        self.assertIsInstance(result, list)
+
+    def testListMetastores(self):
+        account = dougrest_factory.test_account()
+        result = account.metastores.list()
+        self.assertIsInstance(result, list)
 
 
 # COMMAND ----------

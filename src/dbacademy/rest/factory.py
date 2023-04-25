@@ -142,6 +142,7 @@ class ApiClientFactory(Generic[ApiType]):
     def test_account(self) -> AccountsApi:
         known_accounts = self.known_accounts()  # Minimize file hits
         result = known_accounts.get(ApiClientFactory.PROFILE_ENVIRONMENT)
+        result = result or known_accounts.get(ApiClientFactory.PROFILE_TEST)
         result = result or known_accounts.get(ApiClientFactory.PROFILE_DEFAULT)
 
         if result is not None:
@@ -183,7 +184,7 @@ class ApiClientFactory(Generic[ApiType]):
                     default = clients[section_name]
 
         if default is not None:
-            clients[ApiClientFactory.PROFILE_DEFAULT] = default
+            clients.setdefault(ApiClientFactory.PROFILE_DEFAULT, default)
 
         return clients
 
