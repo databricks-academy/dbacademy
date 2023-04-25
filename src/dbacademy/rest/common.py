@@ -12,7 +12,7 @@ import requests
 
 __all__ = ["ApiContainer", "ApiClient", "DatabricksApiException",
            "HttpStatusCodes", "HttpMethod", "HttpReturnType", "IfNotExists", "IfExists",
-           "Item", "ItemId", "ItemOrId"]
+           "Item", "ItemId", "ItemOrId", "Cloud"]
 
 HttpStatusCodes = Union[int, Container[int]]
 HttpMethod = Literal["GET", "PUT", "POST", "DELETE", "PATCH", "HEAD", "OPTIONS"]
@@ -24,6 +24,8 @@ IfExists = Literal["create", "error", "ignore", "overwrite", "update"]
 Item = Dict
 ItemId = Union[int, str]
 ItemOrId = Union[int, str, Dict]
+
+Cloud = Literal["AWS", "MSA", "GCP"]
 
 
 class ApiContainer(object):
