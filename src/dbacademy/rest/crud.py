@@ -118,7 +118,11 @@ class CRUD(ApiContainer, metaclass=ABCMeta):
 
     def list(self) -> List[Item]:
         """Returns a list of all {plural}."""
-        return [self._refresh(item) for item in self._list()]
+        from typing import Sequence
+        result = self._list()
+        if not isinstance(result, Sequence):
+            raise ValueError("Invalid response.  Expected list, found: " + result)
+        return [self._refresh(item) for item in result]
 
     def list_names(self) -> List[str]:
         """Returns a list the names of all {plural}."""
