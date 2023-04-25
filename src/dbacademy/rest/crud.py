@@ -121,7 +121,7 @@ class CRUD(ApiContainer, metaclass=ABCMeta):
         from typing import Sequence
         result = self._list()
         if not isinstance(result, Sequence):
-            raise ValueError("Invalid response.  Expected list, found: " + result)
+            raise ValueError(f"Invalid response.  Expected list, found {result!r})
         return [self._refresh(item) for item in result]
 
     def list_names(self) -> List[str]:
