@@ -39,11 +39,12 @@ class ApiClientFactory(Generic[ApiType]):
         know_clients = self.known_clients()  # Minimize file hits
         result = know_clients.get(ApiClientFactory.PROFILE_ENVIRONMENT_TEST)
         result = result or know_clients.get(ApiClientFactory.PROFILE_TEST)
-
         if result:
             return result
-
-        raise ValueError(f"Unable to determine the test_client() hostname and token; Please configure the [TEST] section of the databricks config file or specify the {ApiClientFactory.ENV_DATABRICKS_HOST_TEST} and {ApiClientFactory.ENV_DATABRICKS_TOKEN_TEST} environment variables.")
+        raise ValueError(f"Unable to determine the test_client() hostname and token; "
+                         f"Please configure the [TEST] section of the databricks config file"
+                         f" or specify the {ApiClientFactory.ENV_DATABRICKS_HOST_TEST} and "
+                         f"{ApiClientFactory.ENV_DATABRICKS_TOKEN_TEST} environment variables.")
 
     @cache
     def current_workspace(self) -> Optional[ApiType]:
@@ -93,7 +94,8 @@ class ApiClientFactory(Generic[ApiType]):
     # TODO Refactor to avoid hitting the file system at all by hinting that we want ENV over CFG
     @cache
     def known_clients(self) -> Dict[str, ApiType]:
-        import os, configparser
+        import configparser
+        import os
 
         clients = {}
 
@@ -135,7 +137,7 @@ class ApiClientFactory(Generic[ApiType]):
         if host and token:
             clients[profile] = self.token_auth(hostname=host, token=token)
 
-    # TODO Refactor to avoid hitting the file system att all by hinting that we want ENV over CFG
+    # TODO Refactor to avoid hitting the file system at all by hinting that we want ENV over CFG
     @cache
     def test_account(self) -> AccountsApi:
         known_accounts = self.known_accounts()  # Minimize file hits
@@ -149,7 +151,8 @@ class ApiClientFactory(Generic[ApiType]):
 
     @cache
     def known_accounts(self) -> Dict[str, AccountsApi]:
-        import os, configparser
+        import configparser
+        import os
 
         clients = {}
         default = None
@@ -158,7 +161,7 @@ class ApiClientFactory(Generic[ApiType]):
         username = os.getenv(ApiClientFactory.ENV_DATABRICKS_ACCOUNT_NAME)
         password = os.getenv(ApiClientFactory.ENV_DATABRICKS_ACCOUNT_PASS)
         if acct_id and username and password:
-            clients[ApiClientFactory.PROFILE_ENVIRONMENT] = AccountsApi(acct_id, username, password)
+            clients[ApiClientFactory.PROFILE_ENVIRONMENT] = AccountsApi(acct_id, user=username, password=password)
 
         for path in ('.databrickscfg', '~/.databrickscfg'):
             path = os.path.expanduser(path)
@@ -175,7 +178,7 @@ class ApiClientFactory(Generic[ApiType]):
                 account_id = section['id']
                 user = section['username']
                 password = section['password']
-                clients[section_name] = AccountsApi(account_id, user, password)
+                clients[section_name] = AccountsApi(account_id, user=user, password=password)
                 if default is None:
                     default = clients[section_name]
 
