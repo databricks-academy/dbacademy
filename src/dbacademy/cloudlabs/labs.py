@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Union
+from typing import List, Dict, Any, Union, Collection, Iterable
 
 from dbacademy.cloudlabs import CloudlabsApi, Tenant
 from dbacademy.dougrest import DatabricksApi
@@ -43,6 +43,12 @@ class Labs(ApiContainer):
     def find_all_by_key(self, key: str, value: Union[str, int]) -> List[Lab]:
         labs = self.list(include_expired=True, include_test=True)
         return [lab for lab in labs if lab[key] == value]
+
+    def refresh(self, lab: Lab) -> Lab:
+        return self.tenant.api("GET", "/api/OnDemandLab", id=lab["OnDemandLabId"])
+
+    def refresh_all(self, labs: Iterable[Lab]) -> List[Lab]:
+        return self.tenant.do_batch(self.refresh, labs)
 
     def get_by_id(self, lab_id: int) -> Lab:
         return self.find_one_by_key("Id", lab_id)
