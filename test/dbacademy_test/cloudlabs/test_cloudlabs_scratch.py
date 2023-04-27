@@ -18,15 +18,11 @@ class TestCloudlabsScratch(unittest.TestCase):
                 return f.read()
         raise ValueError("Environment variable CLOUDLABS_CURL must be set, or the file .curl_login must exist")
 
-    def testGetLabs(self):
+    def getLabs(self):
         cloudlabs = CloudlabsApi.curl_auth(self.curl_login)
         tenant = cloudlabs.tenants["Databricks – Training"]
         all_labs = tenant.labs.list(include_test=True)
         test_labs = [lab for lab in all_labs if "User Acceptance Environment" in lab["Title"]]
-        ml_labs = [lab["Title"] for lab in all_labs if "Scalable Machine" in lab["Title"]]
-        print()
-        for lab in ml_labs:
-            print(lab)
 
         def load_details(lab):
             lab = tenant.labs.refresh(lab)
@@ -34,30 +30,56 @@ class TestCloudlabsScratch(unittest.TestCase):
             assert len(workspaces) == 1, "Invalid assumption of exactly 1 workspace"
             lab["Workspace"] = workspaces[0]
             lab["Instructors"] = tenant.instructors.get_instructors_for_lab(lab)
+            lab["Title"] = lab["Title"][0:lab["Title"].find(" | ")]
             return lab
 
         test_labs = tenant.do_batch(load_details, test_labs)
+        test_labs = [lab for lab in test_labs if "2023-04-25" in lab["CreatedTime"]]
+        return test_labs
+
+    def testWriteLabTokens(self):
+        from pprint import pprint
+        print()
+        test_labs = self.getLabs()
+        table_mapping = {
+            "name": "Title",
+            "url": lambda lab: lab["Workspace"].url[:-len("/api/")],
+            "token": lambda lab: lab["Workspace"].token,
+        }
+        results = []
+        for lab in test_labs:
+            row = {}
+            for title, field in table_mapping.items():
+                if callable(field):
+                    row[title] = field(lab)
+                else:
+                    row[title] = lab[field]
+            results.append(row)
+        pprint(results, indent=4, sort_dicts=False)
+
+    def testWriteSpreadsheet(self):
+        import csv
+        from sys import stdout
+        print()
+        test_labs = self.getLabs()
         table_mapping = {
             "Created": "CreatedTime",
             "Cloud": lambda lab: lab["Workspace"].cloud,
             "Template": "TemplateId",
             "Lab ID": "Id",
-            "Template Name": "TemplateName",
             "Lab Name": "Title",
             "Bitly URL": "BitLink",
             "Databricks Workspace URL": lambda lab: lab["Workspace"].url[:-len("/api/")],
+            "Databricks Workspace Token": lambda lab: lab["Workspace"].token,
             "Control Panel": lambda lab: f"https://admin.cloudlabs.ai/#/home/odl/controlpanel/{lab['UniqueName']}",
         }
-        import csv
-        from sys import stdout
-        print()
         csvwriter = csv.writer(stdout, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         csvwriter.writerow(table_mapping.keys())
         for lab in test_labs:
             row = []
-            for item in table_mapping.values():
-                if callable(item):
-                    row.append(item(lab))
+            for title, field in table_mapping.items():
+                if callable(field):
+                    row.append(field(lab))
                 else:
-                    row.append(lab[item])
+                    row.append(lab[field])
             csvwriter.writerow(row)
