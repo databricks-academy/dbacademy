@@ -4,6 +4,8 @@ from dbacademy.dougrest import DatabricksApi
 from dbacademy.dougrest.accounts.workspaces import Workspace
 from dbacademy.rest.common import DatabricksApiException
 
+__all__ = ["Commands", "scan_workspaces", "find_workspace"]
+
 
 class Commands(object):
     @staticmethod
