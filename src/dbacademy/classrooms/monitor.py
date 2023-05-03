@@ -4,14 +4,10 @@ from dbacademy.dougrest import DatabricksApi
 from dbacademy.dougrest.accounts.workspaces import Workspace
 from dbacademy.rest.common import DatabricksApiException
 
+__all__ = ["Commands", "scan_workspaces", "find_workspace"]
+
 
 class Commands(object):
-    def __init__(self, cluster_spec: Dict, courseware_spec: Dict, event: Dict):
-        self.cluster_spec = cluster_spec
-        self.courseware_spec = courseware_spec
-        self.event = event
-        self.all_users = False
-
     @staticmethod
     def get_region(ws: Workspace):
         """In order to use this function, you must have pre-installed dnspython."""
@@ -29,56 +25,54 @@ class Commands(object):
         users = ws.users.list_usernames()
         return len([u for u in users if "odl_instructor" in u])
 
-    def courseware_verify(self, ws: Workspace, fix: bool = False, only_students: bool = False):
-        """Compares each user's home folder to the courseware_spec defined above."""
-        users = ws.users.list_usernames()
-        results = []
-        correct_file_count = -1
-
-        for user in users:
-            if only_students and "odl_user" not in user:
-                continue  # Skip instructors
-            folder_name = self.courseware_spec['folder']
-            if "dbc" in self.courseware_spec:
-                workspace_path = f"/Users/{user}/{folder_name}"
-                try:
-                    file_count = len(list(ws.workspace.walk(workspace_path)))
-                    if correct_file_count < 0:
-                        correct_file_count = file_count
-                        continue
-                    elif file_count == correct_file_count:
-                        continue
-                    elif file_count > correct_file_count:
-                        results.append(user + ", extra files found")
-                        continue
-                    elif file_count < correct_file_count:
-                        results.append(user + ", half imported")
-                        if fix:
-                            ws.workspace.delete(workspace_path, recursive=True)
-                        else:
+    @staticmethod
+    def courseware_verify(courseware_spec: Dict, fix: bool = False, only_students: bool = False):
+        def do_courseware_verify(ws: Workspace):
+            """Compares each user's home folder to the courseware_spec defined above."""
+            users = ws.users.list_usernames()
+            results = []
+            correct_file_count = -1
+            for user in users:
+                if only_students and "odl_user" not in user:
+                    continue  # Skip instructors
+                folder_name = courseware_spec['folder']
+                if "dbc" in courseware_spec:
+                    workspace_path = f"/Users/{user}/{folder_name}"
+                    try:
+                        file_count = len(list(ws.workspace.walk(workspace_path)))
+                        if correct_file_count < 0:
+                            correct_file_count = file_count
                             continue
-                except DatabricksApiException:
-                    pass
-                if fix:
-                    ws.workspace.import_from_url(self.courseware_spec["dbc"], workspace_path)
-                results.append(user)
-            if "repo" in self.courseware_spec:
-                workspace_path = f"/Repos/{user}/{folder_name}"
-                workspace_path2 = f"/Repos/{user}/{folder_name.lower()}"
-                if ws.repos.exists(workspace_path):
-                    continue
-                if ws.repos.exists(workspace_path2):
-                    continue
-                # Comment out the w.repos.list() if you want all users to have a cluster.
-                if fix and not ws.repos.list():
-                    #           w.workspace.mkdirs(f"/Repos/{user}")
-                    ws.repos.create(self.courseware_spec["repo"], workspace_path)
-                results.append(user)
-        return results
-
-    def courseware_fix(self, ws: Workspace):
-        """Compares each user's home folder to the courseware_spec defined above, deploying if needed."""
-        return self.courseware_verify(ws, fix=True)
+                        elif file_count == correct_file_count:
+                            continue
+                        elif file_count > correct_file_count:
+                            results.append(user + ", extra files found")
+                            continue
+                        elif file_count < correct_file_count:
+                            results.append(user + ", half imported")
+                            if fix:
+                                ws.workspace.delete(workspace_path, recursive=True)
+                            else:
+                                continue
+                    except DatabricksApiException:
+                        pass
+                    if fix:
+                        ws.workspace.import_from_url(courseware_spec["dbc"], workspace_path)
+                    results.append(user)
+                if "repo" in courseware_spec:
+                    workspace_path = f"/Repos/{user}/{folder_name}"
+                    workspace_path2 = f"/Repos/{user}/{folder_name.lower()}"
+                    if ws.repos.exists(workspace_path):
+                        continue
+                    if ws.repos.exists(workspace_path2):
+                        continue
+                    # Comment out the w.repos.list() if you want all users to have a cluster.
+                    if fix and not ws.repos.list():
+                        #           w.workspace.mkdirs(f"/Repos/{user}")
+                        ws.repos.create(courseware_spec["repo"], workspace_path)
+                    results.append(user)
+            return results
+        return do_courseware_verify
 
     @staticmethod
     def warehouses_create_starter(ws: Workspace):
@@ -425,91 +419,93 @@ class Commands(object):
                 count += 1
         return count
 
-    def clusters_create_missing(self, ws: Workspace, fix: bool = False):
-        """Create user clusters matching the cluster spec above"""
-        import re
-        pattern = re.compile(r"\D")
-        clusters = ws.clusters.list()
-        clusters = [c for c in clusters if c["cluster_name"][0:4] not in ("dlt-", "job-")]
-        clusters_map = {pattern.subn("", c["cluster_name"])[0]: c for c in clusters}
-        usernames = ws.users.list_usernames()
-        results = []
-        for user in usernames:
-            c = dict(self.cluster_spec)
-            if user.startswith("odl_") or user.startswith("class+"):
-                number = pattern.subn("", user)[0]
-                if number in clusters_map:
+    @staticmethod
+    def clusters_check_missing(cluster_spec: Dict, fix: bool = False):
+        def do_clusters_check_missing(ws: Workspace):
+            """Create user clusters matching the cluster spec above"""
+            import re
+            pattern = re.compile(r"\D")
+            clusters = ws.clusters.list()
+            clusters = [c for c in clusters if c["cluster_name"][0:4] not in ("dlt-", "job-")]
+            clusters_map = {pattern.subn("", c["cluster_name"])[0]: c for c in clusters}
+            usernames = ws.users.list_usernames()
+            results = []
+            for user in usernames:
+                c = dict(cluster_spec)
+                if user.startswith("odl_") or user.startswith("class+"):
+                    number = pattern.subn("", user)[0]
+                    if number in clusters_map:
+                        continue
+                    #           c=clusters_map[number]
+                    #           result=w.permissions.clusters.update_user(c["cluster_id"], user, "CAN_MANAGE")
+                    #           results.append({"cluster_name": c["cluster_name"], "error": "Setting ACL"})
+                    elif fix:
+                        c["cluster_name"] = "my_cluster_" + number
+                        c = ws.clusters.create(**c)
+                        cluster_id = c["cluster_id"]
+                        ws.clusters.terminate(cluster_id)
+                        ws.clusters.set_acl(cluster_id, user_permissions={user: "CAN_MANAGE"})
+                        results.append({"cluster_name": c["cluster_name"], "error": "Creating cluster"})
+                    else:
+                        results.append({"cluster_name": c["cluster_name"], "error": "Missing cluster"})
+            return results
+        return do_clusters_check_missing
+
+    @staticmethod
+    def clusters_verify(cluster_spec: Dict, fix: bool = False):
+        def do_clusters_verify(ws: Workspace):
+            """Check all clusters against the cluster spec above"""
+            clusters = ws.clusters.list()
+            clusters = [c for c in clusters if
+                        c["cluster_name"][0:4] not in ("dlt-", "job-") and c["cluster_name"] != "my_cluster"]
+            if not clusters:
+                return [{"cluster_name": " ", "error": "No cluster in workspace"}]
+            errors = []
+            for c in clusters:
+                if c.get("cluster_source") in ["PIPELINE", "JOB", "PIPELINE_MAINTENANCE"]:
                     continue
-                #           c=clusters_map[number]
-                #           result=w.permissions.clusters.update_user(c["cluster_id"], user, "CAN_MANAGE")
-                #           results.append({"cluster_name": c["cluster_name"], "error": "Setting ACL"})
-                elif fix:
-                    c["cluster_name"] = "my_cluster_" + number
-                    c = ws.clusters.create(**c)
-                    cluster_id = c["cluster_id"]
-                    ws.clusters.terminate(cluster_id)
-                    ws.clusters.set_acl(cluster_id, user_permissions={user: "CAN_MANAGE"})
-                    results.append({"cluster_name": c["cluster_name"], "error": "Creating cluster"})
-                else:
-                    results.append({"cluster_name": c["cluster_name"], "error": "Missing cluster"})
-        return results
-
-    def clusters_verify(self, ws: Workspace, fix: bool = False):
-        """Check all clusters against the cluster spec above"""
-        clusters = ws.clusters.list()
-        clusters = [c for c in clusters if
-                    c["cluster_name"][0:4] not in ("dlt-", "job-") and c["cluster_name"] != "my_cluster"]
-        if not clusters:
-            return [{"cluster_name": " ", "error": "No cluster in workspace"}]
-        errors = []
-        for c in clusters:
-            if c.get("cluster_source") in ["PIPELINE", "JOB", "PIPELINE_MAINTENANCE"]:
-                continue
-            differences = {k: c.get(k) for k in self.cluster_spec if k not in c or c[k] != self.cluster_spec[k]}
-            if "num_workers" in self.cluster_spec and "autoscale" in c:
-                differences["autoscale"] = str(c["autoscale"])
-                del c["autoscale"]
-            if "autoscale" in self.cluster_spec and "num_workers" in c:
-                differences["num_workers"] = str(c["num_workers"])
-                del c["num_workers"]
-            if c.get("cluster_source") not in ["UI", "API"]:
-                differences["cluster_source"] = c.get("cluster_source")
-            if not differences:
-                continue
-            if (differences.get("custom_tags") or {}).get("ResourceClass") == "SingleNode":
-                differences["spark_conf"] = {
-                    "spark.databricks.cluster.profile": "singleNode",
-                    "spark.master": "local[*, 4]",
-                    "spark.databricks.delta.preview.enabled": "true"
-                }
-            err = ", ".join(f"{k}={v}" for k, v in differences.items())
-            errors.append({"cluster_name": c["cluster_name"], "error": err})
-            if fix:
-                c.update(self.cluster_spec)
-                if "policy_id" in c and "node_type_id" in c:
-                    c["node_type_id"] = None
-                elif "node_type_id" in c and "instance_pool_id" in c:
-                    c["instance_pool_id"] = None
-                if "policy_id" in c and "driver_node_type_id" in c:
-                    c["driver_node_type_id"] = None
-                elif "driver_node_type_id" in c and "driver_instance_pool_id" in c:
-                    c["driver_instance_pool_id"] = None
-                # if "runtime_engine" in c:
-                #     del c["runtime_engine"]
-                for k in list(c.get("aws_attributes", {})):
-                    if k.startswith("ebs_"):
-                        del c["aws_attributes"][k]
-                try:
-                    ws.clusters.update(c)
-                except Exception as e:
-                    import json
-                    errors.append({"cluster_name": c["cluster_name"], "error": str(e) + json.dumps(c)})
-        #         w.clusters.terminate(c["cluster_id"])
-        return errors
-
-    def clusters_fix(self, ws: Workspace):
-        """Check all clusters against the cluster spec above, correcting where needed."""
-        return self.clusters_verify(ws, fix=True)
+                differences = {k: c.get(k) for k in cluster_spec if k not in c or c[k] != cluster_spec[k]}
+                if "num_workers" in cluster_spec and "autoscale" in c:
+                    differences["autoscale"] = str(c["autoscale"])
+                    del c["autoscale"]
+                if "autoscale" in cluster_spec and "num_workers" in c:
+                    differences["num_workers"] = str(c["num_workers"])
+                    del c["num_workers"]
+                if c.get("cluster_source") not in ["UI", "API"]:
+                    differences["cluster_source"] = c.get("cluster_source")
+                if not differences:
+                    continue
+                if (differences.get("custom_tags") or {}).get("ResourceClass") == "SingleNode":
+                    differences["spark_conf"] = {
+                        "spark.databricks.cluster.profile": "singleNode",
+                        "spark.master": "local[*, 4]",
+                        "spark.databricks.delta.preview.enabled": "true"
+                    }
+                err = ", ".join(f"{k}={v}" for k, v in differences.items())
+                errors.append({"cluster_name": c["cluster_name"], "error": err})
+                if fix:
+                    c.update(cluster_spec)
+                    if "policy_id" in c and "node_type_id" in c:
+                        c["node_type_id"] = None
+                    elif "node_type_id" in c and "instance_pool_id" in c:
+                        c["instance_pool_id"] = None
+                    if "policy_id" in c and "driver_node_type_id" in c:
+                        c["driver_node_type_id"] = None
+                    elif "driver_node_type_id" in c and "driver_instance_pool_id" in c:
+                        c["driver_instance_pool_id"] = None
+                    # if "runtime_engine" in c:
+                    #     del c["runtime_engine"]
+                    for k in list(c.get("aws_attributes", {})):
+                        if k.startswith("ebs_"):
+                            del c["aws_attributes"][k]
+                    try:
+                        ws.clusters.update(c)
+                    except Exception as e:
+                        import json
+                        errors.append({"cluster_name": c["cluster_name"], "error": str(e) + json.dumps(c)})
+                    # ws.clusters.terminate(c["cluster_id"])
+            return errors
+        return do_clusters_verify
 
     @staticmethod
     def clusters_start(ws: Workspace):
@@ -710,106 +706,110 @@ class Commands(object):
                 return result
             sleep(60)  # seconds
 
-    def workspace_setup(self, ws: Workspace):
-        import requests as web
-        from dbacademy.dbhelper import WorkspaceHelper
+    @staticmethod
+    def workspace_setup(courseware_spec: Dict, cluster_spec: Dict, event: Dict, all_users=False):
+        def do_workspace_setup(ws: Workspace):
+            import requests as web
+            from dbacademy.dbhelper import WorkspaceHelper
 
-        courseware_url = self.courseware_spec["repo"]
-        response = web.get(courseware_url + "/blob/published/Includes/Workspace-Setup.py")
-        if response.status_code != 200:  # If file exists
-            return "No Workspace-Setup found."
+            courseware_url = courseware_spec["repo"]
+            response = web.get(courseware_url + "/blob/published/Includes/Workspace-Setup.py")
+            if response.status_code != 200:  # If file exists
+                return "No Workspace-Setup found."
 
-        import re
-        workspace_hostname = re.match("https://([^/]+)/api/", ws.url)[1]
+            import re
+            workspace_hostname = re.match("https://([^/]+)/api/", ws.url)[1]
 
-        # Spec for the job to run
-        if self.all_users:
-            configure_for = WorkspaceHelper.CONFIGURE_FOR_ALL_USERS
-        else:
-            configure_for = WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY
-        job_spec = {
-            "name": "Workspace-Setup",
-            "timeout_seconds": 60 * 60 * 6,  # 6 hours
-            "max_concurrent_runs": 1,
-            "tasks": [{
-                "task_key": "Workspace-Setup",
-                "notebook_task": {
-                    "notebook_path": "Includes/Workspace-Setup",
-                    "base_parameters": {
-                        WorkspaceHelper.PARAM_LAB_ID: self.event["name"],
-                        WorkspaceHelper.PARAM_DESCRIPTION: self.event["description"],
-                        WorkspaceHelper.PARAM_CONFIGURE_FOR: configure_for,
+            # Spec for the job to run
+            if all_users:
+                configure_for = WorkspaceHelper.CONFIGURE_FOR_ALL_USERS
+            else:
+                configure_for = WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY
+            job_spec = {
+                "name": "Workspace-Setup",
+                "timeout_seconds": 60 * 60 * 6,  # 6 hours
+                "max_concurrent_runs": 1,
+                "tasks": [{
+                    "task_key": "Workspace-Setup",
+                    "notebook_task": {
+                        "notebook_path": "Includes/Workspace-Setup",
+                        "base_parameters": {
+                            WorkspaceHelper.PARAM_LAB_ID: event.get("name", "Unknown"),
+                            WorkspaceHelper.PARAM_DESCRIPTION: event.get("description", "Unknown"),
+                            WorkspaceHelper.PARAM_CONFIGURE_FOR: configure_for,
+                        },
+                        "source": "GIT"
                     },
-                    "source": "GIT"
+                    "job_cluster_key": "Workspace-Setup",
+                    "timeout_seconds": 0
+                }],
+                "job_clusters": [{
+                    "job_cluster_key": "Workspace-Setup",
+                    "new_cluster": {
+                        "spark_version": cluster_spec["spark_version"],
+                        "spark_conf": {
+                            "spark.master": "local[*, 4]",
+                            "spark.databricks.cluster.profile": "singleNode"
+                        },
+                        "custom_tags": {
+                            "ResourceClass": "SingleNode",
+                            "dbacademy.event_name": event.get("name", "unknown"),
+                            "dbacademy.event_description": event.get("description", "unknown"),
+                            "dbacademy.workspace": workspace_hostname
+                        },
+                        "spark_env_vars": {
+                            "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+                        },
+                        "enable_elastic_disk": True,
+                        "runtime_engine": "STANDARD",
+                        "num_workers": 0
+                    }
+                }],
+                "git_source": {
+                    "git_url": courseware_url,
+                    "git_provider": "gitHub",
+                    "git_branch": "published"
                 },
-                "job_cluster_key": "Workspace-Setup",
-                "timeout_seconds": 0
-            }],
-            "job_clusters": [{
-                "job_cluster_key": "Workspace-Setup",
-                "new_cluster": {
-                    "spark_version": self.cluster_spec["spark_version"],
-                    "spark_conf": {
-                        "spark.master": "local[*, 4]",
-                        "spark.databricks.cluster.profile": "singleNode"
-                    },
-                    "custom_tags": {
-                        "ResourceClass": "SingleNode",
-                        "dbacademy.event_name": self.event.get("name", "unknown"),
-                        "dbacademy.event_description": self.event.get("description", "unknown"),
-                        "dbacademy.workspace": workspace_hostname
-                    },
-                    "spark_env_vars": {
-                        "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
-                    },
-                    "enable_elastic_disk": True,
-                    "runtime_engine": "STANDARD",
-                    "num_workers": 0
-                }
-            }],
-            "git_source": {
-                "git_url": courseware_url,
-                "git_provider": "gitHub",
-                "git_branch": "published"
-            },
-            "format": "MULTI_TASK"
-        }
+                "format": "MULTI_TASK"
+            }
 
-        # Append cloud specific attributes the job_clusters spec.
-        cloud_attributes = Commands._cloud_specific_attributes(ws)
-        job_spec["job_clusters"][0]["new_cluster"].update(cloud_attributes)
+            # Append cloud specific attributes the job_clusters spec.
+            cloud_attributes = Commands._cloud_specific_attributes(ws)
+            job_spec["job_clusters"][0]["new_cluster"].update(cloud_attributes)
 
-        job = ws.jobs.get(job_spec["name"], if_not_exists="ignore") or {}
-        if job:
-            job_id = job["job_id"]
-            ws.jobs.runs.delete_all(job_id)
-            job_spec["job_id"] = job_id
-            ws.jobs.update(job_spec)
-        else:
-            job_id = ws.jobs.create_multi_task_job(**job_spec)
+            job = ws.jobs.get(job_spec["name"], if_not_exists="ignore") or {}
+            if job:
+                job_id = job["job_id"]
+                ws.jobs.runs.delete_all(job_id)
+                job_spec["job_id"] = job_id
+                ws.jobs.update(job_spec)
+            else:
+                job_id = ws.jobs.create_multi_task_job(**job_spec)
 
-        runs = ws.jobs.runs.list(job_id=job_id, active_only=True)
-        if runs:
-            run_id = runs[0]["run_id"]
-        else:
-            response = ws.api("POST", "/2.1/jobs/run-now", {"job_id": job_id})
-            run_id = response["run_id"]
+            runs = ws.jobs.runs.list(job_id=job_id, active_only=True)
+            if runs:
+                run_id = runs[0]["run_id"]
+            else:
+                response = ws.api("POST", "/2.1/jobs/run-now", {"job_id": job_id})
+                run_id = response["run_id"]
 
-        # Poll for job completion
-        response = self._wait_for(ws, run_id)
-        if response.get("state").get("life_cycle_state") == "TERMINATED":
-            print("The job completed successfully.")
-        else:
-            pass
+            # Poll for job completion
+            response = Commands._wait_for(ws, run_id)
+            if response.get("state").get("life_cycle_state") == "TERMINATED":
+                print("The job completed successfully.")
+            else:
+                pass
 
-        # while True:
-        #     response = workspace.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
-        #     if response["state"]["life_cycle_state"] not in ["PENDING", "RUNNING", "TERMINATING"]:
-        #         result = response["state"]["result_state"]
-        #         return result
-        #     sleep(60)  # seconds
+            # while True:
+            #     response = workspace.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
+            #     if response["state"]["life_cycle_state"] not in ["PENDING", "RUNNING", "TERMINATING"]:
+            #         result = response["state"]["result_state"]
+            #         return result
+            #     sleep(60)  # seconds
+        return do_workspace_setup
 
-    def _wait_for(self, ws: Workspace, run_id: int):
+    @staticmethod
+    def _wait_for(ws: Workspace, run_id: int):
         import time
 
         wait = 60  # seconds
@@ -825,124 +825,127 @@ class Commands(object):
                 print(f" - Job #{job_id}-{run_id} is {state}, checking again in 5 seconds")
                 time.sleep(5)
 
-            return self._wait_for(ws, run_id)
+            return Commands._wait_for(ws, run_id)
 
         return response
 
-    def policies_create(self, ws: Workspace):
-        import re
-        workspace_hostname = re.match(r"^https://([^/]+)/.*$", ws.url)[1]
-        machine_type = self.cluster_spec["node_type_id"]
-        autotermination = self.cluster_spec["autotermination_minutes"]
-        spark_version = self.cluster_spec["spark_version"]
+    @staticmethod
+    def policies_create(cluster_spec: Dict, event: Dict):
+        def do_policies_create(ws: Workspace):
+            import re
+            workspace_hostname = re.match(r"^https://([^/]+)/.*$", ws.url)[1]
+            machine_type = cluster_spec["node_type_id"]
+            autotermination = cluster_spec["autotermination_minutes"]
+            spark_version = cluster_spec["spark_version"]
 
-        tags = {
-            "dbacademy.event_name": self.event.get("name", "unknown"),
-            "dbacademy.event_description": self.event.get("description", "unknown"),
-            "dbacademy.workspace": workspace_hostname,
-        }
-
-        instance_pool_name = f"{machine_type} Pool"
-        instance_pool_spec = {
-            'instance_pool_name': instance_pool_name,
-            'min_idle_instances': 0,
-            'node_type_id': machine_type,
-            'custom_tags': {k.replace("dbacademy", "dbacademy.pool"): v for k, v in tags.items()},
-            'idle_instance_autotermination_minutes': 5,
-            'preloaded_spark_versions': [spark_version],
-        }
-
-        instance_pool = ws.pools.get_by_name(instance_pool_name, if_not_exists="ignore")
-        if not instance_pool:
-            instance_pool = ws.api("POST", "2.0/instance-pools/create", instance_pool_spec)
-            instance_pool_id = instance_pool["instance_pool_id"]
-        else:
-            instance_pool_id = instance_pool["instance_pool_id"]
-        ws.permissions.pools.update_group(instance_pool_id, "users", "CAN_ATTACH_TO")
-
-        tags_policy = {
-            f"custom_tags.{tag_name}": {
-                "type": "fixed",
-                "value": tag_value,
-                "hidden": False,
+            tags = {
+                "dbacademy.event_name": event.get("name", "unknown"),
+                "dbacademy.event_description": event.get("description", "unknown"),
+                "dbacademy.workspace": workspace_hostname,
             }
-            for tag_name, tag_value in tags.items()
-        }
 
-        cluster_policy = {
-            "spark_conf.spark.databricks.cluster.profile": {
-                "type": "fixed",
-                "value": "singleNode",
-                "hidden": False,
-            },
-            "num_workers": {
-                "type": "fixed",
-                "value": 0,
-                "hidden": False,
-            },
-            "spark_version": {
-                "type": "unlimited",
-                "defaultValue": "auto:latest-lts-ml",
-                "isOptional": True
-            },
-            "instance_pool_id": {
-                "type": "fixed",
-                "value": instance_pool_id,
-                "hidden": False,
-            },
-        }
-        cluster_policy.update(tags_policy)
+            instance_pool_name = f"{machine_type} Pool"
+            instance_pool_spec = {
+                'instance_pool_name': instance_pool_name,
+                'min_idle_instances': 0,
+                'node_type_id': machine_type,
+                'custom_tags': {k.replace("dbacademy", "dbacademy.pool"): v for k, v in tags.items()},
+                'idle_instance_autotermination_minutes': 5,
+                'preloaded_spark_versions': [spark_version],
+            }
 
-        all_purpose_policy: Dict[str, Any] = {
-            "cluster_type": {
-                "type": "fixed",
-                "value": "all-purpose"
-            },
-            "autotermination_minutes": {
-                "type": "range",
-                "minValue": 1,
-                "maxValue": 180,
-                "defaultValue": autotermination,
-            },
-            "data_security_mode": {
-                "type": "unlimited",
-                "defaultValue": "SINGLE_USER"
-            },
-        }
-        all_purpose_policy.update(cluster_policy)
-        all_purpose_policy = ws.clusters.policies.create_or_update("DBAcademy",
-                                                                   all_purpose_policy)
-        all_purpose_policy_id = all_purpose_policy.get("policy_id")
-        ws.permissions.clusters.policies.update(all_purpose_policy_id, "group_name", "users", "CAN_USE")
+            instance_pool = ws.pools.get_by_name(instance_pool_name, if_not_exists="ignore")
+            if not instance_pool:
+                instance_pool = ws.api("POST", "2.0/instance-pools/create", instance_pool_spec)
+                instance_pool_id = instance_pool["instance_pool_id"]
+            else:
+                instance_pool_id = instance_pool["instance_pool_id"]
+            ws.permissions.pools.update_group(instance_pool_id, "users", "CAN_ATTACH_TO")
 
-        jobs_policy: Dict[str, Any] = {
-            "cluster_type": {
-                "type": "fixed",
-                "value": "job"
-            },
-        }
-        jobs_policy.update(cluster_policy)
-        jobs_policy = ws.clusters.policies.create_or_update("DBAcademy Jobs", jobs_policy)
-        jobs_policy_id = jobs_policy.get("policy_id")
-        ws.permissions.clusters.policies.update(jobs_policy_id, "group_name", "users", "CAN_USE")
-        dlt_policy: Dict[str, Any] = {
-            "cluster_type": {
-                "type": "fixed",
-                "value": "dlt"
-            },
-            "num_workers": {
-                "type": "fixed",
-                "value": 0,
-                "hidden": False,
-            },
-        }
-        for forbidden in ("node_type_id", "driver_node_type_id", "instance_pool_id", "driver_instance_pool_id"):
-            if forbidden in dlt_policy:
-                del dlt_policy[forbidden]
-        dlt_policy.update(tags_policy)
-        dlt_policy = ws.clusters.policies.create_or_update("DBAcademy DLT", dlt_policy)
-        dlt_policy_id = dlt_policy.get("policy_id")
-        ws.permissions.clusters.policies.update(dlt_policy_id, "group_name", "users", "CAN_USE")
+            tags_policy = {
+                f"custom_tags.{tag_name}": {
+                    "type": "fixed",
+                    "value": tag_value,
+                    "hidden": False,
+                }
+                for tag_name, tag_value in tags.items()
+            }
+
+            cluster_policy = {
+                "spark_conf.spark.databricks.cluster.profile": {
+                    "type": "fixed",
+                    "value": "singleNode",
+                    "hidden": False,
+                },
+                "num_workers": {
+                    "type": "fixed",
+                    "value": 0,
+                    "hidden": False,
+                },
+                "spark_version": {
+                    "type": "unlimited",
+                    "defaultValue": "auto:latest-lts-ml",
+                    "isOptional": True
+                },
+                "instance_pool_id": {
+                    "type": "fixed",
+                    "value": instance_pool_id,
+                    "hidden": False,
+                },
+            }
+            cluster_policy.update(tags_policy)
+
+            all_purpose_policy: Dict[str, Any] = {
+                "cluster_type": {
+                    "type": "fixed",
+                    "value": "all-purpose"
+                },
+                "autotermination_minutes": {
+                    "type": "range",
+                    "minValue": 1,
+                    "maxValue": 180,
+                    "defaultValue": autotermination,
+                },
+                "data_security_mode": {
+                    "type": "unlimited",
+                    "defaultValue": "SINGLE_USER"
+                },
+            }
+            all_purpose_policy.update(cluster_policy)
+            all_purpose_policy = ws.clusters.policies.create_or_update("DBAcademy",
+                                                                       all_purpose_policy)
+            all_purpose_policy_id = all_purpose_policy.get("policy_id")
+            ws.permissions.clusters.policies.update(all_purpose_policy_id, "group_name", "users", "CAN_USE")
+
+            jobs_policy: Dict[str, Any] = {
+                "cluster_type": {
+                    "type": "fixed",
+                    "value": "job"
+                },
+            }
+            jobs_policy.update(cluster_policy)
+            jobs_policy = ws.clusters.policies.create_or_update("DBAcademy Jobs", jobs_policy)
+            jobs_policy_id = jobs_policy.get("policy_id")
+            ws.permissions.clusters.policies.update(jobs_policy_id, "group_name", "users", "CAN_USE")
+            dlt_policy: Dict[str, Any] = {
+                "cluster_type": {
+                    "type": "fixed",
+                    "value": "dlt"
+                },
+                "num_workers": {
+                    "type": "fixed",
+                    "value": 0,
+                    "hidden": False,
+                },
+            }
+            for forbidden in ("node_type_id", "driver_node_type_id", "instance_pool_id", "driver_instance_pool_id"):
+                if forbidden in dlt_policy:
+                    del dlt_policy[forbidden]
+            dlt_policy.update(tags_policy)
+            dlt_policy = ws.clusters.policies.create_or_update("DBAcademy DLT", dlt_policy)
+            dlt_policy_id = dlt_policy.get("policy_id")
+            ws.permissions.clusters.policies.update(dlt_policy_id, "group_name", "users", "CAN_USE")
+        return do_policies_create
 
     @staticmethod
     def clusters_set_single_user(ws: Workspace):
