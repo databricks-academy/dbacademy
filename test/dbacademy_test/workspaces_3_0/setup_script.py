@@ -27,7 +27,7 @@ print("-"*100)
 env_code = read_str("""Please select an environment such as "PROSVC" or "CURR".""", "CURR").upper()
 
 # workspace_numbers = list({99})
-workspace_numbers = list(range(100, 200))
+workspace_numbers = list(range(100, 105))
 
 print("1) Create workspaces.")
 print("2) Delete a workspace.")
@@ -74,7 +74,7 @@ workspace_config_template = WorkspaceConfig(max_participants=max_participants,
                                                 "workspace-access": True,
                                             },
                                             # Cloud Labs needs are different here because they have a list of users, not a range of users.
-                                            workspace_name_pattern="es-645542-{workspace_number}",  # workspace_number defaults to 3 digits, zero prefixed
+                                            workspace_name_pattern="classroom-{workspace_number}",  # workspace_number defaults to 3 digits, zero prefixed
                                             workspace_group={                                       # User class+000@ should always be an admin
                                                 "admins": [0],                                      # Defined as user "0" or by full username.
                                                 # The instructor's group is defined at the account level to be
@@ -113,7 +113,7 @@ elif action == 1:
         advertise("Ignored", account.ignored_workspaces)
 
         FALSE = False  # easier for my eyes to recognize
-        workspace_setup.create_workspaces(run_workspace_setup=FALSE,   # <<< TRUE
+        workspace_setup.create_workspaces(run_workspace_setup=True,   # <<< TRUE
                                           remove_metastore=FALSE,      # This should always be False
                                           remove_users=FALSE,          # This should always be False
                                           uninstall_courseware=FALSE)  # This should always be False
