@@ -34,7 +34,7 @@ def update_template_descriptions(tenant: Tenant, template_ids: Set[int]):
                     <li>Please open the Databricks URL in an Incognito/Anonymous browser window.</li>
                     <li>Click the <span style="font-weight: bold">Sign in with Azure AD</span> button and then enter the provided username and password.</li>
                     </ul>
-            """
+            """.strip()
             launch_description = "".join(line.strip() for line in launch_description.split("\n"))
         elif template["CloudPlatformId"] == 2:
             # AWS
@@ -46,8 +46,8 @@ def update_template_descriptions(tenant: Tenant, template_ids: Set[int]):
                     <li>Please open the Databricks URL in an Incognito/Anonymous browser window.</li>
                     <li>Click the <span style="font-weight: bold">Single Sign On</span> button and then enter the provided username and password.</li>
                     </ul>
-            """
-            launch_description="".join(line.strip() for line in launch_description.split("\n"))
+            """.strip()
+            launch_description = "".join(line.strip() for line in launch_description.split("\n"))
         else:
             raise ValueError(f'Unexpected {template["CloudPlatformId"]}')
         tenant.templates.patch(template_id, {
