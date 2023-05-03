@@ -49,7 +49,7 @@ def update_template_descriptions(tenant: Tenant, template_ids: Set[int]):
             """.strip()
             launch_description = "".join(line.strip() for line in launch_description.split("\n"))
         else:
-            raise ValueError(f'Unexpected {template["CloudPlatformId"]}')
+            continue
         tenant.templates.patch(template_id, {
             "Description": description,
             "LabLaunchPageDescription": launch_description,
