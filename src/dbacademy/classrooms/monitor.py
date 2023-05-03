@@ -673,7 +673,7 @@ class Commands(object):
             "git_source": {
                 "git_url": "https://github.com/databricks-academy/workspace-setup.git",
                 "git_provider": "gitHub",
-                "git_branch": "published"
+                "git_branch": "main"
             },
             "format": "MULTI_TASK"
         }
