@@ -632,7 +632,7 @@ class WorkspaceSetup:
                 job_name = WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME
                 job_config = JobConfig(job_name=job_name, timeout_seconds=60 * 60)
 
-                job_config.git_branch(provider="gitHub", url="https://github.com/databricks-academy/workspace-setup.git", branch="published")
+                job_config.git_branch(provider="gitHub", url="https://github.com/databricks-academy/workspace-setup.git", branch="main")
 
                 task_config = job_config.add_task(task_key="Workspace-Setup", description="This job is used to configure the workspace per Databricks Academy's courseware requirements")
                 task_config.task.notebook("Workspace-Setup", source="GIT", base_parameters={
