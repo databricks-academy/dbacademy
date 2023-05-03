@@ -621,6 +621,8 @@ class Commands(object):
 
         if datasets is None:
             datasets = list()
+        if courses is None:
+            courses = list()
 
         # Spec for the job to run
         job_spec = {
