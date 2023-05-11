@@ -6,7 +6,7 @@ This repository is an incubator for internal libraries used to test and develop 
 ## Getting Started
 While intended to be used in both notebook/online/remote and "traditional"/offline/local development, this module is specifically structured for local development and as such requires a Conda environment. Instructions to setup the Conda environment are as folllows:
 ```
-conda create -n dbacademy python=3.8
+conda create -n dbacademy python=3.9
 conda activate dbacademy
 pip install -r requirements.txt
 ```

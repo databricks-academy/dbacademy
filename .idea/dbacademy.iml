@@ -9,6 +9,11 @@
       <excludeFolder url="file://$MODULE_DIR$/reports" />
       <excludeFolder url="file://$MODULE_DIR$/.pytest_cache" />
       <excludeFolder url="file://$MODULE_DIR$/aws-config" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/.vscode" />
+      <excludeFolder url="file://$MODULE_DIR$/docs" />
+      <excludeFolder url="file://$MODULE_DIR$/docs_src" />
+      <excludeFolder url="file://$MODULE_DIR$/notes" />
     </content>
     <orderEntry type="jdk" jdkName="dbacademy" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
