@@ -42,6 +42,8 @@ class CloudlabsApi(ApiClient):
         menu = self.api("GET", "/api/Menu/525A6E337A46535250527246334353504C355A7449673D3D")
         return {t["Name"]: Tenant(self, t) for t in menu["AssociatedTenants"]}
 
+    # TODO doug.bateman@databricks.com: Need to fix different errors/warnings
+    # noinspection PyTypeChecker,RegExpRepeatedSpace,RegExpRedundantEscape
     @staticmethod
     def curl_auth(curl_login: str) -> CloudlabsApi:
         """

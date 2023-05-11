@@ -1,7 +1,6 @@
 from typing import List, Dict, Any, Union
 
-from dbacademy.cloudlabs import CloudlabsApi, Tenant
-from dbacademy.cloudlabs.labs import Lab, Labs
+from dbacademy.cloudlabs import Tenant
 from dbacademy.rest.common import ApiContainer, DatabricksApiException
 
 Template = Dict[str, Any]
@@ -27,6 +26,8 @@ class Templates(ApiContainer):
             "PageCount": page,
         } | filters)
 
+    # TODO doug.bateman@databricks.com: Calling code may produce a bug from this.
+    # noinspection PyUnusedLocal
     def list_all(self, **filters) -> List[Template]:
         """
         Returns an iterator that will loop through all pages and return all templates.
@@ -38,6 +39,8 @@ class Templates(ApiContainer):
                 break
             yield from templates
 
+    # TODO doug.bateman@databricks.com: Calling code may produce a bug from this.
+    # noinspection PyUnusedLocal
     def find_one_by_key(self, key: str, value: Union[str, int], **filters) -> Template:
         labs = self.list_all()
         for lab in labs:
@@ -46,6 +49,8 @@ class Templates(ApiContainer):
         else:
             raise DatabricksApiException(f"No lab found with {key}={value!r}", 404)
 
+    # TODO doug.bateman@databricks.com: Calling code may produce a bug from this.
+    # noinspection PyUnusedLocal
     def find_all_by_key(self, key: str, value: Union[str, int], **filters) -> List[Template]:
         labs = self.list_all()
         return [lab for lab in labs if lab[key] == value]

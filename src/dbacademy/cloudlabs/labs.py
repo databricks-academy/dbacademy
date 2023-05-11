@@ -1,6 +1,6 @@
-from typing import List, Dict, Any, Union, Collection, Iterable
+from typing import List, Dict, Any, Union, Iterable
 
-from dbacademy.cloudlabs import CloudlabsApi, Tenant
+from dbacademy.cloudlabs import Tenant
 from dbacademy.dougrest import DatabricksApi
 from dbacademy.dougrest.workspace import Workspace
 from dbacademy.rest.common import ApiContainer, DatabricksApiException
@@ -59,6 +59,8 @@ class Labs(ApiContainer):
     def get_by_title(self, title: str) -> Lab:
         return self.find_one_by_key("Title", title)
 
+    # TODO @doug.bateman@databricks.com: Multiple instances of the wrong return type
+    # noinspection PyTypeChecker
     def workspaces(self, lab: Union[int, Lab]) -> Workspace:
         import requests
         lab_id = Labs.to_id(lab)
