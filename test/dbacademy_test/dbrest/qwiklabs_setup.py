@@ -17,6 +17,9 @@ from dbacademy.dougrest.accounts.workspaces import Workspace
 account_id = "b338b505-b6ba-49e5-b6d9-c7174d67017a"
 username = "class+qwiklabs@databricks.com"
 password = "REDACTED"
+
+# TODO doug.bateman@databricks.com: Potential bug
+# noinspection PyArgumentList
 databricks = AccountsApi(account_id, username, password)
 
 # TODO: Configure these with the IAM role and s3 bucket you created.  The region should match the s3 bucket.

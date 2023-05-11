@@ -2,8 +2,8 @@ from typing import List, Union, Optional
 
 
 class AccountConfig:
-    from dbacademy.workspaces_3_0.uc_storage_config_class import UcStorageConfig
-    from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
+    from dbacademy_test.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
+    from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
     @staticmethod
     def from_env(*, account_id_env_name, account_password_env_name, account_username_env_name, region: str, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, workspace_numbers: Optional[List[int]], ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
@@ -33,16 +33,16 @@ class AccountConfig:
         Creates the configuration for account-level settings.
         """
         from dbacademy import common
-        from dbacademy.workspaces_3_0.uc_storage_config_class import UcStorageConfig
-        from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
+        from dbacademy_test.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
+        from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
         self.__account_id = common.verify_type(str, min_length=1, account_id=account_id)
         self.__password = common.verify_type(str, min_length=1, password=password)
         self.__username = common.verify_type(str, min_length=1, username=username)
 
-        print(f"Account ID: {account_id}")
-        print(f"Password:   {password[0]}***{password[-1]}")
-        print(f"Username:   {username}")
+        print(f"Account ID:    {account_id}")
+        print(f"Password:      {password[0]}***{password[-1]}")
+        print(f"Username:      {username}")
 
         self.__region = common.verify_type(str, min_length=1, region=region)
         self.__ignored_workspaces = common.verify_type(list, non_none=True, ignored_workspaces=ignored_workspaces)
@@ -56,7 +56,7 @@ class AccountConfig:
                                          workspace_number=workspace_number)
 
     def create_workspace_config(self, *, template: WorkspaceConfig, workspace_number: int) -> WorkspaceConfig:
-        from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
+        from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
         workspace = WorkspaceConfig(workspace_number=workspace_number,
                                     max_participants=template.max_participants,
@@ -73,9 +73,11 @@ class AccountConfig:
                                     workspace_name_pattern=template.workspace_name_pattern)
 
         if workspace.name in self.ignored_workspaces:
-            print(f"Skipping:   {workspace.name}")
+            # print(f"Skipping:   {workspace.name}")
+            pass
         elif workspace_number in self.ignored_workspaces:
-            print(f"Skipping    #{workspace_number}")
+            # print(f"Skipping:    #{workspace_number}")
+            pass
         else:
             self.__workspaces.append(workspace)
 

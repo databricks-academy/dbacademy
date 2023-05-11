@@ -45,12 +45,14 @@ class TestUsers(unittest.TestCase):
         self.assertEqual(mickey, user.get("displayName"))
 
         # The user will exist at the account level and so the entitlements are still hanging around.
-        id = user.get("id")
+        # user_id = user.get("id")
+        user.get("id")
         entitlements = user.get("entitlements", [])
         for entitlement in entitlements:
-            value = entitlement.get("value")
+            # value = entitlement.get("value")
+            entitlement.get("value")
             # TODO this is failing
-            # self.client.scim.users.remove_entitlement(id, value)
+            # self.client.scim.users.remove_entitlement(user_id, value)
 
         try:
             # Second create should fail
@@ -67,11 +69,11 @@ class TestUsers(unittest.TestCase):
         # self.assertEqual("allow-cluster-create", entitlements[0].get("value"))
 
         # Test unacceptable entitlement
-        id = user.get("id")
-        self.client.scim.users.add_entitlement(id, "some-random-value")
+        user_id = user.get("id")
+        self.client.scim.users.add_entitlement(user_id, "some-random-value")
 
         # Test get_by_id
-        user = self.client.scim.users.get_by_id(id)
+        user = self.client.scim.users.get_by_id(user_id)
         entitlements = user.get("entitlements")
         self.assertIsNotNone(entitlements)
         # TODO - still not working 
@@ -80,9 +82,11 @@ class TestUsers(unittest.TestCase):
         # self.assertEqual("allow-cluster-create", entitlements[0].get("value"))
 
         # Test acceptable entitlement
-        self.client.scim.users.add_entitlement(id, "allow-instance-pool-create")
-        user = self.client.scim.users.get_by_id(id)
-        entitlements = user.get("entitlements", [])
+        self.client.scim.users.add_entitlement(user_id, "allow-instance-pool-create")
+        user = self.client.scim.users.get_by_id(user_id)
+        # entitlements = user.get("entitlements", [])
+        user.get("entitlements", [])
+
         # TODO - still nt working
         # entitlements = user.get("entitlements")
         # self.assertEqual(2, len(entitlements))
@@ -90,12 +94,14 @@ class TestUsers(unittest.TestCase):
         # self.assertEqual("allow-instance-pool-create", entitlements[1].get("value"))
 
         # Test delete by id
-        user = self.client.scim.users.delete_by_id(id)
+        user = self.client.scim.users.delete_by_id(user_id)
+        self.assertIsNone(user)
 
         # Test delete by username
         user = self.client.scim.users.create(mickey)
         self.assertIsNotNone(user)
         self.client.scim.users.delete_by_username(mickey)
+
         user = self.client.scim.users.get_by_username(mickey)
         self.assertIsNone(user)
 
@@ -104,8 +110,8 @@ class TestUsers(unittest.TestCase):
         self.assertIsNotNone(user)
         self.assertEqual("jacob.parr@databricks.com", user.get("userName"))
 
-        id = user.get("id")
-        user = self.client.scim.users.get_by_id(id)
+        user_id = user.get("id")
+        user = self.client.scim.users.get_by_id(user_id)
         self.assertIsNotNone(user)
         self.assertEqual("jacob.parr@databricks.com", user.get("userName"))
 

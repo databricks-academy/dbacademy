@@ -1,10 +1,10 @@
 import unittest
-from typing import Dict
 
 from dbacademy.cloudlabs import CloudlabsApi
-from dbacademy.dougrest import DatabricksApi
 
 
+# TODO doug.bateman@databricks.com: Potential bugs
+# noinspection PyTypeChecker
 class TestCloudlabsApi(unittest.TestCase):
 
     @property
@@ -18,7 +18,8 @@ class TestCloudlabsApi(unittest.TestCase):
                 continue
             with open(path) as f:
                 return f.read()
-        raise ValueError("Environment variable CLOUDLABS_CURL must be set, or the file .curl_login must exist")
+        self.skipTest(reason="Environment variable CLOUDLABS_CURL must be set, or the file .curl_login must exist")
+        # raise ValueError("Environment variable CLOUDLABS_CURL must be set, or the file .curl_login must exist")
 
     def testGetLabs(self):
         cloudlabs = CloudlabsApi.curl_auth(self.curl_login)

@@ -1,9 +1,9 @@
 import os
-from typing import Optional
-from dbacademy.workspaces_3_0.account_config_class import AccountConfig
-from dbacademy.workspaces_3_0.uc_storage_config_class import UcStorageConfig
-from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
-from dbacademy.workspaces_3_0.workspace_setup_class import WorkspaceSetup
+from typing import Optional, Union, List
+from dbacademy_test.workspaces_3_0.support.account_config_class import AccountConfig
+from dbacademy_test.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
+from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
+from dbacademy_test.workspaces_3_0.support.workspace_setup_class import WorkspaceSetup
 
 
 def read_int(prompt: str, default_value: int) -> int:
@@ -13,38 +13,77 @@ def read_int(prompt: str, default_value: int) -> int:
 
 def read_str(prompt: str, default_value: Optional[str] = "") -> str:
     value = input(f"{prompt} ({default_value}):")
-    return default_value if value.strip() == "" else value
+    return default_value if len(value.strip()) == 0 else value
 
 
-def advertise(name: str, items: list):
-    if len(items) > 0:
-        print(f"{name}: ")
+def advertise(name: str, items: Union[List, str, bool], padding: int, indent: int):
+
+    if type(items) != list:
+        print(f"{name}: {' ' * padding}{items}")
+
+    elif len(items) == 1:
+        print(f"{name}: {' ' * padding}{items[0]}")
+
+    elif len(items) > 0:
+        first = items.pop()
+        print(f"{name}: {' ' * padding}{first}")
         for item in items:
-            print(f"    {item}")
+            print(f"{' '*indent}{item}")
 
+
+deleting_wsj = False
+workspace_numbers = None
+CONFIRMATIONS = ["y", "yes", "1", "t", "true"]
 
 print("-"*100)
-env_code = read_str("""Please select an environment such as "PROSVC" or "CURR".""", "CURR").upper()
+env_codes = ["PROSVC", "CURR"]
+env_code = read_str(f"""Please select an environment {env_codes}""", None)
 
-# workspace_numbers = list({99})
-workspace_numbers = list(range(100, 105))
+if env_code is None:
+    print(f"""\n{"-" * 100}\nAborting script; no environment specified.""")
+    exit(1)
+else:
+    env_code = env_code.upper()
 
-print("1) Create workspaces.")
+print("\n1) Create workspaces.")
 print("2) Delete a workspace.")
 print("3) Remove a metastore.")
 action = read_int("Select an action", 0)
 if action not in [1, 2, 3]:
-    print(f"""\n{"-" * 100}\nAborting script; Invalid action selection""")
+    print(f"""\n{"-" * 100}\nAborting script; no command specified.""")
     exit(1)
 
 # If we are not creating, then we don't care.
-max_participants = 1 if action != 1 else read_int("Max Participants Per Workspace", 25)
+if env_code == "CURR":
+    max_participants_default = 5
+elif env_code == "PROSVC":
+    max_participants_default = 250
+else:
+    raise Exception(f"""Unsupported environment, expected one of {env_codes}, found {env_code}.""")
+
+max_participants = 1 if action != 1 else read_int("\nMax Participants per Workspace", max_participants_default)
+
+if action == 1:
+    wsn_a = read_int("\nPlease enter the first workspace number to create", 0)
+    if wsn_a == 0:
+        print(f"""\n{"-" * 100}\nAborting script; no workspace number""")
+        exit(1)
+
+    wsn_b = read_int("Please enter the last workspace number to create", wsn_a)
+
+    if wsn_a == wsn_b:
+        workspace_numbers = [wsn_a]
+    else:
+        workspace_numbers = list(range(wsn_a, wsn_b+1))
+
+    deleting_wsj = read_str("""\nDelete existing Workspace-Setup jobs""", "no").lower() in CONFIRMATIONS
 
 print()
 print("-"*100)
-print(f"""Env ID (PROSVC, CURR, etc):  {env_code}""")
-print(f"""Max Users Per Workspace:     {max_participants}""")
-print(f"""Workspaces:                  {", ".join([str(n) for n in workspace_numbers])}""")
+print(f"""Env ID (PROSVC, CURR, etc): {env_code}""")
+if action == 1:
+    print(f"""Max Users Per Workspace:    {max_participants}""")
+    print(f"""Workspaces:                 {", ".join([str(n) for n in workspace_numbers])}""")
 
 uc_storage_config = UcStorageConfig(storage_root="s3://unity-catalogs-us-west-2/",
                                     storage_root_credential_id="be2549d1-3f5b-40db-900d-1b0fcdb419ee",  # ARN
@@ -69,7 +108,6 @@ workspace_config_template = WorkspaceConfig(max_participants=max_participants,
                                             username_pattern="class+{student_number}@databricks.com",  # student_number defaults to 3 digits, zero prefixed
                                             entitlements={
                                                 "allow-cluster-create": False,          # Removed to enforce policy
-                                                # "allow-instance-pool-create": False,  # TODO Can’t be granted to individual users or service principals nor removed from workspace admins. See https://docs.databricks.com/administration-guide/users-groups/service-principals.html#manage-entitlements-for-a-service-principal
                                                 "databricks-sql-access": True,
                                                 "workspace-access": True,
                                             },
@@ -91,29 +129,39 @@ account = AccountConfig.from_env(account_id_env_name=f"WORKSPACE_SETUP_{env_code
                                  uc_storage_config=uc_storage_config,
                                  workspace_config_template=workspace_config_template,
                                  ignored_workspaces=[                                                 # Either the number or name (not domain) to skip
-                                     146
+                                     529, 544, 550, 590, 598
                                      # "classroom-005-9j1zg",
                                      # "classroom-007-t8yxo",
                                  ])
 
 workspace_setup = WorkspaceSetup(account)
-confirmations = ["y", "yes", "1"]
 
-if action == 3 and read_str("""\nPlease confirm you wish to REMOVE these metastores""", "y/n").lower() in confirmations:
+if action == 3 and read_str("""\nPlease confirm you wish to REMOVE these metastores""", "no").lower() in CONFIRMATIONS:
     for workspace_number in workspace_numbers:
         workspace_setup.remove_metastore(workspace_number)
 
-if action == 2 and read_str("""\nPlease confirm you wish to DELETE these workspaces""", "y/n").lower() in confirmations:
-    workspace_setup.delete_workspaces()
+if action == 2:
+    message = "\nEnter the workspace number to delete"
+    workspace_number = read_int(message, 0)
+    while workspace_number > 0:
+        if read_str("Please confirm the deletion of this workspace", "no") in CONFIRMATIONS:
+            workspace_setup.delete_workspace(workspace_number)
+            workspace_number = read_int(message, 0)
+        else:
+            print(f"""Workspace #{workspace_number} will NOT be created.""")
 
 elif action == 1:
-    if read_str("""\nPlease confirm you wish to create these workspaces""", "y/n").lower() in confirmations:
-        advertise("Courses", workspace_config_template.course_definitions)
-        advertise("Datasets", workspace_config_template.datasets)
-        advertise("Ignored", account.ignored_workspaces)
+    print()
+    advertise("Courses", workspace_config_template.course_definitions, 6, 15)
+    advertise("Datasets", workspace_config_template.datasets, 5, 15)
+    advertise("Delete WS Job", deleting_wsj, 0, 15)
+    advertise("Skipping", account.ignored_workspaces, 5, 15)
+
+    if read_str("""\nPlease confirm you wish to create these workspaces""", "no").lower() in CONFIRMATIONS:
 
         FALSE = False  # easier for my eyes to recognize
         workspace_setup.create_workspaces(run_workspace_setup=True,   # <<< TRUE
                                           remove_metastore=FALSE,      # This should always be False
                                           remove_users=FALSE,          # This should always be False
-                                          uninstall_courseware=FALSE)  # This should always be False
+                                          uninstall_courseware=FALSE,  # This should always be False
+                                          delete_workspace_setup_job=deleting_wsj)

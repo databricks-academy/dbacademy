@@ -3,6 +3,8 @@ import unittest
 from dbacademy.cloudlabs import CloudlabsApi
 
 
+# TODO doug.bateman@databricks.com: Potential bugs
+# noinspection PyTypeChecker
 class TestCloudlabsScratch(unittest.TestCase):
 
     @property
@@ -16,7 +18,9 @@ class TestCloudlabsScratch(unittest.TestCase):
                 continue
             with open(path) as f:
                 return f.read()
-        raise ValueError("Environment variable CLOUDLABS_CURL must be set, or the file .curl_login must exist")
+
+        self.skipTest(reason="Environment variable CLOUDLABS_CURL must be set, or the file .curl_login must exist")
+        # raise ValueError("Environment variable CLOUDLABS_CURL must be set, or the file .curl_login must exist")
 
     def getLabs(self):
         cloudlabs = CloudlabsApi.curl_auth(self.curl_login)
@@ -43,8 +47,8 @@ class TestCloudlabsScratch(unittest.TestCase):
         test_labs = self.getLabs()
         table_mapping = {
             "name": "Title",
-            "url": lambda lab: lab["Workspace"].url[:-len("/api/")],
-            "token": lambda lab: lab["Workspace"].token,
+            "url": lambda l: l["Workspace"].url[:-len("/api/")],
+            "token": lambda l: l["Workspace"].token,
         }
         results = []
         for lab in test_labs:
@@ -64,14 +68,14 @@ class TestCloudlabsScratch(unittest.TestCase):
         test_labs = self.getLabs()
         table_mapping = {
             "Created": "CreatedTime",
-            "Cloud": lambda lab: lab["Workspace"].cloud,
+            "Cloud": lambda l: l["Workspace"].cloud,
             "Template": "TemplateId",
             "Lab ID": "Id",
             "Lab Name": "Title",
             "Bitly URL": "BitLink",
-            "Databricks Workspace URL": lambda lab: lab["Workspace"].url[:-len("/api/")],
-            "Databricks Workspace Token": lambda lab: lab["Workspace"].token,
-            "Control Panel": lambda lab: f"https://admin.cloudlabs.ai/#/home/odl/controlpanel/{lab['UniqueName']}",
+            "Databricks Workspace URL": lambda l: l["Workspace"].url[:-len("/api/")],
+            "Databricks Workspace Token": lambda l: l["Workspace"].token,
+            "Control Panel": lambda l: f"https://admin.cloudlabs.ai/#/home/odl/controlpanel/{l['UniqueName']}",
         }
         csvwriter = csv.writer(stdout, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         csvwriter.writerow(table_mapping.keys())

@@ -154,23 +154,35 @@ class TestLessonConfig(unittest.TestCase):
         config.lock_mutations()
         error_message = "LessonConfig is no longer mutable; DBAcademyHelper has already been initialized."
 
-        try: config.name = "Something Else"
-        except AssertionError as e: self.assertEquals(error_message, str(e))
+        try:
+            config.name = "Something Else"
+        except AssertionError as e:
+            self.assertEquals(error_message, str(e))
 
-        try: config.installing_datasets = True
-        except AssertionError as e: self.assertEquals(error_message, str(e))
+        try:
+            config.installing_datasets = True
+        except AssertionError as e:
+            self.assertEquals(error_message, str(e))
 
-        try: config.enable_streaming_support = True
-        except AssertionError as e: self.assertEquals(error_message, str(e))
+        try:
+            config.enable_streaming_support = True
+        except AssertionError as e:
+            self.assertEquals(error_message, str(e))
 
-        try: config.requires_uc = False
-        except AssertionError as e: self.assertEquals(error_message, str(e))
+        try:
+            config.requires_uc = False
+        except AssertionError as e:
+            self.assertEquals(error_message, str(e))
 
-        try: config.create_schema = False
-        except AssertionError as e: self.assertEquals(error_message, str(e))
+        try:
+            config.create_schema = False
+        except AssertionError as e:
+            self.assertEquals(error_message, str(e))
 
-        try: config.create_catalog = True
-        except AssertionError as e: self.assertEquals(error_message, str(e))
+        try:
+            config.create_catalog = True
+        except AssertionError as e:
+            self.assertEquals(error_message, str(e))
 
 
 if __name__ == '__main__':

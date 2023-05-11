@@ -1,5 +1,5 @@
 import unittest
-from dbacademy.workspaces_3_0.uc_storage_config_class import UcStorageConfig
+from dbacademy_test.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
 
 
 class TestUCStorageConfig(unittest.TestCase):

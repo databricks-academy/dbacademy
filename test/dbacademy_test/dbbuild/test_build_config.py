@@ -1,5 +1,4 @@
 import unittest
-from typing import Dict
 
 
 class TestBuildConfig(unittest.TestCase):

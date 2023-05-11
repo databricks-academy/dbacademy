@@ -1,5 +1,6 @@
-import unittest, pytest
-from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
+import unittest
+import pytest
+from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
 
 class TestWorkspaceConfig(unittest.TestCase):

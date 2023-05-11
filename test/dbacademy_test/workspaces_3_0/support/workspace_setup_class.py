@@ -2,11 +2,11 @@ from typing import List, Optional, Callable, Dict, Any
 
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import DatabricksApiException
-from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
+from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
 
 class WorkspaceTrio:
-    from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
+    from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
     from dbacademy.dougrest.accounts.workspaces import Workspace as WorkspaceAPI
     from dbacademy.classrooms.classroom import Classroom
 
@@ -77,12 +77,12 @@ class WorkspaceTrio:
 
 
 class WorkspaceSetup:
-    from dbacademy.workspaces_3_0.account_config_class import AccountConfig
+    from dbacademy_test.workspaces_3_0.support.account_config_class import AccountConfig
 
     def __init__(self, account_config: AccountConfig):
         from dbacademy import common
         from dbacademy.dougrest import AccountsApi
-        from dbacademy.workspaces_3_0.account_config_class import AccountConfig
+        from dbacademy_test.workspaces_3_0.support.account_config_class import AccountConfig
 
         self.__errors: List[str] = list()
         self.__workspaces: List[WorkspaceTrio] = list()
@@ -92,6 +92,7 @@ class WorkspaceSetup:
                                           user=self.account_config.username,
                                           password=self.account_config.password)
         # self.__accounts_api.dns_retry = True
+        self.__delete_workspace_setup_job = False
 
     def log_error(self, msg):
         self.__errors.append(msg)
@@ -116,7 +117,7 @@ class WorkspaceSetup:
 
     @staticmethod
     def __remove_metastore(trio: WorkspaceTrio):
-        # Unassign the metastore from the workspace
+        # Un-assign the metastore from the workspace
         try:
             print(f"Removing metastore {trio.name}")
             response = trio.workspace_api.api("GET", f"2.1/unity-catalog/current-metastore-assignment")
@@ -223,26 +224,26 @@ class WorkspaceSetup:
                 msg += "="*100
                 print(msg)
 
-    # def delete_workspace(self, workspace_number: int):
-    #     assert workspace_number >= 0, f"Invalid workspace number: {workspace_number}"
-    #
-    #     print("-"*100)
-    #     workspace_config = self.account_config.create_workspace_config(template=self.account_config.workspace_config_template,
-    #                                                                    workspace_number=workspace_number)
-    #     try:
-    #         workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="error")
-    #         workspace_api.dns_retry = True
-    #         trio = WorkspaceTrio(workspace_config, workspace_api, None)
-    #         print(f"Destroying workspace #{workspace_number}: {trio.workspace_config.name}""")
-    #
-    #         self.__remove_metastore(trio)
-    #         self.__delete_workspace(trio)
-    #
-    #     except DatabricksApiException as e:
-    #         if e.http_code == 404:
-    #             print(f"Skipping deletion, workspace #{workspace_number} was not found for {workspace_config.name}""")
-    #         else:
-    #             raise e
+    def delete_workspace(self, workspace_number: int):
+        assert workspace_number >= 0, f"Invalid workspace number: {workspace_number}"
+
+        print("-"*100)
+        workspace_config = self.account_config.create_workspace_config(template=self.account_config.workspace_config_template,
+                                                                       workspace_number=workspace_number)
+        try:
+            workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="error")
+            workspace_api.dns_retry = True
+            trio = WorkspaceTrio(workspace_config, workspace_api, None)
+            print(f"Destroying workspace #{workspace_number}: {trio.workspace_config.name}""")
+
+            self.__remove_metastore(trio)
+            self.__delete_workspace(trio)
+
+        except DatabricksApiException as e:
+            if e.http_code == 404:
+                print(f"Skipping deletion, workspace #{workspace_number} was not found for {workspace_config.name}""")
+            else:
+                raise e
 
     def delete_workspaces(self):
         print("\n")
@@ -256,10 +257,11 @@ class WorkspaceSetup:
             self.__remove_metastore(trio)
             self.__delete_workspace(trio)
 
-    def create_workspaces(self, *, remove_users: bool, remove_metastore: bool, run_workspace_setup: bool, uninstall_courseware: bool = False):
+    def create_workspaces(self, *, remove_users: bool, remove_metastore: bool, run_workspace_setup: bool, uninstall_courseware: bool = False, delete_workspace_setup_job=False):
 
         naming_pattern = self.account_config.workspace_config_template.workspace_name_pattern
         not_using_classroom = not naming_pattern.startswith("classroom-")
+        self.__delete_workspace_setup_job = delete_workspace_setup_job
 
         if not run_workspace_setup or remove_metastore or remove_users or uninstall_courseware or not_using_classroom:
             print()
@@ -274,6 +276,9 @@ class WorkspaceSetup:
                 print("WARNING: Not configured to run the Workspace-Setup job.")
             if not_using_classroom:
                 print(f"""WARNING: The workspace naming pattern doesn't start with "classroom", found "{naming_pattern}".""")
+            if delete_workspace_setup_job:
+                print(f"""WARNING: The existing Workspace Setup Job will be deleted and recreated, loosing all history.""")
+
             if input(f"\nPlease confirm running with this abnormal configuration (y/n):").lower() not in ["1", "y", "yes"]:
                 return print("Execution aborted.")
 
@@ -509,11 +514,17 @@ class WorkspaceSetup:
                 try:
                     user = trio.client.scim.users.create(username)
                 except DatabricksApiException as e:
-                    print(f"|{e.message}|")
                     user = trio.client.scim.users.get_by_username(username)
                     if user is None:
                         user = trio.client.scim.users.create(username)
+                        print(f"| {e.message}|")
                         print("F$@# LIARS !!!")
+                    elif e.http_code == 409:
+                        existing = username in existing_usernames
+                        print("-"*100)
+                        print(f"409 creating user {username}, existing: {existing}")
+                        print(f"| {e.message}|")
+                        print("-"*100)
                     else:
                         raise Exception(f"Failed to create user {username} for {name}") from e
 
@@ -614,41 +625,25 @@ class WorkspaceSetup:
     def __run_workspace_setup(self, trio: WorkspaceTrio):
         import time
         import traceback
-        from dbacademy.common import Cloud
         from dbacademy.dbhelper import WorkspaceHelper
-        from dbacademy.dbrest.jobs import JobConfig
-        from dbacademy.dbrest.clusters import JobClusterConfig
 
         start = time.time()
         try:
-            job = trio.client.jobs.get_by_name(WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME)
 
-            if job is not None:
-                # If it already exists, we will just run that one.
-                job_id = job.get("job_id")
-
+            # If the job exist delete it to address cases where the job is misconfigured
+            # and leaving it would only result in re-running the misconfigured job.
+            if self.__delete_workspace_setup_job:
+                job = None
+                trio.client.jobs.delete_by_name(WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME, success_only=False)
             else:
-                # It doesn't exist, we need to create it.
-                job_name = WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME
-                job_config = JobConfig(job_name=job_name, timeout_seconds=60 * 60)
+                job = trio.client.jobs.get_by_name(WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME)
 
-                job_config.git_branch(provider="gitHub", url="https://github.com/databricks-academy/workspace-setup.git", branch="main")
-
-                task_config = job_config.add_task(task_key="Workspace-Setup", description="This job is used to configure the workspace per Databricks Academy's courseware requirements")
-                task_config.task.notebook("Workspace-Setup", source="GIT", base_parameters={
-                    WorkspaceHelper.PARAM_LAB_ID: trio.workspace_config.workspace_number,
-                    WorkspaceHelper.PARAM_DESCRIPTION: f"Classroom #{trio.workspace_config.workspace_number}",
-                    WorkspaceHelper.PARAM_NODE_TYPE_ID: trio.workspace_config.default_node_type_id,
-                    WorkspaceHelper.PARAM_SPARK_VERSION: trio.workspace_config.default_dbr,
-                    WorkspaceHelper.PARAM_DATASETS: ",".join(trio.workspace_config.dbc_urls),
-                    WorkspaceHelper.PARAM_COURSES: ",".join(trio.workspace_config.datasets),
-                })
-                task_config.cluster.new(JobClusterConfig(cloud=Cloud.AWS,  # TODO externalize this; refactor with UC config's credentials.
-                                                         spark_version="11.3.x-scala2.12",
-                                                         node_type_id="i3.xlarge",
-                                                         num_workers=0,
-                                                         autotermination_minutes=None))
-                job_id = trio.client.jobs.create_from_config(job_config)
+            if job is None:
+                # We deleted it or it never existed.
+                job_id = self.__create_job(trio)
+            else:
+                # Use pre-existing job
+                job_id = job.get("job_id")
 
             run = trio.client.jobs.run_now(job_id)
             run_id = run.get("run_id")
@@ -679,6 +674,39 @@ class WorkspaceSetup:
 
         except Exception as e:
             self.log_error(f"""Failed executing Universal-Workspace-Setup for "{trio.workspace_config.name}".\n{str(e)}\n{traceback.format_exc()}""")
+
+    def __create_job(self, trio: WorkspaceTrio) -> str:
+        from dbacademy.dbhelper import WorkspaceHelper
+        from dbacademy.common import Cloud
+        from dbacademy.dbrest.jobs import JobConfig
+        from dbacademy.dbrest.clusters import JobClusterConfig
+
+        job_name = WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME
+        job_config = JobConfig(job_name=job_name, timeout_seconds=60 * 60)
+
+        job_config.git_branch(provider="gitHub", url="https://github.com/databricks-academy/workspace-setup.git",
+                              branch="main")
+
+        task_config = job_config.add_task(task_key="Workspace-Setup",
+                                          description="This job is used to configure the workspace per Databricks Academy's courseware requirements")
+        task_config.task.notebook("Workspace-Setup", source="GIT", base_parameters={
+            WorkspaceHelper.PARAM_LAB_ID: trio.workspace_config.workspace_number,
+            WorkspaceHelper.PARAM_DESCRIPTION: f"Classroom #{trio.workspace_config.workspace_number}",
+            WorkspaceHelper.PARAM_NODE_TYPE_ID: trio.workspace_config.default_node_type_id,
+            WorkspaceHelper.PARAM_SPARK_VERSION: trio.workspace_config.default_dbr,
+            WorkspaceHelper.PARAM_DATASETS: ",".join(trio.workspace_config.dbc_urls),
+            WorkspaceHelper.PARAM_COURSES: ",".join(trio.workspace_config.datasets),
+        })
+        task_config.cluster.new(
+            JobClusterConfig(cloud=Cloud.AWS,  # TODO externalize this; refactor with UC config's credentials.
+                             spark_version="11.3.x-scala2.12",
+                             node_type_id="i3.xlarge",
+                             num_workers=0,
+                             autotermination_minutes=None,
+                             single_user_name=self.account_config.username))
+
+        job_id = trio.client.jobs.create_from_config(job_config)
+        return job_id
 
     def __wait_for_job_run(self, trio: WorkspaceTrio, job_id: str, run_id: str):
         import time

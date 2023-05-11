@@ -3,6 +3,8 @@ from typing import Set
 from dbacademy.cloudlabs import CloudlabsApi, Tenant
 
 
+# TODO doug.bateman@databricks.com: Potential bug
+# noinspection PyTypeChecker
 def curl_login() -> CloudlabsApi:
     import os
     if "CLOUDLABS_URL" in os.environ:
@@ -57,6 +59,8 @@ def update_template_descriptions(tenant: Tenant, template_ids: Set[int]):
     return updated_ids
 
 
+# TODO doug.bateman@databricks.com: Potential bug
+# noinspection PyTypeChecker
 def main():
     cloudlabs = CloudlabsApi.curl_auth(curl_login())
     tenant = cloudlabs.tenants["Databricks – User Success"]

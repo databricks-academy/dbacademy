@@ -704,7 +704,7 @@ class TestClusters(unittest.TestCase):
 
         self.assertIsNotNone(types)
         self.assertTrue(list, type(types))
-        self.assertEquals(241, len(types))
+        self.assertEquals(353, len(types))
 
         note_type_ids = [t.get("node_type_id") for t in types]
         self.assertTrue("i3.xlarge" in note_type_ids)

@@ -1,7 +1,8 @@
-import unittest, pytest
-from dbacademy.workspaces_3_0.account_config_class import AccountConfig
-from dbacademy.workspaces_3_0.uc_storage_config_class import UcStorageConfig
-from dbacademy.workspaces_3_0.workspace_config_classe import WorkspaceConfig
+import unittest
+import pytest
+from dbacademy_test.workspaces_3_0.support.account_config_class import AccountConfig
+from dbacademy_test.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
+from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
 
 class TestAccountConfig(unittest.TestCase):

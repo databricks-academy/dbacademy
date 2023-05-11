@@ -2,7 +2,7 @@ import os
 import re
 import time
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Optional, List, Dict
 
 from dbacademy.dougrest import AccountsApi, DatabricksApiException
 from dbacademy.dougrest.accounts.workspaces import Workspace
@@ -30,8 +30,8 @@ class WorkspaceConfig:
     lab_description: str
     workspace_name: str
     region: str
-    instructors: list[str]
-    users: list[str]
+    instructors: List[str]
+    users: List[str]
     default_dbr: str = "11.3.x-cpu-ml-scala2.12"
     default_node_type_id: str = "i3.xlarge"
     credentials_name: str = "default"
@@ -39,19 +39,19 @@ class WorkspaceConfig:
     uc_storage_root: str = None
     uc_aws_iam_role_arn: Optional[str] = "arn:aws:iam::981174701421:role/Unity-Catalog-Role"
     uc_msa_access_connector_id: Optional[str] = None
-    entitlements: dict[str, bool] = field(default_factory=lambda: dict(
+    entitlements: Dict[str, bool] = field(default_factory=lambda: dict(
         {
             "allow-cluster-create": False,  # False to enforce policy
             "allow-instance-pool-create": False,  # False to enforce policy
             "databricks-sql-access": True,
             "workspace-access": True,
         }))
-    courseware: dict[str, str] = field(default_factory=lambda: dict(
+    courseware: Dict[str, str] = field(default_factory=lambda: dict(
         {
             # "folder_name": "https://..../import_url.dbc"
         }
     ))
-    datasets: list[str] = None  # Only needs to be defined for DAWD
+    datasets: List[str] = None  # Only needs to be defined for DAWD
 
     def __post_init__(self):
         if self.lab_description is None:
@@ -66,7 +66,7 @@ class WorkspaceConfig:
             self.datasets = []
 
 
-def generate_usernames(first: int, last: int = None, pattern: str = "class+{num:03d}@databricks.com") -> list[str]:
+def generate_usernames(first: int, last: int = None, pattern: str = "class+{num:03d}@databricks.com") -> List[str]:
     if last is None:
         last = first
     return [pattern.format(num=i) for i in range(first, last + 1)]
@@ -160,7 +160,7 @@ def create_workspace(config: WorkspaceConfig):
     response = accounts_api.api("GET", "scim/v2/Users", count=1000)
     users = {u["userName"]: u for u in response["Resources"]}
     group_members = [{"values": users[instructor]["id"]} for instructor in config.instructors]
-    instructors_group = accounts_api.api("POST", "/scim/v2/Groups", {
+    accounts_api.api("POST", "/scim/v2/Groups", {
         "displayName": instructors_group_name,
         "schemas": ["urn:ietf:params:scim:schemas:core:2.0:Group"],
         "members": group_members,
