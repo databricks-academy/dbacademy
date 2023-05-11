@@ -357,7 +357,8 @@ class Publisher:
 
     @staticmethod
     def __copy_doc_files(source_docs_path: str, target_docs_path: str) -> None:
-        import os, shutil
+        import os
+        import shutil
 
         print(f"Source: {source_docs_path}")
         print(f"Target: {target_docs_path}")
@@ -448,8 +449,7 @@ class Publisher:
         for direct download from the calling notebook
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
-        import os, json, shutil, datetime
-        from dbacademy import dbgems
+        import json, shutil, datetime
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         if self.target_repo_url is None:

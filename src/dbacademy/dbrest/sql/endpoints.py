@@ -154,6 +154,8 @@ class SqlWarehousesClient(ApiContainer):
     def edit(self, endpoint_id: str, name: str = None, cluster_size: str = None, enable_serverless_compute: bool = None, min_num_clusters: int = None, max_num_clusters: int = None, auto_stop_mins: int = None, enable_photon: bool = None, spot_instance_policy: str = None, channel: str = None, tags: dict = None):
         return self.update(endpoint_id, name, cluster_size, enable_serverless_compute, min_num_clusters, max_num_clusters, auto_stop_mins, enable_photon, spot_instance_policy, channel, tags)
 
+    # TODO doug.bateman@databricks.com: Potential bugs.
+    # noinspection PyUnresolvedReferences
     def update(self,
                endpoint_id: str,
                name: str = None,

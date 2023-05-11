@@ -9,14 +9,17 @@ class ScimUsersClient(ApiContainer):
         self.client = client      # Client API exposing other operations to this class
 
     def list(self) -> List[Dict[str, Any]]:
-        response = self.client.api("GET", f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users?excludedAttributes=roles")
+        try:
+            response = self.client.api("GET", f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users", count=1000, excludedAttributes="roles")
 
-        users = response.get("Resources", list())
-        total_results = response.get("totalResults")
+            users = response.get("Resources", list())
+            total_results = response.get("totalResults")
 
-        assert len(users) == int(total_results), f"""The returned value "totalResults" ({total_results}) does not match the number of records ({len(users)}) returned."""
+            assert len(users) == int(total_results), f"""The returned value "totalResults" ({total_results}) does not match the number of records ({len(users)}) returned."""
 
-        return users
+            return users
+        except Exception as e:
+            raise e
 
     def get_by_id(self, user_id: str) -> Dict[str, Any]:
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
@@ -48,7 +51,8 @@ class ScimUsersClient(ApiContainer):
 
     def delete_by_id(self, user_id: str) -> None:
         url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
-        return self.client.api("DELETE", url, _expected=204)
+        self.client.api("DELETE", url, _expected=204)
+        return None
 
     def delete_by_username(self, username: str) -> None:
         for user in self.list():
@@ -58,17 +62,18 @@ class ScimUsersClient(ApiContainer):
         return None
 
     def create(self, username: str) -> Dict[str, Any]:
-        from dbacademy.rest.common import DatabricksApiException
+        try:
+            payload = {
+                "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
+                "userName": username,
+                "groups": [],
+                "entitlements": []
+            }
 
-        payload = {
-            "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
-            "userName": username,
-            "groups": [],
-            "entitlements": []
-        }
-
-        url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users"
-        return self.client.api("POST", url, payload, _expected=(200, 201))
+            url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users"
+            return self.client.api("POST", url, payload, _expected=(200, 201))
+        except Exception as e:
+            raise e
 
     def to_users_list(self, users: Union[None, str, Dict[str, Any]]) -> List[Dict[str, Any]]:
 

@@ -111,7 +111,7 @@ class JobsClient(ApiContainer):
     def delete_by_id(self, job_id):
         self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/delete", job_id=job_id)
 
-    def delete_by_name(self, job_names, success_only: bool):
+    def delete_by_name(self, job_names, success_only: bool) -> None:
         if type(job_names) == dict:
             job_names = list(job_names.keys())
         elif type(job_names) == list:
@@ -165,3 +165,4 @@ class JobsClient(ApiContainer):
                         deleted += 1
 
         self.client.vprint(f"...deleted {deleted} jobs")
+        return None

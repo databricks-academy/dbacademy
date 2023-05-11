@@ -1,4 +1,3 @@
-from typing import Dict, List
 from dbacademy.rest.common import DatabricksApiException, ApiContainer
 
 
@@ -44,6 +43,8 @@ class Groups(ApiContainer):
         else:
             return self.databricks.api("POST", "2.0/groups/create", _data=data)
 
+    # TODO doug.bateman@databricks.com: Calling code may produce a bug from this.
+    # noinspection PyUnusedLocal
     def get_by_id(self, value):
         return self.databricks.api("GET", "2.0/groups/list")["group_names"]
 

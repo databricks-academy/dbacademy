@@ -59,7 +59,8 @@ class DocsPublisher:
 
     @staticmethod
     def __save_pdfs(file_bytes: io.BytesIO, path: str):
-        import os, shutil
+        import os
+        import shutil
 
         if os.path.exists(path):
             os.remove(path)

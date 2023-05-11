@@ -58,7 +58,7 @@ class LessonConfig:
             self.__username = row["username"]
             self.__initial_schema = row["schema"]
             self.__initial_catalog = row["catalog"]
-        except:
+        except Exception:
             # Presumably because of unit tests
             self.__username = None
             self.__initial_schema = None

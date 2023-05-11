@@ -33,7 +33,7 @@ class Runs(ApiContainer):
     # TODO Remove unused parameter
     # noinspection PyUnusedLocal
     def get_output(self, run: Union[int, dict], *, if_not_exists: str = "error") -> dict:
-        # Detect if it's a multi-task job with only 1 task.
+        # Detect if it's a multitask job with only 1 task.
         if isinstance(run, dict) and len(run.get("tasks", ())) == 1:
             run = run["tasks"][0]["run_id"]
         else:
