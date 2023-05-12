@@ -32,7 +32,7 @@ def advertise(name: str, items: Union[List, str, bool], padding: int, indent: in
 
 
 deleting_wsj = False
-workspace_numbers = None
+workspace_numbers = list()
 CONFIRMATIONS = ["y", "yes", "1", "t", "true"]
 
 print("-"*100)
