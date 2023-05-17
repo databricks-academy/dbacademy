@@ -1,7 +1,7 @@
 # Project Lockdown
 
 ## README.md
-```angular2html
+```
 # Please see Databricks Academy
 
 The courseware materials for this course are no longer available through GitHub.
