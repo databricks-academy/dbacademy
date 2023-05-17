@@ -184,10 +184,10 @@ class WorkspaceCleaner:
     def _stop_all_streams() -> bool:
         from dbacademy import dbgems
 
-        if len(dbgems.spark.streams.active) == 0:
+        if len(dbgems.active_streams()) == 0:
             return False  # Bail if there are no active streams
 
-        for stream in dbgems.spark.streams.active:
+        for stream in dbgems.active_streams():
             start = dbgems.clock_start()
             print(f"| stopping the stream \"{stream.name}\"", end="...")
             stream.stop()

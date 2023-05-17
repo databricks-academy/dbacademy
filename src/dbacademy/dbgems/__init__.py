@@ -2,7 +2,7 @@
 This module includes helper functions specifically aimed at code developed in and maintained in Notebooks.
 Examples include wrappers around tags, notebook state variables, and the full body of functions exposed by dbutils.
 """
-from typing import Union, Any, Callable, Optional
+from typing import Union, Any, Callable, Optional, List
 
 # The one import I can't shake!!! JDP
 import pyspark
@@ -425,6 +425,20 @@ def find_global(target):
         caller_frame = caller_frame.f_back
 
     return None
+
+
+def active_streams() -> List:
+    # noinspection PyUnresolvedReferences
+    from pyspark.errors.exceptions.connect import SparkConnectGrpcException
+
+    if not spark:
+        return list()
+
+    try:
+        return spark.streams.active
+
+    except SparkConnectGrpcException:
+        return list()
 
 
 spark: Union[None, "pyspark.sql.SparkSession"] = find_global("spark")

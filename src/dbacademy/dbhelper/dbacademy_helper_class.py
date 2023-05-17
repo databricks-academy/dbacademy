@@ -796,11 +796,11 @@ class DBAcademyHelper:
         assert query is not None and type(query) in [str, StreamingQuery], f"Expected the query parameter to be of type \"str\" or \"pyspark.sql.streaming.StreamingQuery\", found \"{type(query)}\"."
 
         if type(query) != pyspark.sql.streaming.StreamingQuery:
-            queries = [aq for aq in dbgems.spark.streams.active if aq.name == query]
+            queries = [aq for aq in dbgems.active_streams() if aq.name == query]
             while len(queries) == 0:
                 print("The query is not yet active...")
                 time.sleep(delay_seconds)  # Give it a couple of seconds
-                queries = [aq for aq in dbgems.spark.streams.active if aq.name == query]
+                queries = [aq for aq in dbgems.active_streams() if aq.name == query]
 
             if len(queries) > 1:
                 raise ValueError(f"More than one spark query was found for the name \"{query}\".")
