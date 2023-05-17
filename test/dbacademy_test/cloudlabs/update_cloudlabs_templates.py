@@ -1,11 +1,7 @@
-from typing import Set
-
 from dbacademy.cloudlabs import CloudlabsApi, Tenant
 
 
-# TODO doug.bateman@databricks.com: Potential bug
-# noinspection PyTypeChecker
-def curl_login() -> CloudlabsApi:
+def curl_login() -> str:
     import os
     if "CLOUDLABS_URL" in os.environ:
         return os.environ["CLOUDLABS_CURL"]
@@ -18,7 +14,17 @@ def curl_login() -> CloudlabsApi:
     raise ValueError("Environment variable CLOUDLABS_CURL must be set, or the file .curl_login must exist")
 
 
-def update_template_descriptions(tenant: Tenant, template_ids: Set[int]):
+def patch_template(tenant: Tenant, template_id: int, changes: dict):
+    template = tenant.templates.get_by_id(template_id)
+    template.update(changes)
+    exclude_params = tenant.api(
+        "GET",
+        f"https://api.cloudlabs.ai/api/WorkshopTemplates/GetExcludingOutputParameters/{template_id}")
+    template["ExcludingOutputParameters"] = ",".join(exclude_params)
+    tenant.api("PUT", f"https://api.cloudlabs.ai/api/WorkshopTemplates?templateId={template_id}", template)
+
+
+def update_template_descriptions(tenant: Tenant, template_ids: set[int]):
     updated_ids = set()
     templates = tenant.templates.list_all()
     for template in templates:
@@ -32,9 +38,11 @@ def update_template_descriptions(tenant: Tenant, template_ids: Set[int]):
             launch_description = """
                 <p>Welcome to Databricks Academy:</p>
                 <ul>
-                    <li>Your lab URL, username &amp; password are in the <span style="font-weight: bold">Environment Details</span> tab.</li>
+                    <li>Your lab URL, username &amp; password are in the
+                        <span style="font-weight: bold">Environment Details</span> tab.</li>
                     <li>Please open the Databricks URL in an Incognito/Anonymous browser window.</li>
-                    <li>Click the <span style="font-weight: bold">Sign in with Azure AD</span> button and then enter the provided username and password.</li>
+                    <li>Click the <span style="font-weight: bold">Sign in with Azure AD</span>
+                        button and then enter the provided username and password.</li>
                     </ul>
             """.strip()
             launch_description = "".join(line.strip() for line in launch_description.split("\n"))
@@ -44,23 +52,24 @@ def update_template_descriptions(tenant: Tenant, template_ids: Set[int]):
             launch_description = """
                 <p>Welcome to Databricks Academy:</p>
                 <ul>
-                    <li>Your lab URL, username &amp; password are in the <span style="font-weight: bold">Environment Details</span> tab.</li>
+                    <li>Your lab URL, username &amp; password are in the
+                        <span style="font-weight: bold">Environment Details</span> tab.</li>
                     <li>Please open the Databricks URL in an Incognito/Anonymous browser window.</li>
-                    <li>Click the <span style="font-weight: bold">Single Sign On</span> button and then enter the provided username and password.</li>
+                    <li>Select the <span style="font-weight: bold">Single Sign On</span>
+                        tab and then enter the provided username and password.</li>
                     </ul>
             """.strip()
             launch_description = "".join(line.strip() for line in launch_description.split("\n"))
         else:
             continue
-        tenant.templates.patch(template_id, {
+        # tenant.templates.patch(template_id, {
+        patch_template(tenant, template_id, {
             "Description": description,
             "LabLaunchPageDescription": launch_description,
         })
     return updated_ids
 
 
-# TODO doug.bateman@databricks.com: Potential bug
-# noinspection PyTypeChecker
 def main():
     cloudlabs = CloudlabsApi.curl_auth(curl_login())
     tenant = cloudlabs.tenants["Databricks – User Success"]
