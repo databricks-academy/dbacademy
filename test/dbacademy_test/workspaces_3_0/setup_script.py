@@ -129,7 +129,7 @@ account = AccountConfig.from_env(account_id_env_name=f"WORKSPACE_SETUP_{env_code
                                  uc_storage_config=uc_storage_config,
                                  workspace_config_template=workspace_config_template,
                                  ignored_workspaces=[                                                 # Either the number or name (not domain) to skip
-                                     529, 544, 550, 590, 598
+                                     # 529, 544, 550, 590, 598
                                      # "classroom-005-9j1zg",
                                      # "classroom-007-t8yxo",
                                  ])
