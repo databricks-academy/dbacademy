@@ -1,9 +1,9 @@
 import os
 from typing import Optional, Union, List
-from dbacademy_test.workspaces_3_0.support.account_config_class import AccountConfig
-from dbacademy_test.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
-from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
-from dbacademy_test.workspaces_3_0.support.workspace_setup_class import WorkspaceSetup
+from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
+from dbacademy_jobs.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
+from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
+from dbacademy_jobs.workspaces_3_0.support.workspace_setup_class import WorkspaceSetup
 
 
 def read_int(prompt: str, default_value: int) -> int:
@@ -154,10 +154,10 @@ elif action == 1:
     print()
     advertise("Courses", workspace_config_template.course_definitions, 6, 15)
     advertise("Datasets", workspace_config_template.datasets, 5, 15)
-    advertise("Delete WS Job", deleting_wsj, 0, 15)
+    advertise("Delete WS Job", [deleting_wsj] if deleting_wsj else [], 0, 15)
     advertise("Skipping", account.ignored_workspaces, 5, 15)
 
-    if read_str("""\nPlease confirm you wish to create these workspaces""", "no").lower() in CONFIRMATIONS:
+    if read_str("""Please confirm you wish to create these workspaces""", "no").lower() in CONFIRMATIONS:
 
         FALSE = False  # easier for my eyes to recognize
         workspace_setup.create_workspaces(run_workspace_setup=True,   # <<< TRUE

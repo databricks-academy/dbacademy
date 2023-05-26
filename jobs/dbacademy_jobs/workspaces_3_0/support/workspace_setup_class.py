@@ -2,11 +2,11 @@ from typing import List, Optional, Callable, Dict, Any
 
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.rest.common import DatabricksApiException
-from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
+from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
 
 class WorkspaceTrio:
-    from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
+    from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
     from dbacademy.dougrest.accounts.workspaces import Workspace as WorkspaceAPI
     from dbacademy.classrooms.classroom import Classroom
 
@@ -77,12 +77,12 @@ class WorkspaceTrio:
 
 
 class WorkspaceSetup:
-    from dbacademy_test.workspaces_3_0.support.account_config_class import AccountConfig
+    from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
 
     def __init__(self, account_config: AccountConfig):
         from dbacademy import common
         from dbacademy.dougrest import AccountsApi
-        from dbacademy_test.workspaces_3_0.support.account_config_class import AccountConfig
+        from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
 
         self.__errors: List[str] = list()
         self.__workspaces: List[WorkspaceTrio] = list()

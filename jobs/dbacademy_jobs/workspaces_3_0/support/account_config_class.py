@@ -2,8 +2,8 @@ from typing import List, Union, Optional
 
 
 class AccountConfig:
-    from dbacademy_test.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
-    from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
+    from dbacademy_jobs.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
+    from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
     @staticmethod
     def from_env(*, account_id_env_name, account_password_env_name, account_username_env_name, region: str, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, workspace_numbers: Optional[List[int]], ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
@@ -33,8 +33,8 @@ class AccountConfig:
         Creates the configuration for account-level settings.
         """
         from dbacademy import common
-        from dbacademy_test.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
-        from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
+        from dbacademy_jobs.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
+        from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
         self.__account_id = common.verify_type(str, min_length=1, account_id=account_id)
         self.__password = common.verify_type(str, min_length=1, password=password)
@@ -56,7 +56,7 @@ class AccountConfig:
                                          workspace_number=workspace_number)
 
     def create_workspace_config(self, *, template: WorkspaceConfig, workspace_number: int) -> WorkspaceConfig:
-        from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
+        from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
         workspace = WorkspaceConfig(workspace_number=workspace_number,
                                     max_participants=template.max_participants,

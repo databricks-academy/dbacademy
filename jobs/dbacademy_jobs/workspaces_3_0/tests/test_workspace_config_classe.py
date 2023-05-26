@@ -1,6 +1,6 @@
 import unittest
 import pytest
-from dbacademy_test.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
+from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
 
 class TestWorkspaceConfig(unittest.TestCase):
@@ -22,7 +22,7 @@ class TestWorkspaceConfig(unittest.TestCase):
         ]
 
     def test_create_workspace_config_no_groups(self):
-        from dbacademy_test.workspaces_3_0 import test_index_error
+        from dbacademy_jobs.workspaces_3_0.tests import test_index_error
 
         workspace_group = {
             "instructors": [0, 1],
@@ -103,7 +103,7 @@ class TestWorkspaceConfig(unittest.TestCase):
         test_index_error(self, lambda: workspace.usernames[153])
 
     def test_create_workspace_config_username_pattern(self):
-        from dbacademy_test.workspaces_3_0 import test_assertion_error
+        from dbacademy_jobs.workspaces_3_0.tests import test_assertion_error
 
         workspace = WorkspaceConfig(max_participants=250,
                                     course_definitions=self.course_definitions,
@@ -132,7 +132,7 @@ class TestWorkspaceConfig(unittest.TestCase):
         test_assertion_error(self, """The parameter "username_pattern" must have a length > 0, found "".""", lambda: WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="", workspace_group=None, entitlements=dict(), workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_workspace_pattern(self):
-        from dbacademy_test.workspaces_3_0 import test_assertion_error
+        from dbacademy_jobs.workspaces_3_0.tests import test_assertion_error
 
         workspace = WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
         self.assertEqual("classroom-{workspace_number}", workspace.workspace_name_pattern)
@@ -151,7 +151,7 @@ class TestWorkspaceConfig(unittest.TestCase):
         test_assertion_error(self, """Expected the parameter "workspace_name_pattern" to contain "{workspace_number}", found "classroom-{whatever}".""", lambda: WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{whatever}"))
 
     def test_create_workspace_config_workspace_number(self):
-        from dbacademy_test.workspaces_3_0 import test_assertion_error
+        from dbacademy_jobs.workspaces_3_0.tests import test_assertion_error
 
         workspace = WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
         self.assertIsNone(workspace.workspace_number)
@@ -169,7 +169,7 @@ class TestWorkspaceConfig(unittest.TestCase):
                              lambda: WorkspaceConfig(workspace_number=0, max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_max_participants(self):
-        from dbacademy_test.workspaces_3_0 import test_assertion_error
+        from dbacademy_jobs.workspaces_3_0.tests import test_assertion_error
         from dbacademy import common
 
         # noinspection PyTypeChecker
@@ -179,7 +179,7 @@ class TestWorkspaceConfig(unittest.TestCase):
         test_assertion_error(self, common.E_MIN_V, lambda: WorkspaceConfig(max_participants=0, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_default_dbr(self):
-        from dbacademy_test.workspaces_3_0 import test_assertion_error
+        from dbacademy_jobs.workspaces_3_0.tests import test_assertion_error
 
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "default_dbr" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr=0, credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
@@ -188,7 +188,7 @@ class TestWorkspaceConfig(unittest.TestCase):
         test_assertion_error(self, """Invalid DBR format, found "abc".""", lambda: WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="abc", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_default_node_type_id(self):
-        from dbacademy_test.workspaces_3_0 import test_assertion_error
+        from dbacademy_jobs.workspaces_3_0.tests import test_assertion_error
 
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "default_node_type_id" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id=0, default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
@@ -197,7 +197,7 @@ class TestWorkspaceConfig(unittest.TestCase):
         test_assertion_error(self, """Invalid node type, found "abc".""", lambda: WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="abc", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_courses(self):
-        from dbacademy_test.workspaces_3_0 import test_assertion_error
+        from dbacademy_jobs.workspaces_3_0.tests import test_assertion_error
 
         workspace = WorkspaceConfig(max_participants=250, course_definitions=None, datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=None, workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
         self.assertEqual(list, type(workspace.course_definitions))
@@ -246,7 +246,7 @@ class TestWorkspaceConfig(unittest.TestCase):
             self.assertEqual("""Item 0 for the parameter "dbc_urls" must start with "https://labs.training.databricks.com/api/v1/courses/download.dbc?", found "https://dev.training.databricks.com/api/v1/courses/download.dbc?course=ml-in-production&token=asdf1234".""", str(e))
 
     def test_create_workspace_config_datasets(self):
-        from dbacademy_test.workspaces_3_0 import test_assertion_error
+        from dbacademy_jobs.workspaces_3_0.tests import test_assertion_error
 
         workspace = WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=None, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
         self.assertEqual(list, type(workspace.datasets))
@@ -269,7 +269,7 @@ class TestWorkspaceConfig(unittest.TestCase):
         test_assertion_error(self, """The parameter "datasets" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=250, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=1, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_credentials_name(self):
-        from dbacademy_test.workspaces_3_0 import test_assertion_error
+        from dbacademy_jobs.workspaces_3_0.tests import test_assertion_error
 
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "credentials_name" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=150, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name=0, storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
@@ -278,7 +278,7 @@ class TestWorkspaceConfig(unittest.TestCase):
         test_assertion_error(self, """The parameter "credentials_name" must be specified, found "".""", lambda: WorkspaceConfig(max_participants=150, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_storage_config(self):
-        from dbacademy_test.workspaces_3_0 import test_assertion_error
+        from dbacademy_jobs.workspaces_3_0.tests import test_assertion_error
 
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "storage_configuration" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=150, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration=0, username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
