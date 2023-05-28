@@ -10,7 +10,7 @@ conda create -n dbacademy python=3.9
 conda activate dbacademy
 pip install -r requirements.txt
 ```
-Once setup, unit tests can by ran by executing
+Once setup, unit tests can be run by executing
 ```pytest```
 
 ## Usage - Notebook/Online/Remote

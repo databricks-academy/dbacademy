@@ -81,6 +81,8 @@ class WorkspaceHelper:
             datasets = [
                 "example-course",
                 "apache-spark-programming-with-databricks",
+                "advanced-data-engineering-with-databricks",
+                "building-and-deploying-large-language-models-on-databricks",
                 "data-analysis-with-databricks",
                 "data-engineer-learning-path",
                 "data-engineering-with-databricks",
