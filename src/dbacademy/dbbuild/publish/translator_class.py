@@ -379,7 +379,7 @@ class Translator:
             for i, command in enumerate(commands):
                 command = command.strip()
                 guid, line_zero = self.__extract_i18n_guid(cm, command)
-                print(f" - #{i+1:0>3} {guid}")
+                # print(f" - #{i+1:0>3} {guid}")
 
                 if guid is None:
                     new_commands.append(command)                            # No GUID, it's %python or other type of command, not MD
