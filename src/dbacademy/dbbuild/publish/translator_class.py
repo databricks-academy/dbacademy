@@ -387,7 +387,7 @@ class Translator:
                     if guid not in i18n_guid_map.keys():
                         for key in i18n_guid_map.keys():
                             print(f"| {key}")
-                        raise AssertionError(f"The GUID \"{guid}\" was not found in \"{file}\".")
+                        raise AssertionError(f"Cmd #{i+1} | The GUID \"{guid}\" was not found in \"{file}\".")
 
                     replacements = i18n_guid_map[guid].strip().split("\n")  # Get the replacement text for the specified GUID
                     cmd_lines = [f"{cm} MAGIC {x}" for x in replacements]   # Prefix the magic command to each line
