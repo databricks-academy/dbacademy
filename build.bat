@@ -1,6 +1,7 @@
+@echo -----------------------------------------------------------------------------------------------------------------
 rmdir /s/q .\dist
 
-C:\Users\JacobParr\Anaconda3\envs\dbacademy\python.exe setup.py bdist_wheel
+@C:\Users\JacobParr\.conda\envs\dbacademy\python.exe setup.py bdist_wheel
 
 rmdir /s/q .\build
 rmdir /s/q .\src\dbacademy.egg-info
