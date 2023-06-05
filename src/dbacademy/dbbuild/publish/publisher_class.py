@@ -11,7 +11,7 @@ class Publisher:
     PUBLISHING_MODE_AUTOMATIC = "automatic"
     PUBLISHING_MODES = [PUBLISHING_MODE_MANUAL, PUBLISHING_MODE_AUTOMATIC]
 
-    KEEPERS = [".gitignore", "README.md", "LICENSE", "docs"]
+    KEEPERS = [".gitignore", "docs", "README.txt", "README.md", "README", "LICENSE.txt", "LICENSE.md", "LICENSE", "NOTICE.md", "NOTICE.txt", "NOTICE"]
 
     def __init__(self, build_config: BuildConfig, publishing_mode: Optional[str]):
         from dbacademy import common
