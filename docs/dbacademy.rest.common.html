@@ -100,11 +100,13 @@ Raises:<br>
 
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>__annotations__</strong> = {'dns_retry': 'bool', 'dns_verify': 'bool', 'url': 'str'}</dl>
+<dl><dt><strong>__annotations__</strong> = {'dns_retry': 'bool', 'dns_verify': 'bool', 'trace': 'bool', 'url': 'str'}</dl>
 
 <dl><dt><strong>dns_retry</strong> = False</dl>
 
 <dl><dt><strong>dns_verify</strong> = True</dl>
+
+<dl><dt><strong>trace</strong> = False</dl>
 
 <dl><dt><strong>url</strong> = None</dl>
 
@@ -222,7 +224,8 @@ Data descriptors inherited from <a href="builtins.html#BaseException">builtins.B
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>HttpMethod</strong> = typing.Literal['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']<br>
+<td width="100%"><strong>Cloud</strong> = typing.Literal['AWS', 'MSA', 'GCP']<br>
+<strong>HttpMethod</strong> = typing.Literal['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']<br>
 <strong>HttpReturnType</strong> = ~HttpReturnType<br>
 <strong>HttpStatusCodes</strong> = typing.Union[int, typing.Container[int]]<br>
 <strong>IfExists</strong> = typing.Literal['create', 'error', 'ignore', 'overwrite', 'update']<br>
@@ -230,5 +233,5 @@ Data descriptors inherited from <a href="builtins.html#BaseException">builtins.B
 <strong>Item</strong> = typing.Dict<br>
 <strong>ItemId</strong> = typing.Union[int, str]<br>
 <strong>ItemOrId</strong> = typing.Union[int, str, typing.Dict]<br>
-<strong>__all__</strong> = ['ApiContainer', 'ApiClient', 'DatabricksApiException', 'HttpStatusCodes', 'HttpMethod', 'HttpReturnType', 'IfNotExists', 'IfExists', 'Item', 'ItemId', 'ItemOrId']</td></tr></table>
+<strong>__all__</strong> = ['ApiContainer', 'ApiClient', 'DatabricksApiException', 'HttpStatusCodes', 'HttpMethod', 'HttpReturnType', 'IfNotExists', 'IfExists', 'Item', 'ItemId', 'ItemOrId', 'Cloud']</td></tr></table>
 </body></html>

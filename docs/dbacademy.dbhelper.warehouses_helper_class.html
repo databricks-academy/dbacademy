@@ -51,7 +51,7 @@
 
 <hr>
 Static methods defined here:<br>
-<dl><dt><a name="WarehousesHelper-create_sql_warehouse"><strong>create_sql_warehouse</strong></a>(*, client: dbacademy.dbrest.client.DBAcademyRestClient, name: str, auto_stop_mins: int, min_num_clusters, max_num_clusters, enable_serverless_compute: bool, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None, for_user: Optional[str] = None)</dt></dl>
+<dl><dt><a name="WarehousesHelper-create_sql_warehouse"><strong>create_sql_warehouse</strong></a>(*, client: dbacademy.dbrest.client.DBAcademyRestClient, name: str, auto_stop_mins: Optional[int], min_num_clusters, max_num_clusters, enable_serverless_compute: bool, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None, for_user: Optional[str] = None)</dt></dl>
 
 <dl><dt><a name="WarehousesHelper-execute_statements"><strong>execute_statements</strong></a>(client: dbacademy.dbrest.client.DBAcademyRestClient, warehouse_id: str, statements: List[str]) -&gt; None</dt></dl>
 
@@ -87,5 +87,6 @@ Data and other attributes defined here:<br>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><strong>List</strong> = typing.List<br>
+<strong>Optional</strong> = typing.Optional<br>
 <strong>Union</strong> = typing.Union</td></tr></table>
 </body></html>

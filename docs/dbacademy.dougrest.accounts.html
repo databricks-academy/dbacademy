@@ -20,15 +20,16 @@
 <td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="dbacademy.dougrest.accounts.budgets.html">budgets</a><br>
 <a href="dbacademy.dougrest.accounts.credentials.html">credentials</a><br>
 <a href="dbacademy.dougrest.accounts.crud.html">crud</a><br>
-</td><td width="25%" valign=top><a href="dbacademy.dougrest.accounts.keys.html">keys</a><br>
-<a href="dbacademy.dougrest.accounts.logs.html">logs</a><br>
+<a href="dbacademy.dougrest.accounts.keys.html">keys</a><br>
+</td><td width="25%" valign=top><a href="dbacademy.dougrest.accounts.logs.html">logs</a><br>
+<a href="dbacademy.dougrest.accounts.metastores.html">metastores</a><br>
 <a href="dbacademy.dougrest.accounts.network.html">network</a><br>
-</td><td width="25%" valign=top><a href="dbacademy.dougrest.accounts.private_access.html">private_access</a><br>
-<a href="dbacademy.dougrest.accounts.storage.html">storage</a><br>
+<a href="dbacademy.dougrest.accounts.private_access.html">private_access</a><br>
+</td><td width="25%" valign=top><a href="dbacademy.dougrest.accounts.storage.html">storage</a><br>
 <a href="dbacademy.dougrest.accounts.usage.html">usage</a><br>
-</td><td width="25%" valign=top><a href="dbacademy.dougrest.accounts.users.html">users</a><br>
+<a href="dbacademy.dougrest.accounts.users.html">users</a><br>
 <a href="dbacademy.dougrest.accounts.vpc.html">vpc</a><br>
-<a href="dbacademy.dougrest.accounts.workspaces.html">workspaces</a><br>
+</td><td width="25%" valign=top><a href="dbacademy.dougrest.accounts.workspaces.html">workspaces</a><br>
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
@@ -51,7 +52,7 @@
 <font color="#000000" face="helvetica, arial"><a name="AccountsApi">class <strong>AccountsApi</strong></a>(<a href="dbacademy.rest.common.html#ApiClient">dbacademy.rest.common.ApiClient</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#AccountsApi">AccountsApi</a>(account_id:&nbsp;'str',&nbsp;user:&nbsp;'str',&nbsp;password:&nbsp;'str')&nbsp;-&amp;gt;&nbsp;'None'<br>
+<td colspan=2><tt><a href="#AccountsApi">AccountsApi</a>(account_id:&nbsp;'str',&nbsp;*,&nbsp;user:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;password:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;token:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;cloud:&nbsp;'Cloud'&nbsp;=&nbsp;'AWS')&nbsp;-&amp;gt;&nbsp;'None'<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -63,7 +64,7 @@
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="AccountsApi-__init__"><strong>__init__</strong></a>(self, account_id: 'str', user: 'str', password: 'str') -&gt; 'None'</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
+<dl><dt><a name="AccountsApi-__init__"><strong>__init__</strong></a>(self, account_id: 'str', *, user: 'str' = None, password: 'str' = None, token: 'str' = None, cloud: 'Cloud' = 'AWS') -&gt; 'None'</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;url:&nbsp;The&nbsp;common&nbsp;base&nbsp;URL&nbsp;to&nbsp;the&nbsp;API&nbsp;endpoints.&nbsp;&nbsp;e.g.&nbsp;<a href="https://workspace.cloud.databricks.com/API/">https://workspace.cloud.databricks.com/API/</a><br>
@@ -103,11 +104,13 @@ Raises:<br>
 
 <hr>
 Data and other attributes inherited from <a href="dbacademy.rest.common.html#ApiClient">dbacademy.rest.common.ApiClient</a>:<br>
-<dl><dt><strong>__annotations__</strong> = {'dns_retry': 'bool', 'dns_verify': 'bool', 'url': 'str'}</dl>
+<dl><dt><strong>__annotations__</strong> = {'dns_retry': 'bool', 'dns_verify': 'bool', 'trace': 'bool', 'url': 'str'}</dl>
 
 <dl><dt><strong>dns_retry</strong> = False</dl>
 
 <dl><dt><strong>dns_verify</strong> = True</dl>
+
+<dl><dt><strong>trace</strong> = False</dl>
 
 <dl><dt><strong>url</strong> = None</dl>
 

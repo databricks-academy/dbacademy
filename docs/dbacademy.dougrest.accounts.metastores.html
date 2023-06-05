@@ -1,14 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><title>Python: module dbacademy.dougrest.accounts.crud</title>
+<html><head><title>Python: module dbacademy.dougrest.accounts.metastores</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head><body bgcolor="#f0f0f8">
 
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
 <tr bgcolor="#7799ee">
 <td valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dougrest.html"><font color="#ffffff">dougrest</font></a>.<a href="dbacademy.dougrest.accounts.html"><font color="#ffffff">accounts</font></a>.crud</strong></big></big></font></td
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dougrest.html"><font color="#ffffff">dougrest</font></a>.<a href="dbacademy.dougrest.accounts.html"><font color="#ffffff">accounts</font></a>.metastores</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdougrest%5Caccounts%5Ccrud.py">c:\dvlp\dbacademy\src\dbacademy\dougrest\accounts\crud.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdougrest%5Caccounts%5Cmetastores.py">c:\dvlp\dbacademy\src\dbacademy\dougrest\accounts\metastores.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -18,10 +18,10 @@
     
 <tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl>
-<dt><font face="helvetica, arial"><a href="dbacademy.rest.crud.html#CRUD">dbacademy.rest.crud.CRUD</a>(<a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>)
+<dt><font face="helvetica, arial"><a href="dbacademy.dougrest.accounts.crud.html#AccountsCRUD">dbacademy.dougrest.accounts.crud.AccountsCRUD</a>(<a href="dbacademy.rest.crud.html#CRUD">dbacademy.rest.crud.CRUD</a>)
 </font></dt><dd>
 <dl>
-<dt><font face="helvetica, arial"><a href="dbacademy.dougrest.accounts.crud.html#AccountsCRUD">AccountsCRUD</a>
+<dt><font face="helvetica, arial"><a href="dbacademy.dougrest.accounts.metastores.html#Metastores">Metastores</a>
 </font></dt></dl>
 </dd>
 </dl>
@@ -29,30 +29,33 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AccountsCRUD">class <strong>AccountsCRUD</strong></a>(<a href="dbacademy.rest.crud.html#CRUD">dbacademy.rest.crud.CRUD</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="Metastores">class <strong>Metastores</strong></a>(<a href="dbacademy.dougrest.accounts.crud.html#AccountsCRUD">dbacademy.dougrest.accounts.crud.AccountsCRUD</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#AccountsCRUD">AccountsCRUD</a>(client:&nbsp;dbacademy.rest.common.ApiClient,&nbsp;path:&nbsp;str,&nbsp;noun:&nbsp;str,&nbsp;*,&nbsp;singular:&nbsp;str&nbsp;=&nbsp;None,&nbsp;plural:&nbsp;str&nbsp;=&nbsp;None,&nbsp;id_key:&nbsp;str&nbsp;=&nbsp;None,&nbsp;name_key:&nbsp;str&nbsp;=&nbsp;None)<br>
+<td colspan=2><tt><a href="#Metastores">Metastores</a>(client)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
-<dd><a href="dbacademy.dougrest.accounts.crud.html#AccountsCRUD">AccountsCRUD</a></dd>
+<dd><a href="dbacademy.dougrest.accounts.metastores.html#Metastores">Metastores</a></dd>
+<dd><a href="dbacademy.dougrest.accounts.crud.html#AccountsCRUD">dbacademy.dougrest.accounts.crud.AccountsCRUD</a></dd>
 <dd><a href="dbacademy.rest.crud.html#CRUD">dbacademy.rest.crud.CRUD</a></dd>
 <dd><a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Metastores-__init__"><strong>__init__</strong></a>(self, client)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#Metastores-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
 <hr>
 Data and other attributes defined here:<br>
 <dl><dt><strong>__abstractmethods__</strong> = frozenset()</dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.rest.crud.html#CRUD">dbacademy.rest.crud.CRUD</a>:<br>
-<dl><dt><a name="AccountsCRUD-__init__"><strong>__init__</strong></a>(self, client: dbacademy.rest.common.ApiClient, path: str, noun: str, *, singular: str = None, plural: str = None, id_key: str = None, name_key: str = None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#AccountsCRUD-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="Metastores-create"><strong>create</strong></a>(self, unimplemented)</dt><dd><tt>Not&nbsp;Implemented.</tt></dd></dl>
 
-<dl><dt><a name="AccountsCRUD-create"><strong>create</strong></a>(self, unimplemented)</dt><dd><tt>Not&nbsp;Implemented.</tt></dd></dl>
-
-<dl><dt><a name="AccountsCRUD-create_by_example"><strong>create_by_example</strong></a>(self, item: Dict, *, fetch: bool = False, if_exists: Literal['create', 'error', 'ignore', 'overwrite', 'update'] = 'create') -&gt; Dict</dt><dd><tt>Create&nbsp;a&nbsp;new&nbsp;{singular}.<br>
+<dl><dt><a name="Metastores-create_by_example"><strong>create_by_example</strong></a>(self, item: Dict, *, fetch: bool = False, if_exists: Literal['create', 'error', 'ignore', 'overwrite', 'update'] = 'create') -&gt; Dict</dt><dd><tt>Create&nbsp;a&nbsp;new&nbsp;{singular}.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;item:&nbsp;A&nbsp;dict&nbsp;specification&nbsp;for&nbsp;the&nbsp;new&nbsp;{singular}.<br>
@@ -72,8 +75,8 @@ Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;neither&nbsp;`{id_key}`&nbsp;nor&nbsp;`{name_key}`&nbsp;is&nbsp;in&nbsp;`item`.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;`if_exists`&nbsp;is&nbsp;not&nbsp;one&nbsp;of&nbsp;'ignore',&nbsp;'update',&nbsp;'error',&nbsp;'create',&nbsp;or&nbsp;'overwrite'.</tt></dd></dl>
 
-<dl><dt><a name="AccountsCRUD-create_or_update"><strong>create_or_update</strong></a>(self, item: Dict, *, fetch: bool = False) -&gt; Dict</dt><dd><tt>Create&nbsp;a&nbsp;new&nbsp;{singular},&nbsp;updating&nbsp;it&nbsp;instead&nbsp;of&nbsp;it&nbsp;already&nbsp;exists.&nbsp;&nbsp;This&nbsp;has&nbsp;the&nbsp;same&nbsp;effect&nbsp;as&nbsp;calling<br>
-`<a href="#AccountsCRUD-create">create</a>(item,&nbsp;fetch=fetch,&nbsp;if_exists="update")`.<br>
+<dl><dt><a name="Metastores-create_or_update"><strong>create_or_update</strong></a>(self, item: Dict, *, fetch: bool = False) -&gt; Dict</dt><dd><tt>Create&nbsp;a&nbsp;new&nbsp;{singular},&nbsp;updating&nbsp;it&nbsp;instead&nbsp;of&nbsp;it&nbsp;already&nbsp;exists.&nbsp;&nbsp;This&nbsp;has&nbsp;the&nbsp;same&nbsp;effect&nbsp;as&nbsp;calling<br>
+`<a href="#Metastores-create">create</a>(item,&nbsp;fetch=fetch,&nbsp;if_exists="update")`.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;item:&nbsp;A&nbsp;dict&nbsp;specification&nbsp;for&nbsp;the&nbsp;new/updated&nbsp;{singular}.<br>
@@ -83,7 +86,7 @@ Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;DatabricksApiException:&nbsp;If&nbsp;the&nbsp;server&nbsp;rejects&nbsp;the&nbsp;request&nbsp;as&nbsp;invalid.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;neither&nbsp;`{id_key}`&nbsp;nor&nbsp;`{name_key}`&nbsp;is&nbsp;in&nbsp;`item`.</tt></dd></dl>
 
-<dl><dt><a name="AccountsCRUD-delete_by_example"><strong>delete_by_example</strong></a>(self, item, if_not_exists: Literal['error', 'ignore'] = 'error')</dt><dd><tt>Delete&nbsp;the&nbsp;provided&nbsp;{singular}.<br>
+<dl><dt><a name="Metastores-delete_by_example"><strong>delete_by_example</strong></a>(self, item, if_not_exists: Literal['error', 'ignore'] = 'error')</dt><dd><tt>Delete&nbsp;the&nbsp;provided&nbsp;{singular}.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;item:&nbsp;A&nbsp;dict&nbsp;containing&nbsp;either&nbsp;`{id_key}`&nbsp;or&nbsp;`{name_key}`<br>
@@ -97,7 +100,7 @@ Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;DatabricksApiException:&nbsp;If&nbsp;not&nbsp;found&nbsp;and&nbsp;`if_not_exists=="error"`.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;neither&nbsp;`{id_key}`&nbsp;nor&nbsp;`{name_key}`&nbsp;is&nbsp;in&nbsp;`item`.</tt></dd></dl>
 
-<dl><dt><a name="AccountsCRUD-delete_by_id"><strong>delete_by_id</strong></a>(self, item_id, *, if_not_exists: Literal['error', 'ignore'] = 'error') -&gt; bool</dt><dd><tt>Delete&nbsp;the&nbsp;{singular}&nbsp;with&nbsp;the&nbsp;given&nbsp;`{id_key}`.<br>
+<dl><dt><a name="Metastores-delete_by_id"><strong>delete_by_id</strong></a>(self, item_id, *, if_not_exists: Literal['error', 'ignore'] = 'error') -&gt; bool</dt><dd><tt>Delete&nbsp;the&nbsp;{singular}&nbsp;with&nbsp;the&nbsp;given&nbsp;`{id_key}`.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;item_id:&nbsp;The&nbsp;`{id_key}`&nbsp;of&nbsp;the&nbsp;{singular}.<br>
@@ -111,7 +114,7 @@ Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;DatabricksApiException:&nbsp;If&nbsp;not&nbsp;found&nbsp;and&nbsp;`if_not_exists=="error"`.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;`if_not_exists`&nbsp;is&nbsp;not&nbsp;'ignore'&nbsp;or&nbsp;'error'.</tt></dd></dl>
 
-<dl><dt><a name="AccountsCRUD-delete_by_name"><strong>delete_by_name</strong></a>(self, item_name, if_not_exists: Literal['error', 'ignore'] = 'error')</dt><dd><tt>Delete&nbsp;the&nbsp;first&nbsp;{singular}&nbsp;with&nbsp;the&nbsp;given&nbsp;name.<br>
+<dl><dt><a name="Metastores-delete_by_name"><strong>delete_by_name</strong></a>(self, item_name, if_not_exists: Literal['error', 'ignore'] = 'error')</dt><dd><tt>Delete&nbsp;the&nbsp;first&nbsp;{singular}&nbsp;with&nbsp;the&nbsp;given&nbsp;name.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;item_name:&nbsp;The&nbsp;`{name_key}`&nbsp;of&nbsp;the&nbsp;{singular}.<br>
@@ -124,7 +127,7 @@ If&nbsp;not&nbsp;found&nbsp;and&nbsp;if_not_exists&nbsp;is:<br>
 Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;DatabricksApiException:&nbsp;If&nbsp;not&nbsp;found&nbsp;and&nbsp;`if_not_exists=="error"`.</tt></dd></dl>
 
-<dl><dt><a name="AccountsCRUD-get_by_example"><strong>get_by_example</strong></a>(self, item: Dict, if_not_exists: Literal['error', 'ignore'] = 'error') -&gt; Dict</dt><dd><tt>Fetch&nbsp;a&nbsp;fresh&nbsp;copy&nbsp;of&nbsp;{singular}&nbsp;from&nbsp;the&nbsp;server.<br>
+<dl><dt><a name="Metastores-get_by_example"><strong>get_by_example</strong></a>(self, item: Dict, if_not_exists: Literal['error', 'ignore'] = 'error') -&gt; Dict</dt><dd><tt>Fetch&nbsp;a&nbsp;fresh&nbsp;copy&nbsp;of&nbsp;{singular}&nbsp;from&nbsp;the&nbsp;server.<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;first&nbsp;{singular}&nbsp;found&nbsp;matching&nbsp;`{id_key}`&nbsp;if&nbsp;present,&nbsp;else&nbsp;matching&nbsp;the&nbsp;`{name_key}`.<br>
@@ -141,7 +144,7 @@ Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;DatabricksApiException:&nbsp;If&nbsp;not&nbsp;found&nbsp;and&nbsp;`if_not_exists=="error"`.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;neither&nbsp;`{id_key}`&nbsp;nor&nbsp;`{name_key}`&nbsp;is&nbsp;in&nbsp;`item`.</tt></dd></dl>
 
-<dl><dt><a name="AccountsCRUD-get_by_id"><strong>get_by_id</strong></a>(self, item_id: Union[int, str], if_not_exists: Literal['error', 'ignore'] = 'error') -&gt; Dict</dt><dd><tt>Fetch&nbsp;the&nbsp;{singular}&nbsp;with&nbsp;`{id_key}`=`item_id`<br>
+<dl><dt><a name="Metastores-get_by_id"><strong>get_by_id</strong></a>(self, item_id: Union[int, str], if_not_exists: Literal['error', 'ignore'] = 'error') -&gt; Dict</dt><dd><tt>Fetch&nbsp;the&nbsp;{singular}&nbsp;with&nbsp;`{id_key}`=`item_id`<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;{singular}&nbsp;with&nbsp;`{id_key}`=`item_id`<br>
@@ -158,7 +161,7 @@ Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;DatabricksApiException:&nbsp;If&nbsp;not&nbsp;found&nbsp;and&nbsp;`if_not_exists=="error"`.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;`if_not_exists`&nbsp;is&nbsp;not&nbsp;'ignore'&nbsp;or&nbsp;'error'.</tt></dd></dl>
 
-<dl><dt><a name="AccountsCRUD-get_by_name"><strong>get_by_name</strong></a>(self, item_name: str, if_not_exists: Literal['error', 'ignore'] = 'error') -&gt; Dict</dt><dd><tt>Fetch&nbsp;the&nbsp;first&nbsp;{singular}&nbsp;found&nbsp;with&nbsp;`{name_key}`=`item_name`<br>
+<dl><dt><a name="Metastores-get_by_name"><strong>get_by_name</strong></a>(self, item_name: str, if_not_exists: Literal['error', 'ignore'] = 'error') -&gt; Dict</dt><dd><tt>Fetch&nbsp;the&nbsp;first&nbsp;{singular}&nbsp;found&nbsp;with&nbsp;`{name_key}`=`item_name`<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;first&nbsp;{singular}&nbsp;found&nbsp;with&nbsp;`{name_key}`=`item_name`<br>
@@ -174,11 +177,11 @@ If&nbsp;not&nbsp;found&nbsp;and&nbsp;if_not_exists&nbsp;is:<br>
 Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;DatabricksApiException:&nbsp;If&nbsp;not&nbsp;found&nbsp;and&nbsp;`if_not_exists=="error"`.</tt></dd></dl>
 
-<dl><dt><a name="AccountsCRUD-list"><strong>list</strong></a>(self) -&gt; List[Dict]</dt><dd><tt>Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;all&nbsp;{plural}.</tt></dd></dl>
+<dl><dt><a name="Metastores-list"><strong>list</strong></a>(self) -&gt; List[Dict]</dt><dd><tt>Returns&nbsp;a&nbsp;list&nbsp;of&nbsp;all&nbsp;{plural}.</tt></dd></dl>
 
-<dl><dt><a name="AccountsCRUD-list_names"><strong>list_names</strong></a>(self) -&gt; List[str]</dt><dd><tt>Returns&nbsp;a&nbsp;list&nbsp;the&nbsp;names&nbsp;of&nbsp;all&nbsp;{plural}.</tt></dd></dl>
+<dl><dt><a name="Metastores-list_names"><strong>list_names</strong></a>(self) -&gt; List[str]</dt><dd><tt>Returns&nbsp;a&nbsp;list&nbsp;the&nbsp;names&nbsp;of&nbsp;all&nbsp;{plural}.</tt></dd></dl>
 
-<dl><dt><a name="AccountsCRUD-update"><strong>update</strong></a>(self, item: Dict, *, fetch: bool = False, if_not_exists: Literal['error', 'ignore'] = 'error') -&gt; Dict</dt><dd><tt>Update&nbsp;the&nbsp;{singular}.<br>
+<dl><dt><a name="Metastores-update"><strong>update</strong></a>(self, item: Dict, *, fetch: bool = False, if_not_exists: Literal['error', 'ignore'] = 'error') -&gt; Dict</dt><dd><tt>Update&nbsp;the&nbsp;{singular}.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;item:&nbsp;A&nbsp;dict&nbsp;specification&nbsp;for&nbsp;the&nbsp;new&nbsp;{singular}.<br>
@@ -197,9 +200,9 @@ Raises:<br>
 
 <hr>
 Methods inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
-<dl><dt><a name="AccountsCRUD-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
+<dl><dt><a name="Metastores-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
 
-<dl><dt><a name="AccountsCRUD-help"><strong>help</strong></a>(self)</dt></dl>
+<dl><dt><a name="Metastores-help"><strong>help</strong></a>(self)</dt></dl>
 
 <hr>
 Data descriptors inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
@@ -220,15 +223,7 @@ Data and other attributes inherited from <a href="dbacademy.rest.common.html#Api
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>Cloud</strong> = typing.Literal['AWS', 'MSA', 'GCP']<br>
-<strong>HttpMethod</strong> = typing.Literal['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']<br>
-<strong>HttpReturnType</strong> = ~HttpReturnType<br>
-<strong>HttpStatusCodes</strong> = typing.Union[int, typing.Container[int]]<br>
-<strong>IfExists</strong> = typing.Literal['create', 'error', 'ignore', 'overwrite', 'update']<br>
-<strong>IfNotExists</strong> = typing.Literal['error', 'ignore']<br>
+<td width="100%"><strong>HttpStatusCodes</strong> = typing.Union[int, typing.Container[int]]<br>
 <strong>Item</strong> = typing.Dict<br>
-<strong>ItemId</strong> = typing.Union[int, str]<br>
-<strong>ItemOrId</strong> = typing.Union[int, str, typing.Dict]<br>
-<strong>List</strong> = typing.List<br>
-<strong>Union</strong> = typing.Union</td></tr></table>
+<strong>List</strong> = typing.List</td></tr></table>
 </body></html>
