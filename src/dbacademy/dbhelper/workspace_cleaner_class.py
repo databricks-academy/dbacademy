@@ -338,15 +338,16 @@ class WorkspaceCleaner:
         endpoints = self.__da.client.serving_endpoints.list_endpoints()
         print(f"| Found {len(endpoints)} endpoints.")
         for endpoint in endpoints:
-            for part in endpoint.get("name").split("_"):
+            name = endpoint.get("name")
+            for part in name.split("_"):
                 if lesson_only and unique_name == part:
                     endpoints.append(endpoint)
-                    print(f"""| Adding "{endpoint}" as full part matching "{part}".""")
+                    print(f"""| Adding "{name}" as full part matching "{part}".""")
                 elif part.startswith(unique_name):
                     endpoints.append(endpoint)
-                    print(f"""| Adding "{endpoint}" as starts with "{unique_name}".""")
+                    print(f"""| Adding "{name}" as starts with "{unique_name}".""")
                 else:
-                    print(f"""| Skipping "{endpoint}".""")
+                    print(f"""| Skipping "{name}".""")
 
         if len(endpoints) == 0:
             return False
