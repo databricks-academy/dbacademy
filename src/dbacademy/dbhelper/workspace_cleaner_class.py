@@ -336,7 +336,7 @@ class WorkspaceCleaner:
         # Filter out the endpoints that pertain to this course and user
         unique_name = self._get_unique_name(lesson_only)
         # endpoints = self.__da.client.ml.mlflow_endpoints.list_endpoints()
-        endpoints = self.__da.client.serving_endpoint.list_endpoints()
+        endpoints = self.__da.client.serving_endpoints.list_endpoints()
         print(f"| Found {len(endpoints)} endpoints.")
         for endpoint in endpoints:
             print("-"*80)
