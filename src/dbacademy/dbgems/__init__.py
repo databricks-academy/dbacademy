@@ -429,7 +429,7 @@ def find_global(target):
 
 def active_streams() -> List:
     # noinspection PyUnresolvedReferences
-    from pyspark.errors.exceptions.connect import SparkConnectGrpcException
+    # from pyspark.errors.exceptions.connect import SparkConnectGrpcException
 
     if not spark:
         return list()
@@ -437,7 +437,9 @@ def active_streams() -> List:
     try:
         return spark.streams.active
 
-    except SparkConnectGrpcException:
+    except:
+        # There is no logical reason for this to fail under "normal" conditions however, when
+        # running on Lighthouse, it will throw an exception due to the fact that it is not supported.
         return list()
 
 
