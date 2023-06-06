@@ -339,7 +339,7 @@ class WorkspaceCleaner:
         print(f"| Found {len(endpoints)} endpoints.")
         for endpoint in endpoints:
             print("-"*80)
-            for part in endpoint.get("registered_model_name").split("_"):
+            for part in endpoint.get("name").split("_"):
                 if lesson_only and unique_name == part:
                     endpoints.append(endpoint)
                     print(f"""| Adding "{endpoint}" as full part matching "{part}".""")
