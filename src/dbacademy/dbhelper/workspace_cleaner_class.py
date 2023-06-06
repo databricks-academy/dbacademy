@@ -353,7 +353,7 @@ class WorkspaceCleaner:
             return False
 
         # Not our normal pattern, but the goal here is to report on ourselves only if endpoints were found.
-        print(f"| enumerating serving endpoints...{dbgems.clock_stopped(start)}")
+        print(f"| enumerating serving endpoints...found {len(existing_endpoints)}...{dbgems.clock_stopped(start)}")
 
         for endpoint in endpoints:
             name: str = endpoint.get("name")
