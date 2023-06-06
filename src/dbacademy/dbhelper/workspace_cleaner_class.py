@@ -339,8 +339,17 @@ class WorkspaceCleaner:
             for part in endpoint.get("registered_model_name").split("_"):
                 if lesson_only and unique_name == part:
                     endpoints.append(endpoint)
+                    print(f"""Adding "{endpoint}" as full part matching "{part}".""")
                 elif part.startswith(unique_name):
                     endpoints.append(endpoint)
+                    print(f"""Adding "{endpoint}" as starts with "{unique_name}".""")
+                else:
+                    print(f"""Skipping "{endpoint}".""")
+
+                import json
+                print("-"*80)
+                print(json.dumps(endpoint, indent=4))
+                print("-"*80)
 
         if len(endpoints) == 0:
             return False
