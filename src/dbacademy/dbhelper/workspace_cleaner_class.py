@@ -349,11 +349,11 @@ class WorkspaceCleaner:
                     pass
                     # print(f"""| Skipping "{name}".""")
 
-        if len(endpoints) == 0:
-            return False
-
         # Not our normal pattern, but the goal here is to report on ourselves only if endpoints were found.
         print(f"| enumerating serving endpoints...found {len(existing_endpoints)}...{dbgems.clock_stopped(start)}")
+
+        if len(endpoints) == 0:
+            return False
 
         for endpoint in endpoints:
             name: str = endpoint.get("name")
