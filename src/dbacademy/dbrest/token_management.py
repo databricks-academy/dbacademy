@@ -17,7 +17,7 @@ class TokenManagementClient(ApiContainer):
 
     def list(self):
         results = self.client.api("GET", f"{self.base_url}/tokens")
-        return results.get("token_infos", [])
+        return results.get("token_infos", list())
 
     def delete_by_id(self, token_id):
         return self.client.api("DELETE", f"{self.base_url}/tokens/{token_id}", _expected=(200, 404))
