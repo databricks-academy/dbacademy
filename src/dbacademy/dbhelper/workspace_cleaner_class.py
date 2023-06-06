@@ -335,23 +335,24 @@ class WorkspaceCleaner:
 
         # Filter out the endpoints that pertain to this course and user
         unique_name = self._get_unique_name(lesson_only)
-        endpoints = self.__da.client.ml.mlflow_endpoints.list_endpoints()
-        print(f"Found {len(endpoints)} endpoints.")
+        # endpoints = self.__da.client.ml.mlflow_endpoints.list_endpoints()
+        endpoints = self.__da.client.serving_endpoint.list_endpoints()
+        print(f"| Found {len(endpoints)} endpoints.")
         for endpoint in endpoints:
+            print("-"*80)
             for part in endpoint.get("registered_model_name").split("_"):
                 if lesson_only and unique_name == part:
                     endpoints.append(endpoint)
-                    print(f"""Adding "{endpoint}" as full part matching "{part}".""")
+                    print(f"""| Adding "{endpoint}" as full part matching "{part}".""")
                 elif part.startswith(unique_name):
                     endpoints.append(endpoint)
-                    print(f"""Adding "{endpoint}" as starts with "{unique_name}".""")
+                    print(f"""| Adding "{endpoint}" as starts with "{unique_name}".""")
                 else:
-                    print(f"""Skipping "{endpoint}".""")
+                    print(f"""| Skipping "{endpoint}".""")
 
-                import json
-                print("-"*80)
-                print(json.dumps(endpoint, indent=4))
-                print("-"*80)
+            import json
+            print(json.dumps(endpoint, indent=4))
+            print("-"*80)
 
         if len(endpoints) == 0:
             return False

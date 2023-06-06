@@ -101,6 +101,9 @@ class DBAcademyRestClient(ApiClient):
         from dbacademy.dbrest.workspace import WorkspaceClient
         self.workspace = WorkspaceClient(self)
 
+        from dbacademy.dbrest.serving_endpoints import ServingEndpointsClient
+        self.serving_endpoints = ServingEndpointsClient(self)
+
     def vprint(self, what):
         if self.verbose:
             print(what)
