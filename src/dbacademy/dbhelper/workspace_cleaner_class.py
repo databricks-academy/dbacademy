@@ -335,9 +335,7 @@ class WorkspaceCleaner:
 
         # Filter out the endpoints that pertain to this course and user
         unique_name = self._get_unique_name(lesson_only)
-        # endpoints = self.__da.client.ml.mlflow_endpoints.list_endpoints()
         existing_endpoints = self.__da.client.serving_endpoints.list_endpoints()
-        # print(f"| Found {len(endpoints)} endpoints.")
         for endpoint in existing_endpoints:
             name = endpoint.get("name")
             for part in name.split("_"):
@@ -358,8 +356,8 @@ class WorkspaceCleaner:
         print(f"| enumerating serving endpoints...{dbgems.clock_stopped(start)}")
 
         for endpoint in endpoints:
-            name: str = endpoint.get("registered_model_name")
+            name: str = endpoint.get("name")
             print(f"| disabling serving endpoint \"{name}\"")
-            self.__da.client.ml.mlflow_endpoints.disable(name)
+            self.__da.client.serving_endpoints.delete_by_name(name)
 
         return True
