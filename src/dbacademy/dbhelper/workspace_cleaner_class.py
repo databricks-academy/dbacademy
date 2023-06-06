@@ -336,28 +336,29 @@ class WorkspaceCleaner:
         unique_name = self._get_unique_name(lesson_only)
         # endpoints = self.__da.client.ml.mlflow_endpoints.list_endpoints()
         endpoints = self.__da.client.serving_endpoints.list_endpoints()
-        print(f"| Found {len(endpoints)} endpoints.")
+        # print(f"| Found {len(endpoints)} endpoints.")
         for endpoint in endpoints:
             name = endpoint.get("name")
             for part in name.split("_"):
                 if lesson_only and unique_name == part:
                     endpoints.append(endpoint)
-                    print(f"""| Adding "{name}" as full part matching "{part}".""")
+                    # print(f"""| Adding "{name}" as full part matching "{part}".""")
                 elif part.startswith(unique_name):
                     endpoints.append(endpoint)
-                    print(f"""| Adding "{name}" as starts with "{unique_name}".""")
+                    # print(f"""| Adding "{name}" as starts with "{unique_name}".""")
                 else:
-                    print(f"""| Skipping "{name}".""")
+                    pass
+                    # print(f"""| Skipping "{name}".""")
 
         if len(endpoints) == 0:
             return False
 
         # Not our normal pattern, but the goal here is to report on ourselves only if endpoints were found.
-        print(f"| enumerating MLflow endpoints...{dbgems.clock_stopped(start)}")
+        print(f"| enumerating serving endpoints...{dbgems.clock_stopped(start)}")
 
         for endpoint in endpoints:
             name: str = endpoint.get("registered_model_name")
-            print(f"| disabling MLflow endpoint \"{name}\"")
+            print(f"| disabling serving endpoint \"{name}\"")
             self.__da.client.ml.mlflow_endpoints.disable(name)
 
         return True
