@@ -338,7 +338,6 @@ class WorkspaceCleaner:
         endpoints = self.__da.client.serving_endpoints.list_endpoints()
         print(f"| Found {len(endpoints)} endpoints.")
         for endpoint in endpoints:
-            print("-"*80)
             for part in endpoint.get("name").split("_"):
                 if lesson_only and unique_name == part:
                     endpoints.append(endpoint)
@@ -348,10 +347,6 @@ class WorkspaceCleaner:
                     print(f"""| Adding "{endpoint}" as starts with "{unique_name}".""")
                 else:
                     print(f"""| Skipping "{endpoint}".""")
-
-            import json
-            print(json.dumps(endpoint, indent=4))
-            print("-"*80)
 
         if len(endpoints) == 0:
             return False
