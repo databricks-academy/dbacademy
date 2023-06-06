@@ -336,7 +336,7 @@ class WorkspaceCleaner:
         # Filter out the endpoints that pertain to this course and user
         unique_name = self._get_unique_name(lesson_only)
         endpoints = self.__da.client.ml.mlflow_endpoints.list_endpoints()
-        print(f"Found {len(endpoints)} endpoints")
+        print(f"Found {len(endpoints)} endpoints.")
         for endpoint in endpoints:
             for part in endpoint.get("registered_model_name").split("_"):
                 if lesson_only and unique_name == part:
