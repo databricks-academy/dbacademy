@@ -7,4 +7,5 @@ class ServingEndpointsClient(ApiContainer):
         self.client = client
 
     def list_endpoints(self) -> dict:
-        return self.client.api("GET", f"{self.client.endpoint}/api/2.0/serving-endpoints")
+        response = self.client.api("GET", f"{self.client.endpoint}/api/2.0/serving-endpoints")
+        return response.get("endpoints", list())
