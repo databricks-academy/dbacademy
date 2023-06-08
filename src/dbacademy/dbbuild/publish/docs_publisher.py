@@ -48,7 +48,6 @@ class DocsPublisher:
         file_bytes = self.google_client.file_export(gdoc_id)
 
         self.__save_pdfs(file_bytes, f"/dbfs/FileStore/tmp/{file_name}")
-        self.__save_pdfs(file_bytes, self.get_distribution_path(version="LATEST", file=file))
         self.__save_pdfs(file_bytes, self.get_distribution_path(version=self.version, file=file))
 
         parts = dbgems.get_workspace_url().split("/")
