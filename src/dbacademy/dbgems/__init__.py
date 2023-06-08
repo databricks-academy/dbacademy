@@ -249,10 +249,13 @@ def validate_dependencies(module: str, curriculum_workspaces_only=True) -> bool:
                     common.print_warning(title=f"Outdated Dependency",
                                          message=f"You are using version \"{current_version}\" but the latest version is \"v{versions[-1]}\".\n" +
                                                  f"Please update your dependencies on the module \"{module}\" at your earliest convenience.")
-            else:
+            elif current_version not in ["Build-Scripts"]:
                 common.print_warning(title=f"Invalid Dependency",
                                      message=f"You are using the branch or commit hash \"{current_version}\" but the latest version is \"v{versions[-1]}\".\n" +
                                              f"Please update your dependencies on the module \"{module}\" at your earliest convenience.")
+            else:
+                pass  # It's a non-issue
+
     except Exception as e:
         if testable:
             raise e
