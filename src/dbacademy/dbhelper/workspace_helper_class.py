@@ -68,21 +68,23 @@ class WorkspaceHelper:
         return dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION)
 
     @staticmethod
-    def install_datasets(installed_datasets: str):
-        from dbacademy import dbgems
-        from dbacademy.dbgems import dbutils
-        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
+    def install_datasets(datasets: str):
 
-        if installed_datasets is not None and installed_datasets.strip() not in ("", "null", "None"):
-            datasets = installed_datasets.split(",")
-            print(f"Installing {len(datasets)} datasets...")
+        if datasets is not None:
+            if type(datasets) == list:
+                pass  # leave as is.
+            elif type(datasets) == str and datasets.strip() not in ("", "null", "None"):
+                datasets = datasets.split(",")
+                print(f"Installing {len(datasets)} datasets...")
+            else:
+                raise Exception(f"""The parameter "datasets" is expected to be of type "str" (and comma seperated) or "list", found "{type(datasets)}".""")
         else:
             print(f"Installing all datasets...")
             datasets = [
                 "example-course",
                 "apache-spark-programming-with-databricks",
                 "advanced-data-engineering-with-databricks",
-                "building-and-deploying-large-language-models-on-databricks",
+                # "large-language-models",  # Not ILT courseware and is freakisly huge.
                 "data-analysis-with-databricks",
                 "data-engineer-learning-path",
                 "data-engineering-with-databricks",
