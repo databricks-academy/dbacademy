@@ -79,7 +79,7 @@ class WorkspaceTrio:
 class WorkspaceSetup:
     from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
 
-    def __init__(self, account_config: AccountConfig):
+    def __init__(self, account_config: AccountConfig, run_workspace_setup: bool):
         from dbacademy import common
         from dbacademy.dougrest import AccountsApi
         from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
@@ -93,6 +93,11 @@ class WorkspaceSetup:
                                           password=self.account_config.password)
         # self.__accounts_api.dns_retry = True
         self.__delete_workspace_setup_job = False
+        self.__run_workspace_setup = run_workspace_setup
+
+    @property
+    def run_workspace_setup(self) -> bool:
+        return self.__run_workspace_setup
 
     def log_error(self, msg):
         self.__errors.append(msg)
@@ -257,16 +262,16 @@ class WorkspaceSetup:
             self.__remove_metastore(trio)
             self.__delete_workspace(trio)
 
-    def create_workspaces(self, *, remove_users: bool, remove_metastore: bool, run_workspace_setup: bool, uninstall_courseware: bool = False, delete_workspace_setup_job=False):
+    def create_workspaces(self, *, remove_users: bool, remove_metastore: bool, uninstall_courseware: bool = False, delete_workspace_setup_job=False):
 
         naming_pattern = self.account_config.workspace_config_template.workspace_name_pattern
         not_using_classroom = not naming_pattern.startswith("classroom-")
         self.__delete_workspace_setup_job = delete_workspace_setup_job
 
-        if not run_workspace_setup or remove_metastore or remove_users or uninstall_courseware or not_using_classroom:
+        if not self.run_workspace_setup or remove_metastore or remove_users or uninstall_courseware or not_using_classroom:
             print()
             print("-"*100)
-            if not run_workspace_setup:
+            if not self.run_workspace_setup:
                 print("WARNING: Not configured to run the Workspace-Setup job.")
             if remove_metastore:
                 print("WARNING: Not configured to run the Workspace-Setup job.")
@@ -363,16 +368,16 @@ class WorkspaceSetup:
 
         #############################################################
         print("-"*100)
-        if run_workspace_setup:
-            print(f"""Starting the Workspace-Setup job in each workspace.""")
-            self.__for_each_workspace(self.__workspaces, self.__run_workspace_setup)
-        else:
-            print("Skipping run of Universal-Workspace-Setup")
+        print(f"""Starting the Workspace-Setup job in each workspace.""")
+        self.__for_each_workspace(self.__workspaces, self.__run_workspace_setup_job)
 
         #############################################################
         print("-"*100)
-        print(f"""Validating select indicators in each workspace.""")
-        self.__for_each_workspace(self.__workspaces, self.__validate_workspace_setup)
+        if self.run_workspace_setup:
+            print(f"""Validating select indicators in each workspace.""")
+            self.__for_each_workspace(self.__workspaces, self.__validate_workspace_setup)
+        else:
+            print("Skipping workspace validation, the Workspace-Setup job has not been run.")
 
         #############################################################
         print("-" * 100)
@@ -548,16 +553,19 @@ class WorkspaceSetup:
 
     @staticmethod
     def __update_entitlements(trio: WorkspaceTrio):
-        # Just in case it's not ready
-        trio.workspace_api.wait_until_ready()
+        try:
+            # Just in case it's not ready
+            trio.workspace_api.wait_until_ready()
 
-        group = trio.client.scim.groups.get_by_name("users")
+            group = trio.client.scim.groups.get_by_name("users")
 
-        for name, value in trio.workspace_config.entitlements.items():
-            if value is True:
-                trio.client.scim.groups.add_entitlement(group.get("id"), name)
-            else:
-                trio.client.scim.groups.remove_entitlement(group.get("id"), name)
+            for name, value in trio.workspace_config.entitlements.items():
+                if value is True:
+                    trio.client.scim.groups.add_entitlement(group.get("id"), name)
+                else:
+                    trio.client.scim.groups.remove_entitlement(group.get("id"), name)
+        except Exception as e:
+            raise Exception(f"""Failed to update entitlements for workspace #{trio.number}.""")
 
     @classmethod
     def __create_group(cls, trio: WorkspaceTrio):
@@ -622,14 +630,13 @@ class WorkspaceSetup:
         elif result_state != "SUCCESS":
             return self.log_error(f"""Workspace-Setup, run #{run_id} was not SUCCESS, found "{result_state}" for {trio.name} | {state_message}""")
 
-    def __run_workspace_setup(self, trio: WorkspaceTrio):
+    def __run_workspace_setup_job(self, trio: WorkspaceTrio):
         import time
         import traceback
         from dbacademy.dbhelper import WorkspaceHelper
 
         start = time.time()
         try:
-
             # If the job exist delete it to address cases where the job is misconfigured
             # and leaving it would only result in re-running the misconfigured job.
             if self.__delete_workspace_setup_job:
@@ -645,32 +652,33 @@ class WorkspaceSetup:
                 # Use pre-existing job
                 job_id = job.get("job_id")
 
-            run = trio.client.jobs.run_now(job_id)
-            run_id = run.get("run_id")
+            if self.run_workspace_setup:
+                run = trio.client.jobs.run_now(job_id)
+                run_id = run.get("run_id")
 
-            response = self.__wait_for_job_run(trio, job_id, run_id)
+                response = self.__wait_for_job_run(trio, job_id, run_id)
 
-            # The job has completed, now we need to evaluate the final state.
-            state = response.get("state", dict())
-            state_message = state.get("state_message", "Unknown")
-            if state is None:
-                raise AssertionError("The job's state object is missing.")
+                # The job has completed, now we need to evaluate the final state.
+                state = response.get("state", dict())
+                state_message = state.get("state_message", "Unknown")
+                if state is None:
+                    raise AssertionError("The job's state object is missing.")
 
-            life_cycle_state = state.get("life_cycle_state")
-            if life_cycle_state == "SKIPPED":
-                print(f"""Skipping Universal-Workspace-Setup (job #{job_id}, run #{run_id}) for "{trio.name}" | {state_message}.""")
-                return
+                life_cycle_state = state.get("life_cycle_state")
+                if life_cycle_state == "SKIPPED":
+                    print(f"""Skipped Universal-Workspace-Setup (job #{job_id}, run #{run_id}) for "{trio.name}" | {state_message}.""")
+                    return
 
-            elif life_cycle_state != "TERMINATED":
-                raise Exception(f"""Expected the final life cycle state of Universal-Workspace-Setup to be "TERMINATED", found "{life_cycle_state}" for "{trio.name}" | {state_message}""")
+                elif life_cycle_state != "TERMINATED":
+                    raise Exception(f"""Expected the final life cycle state of Universal-Workspace-Setup to be "TERMINATED", found "{life_cycle_state}" for "{trio.name}" | {state_message}""")
 
-            else:
-                result_state = state.get("result_state")
-                if result_state != "SUCCESS":
-                    raise Exception(f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{result_state}" for "{trio.name}" | {state_message}""")
+                else:
+                    result_state = state.get("result_state")
+                    if result_state != "SUCCESS":
+                        raise Exception(f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{result_state}" for "{trio.name}" | {state_message}""")
 
-            duration = int((time.time() - start) / 60)
-            print(f"""Finished Universal-Workspace-Setup (job #{job_id}, run #{run_id}) for "{trio.name}" ({duration} minutes).""")
+                duration = int((time.time() - start) / 60)
+                print(f"""Finished Universal-Workspace-Setup (job #{job_id}, run #{run_id}) for "{trio.name}" ({duration} minutes).""")
 
         except Exception as e:
             self.log_error(f"""Failed executing Universal-Workspace-Setup for "{trio.workspace_config.name}".\n{str(e)}\n{traceback.format_exc()}""")

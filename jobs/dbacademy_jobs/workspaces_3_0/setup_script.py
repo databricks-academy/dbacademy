@@ -1,34 +1,9 @@
 import os
-from typing import Optional, Union, List
 from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
 from dbacademy_jobs.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
 from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 from dbacademy_jobs.workspaces_3_0.support.workspace_setup_class import WorkspaceSetup
-
-
-def read_int(prompt: str, default_value: int) -> int:
-    value = input(f"{prompt} ({default_value}):")
-    return default_value if value.strip() == "" else int(value)
-
-
-def read_str(prompt: str, default_value: Optional[str] = "") -> str:
-    value = input(f"{prompt} ({default_value}):")
-    return default_value if len(value.strip()) == 0 else value
-
-
-def advertise(name: str, items: Union[List, str, bool], padding: int, indent: int):
-
-    if type(items) != list:
-        print(f"{name}: {' ' * padding}{items}")
-
-    elif len(items) == 1:
-        print(f"{name}: {' ' * padding}{items[0]}")
-
-    elif len(items) > 0:
-        first = items.pop()
-        print(f"{name}: {' ' * padding}{first}")
-        for item in items:
-            print(f"{' '*indent}{item}")
+from dbacademy_jobs.workspaces_3_0.support import read_str, read_int, advertise, from_workspace_url
 
 
 deleting_wsj = False
@@ -129,26 +104,28 @@ account = AccountConfig.from_env(account_id_env_name=f"WORKSPACE_SETUP_{env_code
                                  uc_storage_config=uc_storage_config,
                                  workspace_config_template=workspace_config_template,
                                  ignored_workspaces=[                                                 # Either the number or name (not domain) to skip
-                                     # 529, 544, 550, 590, 598
-                                     # "classroom-005-9j1zg",
-                                     # "classroom-007-t8yxo",
+                                     624
                                  ])
 
-workspace_setup = WorkspaceSetup(account)
+# run_workspace_setup should always be True
+workspace_setup = WorkspaceSetup(account, run_workspace_setup=True)
 
 if action == 3 and read_str("""\nPlease confirm you wish to REMOVE these metastores""", "no").lower() in CONFIRMATIONS:
     for workspace_number in workspace_numbers:
         workspace_setup.remove_metastore(workspace_number)
 
 if action == 2:
-    message = "\nEnter the workspace number to delete"
-    workspace_number = read_int(message, 0)
+    deletable_workspaces = [
+        # "https://training-classroom-541-5pxcj.cloud.databricks.com",
+    ]
+    workspace_number = from_workspace_url(deletable_workspaces)
+
     while workspace_number > 0:
-        if read_str("Please confirm the deletion of this workspace", "no") in CONFIRMATIONS:
+        if read_str(f"Please confirm the deletion of workspace #{workspace_number}.", "no") in CONFIRMATIONS:
             workspace_setup.delete_workspace(workspace_number)
-            workspace_number = read_int(message, 0)
+            workspace_number = from_workspace_url(deletable_workspaces)
         else:
-            print(f"""Workspace #{workspace_number} will NOT be created.""")
+            print(f"""Workspace #{workspace_number} will NOT be deleted.""")
 
 elif action == 1:
     print()
@@ -160,8 +137,7 @@ elif action == 1:
     if read_str("""Please confirm you wish to create these workspaces""", "no").lower() in CONFIRMATIONS:
 
         FALSE = False  # easier for my eyes to recognize
-        workspace_setup.create_workspaces(run_workspace_setup=True,   # <<< TRUE
-                                          remove_metastore=FALSE,      # This should always be False
+        workspace_setup.create_workspaces(remove_metastore=FALSE,      # This should always be False
                                           remove_users=FALSE,          # This should always be False
                                           uninstall_courseware=FALSE,  # This should always be False
                                           delete_workspace_setup_job=deleting_wsj)

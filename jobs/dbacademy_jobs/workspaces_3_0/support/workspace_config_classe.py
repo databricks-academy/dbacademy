@@ -27,7 +27,6 @@ class WorkspaceConfig:
         :param course_definitions: see the corresponding property
         :param datasets: see the corresponding property
         """
-        from dbacademy.dbgems import stable_hash
         from dbacademy.dbhelper import WorkspaceHelper
         from dbacademy import common
 
@@ -141,9 +140,16 @@ class WorkspaceConfig:
             workspace_number_str = f"{self.workspace_number:03d}"
             name = self.workspace_name_pattern.format(workspace_number=workspace_number_str)
 
-            event_id = 0  # This use to be pre-defined, but was always zero. Hard coding zero for backwards compatibility for workspaces < 375
-            hashcode = stable_hash("Databricks Lakehouse", event_id, workspace_number, length=5)
+            # event_id = 0  # This use to be pre-defined, but was always zero. Hard coding zero for backwards compatibility for workspaces < 375
+            hashcode = self.hashcode(workspace_number)  # stable_hash("Databricks Lakehouse", event_id, workspace_number, length=5)
             self.__name = f"{name}-{hashcode}".lower()
+
+    @staticmethod
+    def hashcode(workspace_number: int) -> str:
+        from dbacademy.dbgems import stable_hash
+
+        event_id = 0  # This use to be pre-defined, but was always zero. Hard coding zero for backwards compatibility for workspaces < 375
+        return stable_hash("Databricks Lakehouse", event_id, workspace_number, length=5)
 
     @property
     def name(self) -> str:
