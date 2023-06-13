@@ -69,6 +69,8 @@ class WorkspaceHelper:
 
     @staticmethod
     def install_datasets(datasets: str):
+        from dbacademy import dbgems
+        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
 
         if datasets is not None:
             if type(datasets) == list:
@@ -106,7 +108,7 @@ class WorkspaceHelper:
             inventory_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net"
             datasets_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}"
 
-            inventory = [i.name.split("/")[0] for i in dbutils.fs.ls(inventory_uri)]
+            inventory = [i.name.split("/")[0] for i in dbgems.dbutils.fs.ls(inventory_uri)]
             if dataset not in inventory:
                 print(f"""| Dataset "{dataset}" not found.""")
                 continue
@@ -119,8 +121,12 @@ class WorkspaceHelper:
                 # We were told which one to use.
                 versions.append(dataset_version)
             else:
-                # TODO this can technically fail if the dataset exists, but it is empty
-                files = sorted(dbutils.fs.ls(datasets_uri))
+                try:
+                    files = sorted(dbgems.dbutils.fs.ls(datasets_uri))
+                except:
+                    # dbutils.fs.ls can fail when the directory doesn't exist.
+                    files = list()
+
                 if len(files) > 1:
                     # There are at least two versions, so we need to install the last two just in case.
                     versions.append(files[-1].name[:-1])  # dropping the trailing /
