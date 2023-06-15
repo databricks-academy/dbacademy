@@ -341,7 +341,7 @@ class WorkspaceCleaner:
             existing_endpoints = self.__da.client.serving_endpoints.list_endpoints()
         except DatabricksApiException as e:
             if e.http_code == 404 and e.error_code == "FEATURE_DISABLED":
-                common.print_warning(e.message)
+                common.print_warning(title="Feature Disabled", message=e.message)
                 existing_endpoints = list()
             else:
                 raise e
