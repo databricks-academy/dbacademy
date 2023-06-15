@@ -328,14 +328,24 @@ class WorkspaceCleaner:
         return True
 
     def _cleanup_mlflow_endpoints(self, lesson_only: bool) -> bool:
-        from dbacademy import dbgems
+        from dbacademy import dbgems, common
+        from dbacademy.rest.common import DatabricksApiException
 
         start = dbgems.clock_start()
         endpoints = list()
 
         # Filter out the endpoints that pertain to this course and user
         unique_name = self._get_unique_name(lesson_only)
-        existing_endpoints = self.__da.client.serving_endpoints.list_endpoints()
+
+        try:
+            existing_endpoints = self.__da.client.serving_endpoints.list_endpoints()
+        except DatabricksApiException as e:
+            if e.http_code == 404 and e.error_code == "FEATURE_DISABLED":
+                common.print_warning(e.message)
+                existing_endpoints = list()
+            else:
+                raise e
+
         for endpoint in existing_endpoints:
             name = endpoint.get("name")
             for part in name.split("_"):

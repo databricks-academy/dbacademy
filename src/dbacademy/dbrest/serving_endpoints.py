@@ -12,8 +12,7 @@ class ServingEndpointsClient(ApiContainer):
         return response.get("endpoints", list())
 
     def get_by_name(self, name):
-        self.client.api("GET", f"{self.base_url}/{name}")
-        return None
+        return self.client.api("GET", f"{self.base_url}/{name}")
 
     def delete_by_name(self, name):
         self.client.api("DELETE", f"{self.base_url}/{name}")
