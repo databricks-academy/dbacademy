@@ -33,7 +33,7 @@ class ScimServicePrincipalsClient(ApiContainer):
         return None
 
     def create(self, display_name: str, group_ids: List = None, entitlements: List = None):
-        group_ids = group_ids or list()
+        from uuid import uuid4
         entitlements = entitlements or list()
 
         params = {
@@ -41,10 +41,15 @@ class ScimServicePrincipalsClient(ApiContainer):
             "entitlements": [],
             "groups": [],
             "schemas": ["urn:ietf:params:scim:schemas:core:2.0:ServicePrincipal"],
-            "active": True
+            "active": True,
         }
 
+        if not self.client.endpoint.endswith("gcp.databricks.com"):
+            params["applicationId"] = str(uuid4())
+
+        group_ids = group_ids or list()
         group_ids = group_ids if group_ids is not None else list()
+
         for group_id in group_ids:
             value = {"value": group_id}
             params["groups"].append(value)

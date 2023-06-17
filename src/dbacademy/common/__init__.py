@@ -154,3 +154,26 @@ def clean_string(value, replacement: str = "_") -> str:
     while replacement_2x in value:
         value = value.replace(replacement_2x, replacement)
     return value
+
+
+def load_databricks_cfg(path: str):
+    with open(path) as file:
+        section_name = None
+        sections = dict()
+
+        lines = file.read().split("\n")
+        for line in lines:
+            if line.startswith("["):
+                section_name = line.strip()[1:-1]
+                sections[section_name] = dict()
+            elif line.strip() != "":
+                pos = line.index("=")
+                key = line[:pos].strip()
+                value = line[pos + 1:].strip()
+
+                if key == "host" and value.endswith("/"):
+                    value = value[:-1]
+
+                sections[section_name][key] = value
+
+        return sections
