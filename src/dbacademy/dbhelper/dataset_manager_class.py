@@ -104,38 +104,37 @@ class DatasetManager:
         self.validate_datasets(fail_fast=False)
 
     def validate_datasets(self, fail_fast: bool) -> None:
-        pass
-        # """
-        # Validates the "install" of the datasets by recursively listing all files in the remote data repository as well as the local data repository, validating that each file exists but DOES NOT validate file size or checksum.
-        # """
-        # from dbacademy import dbgems
-        #
-        # validation_start = dbgems.clock_start()
-        #
-        # if self.staging_source_uri == self.data_source_uri:
-        #     # When working with staging data, we need to enumerate what is in there
-        #     # and use it as a definitive source to the complete enumeration of our files
-        #     start = dbgems.clock_start()
-        #     print("\nEnumerating staged files for validation", end="...")
-        #     self.__remote_files = DatasetManager.list_r(self.staging_source_uri)
-        #     print(dbgems.clock_stopped(start))
-        #     print()
-        #
-        # print(f"\nValidating the locally installed datasets:")
-        #
-        # self.__validate_and_repair()
-        #
-        # if self.fixes == 1:
-        #     print(f"| fixed 1 issue", end="...")
-        # elif self.fixes > 0:
-        #     print(f"| fixed {self.fixes} issues", end="...")
-        # else:
-        #     print(f"| validation completed", end="...")
-        #
-        # print(dbgems.clock_stopped(validation_start, " total"))
-        #
-        # if fail_fast:
-        #     assert self.fixes == 0, f"Unexpected modifications to source datasets."
+        """
+        Validates the "install" of the datasets by recursively listing all files in the remote data repository as well as the local data repository, validating that each file exists but DOES NOT validate file size or checksum.
+        """
+        from dbacademy import dbgems
+
+        validation_start = dbgems.clock_start()
+
+        if self.staging_source_uri == self.data_source_uri:
+            # When working with staging data, we need to enumerate what is in there
+            # and use it as a definitive source to the complete enumeration of our files
+            start = dbgems.clock_start()
+            print("\nEnumerating staged files for validation", end="...")
+            self.__remote_files = DatasetManager.list_r(self.staging_source_uri)
+            print(dbgems.clock_stopped(start))
+            print()
+
+        print(f"\nValidating the locally installed datasets:")
+
+        self.__validate_and_repair()
+
+        if self.fixes == 1:
+            print(f"| fixed 1 issue", end="...")
+        elif self.fixes > 0:
+            print(f"| fixed {self.fixes} issues", end="...")
+        else:
+            print(f"| validation completed", end="...")
+
+        print(dbgems.clock_stopped(validation_start, " total"))
+
+        if fail_fast:
+            assert self.fixes == 0, f"Unexpected modifications to source datasets."
 
     def __validate_and_repair(self) -> None:
         from dbacademy import dbgems
