@@ -95,10 +95,9 @@ if action == 2:
 
     air_table = AirTable(access_token=air_table_token,
                          base_id="appNCMjJ2yMKUrTbo",
-                         table_id="tblF3cxlP8gcM9Rqr",
-                         view_id="viwCW83QNyJlMEMAk")
+                         table_id="tblF3cxlP8gcM9Rqr")
 
-    records = air_table.read()
+    records = air_table.read(view_id="viwCW83QNyJlMEMAk")
 
     for record in records:
         record_id = record.get("id")
@@ -111,7 +110,10 @@ if action == 2:
 
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         memo = f"{now}: Deleted workspace via automation script."
-        comments = memo if comments is None or comments.strip() != "" else f"{memo}\n{comments}"
+        if comments is None or comments.strip() == "":
+            comments = memo
+        else:
+            comments = f"{memo}\n{comments}"
 
         if reserved:
             print("\n"+(f"*" * 100))
@@ -128,7 +130,10 @@ if action == 2:
         print("-" * 100)
         if read_str(f"Please confirm the deletion of workspace #{workspace_number}.", "no") in CONFIRMATIONS:
             workspace_setup.delete_workspace(workspace_number)
-            asdf
+            air_table.update(record_id, fields={
+                "Deleted?": True,
+                "Comments": comments,
+            })
         else:
             print(f"""Workspace #{workspace_number} will NOT be deleted.""")
 

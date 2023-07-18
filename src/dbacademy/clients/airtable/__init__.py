@@ -11,10 +11,9 @@ class ErrorHandler(object):
 class AirTable(object):
     from requests import Response
 
-    def __init__(self, *, access_token: str, base_id: str, table_id: str, view_id: str = None, error_handler: ErrorHandler = ErrorHandler()):
+    def __init__(self, *, access_token: str, base_id: str, table_id: str, error_handler: ErrorHandler = ErrorHandler()):
         self.__base_id = base_id
         self.__table_id = table_id
-        self.__view_id = view_id
         self.__access_token = access_token
         self.__url = f"https://api.airtable.com/v0/{base_id}/{table_id}"
         self.__error_handler = error_handler
@@ -36,18 +35,14 @@ class AirTable(object):
     def table_id(self) -> str:
         return self.__table_id
 
-    @property
-    def view_id(self) -> str:
-        return self.__view_id
-
-    def read(self, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True):
+    def read(self, view_id: str = None, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True):
         import requests
 
         url = f"{self.__url}"
 
-        if self.view_id is not None:
+        if view_id is not None:
             url += "?" if url == self.__url else "&"
-            url += f"""view={self.view_id}"""
+            url += f"""view={view_id}"""
 
         if filter_by_formula is not None:
             url += "?" if url == self.__url else "&"

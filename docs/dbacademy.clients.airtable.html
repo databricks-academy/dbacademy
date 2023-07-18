@@ -39,16 +39,16 @@
 <font color="#000000" face="helvetica, arial"><a name="AirTable">class <strong>AirTable</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#AirTable">AirTable</a>(*,&nbsp;access_token:&nbsp;str,&nbsp;base_id:&nbsp;str,&nbsp;table_id:&nbsp;str,&nbsp;view_id:&nbsp;str&nbsp;=&nbsp;None,&nbsp;error_handler:&nbsp;dbacademy.clients.airtable.ErrorHandler&nbsp;=&nbsp;&amp;lt;dbacademy.clients.airtable.ErrorHandler&nbsp;<a href="builtins.html#object">object</a>&nbsp;at&nbsp;0x000001FC45F472E0&amp;gt;)<br>
+<td colspan=2><tt><a href="#AirTable">AirTable</a>(*,&nbsp;access_token:&nbsp;str,&nbsp;base_id:&nbsp;str,&nbsp;table_id:&nbsp;str,&nbsp;error_handler:&nbsp;dbacademy.clients.airtable.ErrorHandler&nbsp;=&nbsp;&amp;lt;dbacademy.clients.airtable.ErrorHandler&nbsp;<a href="builtins.html#object">object</a>&nbsp;at&nbsp;0x000001A4200671F0&amp;gt;)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="AirTable-__init__"><strong>__init__</strong></a>(self, *, access_token: str, base_id: str, table_id: str, view_id: str = None, error_handler: dbacademy.clients.airtable.ErrorHandler = &lt;dbacademy.clients.airtable.ErrorHandler object at 0x000001FC45F472E0&gt;)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="AirTable-__init__"><strong>__init__</strong></a>(self, *, access_token: str, base_id: str, table_id: str, error_handler: dbacademy.clients.airtable.ErrorHandler = &lt;dbacademy.clients.airtable.ErrorHandler object at 0x000001A4200671F0&gt;)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="AirTable-assert_response"><strong>assert_response</strong></a>(self, response: requests.models.Response, message: str) -&gt; None</dt></dl>
 
-<dl><dt><a name="AirTable-read"><strong>read</strong></a>(self, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True)</dt></dl>
+<dl><dt><a name="AirTable-read"><strong>read</strong></a>(self, view_id: str = None, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True)</dt></dl>
 
 <dl><dt><a name="AirTable-update"><strong>update</strong></a>(self, record_id: str, *, fields: Dict[str, Any])</dt></dl>
 
@@ -59,8 +59,6 @@ Readonly properties defined here:<br>
 <dl><dt><strong>base_id</strong></dt>
 </dl>
 <dl><dt><strong>table_id</strong></dt>
-</dl>
-<dl><dt><strong>view_id</strong></dt>
 </dl>
 <hr>
 Data descriptors defined here:<br>
