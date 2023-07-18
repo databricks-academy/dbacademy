@@ -33,6 +33,7 @@ class AirTable(object):
 
     def read(self, view_id: str = None, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True):
         import requests
+        from urllib.parse import quote_plus
 
         url = f"{self.__url}"
 
@@ -42,7 +43,7 @@ class AirTable(object):
 
         if filter_by_formula is not None:
             url += "?" if url == self.__url else "&"
-            url += f"""filterByFormula={filter_by_formula}"""
+            url += f"""filterByFormula={quote_plus(filter_by_formula)}"""
 
         if sort_by is not None:
             url += "?" if url == self.__url else "&"
