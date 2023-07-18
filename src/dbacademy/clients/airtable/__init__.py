@@ -1,9 +1,9 @@
 from typing import Dict, Any
 
-__all__ = ["AirTable"]
+__all__ = ["AirTableClient"]
 
 
-class AirTable(object):
+class AirTableClient(object):
     from requests import Response
     from dbacademy.clients import ClientErrorHandler
 

@@ -28,7 +28,7 @@
 <dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
 </font></dt><dd>
 <dl>
-<dt><font face="helvetica, arial"><a href="dbacademy.clients.airtable.html#AirTable">AirTable</a>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.airtable.html#AirTableClient">AirTableClient</a>
 </font></dt></dl>
 </dd>
 </dl>
@@ -36,21 +36,21 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="AirTable">class <strong>AirTable</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="AirTableClient">class <strong>AirTableClient</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#AirTable">AirTable</a>(*,&nbsp;access_token:&nbsp;str,&nbsp;base_id:&nbsp;str,&nbsp;table_id:&nbsp;str,&nbsp;error_handler:&nbsp;dbacademy.clients.ClientErrorHandler&nbsp;=&nbsp;&amp;lt;dbacademy.clients.ClientErrorHandler&nbsp;<a href="builtins.html#object">object</a>&nbsp;at&nbsp;0x00000258656C72B0&amp;gt;)<br>
+<td colspan=2><tt><a href="#AirTableClient">AirTableClient</a>(*,&nbsp;access_token:&nbsp;str,&nbsp;base_id:&nbsp;str,&nbsp;table_id:&nbsp;str,&nbsp;error_handler:&nbsp;dbacademy.clients.ClientErrorHandler&nbsp;=&nbsp;&amp;lt;dbacademy.clients.ClientErrorHandler&nbsp;<a href="builtins.html#object">object</a>&nbsp;at&nbsp;0x000001EE6A9472B0&amp;gt;)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="AirTable-__init__"><strong>__init__</strong></a>(self, *, access_token: str, base_id: str, table_id: str, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x00000258656C72B0&gt;)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="AirTableClient-__init__"><strong>__init__</strong></a>(self, *, access_token: str, base_id: str, table_id: str, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001EE6A9472B0&gt;)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="AirTable-assert_response"><strong>assert_response</strong></a>(self, response: requests.models.Response, message: str) -&gt; None</dt></dl>
+<dl><dt><a name="AirTableClient-assert_response"><strong>assert_response</strong></a>(self, response: requests.models.Response, message: str) -&gt; None</dt></dl>
 
-<dl><dt><a name="AirTable-read"><strong>read</strong></a>(self, view_id: str = None, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True)</dt></dl>
+<dl><dt><a name="AirTableClient-read"><strong>read</strong></a>(self, view_id: str = None, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True)</dt></dl>
 
-<dl><dt><a name="AirTable-update"><strong>update</strong></a>(self, record_id: str, *, fields: Dict[str, Any])</dt></dl>
+<dl><dt><a name="AirTableClient-update"><strong>update</strong></a>(self, record_id: str, *, fields: Dict[str, Any])</dt></dl>
 
 <hr>
 Readonly properties defined here:<br>
@@ -82,5 +82,5 @@ server's&nbsp;response&nbsp;to&nbsp;an&nbsp;HTTP&nbsp;request.</tt></dl>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>__all__</strong> = ['AirTable']</td></tr></table>
+<td width="100%"><strong>__all__</strong> = ['AirTableClient']</td></tr></table>
 </body></html>
