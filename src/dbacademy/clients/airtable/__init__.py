@@ -3,11 +3,6 @@ from typing import Dict, Any
 __all__ = ["AirTable"]
 
 
-class ErrorHandler(object):
-    def on_error(self, *messages: str):
-        pass
-
-
 class AirTable(object):
     from requests import Response
 
