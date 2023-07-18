@@ -5,8 +5,9 @@ __all__ = ["AirTable"]
 
 class AirTable(object):
     from requests import Response
+    from dbacademy.clients import ClientErrorHandler
 
-    def __init__(self, *, access_token: str, base_id: str, table_id: str, error_handler: ErrorHandler = ErrorHandler()):
+    def __init__(self, *, access_token: str, base_id: str, table_id: str, error_handler: ClientErrorHandler = ClientErrorHandler()):
         self.__base_id = base_id
         self.__table_id = table_id
         self.__access_token = access_token
