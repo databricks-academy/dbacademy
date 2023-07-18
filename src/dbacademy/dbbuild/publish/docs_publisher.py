@@ -4,10 +4,10 @@ from typing import Dict
 class DocsPublisher:
     import io
     from dbacademy.dbbuild.publish.publishing_info_class import Translation
-    from dbacademy.google.google_client_class import GoogleClient
+    from dbacademy.clients.google.google_client_class import GoogleClient
 
     def __init__(self, build_name: str, version: str, translation: Translation):
-        from dbacademy.google.google_client_class import GoogleClient
+        from dbacademy.clients.google.google_client_class import GoogleClient
 
         self.__translation = translation
         self.__build_name = build_name
@@ -75,7 +75,7 @@ class DocsPublisher:
 
     def process_pdfs(self) -> None:
         from dbacademy import common
-        from dbacademy.google.google_client_class import GoogleClientException
+        from dbacademy.clients.google.google_client_class import GoogleClientException
 
         print("Exporting Google Docs as PDFs:")
         total = len(self.translation.document_links)

@@ -77,6 +77,7 @@ class WorkspaceTrio:
 
 
 class WorkspaceSetup:
+    from dbacademy.dougrest.accounts.workspaces import Workspace
     from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
 
     def __init__(self, account_config: AccountConfig, run_workspace_setup: bool):
@@ -120,43 +121,44 @@ class WorkspaceSetup:
         with ThreadPool(len(workspaces)) as pool:
             pool.map(some_action, workspaces)
 
-    @staticmethod
-    def __remove_metastore(trio: WorkspaceTrio):
-        # Un-assign the metastore from the workspace
+    @classmethod
+    def __get_metastore(cls, workspace_api: Workspace, workspace_name: str) -> Optional[Dict[str, Any]]:
+
+        for metastore in workspace_api.api("GET", f"2.1/unity-catalog/metastores").get("metastores", list()):
+            if workspace_name == metastore.get("name"):
+                return metastore
+
+        return None
+
+    @classmethod
+    def __remove_metastore(cls, trio: WorkspaceTrio):
+        workspace_api = trio.workspace_api
+
+        workspace_id = workspace_api.get("workspace_id")
+        workspace_name = workspace_api.get("workspace_name")
+        workspace_number = workspace_name.split("-")[1]
+
         try:
-            print(f"Removing metastore {trio.name}")
-            response = trio.workspace_api.api("GET", f"2.1/unity-catalog/current-metastore-assignment")
-
-        except DatabricksApiException as e:
-            if e.error_code == "METASTORE_DOES_NOT_EXIST":
-                return  # It doesn't exist, move on.
-            else:
-                raise e
-
-        metastore_id = response["metastore_id"]
-        workspace_id = response["workspace_id"]
-
-        try:
-            # Delete the assignment
+            # Removed the currently assigned metastore
+            assigned_metastore = trio.workspace_api.api("GET", f"2.1/unity-catalog/current-metastore-assignment")
+            metastore_id = assigned_metastore.get("metastore_id")
             trio.workspace_api.api("DELETE", f"2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
                 "metastore_id": metastore_id
             })
         except DatabricksApiException as e:
             if e.error_code == "METASTORE_DOES_NOT_EXIST":
-                return  # It doesn't exist, move on.
+                print(f"""No metastore is assigned to workspace #{workspace_number} ({workspace_name}).""")
             else:
                 raise e
 
-        try:
-            # Delete the metastore, but only if there are no other workspaces attached.
+        metastore = cls.__get_metastore(workspace_api, workspace_name)
+        if metastore is None:
+            print(f"""The metastore "{workspace_name}" does not exist.""")
+        else:
+            metastore_id = metastore.get("metastore_id")
             trio.workspace_api.api("DELETE", f"2.1/unity-catalog/metastores/{metastore_id}", {
                 "force": True
             })
-        except DatabricksApiException as e:
-            if e.error_code == "METASTORE_DOES_NOT_EXIST":
-                return  # It doesn't exist, move on.
-            else:
-                raise e
 
     def remove_metastore(self, workspace_number: int):
         assert workspace_number >= 0, f"Invalid workspace number: {workspace_number}"
@@ -215,6 +217,7 @@ class WorkspaceSetup:
 
     def __delete_workspace(self, trio: WorkspaceTrio):
         import traceback
+
         try:
             print(f"""Deleting the workspace "{trio.workspace_config.name}".""")
             self.accounts_api.workspaces.delete_by_name(trio.workspace_config.name)
@@ -232,12 +235,13 @@ class WorkspaceSetup:
     def delete_workspace(self, workspace_number: int):
         assert workspace_number >= 0, f"Invalid workspace number: {workspace_number}"
 
-        print("-"*100)
         workspace_config = self.account_config.create_workspace_config(template=self.account_config.workspace_config_template,
                                                                        workspace_number=workspace_number)
         try:
             workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="error")
+            # workspace_id = workspace_api.get("workspace_api")
             workspace_api.dns_retry = True
+
             trio = WorkspaceTrio(workspace_config, workspace_api, None)
             print(f"Destroying workspace #{workspace_number}: {trio.workspace_config.name}""")
 
@@ -565,7 +569,7 @@ class WorkspaceSetup:
                 else:
                     trio.client.scim.groups.remove_entitlement(group.get("id"), name)
         except Exception as e:
-            raise Exception(f"""Failed to update entitlements for workspace #{trio.number}.""")
+            raise Exception(f"""Failed to update entitlements for workspace #{trio.number}.""") from e
 
     @classmethod
     def __create_group(cls, trio: WorkspaceTrio):

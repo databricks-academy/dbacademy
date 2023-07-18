@@ -535,7 +535,7 @@ For more current information, please <a href="https://files.training.databricks.
         self.append_both(students_commands, solutions_commands, """
 %md ### Cannot Install Libraries\n
 Databricks Academy provides custom libraries to facilitate the development of its courseware. Your cluster requires access to these remotely hosted libraries so that they can be installed into your cluster.\n
-Various companies restrict access to external sites to limit data exfiltration and address other security concerns, such as leaking potentially sensitive or proprietary information.\n
+Various companies restrict access to external sites to limit data ex-filtration and address other security concerns, such as leaking potentially sensitive or proprietary information.\n
 For more current information, please see <a href="https://files.training.databricks.com/static/troubleshooting.html#cannot-install-libraries" target="_blank">Troubleshooting Library Installation</a>""".strip())
 
         self.append_both(students_commands, solutions_commands, """

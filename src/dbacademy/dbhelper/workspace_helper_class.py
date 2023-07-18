@@ -86,7 +86,7 @@ class WorkspaceHelper:
                 "example-course",
                 "apache-spark-programming-with-databricks",
                 "advanced-data-engineering-with-databricks",
-                # "large-language-models",  # Not ILT courseware and is freakisly huge.
+                # "large-language-models",  # Not ILT courseware and is freakishly huge.
                 "data-analysis-with-databricks",
                 "data-engineer-learning-path",
                 "data-engineering-with-databricks",

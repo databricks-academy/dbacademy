@@ -138,7 +138,7 @@ class ApiClient(ApiContainer):
         self._last_request_timestamp = 0
         self.verbose = verbose
         self.authorization_header = authorization_header
-        self.retries = 24  # 24 to match the previous max
+        self.max_retries = 25
 
         # Reference information for this backoff/retry issues
         # https://stackoverflow.com/questions/47675138/how-to-override-backoff-max-while-working-with-requests-retry
@@ -230,7 +230,7 @@ class ApiClient(ApiContainer):
         response = None  # Precluding warning
         attempts = 0     # Counter for debugging
 
-        for attempt in range(self.retries+1):
+        for attempt in range(self.max_retries):
             try:
                 if _http_method in ('GET', 'HEAD', 'OPTIONS'):
                     params = {k: str(v).lower() if isinstance(v, bool) else v for k, v in _data.items()}
@@ -259,7 +259,7 @@ class ApiClient(ApiContainer):
             # Attempt 1=1s, 2=1s, 3=5s, 4=16s, 5=13s, etc...
             duration = math.ceil(attempt * attempt / 2)
             if verbose:
-                print(f"Retrying after {duration}s, attempt {attempt+1} of {self.retries+1}: {_http_method} {url}")
+                print(f"Retrying after {duration}s, attempt {attempt+1} of {self.max_retries+1}: {_http_method} {url}")
             time.sleep(duration)
 
         if response is None:  # "None" should never happen

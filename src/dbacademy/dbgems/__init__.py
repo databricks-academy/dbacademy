@@ -224,7 +224,7 @@ def is_curriculum_workspace() -> bool:
 
 def validate_dependencies(module: str, curriculum_workspaces_only=True) -> bool:
     # Don't do anything unless this is in one of the Curriculum Workspaces
-    from dbacademy import github
+    from dbacademy.clients import github
 
     testable = curriculum_workspaces_only is False or is_curriculum_workspace()
     try:

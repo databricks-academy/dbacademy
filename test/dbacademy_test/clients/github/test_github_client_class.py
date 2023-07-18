@@ -4,14 +4,14 @@ import unittest
 class MyTestCase(unittest.TestCase):
 
     def test_get_latest_commit_id(self):
-        from dbacademy import github
+        from dbacademy.clients import github
 
         commit_id = github.default_client().repo("dbacademy").commits.get_latest_commit_id(branch_name="main")
 
         self.assertIsNotNone(commit_id)
 
     def test_list_all_tags(self):
-        from dbacademy import github
+        from dbacademy.clients import github
 
         all_tags = github.default_client().repo("dbacademy").list_all_tags()
         self.assertTrue(len(all_tags) >= 30, f"Expected at least 30 entries, found {len(all_tags)}")

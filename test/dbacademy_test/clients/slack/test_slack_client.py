@@ -1,5 +1,5 @@
 import unittest
-from dbacademy.slack.slack_thread import SlackThread
+from dbacademy.clients.slack import SlackThread
 
 
 class MyTestCase(unittest.TestCase):

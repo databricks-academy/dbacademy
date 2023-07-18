@@ -164,7 +164,7 @@ class ArtifactValidator:
     def __validate_published_docs(self, version: str) -> bool:
         import os
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
-        from dbacademy.google.google_client_class import GoogleClient
+        from dbacademy.clients.google.google_client_class import GoogleClient
 
         if self.translation is None:
             print(f"| PASSED: No documents to validate")

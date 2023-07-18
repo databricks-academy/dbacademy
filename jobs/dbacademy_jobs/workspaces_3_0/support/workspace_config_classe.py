@@ -30,7 +30,7 @@ class WorkspaceConfig:
         from dbacademy.dbhelper import WorkspaceHelper
         from dbacademy import common
 
-        self.__max_participants = common.verify_type(int, min_value=1, max_participants=max_participants)
+        self.__max_participants = common.verify_type(int, min_value=0, max_participants=max_participants)
 
         assert workspace_number is None or type(workspace_number) == int, f"""The parameter "workspace_number" must be None or an integral value, found {type(workspace_number)}."""
         assert workspace_number is None or workspace_number > 0, f"""The parameter "workspace_number" must be None or greater than zero, found "{workspace_number}"."""

@@ -4,7 +4,7 @@ import unittest
 class TestCoursesClient(unittest.TestCase):
 
     def test_get_course(self):
-        from dbacademy.docebo import DoceboRestClient
+        from dbacademy.clients.docebo import DoceboRestClient
         client = DoceboRestClient.from_environ()
 
         course = client.course.courses.get_course("134")
@@ -12,7 +12,7 @@ class TestCoursesClient(unittest.TestCase):
         self.assertEquals(134, course.get("id"))
 
     def test_get_sessions_by_course(self):
-        from dbacademy.docebo import DoceboRestClient
+        from dbacademy.clients.docebo import DoceboRestClient
         client = DoceboRestClient.from_environ()
 
         sessions = client.course.courses.get_sessions_by_course("134")
@@ -20,7 +20,7 @@ class TestCoursesClient(unittest.TestCase):
         self.assertTrue(len(sessions) > 0)
 
     def test_get_events_by_session(self):
-        from dbacademy.docebo import DoceboRestClient
+        from dbacademy.clients.docebo import DoceboRestClient
         client = DoceboRestClient.from_environ()
 
         sessions = client.course.courses.get_sessions_by_course("134")

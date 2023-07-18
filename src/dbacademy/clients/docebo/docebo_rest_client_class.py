@@ -43,10 +43,10 @@ class DoceboRestClient(ApiClient):
                          authorization_header=F"Bearer {access_token}",
                          throttle_seconds=throttle_seconds)
 
-        from dbacademy.docebo.manage import ManageClient
+        from dbacademy.clients.docebo.manage import ManageClient
         self.manage = ManageClient(self)
 
-        from dbacademy.docebo.course import CourseClient
+        from dbacademy.clients.docebo.course import CourseClient
         self.course = CourseClient(self)
 
     @staticmethod

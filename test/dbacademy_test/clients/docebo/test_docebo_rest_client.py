@@ -4,7 +4,7 @@ import unittest
 class TestDoceboRestClient(unittest.TestCase):
 
     def test_create(self):
-        from dbacademy.docebo import DoceboRestClient
+        from dbacademy.clients.docebo import DoceboRestClient
 
         client = DoceboRestClient.from_environ()
         self.assertIsNotNone(client)

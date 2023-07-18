@@ -1,3 +1,6 @@
+__all__ = ["SlackThread"]
+
+
 class SlackThread(object):
 
     def __init__(self, channel, username, access_token):

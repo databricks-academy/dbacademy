@@ -1,4 +1,4 @@
-from dbacademy.github.github_client_class import GitHubClient
+from dbacademy.clients.github.github_client_class import GitHubClient
 
 
 def default_client() -> GitHubClient:

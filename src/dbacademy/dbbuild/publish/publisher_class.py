@@ -124,7 +124,7 @@ class Publisher:
     def create_resource_bundle(self, folder_name: str = None, target_dir: str = None) -> str:
         """
         Only applicable to translated courses, this method creates a "resource bundle" consisting of MD files of the notebook's various MD cells
-        :param folder_name: The name of the folder for the resource bundle as a subfolder of target_dir
+        :param folder_name: The name of the folder for the resource bundle as a sub-folder of target_dir
         :param target_dir: The directory under which resource bundles are located.
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """

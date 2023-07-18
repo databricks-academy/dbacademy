@@ -1,4 +1,4 @@
-from dbacademy.docebo import DoceboRestClient
+from dbacademy.clients.docebo import DoceboRestClient
 from dbacademy.rest.common import ApiContainer
 
 
