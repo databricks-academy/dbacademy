@@ -4,9 +4,6 @@ Examples include wrappers around tags, notebook state variables, and the full bo
 """
 from typing import Union, Any, Callable, Optional, List
 
-# The one import I can't shake!!! JDP
-import pyspark
-
 from dbacademy import common
 from dbacademy.dbgems.mock_dbutils_class import MockDBUtils
 
@@ -431,9 +428,6 @@ def find_global(target):
 
 
 def active_streams() -> List:
-    # noinspection PyUnresolvedReferences
-    # from pyspark.errors.exceptions.connect import SparkConnectGrpcException
-
     if not spark:
         return list()
 
@@ -446,8 +440,16 @@ def active_streams() -> List:
         return list()
 
 
-spark: Union[None, "pyspark.sql.SparkSession"] = find_global("spark")
-sc: Union[None, "pyspark.SparkContext"] = find_global("sc")
-dbutils: Union[MockDBUtils, None] = find_global("dbutils")
+try:
+    # noinspection PyUnresolvedReferences
+    import pyspark
+    spark: Union[None, "pyspark.sql.SparkSession"] = find_global("spark")
+    sc: Union[None, "pyspark.SparkContext"] = find_global("sc")
+    dbutils: Union[MockDBUtils, None] = find_global("dbutils")
+except ImportError:
+    spark = None
+    sc = None
+    dbutils = None
+
 
 check_deprecation_logging_enabled()

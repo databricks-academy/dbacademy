@@ -1,5 +1,5 @@
-import os, requests
-from dbacademy.clients.airtable import AirTable
+import os
+from dbacademy.clients.airtable import AirTableClient
 from typing import List
 from datetime import datetime
 from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
@@ -93,10 +93,7 @@ if action == 2:
     air_table_token = os.environ.get(env_variable)
     assert air_table_token is not None, f"The environment variable {env_variable} must be specified, not found."
 
-    air_table = AirTable(access_token=air_table_token,
-                         base_id="appNCMjJ2yMKUrTbo",
-                         table_id="tblF3cxlP8gcM9Rqr")
-
+    air_table = AirTableClient(access_token=air_table_token, base_id="appNCMjJ2yMKUrTbo", table_id="tblF3cxlP8gcM9Rqr")
     records = air_table.read(view_id="viwCW83QNyJlMEMAk")
 
     for record in records:

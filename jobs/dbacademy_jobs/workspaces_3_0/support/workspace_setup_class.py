@@ -220,6 +220,7 @@ class WorkspaceSetup:
 
         try:
             print(f"""Deleting the workspace "{trio.workspace_config.name}".""")
+            test = self.accounts_api.workspaces.get_by_name(trio.workspace_config.name)
             self.accounts_api.workspaces.delete_by_name(trio.workspace_config.name)
 
         except DatabricksApiException as e:
@@ -239,7 +240,6 @@ class WorkspaceSetup:
                                                                        workspace_number=workspace_number)
         try:
             workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="error")
-            # workspace_id = workspace_api.get("workspace_api")
             workspace_api.dns_retry = True
 
             trio = WorkspaceTrio(workspace_config, workspace_api, None)
