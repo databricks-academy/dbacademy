@@ -11,6 +11,13 @@ from dbacademy_jobs.workspaces_3_0.support import read_str, read_int, advertise,
 
 CONFIRMATIONS = ["y", "yes", "1", "t", "true"]
 
+AIR_TABLE_TOKEN = os.environ.get("AIR-TABLE-PERSONAL-ACCESS-TOKEN")
+assert AIR_TABLE_TOKEN is not None, f"""The environment variable "AIR-TABLE-PERSONAL-ACCESS-TOKEN" must be specified, not found."""
+BASE_ID = "appNCMjJ2yMKUrTbo"
+TABLE_ID = "tblF3cxlP8gcM9Rqr"
+DELETABLE_VIEW_ID = "viwCW83QNyJlMEMAk"
+air_table_client = AirTableClient(access_token=AIR_TABLE_TOKEN, base_id=BASE_ID, table_id=TABLE_ID)
+
 print("1) Create workspaces.")
 print("2) Delete all AirTable workspaces.")
 action = read_int("Select an action", 0)
@@ -32,11 +39,10 @@ def configure_workspace_setup(*,
                               _run_workspace_setup: bool,
                               _max_participants: int = 0,
                               _env_code: str,
-                              _ignored_workspaces: List[int] = None,
-                              _workspace_numbers: List[int] = None) -> (WorkspaceConfig, WorkspaceSetup):
+                              _workspace_numbers: List[int],
+                              _ignored_workspaces: List[int] = None) -> (WorkspaceConfig, WorkspaceSetup):
 
     _ignored_workspaces = _ignored_workspaces or list()
-    _workspace_numbers = _workspace_numbers or list()
 
     uc_storage_config = UcStorageConfig(storage_root="s3://unity-catalogs-us-west-2/",
                                         storage_root_credential_id="be2549d1-3f5b-40db-900d-1b0fcdb419ee",  # ARN
@@ -87,14 +93,9 @@ def configure_workspace_setup(*,
 
 
 if action == 2:
-    workspace_config_template, workspace_setup = configure_workspace_setup(_run_workspace_setup=True, _env_code=env_code)
+    workspace_config_template, workspace_setup = configure_workspace_setup(_run_workspace_setup=True, _env_code=env_code, _workspace_numbers=list())
 
-    env_variable = "AIR-TABLE-PERSONAL-ACCESS-TOKEN"
-    air_table_token = os.environ.get(env_variable)
-    assert air_table_token is not None, f"The environment variable {env_variable} must be specified, not found."
-
-    air_table = AirTableClient(access_token=air_table_token, base_id="appNCMjJ2yMKUrTbo", table_id="tblF3cxlP8gcM9Rqr")
-    records = air_table.read(view_id="viwCW83QNyJlMEMAk")
+    records = air_table_client.read(view_id=DELETABLE_VIEW_ID)
 
     for record in records:
         record_id = record.get("id")
@@ -127,7 +128,7 @@ if action == 2:
         print("-" * 100)
         if read_str(f"Please confirm the deletion of workspace #{workspace_number}.", "no") in CONFIRMATIONS:
             workspace_setup.delete_workspace(workspace_number)
-            air_table.update(record_id, fields={
+            air_table_client.update(record_id, fields={
                 "Deleted?": True,
                 "Comments": comments,
             })
@@ -157,13 +158,15 @@ elif action == 1:
     else:
         workspace_numbers = list(range(wsn_a, wsn_b+1))
 
-    deleting_wsj = read_str("""\nDelete existing Workspace-Setup jobs""", "no").lower() in CONFIRMATIONS
+    deleting_wsj = True
+    # deleting_wsj = read_str("""\nDelete existing Workspace-Setup jobs""", "no").lower() in CONFIRMATIONS
 
     ignored = []
     workspace_config_template, workspace_setup = configure_workspace_setup(_env_code=env_code,
                                                                            _run_workspace_setup=True,
                                                                            _ignored_workspaces=ignored,
-                                                                           _max_participants=max_participants)
+                                                                           _max_participants=max_participants,
+                                                                           _workspace_numbers=workspace_numbers)
 
     print()
     print("-"*100)
@@ -174,7 +177,6 @@ elif action == 1:
     print()
     advertise("Courses", workspace_config_template.course_definitions, 6, 15)
     advertise("Datasets", workspace_config_template.datasets, 5, 15)
-    advertise("Delete WS Job", [deleting_wsj] if deleting_wsj else [], 0, 15)
     advertise("Skipping", ignored, 5, 15)
 
     if read_str("""Please confirm you wish to create these workspaces""", "no").lower() in CONFIRMATIONS:

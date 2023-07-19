@@ -1,4 +1,4 @@
-from typing import Callable, List, TypeVar, Optional
+from typing import Callable, List, TypeVar, Optional, Union, Dict, Any
 
 
 class WorkspaceHelper:
@@ -15,8 +15,8 @@ class WorkspaceHelper:
     PARAM_CONFIGURE_FOR = "configure_for"
     PARAM_NODE_TYPE_ID = "node_type_id"
     PARAM_SPARK_VERSION = "spark_version"
-    PARAM_DATASETS = "datasets"
-    PARAM_COURSES = "courses"
+    PARAM_DATASETS = "dataset"
+    PARAM_COURSES = "course"
     PARAM_SOURCE = "source"
     PARAM_ORG_ID = "org_id"
     PARAM_WORKSPACE_NAME = "workspace_name"
@@ -68,7 +68,7 @@ class WorkspaceHelper:
         return dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION)
 
     @staticmethod
-    def install_datasets(datasets: str):
+    def install_datasets(datasets: Union[str, List[str]]):
         from dbacademy import dbgems
         from dbacademy.dbhelper.dataset_manager_class import DatasetManager
 
@@ -160,11 +160,22 @@ class WorkspaceHelper:
                 if version == versions[-1] and len(versions) > 1:
                     print("\n" + ("-" * 100) + "\n")
 
-    @staticmethod
-    def uninstall_courseware(client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
+    @classmethod
+    def __parse_args(cls, client: DBAcademyRestClient, courses_arg: str, usernames: List[str]) -> (List[str], Dict[str, Any]):
+
+        if courses_arg is None or courses_arg.strip() in ("", "null", "None"):
+            print("No courses specified.")
+            return list(), None
 
         course_defs = [c.strip() for c in courses_arg.split(",")]
         usernames = usernames or [u.get("userName") for u in client.scim.users.list()]
+
+        return usernames, course_defs
+
+    @classmethod
+    def uninstall_courseware(cls, client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
+
+        usernames, course_defs = cls.__parse_args(client, courses_arg, usernames)
 
         for username in usernames:
             print(f"Uninstalling courses for {username}")
@@ -182,15 +193,10 @@ class WorkspaceHelper:
 
             print("-" * 80)
 
-    @staticmethod
-    def install_courseware(client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
+    @classmethod
+    def install_courseware(cls, client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
 
-        if courses_arg is None or courses_arg.strip() in ("", "null", "None"):
-            print("No courses specified for installation.")
-            return
-
-        course_defs = set(c.strip() for c in courses_arg.split(","))
-        usernames = usernames or [u.get("userName") for u in client.scim.users.list()]
+        usernames, course_defs = cls.__parse_args(client, courses_arg, usernames)
 
         for username in usernames:
 

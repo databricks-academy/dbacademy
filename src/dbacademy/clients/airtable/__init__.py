@@ -7,6 +7,8 @@ class AirTableClient(object):
     from requests import Response
     from dbacademy.clients import ClientErrorHandler
 
+    ATTEMPTS = range(1, 10 + 1)  # 1-10 inclusive
+
     def __init__(self, *, access_token: str, base_id: str, table_id: str, error_handler: ClientErrorHandler = ClientErrorHandler()):
         self.__base_id = base_id
         self.__table_id = table_id
@@ -33,6 +35,20 @@ class AirTableClient(object):
 
     def read(self, view_id: str = None, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True):
         import requests
+
+        error_message = "Exception reading records from the database"
+        url = self.__build_url(view_id=view_id, filter_by_formula=filter_by_formula, sort_by=sort_by, sort_asc=sort_asc)
+
+        for attempt in self.ATTEMPTS:
+            response = requests.get(url, headers=self.__headers)
+            if not self.__rate_limited(response, attempt):
+                # We are not being rate limited, go ahead and validate the response.
+                self.__validate_response(response, error_message, response.status_code)
+                return response.json().get("records", list())
+
+        self.__raise_rate_limit_failure(error_message)
+
+    def __build_url(self, *, view_id: str = None, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True):
         from urllib.parse import quote_plus
 
         url = f"{self.__url}"
@@ -54,27 +70,81 @@ class AirTableClient(object):
             else:
                 url += f"""&sort[0][direction]=desc"""
 
-        response = requests.get(url, headers=self.__headers)
-        self.assert_response(response, f"""Exception reading records from the database: {response.status_code}""")
-
-        json_object = response.json()
-        return json_object.get("records", list())
+        return url
 
     def update(self, record_id: str, *, fields: Dict[str, Any]):
         import requests
 
+        error_message = "Exception updating database record"
         url = f"{self.__url}/{record_id}"
 
         payload = {
             "typecast": True,
             "fields": fields
         }
-        response = requests.patch(url, headers=self.__headers, json=payload)
-        self.assert_response(response, f"""Exception writing records to the database: {response.status_code}""")
 
-    def assert_response(self, response: Response, message: str) -> None:
+        for attempt in self.ATTEMPTS:
+            response = requests.patch(url, headers=self.__headers, json=payload)
+            if not self.__rate_limited(response, attempt):
+                # We are not being rate limited, go ahead and validate the response.
+                self.__validate_response(response, error_message, response.status_code)
+                return response.json()
+
+        self.__raise_rate_limit_failure(error_message)
+
+    def insert(self, fields: Dict[str, Any]) -> Dict[str, Any]:
+        import requests
+
+        payload = {
+            "typecast": True,
+            "fields": fields
+        }
+        error_message = "Exception inserting records to the database"
+
+        for attempt in self.ATTEMPTS:
+            response = requests.post(self.__url, headers=self.__headers, json=payload)
+            if not self.__rate_limited(response, attempt):
+                # We are not being rate limited, go ahead and validate the response.
+                self.__validate_response(response, error_message, response.status_code)
+                return response.json()
+
+        self.__raise_rate_limit_failure(error_message)
+
+    def delete(self, record_id: str):
+        import requests
+
+        error_message = "Exception deleting records from the database"
+        url = f"{self.__url}/{record_id}"
+
+        for attempt in self.ATTEMPTS:
+            response = requests.delete(url, headers=self.__headers)
+            if not self.__rate_limited(response, attempt):
+                # We are not being rate limited, go ahead and validate the response.
+                self.__validate_response(response, error_message, response.status_code)
+                return response.json()
+
+        self.__raise_rate_limit_failure(error_message)
+
+    @staticmethod
+    def __rate_limited(response: Response, attempt: int) -> bool:
+        import time, random
+
+        rate_limited = response.text is not None and "RATE_LIMIT_REACHED" in response.text
+        if rate_limited:
+            time.sleep(attempt * random.random())
+
+        return rate_limited
+
+    def __validate_response(self, response: Response, error_message: str, status_code: int) -> None:
         import json
 
         if response.status_code != 200:
+            # Almost a "perfect" API except all successful calls return 200 <groan>
+            message = f"""{error_message}: {status_code}"""
             self.__error_handler.on_error(message, json.dumps(response.json(), indent=4))
             raise AssertionError(message)
+
+    def __raise_rate_limit_failure(self, what: str) -> None:
+        error_message = f"""{what}; failed after {self.ATTEMPTS}."""
+        self.__error_handler.on_error(error_message)
+        raise AssertionError(error_message)

@@ -1,4 +1,3 @@
-import json
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy import common
 

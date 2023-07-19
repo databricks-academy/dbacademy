@@ -1,6 +1,5 @@
-import json
 from typing import Dict
-from dbacademy_test.cloudlabs.lab_specs.lab_specs import load_lab_specs, LabSpec
+from dbacademy_jobs.cloudlabs.lab_specs.lab_specs import load_lab_specs, LabSpec
 from dbacademy.dbrest.client import DBAcademyRestClient
 
 lab_specs: Dict[str, LabSpec] = load_lab_specs("C:/Users/JacobParr/.cloudlabs/lt_user_acceptance.json")

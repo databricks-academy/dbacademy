@@ -65,12 +65,25 @@ class TestAirTAble(unittest.TestCase):
         when_a = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")+".000Z"
 
         air_table.update(record_id, fields={
-            "when": when_a
+            "When": when_a
         })
 
         records = air_table.read(filter_by_formula="id = 1")
-        when_b = records[0].get("fields").get("when")
+        when_b = records[0].get("fields").get("When")
         self.assertEquals(when_a, when_b)
+
+    def test_insert_delete(self):
+        from datetime import datetime
+
+        air_table = AirTableClient(access_token=ACCESS_TOKEN, base_id=BASE_ID, table_id=TABLE_ID)
+        response = air_table.insert({
+            "Notes": "This is a test",
+            "Assignee": None,
+            "Status": "Whatever",
+            "When": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")+".000Z"
+        })
+        record_id = response.get("id")
+        air_table.delete(record_id)
 
 
 if __name__ == '__main__':
