@@ -179,7 +179,7 @@ class WorkspaceSetup:
                                                                        workspace_number=workspace_number)
 
         workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="error")
-        # workspace_api.dns_retry = True
+        workspace_api.dns_retry = True
 
         trio = WorkspaceTrio(workspace_config, workspace_api, None)
 
@@ -407,11 +407,14 @@ class WorkspaceSetup:
         workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="ignore")
         if workspace_api is None:
             # It doesn't exist, so go ahead and create it.
-            workspace_api = self.accounts_api.workspaces.create(workspace_name=workspace_config.name,
-                                                                deployment_name=workspace_config.name,
-                                                                region=self.account_config.region,
-                                                                credentials_name=self.account_config.workspace_config_template.credentials_name,
-                                                                storage_configuration_name=self.account_config.workspace_config_template.storage_configuration)
+            try:
+                workspace_api = self.accounts_api.workspaces.create(workspace_name=workspace_config.name,
+                                                                    deployment_name=workspace_config.name,
+                                                                    region=self.account_config.region,
+                                                                    credentials_name=self.account_config.workspace_config_template.credentials_name,
+                                                                    storage_configuration_name=self.account_config.workspace_config_template.storage_configuration)
+            except DatabricksApiException as e:
+                raise Exception from e
 
         classroom = Classroom(num_students=len(workspace_config.usernames),
                               username_pattern=workspace_config.username_pattern,
@@ -605,10 +608,12 @@ class WorkspaceSetup:
                     trio.client.scim.groups.add_member(group.get("id"), user.get("id"))
 
     def __validate_workspace_setup(self, trio: WorkspaceTrio) -> None:
+        from datetime import datetime
+
         errors = list()
-        errors.append(self.__validate_workspace_setup_job(trio))
+        errors.extend(self.__validate_workspace_setup_job(trio))
         if len(errors) == 0:
-            errors.append(self.__validate_pool_and_policies(trio))
+            errors.extend(self.__validate_pool_and_policies(trio))
 
         if len(errors) > 0:
             return
@@ -620,8 +625,12 @@ class WorkspaceSetup:
             if new_url == old_url:
                 break
         else:
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            comments = f"{now}: Created workspace via automation script."
+
             self.air_table_client.insert({
-                "AWS Workspace URL": new_url
+                "AWS Workspace URL": new_url,
+                "Comments": comments
             })
 
     def __validate_pool_and_policies(self, trio: WorkspaceTrio) -> List[str]:
@@ -660,6 +669,8 @@ class WorkspaceSetup:
             return [self.log_error(f"""Workspace-Setup, run #{run_id} was not TERMINATED, found "{life_cycle_state}" for {trio.name} | {state_message}""")]
         elif result_state != "SUCCESS":
             return [self.log_error(f"""Workspace-Setup, run #{run_id} was not SUCCESS, found "{result_state}" for {trio.name} | {state_message}""")]
+        else:
+            return list()
 
     def __run_workspace_setup_job(self, trio: WorkspaceTrio):
         import time
@@ -723,8 +734,8 @@ class WorkspaceSetup:
 
         install_all = True
         if install_all:
-            config_text = config_text.replace("{{courses}}", f"")
-            config_text = config_text.replace("{{datasets}}", f"")
+            config_text = config_text.replace("{{courses}}", f"None")
+            config_text = config_text.replace("{{datasets}}", f"None")
         else:
             token = os.environ.get("CDS_DOWNLOAD_TOKEN")
             config_text = config_text.replace("{{courses}}", f"course=example-course&version=v1.3.2&token={token}")

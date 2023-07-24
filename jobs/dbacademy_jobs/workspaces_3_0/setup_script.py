@@ -184,5 +184,4 @@ elif action == 1:
         FALSE = False  # easier for my eyes to recognize
         workspace_setup.create_workspaces(remove_metastore=FALSE,      # This should always be False
                                           remove_users=FALSE,          # This should always be False
-                                          uninstall_courseware=FALSE,  # This should always be False
-                                          delete_workspace_setup_job=deleting_wsj)
+                                          uninstall_courseware=FALSE)  # This should always be False

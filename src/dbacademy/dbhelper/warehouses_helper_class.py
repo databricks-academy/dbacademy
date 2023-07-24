@@ -130,8 +130,8 @@ class WarehousesHelper:
                 spot_instance_policy=RELIABILITY_OPTIMIZED,
                 channel=CHANNEL_NAME_CURRENT,
                 tags={
-                    f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}": common.clean_string(lab_id),
-                    f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}": common.clean_string(workspace_description),
+                    f"dbacademy.{WorkspaceHelper.PARAM_EVENT_ID}": common.clean_string(lab_id),
+                    f"dbacademy.{WorkspaceHelper.PARAM_EVENT_DESCRIPTION}": common.clean_string(workspace_description),
                     f"dbacademy.workspace": common.clean_string(workspace_name),
                     f"dbacademy.org_id": common.clean_string(org_id),
                     f"dbacademy.source": common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else lab_id),

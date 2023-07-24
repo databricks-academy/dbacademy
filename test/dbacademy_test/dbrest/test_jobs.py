@@ -47,10 +47,10 @@ class TestJobsClient(unittest.TestCase):
 
         task_config = config.add_task(task_key="Workspace-Setup", description="Just a sample job", timeout_seconds=555)
         task_config.task.notebook("Workspace-Setup", source="GIT", base_parameters={
-            WorkspaceHelper.PARAM_LAB_ID: "Testing 123",
-            WorkspaceHelper.PARAM_DESCRIPTION: "This is a test of the Emergency Broadcast System. This is only a test.",
-            WorkspaceHelper.PARAM_NODE_TYPE_ID: "i3.xlarge",
-            WorkspaceHelper.PARAM_SPARK_VERSION: "11.3.x-scala2.12"
+            WorkspaceHelper.PARAM_EVENT_ID: "Testing 123",
+            WorkspaceHelper.PARAM_EVENT_DESCRIPTION: "This is a test of the Emergency Broadcast System. This is only a test.",
+            WorkspaceHelper.PARAM_POOLS_NODE_TYPE_ID: "i3.xlarge",
+            WorkspaceHelper.PARAM_DEFAULT_SPARK_VERSION: "11.3.x-scala2.12"
         })
         task_config.cluster.new(JobClusterConfig(cloud=Cloud.AWS,
                                                  spark_version="11.3.x-scala2.12",
@@ -81,10 +81,10 @@ class TestJobsClient(unittest.TestCase):
         self.assertEquals("GIT", notebook_task.get("source"))
 
         base_parameters = {
-            "lab_id": "Testing 123",
-            "description": "This is a test of the Emergency Broadcast System. This is only a test.",
-            "node_type_id": "i3.xlarge",
-            "spark_version": "11.3.x-scala2.12"
+            "event_id": "Testing 123",
+            "event_description": "This is a test of the Emergency Broadcast System. This is only a test.",
+            "pools_node_type_id": "i3.xlarge",
+            "default_spark_version": "11.3.x-scala2.12"
         }
         self.assertEquals(base_parameters, notebook_task.get("base_parameters"))
 

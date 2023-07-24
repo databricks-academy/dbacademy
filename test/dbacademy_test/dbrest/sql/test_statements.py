@@ -36,8 +36,8 @@ class StatementTests(unittest.TestCase):
             spot_instance_policy=RELIABILITY_OPTIMIZED,
             channel=CHANNEL_NAME_CURRENT,
             tags={
-                f"dbacademy.{WorkspaceHelper.PARAM_LAB_ID}": "n/a",
-                f"dbacademy.{WorkspaceHelper.PARAM_DESCRIPTION}": "SQL warehouse created for unit testing",
+                f"dbacademy.{WorkspaceHelper.PARAM_EVENT_ID}": "n/a",
+                f"dbacademy.{WorkspaceHelper.PARAM_EVENT_DESCRIPTION}": "SQL warehouse created for unit testing",
                 f"dbacademy.workspace": "curriculum-unit-tests.cloud.databricks.com",
                 f"dbacademy.org_id": "2967772011441968",
                 f"dbacademy.source": "DBAcademy Library Unit-Tests",

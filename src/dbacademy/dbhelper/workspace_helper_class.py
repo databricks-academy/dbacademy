@@ -10,13 +10,13 @@ class WorkspaceHelper:
     WORKSPACE_SETUP_JOB_NAME = "DBAcademy Workspace-Setup"
     BOOTSTRAP_JOB_NAME = "DBAcademy Workspace-Setup (Bootstrap)"
 
-    PARAM_LAB_ID = "lab_id"
-    PARAM_DESCRIPTION = "description"
+    PARAM_EVENT_ID = "event_id"
+    PARAM_EVENT_DESCRIPTION = "event_description"
     PARAM_CONFIGURE_FOR = "configure_for"
-    PARAM_NODE_TYPE_ID = "node_type_id"
-    PARAM_SPARK_VERSION = "spark_version"
-    PARAM_DATASETS = "dataset"
-    PARAM_COURSES = "course"
+    PARAM_POOLS_NODE_TYPE_ID = "pools_node_type_id"
+    PARAM_DEFAULT_SPARK_VERSION = "default_spark_version"
+    PARAM_DATASETS = "datasets"
+    PARAM_COURSES = "courses"
     PARAM_SOURCE = "source"
     PARAM_ORG_ID = "org_id"
     PARAM_WORKSPACE_NAME = "workspace_name"
@@ -47,13 +47,13 @@ class WorkspaceHelper:
     def get_spark_version():
         from dbacademy import dbgems
 
-        return dbgems.get_parameter(WorkspaceHelper.PARAM_SPARK_VERSION)
+        return dbgems.get_parameter(WorkspaceHelper.PARAM_DEFAULT_SPARK_VERSION)
 
     @staticmethod
     def get_lab_id():
         from dbacademy import dbgems
 
-        return dbgems.get_parameter(WorkspaceHelper.PARAM_LAB_ID)
+        return dbgems.get_parameter(WorkspaceHelper.PARAM_EVENT_ID)
 
     @staticmethod
     def get_workspace_name():
@@ -65,7 +65,7 @@ class WorkspaceHelper:
     def get_workspace_description():
         from dbacademy import dbgems
 
-        return dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION)
+        return dbgems.get_parameter(WorkspaceHelper.PARAM_EVENT_DESCRIPTION)
 
     @staticmethod
     def install_datasets(datasets: Union[str, List[str]]):
@@ -408,7 +408,7 @@ class WorkspaceHelper:
         from dbacademy import common
         from dbacademy.dbhelper import DBAcademyHelper
 
-        lab_id = "Smoke Test" if DBAcademyHelper.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_LAB_ID, None)
+        lab_id = "Smoke Test" if DBAcademyHelper.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_EVENT_ID, None)
         return None if lab_id is None else common.clean_string(lab_id)
 
     @property
@@ -417,5 +417,5 @@ class WorkspaceHelper:
         from dbacademy import common
         from dbacademy.dbhelper import DBAcademyHelper
 
-        description = "This is a smoke test" if DBAcademyHelper.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_DESCRIPTION, None)
+        description = "This is a smoke test" if DBAcademyHelper.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_EVENT_DESCRIPTION, None)
         return None if description is None else common.clean_string(description)

@@ -46,8 +46,8 @@ class ClustersHelper:
         org_id = org_id or dbgems.get_org_id()
 
         tags = [
-            (f"dbacademy.pool.{WorkspaceHelper.PARAM_LAB_ID}", common.clean_string(lab_id)),
-            (f"dbacademy.pool.{WorkspaceHelper.PARAM_DESCRIPTION}", common.clean_string(workspace_description)),
+            (f"dbacademy.pool.{WorkspaceHelper.PARAM_EVENT_ID}", common.clean_string(lab_id)),
+            (f"dbacademy.pool.{WorkspaceHelper.PARAM_EVENT_DESCRIPTION}", common.clean_string(workspace_description)),
             (f"dbacademy.pool.{WorkspaceHelper.PARAM_WORKSPACE_NAME}", common.clean_string(workspace_name)),
             (f"dbacademy.pool.{WorkspaceHelper.PARAM_ORG_ID}", common.clean_string(org_id)),
             (f"dbacademy.pool.{WorkspaceHelper.PARAM_SOURCE}", common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else lab_id))
@@ -216,9 +216,9 @@ class ClustersHelper:
             },
         }
 
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_LAB_ID, lab_id)
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_EVENT_ID, lab_id)
 
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_DESCRIPTION, workspace_description)
+        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_EVENT_DESCRIPTION, workspace_description)
 
         ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_SOURCE, "Smoke-Test" if DBAcademyHelper.is_smoke_test() else common.clean_string(lab_id))
 

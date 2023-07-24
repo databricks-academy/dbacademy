@@ -635,10 +635,10 @@ class Commands(object):
                 "notebook_task": {
                     "notebook_path": "Workspace-Setup",
                     "base_parameters": {
-                        WorkspaceHelper.PARAM_LAB_ID: lab_id or "Unknown",
-                        WorkspaceHelper.PARAM_DESCRIPTION: description or "Unknown",
-                        WorkspaceHelper.PARAM_NODE_TYPE_ID: node_type_id,
-                        WorkspaceHelper.PARAM_SPARK_VERSION: spark_version,
+                        WorkspaceHelper.PARAM_EVENT_ID: lab_id or "Unknown",
+                        WorkspaceHelper.PARAM_EVENT_DESCRIPTION: description or "Unknown",
+                        WorkspaceHelper.PARAM_POOLS_NODE_TYPE_ID: node_type_id,
+                        WorkspaceHelper.PARAM_DEFAULT_SPARK_VERSION: spark_version,
                         WorkspaceHelper.PARAM_DATASETS: ",".join(datasets),
                         WorkspaceHelper.PARAM_COURSES: ",".join(courses),
                     },
@@ -736,8 +736,8 @@ class Commands(object):
                     "notebook_task": {
                         "notebook_path": "Includes/Workspace-Setup",
                         "base_parameters": {
-                            WorkspaceHelper.PARAM_LAB_ID: event.get("name", "Unknown"),
-                            WorkspaceHelper.PARAM_DESCRIPTION: event.get("description", "Unknown"),
+                            WorkspaceHelper.PARAM_EVENT_ID: event.get("name", "Unknown"),
+                            WorkspaceHelper.PARAM_EVENT_DESCRIPTION: event.get("description", "Unknown"),
                             WorkspaceHelper.PARAM_CONFIGURE_FOR: configure_for,
                         },
                         "source": "GIT"

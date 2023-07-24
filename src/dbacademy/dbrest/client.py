@@ -35,7 +35,10 @@ class DBAcademyRestClient(ApiClient):
             from dbacademy import dbgems
             endpoint = dbgems.get_notebooks_api_endpoint()
 
-        if not any((authorization_header, token, password)):
+        if user is not None and password is not None:
+            pass  # We will use username and password to create the authorization_header (later)
+
+        elif not any((authorization_header, token, password)):
             from dbacademy import dbgems
             token = dbgems.get_notebooks_api_token()
             if verbose:
