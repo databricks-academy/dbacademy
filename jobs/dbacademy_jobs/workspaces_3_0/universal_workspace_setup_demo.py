@@ -63,7 +63,10 @@ assert len(client.workspace.ls("/")) > 0, f"Expected at least one file."  # Test
 client.jobs.delete_by_name("DBAcademy Workspace-Setup", False)  # Hard coded into the corresponding JSON file.)
 job_id = create_job(workspace_number, workspace_name, "Demo")  # Context descriptor; AirTable, Backup, CloudLabs, Vocareum
 run_id = run_job(job_id)
-
 response = client.runs.wait_for(run_id)
-state = response.get("state").get("life_cycle_state")
-assert response.status_code == 200, f"Expected HTTP 200, found {response.status_code}"
+
+result_state = response.get("state").get("result_state")
+assert result_state == "SUCCESS", f"""Expected the result_state to be "SUCCESS", found "{result_state}"."""
+
+life_cycle_state = response.get("state").get("life_cycle_state")
+assert life_cycle_state == "TERMINATED", f"""Expected the life_cycle_state to be "TERMINATED", found "{life_cycle_state}"."""
