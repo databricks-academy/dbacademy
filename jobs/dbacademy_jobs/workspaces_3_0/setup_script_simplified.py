@@ -4,8 +4,8 @@ import time
 from dataclasses import dataclass, field
 from typing import Optional, List, Dict
 
-from dbacademy.dougrest import AccountsApi, DatabricksApiException
-from dbacademy.dougrest.accounts.workspaces import Workspace
+from dbacademy.clients.dougrest import AccountsApi, DatabricksApiException
+from dbacademy.clients.dougrest.accounts.workspaces import Workspace
 
 # Read environment variables
 env_id = "PROSVC"

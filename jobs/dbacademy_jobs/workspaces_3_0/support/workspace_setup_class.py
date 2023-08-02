@@ -2,13 +2,13 @@ from typing import List, Optional, Callable, Dict, Any
 
 from dbacademy.clients.airtable import AirTableClient
 from dbacademy.dbrest import DBAcademyRestClient
-from dbacademy.rest.common import DatabricksApiException
+from dbacademy.clients.rest.common import DatabricksApiException
 from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
 
 class WorkspaceTrio:
     from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
-    from dbacademy.dougrest.accounts.workspaces import Workspace as WorkspaceAPI
+    from dbacademy.clients.dougrest.accounts.workspaces import Workspace as WorkspaceAPI
     from dbacademy.clients.classrooms.classroom import Classroom
 
     def __init__(self, workspace_config: WorkspaceConfig, workspace_api: WorkspaceAPI, classroom: Optional[Classroom]):
@@ -78,13 +78,13 @@ class WorkspaceTrio:
 
 
 class WorkspaceSetup:
-    from dbacademy.dougrest.accounts.workspaces import Workspace
+    from dbacademy.clients.dougrest.accounts.workspaces import Workspace
     from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
 
     def __init__(self, account_config: AccountConfig, run_workspace_setup: bool):
         import os
         from dbacademy import common
-        from dbacademy.dougrest import AccountsApi
+        from dbacademy.clients.dougrest import AccountsApi
         from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
 
         self.__errors: List[str] = list()
