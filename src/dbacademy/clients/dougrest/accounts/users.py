@@ -1,4 +1,4 @@
-from dbacademy.dougrest.scim.users import Users as UsersBase
+from dbacademy.clients.dougrest.scim.users import Users as UsersBase
 
 
 class Users(UsersBase):

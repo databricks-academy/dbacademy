@@ -1,5 +1,5 @@
-from dbacademy.dougrest.scim.groups import Groups
-from dbacademy.dougrest.scim.users import Users
+from dbacademy.clients.dougrest.scim.groups import Groups
+from dbacademy.clients.dougrest.scim.users import Users
 from dbacademy.rest.common import ApiContainer
 
 

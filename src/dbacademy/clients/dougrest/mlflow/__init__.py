@@ -1,5 +1,5 @@
-from dbacademy.dougrest.mlflow.models import RegisteredModels
-from dbacademy.dougrest.mlflow.versions import ModelVersions
+from dbacademy.clients.dougrest.mlflow.models import RegisteredModels
+from dbacademy.clients.dougrest.mlflow.versions import ModelVersions
 from dbacademy.rest.common import ApiContainer
 
 

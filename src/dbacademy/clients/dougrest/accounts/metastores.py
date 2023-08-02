@@ -1,6 +1,6 @@
 from typing import List
 
-from dbacademy.dougrest.accounts.crud import AccountsCRUD
+from dbacademy.clients.dougrest.accounts.crud import AccountsCRUD
 from dbacademy.rest.common import HttpStatusCodes, Item
 
 

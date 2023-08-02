@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from dbacademy.dougrest.accounts.budgets import Budgets
-from dbacademy.dougrest.accounts.credentials import Credentials
-from dbacademy.dougrest.accounts.keys import CustomerManagedKeys
-from dbacademy.dougrest.accounts.logs import LogDeliveryConfigurations
-from dbacademy.dougrest.accounts.metastores import Metastores
-from dbacademy.dougrest.accounts.network import NetworkConfigurations
-from dbacademy.dougrest.accounts.private_access import PrivateAccessSettings
-from dbacademy.dougrest.accounts.storage import StorageConfigurations
-from dbacademy.dougrest.accounts.users import Users
-from dbacademy.dougrest.accounts.vpc import VpcEndpoints
-from dbacademy.dougrest.accounts.workspaces import Workspaces
+from dbacademy.clients.dougrest.accounts.budgets import Budgets
+from dbacademy.clients.dougrest.accounts.credentials import Credentials
+from dbacademy.clients.dougrest.accounts.keys import CustomerManagedKeys
+from dbacademy.clients.dougrest.accounts.logs import LogDeliveryConfigurations
+from dbacademy.clients.dougrest.accounts.metastores import Metastores
+from dbacademy.clients.dougrest.accounts.network import NetworkConfigurations
+from dbacademy.clients.dougrest.accounts.private_access import PrivateAccessSettings
+from dbacademy.clients.dougrest.accounts.storage import StorageConfigurations
+from dbacademy.clients.dougrest.accounts.users import Users
+from dbacademy.clients.dougrest.accounts.vpc import VpcEndpoints
+from dbacademy.clients.dougrest.accounts.workspaces import Workspaces
 from dbacademy.rest.common import *
 
 __all__ = ["AccountsApi"]

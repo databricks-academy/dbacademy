@@ -1,4 +1,4 @@
-from dbacademy.dougrest.accounts.crud import AccountsCRUD
+from dbacademy.clients.dougrest.accounts.crud import AccountsCRUD
 
 
 class CustomerManagedKeys(AccountsCRUD):

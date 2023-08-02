@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-from dbacademy.dougrest import DatabricksApi
+from dbacademy.clients.dougrest import DatabricksApi
 from dbacademy.rest.common import HttpStatusCodes, Item, ItemId
 from dbacademy.rest.crud import CRUD
 

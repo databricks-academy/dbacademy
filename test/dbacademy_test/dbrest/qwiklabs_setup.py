@@ -9,8 +9,8 @@ import re
 import time
 import urllib.parse
 
-from dbacademy.dougrest.accounts import AccountsApi
-from dbacademy.dougrest.accounts.workspaces import Workspace
+from dbacademy.clients.dougrest.accounts import AccountsApi
+from dbacademy.clients.dougrest.accounts.workspaces import Workspace
 
 # TODO: Enter your username and password below.
 # It's best to read these from a file, environment variable, or secrets store.

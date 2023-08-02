@@ -48,32 +48,32 @@ class DatabricksApi(dict, ApiClient):
         self.default_preloaded_versions = ["11.3.x-cpu-ml-scala2.12", "11.3.x-cpu-scala2.12"]
         self.default_spark_version = self.default_preloaded_versions[0]
 
-        from dbacademy.dougrest.clusters import Clusters
+        from dbacademy.clients.dougrest.clusters import Clusters
         self.clusters = Clusters(self)
 
-        from dbacademy.dougrest.groups import Groups
+        from dbacademy.clients.dougrest.groups import Groups
         self.groups = Groups(self)
 
-        from dbacademy.dougrest.jobs import Jobs
+        from dbacademy.clients.dougrest.jobs import Jobs
         self.jobs = Jobs(self)
 
-        from dbacademy.dougrest.mlflow import MLFlow
+        from dbacademy.clients.dougrest.mlflow import MLFlow
         self.mlflow = MLFlow(self)
 
-        from dbacademy.dougrest.pools import Pools
+        from dbacademy.clients.dougrest.pools import Pools
         self.pools = Pools(self)
 
-        from dbacademy.dougrest.repos import Repos
+        from dbacademy.clients.dougrest.repos import Repos
         self.repos = Repos(self)
 
-        from dbacademy.dougrest.scim import SCIM, Users
+        from dbacademy.clients.dougrest.scim import SCIM, Users
         self.scim = SCIM(self)
         self.users = Users(self)
 
-        from dbacademy.dougrest.sql import Sql
+        from dbacademy.clients.dougrest.sql import Sql
         self.sql = Sql(self)
 
-        from dbacademy.dougrest.workspace import Workspace
+        from dbacademy.clients.dougrest.workspace import Workspace
         self.workspace = Workspace(self)
 
         from dbacademy.rest.permissions import Permissions

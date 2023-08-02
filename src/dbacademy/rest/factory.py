@@ -4,7 +4,7 @@ from functools import cache
 from typing import Dict, Generic, Type, TypeVar, Union, Optional
 
 from dbacademy.dbrest.client import DBAcademyRestClient
-from dbacademy.dougrest import AccountsApi, DatabricksApi
+from dbacademy.clients.dougrest import AccountsApi, DatabricksApi
 
 ApiType = TypeVar('ApiType', bound=Union[DatabricksApi, DBAcademyRestClient])
 

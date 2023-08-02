@@ -69,6 +69,7 @@ class CRUD(ApiContainer, metaclass=ABCMeta):
         """Perform API call"""
         pass
 
+    # noinspection PyMethodMayBeStatic
     def _wrap(self, item: Item):
         """
          Return a (possibly wrapped) copy of the item.

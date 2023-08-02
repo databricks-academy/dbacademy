@@ -7,7 +7,7 @@ import re
 import urllib.parse
 from html.parser import HTMLParser
 from multiprocessing.pool import ThreadPool
-from dbacademy.dougrest import DatabricksApi
+from dbacademy.clients.dougrest import DatabricksApi
 
 
 # TODO remove unused parameter

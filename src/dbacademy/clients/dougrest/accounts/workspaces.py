@@ -2,8 +2,8 @@ from typing import Any, Type
 import time
 
 from dbacademy.common import overrides
-from dbacademy.dougrest.accounts.crud import AccountsCRUD, IfNotExists, IfExists
-from dbacademy.dougrest.client import DatabricksApi, DatabricksApiException
+from dbacademy.clients.dougrest.accounts.crud import AccountsCRUD, IfNotExists, IfExists
+from dbacademy.clients.dougrest.client import DatabricksApi, DatabricksApiException
 from dbacademy.rest.common import HttpMethod, HttpReturnType, HttpStatusCodes
 
 

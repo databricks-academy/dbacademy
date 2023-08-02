@@ -1,4 +1,4 @@
-from dbacademy.dougrest.sql.warehouses import Warehouses
+from dbacademy.clients.dougrest.sql.warehouses import Warehouses
 from dbacademy.rest.common import ApiContainer
 
 

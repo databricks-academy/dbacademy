@@ -1,4 +1,4 @@
-from dbacademy.dougrest import DatabricksApi
+from dbacademy.clients.dougrest import DatabricksApi
 
 
 class Classroom(object):

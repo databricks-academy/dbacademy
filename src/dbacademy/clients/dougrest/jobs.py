@@ -1,7 +1,7 @@
 from typing import Union, Dict, List, Any, Optional
 
 from dbacademy.rest.common import DatabricksApiException, ApiContainer
-from dbacademy.dougrest.runs import Runs
+from dbacademy.clients.dougrest.runs import Runs
 
 
 class Jobs(ApiContainer):
