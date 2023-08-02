@@ -1,4 +1,4 @@
-from dbacademy.cloudlabs import CloudlabsApi, Tenant
+from dbacademy.clients.cloudlabs import CloudlabsApi, Tenant
 
 
 def curl_login() -> str:

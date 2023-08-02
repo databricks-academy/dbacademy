@@ -1,6 +1,6 @@
 import unittest
 
-from dbacademy.cloudlabs import CloudlabsApi
+from dbacademy.clients.cloudlabs import CloudlabsApi
 
 
 # TODO doug.bateman@databricks.com: Potential bugs

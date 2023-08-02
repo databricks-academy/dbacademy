@@ -1,6 +1,6 @@
 from typing import List, Dict, Any, Union, Iterable
 
-from dbacademy.cloudlabs import Tenant
+from dbacademy.clients.cloudlabs import Tenant
 from dbacademy.dougrest import DatabricksApi
 from dbacademy.dougrest.workspace import Workspace
 from dbacademy.rest.common import ApiContainer, DatabricksApiException

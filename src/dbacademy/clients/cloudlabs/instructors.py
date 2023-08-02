@@ -1,7 +1,7 @@
 from typing import List, Dict, Any, Union
 
-from dbacademy.cloudlabs import Tenant
-from dbacademy.cloudlabs.labs import Lab, Labs
+from dbacademy.clients.cloudlabs import Tenant
+from dbacademy.clients.cloudlabs.labs import Lab, Labs
 from dbacademy.rest.common import ApiContainer
 
 Instructor = Dict[str, Any]

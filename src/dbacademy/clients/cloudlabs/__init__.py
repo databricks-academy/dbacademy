@@ -16,11 +16,11 @@ class Tenant(ApiClient):
         self.name = tenant["Name"]
         self.session.headers['roleid'] = tenant["InternalRoleId"]
         self.session.headers['tenantid'] = tenant["InternalPartnerId"]
-        from dbacademy.cloudlabs.instructors import Instructors
+        from dbacademy.clients.cloudlabs.instructors import Instructors
         self.instructors = Instructors(self)
-        from dbacademy.cloudlabs.labs import Labs
+        from dbacademy.clients.cloudlabs.labs import Labs
         self.labs = Labs(self)
-        from dbacademy.cloudlabs.templates import Templates
+        from dbacademy.clients.cloudlabs.templates import Templates
         self.templates = Templates(self)
 
     @property
