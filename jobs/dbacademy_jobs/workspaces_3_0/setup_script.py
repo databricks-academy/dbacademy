@@ -146,8 +146,8 @@ elif action == 1:
 
     max_participants = read_int("\nMax Participants per Workspace", max_participants_default)
 
-    wsn_a = read_int("\nPlease enter the first workspace number to create", 0)
-    if wsn_a == 0:
+    wsn_a = read_int("\nPlease enter the first workspace number to create", -1)
+    if wsn_a < 0:
         print(f"""\n{"-" * 100}\nAborting script; no workspace number""")
         exit(1)
 

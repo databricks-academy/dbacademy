@@ -722,20 +722,20 @@ class WorkspaceSetup:
         import requests, json, os
 
         config_text = requests.get("https://raw.githubusercontent.com/databricks-academy/workspace-setup/main/universal-workspace-setup-job-config.json").text
-        config_text = config_text.replace("{{ODL-ID}}", str(trio.number))
-        config_text = config_text.replace("{{ODL-TITLE}}", trio.name)
-        config_text = config_text.replace("{{ODL-TENANT}}", "AirTable")
+        config_text = config_text.replace("{{event_id}}", f"{trio.number:03d}")
+        config_text = config_text.replace("{{event_description}}", trio.name)
+        config_text = config_text.replace("{{deployment_context}}", f"Learning Platforms Workspace {trio.number:03d}")
 
-        config_text = config_text.replace("{{poolWorkerSize}}", "i3.xlarge")
-        config_text = config_text.replace("{{runtimeVersion}}", "11.3.x-cpu-ml-scala2.12")
+        config_text = config_text.replace("{{pools_node_type_id}}", "i3.xlarge")
+        config_text = config_text.replace("{{default_spark_version}}", "11.3.x-cpu-ml-scala2.12")
 
         config_text = config_text.replace("aws:node_type_id", "node_type_id")
         config_text = config_text.replace("aws:aws_attributes", "aws_attributes")
 
         install_all = True
         if install_all:
-            config_text = config_text.replace("{{courses}}", f"None")
-            config_text = config_text.replace("{{datasets}}", f"None")
+            config_text = config_text.replace("{{courses}}", str(None))
+            config_text = config_text.replace("{{datasets}}", str(None))
         else:
             token = os.environ.get("CDS_DOWNLOAD_TOKEN")
             config_text = config_text.replace("{{courses}}", f"course=example-course&version=v1.3.2&token={token}")

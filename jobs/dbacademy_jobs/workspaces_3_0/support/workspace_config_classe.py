@@ -33,7 +33,7 @@ class WorkspaceConfig:
         self.__max_participants = common.verify_type(int, min_value=0, max_participants=max_participants)
 
         assert workspace_number is None or type(workspace_number) == int, f"""The parameter "workspace_number" must be None or an integral value, found {type(workspace_number)}."""
-        assert workspace_number is None or workspace_number > 0, f"""The parameter "workspace_number" must be None or greater than zero, found "{workspace_number}"."""
+        assert workspace_number is None or workspace_number >= 0, f"""The parameter "workspace_number" must be None or greater than zero, found "{workspace_number}"."""
 
         assert type(default_node_type_id) == str, f"""The parameter "default_node_type_id" must be a string value, found {type(default_node_type_id)}."""
         assert len(default_node_type_id) > 3, f"""Invalid node type, found "{default_node_type_id}"."""
