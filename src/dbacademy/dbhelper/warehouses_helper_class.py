@@ -100,7 +100,7 @@ class WarehousesHelper:
                              org_id: str = None, for_user: Union[str, None] = None):
         from dbacademy import dbgems
         from dbacademy import common
-        from dbacademy.rest.common import DatabricksApiException
+        from dbacademy.clients.rest.common import DatabricksApiException
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
         from dbacademy.dbrest.sql.endpoints import RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT, CLUSTER_SIZE_2X_SMALL

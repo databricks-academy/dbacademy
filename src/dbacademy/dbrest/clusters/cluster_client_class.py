@@ -1,5 +1,5 @@
 from typing import Optional, Dict, Any, List
-from dbacademy.rest.common import ApiContainer
+from dbacademy.clients.rest.common import ApiContainer
 
 
 class ClustersClient(ApiContainer):
@@ -87,7 +87,7 @@ class ClustersClient(ApiContainer):
 
     def terminate_by_name(self, cluster_name) -> None:
         from dbacademy import common
-        from dbacademy.rest.common import DatabricksApiException
+        from dbacademy.clients.rest.common import DatabricksApiException
 
         cluster_name = common.validate_type(cluster_name, "cluster_name", str)
         cluster = self.get_by_name(cluster_name)

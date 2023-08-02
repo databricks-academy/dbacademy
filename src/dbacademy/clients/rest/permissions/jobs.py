@@ -1,10 +1,10 @@
-from dbacademy.rest.common import ApiClient
-from dbacademy.rest.permissions.crud import PermissionsCrud
+from dbacademy.clients.rest.common import ApiClient
+from dbacademy.clients.rest.permissions.crud import PermissionsCrud
 
 __all__ = ["Jobs"]
 
 # noinspection PyProtectedMember
-from dbacademy.rest.permissions.crud import What
+from dbacademy.clients.rest.permissions.crud import What
 
 
 class Jobs(PermissionsCrud):

@@ -137,7 +137,7 @@ class BuildConfig:
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.dbhelper.course_config_class import CourseConfig
         from dbacademy import dbgems
-        from dbacademy.rest.factory import dbrest_factory
+        from dbacademy.clients.rest.factory import dbrest_factory
 
         self.__validated = False
         self.__created_notebooks = False

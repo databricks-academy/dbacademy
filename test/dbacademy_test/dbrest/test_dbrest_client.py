@@ -7,7 +7,7 @@
 
 import unittest
 
-from dbacademy.rest.factory import dbrest_factory
+from dbacademy.clients.rest.factory import dbrest_factory
 
 
 class TestDBAcademyRestClient(unittest.TestCase):

@@ -1,7 +1,7 @@
 from typing import Dict, Any
 
 from dbacademy.dbrest.cluster_policies import ClustersPolicyClient
-from dbacademy.rest.common import ApiContainer, IfExists, DatabricksApiException
+from dbacademy.clients.rest.common import ApiContainer, IfExists, DatabricksApiException
 
 
 class Clusters(ApiContainer):

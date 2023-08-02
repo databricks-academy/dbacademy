@@ -1,4 +1,4 @@
-from dbacademy.rest.common import DatabricksApiException, ApiContainer
+from dbacademy.clients.rest.common import DatabricksApiException, ApiContainer
 
 
 class Repos(ApiContainer):

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dbacademy.rest.common import *
+from dbacademy.clients.rest.common import *
 
 __all__ = ["DatabricksApi", "DatabricksApiException"]
 
@@ -76,5 +76,5 @@ class DatabricksApi(dict, ApiClient):
         from dbacademy.clients.dougrest.workspace import Workspace
         self.workspace = Workspace(self)
 
-        from dbacademy.rest.permissions import Permissions
+        from dbacademy.clients.rest.permissions import Permissions
         self.permissions = Permissions(self)

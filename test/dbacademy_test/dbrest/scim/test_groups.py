@@ -79,7 +79,7 @@ class TestGroups(unittest.TestCase):
         self.assertIsNone(group)
 
     def test_create(self):
-        from dbacademy.rest.common import DatabricksApiException
+        from dbacademy.clients.rest.common import DatabricksApiException
 
         name = "dummies"
         if self.client.scim.groups.get_by_name(name) is not None:

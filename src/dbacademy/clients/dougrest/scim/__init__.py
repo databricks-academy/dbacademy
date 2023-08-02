@@ -1,6 +1,6 @@
 from dbacademy.clients.dougrest.scim.groups import Groups
 from dbacademy.clients.dougrest.scim.users import Users
-from dbacademy.rest.common import ApiContainer
+from dbacademy.clients.rest.common import ApiContainer
 
 
 class SCIM(ApiContainer):

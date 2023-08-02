@@ -5,7 +5,7 @@ try:
 except ImportError:
     from typing_extensions import Literal
 
-from dbacademy.rest.common import *
+from dbacademy.clients.rest.common import *
 
 
 __all__ = ["PermissionsCrud"]

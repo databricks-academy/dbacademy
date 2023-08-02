@@ -329,7 +329,7 @@ class WorkspaceCleaner:
 
     def _cleanup_mlflow_endpoints(self, lesson_only: bool) -> bool:
         from dbacademy import dbgems, common
-        from dbacademy.rest.common import DatabricksApiException
+        from dbacademy.clients.rest.common import DatabricksApiException
 
         start = dbgems.clock_start()
         endpoints = list()

@@ -2,7 +2,7 @@ from typing import Dict, Any, List, Callable, cast, Optional
 
 from dbacademy.clients.dougrest import DatabricksApi
 from dbacademy.clients.dougrest.accounts.workspaces import Workspace
-from dbacademy.rest.common import DatabricksApiException
+from dbacademy.clients.rest.common import DatabricksApiException
 
 __all__ = ["Commands", "scan_workspaces", "find_workspace"]
 

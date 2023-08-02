@@ -1,6 +1,6 @@
 from typing import List, Dict, Any, Optional
 from dbacademy.dbrest import DBAcademyRestClient
-from dbacademy.rest.common import ApiContainer
+from dbacademy.clients.rest.common import ApiContainer
 
 
 class ScimGroupsClient(ApiContainer):

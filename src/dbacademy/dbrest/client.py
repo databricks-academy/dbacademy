@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dbacademy.rest.common import ApiClient
+from dbacademy.clients.rest.common import ApiClient
 
 
 class DBAcademyRestClient(ApiClient):
@@ -75,7 +75,7 @@ class DBAcademyRestClient(ApiClient):
         from dbacademy.dbrest.ml import MlClient
         self.ml = MlClient(self)
 
-        from dbacademy.rest.permissions import Permissions
+        from dbacademy.clients.rest.permissions import Permissions
         self.permissions = Permissions(self)
 
         from dbacademy.dbrest.pipelines import PipelinesClient

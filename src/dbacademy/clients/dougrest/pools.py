@@ -1,8 +1,8 @@
 from typing import Dict, List
 
 from dbacademy.clients.dougrest import DatabricksApi
-from dbacademy.rest.common import HttpStatusCodes, Item, ItemId
-from dbacademy.rest.crud import CRUD
+from dbacademy.clients.rest.common import HttpStatusCodes, Item, ItemId
+from dbacademy.clients.rest.crud import CRUD
 
 
 class Pools(CRUD):

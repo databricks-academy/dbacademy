@@ -28,7 +28,7 @@ class TestUsers(unittest.TestCase):
         return self.__client
 
     def test_lifecycles(self):
-        from dbacademy.rest.common import DatabricksApiException
+        from dbacademy.clients.rest.common import DatabricksApiException
 
         mickey = "mickey.mouse@disney.com"
         user = self.client.scim.users.get_by_username(mickey)

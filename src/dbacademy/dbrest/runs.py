@@ -2,7 +2,7 @@ from typing import Any, Dict, Union, List
 from dbacademy.dbrest import DBAcademyRestClient
 import builtins
 
-from dbacademy.rest.common import ApiContainer
+from dbacademy.clients.rest.common import ApiContainer
 
 
 class RunsClient(ApiContainer):

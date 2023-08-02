@@ -5,7 +5,7 @@ class TestUsers(unittest.TestCase):
 
     def test_login_failure(self):
         from dbacademy.clients.docebo import DoceboRestClient
-        from dbacademy.rest.common import DatabricksApiException
+        from dbacademy.clients.rest.common import DatabricksApiException
 
         client = DoceboRestClient.from_environ()
 

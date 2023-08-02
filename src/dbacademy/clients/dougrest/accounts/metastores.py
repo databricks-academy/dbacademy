@@ -1,7 +1,7 @@
 from typing import List
 
 from dbacademy.clients.dougrest.accounts.crud import AccountsCRUD
-from dbacademy.rest.common import HttpStatusCodes, Item
+from dbacademy.clients.rest.common import HttpStatusCodes, Item
 
 
 class Metastores(AccountsCRUD):

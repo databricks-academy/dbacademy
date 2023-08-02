@@ -4,7 +4,7 @@ import time
 from dbacademy.common import overrides
 from dbacademy.clients.dougrest.accounts.crud import AccountsCRUD, IfNotExists, IfExists
 from dbacademy.clients.dougrest.client import DatabricksApi, DatabricksApiException
-from dbacademy.rest.common import HttpMethod, HttpReturnType, HttpStatusCodes
+from dbacademy.clients.rest.common import HttpMethod, HttpReturnType, HttpStatusCodes
 
 
 class Workspace(DatabricksApi):

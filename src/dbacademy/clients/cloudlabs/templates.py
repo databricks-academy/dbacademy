@@ -1,7 +1,7 @@
 from typing import List, Dict, Any, Union
 
 from dbacademy.clients.cloudlabs import Tenant
-from dbacademy.rest.common import ApiContainer, DatabricksApiException
+from dbacademy.clients.rest.common import ApiContainer, DatabricksApiException
 
 Template = Dict[str, Any]
 

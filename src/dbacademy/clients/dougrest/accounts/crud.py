@@ -1,8 +1,8 @@
 from typing import Union, List
 
 from dbacademy.common import overrides
-from dbacademy.rest.common import *
-from dbacademy.rest.crud import CRUD
+from dbacademy.clients.rest.common import *
+from dbacademy.clients.rest.crud import CRUD
 
 
 class AccountsCRUD(CRUD):

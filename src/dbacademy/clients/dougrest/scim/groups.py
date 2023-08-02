@@ -1,4 +1,4 @@
-from dbacademy.rest.common import ApiContainer
+from dbacademy.clients.rest.common import ApiContainer
 
 
 class Groups(ApiContainer):

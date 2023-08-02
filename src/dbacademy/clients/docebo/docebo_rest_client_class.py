@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dbacademy.rest.common import ApiClient
+from dbacademy.clients.rest.common import ApiClient
 
 
 class DoceboRestClient(ApiClient):

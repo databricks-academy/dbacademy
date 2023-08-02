@@ -1,5 +1,5 @@
 from typing import List
-from dbacademy.rest.common import ApiClient
+from dbacademy.clients.rest.common import ApiClient
 
 __all__ = ["GitHubClient"]
 

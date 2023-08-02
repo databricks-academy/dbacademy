@@ -1,7 +1,7 @@
 from typing import Dict, Any
 from dbacademy import common
 from dbacademy.dbrest import DBAcademyRestClient
-from dbacademy.rest.common import ApiContainer
+from dbacademy.clients.rest.common import ApiContainer
 
 
 class JobsClient(ApiContainer):

@@ -572,7 +572,7 @@ class TestClusters(unittest.TestCase):
         self.assertEquals("true", cluster.get("custom_tags").get("dbacademy.smoke_tests"))
 
     def test_no_cluster(self):
-        from dbacademy.rest.common import DatabricksApiException
+        from dbacademy.clients.rest.common import DatabricksApiException
 
         self.assertIsNone(self.client.clusters.get_by_id("0000000000"))
         self.assertIsNone(self.client.clusters.get_by_name("John Doe"))

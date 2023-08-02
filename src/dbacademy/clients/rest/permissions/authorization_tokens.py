@@ -1,6 +1,6 @@
-from dbacademy.rest.common import ApiClient, ApiContainer
+from dbacademy.clients.rest.common import ApiClient, ApiContainer
 
-# from dbacademy.rest.permissions.crud import What, PermissionLevel
+# from dbacademy.clients.rest.permissions.crud import What, PermissionLevel
 
 __all__ = ["Tokens"]
 

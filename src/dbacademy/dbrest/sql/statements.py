@@ -1,6 +1,6 @@
 from typing import Literal, Dict, Any, get_args
 from dbacademy.dbrest import DBAcademyRestClient
-from dbacademy.rest.common import ApiContainer
+from dbacademy.clients.rest.common import ApiContainer
 
 DISPOSITION_TYPE = Literal["INLINE", "EXTERNAL_LINKS"]
 FORMAT_TYPE = Literal["JSON_ARRAY", "ARROW_STREAM"]

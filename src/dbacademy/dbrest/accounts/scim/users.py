@@ -1,5 +1,5 @@
 from typing import Dict, Any, Union, List, Optional
-from dbacademy.rest.common import ApiContainer
+from dbacademy.clients.rest.common import ApiContainer
 
 
 class AccountScimUsersClient(ApiContainer):

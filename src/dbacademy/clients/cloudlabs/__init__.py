@@ -3,7 +3,7 @@ from __future__ import annotations
 from functools import cached_property
 from typing import Dict
 
-from dbacademy.rest.common import ApiClient
+from dbacademy.clients.rest.common import ApiClient
 
 __all__ = ["CloudlabsApi", "Tenant"]
 

@@ -1,5 +1,5 @@
 from typing import Optional
-from dbacademy.rest.common import ApiContainer, ApiClient
+from dbacademy.clients.rest.common import ApiContainer, ApiClient
 
 
 class ClustersPolicyClient(ApiContainer):

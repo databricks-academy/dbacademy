@@ -8,8 +8,8 @@
 import unittest
 import pytest
 
-from dbacademy.rest.common import ApiClient, DatabricksApiException
-from dbacademy.rest.factory import dougrest_factory
+from dbacademy.clients.rest.common import ApiClient, DatabricksApiException
+from dbacademy.clients.rest.factory import dougrest_factory
 
 
 class TestApiClient(unittest.TestCase):

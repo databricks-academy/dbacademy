@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from dbacademy.rest.common import ApiContainer, DatabricksApiException, IfExists
+from dbacademy.clients.rest.common import ApiContainer, DatabricksApiException, IfExists
 
 
 class Users(ApiContainer):

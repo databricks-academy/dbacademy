@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
 
-from dbacademy.rest.common import *
+from dbacademy.clients.rest.common import *
 
 __all__ = ["CRUD"]
 

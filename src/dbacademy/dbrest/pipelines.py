@@ -2,7 +2,7 @@ from dbacademy.dbrest import DBAcademyRestClient
 import builtins
 from typing import Union
 
-from dbacademy.rest.common import ApiContainer
+from dbacademy.clients.rest.common import ApiContainer
 
 
 class PipelinesClient(ApiContainer):

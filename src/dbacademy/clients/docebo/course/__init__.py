@@ -1,5 +1,5 @@
 from dbacademy.clients.docebo import DoceboRestClient
-from dbacademy.rest.common import ApiContainer
+from dbacademy.clients.rest.common import ApiContainer
 
 
 class CourseClient(ApiContainer):

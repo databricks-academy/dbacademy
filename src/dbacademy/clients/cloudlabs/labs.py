@@ -3,7 +3,7 @@ from typing import List, Dict, Any, Union, Iterable
 from dbacademy.clients.cloudlabs import Tenant
 from dbacademy.clients.dougrest import DatabricksApi
 from dbacademy.clients.dougrest.workspace import Workspace
-from dbacademy.rest.common import ApiContainer, DatabricksApiException
+from dbacademy.clients.rest.common import ApiContainer, DatabricksApiException
 
 Lab = Dict[str, Any]
 

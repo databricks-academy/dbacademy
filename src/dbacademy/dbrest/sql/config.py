@@ -1,5 +1,5 @@
 from dbacademy.dbrest import DBAcademyRestClient
-from dbacademy.rest.common import ApiContainer
+from dbacademy.clients.rest.common import ApiContainer
 
 DATA_ACCESS_CONTROL = "DATA_ACCESS_CONTROL"
 SECURITY_POLICIES = [DATA_ACCESS_CONTROL]
