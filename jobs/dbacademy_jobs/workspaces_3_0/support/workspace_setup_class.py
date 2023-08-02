@@ -9,7 +9,7 @@ from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import Worksp
 class WorkspaceTrio:
     from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
     from dbacademy.dougrest.accounts.workspaces import Workspace as WorkspaceAPI
-    from dbacademy.classrooms.classroom import Classroom
+    from dbacademy.clients.classrooms.classroom import Classroom
 
     def __init__(self, workspace_config: WorkspaceConfig, workspace_api: WorkspaceAPI, classroom: Optional[Classroom]):
         from dbacademy.dbrest import DBAcademyRestClient
@@ -402,7 +402,7 @@ class WorkspaceSetup:
                 print("-"*100)
 
     def __create_workspace(self, workspace_config: WorkspaceConfig):
-        from dbacademy.classrooms.classroom import Classroom
+        from dbacademy.clients.classrooms.classroom import Classroom
 
         workspace_api = self.accounts_api.workspaces.get_by_name(workspace_config.name, if_not_exists="ignore")
         if workspace_api is None:
