@@ -60,12 +60,12 @@ def create_job(_cloud: Cloud, _event_id: int, _workspace_name: str, _context: st
     elif _cloud == Cloud.MSA:
         # Enable MSA parameters
         config_text = config_text.replace("msa:node_type_id", "node_type_id")
-        config_text = config_text.replace("msa:aws_attributes", "aws_attributes")
+        config_text = config_text.replace("msa:aws_attributes", "msa_attributes")
 
     elif _cloud == Cloud.GCP:
         # Enable GCP parameters
         config_text = config_text.replace("gcp:node_type_id", "node_type_id")
-        config_text = config_text.replace("gcp:aws_attributes", "aws_attributes")
+        config_text = config_text.replace("gcp:aws_attributes", "gcp_attributes")
 
     config = json.loads(config_text)
 
@@ -85,7 +85,7 @@ assert len(client.workspace.ls("/")) > 0, f"Expected at least one file."  # Test
 
 job_name = WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME                       # The job's name allowing for configuration by convention
 client.jobs.delete_by_name(job_name, False)                               # Hard coded into the corresponding JSON file.)
-job_id = create_job(Cloud.AWS, event_id, workspace_name, "Demo")              # Create the job using the DBRest client
+job_id = create_job(Cloud.AWS, event_id, workspace_name, "Demo")          # Create the job using the DBRest client
 run_id = client.jobs.run_now(job_id).get("run_id")                        # Run the job using the DBRest client
 response = client.runs.wait_for(run_id)                                   # Blocks until the job has completed
 
