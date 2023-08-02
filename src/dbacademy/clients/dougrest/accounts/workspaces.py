@@ -71,7 +71,7 @@ class Workspaces(AccountsCRUD):
 
     # noinspection PyUnresolvedReferences
     def __init__(self, client: "AccountsApi"):
-        from dbacademy.dougrest.accounts import AccountsApi
+        from dbacademy.clients.dougrest.accounts import AccountsApi
         super().__init__(client, "/workspaces", "workspace")
 
         # noinspection PyTypeChecker

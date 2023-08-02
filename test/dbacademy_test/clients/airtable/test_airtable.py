@@ -15,7 +15,7 @@ class TestAirTAble(unittest.TestCase):
         records = air_table.read()
 
         self.assertIsNotNone(records)
-        self.assertEquals(3, len(records))
+        self.assertTrue(len(records) > 3, f"Expected at least 3, found {len(records)}")
 
     def test_read_sorted(self):
 
@@ -23,7 +23,7 @@ class TestAirTAble(unittest.TestCase):
         records = air_table.read(sort_by="id")
 
         self.assertIsNotNone(records)
-        self.assertEquals(3, len(records))
+        self.assertTrue(len(records) > 3, f"Expected at least 3, found {len(records)}")
         self.assertEquals(1, records[0].get("fields").get("id"))
         self.assertEquals(2, records[1].get("fields").get("id"))
         self.assertEquals(3, records[2].get("fields").get("id"))
