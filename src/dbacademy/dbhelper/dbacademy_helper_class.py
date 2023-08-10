@@ -527,6 +527,7 @@ class DBAcademyHelper:
             print("-?-")
             # The last step is to make sure the datasets are still intact and repair if necessary
             DatasetManager.from_dbacademy_helper(self).validate_datasets(fail_fast=True)
+        print("--?--")
 
     def reset_learning_environment(self) -> None:
         """
