@@ -79,12 +79,9 @@ class WorkspaceCleaner:
         from dbacademy import dbgems
         from dbacademy.dbhelper.paths_class import Paths
 
-        # noinspection PyProtectedMember
-        working_dir_root = self.__da.paths._working_dir_root
-
-        if Paths.exists(working_dir_root):
-            print(f"| deleting working directory \"{working_dir_root}\".")
-            dbgems.dbutils.fs.rm(working_dir_root, True)
+        if Paths.exists(self.__da.working_dir_root):
+            print(f"| deleting working directory \"{self.__da.paths.working_dir_root}\".")
+            dbgems.dbutils.fs.rm(self.__da.paths.working_dir_root, True)
 
     def _reset_datasets(self) -> None:
         from dbacademy import dbgems
