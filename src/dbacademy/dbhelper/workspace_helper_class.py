@@ -118,7 +118,6 @@ class WorkspaceHelper:
             # We may have to install more than one version due to the
             # fact that we often teach the latest and latest-1 for a season.
             versions = list()
-            data_source_as_archive = False
 
             if dataset_version is not None:
                 # We were told which one to use.
