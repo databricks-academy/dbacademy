@@ -12,8 +12,7 @@ class CourseConfig:
                  install_max_time: str,
                  remote_files: List[str],
                  supported_dbrs: List[str],
-                 expected_dbrs: str,
-                 convert_to_vm_path: bool = False):
+                 expected_dbrs: str):
         """
         The CourseConfig encapsulates those parameters that should never change for the entire duration of a course
         compared to the LessonConfig which encapsulates parameters that may change from lesson to lesson
@@ -26,11 +25,9 @@ class CourseConfig:
         :param remote_files: See the property by the same name
         :param supported_dbrs: See the property by the same name
         :param expected_dbrs: See the property by the same name
-        :param convert_to_vm_path: See the property by the same name
         """
         self.__course_code = course_code
         self.__build_name = CourseConfig.to_build_name(course_name)
-        self.__convert_to_vm_path = convert_to_vm_path
 
         self.__course_name = course_name
         self.__data_source_version = data_source_version
@@ -50,10 +47,6 @@ class CourseConfig:
             assert len(supported_dbrs) == len(expected_dbrs), f"The supported and expected list of DBRs does not match: {len(supported_dbrs)} (supported) vs {len(expected_dbrs)} (expected)"
             for dbr in supported_dbrs:
                 assert dbr in expected_dbrs, f"The supported DBR \"{dbr}\" was not find in the list of expected dbrs: {expected_dbrs}"
-
-    @property
-    def convert_to_vm_path(self) -> bool:
-        return self.__convert_to_vm_path
 
     @property
     def course_code(self) -> str:
