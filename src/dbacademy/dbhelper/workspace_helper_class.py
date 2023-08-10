@@ -151,8 +151,6 @@ class WorkspaceHelper:
                     # TODO test if archives-only
                     # datasets_as_archive = True
 
-                datasets_path = f"dbfs:/mnt/dbacademy-datasets/{data_source_name}/{data_source_version}"
-
                 ######################################################################
                 if data_source_as_archive:
                     datasets_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{data_source_name}/{data_source_version}"

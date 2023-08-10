@@ -6,9 +6,7 @@ class CourseConfig:
     def __init__(self, *,
                  course_code: str,
                  course_name: str,
-                 data_source_name: str,
                  data_source_version: str,
-                 data_source_as_archive: bool,
                  install_min_time: str,
                  install_max_time: str,
                  remote_files: List[str],
@@ -19,9 +17,7 @@ class CourseConfig:
         compared to the LessonConfig which encapsulates parameters that may change from lesson to lesson
         :param course_code: See the property by the same name
         :param course_name: See the property by the same name
-        :param data_source_name: See the property by the same name
         :param data_source_version: See the property by the same name
-        :param data_source_as_archive: See the property by the same name
         :param install_min_time: See the property by the same name
         :param install_max_time: See the property by the same name
         :param remote_files: See the property by the same name
@@ -29,13 +25,10 @@ class CourseConfig:
         :param expected_dbrs: See the property by the same name
         """
         self.__course_code = course_code
-
-        self.__course_name = course_name
         self.__build_name = CourseConfig.to_build_name(course_name)
 
-        self.__data_source_name = data_source_name
+        self.__course_name = course_name
         self.__data_source_version = data_source_version
-        self.__data_source_as_archive = data_source_as_archive
 
         self.__install_min_time = install_min_time
         self.__install_max_time = install_max_time
@@ -93,10 +86,10 @@ class CourseConfig:
     @property
     def data_source_name(self) -> str:
         """
-        This should be the same as the build_name with support for it deviating as necessary
+        This value is assumed to be the same as the build_name.
         :return: the name of the dataset in the data repository.
         """
-        return self.__data_source_name
+        return self.__build_name
 
     @property
     def data_source_version(self) -> str:
@@ -104,13 +97,6 @@ class CourseConfig:
         :return: the two-digit version number of a dataset prefixed by the letter "v" as in "v01" or "v02" (not to be confused with the version of a course)
         """
         return self.__data_source_version
-
-    @property
-    def data_source_as_archive(self) -> bool:
-        """
-        :return: True if datasets are packaged as an archive file (zip file) or false if not.
-        """
-        return self.__data_source_as_archive
 
     @property
     def install_min_time(self) -> str:
