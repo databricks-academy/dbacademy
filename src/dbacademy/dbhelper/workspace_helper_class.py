@@ -169,7 +169,6 @@ class WorkspaceHelper:
                                                  _staging_source_uri=None,
                                                  _datasets_path=datasets_path,
                                                  _archives_path=archives_path,
-                                                 _data_source_as_archive=data_source_as_archive,
                                                  _install_min_time=None,
                                                  _install_max_time=None,
                                                  _remote_files=remote_files)

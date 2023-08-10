@@ -35,11 +35,20 @@ class DatasetManager:
         self.__repaired_paths = []
         self.__data_source_uri = _data_source_uri
         self.__staging_source_uri = _staging_source_uri
-        self.__datasets_path = _datasets_path
-        self.__archives_path = _archives_path
         self.__remote_files = _remote_files
         self.__install_min_time = _install_min_time
         self.__install_max_time = _install_max_time
+
+        if _archives_path is None and _datasets_path is None:
+            raise ValueError(f"""One of the two parameters, "_archives_path" or "_datasets_path" must be specified.""")
+        elif _archives_path is None:
+            self.__install_path = _datasets_path
+        else:
+            self.__install_path = _archives_path
+
+    @property
+    def install_path(self) -> str:
+        return self.__install_path
 
     @property
     def install_min_time(self) -> Optional[str]:
@@ -52,14 +61,6 @@ class DatasetManager:
     @property
     def remote_files(self) -> List[str]:
         return self.__remote_files
-
-    @property
-    def datasets_path(self) -> str:
-        return self.__datasets_path
-
-    @property
-    def archives_path(self) -> str:
-        return self.__archives_path
 
     @property
     def data_source_uri(self) -> str:
@@ -84,26 +85,25 @@ class DatasetManager:
         This ensures that data and compute are in the same region which subsequently mitigates performance issues
         when the storage and compute are, for example, on opposite sides of the world.
         """
-
         from dbacademy import dbgems
         from dbacademy.dbhelper.paths_class import Paths
         # if not repairing_dataset: print(f"\nThe source for the datasets is\n{self.data_source_uri}/")
         # if not repairing_dataset: print(f"\nYour local dataset directory is {datasets_path}")
 
-        if Paths.exists(self.datasets_path):
+        if Paths.exists(self.install_path):
             # It's already installed...
             if reinstall_datasets:
                 print(f"\nRemoving previously installed datasets")
-                dbgems.dbutils.fs.rm(self.datasets_path, True)
+                dbgems.dbutils.fs.rm(self.install_path, True)
 
             else:  # not reinstall_datasets:
-                print(f"\nSkipping install of existing datasets to \"{self.datasets_path}\"")
+                print(f"\nSkipping install of existing datasets to \"{self.install_path}\"")
                 self.validate_datasets(fail_fast=False)
                 return
 
         print(f"\nInstalling datasets:")
         print(f"| from \"{self.data_source_uri}\"")
-        print(f"| to \"{self.datasets_path}\"")
+        print(f"| to   \"{self.install_path}\"")
         if self.install_min_time is not None and self.install_max_time is not None:
             print(f"|")
             print(f"| NOTE: The datasets that we are installing are located in Washington, USA - depending on the")
@@ -125,7 +125,7 @@ class DatasetManager:
             print(f"| copying {i + 1}/{total}: {name}", end="...")
 
             source_path = f"{self.data_source_uri}/{name}"
-            target_path = f"{self.datasets_path}/{name}"
+            target_path = f"{self.install_path}/{name}"
 
             dbgems.dbutils.fs.cp(source_path, target_path, True)
             print(dbgems.clock_stopped(start))
@@ -173,17 +173,12 @@ class DatasetManager:
         print("| listing local files", end="...")
         start = dbgems.clock_start()
 
-        if self.archives_path is None:
-            local_files = DatasetManager.list_r(self.datasets_path)
-            print(dbgems.clock_stopped(start))
-        else:
-            local_files = DatasetManager.list_r(self.archives_path)
-            print(dbgems.clock_stopped(start))
+        local_files = DatasetManager.list_r(self.install_path)
+        print(dbgems.clock_stopped(start))
 
         print(f"\n| " + ("*"*80))
-        print(f"| archives_path: {self.archives_path}")
-        print(f"| datasets_path: {self.datasets_path}")
-        print(f"| local_files:   {local_files}")
+        print(f"| install_path: {self.install_path}")
+        print(f"| local_files:  {local_files}")
         print(f"| " + ("*"*80) + "\n")
         print()
 
@@ -214,7 +209,7 @@ class DatasetManager:
                 start = dbgems.clock_start()
                 self.repaired_paths.append(file)
                 print(f"| removing extra path: {file}", end="...")
-                dbgems.dbutils.fs.rm(f"{self.datasets_path}/{file[1:]}", True)
+                dbgems.dbutils.fs.rm(f"{self.install_path}/{file[1:]}", True)
                 print(dbgems.clock_stopped(start))
 
     def __add_extra_paths(self, local_files: List[str]) -> None:
@@ -231,7 +226,7 @@ class DatasetManager:
                 self.repaired_paths.append(file)
                 print(f"| restoring missing path: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
-                target_file = f"{self.datasets_path}/{file[1:]}"
+                target_file = f"{self.install_path}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
                 print(dbgems.clock_stopped(start))
 
@@ -247,7 +242,7 @@ class DatasetManager:
                 self.__fixes += 1
                 start = dbgems.clock_start()
                 print(f"| removing extra file: {file}", end="...")
-                dbgems.dbutils.fs.rm(f"{self.datasets_path}/{file[1:]}", True)
+                dbgems.dbutils.fs.rm(f"{self.install_path}/{file[1:]}", True)
                 print(dbgems.clock_stopped(start))
 
     def __add_extra_files(self, local_files: List[str]) -> None:
@@ -263,7 +258,7 @@ class DatasetManager:
                 start = dbgems.clock_start()
                 print(f"| restoring missing file: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
-                target_file = f"{self.datasets_path}/{file[1:]}"
+                target_file = f"{self.install_path}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
                 print(dbgems.clock_stopped(start))
 

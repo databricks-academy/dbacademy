@@ -459,12 +459,13 @@ class DBAcademyHelper:
         after instantiation but before initialization.
         :return: None
         """
+        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
 
         if self.lesson_config.create_catalog:
             assert not self.lesson_config.create_schema, f"Creation of the schema (LessonConfig.create_schema=True) is not supported while creating the catalog (LessonConfig.create_catalog=True)"
 
         if self.lesson_config.installing_datasets:
-            self.install_datasets()
+            DatasetManager.from_dbacademy_helper(self).install_dataset(reinstall_datasets=False)
 
         if self.lesson_config.create_catalog:
             self.__create_catalog()  # Create the UC catalog
@@ -617,11 +618,6 @@ class DBAcademyHelper:
         self.paths.print(self_name="DA.")
 
         print(f"\nSetup completed {dbgems.clock_stopped(self.__start)}")
-
-    def install_datasets(self, reinstall_datasets: bool = False) -> None:
-        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
-
-        DatasetManager.from_dbacademy_helper(self).install_dataset(reinstall_datasets=reinstall_datasets)
 
     def print_copyrights(self, mappings: Optional[Dict[str, str]] = None) -> None:
         """
