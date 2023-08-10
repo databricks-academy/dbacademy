@@ -8,7 +8,7 @@ class MyTestCase(unittest.TestCase):
         try:
             CourseConfig(course_code="test",
                          course_name="Some Unit Test",
-                         data_source_name="some-unit-test",
+                         # data_source_name="some-unit-test",
                          data_source_version="v03",
                          data_source_as_archive=False,
                          install_min_time="5 min",
@@ -25,7 +25,7 @@ class MyTestCase(unittest.TestCase):
         try:
             CourseConfig(course_code="test",
                          course_name="Some Unit Test",
-                         data_source_name="some-unit-test",
+                         # data_source_name="some-unit-test",
                          data_source_version="v03",
                          data_source_as_archive=False,
                          install_min_time="5 min",
@@ -42,7 +42,7 @@ class MyTestCase(unittest.TestCase):
         try:
             CourseConfig(course_code="test",
                          course_name="Some Unit Test",
-                         data_source_name="some-unit-test",
+                         # data_source_name="some-unit-test",
                          data_source_version="v03",
                          data_source_as_archive=False,
                          install_min_time="5 min",
@@ -58,7 +58,7 @@ class MyTestCase(unittest.TestCase):
     def test_course_config_no_expected_dbrs(self):
         config = CourseConfig(course_code="test",
                               course_name="Some Unit Test",
-                              data_source_name="some-unit-test",
+                              # data_source_name="some-unit-test",
                               data_source_version="v03",
                               data_source_as_archive=False,
                               install_min_time="5 min",
@@ -81,7 +81,7 @@ class MyTestCase(unittest.TestCase):
     def test_course_config_supported_dbrs(self):
         config = CourseConfig(course_code="test",
                               course_name="Some Unit Test",
-                              data_source_name="some-unit-test",
+                              # data_source_name="some-unit-test",
                               data_source_version="v03",
                               data_source_as_archive=False,
                               install_min_time="5 min",
