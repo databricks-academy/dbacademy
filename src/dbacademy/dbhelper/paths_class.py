@@ -16,12 +16,16 @@ class Paths:
             self.user_db = f"{self.working_dir}/database.db"
 
         self.datasets = _datasets
-        self.archives = _archives
+        self.__archives = _archives
 
         # When working with streams, it helps to put all checkpoints in their
         # own directory relative the previously defined working_dir
         if _lesson_config.enable_streaming_support:
             self.checkpoints = f"{self.working_dir}/_checkpoints"
+
+    @property
+    def archives(self) -> str:
+        return self.__archives
 
     @classmethod
     def to_vm_path(cls, _path: str) -> str:
