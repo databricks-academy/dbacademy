@@ -52,7 +52,7 @@ class Paths:
 
     @classmethod
     def to_vm_path(cls, _path: str) -> str:
-        return _path.replace("dbfs:/", "/dbfs/")
+        return None if _path is None else _path.replace("dbfs:/", "/dbfs/")
 
     @classmethod
     def exists(cls, path: str) -> bool:
