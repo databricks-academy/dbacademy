@@ -39,7 +39,7 @@ class Paths:
 
     @working_dir_root.setter
     def working_dir_root(self, value: str) -> None:
-        self.working_dir_root = value
+        self.__working_dir_root = value
 
     @property
     def working_dir(self) -> str:
@@ -47,7 +47,7 @@ class Paths:
 
     @working_dir.setter
     def working_dir(self, value: str) -> None:
-        self.working_dir = value
+        self.__working_dir = value
 
     @property
     def datasets(self) -> str:
@@ -55,7 +55,7 @@ class Paths:
 
     @datasets.setter
     def datasets(self, value: str) -> None:
-        self.datasets = value
+        self.__datasets = value
 
     @property
     def archives(self) -> str:
@@ -63,7 +63,7 @@ class Paths:
 
     @archives.setter
     def archives(self, value: str) -> None:
-        self.archives = value
+        self.__archives = value
 
     @classmethod
     def to_vm_path(cls, _path: str) -> str:
