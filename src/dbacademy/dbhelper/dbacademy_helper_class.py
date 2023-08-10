@@ -20,7 +20,7 @@ class DBAcademyHelper:
     CATALOG_SPARK_DEFAULT = "spark_catalog"
     CATALOG_UC_DEFAULT = "hive_metastore"
 
-    TROUBLESHOOT_ERROR_TEMPLATE = "{error} Please see the \"Troubleshooting | {section}\" section of the \"Version Info\" notebook for more information."
+    TROUBLESHOOT_ERROR_TEMPLATE = """{error} Please see the "Troubleshooting | {section}" section of the "Version Info" notebook for more information."""
 
     def __init__(self,
                  course_config: CourseConfig,
@@ -477,7 +477,7 @@ class DBAcademyHelper:
         from dbacademy import dbgems
         try:
             start = dbgems.clock_start()
-            print(f"Creating & using the catalog \"{self.catalog_name}\"", end="...")
+            print(f"""Creating & using the catalog "{self.catalog_name}"...""", end="")
             dbgems.sql(f"CREATE CATALOG IF NOT EXISTS {self.catalog_name}")
             dbgems.sql(f"USE CATALOG {self.catalog_name}")
 
@@ -487,7 +487,7 @@ class DBAcademyHelper:
             print(dbgems.clock_stopped(start))
 
         except Exception as e:
-            raise AssertionError(self.__troubleshoot_error(f"Failed to create the catalog \"{self.catalog_name}\".", "Cannot Create Catalog")) from e
+            raise AssertionError(self.__troubleshoot_error(f"""Failed to create the catalog "{self.catalog_name}".""", "Cannot Create Catalog")) from e
 
     def __create_schema(self) -> None:
         from dbacademy import dbgems
@@ -495,14 +495,14 @@ class DBAcademyHelper:
         start = dbgems.clock_start()
         try:
 
-            print(f"\nCreating & using the schema \"{self.schema_name}\" in the catalog \"{self.catalog_name}\"", end="...")
+            print(f"""\nCreating & using the schema "{self.schema_name}" in the catalog "{self.catalog_name}"...""", end="")
             dbgems.sql(f"USE CATALOG {self.catalog_name}")
             dbgems.sql(f"CREATE DATABASE IF NOT EXISTS {self.schema_name} LOCATION '{self.paths.user_db}'")
             dbgems.sql(f"USE {self.schema_name}")
             print(dbgems.clock_stopped(start))
 
         except Exception as e:
-            raise AssertionError(self.__troubleshoot_error(f"Failed to create the schema \"{self.schema_name}\".", "Cannot Create Schema")) from e
+            raise AssertionError(self.__troubleshoot_error(f"""Failed to create the schema "{self.schema_name}".""", "Cannot Create Schema")) from e
 
     def reset_lesson(self) -> None:
         """
@@ -587,7 +587,7 @@ class DBAcademyHelper:
 
             if self.lesson_config.create_catalog:
                 # We have a catalog and presumably a default schema
-                print(f"Predefined tables in \"{self.catalog_name}.{schema}\":")
+                print(f"""Predefined tables in "{self.catalog_name}.{schema}":""")
                 tables = dbgems.sql(f"SHOW TABLES IN {self.catalog_name}.{schema}").filter("isTemporary == false").select("tableName").collect()
                 if len(tables) == 0:
                     print("| -none-")
@@ -596,13 +596,13 @@ class DBAcademyHelper:
 
             elif self.lesson_config.requires_uc:
                 # We require UC, but we didn't create the catalog.
-                print(f"Using the catalog \"{self.lesson_config.initial_catalog}\" and the schema \"{self.lesson_config.initial_schema}\".")
+                print(f"""Using the catalog "{self.lesson_config.initial_catalog}" and the schema "{self.lesson_config.initial_schema}".""")
 
             elif self.lesson_config.create_schema:
                 # Not UC, but we created a schema so there should be tables in it
                 # catalog_table = schema if self.env.initial_catalog == DBAcademyHelper.CATALOG_SPARK_DEFAULT else f"{self.env.initial_catalog}.{schema}"
 
-                print(f"Predefined tables in \"{schema}\":")
+                print(f"""Predefined tables in "{schema}":""")
                 tables = dbgems.sql(f"SHOW TABLES IN {schema}").filter("isTemporary == false").select("tableName").collect()
                 if len(tables) == 0:
                     print("| -none-")
@@ -611,7 +611,7 @@ class DBAcademyHelper:
 
             else:
                 # Not UC, didn't create the database
-                print(f"Using the \"{self.lesson_config.initial_schema}\" schema.")
+                print(f"""Using the "{self.lesson_config.initial_schema}" schema.""")
 
         print("\nPredefined paths variables:")
         self.paths.print(self_name="DA.")
@@ -671,7 +671,7 @@ class DBAcademyHelper:
                       f"{self.course_config.supported_dbrs}"
             common.print_warning("Spark Version", self.__troubleshoot_error(warning, "Spark Version"))
 
-        message = f"The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found \"{self.current_dbr}\"."
+        message = f"""The Databricks Runtime is expected to be one of {self.course_config.supported_dbrs}, found "{self.current_dbr}"."""
         if self.current_dbr not in self.course_config.supported_dbrs:
             # This is an unsupported DBR
             if dbgems.get_spark_config("dbacademy.runtime.check", "fail").lower() == "warn":
@@ -798,7 +798,7 @@ class DBAcademyHelper:
         from dbacademy import dbgems
         from pyspark.sql.streaming import StreamingQuery
 
-        assert query is not None and type(query) in [str, StreamingQuery], f"Expected the query parameter to be of type \"str\" or \"pyspark.sql.streaming.StreamingQuery\", found \"{type(query)}\"."
+        assert query is not None and type(query) in [str, StreamingQuery], f"""Expected the query parameter to be of type "str" or "pyspark.sql.streaming.StreamingQuery", found "{type(query)}"."""
 
         if type(query) != pyspark.sql.streaming.StreamingQuery:
             queries = [aq for aq in dbgems.active_streams() if aq.name == query]
@@ -808,7 +808,7 @@ class DBAcademyHelper:
                 queries = [aq for aq in dbgems.active_streams() if aq.name == query]
 
             if len(queries) > 1:
-                raise ValueError(f"More than one spark query was found for the name \"{query}\".")
+                raise ValueError(f"""More than one spark query was found for the name "{query}".""")
             query = queries[0]
 
         while True:
