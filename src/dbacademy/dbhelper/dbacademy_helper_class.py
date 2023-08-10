@@ -583,7 +583,7 @@ class DBAcademyHelper:
 
         for i, schema in enumerate(schemas):
             if i > 0:
-                print()
+                print("-")
 
             if self.lesson_config.create_catalog:
                 # We have a catalog and presumably a default schema
