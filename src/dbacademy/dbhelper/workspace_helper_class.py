@@ -141,7 +141,7 @@ class WorkspaceHelper:
             for data_source_version in versions:
                 start = dbgems.clock_start()
 
-                datasets_as_archive = False
+                data_source_as_archive = False
                 data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{data_source_name}/{data_source_version}"
                 remote_files = DatasetManager.list_r(data_source_uri)
 
@@ -149,7 +149,7 @@ class WorkspaceHelper:
                 for file in remote_files:
                     print(f"{file}")
                     # TODO test if archives-only
-                    # datasets_as_archive = True
+                    # data_source_as_archive = True
 
                 ######################################################################
                 if data_source_as_archive:
@@ -170,7 +170,7 @@ class WorkspaceHelper:
                                                  _staging_source_uri=None,
                                                  _datasets_path=datasets_path,
                                                  _archives_path=archives_path,
-                                                 _datasets_as_archive=datasets_as_archive,
+                                                 _data_source_as_archive=data_source_as_archive,
                                                  _install_min_time=None,
                                                  _install_max_time=None,
                                                  _remote_files=remote_files)

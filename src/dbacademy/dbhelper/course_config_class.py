@@ -19,6 +19,7 @@ class CourseConfig:
         :param course_code: See the property by the same name
         :param course_name: See the property by the same name
         :param data_source_version: See the property by the same name
+        :param data_source_as_archive: See the property by the same name
         :param install_min_time: See the property by the same name
         :param install_max_time: See the property by the same name
         :param remote_files: See the property by the same name
