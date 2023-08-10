@@ -524,6 +524,7 @@ class DBAcademyHelper:
         WorkspaceCleaner(self).reset_lesson()
 
         if validate_datasets:
+            print("-?-")
             # The last step is to make sure the datasets are still intact and repair if necessary
             DatasetManager.from_dbacademy_helper(self).validate_datasets(fail_fast=True)
 
@@ -583,7 +584,7 @@ class DBAcademyHelper:
 
         for i, schema in enumerate(schemas):
             if i > 0:
-                print("-")
+                print()
 
             if self.lesson_config.create_catalog:
                 # We have a catalog and presumably a default schema
