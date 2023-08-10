@@ -1,10 +1,9 @@
 class Paths:
     from dbacademy.dbhelper.lesson_config_class import LessonConfig
 
-    def __init__(self, *, _lesson_config: LessonConfig, _working_dir_root: str, _datasets: str, _archives: str, _convert_to_vm_path: bool):
+    def __init__(self, *, _lesson_config: LessonConfig, _working_dir_root: str, _datasets: str, _archives: str):
 
         self.__working_dir_root = _working_dir_root
-        self.__convert_to_vm_path = _convert_to_vm_path
 
         if _lesson_config.name is None:
             self.__working_dir = _working_dir_root
@@ -27,12 +26,8 @@ class Paths:
             self.checkpoints = f"{self.__working_dir}/_checkpoints"
 
     @property
-    def convert_to_vm_path(self) -> bool:
-        return self.__convert_to_vm_path
-
-    @property
     def user_db(self) -> str:
-        return self.to_vm_path(self.__user_db) if self.convert_to_vm_path else self.__user_db
+        return self.__user_db
 
     @user_db.setter
     def user_db(self, value: str) -> None:
@@ -40,7 +35,7 @@ class Paths:
 
     @property
     def working_dir_root(self) -> str:
-        return self.to_vm_path(self.__working_dir_root) if self.convert_to_vm_path else self.__working_dir_root
+        return self.__working_dir_root
 
     @working_dir_root.setter
     def working_dir_root(self, value: str) -> None:
@@ -48,7 +43,7 @@ class Paths:
 
     @property
     def working_dir(self) -> str:
-        return self.to_vm_path(self.__working_dir) if self.convert_to_vm_path else self.__working_dir
+        return self.__working_dir
 
     @working_dir.setter
     def working_dir(self, value: str) -> None:
@@ -56,7 +51,7 @@ class Paths:
 
     @property
     def datasets(self) -> str:
-        return self.to_vm_path(self.__datasets) if self.convert_to_vm_path else self.__datasets
+        return self.__datasets
 
     @datasets.setter
     def datasets(self, value: str) -> None:
@@ -64,7 +59,7 @@ class Paths:
 
     @property
     def archives(self) -> str:
-        return self.to_vm_path(self.__archives) if self.convert_to_vm_path else self.__archives
+        return self.__archives
 
     @archives.setter
     def archives(self, value: str) -> None:
