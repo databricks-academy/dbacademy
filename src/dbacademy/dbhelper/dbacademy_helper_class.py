@@ -459,7 +459,6 @@ class DBAcademyHelper:
         after instantiation but before initialization.
         :return: None
         """
-        print("-?-")
 
         if self.lesson_config.create_catalog:
             assert not self.lesson_config.create_schema, f"Creation of the schema (LessonConfig.create_schema=True) is not supported while creating the catalog (LessonConfig.create_catalog=True)"
@@ -473,8 +472,6 @@ class DBAcademyHelper:
             self.__create_schema()  # Create the Schema (is not a catalog)
 
         self.__initialized = True  # Set the all-done flag.
-
-        print("--?--")
 
     def __create_catalog(self) -> None:
         from dbacademy import dbgems
