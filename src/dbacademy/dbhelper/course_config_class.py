@@ -8,6 +8,7 @@ class CourseConfig:
                  course_name: str,
                  data_source_name: str,
                  data_source_version: str,
+                 data_source_as_archive: bool,
                  install_min_time: str,
                  install_max_time: str,
                  remote_files: List[str],
@@ -20,6 +21,7 @@ class CourseConfig:
         :param course_name: See the property by the same name
         :param data_source_name: See the property by the same name
         :param data_source_version: See the property by the same name
+        :param data_source_as_archive: See the property by the same name
         :param install_min_time: See the property by the same name
         :param install_max_time: See the property by the same name
         :param remote_files: See the property by the same name
@@ -33,6 +35,8 @@ class CourseConfig:
 
         self.__data_source_name = data_source_name
         self.__data_source_version = data_source_version
+        self.__data_source_as_archive = data_source_as_archive
+
         self.__install_min_time = install_min_time
         self.__install_max_time = install_max_time
         self.__remote_files = remote_files
@@ -100,6 +104,13 @@ class CourseConfig:
         :return: the two-digit version number of a dataset prefixed by the letter "v" as in "v01" or "v02" (not to be confused with the version of a course)
         """
         return self.__data_source_version
+
+    @property
+    def data_source_as_archive(self) -> bool:
+        """
+        :return: True if datasets are packaged as an archive file (zip file) or false if not.
+        """
+        return self.__data_source_as_archive
 
     @property
     def install_min_time(self) -> str:

@@ -1,35 +1,56 @@
 class Paths:
     from dbacademy.dbhelper.lesson_config_class import LessonConfig
 
-    def __init__(self, *, lesson_config: LessonConfig, working_dir_root: str, datasets: str):
+    def __init__(self, *, _lesson_config: LessonConfig, _working_dir_root: str, _datasets: str, _archives: str):
 
-        self._working_dir_root = working_dir_root
+        self.__working_dir_root = _working_dir_root
 
-        if lesson_config.name is None:
-            self.working_dir = working_dir_root
+        if _lesson_config.name is None:
+            self.__working_dir = _working_dir_root
         else:
-            self.working_dir = f"{self._working_dir_root}/{lesson_config.name}"
+            self.__working_dir = f"{_working_dir_root}/{_lesson_config.name}"
 
-        if lesson_config.create_catalog:
+        if _lesson_config.create_catalog:
             # A little hacky, but if we created the catalog, we don't have a user_db_path
             # because UC will be managing the database location for us
-            self.user_db = None
+            self.__user_db = None
         else:
-            self.user_db = f"{self.working_dir}/database.db"
+            self.__user_db = f"{self.__working_dir}/database.db"
 
-        self.datasets = datasets
+        self.__datasets = _datasets
+        self.__archives = _archives
 
         # When working with streams, it helps to put all checkpoints in their
         # own directory relative the previously defined working_dir
-        if lesson_config.enable_streaming_support:
-            self.checkpoints = f"{self.working_dir}/_checkpoints"
+        if _lesson_config.enable_streaming_support:
+            self.checkpoints = f"{self.__working_dir}/_checkpoints"
 
-    @staticmethod
-    def to_vm_path(path):
-        return path.replace("dbfs:/", "/dbfs/")
+    @property
+    def user_db(self) -> str:
+        return self.__user_db
 
-    @staticmethod
-    def exists(path):
+    @property
+    def working_dir_root(self) -> str:
+        return self.__working_dir_root
+
+    @property
+    def working_dir(self) -> str:
+        return self.__working_dir
+
+    @property
+    def datasets(self) -> str:
+        return self.__datasets
+
+    @property
+    def archives(self) -> str:
+        return self.__archives
+
+    @classmethod
+    def to_vm_path(cls, _path: str) -> str:
+        return _path.replace("dbfs:/", "/dbfs/")
+
+    @classmethod
+    def exists(cls, path: str) -> bool:
         """
         Returns true if the specified path exists else false.
         """

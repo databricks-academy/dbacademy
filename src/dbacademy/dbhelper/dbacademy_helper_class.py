@@ -108,11 +108,18 @@ class DBAcademyHelper:
         ###########################################################################################
 
         # This is where the datasets will be downloaded to and should be treated as read-only for all practical purposes
-        datasets_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
+        # dbfs:/mnt/dbacademy-datasets/????????/some_dataset/v00
+        if self.course_config.data_source_as_archive:
+            datasets_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
+            archives_path = None
+        else:
+            datasets_path = f"{DBAcademyHelper.working_dir_root}/datasets"
+            archives_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
 
-        self.paths = Paths(lesson_config=self.lesson_config,
-                           working_dir_root=self.working_dir_root,
-                           datasets=datasets_path)
+        self.paths = Paths(_lesson_config=self.lesson_config,
+                           _working_dir_root=self.working_dir_root,
+                           _datasets=datasets_path,
+                           _archives=archives_path)
 
         self.__lesson_config.lock_mutations()
 
@@ -122,8 +129,8 @@ class DBAcademyHelper:
         self.__validate_dbfs_writes(DBAcademyHelper.get_dbacademy_users_path())
         self.__validate_dbfs_writes(DBAcademyHelper.get_dbacademy_datasets_path())
 
-    @staticmethod
-    def get_dbacademy_datasets_path() -> str:
+    @classmethod
+    def get_dbacademy_datasets_path(cls) -> str:
         """
         This method encapsulates the value resolution for the DBAcademy datasets. By convention, this should always be "dbfs:/mnt/dbacademy-datasets"
         however, to support those environments that require that the datasets be hosted at another location, this default value can be overridden
@@ -133,8 +140,8 @@ class DBAcademyHelper:
         from dbacademy import dbgems
         return dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PATHS_DATASETS, default="dbfs:/mnt/dbacademy-datasets")
 
-    @staticmethod
-    def get_dbacademy_users_path() -> str:
+    @classmethod
+    def get_dbacademy_users_path(cls) -> str:
         """
         This method encapsulates the value resolution for the DBAcademy user's directory. By convention, this should always be "dbfs:/mnt/dbacademy-users"
         however, to support those environments that require that the datasets be hosted at another location, this default value can be overridden
@@ -144,8 +151,8 @@ class DBAcademyHelper:
         from dbacademy import dbgems
         return dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PATHS_USERS, default="dbfs:/mnt/dbacademy-users")
 
-    @staticmethod
-    def get_dbacademy_datasets_staging() -> str:
+    @classmethod
+    def get_dbacademy_datasets_staging(cls) -> str:
         """
         This location is inspected upon initialization to determine where datasets should be loaded from. If a corresponding dataset is found in this location,
         under the CourseConfig.data_source_name and CourseConfig.data_source_version folders, then data will be installed from this staging repo enabling
@@ -230,8 +237,8 @@ class DBAcademyHelper:
                                    lesson_name=self.lesson_config.name,
                                    sep=sep)
 
-    @staticmethod
-    def to_unique_name(*, username: str, course_code: str, lesson_name: Optional[str], sep: str) -> str:
+    @classmethod
+    def to_unique_name(cls, *, username: str, course_code: str, lesson_name: Optional[str], sep: str) -> str:
         """
         A utility function that produces a unique name to be used in creating jobs, warehouses, DLT pipelines, experiments and other user & course specific artifacts.
         The pattern consist of the local part of the email address, a 4-character hash, "da" for DBAcademy and the course's code. The value is then converted to lower case
@@ -265,8 +272,8 @@ class DBAcademyHelper:
         """
         return self.to_catalog_name_prefix(username=self.username)
 
-    @staticmethod
-    def to_catalog_name_prefix(*, username: str) -> str:
+    @classmethod
+    def to_catalog_name_prefix(cls, *, username: str) -> str:
         """
         A utility function that produces a catalog name prefix. The pattern consist of the local part of the email address,
         a 4-character hash and "da" for DBAcademy. The value is then converted to lower case after which all non-alpha and
@@ -297,8 +304,8 @@ class DBAcademyHelper:
             return self.to_catalog_name(username=self.username,
                                         lesson_name=self.lesson_config.name)
 
-    @staticmethod
-    def to_catalog_name(*, username: str, lesson_name: Optional[str]) -> str:
+    @classmethod
+    def to_catalog_name(cls, *, username: str, lesson_name: Optional[str]) -> str:
         """
         A utility function that produces a unique catalog name. The pattern consist of the local part of the email address,
         a 4-character hash and "da" for DBAcademy and the lesson_name. The value is then converted to lower case after which
@@ -344,8 +351,8 @@ class DBAcademyHelper:
             return self.to_schema_name_prefix(username=self.username,
                                               course_code=self.course_config.course_code)
 
-    @staticmethod
-    def to_schema_name_prefix(*, username: str, course_code: str) -> str:
+    @classmethod
+    def to_schema_name_prefix(cls, *, username: str, course_code: str) -> str:
         """
         Shorthand for DBAcademyHelper.to_schema_name(username=username, course_code=course_code, lesson_name=None)
         :param username: The full email address of a user. See also `LessonConfig.username`
@@ -369,8 +376,8 @@ class DBAcademyHelper:
                                        course_code=self.course_config.course_code,
                                        lesson_name=self.lesson_config.name)
 
-    @staticmethod
-    def to_schema_name(*, username: str, course_code: str, lesson_name: Optional[str]) -> str:
+    @classmethod
+    def to_schema_name(cls, *, username: str, course_code: str, lesson_name: Optional[str]) -> str:
         """
         A utility function that produces a unique schema name. The pattern consist of the local part of the email address,
         a 4-character hash and "da" for DBAcademy, course's code and the lesson_name. The value is then converted to lower case after which
@@ -407,8 +414,8 @@ class DBAcademyHelper:
         from dbacademy import dbgems
         return dbgems.spark.sql("SELECT current_database()").first()[0]
 
-    @staticmethod
-    def is_smoke_test() -> bool:
+    @classmethod
+    def is_smoke_test(cls) -> bool:
         """
         Helper method to indentify when we are running as a smoke test
         :return: Returns true if the notebook is running as a smoke test.
@@ -430,8 +437,8 @@ class DBAcademyHelper:
     def __troubleshoot_error(self, error: str, section: str) -> str:
         return DBAcademyHelper.TROUBLESHOOT_ERROR_TEMPLATE.format(error=error, section=section)
 
-    @staticmethod
-    def monkey_patch(function_ref, delete=True):
+    @classmethod
+    def monkey_patch(cls, function_ref, delete=True):
         """
         This function "monkey patches" the specified function to the DBAcademyHelper class. While not 100% necessary,
         this pattern does allow each function to be defined in its own cell which makes authoring notebooks a little easier.
@@ -613,10 +620,7 @@ class DBAcademyHelper:
     def install_datasets(self, reinstall_datasets: bool = False) -> None:
         from dbacademy.dbhelper.dataset_manager_class import DatasetManager
 
-        dataset_manager = DatasetManager.from_dbacademy_helper(self)
-        dataset_manager.install_dataset(install_min_time=self.course_config.install_min_time,
-                                        install_max_time=self.course_config.install_max_time,
-                                        reinstall_datasets=reinstall_datasets)
+        DatasetManager.from_dbacademy_helper(self).install_dataset(reinstall_datasets=reinstall_datasets)
 
     def print_copyrights(self, mappings: Optional[Dict[str, str]] = None) -> None:
         """
@@ -774,8 +778,8 @@ class DBAcademyHelper:
             unique_name = self.unique_name("-")
             mlflow.set_experiment(f"/Curriculum/Test Results/{unique_name}-{dbgems.get_job_id()}")
 
-    @staticmethod
-    def block_until_stream_is_ready(query: Union[str, StreamingQuery], min_batches: int = 2, delay_seconds: int = 5) -> None:
+    @classmethod
+    def block_until_stream_is_ready(cls, query: Union[str, StreamingQuery], min_batches: int = 2, delay_seconds: int = 5) -> None:
         """
         A utility method used in streaming notebooks to block until the stream has processed n batches. This method serves one main purpose in two different use cases.
 

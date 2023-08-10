@@ -71,6 +71,7 @@ class WorkspaceHelper:
     def install_datasets(datasets: Union[str, List[str]]):
         from dbacademy import dbgems
         from dbacademy.dbhelper.dataset_manager_class import DatasetManager
+        from dbacademy.dbhelper import DBAcademyHelper
 
         if datasets is not None:
             if type(datasets) == list:
@@ -101,21 +102,23 @@ class WorkspaceHelper:
 
         for dataset in datasets:
             if ":" in dataset:
-                dataset, dataset_version = dataset.split(":")
+                data_source_name, dataset_version = dataset.split(":")
             else:
+                data_source_name = dataset
                 dataset_version = None
 
             inventory_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net"
-            datasets_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}"
+            datasets_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{data_source_name}"
 
             inventory = [i.name.split("/")[0] for i in dbgems.dbutils.fs.ls(inventory_uri)]
-            if dataset not in inventory:
-                print(f"""| Dataset "{dataset}" not found.""")
+            if data_source_name not in inventory:
+                print(f"""| Dataset "{data_source_name}" not found.""")
                 continue
 
             # We may have to install more than one version due to the
             # fact that we often teach the latest and latest-1 for a season.
             versions = list()
+            data_source_as_archive = False
 
             if dataset_version is not None:
                 # We were told which one to use.
@@ -135,29 +138,48 @@ class WorkspaceHelper:
                     # There is only one version, just use the last one.
                     versions.append(files[-1].name[:-1])
 
-            for version in versions:
+            for data_source_version in versions:
+                start = dbgems.clock_start()
 
-                datasets_path = f"dbfs:/mnt/dbacademy-datasets/{dataset}/{version}"
-                data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{dataset}/{version}"
+                datasets_as_archive = False
+                data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{data_source_name}/{data_source_version}"
+                remote_files = DatasetManager.list_r(data_source_uri)
+
+                print(f"Remote files:")
+                for file in remote_files:
+                    print(f"{file}")
+                    # TODO test if archives-only
+                    # datasets_as_archive = True
+
+                datasets_path = f"dbfs:/mnt/dbacademy-datasets/{data_source_name}/{data_source_version}"
+
+                ######################################################################
+                if data_source_as_archive:
+                    datasets_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{data_source_name}/{data_source_version}"
+                    archives_path = None
+                else:
+                    datasets_path = f"{DBAcademyHelper.working_dir_root}/datasets"
+                    archives_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{data_source_name}/{data_source_version}"
+                ######################################################################
 
                 print(f"| {data_source_uri}")
                 print(f"| {datasets_path}")
                 print("| listing remote files", end="...")
 
-                start = dbgems.clock_start()
-                remote_files = DatasetManager.list_r(data_source_uri)
                 print(dbgems.clock_stopped(start))
 
-                dataset_manager = DatasetManager(data_source_uri=data_source_uri,
-                                                 staging_source_uri=None,
-                                                 datasets_path=datasets_path,
-                                                 remote_files=remote_files)
+                dataset_manager = DatasetManager(_data_source_uri=data_source_uri,
+                                                 _staging_source_uri=None,
+                                                 _datasets_path=datasets_path,
+                                                 _archives_path=archives_path,
+                                                 _datasets_as_archive=datasets_as_archive,
+                                                 _install_min_time=None,
+                                                 _install_max_time=None,
+                                                 _remote_files=remote_files)
 
-                dataset_manager.install_dataset(install_min_time=None,
-                                                install_max_time=None,
-                                                reinstall_datasets=False)
+                dataset_manager.install_dataset(reinstall_datasets=False)
 
-                if version == versions[-1] and len(versions) > 1:
+                if data_source_version == versions[-1] and len(versions) > 1:
                     print("\n" + ("-" * 100) + "\n")
 
     @classmethod

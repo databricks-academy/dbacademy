@@ -2,27 +2,56 @@ from typing import Optional, List
 
 
 class DatasetManager:
+    from dbacademy.dbhelper import DBAcademyHelper
 
     @staticmethod
-    def from_dbacademy_helper(da):
-        return DatasetManager(data_source_uri=da.data_source_uri,
-                              staging_source_uri=da.staging_source_uri,
-                              datasets_path=da.paths.datasets,
-                              remote_files=da.course_config.remote_files)
+    def from_dbacademy_helper(da: DBAcademyHelper):
+        return DatasetManager(_data_source_uri=da.data_source_uri,
+                              _staging_source_uri=da.staging_source_uri,
+                              _datasets_path=da.paths.datasets,
+                              _archives_path=da.paths.archives,
+                              _datasets_as_archive=da.course_config.datasets_as_archive,
+                              _install_min_time=da.course_config.install_min_time,
+                              _install_max_time=da.course_config.install_max_time,
+                              _remote_files=da.course_config.remote_files)
 
-    def __init__(self, *, data_source_uri: str, staging_source_uri: Optional[str], datasets_path: str, remote_files: List[str]):
+    def __init__(self, *,
+                 _data_source_uri: str,
+                 _staging_source_uri: Optional[str],
+                 _datasets_path: str,
+                 _archives_path: str,
+                 _datasets_as_archive: bool,
+                 _install_min_time: Optional[str],
+                 _install_max_time: Optional[str],
+                 _remote_files: List[str]):
         """
         Creates an instance of DatasetManager
-        :param data_source_uri: See DBAcademy.data_source_uri
-        :param staging_source_uri: See DBAcademy.staging_source_uri
-        :param datasets_path: See DBAcademy.paths.datasets, Paths
+        :param _data_source_uri: See DBAcademy.data_source_uri
+        :param _staging_source_uri: See DBAcademy.staging_source_uri
+        :param _datasets_path: See DBAcademy.paths.datasets, Paths
+        :param _archives_path: See DBAcademy.paths.archives, Paths
+        :param _datasets_as_archive: See DBAcademy.paths.datasets_as_archive, Paths
+        :param _install_min_time: See CourseConfig.install_min_time, str
+        :param _install_max_time: See CourseConfig.install_max_time, str
         """
         self.__fixes = 0
         self.__repaired_paths = []
-        self.__data_source_uri = data_source_uri
-        self.__staging_source_uri = staging_source_uri
-        self.__datasets_path = datasets_path
-        self.__remote_files = remote_files
+        self.__data_source_uri = _data_source_uri
+        self.__staging_source_uri = _staging_source_uri
+        self.__datasets_path = _datasets_path
+        self.__archives_path = _archives_path
+        self.__datasets_as_archive = _datasets_as_archive
+        self.__remote_files = _remote_files
+        self.__install_min_time = _install_min_time
+        self.__install_max_time = _install_max_time
+
+    @property
+    def install_min_time(self) -> Optional[str]:
+        return self.__install_min_time
+
+    @property
+    def install_max_time(self) -> Optional[str]:
+        return self.__install_max_time
 
     @property
     def remote_files(self) -> List[str]:
@@ -31,6 +60,14 @@ class DatasetManager:
     @property
     def datasets_path(self) -> str:
         return self.__datasets_path
+
+    @property
+    def archives_path(self) -> str:
+        return self.__archives_path
+
+    @property
+    def datasets_as_archive(self) -> bool:
+        return self.__datasets_as_archive
 
     @property
     def data_source_uri(self) -> str:
@@ -48,13 +85,14 @@ class DatasetManager:
     def repaired_paths(self) -> List[str]:
         return self.__repaired_paths
 
-    def install_dataset(self, *, install_min_time: Optional[str], install_max_time: Optional[str], reinstall_datasets: bool = False) -> None:
+    def install_dataset(self, *, reinstall_datasets: bool = False) -> None:
         """
         Install the datasets used by this course to DBFS.
 
         This ensures that data and compute are in the same region which subsequently mitigates performance issues
         when the storage and compute are, for example, on opposite sides of the world.
         """
+
         from dbacademy import dbgems
         from dbacademy.dbhelper.paths_class import Paths
         # if not repairing_dataset: print(f"\nThe source for the datasets is\n{self.data_source_uri}/")
@@ -66,7 +104,7 @@ class DatasetManager:
                 print(f"\nRemoving previously installed datasets")
                 dbgems.dbutils.fs.rm(self.datasets_path, True)
 
-            if not reinstall_datasets:
+            else:  # not reinstall_datasets:
                 print(f"\nSkipping install of existing datasets to \"{self.datasets_path}\"")
                 self.validate_datasets(fail_fast=False)
                 return
@@ -74,11 +112,11 @@ class DatasetManager:
         print(f"\nInstalling datasets:")
         print(f"| from \"{self.data_source_uri}\"")
         print(f"| to \"{self.datasets_path}\"")
-        if install_min_time is not None and install_max_time is not None:
+        if self.install_min_time is not None and self.install_max_time is not None:
             print(f"|")
             print(f"| NOTE: The datasets that we are installing are located in Washington, USA - depending on the")
-            print(f"|       region that your workspace is in, this operation can take as little as {install_min_time} and")
-            print(f"|       upwards to {install_max_time}, but this is a one-time operation.")
+            print(f"|       region that your workspace is in, this operation can take as little as {self.install_min_time} and")
+            print(f"|       upwards to {self.install_max_time}, but this is a one-time operation.")
 
         # Using data_source_uri is a temporary hack because it assumes we can actually
         # reach the remote repository - in cases where it's blocked, this will fail.
@@ -143,6 +181,9 @@ class DatasetManager:
         start = dbgems.clock_start()
         local_files = DatasetManager.list_r(self.datasets_path)
         print(dbgems.clock_stopped(start))
+
+        print(f"This is where were need to decompress archives")
+        print(f"datasets_as_archive = {self.datasets_as_archive}")
 
         # Process directories first
         self.__del_extra_paths(local_files)
