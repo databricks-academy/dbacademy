@@ -459,6 +459,7 @@ class DBAcademyHelper:
         after instantiation but before initialization.
         :return: None
         """
+        print("-?-")
 
         if self.lesson_config.create_catalog:
             assert not self.lesson_config.create_schema, f"Creation of the schema (LessonConfig.create_schema=True) is not supported while creating the catalog (LessonConfig.create_catalog=True)"
@@ -472,6 +473,8 @@ class DBAcademyHelper:
             self.__create_schema()  # Create the Schema (is not a catalog)
 
         self.__initialized = True  # Set the all-done flag.
+
+        print("--?--")
 
     def __create_catalog(self) -> None:
         from dbacademy import dbgems
@@ -524,10 +527,8 @@ class DBAcademyHelper:
         WorkspaceCleaner(self).reset_lesson()
 
         if validate_datasets:
-            print("-?-")
             # The last step is to make sure the datasets are still intact and repair if necessary
             DatasetManager.from_dbacademy_helper(self).validate_datasets(fail_fast=True)
-        print("--?--")
 
     def reset_learning_environment(self) -> None:
         """
