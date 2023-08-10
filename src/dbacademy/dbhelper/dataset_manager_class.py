@@ -278,8 +278,8 @@ class DatasetManager:
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
                 print(dbgems.clock_stopped(start))
 
-    @staticmethod
-    def list_r(path: str, prefix: Optional[str] = None, results: Optional[List[str]] = None) -> List[str]:
+    @classmethod
+    def list_r(cls, path: str, prefix: Optional[str] = None, results: Optional[List[str]] = None) -> List[str]:
         """
         Utility method used by the dataset validation, this method performs a recursive list of the specified path and returns the sorted list of paths.
         """
