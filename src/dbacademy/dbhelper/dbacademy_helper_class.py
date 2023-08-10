@@ -119,7 +119,8 @@ class DBAcademyHelper:
         self.paths = Paths(_lesson_config=self.lesson_config,
                            _working_dir_root=self.working_dir_root,
                            _datasets=datasets_path,
-                           _archives=archives_path)
+                           _archives=archives_path,
+                           _convert_to_vm_path=course_config.convert_to_vm_path)
 
         self.__lesson_config.lock_mutations()
 

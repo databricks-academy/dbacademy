@@ -1,9 +1,10 @@
 class Paths:
     from dbacademy.dbhelper.lesson_config_class import LessonConfig
 
-    def __init__(self, *, _lesson_config: LessonConfig, _working_dir_root: str, _datasets: str, _archives: str):
+    def __init__(self, *, _lesson_config: LessonConfig, _working_dir_root: str, _datasets: str, _archives: str, _convert_to_vm_path: bool):
 
         self.__working_dir_root = _working_dir_root
+        self.__convert_to_vm_path = _convert_to_vm_path
 
         if _lesson_config.name is None:
             self.__working_dir = _working_dir_root
@@ -26,24 +27,28 @@ class Paths:
             self.checkpoints = f"{self.__working_dir}/_checkpoints"
 
     @property
+    def convert_to_vm_path(self) -> bool:
+        return self.__convert_to_vm_path
+
+    @property
     def user_db(self) -> str:
-        return self.__user_db
+        return self.to_vm_path(self.__user_db) if self.convert_to_vm_path else self.__user_db
 
     @property
     def working_dir_root(self) -> str:
-        return self.__working_dir_root
+        return self.to_vm_path(self.__working_dir_root) if self.convert_to_vm_path else self.__working_dir_root
 
     @property
     def working_dir(self) -> str:
-        return self.__working_dir
+        return self.to_vm_path(self.__working_dir) if self.convert_to_vm_path else self.__working_dir
 
     @property
     def datasets(self) -> str:
-        return self.__datasets
+        return self.to_vm_path(self.__datasets) if self.convert_to_vm_path else self.__datasets
 
     @property
     def archives(self) -> str:
-        return self.__archives
+        return self.to_vm_path(self.__archives) if self.convert_to_vm_path else self.__archives
 
     @classmethod
     def to_vm_path(cls, _path: str) -> str:
