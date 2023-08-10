@@ -3,8 +3,6 @@ class Paths:
 
     def __init__(self, *, _lesson_config: LessonConfig, _working_dir_root: str, _datasets: str, _archives: str):
 
-        self.working_dir_root = _working_dir_root
-
         if _lesson_config.name is None:
             self.working_dir = _working_dir_root
         else:
