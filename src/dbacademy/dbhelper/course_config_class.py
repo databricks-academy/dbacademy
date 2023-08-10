@@ -7,6 +7,7 @@ class CourseConfig:
                  course_code: str,
                  course_name: str,
                  data_source_version: str,
+                 data_source_as_archive: bool,
                  install_min_time: str,
                  install_max_time: str,
                  remote_files: List[str],
@@ -29,6 +30,7 @@ class CourseConfig:
 
         self.__course_name = course_name
         self.__data_source_version = data_source_version
+        self.__data_source_as_archive = data_source_as_archive
 
         self.__install_min_time = install_min_time
         self.__install_max_time = install_max_time
@@ -86,7 +88,7 @@ class CourseConfig:
     @property
     def data_source_name(self) -> str:
         """
-        This value is assumed to be the same as the build_name.
+        This is assumed to be the same as build_name
         :return: the name of the dataset in the data repository.
         """
         return self.__build_name
@@ -97,6 +99,13 @@ class CourseConfig:
         :return: the two-digit version number of a dataset prefixed by the letter "v" as in "v01" or "v02" (not to be confused with the version of a course)
         """
         return self.__data_source_version
+
+    @property
+    def data_source_as_archive(self) -> bool:
+        """
+        :return: True if datasets are packaged as an archive file (zip file) or false if not.
+        """
+        return self.__data_source_as_archive
 
     @property
     def install_min_time(self) -> str:
