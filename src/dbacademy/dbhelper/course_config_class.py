@@ -13,7 +13,7 @@ class CourseConfig:
                  remote_files: List[str],
                  supported_dbrs: List[str],
                  expected_dbrs: str,
-                 convert_to_vm_path: bool):
+                 convert_to_vm_path: bool = False):
         """
         The CourseConfig encapsulates those parameters that should never change for the entire duration of a course
         compared to the LessonConfig which encapsulates parameters that may change from lesson to lesson
