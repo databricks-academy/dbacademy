@@ -242,6 +242,10 @@ class DatasetManager:
         from dbacademy import dbgems
 
         for file in local_files:
+            print("*"*80)
+            print(f"Files:        {file}")
+            print(f"Remote Files: {self.remote_files}")
+            print("*"*80)
             if file not in self.remote_files and not file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
                 start = dbgems.clock_start()
