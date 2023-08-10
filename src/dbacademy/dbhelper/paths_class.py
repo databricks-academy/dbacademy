@@ -3,67 +3,27 @@ class Paths:
 
     def __init__(self, *, _lesson_config: LessonConfig, _working_dir_root: str, _datasets: str, _archives: str):
 
-        self.__working_dir_root = _working_dir_root
+        self.working_dir_root = _working_dir_root
 
         if _lesson_config.name is None:
-            self.__working_dir = _working_dir_root
+            self.working_dir = _working_dir_root
         else:
-            self.__working_dir = f"{_working_dir_root}/{_lesson_config.name}"
+            self.working_dir = f"{_working_dir_root}/{_lesson_config.name}"
 
         if _lesson_config.create_catalog:
             # A little hacky, but if we created the catalog, we don't have a user_db_path
             # because UC will be managing the database location for us
-            self.__user_db = None
+            self.user_db = None
         else:
-            self.__user_db = f"{self.__working_dir}/database.db"
+            self.user_db = f"{self.working_dir}/database.db"
 
-        self.__datasets = _datasets
-        self.__archives = _archives
+        self.datasets = _datasets
+        self.archives = _archives
 
         # When working with streams, it helps to put all checkpoints in their
         # own directory relative the previously defined working_dir
         if _lesson_config.enable_streaming_support:
-            self.checkpoints = f"{self.__working_dir}/_checkpoints"
-
-    @property
-    def user_db(self) -> str:
-        return self.__user_db
-
-    @user_db.setter
-    def user_db(self, value: str) -> None:
-        self.__user_db = value
-
-    @property
-    def working_dir_root(self) -> str:
-        return self.__working_dir_root
-
-    @working_dir_root.setter
-    def working_dir_root(self, value: str) -> None:
-        self.__working_dir_root = value
-
-    @property
-    def working_dir(self) -> str:
-        return self.__working_dir
-
-    @working_dir.setter
-    def working_dir(self, value: str) -> None:
-        self.__working_dir = value
-
-    @property
-    def datasets(self) -> str:
-        return self.__datasets
-
-    @datasets.setter
-    def datasets(self, value: str) -> None:
-        self.__datasets = value
-
-    @property
-    def archives(self) -> str:
-        return self.__archives
-
-    @archives.setter
-    def archives(self, value: str) -> None:
-        self.__archives = value
+            self.checkpoints = f"{self.working_dir}/_checkpoints"
 
     @classmethod
     def to_vm_path(cls, _path: str) -> str:
