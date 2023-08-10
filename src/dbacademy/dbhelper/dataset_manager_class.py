@@ -10,7 +10,6 @@ class DatasetManager:
                               _staging_source_uri=da.staging_source_uri,
                               _datasets_path=da.paths.datasets,
                               _archives_path=da.paths.archives,
-                              _data_source_as_archive=da.course_config.data_source_as_archive,
                               _install_min_time=da.course_config.install_min_time,
                               _install_max_time=da.course_config.install_max_time,
                               _remote_files=da.course_config.remote_files)
@@ -20,7 +19,6 @@ class DatasetManager:
                  _staging_source_uri: Optional[str],
                  _datasets_path: str,
                  _archives_path: str,
-                 _data_source_as_archive: bool,
                  _install_min_time: Optional[str],
                  _install_max_time: Optional[str],
                  _remote_files: List[str]):
@@ -30,7 +28,6 @@ class DatasetManager:
         :param _staging_source_uri: See DBAcademy.staging_source_uri
         :param _datasets_path: See DBAcademy.paths.datasets, Paths
         :param _archives_path: See DBAcademy.paths.archives, Paths
-        :param _data_source_as_archive: See DBAcademy.paths.data_source_as_archive, Paths
         :param _install_min_time: See CourseConfig.install_min_time, str
         :param _install_max_time: See CourseConfig.install_max_time, str
         """
@@ -40,7 +37,6 @@ class DatasetManager:
         self.__staging_source_uri = _staging_source_uri
         self.__datasets_path = _datasets_path
         self.__archives_path = _archives_path
-        self.__data_source_as_archive = _data_source_as_archive
         self.__remote_files = _remote_files
         self.__install_min_time = _install_min_time
         self.__install_max_time = _install_max_time
@@ -64,10 +60,6 @@ class DatasetManager:
     @property
     def archives_path(self) -> str:
         return self.__archives_path
-
-    @property
-    def data_source_as_archive(self) -> bool:
-        return self.__data_source_as_archive
 
     @property
     def data_source_uri(self) -> str:
@@ -180,11 +172,20 @@ class DatasetManager:
 
         print("| listing local files", end="...")
         start = dbgems.clock_start()
-        local_files = DatasetManager.list_r(self.datasets_path)
-        print(dbgems.clock_stopped(start))
 
-        print(f"This is where were need to decompress archives")
-        print(f"data_source_as_archive = {self.data_source_as_archive}")
+        if self.archives_path is None:
+            local_files = DatasetManager.list_r(self.datasets_path)
+            print(dbgems.clock_stopped(start))
+        else:
+            local_files = DatasetManager.list_r(self.archives_path)
+            print(dbgems.clock_stopped(start))
+
+        print(f"\n| " + ("*"*80))
+        print(f"| archives_path: {self.archives_path}")
+        print(f"| datasets_path: {self.datasets_path}")
+        print(f"| local_files:   {local_files}")
+        print(f"| " + ("*"*80) + "\n")
+        print()
 
         # Process directories first
         self.__del_extra_paths(local_files)
