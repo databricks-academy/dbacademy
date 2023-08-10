@@ -209,12 +209,6 @@ class DatasetManager:
 
         for file in local_files:
             if file not in self.remote_files and file.endswith("/") and self.__dataset_not_fixed(test_file=file):
-                # TODO Remove this
-                print("*" * 80)
-                print(f"Files:        {file}")
-                print(f"Remote Paths: {self.remote_files}")
-                print("*" * 80)
-
                 self.__fixes += 1
                 start = dbgems.clock_start()
                 self.repaired_paths.append(file)
@@ -249,12 +243,6 @@ class DatasetManager:
 
         for file in local_files:
             if file not in self.remote_files and not file.endswith("/") and self.__dataset_not_fixed(test_file=file):
-                # TODO Remove this
-                print("*" * 80)
-                print(f"Files:        {file}")
-                print(f"Remote Files: {self.remote_files}")
-                print("*" * 80)
-
                 self.__fixes += 1
                 start = dbgems.clock_start()
                 print(f"| removing extra file: {file}", end="...")
@@ -302,11 +290,4 @@ class DatasetManager:
                 DatasetManager.list_r(file.path, prefix, results)
 
         results.sort()
-
-        # TODO Remove this
-        print("*" * 80)
-        print(f"Prefix:      {prefix}")
-        print(f"Local Files: {results}")
-        print("*" * 80)
-
         return results
