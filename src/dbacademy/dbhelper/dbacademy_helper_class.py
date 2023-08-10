@@ -115,7 +115,7 @@ class DBAcademyHelper:
 
         if self.course_config.data_source_as_archive:
             archives_path = datasets_path  # Trading values
-            datasets_path = f"{DBAcademyHelper.working_dir_root}/datasets"
+            datasets_path = f"{self.working_dir_root}/datasets"
 
         self.paths = Paths(_lesson_config=self.lesson_config,
                            _working_dir_root=self.working_dir_root,
