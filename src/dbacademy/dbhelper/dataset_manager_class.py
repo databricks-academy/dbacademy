@@ -302,4 +302,11 @@ class DatasetManager:
                 DatasetManager.list_r(file.path, prefix, results)
 
         results.sort()
+
+        # TODO Remove this
+        print("*" * 80)
+        print(f"Prefix:      {prefix}")
+        print(f"Local Files: {results}")
+        print("*" * 80)
+
         return results
