@@ -34,21 +34,41 @@ class Paths:
     def user_db(self) -> str:
         return self.to_vm_path(self.__user_db) if self.convert_to_vm_path else self.__user_db
 
+    @user_db.setter
+    def user_db(self, value: str) -> None:
+        self.__user_db = value
+
     @property
     def working_dir_root(self) -> str:
         return self.to_vm_path(self.__working_dir_root) if self.convert_to_vm_path else self.__working_dir_root
+
+    @working_dir_root.setter
+    def working_dir_root(self, value: str) -> None:
+        self.working_dir_root = value
 
     @property
     def working_dir(self) -> str:
         return self.to_vm_path(self.__working_dir) if self.convert_to_vm_path else self.__working_dir
 
+    @working_dir.setter
+    def working_dir(self, value: str) -> None:
+        self.working_dir = value
+
     @property
     def datasets(self) -> str:
         return self.to_vm_path(self.__datasets) if self.convert_to_vm_path else self.__datasets
 
+    @datasets.setter
+    def datasets(self, value: str) -> None:
+        self.datasets = value
+
     @property
     def archives(self) -> str:
         return self.to_vm_path(self.__archives) if self.convert_to_vm_path else self.__archives
+
+    @archives.setter
+    def archives(self, value: str) -> None:
+        self.archives = value
 
     @classmethod
     def to_vm_path(cls, _path: str) -> str:
