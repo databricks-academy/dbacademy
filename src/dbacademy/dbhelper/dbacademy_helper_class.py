@@ -109,12 +109,13 @@ class DBAcademyHelper:
 
         # This is where the datasets will be downloaded to and should be treated as read-only for all practical purposes
         # dbfs:/mnt/dbacademy-datasets/????????/some_dataset/v00
+
+        archives_path = None
+        datasets_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
+
         if self.course_config.data_source_as_archive:
-            datasets_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
-            archives_path = None
-        else:
+            archives_path = datasets_path  # Trading values
             datasets_path = f"{DBAcademyHelper.working_dir_root}/datasets"
-            archives_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
 
         self.paths = Paths(_lesson_config=self.lesson_config,
                            _working_dir_root=self.working_dir_root,
