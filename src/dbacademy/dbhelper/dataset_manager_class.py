@@ -162,6 +162,7 @@ class DatasetManager:
 
         self.validate_datasets(fail_fast=False)
         self.unpack_archive()
+        print()
 
     def unpack_archive(self) -> None:
         import shutil
