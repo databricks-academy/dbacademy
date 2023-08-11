@@ -446,6 +446,9 @@ try:
     spark: Union[None, "pyspark.sql.SparkSession"] = find_global("spark")
     sc: Union[None, "pyspark.SparkContext"] = find_global("sc")
     dbutils: Union[MockDBUtils, None] = find_global("dbutils")
+    print("-"*100)
+    print(dbutils)
+    print("-"*100)
 
 except ImportError as e:
     print("-"*100)
