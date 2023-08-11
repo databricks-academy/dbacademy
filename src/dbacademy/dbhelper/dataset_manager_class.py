@@ -137,6 +137,9 @@ class DatasetManager:
 
         self.validate_datasets(fail_fast=False)
 
+    def unarchive_assets(self):
+        pass
+
     def validate_datasets(self, fail_fast: bool) -> None:
         """
         Validates the "install" of the datasets by recursively listing all files in the remote data repository as well as the local data repository, validating that each file exists but DOES NOT validate file size or checksum.

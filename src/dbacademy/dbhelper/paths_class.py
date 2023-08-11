@@ -4,7 +4,7 @@ class Paths:
     def __init__(self, *, _lesson_config: LessonConfig, _working_dir_root: str, _datasets: str, _archives: str):
 
         if _lesson_config.name is None:
-            self.working_dir = _working_dir_root
+            self.working_dir = f"{_working_dir_root}/working"
         else:
             self.working_dir = f"{_working_dir_root}/{_lesson_config.name}"
 

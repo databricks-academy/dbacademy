@@ -7,7 +7,6 @@ class CourseConfig:
                  course_code: str,
                  course_name: str,
                  data_source_version: str,
-                 data_source_as_archive: bool,
                  install_min_time: str,
                  install_max_time: str,
                  remote_files: List[str],
@@ -19,7 +18,6 @@ class CourseConfig:
         :param course_code: See the property by the same name
         :param course_name: See the property by the same name
         :param data_source_version: See the property by the same name
-        :param data_source_as_archive: See the property by the same name
         :param install_min_time: See the property by the same name
         :param install_max_time: See the property by the same name
         :param remote_files: See the property by the same name
@@ -31,11 +29,13 @@ class CourseConfig:
 
         self.__course_name = course_name
         self.__data_source_version = data_source_version
-        self.__data_source_as_archive = data_source_as_archive
 
         self.__install_min_time = install_min_time
         self.__install_max_time = install_max_time
         self.__remote_files = remote_files
+
+        # We are using the archive pattern if there is only one file declared, and it's named "/archive.zip"
+        self.__data_source_as_archive = len(self.__remote_files) == 1 and "/archive.zip" in self.__remote_files
 
         assert len(supported_dbrs) > 0, f"At least one supported DBR must be defined."
         self.__supported_dbrs = [str(d) for d in supported_dbrs]
