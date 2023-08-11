@@ -123,14 +123,14 @@ class DatasetManager:
                     dbgems.dbutils.fs.rm(self.archives_path, True)
 
             else:  # not reinstall_datasets:
-                print(f"\nSkipping {action.lower()} of existing datasets to \"{self.install_path}\"")
+                print(f"""\nSkipping {action.lower()} of existing datasets to "{self.install_path}" """)
                 self.validate_datasets(fail_fast=False)
                 self.unpack_archive()
                 return  # All done.
 
-        print(f"\n{action}ing datasets:")
-        print(f"| from \"{self.data_source_uri}\"")
-        print(f"| to   \"{self.install_path}\"")
+        print(f"""\n{action}ing datasets:""")
+        print(f"""| from "{self.data_source_uri}" """)
+        print(f"""| to   "{self.install_path}" """)
         if self.install_min_time is not None and self.install_max_time is not None:
             print(f"|")
             print(f"| NOTE: The datasets that we are installing are located in Washington, USA - depending on the")
@@ -191,25 +191,24 @@ class DatasetManager:
         from dbacademy import dbgems
 
         validation_start = dbgems.clock_start()
+        print(f"| Validating the locally installed datasets:")
 
         if self.staging_source_uri == self.data_source_uri:
             # When working with staging data, we need to enumerate what is in there
             # and use it as a definitive source to the complete enumeration of our files
             start = dbgems.clock_start()
-            print("\nEnumerating staged files for validation", end="...")
+            print("| Enumerating staged files for validation", end="...")
             self.__remote_files = DatasetManager.list_r(self.staging_source_uri)
             print(dbgems.clock_stopped(start))
-
-        print(f"\nValidating the locally installed datasets:")
 
         self.__validate_and_repair()
 
         if self.fixes == 1:
-            print(f"| fixed 1 issue", end="...")
+            print(f"  | fixed 1 issue", end="...")
         elif self.fixes > 0:
-            print(f"| fixed {self.fixes} issues", end="...")
+            print(f"  | fixed {self.fixes} issues", end="...")
         else:
-            print(f"| validation completed", end="...")
+            print(f"  | validation completed", end="...")
 
         print(dbgems.clock_stopped(validation_start, " total"))
 
@@ -219,17 +218,11 @@ class DatasetManager:
     def __validate_and_repair(self) -> None:
         from dbacademy import dbgems
 
-        print("| listing local files", end="...")
+        print("  | listing local files", end="...")
         start = dbgems.clock_start()
 
         local_files = DatasetManager.list_r(self.install_path)
         print(dbgems.clock_stopped(start))
-
-        # print(f"\n| " + ("*"*80))
-        # print(f"| install_path: {self.install_path}")
-        # print(f"| local_files:  {local_files}")
-        # print(f"| " + ("*"*80) + "\n")
-        # print()
 
         # Process directories first
         self.__del_extra_paths(local_files)
@@ -257,7 +250,7 @@ class DatasetManager:
                 self.__fixes += 1
                 start = dbgems.clock_start()
                 self.repaired_paths.append(file)
-                print(f"| removing extra path: {file}", end="...")
+                print(f"  | removing extra path: {file}", end="...")
                 dbgems.dbutils.fs.rm(f"{self.install_path}/{file[1:]}", True)
                 print(dbgems.clock_stopped(start))
 
@@ -273,7 +266,7 @@ class DatasetManager:
                 self.__fixes += 1
                 start = dbgems.clock_start()
                 self.repaired_paths.append(file)
-                print(f"| restoring missing path: {file}", end="...")
+                print(f"  | restoring missing path: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
                 target_file = f"{self.install_path}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
@@ -290,7 +283,7 @@ class DatasetManager:
             if file not in self.remote_files and not file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
                 start = dbgems.clock_start()
-                print(f"| removing extra file: {file}", end="...")
+                print(f"  | removing extra file: {file}", end="...")
                 dbgems.dbutils.fs.rm(f"{self.install_path}/{file[1:]}", True)
                 print(dbgems.clock_stopped(start))
 
@@ -305,7 +298,7 @@ class DatasetManager:
             if file not in local_files and not file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
                 start = dbgems.clock_start()
-                print(f"| restoring missing file: {file}", end="...")
+                print(f"  | restoring missing file: {file}", end="...")
                 source_file = f"{self.data_source_uri}/{file[1:]}"
                 target_file = f"{self.install_path}/{file[1:]}"
                 dbgems.dbutils.fs.cp(source_file, target_file, True)
