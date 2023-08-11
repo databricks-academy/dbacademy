@@ -13,12 +13,10 @@ class JobsClient(ApiContainer):
 
     @common.deprecated("Use JobsClient.create_from_config() instead")
     def create(self, params) -> Dict[str, Any]:
+        from dbacademy import common
+
         if "notebook_task" in params:
-            print("*"*80)
-            print("* DEPRECATION WARNING")
-            print("* You are using the Jobs 2.0 version of create as noted by the existence of the notebook_task parameter.")
-            print("* Please upgrade to the 2.1 version.")
-            print("*"*80)
+            common.print_warning("DEPRECATION WARNING", "You are using the Jobs 2.0 version of create as noted by the existence of the notebook_task parameter.\nPlease upgrade to the 2.1 version.")
             return self.create_2_0(params)
         else:
             return self.create_2_1(params)
@@ -35,9 +33,6 @@ class JobsClient(ApiContainer):
         return self.create_from_dict(config.params)
 
     def create_from_dict(self, params: Dict[str, Any]) -> str:
-        import json
-        print(json.dumps(params, indent=4))
-
         response = self.client.api("POST", f"{self.client.endpoint}/api/2.1/jobs/create", params)
         return response.get("job_id")
 
@@ -152,10 +147,10 @@ class JobsClient(ApiContainer):
 
                         if success_only and life_cycle_state != "TERMINATED":
                             delete_job = False
-                            print(f""" - The job "{job_name}" was not "TERMINATED" but "{life_cycle_state}", this job must be deleted manually""")
+                            self.client.vprint(f""" - The job "{job_name}" was not "TERMINATED" but "{life_cycle_state}", this job must be deleted manually""")
                         if success_only and result_state != "SUCCESS":
                             delete_job = False
-                            print(f""" - The job "{job_name}" was not "SUCCESS" but "{result_state}", this job must be deleted manually""")
+                            self.client.vprint(f""" - The job "{job_name}" was not "SUCCESS" but "{result_state}", this job must be deleted manually""")
 
                     if delete_job:
                         self.client.vprint(f"...Deleting job #{job_id}, \"{job_name}\"")
