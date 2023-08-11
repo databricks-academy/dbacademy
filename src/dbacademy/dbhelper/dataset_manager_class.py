@@ -123,9 +123,12 @@ class DatasetManager:
                 print()
                 return  # All done.
 
+        file = "archive.zip"
         print(f"""\nInstalling datasets:""")
-        print(f"""| from "{self.data_source_uri}" """)
-        print(f"""| to   "{self.install_path}" """)
+        print(f"""| from "{self.data_source_uri}/{file}" """)
+        print(f"""| temp "{self.install_path}/{file}" """)
+        print(f"""| to   "{self.install_path}/{file}" """)
+
         if self.install_min_time is not None and self.install_max_time is not None:
             print(f"|")
             print(f"| NOTE: The datasets that we are installing are located in Washington, USA - depending on the")
@@ -136,7 +139,6 @@ class DatasetManager:
         # reach the remote repository - in cases where it's blocked, this will fail.
         # files = dbgems.dbutils.fs.ls(self.data_source_uri)
 
-        file = "archive.zip"
         download_start = dbgems.clock_start()
 
         print(f"""|""")
