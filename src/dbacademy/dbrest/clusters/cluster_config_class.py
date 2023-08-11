@@ -1,6 +1,8 @@
 from enum import Enum
 from typing import Optional, Dict, Any, List
 
+__all__ = ["Availability", "ClusterConfig", "JobClusterConfig"]
+
 
 class Availability(Enum):
     ON_DEMAND = "ON_DEMAND"
@@ -18,6 +20,48 @@ class Availability(Enum):
     @property
     def is_spot_with_fallback(self) -> bool:
         return self == Availability.SPOT_WITH_FALLBACK
+
+
+class LibraryFactory:
+    def __init__(self, _libraries: List[Dict[str, Any]]):
+        self.__definitions = _libraries if _libraries else list()
+
+    @property
+    def definitions(self) -> List[Dict[str, Any]]:
+        return self.__definitions
+
+    def jar(self, location: str):
+        self.definitions.append({
+            "jar": location
+        })
+
+    def egg(self, location: str):
+        self.definitions.append({
+            "egg": location
+        })
+
+    def wheel(self, location: str):
+        self.definitions.append({
+            "egg": location
+        })
+
+    def pypi(self, definition: Dict[str, Any]):
+        self.definitions.append({
+            "pypi": definition
+        })
+
+    def maven(self, definition: Dict[str, Any]):
+        self.definitions.append({
+            "maven": definition
+        })
+
+    def cran(self, definition: Dict[str, Any]):
+        self.definitions.append({
+            "cran": definition
+        })
+
+    def from_dict(self, library: Dict[str, Any]):
+        self.definitions.append(library)
 
 
 class ClusterConfig:
@@ -39,7 +83,7 @@ class ClusterConfig:
                  spark_env_vars: Optional[Dict[str, str]] = None,
                  custom_tags: Optional[Dict[str, str]] = None,
                  extra_params: Dict[str, Any] = None,
-                 libraries: List[Dict] = None):
+                 libraries: List[Dict[str, Any]] = None):
 
         self.__params = {
             "cluster_name": cluster_name,
@@ -114,46 +158,8 @@ class ClusterConfig:
         if len(spark_env_vars) > 0:
             self.__params["spark_env_vars"] = spark_env_vars
 
-        class Library:
-            def __init__(self, _libraries: List[Dict[str, Any]]):
-                self.libraries = libraries
-
-            def jar(self, location: str):
-                self.libraries.append({
-                    "jar": location
-                })
-
-            def egg(self, location: str):
-                self.libraries.append({
-                    "egg": location
-                })
-
-            def wheel(self, location: str):
-                self.libraries.append({
-                    "egg": location
-                })
-
-            def pypi(self, definition: Dict[str, Any]):
-                self.libraries.append({
-                    "pypi": definition
-                })
-
-            def maven(self, definition: Dict[str, Any]):
-                self.libraries.append({
-                    "maven": definition
-                })
-
-            def cran(self, definition: Dict[str, Any]):
-                self.libraries.append({
-                    "cran": definition
-                })
-
-            def from_dict(self, _libraries: Dict[str, Any]):
-                self.libraries.append(_libraries)
-
-        libraries = libraries if libraries else list()
-        self.libraries = Library(libraries)
-        extra_params["libraries"] = libraries
+        self.__libraries = LibraryFactory(libraries)
+        extra_params["libraries"] = self.libraries.definitions
 
         # Process last just in case there is an exclusion bug...
         # This will result in replacing any previously defined parameters
@@ -163,6 +169,10 @@ class ClusterConfig:
     @property
     def params(self) -> Dict[str, Any]:
         return self.__params
+
+    @property
+    def libraries(self) -> LibraryFactory:
+        return self.__libraries
 
 
 class JobClusterConfig(ClusterConfig):
