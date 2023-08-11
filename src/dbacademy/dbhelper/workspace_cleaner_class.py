@@ -53,16 +53,17 @@ class WorkspaceCleaner:
             self._cleanup_mlflow_models(lesson_only=False)
             self._cleanup_experiments(lesson_only=False)
 
-        self._reset_databases()
-        self._reset_datasets()
-        self._reset_working_dir()
+        self.__reset_databases()
+        self.__reset_datasets()
+        self.__reset_archives()
+        self.__reset_working_dir()
 
-        self._drop_instance_pool()
-        self._drop_cluster_policy()
+        self.__drop_instance_pool()
+        self.__drop_cluster_policies()
 
         print(f"| The learning environment was successfully reset {dbgems.clock_stopped(start)}.")
 
-    def _drop_instance_pool(self):
+    def __drop_instance_pool(self):
         from dbacademy.dbhelper import ClustersHelper
 
         for pool_name in ClustersHelper.POOLS:
@@ -71,7 +72,7 @@ class WorkspaceCleaner:
                 print(f"| Dropping the instance pool \"{pool_name}\".")
                 self.__da.client.instance_pools.delete_by_name(pool_name)
 
-    def _drop_cluster_policy(self):
+    def __drop_cluster_policies(self):
         from dbacademy.dbhelper import ClustersHelper
 
         for policy_name in ClustersHelper.POLICIES:
@@ -80,7 +81,7 @@ class WorkspaceCleaner:
                 print(f"| Dropping the cluster policy \"{policy_name}\".")
                 self.__da.client.cluster_policies.delete_by_name(policy_name)
 
-    def _reset_working_dir(self) -> None:
+    def __reset_working_dir(self) -> None:
         from dbacademy import dbgems
         from dbacademy.dbhelper.paths_class import Paths
 
@@ -88,7 +89,7 @@ class WorkspaceCleaner:
             print(f"| Deleting working directory \"{self.__da.working_dir_root}\".")
             dbgems.dbutils.fs.rm(self.__da.working_dir_root, True)
 
-    def _reset_datasets(self) -> None:
+    def __reset_datasets(self) -> None:
         from dbacademy import dbgems
         from dbacademy.dbhelper.paths_class import Paths
 
@@ -96,13 +97,21 @@ class WorkspaceCleaner:
             print(f"| Deleting datasets \"{self.__da.paths.datasets}\".")
             dbgems.dbutils.fs.rm(self.__da.paths.datasets, True)
 
+    def __reset_archives(self) -> None:
+        from dbacademy import dbgems
+        from dbacademy.dbhelper.paths_class import Paths
+
+        if Paths.exists(self.__da.paths.datasets):
+            print(f"| Deleting archives \"{self.__da.paths.archives}\".")
+            dbgems.dbutils.fs.rm(self.__da.paths.archives, True)
+
     @staticmethod
     def __list_catalogs():
         from dbacademy import dbgems
 
         return [c.catalog for c in dbgems.spark.sql(f"SHOW CATALOGS").collect()]
 
-    def _reset_databases(self) -> None:
+    def __reset_databases(self) -> None:
         from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from pyspark.sql.utils import AnalysisException
