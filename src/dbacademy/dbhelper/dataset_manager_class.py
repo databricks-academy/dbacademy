@@ -129,7 +129,7 @@ class DatasetManager:
                 self.unpack_archive()
                 return  # All done.
 
-        print(f"""\n{action}ing datasets:""")
+        print(f"""\n{action}ing {what}:""")
         print(f"""| from "{self.data_source_uri}" """)
         print(f"""| to   "{self.install_path}" """)
         if self.install_min_time is not None and self.install_max_time is not None:
