@@ -124,6 +124,7 @@ class DatasetManager:
                 return  # All done.
 
         file = "archive.zip"
+        install_start = dbgems.clock_start()
         print(f"""\nInstalling datasets:""")
         print(f"""| from "{self.data_source_uri}/{file}" """)
         print(f"""| temp "{self.install_path}/{file}" """)
@@ -152,6 +153,7 @@ class DatasetManager:
 
         self.validate_datasets(fail_fast=False)
         self.unpack_archive()
+        print(f"""| Dataset installation completed {dbgems.clock_stopped(install_start)}.""")
         print()
 
     def unpack_archive(self) -> None:
@@ -174,7 +176,7 @@ class DatasetManager:
             print(f"""| Skipping install of existing datasets to "{self.datasets_path}" """)
         else:
             print(f"""|""")
-            print(f"""| Installing datasets to "{self.datasets_path}"...""", end="")
+            print(f"""| Unpacking datasets to "{self.datasets_path}"...""", end="")
             archive_path = f"{self.archives_path}/archive.zip".replace("dbfs:/", '/dbfs/')
             dataset_path = self.datasets_path.replace("dbfs:/", '/dbfs/')
             shutil.unpack_archive(archive_path, dataset_path)
@@ -188,7 +190,7 @@ class DatasetManager:
 
         # TODO Use the zip file to determine which files should exist in the datasets directory
         validation_start = dbgems.clock_start()
-        print(f"| Validating the local assets:")
+        print(f"| Validating local assets:")
 
         self.__validate_and_repair()
 
