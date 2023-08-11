@@ -134,25 +134,19 @@ class DatasetManager:
 
         # Using data_source_uri is a temporary hack because it assumes we can actually
         # reach the remote repository - in cases where it's blocked, this will fail.
-        files = dbgems.dbutils.fs.ls(self.data_source_uri)
+        # files = dbgems.dbutils.fs.ls(self.data_source_uri)
 
-        total = len(files)
+        file = "archive.zip"
+        download_start = dbgems.clock_start()
+
         print("| ")
+        print(f"| Downloading {file}", end="...")
 
-        install_start = dbgems.clock_start()
+        dbgems.dbutils.fs.cp(f"{self.data_source_uri}/{file}",
+                             f"{self.install_path}/{file}", True)
 
-        for i, f in enumerate(files):
-            start = dbgems.clock_start()
-            name = f.name[:-1] if f.name.endswith("/") else f.name
-            print(f"| Copying {i + 1}/{total}: {name}", end="...")
-
-            source_path = f"{self.data_source_uri}/{name}"
-            target_path = f"{self.install_path}/{name}"
-
-            dbgems.dbutils.fs.cp(source_path, target_path, True)
-            print(dbgems.clock_stopped(start))
-
-        print(f"| Completed {what} {action.lower()} successfully...{dbgems.clock_stopped(install_start)}\n")
+        print(dbgems.clock_stopped(download_start))
+        print("| ")
 
         self.validate_datasets(fail_fast=False)
         self.unpack_archive()
