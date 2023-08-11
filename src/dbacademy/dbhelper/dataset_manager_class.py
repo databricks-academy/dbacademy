@@ -184,8 +184,9 @@ class DatasetManager:
         """
         from dbacademy import dbgems
 
+        # TODO Use the zip file to determine which files should exist in the datasets directory
         validation_start = dbgems.clock_start()
-        print(f"| Validating the locally installed datasets:")
+        print(f"| Validating the local assets:")
 
         self.__validate_and_repair()
 
