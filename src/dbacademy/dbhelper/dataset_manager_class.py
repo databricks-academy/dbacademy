@@ -118,10 +118,7 @@ class DatasetManager:
 
             else:  # not reinstall_datasets:
                 print(f"""\nSkipping {action.lower()} of existing {what} to "{self.install_path}" """)
-                self.validate_datasets(fail_fast=False)
-                self.unpack_archive()
-                print()
-                return  # All done.
+                return self.install_dataset_done(0)
 
         file = "archive.zip"
         install_start = dbgems.clock_start()
@@ -151,9 +148,19 @@ class DatasetManager:
         print(dbgems.clock_stopped(download_start))
         print("| ")
 
+        return self.install_dataset_done(install_start)
+
+    def install_dataset_done(self, install_start: int) -> None:
+        from dbacademy import dbgems
+
         self.validate_datasets(fail_fast=False)
         self.unpack_archive()
-        print(f"""| Dataset installation completed {dbgems.clock_stopped(install_start)}.""")
+
+        if install_start == 0:
+            print(f"""| Dataset installation completed.""")
+        else:
+            print(f"""| Dataset installation completed {dbgems.clock_stopped(install_start)}.""")
+
         print()
 
     def unpack_archive(self) -> None:
