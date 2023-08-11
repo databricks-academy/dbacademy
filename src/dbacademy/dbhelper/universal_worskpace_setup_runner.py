@@ -1,6 +1,3 @@
-from dbacademy.dbhelper import WorkspaceHelper
-from dbacademy.dbrest.client import DBAcademyRestClient
-
 __all__ = ["UniversalWorkspaceSetupRunner"]
 
 
@@ -8,6 +5,7 @@ class UniversalWorkspaceSetupRunner:
 
     def __int__(self, *, token: str, endpoint: str, workspace_name: str, course_name: str, data_source_version: str, default_spark_version: str, event_description: str = None, event_id: int = 0, pools_node_type_id: str = None):
         from dbacademy.common import Cloud
+        from dbacademy.dbrest.client import DBAcademyRestClient
 
         self.event_id = event_id
         self.course_name = course_name
@@ -31,6 +29,8 @@ class UniversalWorkspaceSetupRunner:
 
     def run(self):
         import time
+        from dbacademy.dbhelper import WorkspaceHelper
+
         start = time.time()
 
         self.client.jobs.delete_by_name(WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME, success_only=False)
