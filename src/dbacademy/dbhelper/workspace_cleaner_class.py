@@ -54,6 +54,7 @@ class WorkspaceCleaner:
             self._cleanup_experiments(lesson_only=False)
 
         self.__reset_databases()
+
         self.__reset_datasets()
         self.__reset_archives()
         self.__reset_working_dir()
@@ -85,24 +86,24 @@ class WorkspaceCleaner:
         from dbacademy import dbgems
         from dbacademy.dbhelper.paths_class import Paths
 
+        print(f"| Deleting working directory root \"{self.__da.working_dir_root}\".")
         if Paths.exists(self.__da.working_dir_root):
-            print(f"| Deleting working directory \"{self.__da.working_dir_root}\".")
             dbgems.dbutils.fs.rm(self.__da.working_dir_root, True)
 
     def __reset_datasets(self) -> None:
         from dbacademy import dbgems
         from dbacademy.dbhelper.paths_class import Paths
 
+        print(f"| Deleting datasets \"{self.__da.paths.datasets}\".")
         if Paths.exists(self.__da.paths.datasets):
-            print(f"| Deleting datasets \"{self.__da.paths.datasets}\".")
             dbgems.dbutils.fs.rm(self.__da.paths.datasets, True)
 
     def __reset_archives(self) -> None:
         from dbacademy import dbgems
         from dbacademy.dbhelper.paths_class import Paths
 
+        print(f"| Deleting archives \"{self.__da.paths.archives}\".")
         if Paths.exists(self.__da.paths.datasets):
-            print(f"| Deleting archives \"{self.__da.paths.archives}\".")
             dbgems.dbutils.fs.rm(self.__da.paths.archives, True)
 
     @staticmethod
