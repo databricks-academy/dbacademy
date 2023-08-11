@@ -27,10 +27,6 @@ class Paths:
     def archives(self) -> str:
         return self.__archives
 
-    @archives.setter
-    def archives(self, value) -> None:
-        self.__archives = value
-
     @classmethod
     def to_vm_path(cls, _path: str) -> str:
         return None if _path is None else _path.replace("dbfs:/", "/dbfs/")

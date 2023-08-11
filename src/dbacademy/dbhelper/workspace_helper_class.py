@@ -140,35 +140,19 @@ class WorkspaceHelper:
             for data_source_version in versions:
                 start = dbgems.clock_start()
 
-                data_source_as_archive = False
                 data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{data_source_name}/{data_source_version}"
                 remote_files = DatasetManager.list_r(data_source_uri)
 
-                print(f"Remote files:")
-                for file in remote_files:
-                    print(f"{file}")
-                    # TODO test if archives-only
-                    # data_source_as_archive = True
-
-                ######################################################################
-                if data_source_as_archive:
-                    datasets_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{data_source_name}/{data_source_version}"
-                    archives_path = None
-                else:
-                    datasets_path = f"{DBAcademyHelper.working_dir_root}/datasets"
-                    archives_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{data_source_name}/{data_source_version}"
-                ######################################################################
+                install_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{data_source_name}/{data_source_version}"
 
                 print(f"| {data_source_uri}")
-                print(f"| {datasets_path}")
                 print("| listing remote files", end="...")
 
                 print(dbgems.clock_stopped(start))
 
                 dataset_manager = DatasetManager(_data_source_uri=data_source_uri,
                                                  _staging_source_uri=None,
-                                                 _datasets_path=datasets_path,
-                                                 _archives_path=archives_path,
+                                                 _install_path=install_path,
                                                  _install_min_time=None,
                                                  _install_max_time=None,
                                                  _remote_files=remote_files)

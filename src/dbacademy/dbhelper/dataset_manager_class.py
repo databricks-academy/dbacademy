@@ -6,10 +6,18 @@ class DatasetManager:
 
     @staticmethod
     def from_dbacademy_helper(da: DBAcademyHelper):
+
+        if da.paths.datasets is None and da.paths.archives is None:
+            raise ValueError(f"""One of the two parameters, "DBAcademyHelper.paths.datasets" or "DBAcademyHelper.paths.archives", must be specified.""")
+        elif da.paths.archives is not None:
+            # Prefer the archives path over the datasets path
+            install_dir = da.paths.archives
+        else:
+            install_dir = da.paths.datasets
+
         return DatasetManager(_data_source_uri=da.data_source_uri,
                               _staging_source_uri=da.staging_source_uri,
-                              _datasets_path=da.paths.datasets,
-                              _archives_path=da.paths.archives,
+                              _install_path=install_dir,
                               _install_min_time=da.course_config.install_min_time,
                               _install_max_time=da.course_config.install_max_time,
                               _remote_files=da.course_config.remote_files)
@@ -17,8 +25,7 @@ class DatasetManager:
     def __init__(self, *,
                  _data_source_uri: str,
                  _staging_source_uri: Optional[str],
-                 _datasets_path: str,
-                 _archives_path: str,
+                 _install_path: str,
                  _install_min_time: Optional[str],
                  _install_max_time: Optional[str],
                  _remote_files: List[str]):
@@ -26,25 +33,21 @@ class DatasetManager:
         Creates an instance of DatasetManager
         :param _data_source_uri: See DBAcademy.data_source_uri
         :param _staging_source_uri: See DBAcademy.staging_source_uri
-        :param _datasets_path: See DBAcademy.paths.datasets, Paths
-        :param _archives_path: See DBAcademy.paths.archives, Paths
+        :param _install_path: See DBAcademy.paths.archives and DBAcademy.paths.datasets, Paths
         :param _install_min_time: See CourseConfig.install_min_time, str
         :param _install_max_time: See CourseConfig.install_max_time, str
         """
         self.__fixes = 0
         self.__repaired_paths = []
+
         self.__data_source_uri = _data_source_uri
         self.__staging_source_uri = _staging_source_uri
+
         self.__remote_files = _remote_files
+
+        self.__install_path = _install_path
         self.__install_min_time = _install_min_time
         self.__install_max_time = _install_max_time
-
-        if _archives_path is None and _datasets_path is None:
-            raise ValueError(f"""One of the two parameters, "_archives_path" or "_datasets_path" must be specified.""")
-        elif _archives_path is None:
-            self.__install_path = _datasets_path
-        else:
-            self.__install_path = _archives_path
 
     @property
     def install_path(self) -> str:
