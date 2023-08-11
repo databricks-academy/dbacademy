@@ -209,11 +209,11 @@ class DatasetManager:
         self.__validate_and_repair()
 
         if self.fixes == 1:
-            print(f"| | fixed 1 issue", end="...")
+            print(f"| | Fixed 1 issue", end="...")
         elif self.fixes > 0:
-            print(f"| | fixed {self.fixes} issues", end="...")
+            print(f"| | Fixed {self.fixes} issues", end="...")
         else:
-            print(f"| | validation completed", end="...")
+            print(f"| | Validation completed", end="...")
 
         print(dbgems.clock_stopped(validation_start, " total"))
 
@@ -223,7 +223,7 @@ class DatasetManager:
     def __validate_and_repair(self) -> None:
         from dbacademy import dbgems
 
-        print("| | listing local files", end="...")
+        print("| | Listing local files", end="...")
         start = dbgems.clock_start()
 
         local_files = DatasetManager.list_r(self.install_path)
