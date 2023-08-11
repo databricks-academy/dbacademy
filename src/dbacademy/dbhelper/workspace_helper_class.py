@@ -156,8 +156,7 @@ class WorkspaceHelper:
                                                  _datasets_path=None,
                                                  _archives_path=None,
                                                  _install_min_time=None,
-                                                 _install_max_time=None,
-                                                 _remote_files=remote_files)
+                                                 _install_max_time=None)
 
                 dataset_manager.install_dataset(reinstall_datasets=False)
 
