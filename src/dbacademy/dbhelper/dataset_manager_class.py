@@ -127,6 +127,7 @@ class DatasetManager:
                 print(f"""\nSkipping {action.lower()} of existing {what} to "{self.install_path}" """)
                 self.validate_datasets(fail_fast=False)
                 self.unpack_archive()
+                print()
                 return  # All done.
 
         print(f"""\n{action}ing {what}:""")
