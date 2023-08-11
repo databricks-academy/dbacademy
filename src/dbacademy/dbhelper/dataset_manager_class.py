@@ -165,14 +165,15 @@ class DatasetManager:
     def unpack_archive(self) -> None:
         import shutil
         from dbacademy import dbgems
+        from dbacademy.dbhelper.paths_class import Paths
 
         if self.archives_path is None:
             return  # This is a classic install, nothing to unpack
 
         try:
-            files = dbgems.dbutils.fs.ls(self.archives_path)
+            files = list() if not Paths.exists(self.datasets_path) else dbgems.dbutils.fs.ls(self.datasets_path)
         except:
-            files = []
+            files = list()
 
         if len(files) > 0:
             print(f"\nSkipping install of existing datasets to \"{self.datasets_path}\"")
