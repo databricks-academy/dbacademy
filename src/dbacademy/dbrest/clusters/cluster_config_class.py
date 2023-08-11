@@ -145,7 +145,8 @@ class JobClusterConfig(ClusterConfig):
                  spark_conf: Optional[Dict[str, str]] = None,
                  spark_env_vars: Optional[Dict[str, str]] = None,
                  custom_tags: Optional[Dict[str, str]] = None,
-                 extra_params: Dict[str, Any] = None):
+                 extra_params: Dict[str, Any] = None,
+                 libraries: List[Dict[str, Any]] = None):
 
         super().__init__(cloud=cloud,
                          cluster_name=None,
@@ -161,4 +162,5 @@ class JobClusterConfig(ClusterConfig):
                          spark_env_vars=spark_env_vars,
                          custom_tags=custom_tags,
                          availability=availability,
-                         extra_params=extra_params)
+                         extra_params=extra_params,
+                         libraries=libraries)
