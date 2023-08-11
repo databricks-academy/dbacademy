@@ -127,7 +127,7 @@ class DatasetManager:
         print(f"""\nInstalling datasets:""")
         print(f"""| from "{self.data_source_uri}/{file}" """)
         print(f"""| temp "{self.install_path}/{file}" """)
-        print(f"""| to   "{self.install_path}/{file}" """)
+        print(f"""| to   "{self.datasets_path}/" """)
 
         if self.install_min_time is not None and self.install_max_time is not None:
             print(f"|")
