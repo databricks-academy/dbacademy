@@ -139,8 +139,8 @@ class DatasetManager:
         file = "archive.zip"
         download_start = dbgems.clock_start()
 
-        print("| ")
-        print(f"| Downloading {file}", end="...")
+        print(f"""|""")
+        print(f"""| Downloading "{file}"...""", end="")
 
         dbgems.dbutils.fs.cp(f"{self.data_source_uri}/{file}",
                              f"{self.install_path}/{file}", True)
