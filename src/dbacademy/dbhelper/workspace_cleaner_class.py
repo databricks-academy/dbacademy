@@ -1,9 +1,14 @@
+from typing import Optional
+
+
 class WorkspaceCleaner:
     from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
     
     def __init__(self, da: DBAcademyHelper):
-        self.__da = da
-        self.__unique_name = None
+        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+
+        self.__da: DBAcademyHelper = da
+        self.__unique_name: Optional[str] = None
 
     def reset_lesson(self) -> None:
         from dbacademy import dbgems
@@ -80,8 +85,8 @@ class WorkspaceCleaner:
         from dbacademy.dbhelper.paths_class import Paths
 
         if Paths.exists(self.__da.working_dir_root):
-            print(f"| Deleting working directory \"{self.__da.paths.working_dir_root}\".")
-            dbgems.dbutils.fs.rm(self.__da.paths.working_dir_root, True)
+            print(f"| Deleting working directory \"{self.__da.working_dir_root}\".")
+            dbgems.dbutils.fs.rm(self.__da.working_dir_root, True)
 
     def _reset_datasets(self) -> None:
         from dbacademy import dbgems

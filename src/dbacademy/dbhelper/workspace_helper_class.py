@@ -141,7 +141,7 @@ class WorkspaceHelper:
                 start = dbgems.clock_start()
 
                 data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{data_source_name}/{data_source_version}"
-                remote_files = DatasetManager.list_r(data_source_uri)
+                # remote_files = DatasetManager.list_r(data_source_uri)
 
                 install_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{data_source_name}/{data_source_version}"
 

@@ -6,6 +6,7 @@ class DBAcademyHelper:
     from dbacademy.dbhelper.lesson_config_class import LessonConfig
     from dbacademy.dbhelper.course_config_class import CourseConfig
     from pyspark.sql.streaming import StreamingQuery
+    from dbacademy.dbhelper.paths_class import Paths
 
     SCHEMA_DEFAULT = "default"
     SCHEMA_INFORMATION = "information_schema"
@@ -107,10 +108,10 @@ class DBAcademyHelper:
         # content-developer specified lesson name integrates into the various parameters.
         ###########################################################################################
 
-        self.paths = Paths(_lesson_config=self.lesson_config,
-                           _working_dir_root=self.working_dir_root,
-                           _datasets=f"{self.working_dir_root}/datasets",
-                           _archives=f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}")
+        self.__paths = Paths(_lesson_config=self.lesson_config,
+                             _working_dir_root=self.working_dir_root,
+                             _datasets=f"{self.working_dir_root}/datasets",
+                             _archives=f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}")
 
         self.__lesson_config.lock_mutations()
 
@@ -119,6 +120,10 @@ class DBAcademyHelper:
         self.__validate_spark_version()
         self.__validate_dbfs_writes(DBAcademyHelper.get_dbacademy_users_path())
         self.__validate_dbfs_writes(DBAcademyHelper.get_dbacademy_datasets_path())
+
+    @property
+    def paths(self) -> Paths:
+        return self.__paths
 
     @classmethod
     def get_dbacademy_datasets_path(cls) -> str:
