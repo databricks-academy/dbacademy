@@ -107,20 +107,10 @@ class DBAcademyHelper:
         # content-developer specified lesson name integrates into the various parameters.
         ###########################################################################################
 
-        # This is where the datasets will be downloaded to and should be treated as read-only for all practical purposes
-        # dbfs:/mnt/dbacademy-datasets/????????/some_dataset/v00
-
-        archives_path = None
-        datasets_path = f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
-
-        if self.course_config.data_source_as_archive:
-            archives_path = datasets_path  # Trading values
-            datasets_path = f"{self.working_dir_root}/datasets"
-
         self.paths = Paths(_lesson_config=self.lesson_config,
                            _working_dir_root=self.working_dir_root,
-                           _datasets=datasets_path,
-                           _archives=archives_path)
+                           _datasets=f"{self.working_dir_root}/datasets",
+                           _archives=f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}")
 
         self.__lesson_config.lock_mutations()
 

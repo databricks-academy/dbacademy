@@ -159,7 +159,7 @@ class DatasetManager:
             dbgems.dbutils.fs.cp(source_path, target_path, True)
             print(dbgems.clock_stopped(start))
 
-        print(f"|\n| Completed {what} {action} successfully...{dbgems.clock_stopped(install_start)}")
+        print(f"| Completed {what} {action.lower()} successfully...{dbgems.clock_stopped(install_start)}\n")
 
         self.validate_datasets(fail_fast=False)
         self.unpack_archive()
