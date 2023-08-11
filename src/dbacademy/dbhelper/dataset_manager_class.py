@@ -174,7 +174,7 @@ class DatasetManager:
 
         if len(files) > 0:
             print(f"""|""")
-            print(f"""| Skipping install of existing datasets to "{self.datasets_path}" """)
+            print(f"""| Skipping the unpacking of datasets to "{self.datasets_path}" """)
         else:
             print(f"""|""")
             print(f"""| Unpacking datasets to "{self.datasets_path}"...""", end="")
