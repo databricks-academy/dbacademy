@@ -55,7 +55,7 @@ class WorkspaceCleaner:
         self._drop_instance_pool()
         self._drop_cluster_policy()
 
-        print(f"| the learning environment was successfully reset {dbgems.clock_stopped(start)}.")
+        print(f"| The learning environment was successfully reset {dbgems.clock_stopped(start)}.")
 
     def _drop_instance_pool(self):
         from dbacademy.dbhelper import ClustersHelper
@@ -63,7 +63,7 @@ class WorkspaceCleaner:
         for pool_name in ClustersHelper.POOLS:
             pool = self.__da.client.instance_pools.get_by_name(pool_name)
             if pool is not None:
-                print(f"| dropping the instance pool \"{pool_name}\".")
+                print(f"| Dropping the instance pool \"{pool_name}\".")
                 self.__da.client.instance_pools.delete_by_name(pool_name)
 
     def _drop_cluster_policy(self):
@@ -72,7 +72,7 @@ class WorkspaceCleaner:
         for policy_name in ClustersHelper.POLICIES:
             policy = self.__da.client.cluster_policies.get_by_name(policy_name)
             if policy is not None:
-                print(f"| dropping the cluster policy \"{policy_name}\".")
+                print(f"| Dropping the cluster policy \"{policy_name}\".")
                 self.__da.client.cluster_policies.delete_by_name(policy_name)
 
     def _reset_working_dir(self) -> None:
@@ -80,7 +80,7 @@ class WorkspaceCleaner:
         from dbacademy.dbhelper.paths_class import Paths
 
         if Paths.exists(self.__da.working_dir_root):
-            print(f"| deleting working directory \"{self.__da.paths.working_dir_root}\".")
+            print(f"| Deleting working directory \"{self.__da.paths.working_dir_root}\".")
             dbgems.dbutils.fs.rm(self.__da.paths.working_dir_root, True)
 
     def _reset_datasets(self) -> None:
@@ -88,7 +88,7 @@ class WorkspaceCleaner:
         from dbacademy.dbhelper.paths_class import Paths
 
         if Paths.exists(self.__da.paths.datasets):
-            print(f"| deleting datasets \"{self.__da.paths.datasets}\".")
+            print(f"| Deleting datasets \"{self.__da.paths.datasets}\".")
             dbgems.dbutils.fs.rm(self.__da.paths.datasets, True)
 
     @staticmethod
@@ -120,7 +120,7 @@ class WorkspaceCleaner:
                 schema_names = [d.databaseName for d in dbgems.spark.sql(f"SHOW DATABASES IN {catalog_name}").collect()]
                 for schema_name in schema_names:
                     if schema_name.startswith(self.__da.schema_name_prefix) and schema_name != DBAcademyHelper.SCHEMA_DEFAULT:
-                        print(f"| dropping the schema \"{catalog_name}.{schema_name}\"")
+                        print(f"| Dropping the schema \"{catalog_name}.{schema_name}\"")
                         self._drop_database(f"{catalog_name}.{schema_name}")
 
     @staticmethod
@@ -151,7 +151,7 @@ class WorkspaceCleaner:
             return False  # If we don't create the catalog, don't drop it
 
         start = dbgems.clock_start()
-        print(f"| dropping the catalog \"{self.__da.catalog_name}\"", end="...")
+        print(f"| Dropping the catalog \"{self.__da.catalog_name}\"", end="...")
 
         try: 
             dbgems.spark.sql(f"DROP CATALOG IF EXISTS {self.__da.catalog_name} CASCADE")
@@ -170,7 +170,7 @@ class WorkspaceCleaner:
             return False  # If the database doesn't exist, it cannot be dropped
 
         start = dbgems.clock_start()
-        print(f"| dropping the schema \"{self.__da.schema_name}\"", end="...")
+        print(f"| Dropping the schema \"{self.__da.schema_name}\"", end="...")
 
         self._drop_database(self.__da.schema_name)
 
@@ -186,7 +186,7 @@ class WorkspaceCleaner:
 
         for stream in dbgems.active_streams():
             start = dbgems.clock_start()
-            print(f"| stopping the stream \"{stream.name}\"", end="...")
+            print(f"| Stopping the stream \"{stream.name}\"", end="...")
             stream.stop()
             try:
                 stream.awaitTermination()
@@ -203,7 +203,7 @@ class WorkspaceCleaner:
             return False  # Bail if the directory doesn't exist
 
         start = dbgems.clock_start()
-        print(f"| removing the working directory \"{self.__da.paths.working_dir}\"", end="...")
+        print(f"| Removing the working directory \"{self.__da.paths.working_dir}\"", end="...")
 
         dbgems.dbutils.fs.rm(self.__da.paths.working_dir, True)
 
@@ -229,7 +229,7 @@ class WorkspaceCleaner:
         try:
             for table in feature_store_tables:
                 name = table.get("name")
-                print(f"| dropping feature store table \"{name}\"")
+                print(f"| Dropping feature store table \"{name}\"")
                 feature_store.FeatureStoreClient().drop_table(name)
         finally:
             logger.disabled = logger_disabled
@@ -261,12 +261,12 @@ class WorkspaceCleaner:
             return False
 
         # Not our normal pattern, but the goal here is to report on ourselves only if experiments were found.
-        print(f"| enumerating MLflow Experiments...{dbgems.clock_stopped(start)}")
+        print(f"| Enumerating MLflow Experiments...{dbgems.clock_stopped(start)}")
 
         for experiment in experiments:
             status = self.__da.client.workspace.get_status(experiment.name)
             if status and status.get("object_type") == "MLFLOW_EXPERIMENT":
-                print(f"| deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
+                print(f"| Deleting experiment \"{experiment.name}\" ({experiment.experiment_id})")
                 mlflow.delete_experiment(experiment.experiment_id)
 
         return True
@@ -294,13 +294,13 @@ class WorkspaceCleaner:
             return False
 
         # Not our normal pattern, but the goal here is to report on ourselves only if models were found.
-        print(f"| enumerating MLflow models...{dbgems.clock_stopped(start)}")
+        print(f"| Enumerating MLflow models...{dbgems.clock_stopped(start)}")
         active_stages = ["production", "staging"]
 
         for model in models:
             start = dbgems.clock_start()
             name = model.get("name")
-            print(f"| deleting model {name}", end="...")
+            print(f"| Deleting model {name}", end="...")
 
             for version in self.__da.client.ml.mlflow_model_versions.list(name):
                 v = version.get("version")
@@ -357,14 +357,14 @@ class WorkspaceCleaner:
                     # print(f"""| Skipping "{name}".""")
 
         # Not our normal pattern, but the goal here is to report on ourselves only if endpoints were found.
-        print(f"| enumerating serving endpoints...found {len(existing_endpoints)}...{dbgems.clock_stopped(start)}")
+        print(f"| Enumerating serving endpoints...found {len(existing_endpoints)}...{dbgems.clock_stopped(start)}")
 
         if len(endpoints) == 0:
             return False
 
         for endpoint in endpoints:
             name: str = endpoint.get("name")
-            print(f"| disabling serving endpoint \"{name}\"")
+            print(f"| Disabling serving endpoint \"{name}\"")
             self.__da.client.serving_endpoints.delete_by_name(name)
 
         return True
