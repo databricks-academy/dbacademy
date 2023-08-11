@@ -73,7 +73,7 @@ class TaskConfig:
                 self.__libraries = LibraryFactory(None)
 
             @property
-            def library_factory(self) -> LibraryFactory:
+            def libraries(self) -> LibraryFactory:
                 return self.__libraries
 
             def notebook(self, notebook_path: str, source: str, base_parameters: Dict[str, str] = None) -> TaskConfig:
