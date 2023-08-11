@@ -31,12 +31,18 @@ class UniversalWorkspaceSetupRunner:
         from dbacademy.dbhelper import WorkspaceHelper
 
         start = time.time()
+        print("Running the Universal Workspace Setup job...")
 
         self.client.jobs.delete_by_name(WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME, success_only=False)
 
         job_id = self.create_job()
+        print(f"| Created job {job_id}")
+
         run = self.client.jobs.run_now(job_id)
         run_id = run.get("run_id")
+        print(f"| Started run {run_id}")
+
+        print(f"| Started run {run_id}")
         response = self.wait_for_job_run(job_id, run_id)
 
         # The job has completed, now we need to evaluate the final state.
@@ -88,6 +94,7 @@ class UniversalWorkspaceSetupRunner:
 
     def wait_for_job_run(self, job_id: str, run_id: str):
         import time
+        print(f"| Waiting for job {job_id}, run {run_id} to finish.")
 
         wait = 15
         new_run = self.client.runs.get(run_id)
