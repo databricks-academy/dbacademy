@@ -11,13 +11,15 @@ class DatasetManager:
             raise ValueError(f"""One of the two parameters, "DBAcademyHelper.paths.datasets" or "DBAcademyHelper.paths.archives", must be specified.""")
         elif da.paths.archives is not None:
             # Prefer the archives path over the datasets path
-            install_dir = da.paths.archives
+            install_path = da.paths.archives
         else:
-            install_dir = da.paths.datasets
+            install_path = da.paths.datasets
 
         return DatasetManager(_data_source_uri=da.data_source_uri,
                               _staging_source_uri=da.staging_source_uri,
-                              _install_path=install_dir,
+                              _datasets_path=da.paths.datasets,
+                              _archives_path=da.paths.archives,
+                              _install_path=install_path,
                               _install_min_time=da.course_config.install_min_time,
                               _install_max_time=da.course_config.install_max_time,
                               _remote_files=da.course_config.remote_files)
@@ -25,6 +27,8 @@ class DatasetManager:
     def __init__(self, *,
                  _data_source_uri: str,
                  _staging_source_uri: Optional[str],
+                 _datasets_path: Optional[str],
+                 _archives_path: Optional[str],
                  _install_path: str,
                  _install_min_time: Optional[str],
                  _install_max_time: Optional[str],
@@ -45,9 +49,20 @@ class DatasetManager:
 
         self.__remote_files = _remote_files
 
+        self.__datasets_path = _datasets_path
+        self.__archives_path = _archives_path
+
         self.__install_path = _install_path
         self.__install_min_time = _install_min_time
         self.__install_max_time = _install_max_time
+
+    @property
+    def datasets_path(self) -> str:
+        return self.__datasets_path
+
+    @property
+    def archives_path(self) -> str:
+        return self.__archives_path
 
     @property
     def install_path(self) -> str:
@@ -81,7 +96,7 @@ class DatasetManager:
     def repaired_paths(self) -> List[str]:
         return self.__repaired_paths
 
-    def install_dataset(self, *, reinstall_datasets: bool = False) -> None:
+    def install_dataset(self, *, reinstall_datasets: bool) -> None:
         """
         Install the datasets used by this course to DBFS.
 
@@ -93,18 +108,27 @@ class DatasetManager:
         # if not repairing_dataset: print(f"\nThe source for the datasets is\n{self.data_source_uri}/")
         # if not repairing_dataset: print(f"\nYour local dataset directory is {datasets_path}")
 
+        action = "Install" if self.archives_path is None else "Download"
+
         if Paths.exists(self.install_path):
             # It's already installed...
             if reinstall_datasets:
-                print(f"\nRemoving previously installed datasets")
-                dbgems.dbutils.fs.rm(self.install_path, True)
+                if self.archives_path is None:
+                    # This is a classic installation with shared datasets
+                    print(f"\nRemoving previously installed shared datasets")
+                    dbgems.dbutils.fs.rm(self.install_path, True)
+                else:
+                    # This is an installation from an archive with per-user datasets
+                    print(f"\nRemoving previously installed private datasets")
+                    dbgems.dbutils.fs.rm(self.archives_path, True)
 
             else:  # not reinstall_datasets:
-                print(f"\nSkipping install of existing datasets to \"{self.install_path}\"")
+                print(f"\nSkipping {action.lower()} of existing datasets to \"{self.install_path}\"")
                 self.validate_datasets(fail_fast=False)
-                return
+                self.unpack_archive()
+                return  # All done.
 
-        print(f"\nInstalling datasets:")
+        print(f"\n{action}ing datasets:")
         print(f"| from \"{self.data_source_uri}\"")
         print(f"| to   \"{self.install_path}\"")
         if self.install_min_time is not None and self.install_max_time is not None:
@@ -136,9 +160,27 @@ class DatasetManager:
         print(f"|\n| completed datasets installation successfully...{dbgems.clock_stopped(install_start)}")
 
         self.validate_datasets(fail_fast=False)
+        self.unpack_archive()
 
-    def unarchive_assets(self):
-        pass
+    def unpack_archive(self) -> None:
+        import shutil
+        from dbacademy import dbgems
+
+        if self.archives_path is None:
+            return  # This is a classic install, nothing to unpack
+
+        try:
+            files = dbgems.dbutils.fs.ls(self.archives_path)
+        except:
+            files = []
+
+        if len(files) > 0:
+            print(f"\nSkipping install of existing datasets to \"{self.datasets_path}\"")
+        else:
+            print(f"\nInstalling datasets to \"{self.datasets_path}\"")
+            archive_path = f"{self.archives_path}/archive.zip".replace("dbfs:/", '/dbfs/')
+            dataset_path = self.datasets_path.replace("dbfs:/", '/dbfs/')
+            shutil.unpack_archive(archive_path, dataset_path)
 
     def validate_datasets(self, fail_fast: bool) -> None:
         """
