@@ -154,6 +154,7 @@ class DatasetManager:
         self.validate_datasets(fail_fast=False)
         self.unpack_archive()
 
+        print(f"""|""")
         print(f"""| Dataset installation completed {dbgems.clock_stopped(install_start)}.\n""")
 
     def unpack_archive(self) -> None:
