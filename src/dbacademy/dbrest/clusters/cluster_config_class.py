@@ -241,7 +241,7 @@ class JobClusterConfig(CommonConfig):
 
         super().__init__(library_factory=None,
                          cloud=cloud,
-                         cluster_name="Some Job Name",
+                         cluster_name=None,  # Not allowed when uses as a job
                          spark_version=spark_version,
                          node_type_id=node_type_id,
                          driver_node_type_id=driver_node_type_id,
