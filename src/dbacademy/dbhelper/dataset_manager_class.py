@@ -130,7 +130,7 @@ class DatasetManager:
                 print()
                 return  # All done.
 
-        print(f"""\n{action}ing {what}:""")
+        print(f"""\nInstalling datasets:""")
         print(f"""| from "{self.data_source_uri}" """)
         print(f"""| to   "{self.install_path}" """)
         if self.install_min_time is not None and self.install_max_time is not None:
@@ -151,7 +151,7 @@ class DatasetManager:
         for i, f in enumerate(files):
             start = dbgems.clock_start()
             name = f.name[:-1] if f.name.endswith("/") else f.name
-            print(f"| copying {i + 1}/{total}: {name}", end="...")
+            print(f"| Copying {i + 1}/{total}: {name}", end="...")
 
             source_path = f"{self.data_source_uri}/{name}"
             target_path = f"{self.install_path}/{name}"
