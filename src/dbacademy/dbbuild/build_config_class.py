@@ -110,6 +110,7 @@ class BuildConfig:
         return build_config
 
     def __init__(self,
+                 # TODO Fix all these types: List, Dict, Optiona, etc
                  *,
                  name: str,
                  version: str = 0,
@@ -119,7 +120,7 @@ class BuildConfig:
                  instance_pool_id: str = None,
                  single_user_name: str = None,
                  workers: int = None,
-                 libraries: list = None,
+                 libraries: List[Dict[str, Any]] = None,
                  client: DBAcademyRestClient = None,
                  source_dir: str = None,
                  source_repo: str = None,
@@ -195,7 +196,7 @@ class BuildConfig:
         self.job_arguments = dict() if job_arguments is None else job_arguments
 
         # The libraries to be attached to the cluster
-        self.libraries = libraries or list()
+        self.__libraries = libraries or list()
 
         self.source_repo = self.default_source_repo(source_repo)
         self.source_dir = self.default_source_dir(source_repo, source_dir)
@@ -210,6 +211,10 @@ class BuildConfig:
 
         self.change_log = None
         self.publishing_info = publishing_info or {}
+
+    @property
+    def libraries(self) -> List[Dict[str, Any]]:
+        return self.__libraries
 
     @staticmethod
     def default_source_repo(source_repo: str = None) -> str:

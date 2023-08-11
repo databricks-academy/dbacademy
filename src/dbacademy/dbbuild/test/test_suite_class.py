@@ -87,7 +87,9 @@ class TestSuite:
             })
         task_config = job_config.add_task(task_key="Smoke-Test", description="Executes a single notebook, hoping that the magic smoke doesn't escape")
         task_config.task.notebook(notebook_path=notebook_path, source="WORKSPACE", base_parameters=self.build_config.job_arguments)
-        task_config.task.libraries.from_dict(self.build_config.libraries)
+
+        for library in self.build_config.libraries:
+            task_config.task.libraries.from_dict(library)
 
         if policy_id is not None:
             policy = self.client.cluster_policies.get_by_id(policy_id)
