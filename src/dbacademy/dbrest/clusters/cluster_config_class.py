@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 
 class Availability(Enum):
@@ -38,7 +38,8 @@ class ClusterConfig:
                  spark_conf: Optional[Dict[str, str]] = None,
                  spark_env_vars: Optional[Dict[str, str]] = None,
                  custom_tags: Optional[Dict[str, str]] = None,
-                 extra_params: Dict[str, Any] = None):
+                 extra_params: Dict[str, Any] = None,
+                 libraries: List[Dict] = None):
 
         self.__params = {
             "cluster_name": cluster_name,
@@ -53,6 +54,9 @@ class ClusterConfig:
         spark_conf = spark_conf or dict()
         spark_env_vars = spark_env_vars or dict()
         custom_tags = custom_tags or dict()
+
+        if libraries is not None:
+            extra_params["libraries"] = libraries
 
         if policy_id is not None:
             extra_params["policy_id"] = policy_id

@@ -22,6 +22,7 @@ class ClustersClient(ApiContainer):
                single_user_name: str = None,
                on_demand: bool = True,
                spark_conf: Optional[Dict[str, Any]] = None,
+               libraries: List[Dict[str, Any]] = None,
                **kwargs) -> str:
         from dbacademy.dbrest.clusters import ClusterConfig, Availability
 
@@ -34,6 +35,7 @@ class ClustersClient(ApiContainer):
                                single_user_name=single_user_name,
                                availability=Availability.ON_DEMAND if on_demand else Availability.SPOT_WITH_FALLBACK,
                                spark_conf=spark_conf,
+                               libraries=libraries,
                                **kwargs)
 
         return self.create_from_config(config)
@@ -42,6 +44,10 @@ class ClustersClient(ApiContainer):
         return self.create_from_dict(config.params)
 
     def create_from_dict(self, params: Dict[str, Any]) -> str:
+        import json
+        print("-"*80)
+        print(json.dumps(params, indent=4))
+        print("-"*80)
         cluster = self.client.api("POST", f"{self.base_uri}/create", _data=params)
         return cluster.get("cluster_id")
 

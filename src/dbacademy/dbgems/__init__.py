@@ -122,11 +122,11 @@ def get_tag(tag_name: str, default: str = None) -> str:
     try:
         value = get_tags().get(tag_name)
         return value or default
-    except Exception as e:
-        if "CommandContext.tags() is not whitelisted" in str(e):
+    except Exception as ex:
+        if "CommandContext.tags() is not whitelisted" in str(ex):
             return default
         else:
-            raise e
+            raise ex
 
 
 def get_username() -> str:
@@ -253,9 +253,9 @@ def validate_dependencies(module: str, curriculum_workspaces_only=True) -> bool:
             else:
                 pass  # It's a non-issue
 
-    except Exception as e:
+    except Exception as ex:
         if testable:
-            raise e
+            raise ex
         else:
             pass  # Bury the exception
 

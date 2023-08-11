@@ -368,7 +368,7 @@ class BuildConfig:
         :param validate_readme: Flag to disable validation of the README file
         :return:
         """
-
+        import json
         assert self.__created_notebooks, f"The notebooks have not yet been initialized; Please call BuildConfig.initialize_notebooks() before proceeding."
 
         if validate_version:
@@ -386,7 +386,7 @@ class BuildConfig:
         print(f"| instance_pool_id:  {self.instance_pool_id}")
         print(f"| spark_conf:        {self.spark_conf}")
         print(f"| cloud:             {self.cloud}")
-        print(f"| libraries:         {self.libraries}")
+        print(f"| libraries:         {json.dumps(self.libraries, indent =4)}")
         print(f"| source_repo:       {self.source_repo}")
         print(f"| source_dir:        {self.source_dir}")
         print(f"| supported_dbrs:    " + ", ".join(self.supported_dbrs))
