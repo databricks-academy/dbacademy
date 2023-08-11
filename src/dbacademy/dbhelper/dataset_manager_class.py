@@ -98,11 +98,10 @@ class DatasetManager:
         """
         from dbacademy import dbgems
         from dbacademy.dbhelper.paths_class import Paths
-        # if not repairing_dataset: print(f"\nThe source for the datasets is\n{self.data_source_uri}/")
-        # if not repairing_dataset: print(f"\nYour local dataset directory is {datasets_path}")
 
         action = "Install" if self.archives_path is None else "Download"
         what = "datasets" if self.archives_path is None else "archive"
+        install_start = dbgems.clock_start()
 
         if Paths.exists(self.install_path):
             # It's already installed...
@@ -118,10 +117,9 @@ class DatasetManager:
 
             else:  # not reinstall_datasets:
                 print(f"""\nSkipping {action.lower()} of existing {what} to "{self.install_path}" """)
-                return self.install_dataset_done(0)
+                return self.install_dataset_done(install_start)
 
         file = "archive.zip"
-        install_start = dbgems.clock_start()
         print(f"""\nInstalling datasets:""")
         print(f"""| from "{self.data_source_uri}/{file}" """)
         print(f"""| temp "{self.install_path}/{file}" """)
@@ -156,12 +154,7 @@ class DatasetManager:
         self.validate_datasets(fail_fast=False)
         self.unpack_archive()
 
-        if install_start == 0:
-            print(f"""| Dataset installation completed.""")
-        else:
-            print(f"""| Dataset installation completed {dbgems.clock_stopped(install_start)}.""")
-
-        print()
+        print(f"""| Dataset installation completed {dbgems.clock_stopped(install_start)}.\n""")
 
     def unpack_archive(self) -> None:
         import shutil
