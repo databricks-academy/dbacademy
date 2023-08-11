@@ -155,7 +155,7 @@ class DatasetManager:
         self.unpack_archive()
 
         print(f"""|""")
-        print(f"""| Dataset installation completed {dbgems.clock_stopped(install_start)}.\n""")
+        print(f"""| Dataset installation completed {dbgems.clock_stopped(install_start)}\n""")
 
     def unpack_archive(self) -> None:
         import shutil
