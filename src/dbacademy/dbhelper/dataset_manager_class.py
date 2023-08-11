@@ -199,7 +199,6 @@ class DatasetManager:
             print("\nEnumerating staged files for validation", end="...")
             self.__remote_files = DatasetManager.list_r(self.staging_source_uri)
             print(dbgems.clock_stopped(start))
-            print()
 
         print(f"\nValidating the locally installed datasets:")
 
