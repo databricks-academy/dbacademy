@@ -179,14 +179,15 @@ class DatasetManager:
             files = list()
 
         if len(files) > 0:
-            print(f"| Skipping install of existing datasets to \"{self.datasets_path}\"")
+            print(f"""|""")
+            print(f"""| Skipping install of existing datasets to "{self.datasets_path}" """)
         else:
-            print(f"| Installing datasets to \"{self.datasets_path}\"")
+            print(f"""|""")
+            print(f"""| Installing datasets to "{self.datasets_path}"...""", end="")
             archive_path = f"{self.archives_path}/archive.zip".replace("dbfs:/", '/dbfs/')
             dataset_path = self.datasets_path.replace("dbfs:/", '/dbfs/')
             shutil.unpack_archive(archive_path, dataset_path)
-
-        print(f"|", dbgems.clock_stopped(unpack_start))
+            print(dbgems.clock_stopped(unpack_start))
 
     def validate_datasets(self, fail_fast: bool) -> None:
         """
