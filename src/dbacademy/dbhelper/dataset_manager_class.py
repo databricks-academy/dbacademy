@@ -168,6 +168,7 @@ class DatasetManager:
         from dbacademy.dbhelper.paths_class import Paths
 
         if self.archives_path is None:
+            print(f"| archives_path = {self.archives_path}")
             return  # This is a classic install, nothing to unpack
 
         try:
@@ -176,9 +177,9 @@ class DatasetManager:
             files = list()
 
         if len(files) > 0:
-            print(f"\nSkipping install of existing datasets to \"{self.datasets_path}\"")
+            print(f"| Skipping install of existing datasets to \"{self.datasets_path}\"")
         else:
-            print(f"\nInstalling datasets to \"{self.datasets_path}\"")
+            print(f"| Installing datasets to \"{self.datasets_path}\"")
             archive_path = f"{self.archives_path}/archive.zip".replace("dbfs:/", '/dbfs/')
             dataset_path = self.datasets_path.replace("dbfs:/", '/dbfs/')
             shutil.unpack_archive(archive_path, dataset_path)
@@ -225,11 +226,11 @@ class DatasetManager:
         local_files = DatasetManager.list_r(self.install_path)
         print(dbgems.clock_stopped(start))
 
-        print(f"\n| " + ("*"*80))
-        print(f"| install_path: {self.install_path}")
-        print(f"| local_files:  {local_files}")
-        print(f"| " + ("*"*80) + "\n")
-        print()
+        # print(f"\n| " + ("*"*80))
+        # print(f"| install_path: {self.install_path}")
+        # print(f"| local_files:  {local_files}")
+        # print(f"| " + ("*"*80) + "\n")
+        # print()
 
         # Process directories first
         self.__del_extra_paths(local_files)
