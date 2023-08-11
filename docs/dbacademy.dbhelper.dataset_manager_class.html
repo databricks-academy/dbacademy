@@ -32,38 +32,52 @@
 <font color="#000000" face="helvetica, arial"><a name="DatasetManager">class <strong>DatasetManager</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#DatasetManager">DatasetManager</a>(*,&nbsp;data_source_uri:&nbsp;str,&nbsp;staging_source_uri:&nbsp;Optional[str],&nbsp;datasets_path:&nbsp;str,&nbsp;remote_files:&nbsp;List[str])<br>
+<td colspan=2><tt><a href="#DatasetManager">DatasetManager</a>(*,&nbsp;_data_source_uri:&nbsp;str,&nbsp;_staging_source_uri:&nbsp;Optional[str],&nbsp;_datasets_path:&nbsp;Optional[str],&nbsp;_archives_path:&nbsp;Optional[str],&nbsp;_install_path:&nbsp;str,&nbsp;_install_min_time:&nbsp;Optional[str],&nbsp;_install_max_time:&nbsp;Optional[str])<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="DatasetManager-__init__"><strong>__init__</strong></a>(self, *, data_source_uri: str, staging_source_uri: Optional[str], datasets_path: str, remote_files: List[str])</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;<a href="#DatasetManager">DatasetManager</a><br>
-:param&nbsp;data_source_uri:&nbsp;See&nbsp;DBAcademy.data_source_uri<br>
-:param&nbsp;staging_source_uri:&nbsp;See&nbsp;DBAcademy.staging_source_uri<br>
-:param&nbsp;datasets_path:&nbsp;See&nbsp;DBAcademy.paths.datasets,&nbsp;Paths</tt></dd></dl>
+<dl><dt><a name="DatasetManager-__init__"><strong>__init__</strong></a>(self, *, _data_source_uri: str, _staging_source_uri: Optional[str], _datasets_path: Optional[str], _archives_path: Optional[str], _install_path: str, _install_min_time: Optional[str], _install_max_time: Optional[str])</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;<a href="#DatasetManager">DatasetManager</a><br>
+:param&nbsp;_data_source_uri:&nbsp;See&nbsp;DBAcademy.data_source_uri<br>
+:param&nbsp;_staging_source_uri:&nbsp;See&nbsp;DBAcademy.staging_source_uri<br>
+:param&nbsp;_install_path:&nbsp;See&nbsp;DBAcademy.paths.archives&nbsp;and&nbsp;DBAcademy.paths.datasets,&nbsp;Paths<br>
+:param&nbsp;_install_min_time:&nbsp;See&nbsp;CourseConfig.install_min_time,&nbsp;str<br>
+:param&nbsp;_install_max_time:&nbsp;See&nbsp;CourseConfig.install_max_time,&nbsp;str</tt></dd></dl>
 
-<dl><dt><a name="DatasetManager-install_dataset"><strong>install_dataset</strong></a>(self, *, install_min_time: Optional[str], install_max_time: Optional[str], reinstall_datasets: bool = False) -&gt; None</dt><dd><tt>Install&nbsp;the&nbsp;datasets&nbsp;used&nbsp;by&nbsp;this&nbsp;course&nbsp;to&nbsp;DBFS.<br>
+<dl><dt><a name="DatasetManager-install_dataset"><strong>install_dataset</strong></a>(self, *, reinstall_datasets: bool) -&gt; None</dt><dd><tt>Install&nbsp;the&nbsp;datasets&nbsp;used&nbsp;by&nbsp;this&nbsp;course&nbsp;to&nbsp;DBFS.<br>
 &nbsp;<br>
 This&nbsp;ensures&nbsp;that&nbsp;data&nbsp;and&nbsp;compute&nbsp;are&nbsp;in&nbsp;the&nbsp;same&nbsp;region&nbsp;which&nbsp;subsequently&nbsp;mitigates&nbsp;performance&nbsp;issues<br>
 when&nbsp;the&nbsp;storage&nbsp;and&nbsp;compute&nbsp;are,&nbsp;for&nbsp;example,&nbsp;on&nbsp;opposite&nbsp;sides&nbsp;of&nbsp;the&nbsp;world.</tt></dd></dl>
 
+<dl><dt><a name="DatasetManager-install_dataset_done"><strong>install_dataset_done</strong></a>(self, install_start: int) -&gt; None</dt></dl>
+
+<dl><dt><a name="DatasetManager-unpack_archive"><strong>unpack_archive</strong></a>(self) -&gt; None</dt></dl>
+
 <dl><dt><a name="DatasetManager-validate_datasets"><strong>validate_datasets</strong></a>(self, fail_fast: bool) -&gt; None</dt><dd><tt>Validates&nbsp;the&nbsp;"install"&nbsp;of&nbsp;the&nbsp;datasets&nbsp;by&nbsp;recursively&nbsp;listing&nbsp;all&nbsp;files&nbsp;in&nbsp;the&nbsp;remote&nbsp;data&nbsp;repository&nbsp;as&nbsp;well&nbsp;as&nbsp;the&nbsp;local&nbsp;data&nbsp;repository,&nbsp;validating&nbsp;that&nbsp;each&nbsp;file&nbsp;exists&nbsp;but&nbsp;DOES&nbsp;NOT&nbsp;validate&nbsp;file&nbsp;size&nbsp;or&nbsp;checksum.</tt></dd></dl>
 
 <hr>
-Static methods defined here:<br>
-<dl><dt><a name="DatasetManager-from_dbacademy_helper"><strong>from_dbacademy_helper</strong></a>(da)</dt></dl>
+Class methods defined here:<br>
+<dl><dt><a name="DatasetManager-list_r"><strong>list_r</strong></a>(path: str, prefix: Optional[str] = None, results: Optional[List[str]] = None) -&gt; List[str]<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Utility&nbsp;method&nbsp;used&nbsp;by&nbsp;the&nbsp;dataset&nbsp;validation,&nbsp;this&nbsp;method&nbsp;performs&nbsp;a&nbsp;recursive&nbsp;list&nbsp;of&nbsp;the&nbsp;specified&nbsp;path&nbsp;and&nbsp;returns&nbsp;the&nbsp;sorted&nbsp;list&nbsp;of&nbsp;paths.</tt></dd></dl>
 
-<dl><dt><a name="DatasetManager-list_r"><strong>list_r</strong></a>(path: str, prefix: Optional[str] = None, results: Optional[List[str]] = None) -&gt; List[str]</dt><dd><tt>Utility&nbsp;method&nbsp;used&nbsp;by&nbsp;the&nbsp;dataset&nbsp;validation,&nbsp;this&nbsp;method&nbsp;performs&nbsp;a&nbsp;recursive&nbsp;list&nbsp;of&nbsp;the&nbsp;specified&nbsp;path&nbsp;and&nbsp;returns&nbsp;the&nbsp;sorted&nbsp;list&nbsp;of&nbsp;paths.</tt></dd></dl>
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="DatasetManager-from_dbacademy_helper"><strong>from_dbacademy_helper</strong></a>(da: dbacademy.dbhelper.dbacademy_helper_class.DBAcademyHelper)</dt></dl>
 
 <hr>
 Readonly properties defined here:<br>
+<dl><dt><strong>archives_path</strong></dt>
+</dl>
 <dl><dt><strong>data_source_uri</strong></dt>
 </dl>
 <dl><dt><strong>datasets_path</strong></dt>
 </dl>
 <dl><dt><strong>fixes</strong></dt>
 </dl>
-<dl><dt><strong>remote_files</strong></dt>
+<dl><dt><strong>install_max_time</strong></dt>
+</dl>
+<dl><dt><strong>install_min_time</strong></dt>
+</dl>
+<dl><dt><strong>install_path</strong></dt>
 </dl>
 <dl><dt><strong>repaired_paths</strong></dt>
 </dl>
@@ -77,6 +91,10 @@ Data descriptors defined here:<br>
 <dl><dt><strong>__weakref__</strong></dt>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>DBAcademyHelper</strong> = &lt;class 'dbacademy.dbhelper.dbacademy_helper_class.DBAcademyHelper'&gt;</dl>
+
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">

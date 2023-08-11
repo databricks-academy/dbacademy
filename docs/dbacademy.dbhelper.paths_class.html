@@ -32,23 +32,27 @@
 <font color="#000000" face="helvetica, arial"><a name="Paths">class <strong>Paths</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#Paths">Paths</a>(*,&nbsp;lesson_config:&nbsp;dbacademy.dbhelper.lesson_config_class.LessonConfig,&nbsp;working_dir_root:&nbsp;str,&nbsp;datasets:&nbsp;str)<br>
+<td colspan=2><tt><a href="#Paths">Paths</a>(*,&nbsp;_lesson_config:&nbsp;dbacademy.dbhelper.lesson_config_class.LessonConfig,&nbsp;_working_dir_root:&nbsp;str,&nbsp;_datasets:&nbsp;str,&nbsp;_archives:&nbsp;str)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="Paths-__init__"><strong>__init__</strong></a>(self, *, lesson_config: dbacademy.dbhelper.lesson_config_class.LessonConfig, working_dir_root: str, datasets: str)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="Paths-__init__"><strong>__init__</strong></a>(self, *, _lesson_config: dbacademy.dbhelper.lesson_config_class.LessonConfig, _working_dir_root: str, _datasets: str, _archives: str)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="Paths-__repr__"><strong>__repr__</strong></a>(self)</dt><dd><tt>Return&nbsp;repr(self).</tt></dd></dl>
 
 <dl><dt><a name="Paths-print"><strong>print</strong></a>(self, padding='| ', self_name='self.')</dt><dd><tt>Prints&nbsp;all&nbsp;the&nbsp;paths&nbsp;attached&nbsp;to&nbsp;this&nbsp;instance&nbsp;of&nbsp;<a href="#Paths">Paths</a></tt></dd></dl>
 
 <hr>
-Static methods defined here:<br>
-<dl><dt><a name="Paths-exists"><strong>exists</strong></a>(path)</dt><dd><tt>Returns&nbsp;true&nbsp;if&nbsp;the&nbsp;specified&nbsp;path&nbsp;exists&nbsp;else&nbsp;false.</tt></dd></dl>
+Class methods defined here:<br>
+<dl><dt><a name="Paths-exists"><strong>exists</strong></a>(path: str) -&gt; bool<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Returns&nbsp;true&nbsp;if&nbsp;the&nbsp;specified&nbsp;path&nbsp;exists&nbsp;else&nbsp;false.</tt></dd></dl>
 
-<dl><dt><a name="Paths-to_vm_path"><strong>to_vm_path</strong></a>(path)</dt></dl>
+<dl><dt><a name="Paths-to_vm_path"><strong>to_vm_path</strong></a>(_path: str) -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt></dl>
 
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>archives</strong></dt>
+</dl>
 <hr>
 Data descriptors defined here:<br>
 <dl><dt><strong>__dict__</strong></dt>

@@ -64,8 +64,6 @@ after&nbsp;instantiation&nbsp;but&nbsp;before&nbsp;initialization.<br>
 
 <dl><dt><a name="DBAcademyHelper-init_mlflow_as_job"><strong>init_mlflow_as_job</strong></a>(self) -&gt; None</dt><dd><tt>Used&nbsp;to&nbsp;initialize&nbsp;MLflow&nbsp;with&nbsp;the&nbsp;job&nbsp;ID&nbsp;when&nbsp;ran&nbsp;under&nbsp;test.</tt></dd></dl>
 
-<dl><dt><a name="DBAcademyHelper-install_datasets"><strong>install_datasets</strong></a>(self, reinstall_datasets: bool = False) -&gt; None</dt></dl>
-
 <dl><dt><a name="DBAcademyHelper-print_copyrights"><strong>print_copyrights</strong></a>(self, mappings: Optional[Dict[str, str]] = None) -&gt; None</dt><dd><tt>Discovers&nbsp;the&nbsp;datasets&nbsp;used&nbsp;by&nbsp;this&nbsp;course&nbsp;and&nbsp;then&nbsp;prints&nbsp;their&nbsp;corresponding&nbsp;README&nbsp;files&nbsp;which&nbsp;should&nbsp;include&nbsp;the&nbsp;corresponding&nbsp;copyrights.<br>
 :param&nbsp;mappings:&nbsp;Allows&nbsp;for&nbsp;redefinition&nbsp;of&nbsp;the&nbsp;location&nbsp;of&nbsp;the&nbsp;README.md&nbsp;file<br>
 :return:</tt></dd></dl>
@@ -89,8 +87,8 @@ against&nbsp;a&nbsp;SQL&nbsp;Warehouse&nbsp;and&nbsp;wherein&nbsp;those&nbsp;sam
 :return:&nbsp;a&nbsp;unique&nbsp;name&nbsp;consisting&nbsp;of&nbsp;the&nbsp;consumer's&nbsp;username,&nbsp;and&nbsp;the&nbsp;course&nbsp;code.</tt></dd></dl>
 
 <hr>
-Static methods defined here:<br>
-<dl><dt><a name="DBAcademyHelper-block_until_stream_is_ready"><strong>block_until_stream_is_ready</strong></a>(query: Union[str, pyspark.sql.streaming.StreamingQuery], min_batches: int = 2, delay_seconds: int = 5) -&gt; None</dt><dd><tt>A&nbsp;utility&nbsp;method&nbsp;used&nbsp;in&nbsp;streaming&nbsp;notebooks&nbsp;to&nbsp;block&nbsp;until&nbsp;the&nbsp;stream&nbsp;has&nbsp;processed&nbsp;n&nbsp;batches.&nbsp;This&nbsp;method&nbsp;serves&nbsp;one&nbsp;main&nbsp;purpose&nbsp;in&nbsp;two&nbsp;different&nbsp;use&nbsp;cases.<br>
+Class methods defined here:<br>
+<dl><dt><a name="DBAcademyHelper-block_until_stream_is_ready"><strong>block_until_stream_is_ready</strong></a>(query: Union[str, pyspark.sql.streaming.StreamingQuery], min_batches: int = 2, delay_seconds: int = 5) -&gt; None<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>A&nbsp;utility&nbsp;method&nbsp;used&nbsp;in&nbsp;streaming&nbsp;notebooks&nbsp;to&nbsp;block&nbsp;until&nbsp;the&nbsp;stream&nbsp;has&nbsp;processed&nbsp;n&nbsp;batches.&nbsp;This&nbsp;method&nbsp;serves&nbsp;one&nbsp;main&nbsp;purpose&nbsp;in&nbsp;two&nbsp;different&nbsp;use&nbsp;cases.<br>
 &nbsp;<br>
 The&nbsp;first&nbsp;use&nbsp;case&nbsp;is&nbsp;in&nbsp;jobs&nbsp;where&nbsp;the&nbsp;stream&nbsp;is&nbsp;started&nbsp;in&nbsp;one&nbsp;cell&nbsp;but&nbsp;execution&nbsp;of&nbsp;subsequent&nbsp;cells&nbsp;start&nbsp;prematurely.<br>
 &nbsp;<br>
@@ -102,28 +100,28 @@ The&nbsp;second&nbsp;use&nbsp;case&nbsp;is&nbsp;to&nbsp;slow&nbsp;down&nbsp;stud
 :param&nbsp;delay_seconds:<br>
 :return:</tt></dd></dl>
 
-<dl><dt><a name="DBAcademyHelper-get_dbacademy_datasets_path"><strong>get_dbacademy_datasets_path</strong></a>() -&gt; str</dt><dd><tt>This&nbsp;method&nbsp;encapsulates&nbsp;the&nbsp;value&nbsp;resolution&nbsp;for&nbsp;the&nbsp;DBAcademy&nbsp;datasets.&nbsp;By&nbsp;convention,&nbsp;this&nbsp;should&nbsp;always&nbsp;be&nbsp;"dbfs:/mnt/dbacademy-datasets"<br>
+<dl><dt><a name="DBAcademyHelper-get_dbacademy_datasets_path"><strong>get_dbacademy_datasets_path</strong></a>() -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>This&nbsp;method&nbsp;encapsulates&nbsp;the&nbsp;value&nbsp;resolution&nbsp;for&nbsp;the&nbsp;DBAcademy&nbsp;datasets.&nbsp;By&nbsp;convention,&nbsp;this&nbsp;should&nbsp;always&nbsp;be&nbsp;"dbfs:/mnt/dbacademy-datasets"<br>
 however,&nbsp;to&nbsp;support&nbsp;those&nbsp;environments&nbsp;that&nbsp;require&nbsp;that&nbsp;the&nbsp;datasets&nbsp;be&nbsp;hosted&nbsp;at&nbsp;another&nbsp;location,&nbsp;this&nbsp;default&nbsp;value&nbsp;can&nbsp;be&nbsp;overridden<br>
 by&nbsp;specifying&nbsp;the&nbsp;spark&nbsp;configuration&nbsp;parameter&nbsp;identified&nbsp;by&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.SPARK_CONF_PATHS_DATASETS<br>
 :return:&nbsp;the&nbsp;location&nbsp;of&nbsp;the&nbsp;DBAcademy&nbsp;datasets.</tt></dd></dl>
 
-<dl><dt><a name="DBAcademyHelper-get_dbacademy_datasets_staging"><strong>get_dbacademy_datasets_staging</strong></a>() -&gt; str</dt><dd><tt>This&nbsp;location&nbsp;is&nbsp;inspected&nbsp;upon&nbsp;initialization&nbsp;to&nbsp;determine&nbsp;where&nbsp;datasets&nbsp;should&nbsp;be&nbsp;loaded&nbsp;from.&nbsp;If&nbsp;a&nbsp;corresponding&nbsp;dataset&nbsp;is&nbsp;found&nbsp;in&nbsp;this&nbsp;location,<br>
+<dl><dt><a name="DBAcademyHelper-get_dbacademy_datasets_staging"><strong>get_dbacademy_datasets_staging</strong></a>() -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>This&nbsp;location&nbsp;is&nbsp;inspected&nbsp;upon&nbsp;initialization&nbsp;to&nbsp;determine&nbsp;where&nbsp;datasets&nbsp;should&nbsp;be&nbsp;loaded&nbsp;from.&nbsp;If&nbsp;a&nbsp;corresponding&nbsp;dataset&nbsp;is&nbsp;found&nbsp;in&nbsp;this&nbsp;location,<br>
 under&nbsp;the&nbsp;CourseConfig.data_source_name&nbsp;and&nbsp;CourseConfig.data_source_version&nbsp;folders,&nbsp;then&nbsp;data&nbsp;will&nbsp;be&nbsp;installed&nbsp;from&nbsp;this&nbsp;staging&nbsp;repo&nbsp;enabling<br>
 authoring&nbsp;of&nbsp;both&nbsp;courseware&nbsp;content&nbsp;and&nbsp;courseware&nbsp;datasets&nbsp;without&nbsp;the&nbsp;overhead&nbsp;of&nbsp;premature&nbsp;publishing&nbsp;of&nbsp;a&nbsp;dataset&nbsp;for&nbsp;a&nbsp;course&nbsp;under&nbsp;active&nbsp;development.<br>
 :return:&nbsp;The&nbsp;location&nbsp;of&nbsp;the&nbsp;staging&nbsp;datasets.</tt></dd></dl>
 
-<dl><dt><a name="DBAcademyHelper-get_dbacademy_users_path"><strong>get_dbacademy_users_path</strong></a>() -&gt; str</dt><dd><tt>This&nbsp;method&nbsp;encapsulates&nbsp;the&nbsp;value&nbsp;resolution&nbsp;for&nbsp;the&nbsp;DBAcademy&nbsp;user's&nbsp;directory.&nbsp;By&nbsp;convention,&nbsp;this&nbsp;should&nbsp;always&nbsp;be&nbsp;"dbfs:/mnt/dbacademy-users"<br>
+<dl><dt><a name="DBAcademyHelper-get_dbacademy_users_path"><strong>get_dbacademy_users_path</strong></a>() -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>This&nbsp;method&nbsp;encapsulates&nbsp;the&nbsp;value&nbsp;resolution&nbsp;for&nbsp;the&nbsp;DBAcademy&nbsp;user's&nbsp;directory.&nbsp;By&nbsp;convention,&nbsp;this&nbsp;should&nbsp;always&nbsp;be&nbsp;"dbfs:/mnt/dbacademy-users"<br>
 however,&nbsp;to&nbsp;support&nbsp;those&nbsp;environments&nbsp;that&nbsp;require&nbsp;that&nbsp;the&nbsp;datasets&nbsp;be&nbsp;hosted&nbsp;at&nbsp;another&nbsp;location,&nbsp;this&nbsp;default&nbsp;value&nbsp;can&nbsp;be&nbsp;overridden<br>
 by&nbsp;specifying&nbsp;the&nbsp;spark&nbsp;configuration&nbsp;parameter&nbsp;identified&nbsp;by&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.SPARK_CONF_PATHS_USERS<br>
 :return:&nbsp;the&nbsp;location&nbsp;of&nbsp;the&nbsp;DBAcademy&nbsp;user's&nbsp;directory.</tt></dd></dl>
 
-<dl><dt><a name="DBAcademyHelper-is_smoke_test"><strong>is_smoke_test</strong></a>() -&gt; bool</dt><dd><tt>Helper&nbsp;method&nbsp;to&nbsp;indentify&nbsp;when&nbsp;we&nbsp;are&nbsp;running&nbsp;as&nbsp;a&nbsp;smoke&nbsp;test<br>
+<dl><dt><a name="DBAcademyHelper-is_smoke_test"><strong>is_smoke_test</strong></a>() -&gt; bool<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Helper&nbsp;method&nbsp;to&nbsp;indentify&nbsp;when&nbsp;we&nbsp;are&nbsp;running&nbsp;as&nbsp;a&nbsp;smoke&nbsp;test<br>
 :return:&nbsp;Returns&nbsp;true&nbsp;if&nbsp;the&nbsp;notebook&nbsp;is&nbsp;running&nbsp;as&nbsp;a&nbsp;smoke&nbsp;test.</tt></dd></dl>
 
-<dl><dt><a name="DBAcademyHelper-monkey_patch"><strong>monkey_patch</strong></a>(function_ref, delete=True)</dt><dd><tt>This&nbsp;function&nbsp;"monkey&nbsp;patches"&nbsp;the&nbsp;specified&nbsp;function&nbsp;to&nbsp;the&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>&nbsp;class.&nbsp;While&nbsp;not&nbsp;100%&nbsp;necessary,<br>
+<dl><dt><a name="DBAcademyHelper-monkey_patch"><strong>monkey_patch</strong></a>(function_ref, delete=True)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>This&nbsp;function&nbsp;"monkey&nbsp;patches"&nbsp;the&nbsp;specified&nbsp;function&nbsp;to&nbsp;the&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>&nbsp;class.&nbsp;While&nbsp;not&nbsp;100%&nbsp;necessary,<br>
 this&nbsp;pattern&nbsp;does&nbsp;allow&nbsp;each&nbsp;function&nbsp;to&nbsp;be&nbsp;defined&nbsp;in&nbsp;its&nbsp;own&nbsp;cell&nbsp;which&nbsp;makes&nbsp;authoring&nbsp;notebooks&nbsp;a&nbsp;little&nbsp;easier.</tt></dd></dl>
 
-<dl><dt><a name="DBAcademyHelper-to_catalog_name"><strong>to_catalog_name</strong></a>(*, username: str, lesson_name: Optional[str]) -&gt; str</dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;unique&nbsp;catalog&nbsp;name.&nbsp;The&nbsp;pattern&nbsp;consist&nbsp;of&nbsp;the&nbsp;local&nbsp;part&nbsp;of&nbsp;the&nbsp;email&nbsp;address,<br>
+<dl><dt><a name="DBAcademyHelper-to_catalog_name"><strong>to_catalog_name</strong></a>(*, username: str, lesson_name: Optional[str]) -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;unique&nbsp;catalog&nbsp;name.&nbsp;The&nbsp;pattern&nbsp;consist&nbsp;of&nbsp;the&nbsp;local&nbsp;part&nbsp;of&nbsp;the&nbsp;email&nbsp;address,<br>
 a&nbsp;4-character&nbsp;hash&nbsp;and&nbsp;"da"&nbsp;for&nbsp;DBAcademy&nbsp;and&nbsp;the&nbsp;lesson_name.&nbsp;The&nbsp;value&nbsp;is&nbsp;then&nbsp;converted&nbsp;to&nbsp;lower&nbsp;case&nbsp;after&nbsp;which<br>
 all&nbsp;non-alpha&nbsp;and&nbsp;non-digits&nbsp;are&nbsp;replaced&nbsp;with&nbsp;underscores.<br>
 See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.catalog_name<br>
@@ -131,14 +129,14 @@ See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.catalog_name<b
 :param&nbsp;lesson_name:&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;lesson.&nbsp;See&nbsp;also&nbsp;LessonConfig.name<br>
 :return:&nbsp;The&nbsp;unique&nbsp;name&nbsp;composited&nbsp;from&nbsp;the&nbsp;specified&nbsp;username&nbsp;and&nbsp;lesson</tt></dd></dl>
 
-<dl><dt><a name="DBAcademyHelper-to_catalog_name_prefix"><strong>to_catalog_name_prefix</strong></a>(*, username: str) -&gt; str</dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;catalog&nbsp;name&nbsp;prefix.&nbsp;The&nbsp;pattern&nbsp;consist&nbsp;of&nbsp;the&nbsp;local&nbsp;part&nbsp;of&nbsp;the&nbsp;email&nbsp;address,<br>
+<dl><dt><a name="DBAcademyHelper-to_catalog_name_prefix"><strong>to_catalog_name_prefix</strong></a>(*, username: str) -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;catalog&nbsp;name&nbsp;prefix.&nbsp;The&nbsp;pattern&nbsp;consist&nbsp;of&nbsp;the&nbsp;local&nbsp;part&nbsp;of&nbsp;the&nbsp;email&nbsp;address,<br>
 a&nbsp;4-character&nbsp;hash&nbsp;and&nbsp;"da"&nbsp;for&nbsp;DBAcademy.&nbsp;The&nbsp;value&nbsp;is&nbsp;then&nbsp;converted&nbsp;to&nbsp;lower&nbsp;case&nbsp;after&nbsp;which&nbsp;all&nbsp;non-alpha&nbsp;and<br>
 non-digits&nbsp;are&nbsp;replaced&nbsp;with&nbsp;underscores.<br>
 See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.catalog_name_prefix<br>
 :param&nbsp;username:&nbsp;The&nbsp;full&nbsp;email&nbsp;address&nbsp;of&nbsp;a&nbsp;user.&nbsp;See&nbsp;also&nbsp;`LessonConfig.username`<br>
 :return:&nbsp;The&nbsp;catalog&nbsp;name&nbsp;composited&nbsp;from&nbsp;the&nbsp;specified&nbsp;username</tt></dd></dl>
 
-<dl><dt><a name="DBAcademyHelper-to_schema_name"><strong>to_schema_name</strong></a>(*, username: str, course_code: str, lesson_name: Optional[str]) -&gt; str</dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;unique&nbsp;schema&nbsp;name.&nbsp;The&nbsp;pattern&nbsp;consist&nbsp;of&nbsp;the&nbsp;local&nbsp;part&nbsp;of&nbsp;the&nbsp;email&nbsp;address,<br>
+<dl><dt><a name="DBAcademyHelper-to_schema_name"><strong>to_schema_name</strong></a>(*, username: str, course_code: str, lesson_name: Optional[str]) -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;unique&nbsp;schema&nbsp;name.&nbsp;The&nbsp;pattern&nbsp;consist&nbsp;of&nbsp;the&nbsp;local&nbsp;part&nbsp;of&nbsp;the&nbsp;email&nbsp;address,<br>
 a&nbsp;4-character&nbsp;hash&nbsp;and&nbsp;"da"&nbsp;for&nbsp;DBAcademy,&nbsp;course's&nbsp;code&nbsp;and&nbsp;the&nbsp;lesson_name.&nbsp;The&nbsp;value&nbsp;is&nbsp;then&nbsp;converted&nbsp;to&nbsp;lower&nbsp;case&nbsp;after&nbsp;which<br>
 all&nbsp;non-alpha&nbsp;and&nbsp;non-digits&nbsp;are&nbsp;replaced&nbsp;with&nbsp;underscores.<br>
 See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.catalog_name<br>
@@ -147,12 +145,12 @@ See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.catalog_name<b
 :param&nbsp;lesson_name:&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;lesson.&nbsp;See&nbsp;also&nbsp;LessonConfig.name<br>
 :return:&nbsp;The&nbsp;unique&nbsp;name&nbsp;composited&nbsp;from&nbsp;the&nbsp;specified&nbsp;username&nbsp;and&nbsp;lesson</tt></dd></dl>
 
-<dl><dt><a name="DBAcademyHelper-to_schema_name_prefix"><strong>to_schema_name_prefix</strong></a>(*, username: str, course_code: str) -&gt; str</dt><dd><tt>Shorthand&nbsp;for&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.<a href="#DBAcademyHelper-to_schema_name">to_schema_name</a>(username=username,&nbsp;course_code=course_code,&nbsp;lesson_name=None)<br>
+<dl><dt><a name="DBAcademyHelper-to_schema_name_prefix"><strong>to_schema_name_prefix</strong></a>(*, username: str, course_code: str) -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Shorthand&nbsp;for&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.<a href="#DBAcademyHelper-to_schema_name">to_schema_name</a>(username=username,&nbsp;course_code=course_code,&nbsp;lesson_name=None)<br>
 :param&nbsp;username:&nbsp;The&nbsp;full&nbsp;email&nbsp;address&nbsp;of&nbsp;a&nbsp;user.&nbsp;See&nbsp;also&nbsp;`LessonConfig.username`<br>
 :param&nbsp;course_code:&nbsp;The&nbsp;course's&nbsp;code.&nbsp;See&nbsp;also&nbsp;CourseConfig.course_code<br>
 :return:&nbsp;The&nbsp;schema&nbsp;name&nbsp;composited&nbsp;from&nbsp;the&nbsp;specified&nbsp;username&nbsp;and&nbsp;course_code</tt></dd></dl>
 
-<dl><dt><a name="DBAcademyHelper-to_unique_name"><strong>to_unique_name</strong></a>(*, username: str, course_code: str, lesson_name: Optional[str], sep: str) -&gt; str</dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;unique&nbsp;name&nbsp;to&nbsp;be&nbsp;used&nbsp;in&nbsp;creating&nbsp;jobs,&nbsp;warehouses,&nbsp;DLT&nbsp;pipelines,&nbsp;experiments&nbsp;and&nbsp;other&nbsp;user&nbsp;&amp;&nbsp;course&nbsp;specific&nbsp;artifacts.<br>
+<dl><dt><a name="DBAcademyHelper-to_unique_name"><strong>to_unique_name</strong></a>(*, username: str, course_code: str, lesson_name: Optional[str], sep: str) -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;unique&nbsp;name&nbsp;to&nbsp;be&nbsp;used&nbsp;in&nbsp;creating&nbsp;jobs,&nbsp;warehouses,&nbsp;DLT&nbsp;pipelines,&nbsp;experiments&nbsp;and&nbsp;other&nbsp;user&nbsp;&amp;&nbsp;course&nbsp;specific&nbsp;artifacts.<br>
 The&nbsp;pattern&nbsp;consist&nbsp;of&nbsp;the&nbsp;local&nbsp;part&nbsp;of&nbsp;the&nbsp;email&nbsp;address,&nbsp;a&nbsp;4-character&nbsp;hash,&nbsp;"da"&nbsp;for&nbsp;DBAcademy&nbsp;and&nbsp;the&nbsp;course's&nbsp;code.&nbsp;The&nbsp;value&nbsp;is&nbsp;then&nbsp;converted&nbsp;to&nbsp;lower&nbsp;case<br>
 after&nbsp;which&nbsp;all&nbsp;non-alpha&nbsp;and&nbsp;non-digits&nbsp;are&nbsp;replaced&nbsp;with&nbsp;hyphens.<br>
 See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.unique_name<br>
@@ -200,6 +198,8 @@ from&nbsp;to&nbsp;bring&nbsp;data&nbsp;into&nbsp;the&nbsp;workspace&nbsp;and&nbs
 <dl><dt><strong>lesson_config</strong></dt>
 <dd><tt>:return:&nbsp;the&nbsp;lesson&nbsp;specific&nbsp;configuration</tt></dd>
 </dl>
+<dl><dt><strong>paths</strong></dt>
+</dl>
 <dl><dt><strong>schema_name</strong></dt>
 <dd><tt>See&nbsp;also&nbsp;DBAcademyHelper.to_schema_name<br>
 :return:&nbsp;the&nbsp;prescribed&nbsp;name&nbsp;of&nbsp;the&nbsp;schema&nbsp;that&nbsp;the&nbsp;consumer&nbsp;is&nbsp;expected&nbsp;to&nbsp;use&nbsp;or&nbsp;DBAcademyHelper.SCHEMA_DEFAULT&nbsp;if&nbsp;LessonConfig.create_catalog&nbsp;=&nbsp;True</tt></dd>
@@ -236,6 +236,8 @@ Data and other attributes defined here:<br>
 <dl><dt><strong>CourseConfig</strong> = &lt;class 'dbacademy.dbhelper.course_config_class.CourseConfig'&gt;</dl>
 
 <dl><dt><strong>LessonConfig</strong> = &lt;class 'dbacademy.dbhelper.lesson_config_class.LessonConfig'&gt;</dl>
+
+<dl><dt><strong>Paths</strong> = &lt;class 'dbacademy.dbhelper.paths_class.Paths'&gt;</dl>
 
 <dl><dt><strong>SCHEMA_DEFAULT</strong> = 'default'</dl>
 

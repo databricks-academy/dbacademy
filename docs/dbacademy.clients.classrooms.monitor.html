@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.clients.classrooms.monitor</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.clients.html"><font color="#ffffff">clients</font></a>.<a href="dbacademy.clients.classrooms.html"><font color="#ffffff">classrooms</font></a>.monitor</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cclients%5Cclassrooms%5Cmonitor.py">c:\dvlp\dbacademy\src\dbacademy\clients\classrooms\monitor.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.classrooms.monitor.html#Commands">Commands</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Commands">class <strong>Commands</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%">Static methods defined here:<br>
+<dl><dt><a name="Commands-clusters_check_missing"><strong>clusters_check_missing</strong></a>(cluster_spec: Dict, fix: bool = False)</dt></dl>
+
+<dl><dt><a name="Commands-clusters_list"><strong>clusters_list</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>List&nbsp;all&nbsp;running&nbsp;clusters</tt></dd></dl>
+
+<dl><dt><a name="Commands-clusters_list_running"><strong>clusters_list_running</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Lists&nbsp;all&nbsp;running&nbsp;clusters,&nbsp;including&nbsp;their&nbsp;uptime.</tt></dd></dl>
+
+<dl><dt><a name="Commands-clusters_no_manage"><strong>clusters_no_manage</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApi)</dt></dl>
+
+<dl><dt><a name="Commands-clusters_set_single_user"><strong>clusters_set_single_user</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt></dl>
+
+<dl><dt><a name="Commands-clusters_start"><strong>clusters_start</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Send&nbsp;a&nbsp;start&nbsp;command&nbsp;to&nbsp;all&nbsp;clusters</tt></dd></dl>
+
+<dl><dt><a name="Commands-clusters_stop"><strong>clusters_stop</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Stop&nbsp;all&nbsp;clusters,&nbsp;including&nbsp;running&nbsp;DLT&nbsp;pipelines&nbsp;and&nbsp;jobs.</tt></dd></dl>
+
+<dl><dt><a name="Commands-clusters_stop_long_lived"><strong>clusters_stop_long_lived</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Stop&nbsp;clusters&nbsp;up&nbsp;more&nbsp;than&nbsp;12&nbsp;hours,&nbsp;including&nbsp;running&nbsp;DLT&nbsp;pipelines&nbsp;and&nbsp;jobs.</tt></dd></dl>
+
+<dl><dt><a name="Commands-clusters_verify"><strong>clusters_verify</strong></a>(cluster_spec: Dict, fix: bool = False)</dt></dl>
+
+<dl><dt><a name="Commands-courseware_verify"><strong>courseware_verify</strong></a>(courseware_spec: Dict, fix: bool = False, only_students: bool = False)</dt></dl>
+
+<dl><dt><a name="Commands-get_region"><strong>get_region</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>In&nbsp;order&nbsp;to&nbsp;use&nbsp;this&nbsp;function,&nbsp;you&nbsp;must&nbsp;have&nbsp;pre-installed&nbsp;dnspython.</tt></dd></dl>
+
+<dl><dt><a name="Commands-instructors_add"><strong>instructors_add</strong></a>(instructors: List[str])</dt></dl>
+
+<dl><dt><a name="Commands-jobs_list"><strong>jobs_list</strong></a>(w: dbacademy.clients.dougrest.accounts.workspaces.Workspace, stop: bool = False)</dt><dd><tt>Clears&nbsp;the&nbsp;jobs&nbsp;schedules.&nbsp;&nbsp;Jobs&nbsp;currently&nbsp;running&nbsp;are&nbsp;not&nbsp;terminated.</tt></dd></dl>
+
+<dl><dt><a name="Commands-jobs_stop"><strong>jobs_stop</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt></dl>
+
+<dl><dt><a name="Commands-jobs_stop_dlt"><strong>jobs_stop_dlt</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Switches&nbsp;any&nbsp;continuous&nbsp;DLT&nbsp;pipelines&nbsp;to&nbsp;standard&nbsp;triggered&nbsp;pipelines</tt></dd></dl>
+
+<dl><dt><a name="Commands-models_stop"><strong>models_stop</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Undeploy&nbsp;any&nbsp;ML&nbsp;Models&nbsp;being&nbsp;served</tt></dd></dl>
+
+<dl><dt><a name="Commands-policies_create"><strong>policies_create</strong></a>(cluster_spec: Dict, event: Dict)</dt></dl>
+
+<dl><dt><a name="Commands-policies_fix"><strong>policies_fix</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt></dl>
+
+<dl><dt><a name="Commands-policies_verify"><strong>policies_verify</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace, fix: bool = False)</dt><dd><tt>Verify&nbsp;cluster&nbsp;policies&nbsp;are&nbsp;correctly&nbsp;deployed&nbsp;matching&nbsp;specs.</tt></dd></dl>
+
+<dl><dt><a name="Commands-pools_list"><strong>pools_list</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>List&nbsp;defined&nbsp;cluster&nbsp;pools</tt></dd></dl>
+
+<dl><dt><a name="Commands-pools_verify"><strong>pools_verify</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Verify&nbsp;cluster&nbsp;pools&nbsp;are&nbsp;correctly&nbsp;deployed&nbsp;matching&nbsp;specs.</tt></dd></dl>
+
+<dl><dt><a name="Commands-stop_all"><strong>stop_all</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Everything:&nbsp;Warehouses,&nbsp;Jobs,&nbsp;DLT,&nbsp;clusters,&nbsp;Warehouses.</tt></dd></dl>
+
+<dl><dt><a name="Commands-universal_setup"><strong>universal_setup</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApi, *, node_type_id: str = None, spark_version: str = None, datasets: List[str] = None, lab_id: str = None, description: str = None, courses: List[str] = None)</dt></dl>
+
+<dl><dt><a name="Commands-users_add_admins"><strong>users_add_admins</strong></a>(admins: List[str])</dt></dl>
+
+<dl><dt><a name="Commands-users_add_azure_principal"><strong>users_add_azure_principal</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Add&nbsp;Doug's&nbsp;Azure&nbsp;Service&nbsp;Principal</tt></dd></dl>
+
+<dl><dt><a name="Commands-users_allow_cluster_create"><strong>users_allow_cluster_create</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApi)</dt></dl>
+
+<dl><dt><a name="Commands-users_count"><strong>users_count</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Returns&nbsp;a&nbsp;count&nbsp;of&nbsp;all&nbsp;users&nbsp;in&nbsp;the&nbsp;workspace.</tt></dd></dl>
+
+<dl><dt><a name="Commands-users_count_instructors"><strong>users_count_instructors</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Returns&nbsp;a&nbsp;count&nbsp;of&nbsp;the&nbsp;number&nbsp;of&nbsp;odl_instructor_*&nbsp;users.</tt></dd></dl>
+
+<dl><dt><a name="Commands-users_disallow_cluster_create"><strong>users_disallow_cluster_create</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApi)</dt></dl>
+
+<dl><dt><a name="Commands-users_disallow_databricks_sql"><strong>users_disallow_databricks_sql</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApi)</dt></dl>
+
+<dl><dt><a name="Commands-warehouses_count"><strong>warehouses_count</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt></dl>
+
+<dl><dt><a name="Commands-warehouses_create_shared"><strong>warehouses_create_shared</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt></dl>
+
+<dl><dt><a name="Commands-warehouses_create_starter"><strong>warehouses_create_starter</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Creates&nbsp;a&nbsp;starter&nbsp;SQL&nbsp;Endpoint.</tt></dd></dl>
+
+<dl><dt><a name="Commands-warehouses_list"><strong>warehouses_list</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Lists&nbsp;all&nbsp;running&nbsp;SQL&nbsp;Warehouses.</tt></dd></dl>
+
+<dl><dt><a name="Commands-warehouses_list_running"><strong>warehouses_list_running</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Lists&nbsp;all&nbsp;running&nbsp;SQL&nbsp;Warehouses.</tt></dd></dl>
+
+<dl><dt><a name="Commands-warehouses_remove_all"><strong>warehouses_remove_all</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Deletes&nbsp;all&nbsp;SQL&nbsp;Warehouses</tt></dd></dl>
+
+<dl><dt><a name="Commands-warehouses_remove_da"><strong>warehouses_remove_da</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt></dl>
+
+<dl><dt><a name="Commands-warehouses_remove_starter"><strong>warehouses_remove_starter</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Deletes&nbsp;the&nbsp;Starter&nbsp;Warehouse.</tt></dd></dl>
+
+<dl><dt><a name="Commands-warehouses_reset"><strong>warehouses_reset</strong></a>(workspace, running_only=False)</dt><dd><tt>Delete&nbsp;and&nbsp;remake&nbsp;all/running&nbsp;SQL&nbsp;Warehouses.&nbsp;&nbsp;This&nbsp;will&nbsp;prevent&nbsp;scheduled&nbsp;queries&nbsp;from&nbsp;running.</tt></dd></dl>
+
+<dl><dt><a name="Commands-warehouses_reset_running"><strong>warehouses_reset_running</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt></dl>
+
+<dl><dt><a name="Commands-warehouses_stop"><strong>warehouses_stop</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Send&nbsp;a&nbsp;stop&nbsp;command&nbsp;to&nbsp;all&nbsp;SQL&nbsp;Warehouses.&nbsp;&nbsp;They&nbsp;may&nbsp;still&nbsp;automatically&nbsp;restart.</tt></dd></dl>
+
+<dl><dt><a name="Commands-workspace_setup"><strong>workspace_setup</strong></a>(courseware_spec: Dict, cluster_spec: Dict, event: Dict, all_users=False)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-find_workspace"><strong>find_workspace</strong></a>(workspaces: List[dbacademy.clients.dougrest.client.DatabricksApi], *, name: str = None, url: str = None) -&gt; dbacademy.clients.dougrest.accounts.workspaces.Workspace</dt></dl>
+ <dl><dt><a name="-scan_workspaces"><strong>scan_workspaces</strong></a>(function: Callable[[dbacademy.clients.dougrest.accounts.workspaces.Workspace], Any], workspaces: List[dbacademy.clients.dougrest.client.DatabricksApi], *, url: str = None, name: str = None, ignore_connection_errors: bool = False)</dt></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['Commands', 'scan_workspaces', 'find_workspace']</td></tr></table>
+</body></html>

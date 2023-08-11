@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.clients.classrooms.classroom</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.clients.html"><font color="#ffffff">clients</font></a>.<a href="dbacademy.clients.classrooms.html"><font color="#ffffff">classrooms</font></a>.classroom</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cclients%5Cclassrooms%5Cclassroom.py">c:\dvlp\dbacademy\src\dbacademy\clients\classrooms\classroom.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.classrooms.classroom.html#Classroom">Classroom</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Classroom">class <strong>Classroom</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Classroom">Classroom</a>(num_students,&nbsp;class_number=None,&nbsp;username_pattern=None,&nbsp;hostname=None,&nbsp;access_token=None,&nbsp;databricks_api=None,&nbsp;spark_version='11.3.x-cpu-ml-scala2.12')<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Classroom-__init__"><strong>__init__</strong></a>(self, num_students, class_number=None, username_pattern=None, hostname=None, access_token=None, databricks_api=None, spark_version='11.3.x-cpu-ml-scala2.12')</dt><dd><tt>Create&nbsp;a&nbsp;<a href="#Classroom">Classroom</a>&nbsp;control&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;classroom=<a href="#Classroom">Classroom</a>(num_students=50,&nbsp;class_number=1360)</tt></dd></dl>
+
+<dl><dt><a name="Classroom-create_users"><strong>create_users</strong></a>(self, last_student=None, first_student=0, allow_cluster_create=False)</dt><dd><tt>Add&nbsp;users&nbsp;class+000@databricks.com&nbsp;to&nbsp;class+050@databricks.com&nbsp;(or&nbsp;whatever&nbsp;limit&nbsp;is&nbsp;set&nbsp;by&nbsp;last_student).<br>
+User&nbsp;class+000@databricks.com&nbsp;receives&nbsp;admin&nbsp;rights,&nbsp;the&nbsp;others&nbsp;do&nbsp;not.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;classroom&nbsp;=&nbsp;<a href="#Classroom">Classroom</a>()<br>
+&gt;&gt;&gt;&nbsp;classroom.<a href="#Classroom-create_users">create_users</a>()</tt></dd></dl>
+
+<dl><dt><a name="Classroom-delete_clusters"><strong>delete_clusters</strong></a>(self)</dt><dd><tt>Terminate&nbsp;all&nbsp;running&nbsp;clusters.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;classroom&nbsp;=&nbsp;<a href="#Classroom">Classroom</a>()<br>
+&gt;&gt;&gt;&nbsp;classroom.<a href="#Classroom-terminate_clusters">terminate_clusters</a>()</tt></dd></dl>
+
+<dl><dt><a name="Classroom-delete_folder"><strong>delete_folder</strong></a>(self, folder_name, last_student=None, first_student=0)</dt><dd><tt>Remove&nbsp;folder&nbsp;from&nbsp;student&nbsp;directories.<br>
+This&nbsp;is&nbsp;typically&nbsp;used&nbsp;to&nbsp;delete&nbsp;old&nbsp;courseware&nbsp;prior&nbsp;to&nbsp;uploading&nbsp;a&nbsp;new&nbsp;version.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;classroom&nbsp;=&nbsp;<a href="#Classroom">Classroom</a>()<br>
+&gt;&gt;&gt;&nbsp;classroom.<a href="#Classroom-delete_folder">delete_folder</a>("Spark-ILT")</tt></dd></dl>
+
+<dl><dt><a name="Classroom-start_clusters"><strong>start_clusters</strong></a>(self, last_student=None, machine_type=None, num_workers=2, first_student=0)</dt><dd><tt>Launch&nbsp;the&nbsp;student&nbsp;clusters.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;classroom&nbsp;=&nbsp;<a href="#Classroom">Classroom</a>()<br>
+&gt;&gt;&gt;&nbsp;classroom.<a href="#Classroom-start_clusters">start_clusters</a>()</tt></dd></dl>
+
+<dl><dt><a name="Classroom-terminate_clusters"><strong>terminate_clusters</strong></a>(self)</dt><dd><tt>Terminate&nbsp;all&nbsp;running&nbsp;clusters.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;classroom&nbsp;=&nbsp;<a href="#Classroom">Classroom</a>()<br>
+&gt;&gt;&gt;&nbsp;classroom.<a href="#Classroom-terminate_clusters">terminate_clusters</a>()</tt></dd></dl>
+
+<dl><dt><a name="Classroom-upload_dbc"><strong>upload_dbc</strong></a>(self, source_url, folder_name=None, last_student=None, first_student=0)</dt><dd><tt>Upload&nbsp;courseware.<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;classroom&nbsp;=&nbsp;<a href="#Classroom">Classroom</a>()<br>
+&gt;&gt;&gt;&nbsp;classroom.<a href="#Classroom-upload_dbc">upload_dbc</a>("<a href="https://files.training.databricks.com/courses/spark-ilt/Lessons.dbc">https://files.training.databricks.com/courses/spark-ilt/Lessons.dbc</a>",&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...&nbsp;"Spark-ILT")</tt></dd></dl>
+
+<hr>
+Class methods defined here:<br>
+<dl><dt><a name="Classroom-extract_filename"><strong>extract_filename</strong></a>(url)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>dbc_regex</strong> = re.compile('^.*/([^/]*).dbc$')</dl>
+
+<dl><dt><strong>invalid_char_regex</strong> = re.compile('\\W')</dl>
+
+<dl><dt><strong>re</strong> = &lt;module 're' from 'C:\\Users\\JacobParr\\.conda\\envs\\dbacademy\\lib\\re.py'&gt;<dd><tt>Support&nbsp;for&nbsp;regular&nbsp;expressions&nbsp;(RE).<br>
+&nbsp;<br>
+This&nbsp;module&nbsp;provides&nbsp;regular&nbsp;expression&nbsp;matching&nbsp;operations&nbsp;similar&nbsp;to<br>
+those&nbsp;found&nbsp;in&nbsp;Perl.&nbsp;&nbsp;It&nbsp;supports&nbsp;both&nbsp;8-bit&nbsp;and&nbsp;Unicode&nbsp;strings;&nbsp;both<br>
+the&nbsp;pattern&nbsp;and&nbsp;the&nbsp;strings&nbsp;being&nbsp;processed&nbsp;can&nbsp;contain&nbsp;null&nbsp;bytes&nbsp;and<br>
+characters&nbsp;outside&nbsp;the&nbsp;US&nbsp;ASCII&nbsp;range.<br>
+&nbsp;<br>
+Regular&nbsp;expressions&nbsp;can&nbsp;contain&nbsp;both&nbsp;special&nbsp;and&nbsp;ordinary&nbsp;characters.<br>
+Most&nbsp;ordinary&nbsp;characters,&nbsp;like&nbsp;"A",&nbsp;"a",&nbsp;or&nbsp;"0",&nbsp;are&nbsp;the&nbsp;simplest<br>
+regular&nbsp;expressions;&nbsp;they&nbsp;simply&nbsp;match&nbsp;themselves.&nbsp;&nbsp;You&nbsp;can<br>
+concatenate&nbsp;ordinary&nbsp;characters,&nbsp;so&nbsp;last&nbsp;matches&nbsp;the&nbsp;string&nbsp;'last'.<br>
+&nbsp;<br>
+The&nbsp;special&nbsp;characters&nbsp;are:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"."&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;any&nbsp;character&nbsp;except&nbsp;a&nbsp;newline.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"^"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;string.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"$"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;string&nbsp;or&nbsp;just&nbsp;before&nbsp;the&nbsp;newline&nbsp;at<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;string.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"*"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;0&nbsp;or&nbsp;more&nbsp;(greedy)&nbsp;repetitions&nbsp;of&nbsp;the&nbsp;preceding&nbsp;RE.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Greedy&nbsp;means&nbsp;that&nbsp;it&nbsp;will&nbsp;match&nbsp;as&nbsp;many&nbsp;repetitions&nbsp;as&nbsp;possible.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;1&nbsp;or&nbsp;more&nbsp;(greedy)&nbsp;repetitions&nbsp;of&nbsp;the&nbsp;preceding&nbsp;RE.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"?"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;0&nbsp;or&nbsp;1&nbsp;(greedy)&nbsp;of&nbsp;the&nbsp;preceding&nbsp;RE.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;*?,+?,??&nbsp;Non-greedy&nbsp;versions&nbsp;of&nbsp;the&nbsp;previous&nbsp;three&nbsp;special&nbsp;characters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{m,n}&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;from&nbsp;m&nbsp;to&nbsp;n&nbsp;repetitions&nbsp;of&nbsp;the&nbsp;preceding&nbsp;RE.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{m,n}?&nbsp;&nbsp;&nbsp;Non-greedy&nbsp;version&nbsp;of&nbsp;the&nbsp;above.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"\\"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Either&nbsp;escapes&nbsp;special&nbsp;characters&nbsp;or&nbsp;signals&nbsp;a&nbsp;special&nbsp;sequence.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicates&nbsp;a&nbsp;set&nbsp;of&nbsp;characters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;"^"&nbsp;as&nbsp;the&nbsp;first&nbsp;character&nbsp;indicates&nbsp;a&nbsp;complementing&nbsp;set.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;"|"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A|B,&nbsp;creates&nbsp;an&nbsp;RE&nbsp;that&nbsp;will&nbsp;match&nbsp;either&nbsp;A&nbsp;or&nbsp;B.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(...)&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;RE&nbsp;inside&nbsp;the&nbsp;parentheses.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;contents&nbsp;can&nbsp;be&nbsp;retrieved&nbsp;or&nbsp;matched&nbsp;later&nbsp;in&nbsp;the&nbsp;string.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(?aiLmsux)&nbsp;The&nbsp;letters&nbsp;set&nbsp;the&nbsp;corresponding&nbsp;flags&nbsp;defined&nbsp;below.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(?:...)&nbsp;&nbsp;Non-grouping&nbsp;version&nbsp;of&nbsp;regular&nbsp;parentheses.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(?P&lt;name&gt;...)&nbsp;The&nbsp;substring&nbsp;matched&nbsp;by&nbsp;the&nbsp;group&nbsp;is&nbsp;accessible&nbsp;by&nbsp;name.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(?P=name)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;text&nbsp;matched&nbsp;earlier&nbsp;by&nbsp;the&nbsp;group&nbsp;named&nbsp;name.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(?#...)&nbsp;&nbsp;A&nbsp;comment;&nbsp;ignored.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(?=...)&nbsp;&nbsp;Matches&nbsp;if&nbsp;...&nbsp;matches&nbsp;next,&nbsp;but&nbsp;doesn't&nbsp;consume&nbsp;the&nbsp;string.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(?!...)&nbsp;&nbsp;Matches&nbsp;if&nbsp;...&nbsp;doesn't&nbsp;match&nbsp;next.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(?&lt;=...)&nbsp;Matches&nbsp;if&nbsp;preceded&nbsp;by&nbsp;...&nbsp;(must&nbsp;be&nbsp;fixed&nbsp;length).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(?&lt;!...)&nbsp;Matches&nbsp;if&nbsp;not&nbsp;preceded&nbsp;by&nbsp;...&nbsp;(must&nbsp;be&nbsp;fixed&nbsp;length).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(?(id/name)yes|no)&nbsp;Matches&nbsp;yes&nbsp;pattern&nbsp;if&nbsp;the&nbsp;group&nbsp;with&nbsp;id/name&nbsp;matched,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;(optional)&nbsp;no&nbsp;pattern&nbsp;otherwise.<br>
+&nbsp;<br>
+The&nbsp;special&nbsp;sequences&nbsp;consist&nbsp;of&nbsp;"\\"&nbsp;and&nbsp;a&nbsp;character&nbsp;from&nbsp;the&nbsp;list<br>
+below.&nbsp;&nbsp;If&nbsp;the&nbsp;ordinary&nbsp;character&nbsp;is&nbsp;not&nbsp;on&nbsp;the&nbsp;list,&nbsp;then&nbsp;the<br>
+resulting&nbsp;RE&nbsp;will&nbsp;match&nbsp;the&nbsp;second&nbsp;character.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\number&nbsp;&nbsp;Matches&nbsp;the&nbsp;contents&nbsp;of&nbsp;the&nbsp;group&nbsp;of&nbsp;the&nbsp;same&nbsp;number.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;only&nbsp;at&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;string.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;only&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;string.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;empty&nbsp;string,&nbsp;but&nbsp;only&nbsp;at&nbsp;the&nbsp;start&nbsp;or&nbsp;end&nbsp;of&nbsp;a&nbsp;word.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;empty&nbsp;string,&nbsp;but&nbsp;not&nbsp;at&nbsp;the&nbsp;start&nbsp;or&nbsp;end&nbsp;of&nbsp;a&nbsp;word.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;any&nbsp;decimal&nbsp;digit;&nbsp;equivalent&nbsp;to&nbsp;the&nbsp;set&nbsp;[0-9]&nbsp;in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bytes&nbsp;patterns&nbsp;or&nbsp;string&nbsp;patterns&nbsp;with&nbsp;the&nbsp;ASCII&nbsp;flag.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In&nbsp;string&nbsp;patterns&nbsp;without&nbsp;the&nbsp;ASCII&nbsp;flag,&nbsp;it&nbsp;will&nbsp;match&nbsp;the&nbsp;whole<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;range&nbsp;of&nbsp;Unicode&nbsp;digits.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\D&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;any&nbsp;non-digit&nbsp;character;&nbsp;equivalent&nbsp;to&nbsp;[^\d].<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;any&nbsp;whitespace&nbsp;character;&nbsp;equivalent&nbsp;to&nbsp;[&nbsp;\t\n\r\f\v]&nbsp;in<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bytes&nbsp;patterns&nbsp;or&nbsp;string&nbsp;patterns&nbsp;with&nbsp;the&nbsp;ASCII&nbsp;flag.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In&nbsp;string&nbsp;patterns&nbsp;without&nbsp;the&nbsp;ASCII&nbsp;flag,&nbsp;it&nbsp;will&nbsp;match&nbsp;the&nbsp;whole<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;range&nbsp;of&nbsp;Unicode&nbsp;whitespace&nbsp;characters.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\S&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;any&nbsp;non-whitespace&nbsp;character;&nbsp;equivalent&nbsp;to&nbsp;[^\s].<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;any&nbsp;alphanumeric&nbsp;character;&nbsp;equivalent&nbsp;to&nbsp;[a-zA-Z0-9_]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in&nbsp;bytes&nbsp;patterns&nbsp;or&nbsp;string&nbsp;patterns&nbsp;with&nbsp;the&nbsp;ASCII&nbsp;flag.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In&nbsp;string&nbsp;patterns&nbsp;without&nbsp;the&nbsp;ASCII&nbsp;flag,&nbsp;it&nbsp;will&nbsp;match&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;range&nbsp;of&nbsp;Unicode&nbsp;alphanumeric&nbsp;characters&nbsp;(letters&nbsp;plus&nbsp;digits<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;plus&nbsp;underscore).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;With&nbsp;LOCALE,&nbsp;it&nbsp;will&nbsp;match&nbsp;the&nbsp;set&nbsp;[0-9_]&nbsp;plus&nbsp;characters&nbsp;defined<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;letters&nbsp;for&nbsp;the&nbsp;current&nbsp;locale.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\W&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;complement&nbsp;of&nbsp;\w.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;a&nbsp;literal&nbsp;backslash.<br>
+&nbsp;<br>
+This&nbsp;module&nbsp;exports&nbsp;the&nbsp;following&nbsp;functions:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;match&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Match&nbsp;a&nbsp;regular&nbsp;expression&nbsp;pattern&nbsp;to&nbsp;the&nbsp;beginning&nbsp;of&nbsp;a&nbsp;string.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fullmatch&nbsp;Match&nbsp;a&nbsp;regular&nbsp;expression&nbsp;pattern&nbsp;to&nbsp;all&nbsp;of&nbsp;a&nbsp;string.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;search&nbsp;&nbsp;&nbsp;&nbsp;Search&nbsp;a&nbsp;string&nbsp;for&nbsp;the&nbsp;presence&nbsp;of&nbsp;a&nbsp;pattern.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sub&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Substitute&nbsp;occurrences&nbsp;of&nbsp;a&nbsp;pattern&nbsp;found&nbsp;in&nbsp;a&nbsp;string.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;subn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Same&nbsp;as&nbsp;sub,&nbsp;but&nbsp;also&nbsp;return&nbsp;the&nbsp;number&nbsp;of&nbsp;substitutions&nbsp;made.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;split&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Split&nbsp;a&nbsp;string&nbsp;by&nbsp;the&nbsp;occurrences&nbsp;of&nbsp;a&nbsp;pattern.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;findall&nbsp;&nbsp;&nbsp;Find&nbsp;all&nbsp;occurrences&nbsp;of&nbsp;a&nbsp;pattern&nbsp;in&nbsp;a&nbsp;string.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;finditer&nbsp;&nbsp;Return&nbsp;an&nbsp;iterator&nbsp;yielding&nbsp;a&nbsp;Match&nbsp;<a href="builtins.html#object">object</a>&nbsp;for&nbsp;each&nbsp;match.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;compile&nbsp;&nbsp;&nbsp;Compile&nbsp;a&nbsp;pattern&nbsp;into&nbsp;a&nbsp;Pattern&nbsp;<a href="builtins.html#object">object</a>.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;purge&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clear&nbsp;the&nbsp;regular&nbsp;expression&nbsp;cache.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;escape&nbsp;&nbsp;&nbsp;&nbsp;Backslash&nbsp;all&nbsp;non-alphanumerics&nbsp;in&nbsp;a&nbsp;string.<br>
+&nbsp;<br>
+Each&nbsp;function&nbsp;other&nbsp;than&nbsp;purge&nbsp;and&nbsp;escape&nbsp;can&nbsp;take&nbsp;an&nbsp;optional&nbsp;'flags'&nbsp;argument<br>
+consisting&nbsp;of&nbsp;one&nbsp;or&nbsp;more&nbsp;of&nbsp;the&nbsp;following&nbsp;module&nbsp;constants,&nbsp;joined&nbsp;by&nbsp;"|".<br>
+A,&nbsp;L,&nbsp;and&nbsp;U&nbsp;are&nbsp;mutually&nbsp;exclusive.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;ASCII&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;string&nbsp;patterns,&nbsp;make&nbsp;\w,&nbsp;\W,&nbsp;\b,&nbsp;\B,&nbsp;\d,&nbsp;\D<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;match&nbsp;the&nbsp;corresponding&nbsp;ASCII&nbsp;character&nbsp;categories<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(rather&nbsp;than&nbsp;the&nbsp;whole&nbsp;Unicode&nbsp;categories,&nbsp;which&nbsp;is&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;bytes&nbsp;patterns,&nbsp;this&nbsp;flag&nbsp;is&nbsp;the&nbsp;only&nbsp;available<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;behaviour&nbsp;and&nbsp;needn't&nbsp;be&nbsp;specified.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;I&nbsp;&nbsp;IGNORECASE&nbsp;&nbsp;Perform&nbsp;case-insensitive&nbsp;matching.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;L&nbsp;&nbsp;LOCALE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Make&nbsp;\w,&nbsp;\W,&nbsp;\b,&nbsp;\B,&nbsp;dependent&nbsp;on&nbsp;the&nbsp;current&nbsp;locale.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;M&nbsp;&nbsp;MULTILINE&nbsp;&nbsp;&nbsp;"^"&nbsp;matches&nbsp;the&nbsp;beginning&nbsp;of&nbsp;lines&nbsp;(after&nbsp;a&nbsp;newline)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;well&nbsp;as&nbsp;the&nbsp;string.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"$"&nbsp;matches&nbsp;the&nbsp;end&nbsp;of&nbsp;lines&nbsp;(before&nbsp;a&nbsp;newline)&nbsp;as&nbsp;well<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;string.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;S&nbsp;&nbsp;DOTALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"."&nbsp;matches&nbsp;any&nbsp;character&nbsp;at&nbsp;all,&nbsp;including&nbsp;the&nbsp;newline.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;VERBOSE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ignore&nbsp;whitespace&nbsp;and&nbsp;comments&nbsp;for&nbsp;nicer&nbsp;looking&nbsp;RE's.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;U&nbsp;&nbsp;UNICODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;compatibility&nbsp;only.&nbsp;Ignored&nbsp;for&nbsp;string&nbsp;patterns&nbsp;(it<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is&nbsp;the&nbsp;default),&nbsp;and&nbsp;forbidden&nbsp;for&nbsp;bytes&nbsp;patterns.<br>
+&nbsp;<br>
+This&nbsp;module&nbsp;also&nbsp;defines&nbsp;an&nbsp;exception&nbsp;'error'.</tt></dl>
+
+</td></tr></table></td></tr></table>
+</body></html>

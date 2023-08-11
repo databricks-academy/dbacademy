@@ -18,7 +18,7 @@
     
 <tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl>
-<dt><font face="helvetica, arial"><a href="dbacademy.rest.common.html#ApiClient">dbacademy.rest.common.ApiClient</a>(<a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>)
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>(<a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>)
 </font></dt><dd>
 <dl>
 <dt><font face="helvetica, arial"><a href="dbacademy.clients.docebo.docebo_rest_client_class.html#DoceboRestClient">DoceboRestClient</a>
@@ -29,7 +29,7 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="DoceboRestClient">class <strong>DoceboRestClient</strong></a>(<a href="dbacademy.rest.common.html#ApiClient">dbacademy.rest.common.ApiClient</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="DoceboRestClient">class <strong>DoceboRestClient</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt><a href="#DoceboRestClient">DoceboRestClient</a>(endpoint:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;'int'&nbsp;=&nbsp;0,&nbsp;*,&nbsp;username:&nbsp;'str',&nbsp;password:&nbsp;'str',&nbsp;consumer_key:&nbsp;'str',&nbsp;consumer_secret:&nbsp;'str')<br>
@@ -38,8 +38,8 @@ Docebo&nbsp;REST&nbsp;API&nbsp;client.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="dbacademy.clients.docebo.docebo_rest_client_class.html#DoceboRestClient">DoceboRestClient</a></dd>
-<dd><a href="dbacademy.rest.common.html#ApiClient">dbacademy.rest.common.ApiClient</a></dd>
-<dd><a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a></dd>
+<dd><a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a></dd>
+<dd><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
@@ -53,7 +53,7 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;password:&nbsp;The&nbsp;authentication&nbsp;password.&nbsp;&nbsp;Defaults&nbsp;to&nbsp;None.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;authorization_header:&nbsp;The&nbsp;header&nbsp;to&nbsp;use&nbsp;for&nbsp;authentication.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;By&nbsp;default,&nbsp;it's&nbsp;generated&nbsp;from&nbsp;the&nbsp;token&nbsp;or&nbsp;password.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;client:&nbsp;A&nbsp;parent&nbsp;<a href="dbacademy.rest.common.html#ApiClient">ApiClient</a>&nbsp;from&nbsp;which&nbsp;to&nbsp;clone&nbsp;settings.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;client:&nbsp;A&nbsp;parent&nbsp;<a href="dbacademy.clients.rest.common.html#ApiClient">ApiClient</a>&nbsp;from&nbsp;which&nbsp;to&nbsp;clone&nbsp;settings.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;throttle_seconds:&nbsp;Number&nbsp;of&nbsp;seconds&nbsp;to&nbsp;sleep&nbsp;between&nbsp;requests.</tt></dd></dl>
 
 <hr>
@@ -63,7 +63,7 @@ Static methods defined here:<br>
 <dl><dt><a name="DoceboRestClient-from_environ"><strong>from_environ</strong></a>() -&gt; 'DoceboRestClient'</dt></dl>
 
 <hr>
-Methods inherited from <a href="dbacademy.rest.common.html#ApiClient">dbacademy.rest.common.ApiClient</a>:<br>
+Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
 <dl><dt><a name="DoceboRestClient-api"><strong>api</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', _data: 'dict' = None, *, _expected: 'HttpStatusCodes' = None, _result_type: 'Type[HttpReturnType]' = &lt;class 'dict'&gt;, _base_url: 'str' = None, **data: 'Any') -&gt; 'HttpReturnType'</dt><dd><tt>Invoke&nbsp;the&nbsp;Databricks&nbsp;REST&nbsp;API.<br>
 &nbsp;<br>
 Args:<br>
@@ -89,7 +89,7 @@ Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;requests.HTTPError:&nbsp;If&nbsp;the&nbsp;API&nbsp;returns&nbsp;an&nbsp;error&nbsp;and&nbsp;on_error='raise'.</tt></dd></dl>
 
 <hr>
-Data and other attributes inherited from <a href="dbacademy.rest.common.html#ApiClient">dbacademy.rest.common.ApiClient</a>:<br>
+Data and other attributes inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
 <dl><dt><strong>__annotations__</strong> = {'dns_retry': 'bool', 'dns_verify': 'bool', 'trace': 'bool', 'url': 'str'}</dl>
 
 <dl><dt><strong>dns_retry</strong> = False</dl>
@@ -101,13 +101,13 @@ Data and other attributes inherited from <a href="dbacademy.rest.common.html#Api
 <dl><dt><strong>url</strong> = None</dl>
 
 <hr>
-Methods inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
+Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
 <dl><dt><a name="DoceboRestClient-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
 
 <dl><dt><a name="DoceboRestClient-help"><strong>help</strong></a>(self)</dt></dl>
 
 <hr>
-Data descriptors inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
+Data descriptors inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -115,7 +115,7 @@ Data descriptors inherited from <a href="dbacademy.rest.common.html#ApiContainer
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="dbacademy.rest.common.html#ApiContainer">dbacademy.rest.common.ApiContainer</a>:<br>
+Data and other attributes inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
 <dl><dt><strong>T</strong> = ~T</dl>
 
 </td></tr></table></td></tr></table><p>
