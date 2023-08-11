@@ -2,23 +2,22 @@ __all__ = ["UniversalWorkspaceSetupRunner"]
 
 
 class UniversalWorkspaceSetupRunner:
+    from dbacademy.dbhelper.course_config_class import CourseConfig
 
-    def __init__(self, *, token: str, endpoint: str, workspace_name: str, course_name: str, data_source_version: str, default_spark_version: str, event_description: str = None, event_id: int = 0, pools_node_type_id: str = None):
+    def __init__(self, *, token: str, endpoint: str, course_config: CourseConfig, workspace_name: str):
         from dbacademy.common import Cloud
         from dbacademy.dbrest.client import DBAcademyRestClient
 
-        self.event_id = event_id
-        self.course_name = course_name
-        self.data_source_version = data_source_version
+        self.event_id = 0
+        self.course_name = course_config.course_name
+        self.data_source_version = course_config.data_source_version
         self.workspace_name = workspace_name
         self.client = DBAcademyRestClient(token=token, endpoint=endpoint)
-        self.event_description = event_description if event_description else f"Workspace {workspace_name}"
+        self.event_description = f"Workspace {workspace_name}"
 
-        self.default_spark_version = default_spark_version
+        self.default_spark_version = course_config.supported_dbrs[0]
 
-        if pools_node_type_id is not None:
-            self.pools_node_type_id = pools_node_type_id
-        elif Cloud.current_cloud().is_aws:
+        if Cloud.current_cloud().is_aws:
             self.pools_node_type_id = "i3.xlarge"
         elif Cloud.current_cloud().is_msa:
             self.pools_node_type_id = "Standard_D4ds_v4"
