@@ -153,6 +153,8 @@ class WorkspaceHelper:
                 dataset_manager = DatasetManager(_data_source_uri=data_source_uri,
                                                  _staging_source_uri=None,
                                                  _install_path=install_path,
+                                                 _datasets_path=None,
+                                                 _archives_path=None,
                                                  _install_min_time=None,
                                                  _install_max_time=None,
                                                  _remote_files=remote_files)
