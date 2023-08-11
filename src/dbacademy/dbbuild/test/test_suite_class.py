@@ -105,7 +105,7 @@ class TestSuite:
 
         cluster_config.libraries.from_dict(self.build_config.libraries)
 
-        task_config.cluster.new(cluster_config=cluster_config)
+        task_config.cluster.new(cluster_config)
 
         job_id = self.client.jobs.create_from_config(job_config)
         return job_id

@@ -35,6 +35,9 @@ class JobsClient(ApiContainer):
         return self.create_from_dict(config.params)
 
     def create_from_dict(self, params: Dict[str, Any]) -> str:
+        import json
+        print(json.dumps(params, indent=4))
+
         response = self.client.api("POST", f"{self.client.endpoint}/api/2.1/jobs/create", params)
         return response.get("job_id")
 
