@@ -71,6 +71,7 @@ class TaskConfig:
 
                 self.name = "task"
                 self.__libraries = LibraryFactory(None)
+                task_config.params["libraries"] = self.__libraries.definitions
 
             @property
             def libraries(self) -> LibraryFactory:
