@@ -64,8 +64,17 @@ class TaskConfig:
         self.cluster = Cluster()
 
         class Task:
+            from dbacademy.dbrest.clusters.cluster_config_class import LibraryFactory
+
             def __init__(self):
+                from dbacademy.dbrest.clusters.cluster_config_class import LibraryFactory
+
                 self.name = "task"
+                self.__libraries = LibraryFactory(None)
+
+            @property
+            def library_factory(self) -> LibraryFactory:
+                return self.__libraries
 
             def notebook(self, notebook_path: str, source: str, base_parameters: Dict[str, str] = None) -> TaskConfig:
                 assert self.name not in task_config.defined, "The task has already been defined."

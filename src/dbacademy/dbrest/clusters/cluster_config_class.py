@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional, Dict, Any, List
 
-__all__ = ["Availability", "ClusterConfig", "JobClusterConfig"]
+__all__ = ["Availability", "ClusterConfig", "JobClusterConfig", "LibraryFactory"]
 
 
 class Availability(Enum):
@@ -23,7 +23,7 @@ class Availability(Enum):
 
 
 class LibraryFactory:
-    def __init__(self, _libraries: List[Dict[str, Any]]):
+    def __init__(self, _libraries: Optional[List[Dict[str, Any]]]):
         self.__definitions = _libraries if _libraries else list()
 
     @property
@@ -64,26 +64,28 @@ class LibraryFactory:
         self.definitions.append(library)
 
 
-class ClusterConfig:
+class CommonConfig:
     from dbacademy.common import Cloud
 
     def __init__(self, *,
+                 library_factory: Optional[LibraryFactory],
                  cloud: Cloud,
                  cluster_name: Optional[str],
                  spark_version: str,
                  node_type_id: Optional[str],
-                 driver_node_type_id: str = None,
-                 instance_pool_id: str = None,
-                 policy_id: str = None,
+                 driver_node_type_id: str,
+                 instance_pool_id: str,
+                 policy_id: str,
                  num_workers: int,
                  autotermination_minutes: Optional[int],
-                 single_user_name: str = None,
-                 availability: Availability = None,
-                 spark_conf: Optional[Dict[str, str]] = None,
-                 spark_env_vars: Optional[Dict[str, str]] = None,
-                 custom_tags: Optional[Dict[str, str]] = None,
-                 extra_params: Dict[str, Any] = None,
-                 libraries: List[Dict[str, Any]] = None):
+                 single_user_name: str,
+                 availability: Availability,
+                 spark_conf: Optional[Dict[str, str]],
+                 spark_env_vars: Optional[Dict[str, str]],
+                 custom_tags: Optional[Dict[str, str]],
+                 extra_params: Dict[str, Any]):
+
+        self.__libraries = library_factory
 
         self.__params = {
             "cluster_name": cluster_name,
@@ -158,13 +160,17 @@ class ClusterConfig:
         if len(spark_env_vars) > 0:
             self.__params["spark_env_vars"] = spark_env_vars
 
-        self.__libraries = LibraryFactory(libraries)
-        extra_params["libraries"] = self.libraries.definitions
+        if self.libraries:
+            extra_params["libraries"] = self.libraries.definitions
 
         # Process last just in case there is an exclusion bug...
         # This will result in replacing any previously defined parameters
         for key, value in extra_params.items():
             self.__params[key] = value
+
+    @property
+    def library_factory(self) -> LibraryFactory:
+        return self.__libraries
 
     @property
     def params(self) -> Dict[str, Any]:
@@ -175,12 +181,12 @@ class ClusterConfig:
         return self.__libraries
 
 
-class JobClusterConfig(ClusterConfig):
+class ClusterConfig(CommonConfig):
     from dbacademy.common import Cloud
 
     def __init__(self, *,
                  cloud: Cloud,
-                 # cluster_name: Optional[str],
+                 cluster_name: Optional[str],
                  spark_version: str,
                  node_type_id: Optional[str],
                  driver_node_type_id: str = None,
@@ -196,8 +202,9 @@ class JobClusterConfig(ClusterConfig):
                  extra_params: Dict[str, Any] = None,
                  libraries: List[Dict[str, Any]] = None):
 
-        super().__init__(cloud=cloud,
-                         cluster_name=None,
+        super().__init__(library_factory=LibraryFactory(libraries),
+                         cloud=cloud,
+                         cluster_name="Some Job Name",
                          spark_version=spark_version,
                          node_type_id=node_type_id,
                          driver_node_type_id=driver_node_type_id,
@@ -210,5 +217,41 @@ class JobClusterConfig(ClusterConfig):
                          spark_env_vars=spark_env_vars,
                          custom_tags=custom_tags,
                          availability=availability,
-                         extra_params=extra_params,
-                         libraries=libraries)
+                         extra_params=extra_params)
+
+
+class JobClusterConfig(CommonConfig):
+    from dbacademy.common import Cloud
+
+    def __init__(self, *,
+                 cloud: Cloud,
+                 spark_version: str,
+                 node_type_id: Optional[str],
+                 driver_node_type_id: str = None,
+                 instance_pool_id: str = None,
+                 policy_id: str = None,
+                 num_workers: int,
+                 autotermination_minutes: Optional[int],
+                 single_user_name: str = None,
+                 availability: Availability = None,
+                 spark_conf: Optional[Dict[str, str]] = None,
+                 spark_env_vars: Optional[Dict[str, str]] = None,
+                 custom_tags: Optional[Dict[str, str]] = None,
+                 extra_params: Dict[str, Any] = None):
+
+        super().__init__(library_factory=None,
+                         cloud=cloud,
+                         cluster_name="Some Job Name",
+                         spark_version=spark_version,
+                         node_type_id=node_type_id,
+                         driver_node_type_id=driver_node_type_id,
+                         instance_pool_id=instance_pool_id,
+                         policy_id=policy_id,
+                         num_workers=num_workers,
+                         autotermination_minutes=autotermination_minutes,
+                         single_user_name=single_user_name,
+                         spark_conf=spark_conf,
+                         spark_env_vars=spark_env_vars,
+                         custom_tags=custom_tags,
+                         availability=availability,
+                         extra_params=extra_params)
