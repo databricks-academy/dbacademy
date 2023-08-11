@@ -12,6 +12,6 @@ class TestInstance:
         else:
             self.notebook_path = f"{test_dir}/{notebook.path}"
 
-        hash_code = hashlib.sha256(self.notebook_path.encode()).hexdigest()
+        hash_code = hashlib.sha256(self.notebook_path.encode()).hexdigest()[:5]
         test_name = build_config.name.lower().replace(" ", "-")
         self.job_name = f"[TEST] {test_name} | {test_type} | {hash_code}"
