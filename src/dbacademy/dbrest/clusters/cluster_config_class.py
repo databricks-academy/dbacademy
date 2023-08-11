@@ -152,7 +152,7 @@ class ClusterConfig:
                 self.libraries.append(_libraries)
 
         libraries = libraries if libraries else list()
-        self.library = Library(libraries)
+        self.libraries = Library(libraries)
         extra_params["libraries"] = libraries
 
         # Process last just in case there is an exclusion bug...

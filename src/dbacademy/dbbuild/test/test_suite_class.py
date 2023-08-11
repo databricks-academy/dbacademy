@@ -86,7 +86,6 @@ class TestSuite:
                 "dbacademy.test-type": self.test_type
             })
         task_config = job_config.add_task(task_key="Smoke-Test", description="Executes a single notebook, hoping that the magic smoke doesn't escape")
-        task_config.library.from_dict(self.build_config.libraries)
         task_config.task.notebook(notebook_path=notebook_path, source="WORKSPACE", base_parameters=self.build_config.job_arguments)
 
         if policy_id is not None:
@@ -103,6 +102,8 @@ class TestSuite:
                                           policy_id=policy_id,
                                           autotermination_minutes=None,
                                           spark_env_vars={"WSFS_ENABLE_WRITE_SUPPORT": "true"})
+
+        cluster_config.libraries.from_dict(self.build_config.libraries)
 
         task_config.cluster.new(cluster_config=cluster_config)
 
