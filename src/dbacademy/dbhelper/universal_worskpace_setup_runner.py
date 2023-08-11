@@ -3,7 +3,7 @@ __all__ = ["UniversalWorkspaceSetupRunner"]
 
 class UniversalWorkspaceSetupRunner:
 
-    def __int__(self, *, token: str, endpoint: str, workspace_name: str, course_name: str, data_source_version: str, default_spark_version: str, event_description: str = None, event_id: int = 0, pools_node_type_id: str = None):
+    def __init__(self, *, token: str, endpoint: str, workspace_name: str, course_name: str, data_source_version: str, default_spark_version: str, event_description: str = None, event_id: int = 0, pools_node_type_id: str = None):
         from dbacademy.common import Cloud
         from dbacademy.dbrest.client import DBAcademyRestClient
 
