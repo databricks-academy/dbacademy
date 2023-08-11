@@ -21,8 +21,7 @@ class DatasetManager:
                               _archives_path=da.paths.archives,
                               _install_path=install_path,
                               _install_min_time=da.course_config.install_min_time,
-                              _install_max_time=da.course_config.install_max_time,
-                              _remote_files=da.course_config.remote_files)
+                              _install_max_time=da.course_config.install_max_time)
 
     def __init__(self, *,
                  _data_source_uri: str,
@@ -31,8 +30,7 @@ class DatasetManager:
                  _archives_path: Optional[str],
                  _install_path: str,
                  _install_min_time: Optional[str],
-                 _install_max_time: Optional[str],
-                 _remote_files: List[str]):
+                 _install_max_time: Optional[str]):
         """
         Creates an instance of DatasetManager
         :param _data_source_uri: See DBAcademy.data_source_uri
@@ -42,12 +40,11 @@ class DatasetManager:
         :param _install_max_time: See CourseConfig.install_max_time, str
         """
         self.__fixes = 0
-        self.__repaired_paths = []
+        self.__repaired_paths = list()
 
+        self.__remote_files = ["/archive.zip"]
         self.__data_source_uri = _data_source_uri
         self.__staging_source_uri = _staging_source_uri
-
-        self.__remote_files = _remote_files
 
         self.__datasets_path = _datasets_path
         self.__archives_path = _archives_path
@@ -75,10 +72,6 @@ class DatasetManager:
     @property
     def install_max_time(self) -> Optional[str]:
         return self.__install_max_time
-
-    @property
-    def remote_files(self) -> List[str]:
-        return self.__remote_files
 
     @property
     def data_source_uri(self) -> str:
@@ -200,14 +193,6 @@ class DatasetManager:
         validation_start = dbgems.clock_start()
         print(f"| Validating the locally installed datasets:")
 
-        if self.staging_source_uri == self.data_source_uri:
-            # When working with staging data, we need to enumerate what is in there
-            # and use it as a definitive source to the complete enumeration of our files
-            start = dbgems.clock_start()
-            print("| | Enumerating staged files for validation", end="...")
-            self.__remote_files = DatasetManager.list_r(self.staging_source_uri)
-            print(dbgems.clock_stopped(start))
-
         self.__validate_and_repair()
 
         if self.fixes == 1:
@@ -253,7 +238,7 @@ class DatasetManager:
         from dbacademy import dbgems
 
         for file in local_files:
-            if file not in self.remote_files and file.endswith("/") and self.__dataset_not_fixed(test_file=file):
+            if file not in self.__remote_files and file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
                 start = dbgems.clock_start()
                 self.repaired_paths.append(file)
@@ -268,7 +253,7 @@ class DatasetManager:
         """
         from dbacademy import dbgems
 
-        for file in self.remote_files:
+        for file in self.__remote_files:
             if file not in local_files and file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
                 start = dbgems.clock_start()
@@ -287,7 +272,7 @@ class DatasetManager:
         from dbacademy import dbgems
 
         for file in local_files:
-            if file not in self.remote_files and not file.endswith("/") and self.__dataset_not_fixed(test_file=file):
+            if file not in self.__remote_files and not file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
                 start = dbgems.clock_start()
                 print(f"| | removing extra file: {file}", end="...")
@@ -301,7 +286,7 @@ class DatasetManager:
         """
         from dbacademy import dbgems
 
-        for file in self.remote_files:
+        for file in self.__remote_files:
             if file not in local_files and not file.endswith("/") and self.__dataset_not_fixed(test_file=file):
                 self.__fixes += 1
                 start = dbgems.clock_start()
