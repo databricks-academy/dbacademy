@@ -129,54 +129,6 @@ class TaskConfig:
 
         self.task = Task()
 
-        class Library:
-            def __init__(self):
-                self.name = "library"
-
-            def jar(self):
-                assert self.name not in task_config.defined, "The library has already been defined."
-                task_config.defined.append(self.name)
-                assert 1/0, "Not yet implemented"
-                return task_config
-
-            def egg(self):
-                assert self.name not in task_config.defined, "The library has already been defined."
-                task_config.defined.append(self.name)
-                assert 1/0, "Not yet implemented"
-                return task_config
-
-            def wheel(self):
-                assert self.name not in task_config.defined, "The library has already been defined."
-                task_config.defined.append(self.name)
-                assert 1/0, "Not yet implemented"
-                return task_config
-
-            def pypi(self):
-                assert self.name not in task_config.defined, "The library has already been defined."
-                task_config.defined.append(self.name)
-                assert 1/0, "Not yet implemented"
-                return task_config
-
-            def maven(self):
-                assert self.name not in task_config.defined, "The library has already been defined."
-                task_config.defined.append(self.name)
-                assert 1/0, "Not yet implemented"
-                return task_config
-
-            def cran(self):
-                assert self.name not in task_config.defined, "The library has already been defined."
-                task_config.defined.append(self.name)
-                assert 1/0, "Not yet implemented"
-                return task_config
-
-            def from_dict(self, libraries):
-                assert self.name not in task_config.defined, "The library has already been defined."
-                task_config.defined.append(self.name)
-                task_config.libraries = libraries
-                return task_config
-
-        self.library: Library = Library()
-
     def add_email_notifications(self, *, on_start: List[str], on_success: List[str], on_failure: List[str], no_alert_for_skipped_runs: bool = False) -> "TaskConfig":
         self.params["email_notifications"] = {
             "on_start": on_start or list(),

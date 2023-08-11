@@ -55,9 +55,6 @@ class ClusterConfig:
         spark_env_vars = spark_env_vars or dict()
         custom_tags = custom_tags or dict()
 
-        if libraries is not None:
-            extra_params["libraries"] = libraries
-
         if policy_id is not None:
             extra_params["policy_id"] = policy_id
 
@@ -116,6 +113,47 @@ class ClusterConfig:
 
         if len(spark_env_vars) > 0:
             self.__params["spark_env_vars"] = spark_env_vars
+
+        class Library:
+            def __init__(self, _libraries: List[Dict[str, Any]]):
+                self.libraries = libraries
+
+            def jar(self, location: str):
+                self.libraries.append({
+                    "jar": location
+                })
+
+            def egg(self, location: str):
+                self.libraries.append({
+                    "egg": location
+                })
+
+            def wheel(self, location: str):
+                self.libraries.append({
+                    "egg": location
+                })
+
+            def pypi(self, definition: Dict[str, Any]):
+                self.libraries.append({
+                    "pypi": definition
+                })
+
+            def maven(self, definition: Dict[str, Any]):
+                self.libraries.append({
+                    "maven": definition
+                })
+
+            def cran(self, definition: Dict[str, Any]):
+                self.libraries.append({
+                    "cran": definition
+                })
+
+            def from_dict(self, _libraries: Dict[str, Any]):
+                self.libraries.append(_libraries)
+
+        libraries = libraries if libraries else list()
+        self.library = Library(libraries)
+        extra_params["libraries"] = libraries
 
         # Process last just in case there is an exclusion bug...
         # This will result in replacing any previously defined parameters
