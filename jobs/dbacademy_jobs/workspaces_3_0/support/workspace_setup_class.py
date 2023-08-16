@@ -622,7 +622,7 @@ class WorkspaceSetup:
 
         for record in self.__air_table_records:
             old_url = record.get("fields", dict()).get("AWS Workspace URL")
-            if new_url == old_url:
+            if str(new_url).lower().strip() == str(old_url).lower().strip(old_url):
                 break
         else:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

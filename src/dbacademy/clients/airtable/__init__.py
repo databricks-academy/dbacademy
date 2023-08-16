@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 __all__ = ["AirTableClient"]
 
@@ -33,22 +33,31 @@ class AirTableClient(object):
     def table_id(self) -> str:
         return self.__table_id
 
-    def read(self, view_id: str = None, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True):
+    def read(self, view_id: str = None, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True, records: List[Dict[str, Any]] = None, offset: str = None) -> List[Dict[str, Any]]:
         import requests
 
+        if records is None:
+            records = list()
+
         error_message = "Exception reading records from the database"
-        url = self.__build_url(view_id=view_id, filter_by_formula=filter_by_formula, sort_by=sort_by, sort_asc=sort_asc)
+        url = self.__build_url(view_id=view_id, filter_by_formula=filter_by_formula, sort_by=sort_by, sort_asc=sort_asc, offset=offset)
 
         for attempt in self.ATTEMPTS:
             response = requests.get(url, headers=self.__headers)
             if not self.__rate_limited(response, attempt):
                 # We are not being rate limited, go ahead and validate the response.
                 self.__validate_response(response, error_message, response.status_code)
-                return response.json().get("records", list())
+                response_data = response.json()
+                records.extend(response_data.get("records", list()))
+                next_offset = response_data.get("offset")
+                if next_offset is None:
+                    return records
+                else:
+                    return self.read(view_id=view_id, filter_by_formula=filter_by_formula, sort_by=sort_by, sort_asc=sort_asc, records=records, offset=next_offset)
 
         self.__raise_rate_limit_failure(error_message)
 
-    def __build_url(self, *, view_id: str = None, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True):
+    def __build_url(self, *, view_id: str = None, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True, offset: str = None):
         from urllib.parse import quote_plus
 
         url = f"{self.__url}"
@@ -69,6 +78,10 @@ class AirTableClient(object):
                 url += f"""&sort[0][direction]=asc"""
             else:
                 url += f"""&sort[0][direction]=desc"""
+
+        if offset is not None:
+            url += "?" if url == self.__url else "&"
+            url += f"""offset={offset}"""
 
         return url
 
