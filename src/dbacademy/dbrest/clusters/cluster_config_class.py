@@ -204,7 +204,7 @@ class ClusterConfig(CommonConfig):
 
         super().__init__(library_factory=LibraryFactory(libraries),
                          cloud=cloud,
-                         cluster_name="Some Job Name",
+                         cluster_name=cluster_name,
                          spark_version=spark_version,
                          node_type_id=node_type_id,
                          driver_node_type_id=driver_node_type_id,

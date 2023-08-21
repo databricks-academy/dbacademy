@@ -110,7 +110,7 @@ class BuildConfig:
         return build_config
 
     def __init__(self,
-                 # TODO Fix all these types: List, Dict, Optiona, etc
+                 # TODO Fix all these types: List, Dict, Optional, etc
                  *,
                  name: str,
                  version: str = 0,
