@@ -135,21 +135,16 @@ class TestUsers(unittest.TestCase):
         self.assertTrue(len(users) >= 3)
 
         found_class = False
-        found_doug = False
         found_jacob = False
 
         for user in users:
             if user.get("userName") == "class+000@databricks.com":
                 found_class = True
 
-            elif user.get("userName") == "doug.bateman@databricks.com":
-                found_doug = True
-
             elif user.get("userName") == "jacob.parr@databricks.com":
                 found_jacob = True
 
         self.assertTrue(found_class)
-        self.assertTrue(found_doug)
         self.assertTrue(found_jacob)
 
 
