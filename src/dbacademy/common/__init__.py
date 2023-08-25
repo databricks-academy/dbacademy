@@ -13,7 +13,7 @@ __all__ = ["deprecated", "overrides", "print_title", "print_warning", "CachedSta
 deprecation_log_level = "error"
 
 
-def print_title(title: str, divider="-", length=100) -> None:
+def print_title(title: str, divider: str = "-", length: int = 100) -> None:
     print(divider * length)
     tail_length = length - 3 - len(title)
     tail = divider * tail_length
