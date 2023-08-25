@@ -495,7 +495,8 @@ class WorkspaceSetup:
                "intercomAdminConsent": "false",    # Turn off product welcome
                "enableDbfsFileBrowser": "true",    # Enable DBFS UI
                "enableWebTerminal": "true",        # Enable Web Terminal
-               "enableExportNotebook": "true"      # We will disable this in due time
+               "enableExportNotebook": "true",     # We will disable this in due time
+               "enableTokensConfig": "true",       # Newer courses need access to the tokens config
         })
 
     def __remove_users(self, trio: WorkspaceTrio):

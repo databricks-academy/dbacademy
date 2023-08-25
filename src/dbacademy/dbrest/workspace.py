@@ -6,6 +6,7 @@ from dbacademy.clients.rest.common import ApiContainer
 class WorkspaceClient(ApiContainer):
     def __init__(self, client: DBAcademyRestClient):
         self.client = client
+        self.base_url = f"{self.client.endpoint}/api/2.0/workspace"
 
     def ls(self, path: str, recursive: bool = False, object_types: List[str] = None) -> Optional[List[Dict[str, Any]]]:
 
@@ -13,7 +14,7 @@ class WorkspaceClient(ApiContainer):
 
         if not recursive:
             try:
-                results = self.client.api("GET", f"{self.client.endpoint}/api/2.0/workspace/list", _expected=(200, 404), path=path)
+                results = self.client.api("GET", f"{self.base_url}/list", _expected=(200, 404), path=path)
 
                 if results is None:
                     return None
@@ -43,12 +44,12 @@ class WorkspaceClient(ApiContainer):
 
     def mkdirs(self, path: str) -> Dict[str, Any]:
         params = {"path": path}
-        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/mkdirs", params)
+        return self.client.api("POST", f"{self.base_url}/mkdirs", params)
 
     def delete_path(self, path: str) -> Dict[str, Any]:
         payload = {"path": path, "recursive": True}
         expected = [200, 404]
-        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/delete", payload, _expected=expected)
+        return self.client.api("POST", f"{self.base_url}/delete", payload, _expected=expected)
 
     def import_html_file(self, html_path: str, content: str, overwrite: bool = True) -> Dict[str, Any]:
         import base64
@@ -60,7 +61,7 @@ class WorkspaceClient(ApiContainer):
             "overwrite": overwrite,
             "format": "SOURCE",
         }
-        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/import", payload)
+        return self.client.api("POST", f"{self.base_url}/import", payload)
 
     def import_dbc_files(self, target_path: str, source_url: str, overwrite: bool = True, local_file_path: str = None) -> Dict[str, Any]:
         import os, base64
@@ -93,7 +94,7 @@ class WorkspaceClient(ApiContainer):
             "overwrite": False,
             "format": "DBC",
         }
-        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/import", payload)
+        return self.client.api("POST", f"{self.base_url}/import", payload)
 
     def import_notebook(self, language: str, notebook_path: str, content: str, overwrite: bool = True) -> Dict[str, Any]:
         import base64
@@ -105,7 +106,7 @@ class WorkspaceClient(ApiContainer):
             "overwrite": overwrite,
             "format": "SOURCE",
         }
-        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/workspace/import", payload)
+        return self.client.api("POST", f"{self.base_url}/import", payload)
 
     def export_notebook(self, path: str) -> str:
         return self.client.api("GET", "2.0/workspace/export",

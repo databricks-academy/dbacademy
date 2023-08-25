@@ -105,6 +105,9 @@ class DBAcademyRestClient(ApiClient):
         from dbacademy.dbrest.workspace import WorkspaceClient
         self.workspace = WorkspaceClient(self)
 
+        from dbacademy.dbrest.workspace_config import WorkspaceConfigClient
+        self.workspace_config = WorkspaceConfigClient(self)
+
         from dbacademy.dbrest.serving_endpoints import ServingEndpointsClient
         self.serving_endpoints = ServingEndpointsClient(self)
 

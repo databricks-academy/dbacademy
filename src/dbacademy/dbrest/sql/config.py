@@ -1,3 +1,4 @@
+from typing import Dict, Any
 from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.clients.rest.common import ApiContainer
 
@@ -12,6 +13,16 @@ class SqlConfigClient(ApiContainer):
 
     def get(self):
         return self.client.api("GET", f"{self.client.endpoint}/api/2.0/sql/config/endpoints")
+
+    def update_all(self, settings: Dict[str, Any]):
+        self.client.api("PUT", f"{self.client.endpoint}/api/2.0/sql/config/endpoints", _data=settings)
+        return None
+
+    def update(self, property_name: str, property_value: Any):
+        settings = self.get()
+        settings[property_name] = property_value
+
+        return self.update_all(settings)
 
     def edit(self, security_policy: str, instance_profile_arn: str, data_access_config: dict, sql_configuration_parameters: dict):
 
