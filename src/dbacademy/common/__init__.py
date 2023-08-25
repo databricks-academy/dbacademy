@@ -8,7 +8,7 @@ from typing import Callable, Any, Iterable
 
 from dbacademy.common.cloud_class import Cloud
 
-__all__ = ["deprecated", "overrides", "print_warning", "CachedStaticProperty", "validate_type", "validate_element_type", "Cloud"]
+__all__ = ["deprecated", "overrides", "print_title", "print_warning", "CachedStaticProperty", "validate_type", "validate_element_type", "Cloud"]
 
 deprecation_log_level = "error"
 
