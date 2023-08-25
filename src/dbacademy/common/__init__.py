@@ -13,6 +13,13 @@ __all__ = ["deprecated", "overrides", "print_warning", "CachedStaticProperty", "
 deprecation_log_level = "error"
 
 
+def print_title(title: str, divider="-", length=100) -> None:
+    print(divider * length)
+    tail_length = length - 3 - len(title)
+    tail = divider * tail_length
+    print(f"- {title} {tail}")
+
+
 def print_warning(title: str, message: str, length: int = 100) -> None:
     title_len = length - len(title) - 4
     print()
