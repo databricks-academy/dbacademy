@@ -55,7 +55,9 @@ class DBAcademyRestClient(ApiClient):
                     token = token or client.token or self.__get_notebook_token()
 
         # Cleanup the API URL
-        if endpoint.endswith("/api/"):
+        if endpoint is None:
+            url = None
+        elif endpoint.endswith("/api/"):
             url = endpoint
         elif endpoint.endswith("/api"):
             url = endpoint + "/"
