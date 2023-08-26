@@ -27,8 +27,7 @@ class AuthorizationTokenTests(unittest.TestCase):
     def test_update_users_can_use(self):
         group_name = "users"
         permission_level = "CAN_USE"
-        response = self.client.permissions.authorizations.tokens.update_group(id_value=None,
-                                                                              group_name=group_name,
+        response = self.client.permissions.authorizations.tokens.update_group(group_name=group_name,
                                                                               permission_level=permission_level)
         self.__validate_update(response, "group_name", group_name, permission_level, False)
 
@@ -38,8 +37,7 @@ class AuthorizationTokenTests(unittest.TestCase):
         try:
             group_name = "users"
             permission_level = "CAN_MANAGE"
-            self.client.permissions.authorizations.tokens.update_group(id_value=None,
-                                                                       group_name=group_name,
+            self.client.permissions.authorizations.tokens.update_group(group_name=group_name,
                                                                        permission_level=permission_level)
             self.fail("Expected DatabricksApiException")
 
@@ -48,7 +46,6 @@ class AuthorizationTokenTests(unittest.TestCase):
             self.assertEqual("Only admins can be given CAN_MANAGE permission on tokens", e.message)
 
     def __validate_update(self, response: Dict[str, Any], what: str, name: str, value: str, inherited: bool):
-        # id_value = "authorization/tokens"
         self.assertEqual("/authorization/tokens", response.get("object_id"))
         self.assertEqual("tokens", response.get("object_type"))
 
