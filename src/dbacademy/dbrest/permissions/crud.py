@@ -65,8 +65,13 @@ class PermissionsCrud(ApiContainer):
             raise ValueError(f"Expected 'permission_level' to be one of {self.valid_permissions},"
                              f" found '{permission_level}'")
 
-    def get_levels(self, *, id_value: ItemId = None) -> PermissionLevelList:
-        return self.client.api("GET", f"{self.path}/{id_value}/permissionLevels").get("permission_levels")
+    def get_levels(self, id_value: ItemId = None) -> PermissionLevelList:
+        if id_value is None:
+            url = f"{self.path}/permissionLevels"
+        else:
+            url = f"{self.path}/{id_value}/permissionLevels"
+
+        return self.client.api("GET", url).get("permission_levels")
 
     def get(self, *, id_value: ItemId = None) -> ACL:
         return self.client.api("GET", f"{self.path}/{id_value}")
