@@ -1,13 +1,9 @@
-from typing import Dict, Any, Literal
-
-from dbacademy.dbrest.client import DBAcademyRestClient
-
-from dbacademy.clients.rest.common import ApiContainer, ItemId, ApiClient
+from dbacademy.clients.rest.common import ApiClient
 
 __all__ = ["Tokens"]
 
 # noinspection PyProtectedMember
-from dbacademy.dbrest.permissions.crud import PermissionLevelList, PermissionsCrud
+from dbacademy.dbrest.permissions.crud import PermissionsCrud
 
 
 class Tokens(PermissionsCrud):

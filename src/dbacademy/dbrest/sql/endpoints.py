@@ -317,7 +317,9 @@ class SqlWarehousesClient(ApiContainer):
 
         # Give the user CAN_MANAGE to their new endpoint
         endpoint_id = endpoint.get("id")
-        self.client.permissions().sql().warehouses().update_user(endpoint_id, username, "CAN_MANAGE")
+        self.client.permissions().sql().warehouses().update_user(id_value=endpoint_id,
+                                                                 username=username,
+                                                                 permission_level="CAN_MANAGE")
 
     def delete_user_endpoints(self, naming_template: str, naming_params: dict, users: list = None):
         for user in self.client.scim().users().to_users_list(users):

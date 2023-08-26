@@ -66,7 +66,9 @@ class ClustersHelper:
         instance_pool_id = pool.get("instance_pool_id")
 
         # With the pool created, make sure that all users can attach to it.
-        client.permissions.pools.update_group(instance_pool_id, "users", "CAN_ATTACH_TO")
+        client.permissions.pools.update_group(id_value=instance_pool_id,
+                                              group_name="users",
+                                              permission_level="CAN_ATTACH_TO")
 
         dbgems.display_html(f"""
         <html style="margin:0"><body style="margin:0"><div style="margin:0">
@@ -104,7 +106,9 @@ class ClustersHelper:
         policy_id = policy.get("policy_id")
 
         # With the pool created, make sure that all users can attach to it.
-        client.permissions.cluster_policies.update_group(policy_id, "users", "CAN_USE")
+        client.permissions.cluster_policies.update_group(id_value=policy_id,
+                                                         group_name="users",
+                                                         permission_level="CAN_USE")
 
         dbgems.display_html(f"""
         <html style="margin:0"><body style="margin:0"><div style="margin:0">

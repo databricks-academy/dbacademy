@@ -81,7 +81,9 @@ class Commands(object):
                                                 photon=True, preview_channel=False, spot=True, size="XXSMALL",
                                                 timeout_minutes=45)
         ws.sql.warehouses.stop(warehouse_id)
-        ws.permissions.sql.warehouses.update_group(warehouse_id, "users", "CAN_USE")
+        ws.permissions.sql.warehouses.update_group(id_value=warehouse_id,
+                                                   group_name="users",
+                                                   permission_level="CAN_USE")
         return True
 
     @staticmethod
@@ -361,7 +363,9 @@ class Commands(object):
                         if p["all_permissions"][0]["permission_level"] == "CAN_ATTACH_TO":
                             break
                 else:
-                    ws.permissions.pools.update_group(pool["instance_pool_id"], "users", "CAN_ATTACH_TO")
+                    ws.permissions.pools.update_group(id_value=pool["instance_pool_id"],
+                                                      group_name="users",
+                                                      permission_level="CAN_ATTACH_TO")
                     results.append(pool["instance_pool_name"])
         return results
 
@@ -389,7 +393,9 @@ class Commands(object):
                             break
                 else:  # If not break
                     if fix:
-                        ws.permissions.clusters.policies.update_group(policy["policy_id"], "users", "CAN_USE")
+                        ws.permissions.clusters.policies.update_group(id_value=policy["policy_id"],
+                                                                      group_name="users",
+                                                                      permission_level="CAN_USE")
                         results.append({"policy": policy["name"], "error": "Fixed users access"})
                     else:
                         results.append({"policy": policy["name"], "error": "Missing users access"})
@@ -415,7 +421,9 @@ class Commands(object):
                       perm["all_permissions"][0]["inherited"] is False
                       ]
             for owner in owners:
-                ws.permissions.clusters.update_user(cluster_id, owner, "CAN_RESTART")
+                ws.permissions.clusters.update_user(id_value=cluster_id,
+                                                    username=owner,
+                                                    permission_level="CAN_RESTART")
                 count += 1
         return count
 
@@ -436,9 +444,11 @@ class Commands(object):
                     number = pattern.subn("", user)[0]
                     if number in clusters_map:
                         continue
-                    #           c=clusters_map[number]
-                    #           result=w.permissions.clusters.update_user(c["cluster_id"], user, "CAN_MANAGE")
-                    #           results.append({"cluster_name": c["cluster_name"], "error": "Setting ACL"})
+                        # c=clusters_map[number]
+                        # result=w.permissions.clusters.update_user(id_value=c["cluster_id"],
+                        #                                           username=user,
+                        #                                           permission_level="CAN_MANAGE")
+                        # results.append({"cluster_name": c["cluster_name"], "error": "Setting ACL"})
                     elif fix:
                         c["cluster_name"] = "my_cluster_" + number
                         c = ws.clusters.create(**c)
@@ -862,8 +872,9 @@ class Commands(object):
                 instance_pool_id = instance_pool["instance_pool_id"]
             else:
                 instance_pool_id = instance_pool["instance_pool_id"]
-            ws.permissions.pools.update_group(instance_pool_id, "users", "CAN_ATTACH_TO")
-
+            ws.permissions.pools.update_group(id_value=instance_pool_id,
+                                              group_name="users",
+                                              permission_level="CAN_ATTACH_TO")
             tags_policy = {
                 f"custom_tags.{tag_name}": {
                     "type": "fixed",

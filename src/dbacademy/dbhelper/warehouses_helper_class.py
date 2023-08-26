@@ -152,11 +152,14 @@ class WarehousesHelper:
         # With the warehouse created, make sure that all users can attach to it.
         if for_user:
             print(f"Created warehouse \"{name}\" ({warehouse_id}) for {for_user}")
-            client.permissions.warehouses.update_user(warehouse_id, for_user, "CAN_USE")
+            client.permissions.warehouses.update_user(id_value=warehouse_id,
+                                                      username=for_user,
+                                                      permission_level="CAN_USE")
         else:
             print(f"Created warehouse \"{name}\" ({warehouse_id})")
-            client.permissions.warehouses.update_group(warehouse_id, "users", "CAN_USE")
-
+            client.permissions.warehouses.update_group(id_value=warehouse_id,
+                                                       group_name="users",
+                                                       permission_level="CAN_USE")
         print(f"| Lab ID:            {lab_id}")
         print(f"| Description:       {workspace_description}")
         print(f"| Workspace Name:    {workspace_name}")
