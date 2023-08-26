@@ -45,14 +45,19 @@ class DBAcademyRestClient(ApiClient):
         if client is not None:
             # We have a valid client, use it to initialize from.
             authorization_header = authorization_header or client.authorization_header
-            endpoint = endpoint or client.url or self.__get_notebook_endpoint()
+            endpoint = endpoint or client.url
 
             if authorization_header is None:
                 user = user or client.user
                 password = password or client.password
 
                 if user is None and password is None:
-                    token = token or client.token or self.__get_notebook_token()
+                    token = token or client.token
+
+        endpoint = endpoint or self.__get_notebook_endpoint()
+
+        if not any([authorization_header, user, password]):
+            token = token or self.__get_notebook_token()
 
         # Cleanup the API URL
         if endpoint is None:
