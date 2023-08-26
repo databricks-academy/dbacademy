@@ -73,7 +73,7 @@ class PermissionsCrud(ApiContainer):
 
         return self.client.api("GET", url).get("permission_levels")
 
-    def get(self, *, id_value: ItemId = None) -> ACL:
+    def get(self, id_value: ItemId = None) -> ACL:
         return self.client.api("GET", f"{self.path}/{id_value}")
 
     def update(self, *, id_value: ItemId = None, what: What, value: str, permission_level: PermissionLevel):
