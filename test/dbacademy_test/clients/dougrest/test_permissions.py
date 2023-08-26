@@ -31,8 +31,10 @@ class TestPermissionsApi(unittest.TestCase):
         policy = ws.clusters.policies.get_by_name("test-policy")
         if policy is None:
             policy = ws.clusters.policies.create("test-policy", policy_spec)
+
         policy_id = policy["policy_id"]
         levels = ws.permissions.clusters.policies.get_levels(policy_id)
+
         ws.permissions.clusters.policies.update(policy_id, "group_name", "users", "CAN_USE")
         acl = ws.permissions.clusters.policies.get(policy_id)["access_control_list"]
         found = False

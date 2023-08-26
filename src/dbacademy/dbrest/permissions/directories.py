@@ -1,5 +1,5 @@
 from dbacademy.clients.rest.common import ApiClient
-from dbacademy.clients.rest.permissions.crud import PermissionsCrud
+from dbacademy.dbrest.permissions.crud import PermissionsCrud
 
 __all__ = ["Directories"]
 

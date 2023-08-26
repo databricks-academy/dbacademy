@@ -19,6 +19,10 @@ class MyTestCase(unittest.TestCase):
 
         self.tearDown()
 
+    @property
+    def client(self):
+        return self.__client
+
     def test_get_config_list(self):
         property_names = [
             "enable-X-Frame-Options",
@@ -28,7 +32,7 @@ class MyTestCase(unittest.TestCase):
             "enableExportNotebook",
             "enableTokensConfig",
         ]
-        config = self.__client.workspace_config.get_config(property_names)
+        config = self.client.workspace_config.get_config(property_names)
         self.__validate_config(config)
 
     def test_get_config_dict(self):
@@ -42,16 +46,16 @@ class MyTestCase(unittest.TestCase):
         }
 
         # Use the dictionary's keys to produce the list.
-        config = self.__client.workspace_config.get_config(random_config.keys())
+        config = self.client.workspace_config.get_config(random_config.keys())
         self.__validate_config(config)
 
     def test_get_config_args(self):
-        config = self.__client.workspace_config.get_config("enable-X-Frame-Options",
-                                                           "intercomAdminConsent",
-                                                           "enableDbfsFileBrowser",
-                                                           "enableWebTerminal",
-                                                           "enableExportNotebook",
-                                                           "enableTokensConfig",)
+        config = self.client.workspace_config.get_config("enable-X-Frame-Options",
+                                                         "intercomAdminConsent",
+                                                         "enableDbfsFileBrowser",
+                                                         "enableWebTerminal",
+                                                         "enableExportNotebook",
+                                                         "enableTokensConfig",)
         self.__validate_config(config)
 
     def __validate_config(self, config: Dict[str, Any]):
@@ -73,26 +77,26 @@ class MyTestCase(unittest.TestCase):
 
     def test_patch_config(self):
         # Change all the values to false
-        self.__client.workspace_config.patch_config({
+        self.client.workspace_config.patch_config({
             "enableExportNotebook": False,
             "enableWebTerminal": False,
         })
 
         # Get the config and assert they were set to False
-        config = self.__client.workspace_config.get_config("enableWebTerminal", "enableExportNotebook")
+        config = self.client.workspace_config.get_config("enableWebTerminal", "enableExportNotebook")
         self.assertIsNotNone(config)
         self.assertEqual(2, len(config.keys()))
         self.assertEqual("false", config.get("enableExportNotebook"))
         self.assertEqual("false", config.get("enableWebTerminal"))
 
         # Change all the values to true
-        self.__client.workspace_config.patch_config({
+        self.client.workspace_config.patch_config({
             "enableExportNotebook": "true",
             "enableWebTerminal": "true",
         })
 
         # Get the config and assert they were set to True
-        config = self.__client.workspace_config.get_config("enableWebTerminal", "enableExportNotebook")
+        config = self.client.workspace_config.get_config("enableWebTerminal", "enableExportNotebook")
         self.assertIsNotNone(config)
         self.assertEqual(2, len(config.keys()))
         self.assertEqual("true", config.get("enableExportNotebook"))

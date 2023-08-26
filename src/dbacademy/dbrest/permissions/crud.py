@@ -66,7 +66,7 @@ class PermissionsCrud(ApiContainer):
                              f" found '{permission_level}'")
 
     def get_levels(self, id_value: ItemId) -> PermissionLevelList:
-        return self.client.api("GET", f"{self.path}/{id_value}/permissionLevels")["permission_levels"]
+        return self.client.api("GET", f"{self.path}/{id_value}/permissionLevels").get("permission_levels")
 
     def get(self, id_value: ItemId) -> ACL:
         return self.client.api("GET", f"{self.path}/{id_value}")

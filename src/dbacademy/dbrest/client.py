@@ -6,6 +6,16 @@ class DBAcademyRestClient(ApiClient):
     """Databricks Academy REST API client."""
     # from dbacademy.dbrest.accounts import AccountsClient
 
+    @classmethod
+    def __get_notebook_endpoint(cls):
+        from dbacademy import dbgems
+        return dbgems.get_notebooks_api_endpoint()
+
+    @classmethod
+    def __get_notebook_token(cls):
+        from dbacademy import dbgems
+        return dbgems.get_notebooks_api_token()
+
     def __init__(self,
                  token: str = None,
                  endpoint: str = None,
@@ -31,23 +41,26 @@ class DBAcademyRestClient(ApiClient):
             client: A parent ApiClient from which to clone settings.
             throttle_seconds: Number of seconds to sleep between requests.
         """
-        if endpoint is None:
-            from dbacademy import dbgems
-            endpoint = dbgems.get_notebooks_api_endpoint()
 
-        if user is not None and password is not None:
-            pass  # We will use username and password to create the authorization_header (later)
+        if client is not None:
+            # We have a valid client, use it to initialize from.
+            authorization_header = authorization_header or client.authorization_header
+            endpoint = endpoint or client.url or self.__get_notebook_endpoint()
 
-        elif not any((authorization_header, token, password)):
-            from dbacademy import dbgems
-            token = dbgems.get_notebooks_api_token()
-            if verbose:
-                print(f"Using notebook token.")
+            if authorization_header is None:
+                user = user or client.user
+                password = password or client.password
+
+                if user is None and password is None:
+                    token = token or client.token or self.__get_notebook_token()
+
+        # Cleanup the API URL
+        if endpoint.endswith("/api/"):
+            url = endpoint
+        elif endpoint.endswith("/api"):
+            url = endpoint + "/"
         else:
-            if verbose:
-                print(f"Using caller-provided token.")
-
-        url = endpoint.rstrip("/") + "/api/"
+            url = endpoint.rstrip("/") + "/api/"
 
         super().__init__(url,
                          token=token,
@@ -75,7 +88,7 @@ class DBAcademyRestClient(ApiClient):
         from dbacademy.dbrest.ml import MlClient
         self.ml = MlClient(self)
 
-        from dbacademy.clients.rest.permissions import Permissions
+        from dbacademy.dbrest.permissions import Permissions
         self.permissions = Permissions(self)
 
         from dbacademy.dbrest.pipelines import PipelinesClient
