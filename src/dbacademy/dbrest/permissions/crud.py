@@ -65,13 +65,13 @@ class PermissionsCrud(ApiContainer):
             raise ValueError(f"Expected 'permission_level' to be one of {self.valid_permissions},"
                              f" found '{permission_level}'")
 
-    def get_levels(self, id_value: ItemId) -> PermissionLevelList:
+    def get_levels(self, *, id_value: ItemId = None) -> PermissionLevelList:
         return self.client.api("GET", f"{self.path}/{id_value}/permissionLevels").get("permission_levels")
 
-    def get(self, id_value: ItemId) -> ACL:
+    def get(self, *, id_value: ItemId = None) -> ACL:
         return self.client.api("GET", f"{self.path}/{id_value}")
 
-    def update(self, id_value: ItemId, what: What, value: str, permission_level: PermissionLevel):
+    def update(self, *, id_value: ItemId = None, what: What, value: str, permission_level: PermissionLevel):
         self._validate_what(what)
         self._validate_permission_level(permission_level)
         acl = [
@@ -80,16 +80,29 @@ class PermissionsCrud(ApiContainer):
                     "permission_level": permission_level
                 }
             ]
-        return self.client.api("PATCH", f"{self.path}/{id_value}", access_control_list=acl)
+        if id_value is None:
+            url = f"{self.path}"
+        else:
+            url = f"{self.path}/{id_value}"
+        return self.client.api("PATCH", url, access_control_list=acl)
 
-    def replace(self, id_value: ItemId, acl: ACL):
+    def replace(self, *, id_value: ItemId, acl: ACL):
         return self.client.api("PUT", f"{self.path}/{id_value}", access_control_list=acl)
 
-    def update_user(self, id_value: ItemId, username, permission_level):
-        return self.update(id_value, "user_name", username, permission_level)
+    def update_user(self, *, id_value: ItemId = None, username, permission_level):
+        return self.update(id_value=id_value,
+                           what="user_name",
+                           value=username,
+                           permission_level=permission_level)
 
-    def update_group(self, id_value: ItemId, group_name, permission_level):
-        return self.update(id_value, "group_name", group_name, permission_level)
+    def update_group(self, *, id_value: ItemId = None, group_name, permission_level):
+        return self.update(id_value=id_value,
+                           what="group_name",
+                           value=group_name,
+                           permission_level=permission_level)
 
-    def update_service_principal(self, id_value: ItemId, service_principal_name, permission_level):
-        return self.update(id_value, "service_principal_name", service_principal_name, permission_level)
+    def update_service_principal(self, *, id_value: ItemId = None, service_principal_name, permission_level):
+        return self.update(id_value=id_value,
+                           what="service_principal_name",
+                           value=service_principal_name,
+                           permission_level=permission_level)
