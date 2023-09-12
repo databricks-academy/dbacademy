@@ -513,6 +513,7 @@ class DBAcademyHelper:
         dropping the database created by the call to init(),
         cleaning out the user-specific catalog, and removing the user's
         lesson-specific working directory and any assets created in that directory.
+        :return: None
         """
         from dbacademy.dbhelper.workspace_cleaner_class import WorkspaceCleaner
         from dbacademy.dbhelper.dataset_manager_class import DatasetManager
@@ -523,11 +524,21 @@ class DBAcademyHelper:
             # The last step is to make sure the datasets are still intact and repair if necessary
             DatasetManager.from_dbacademy_helper(self).validate_datasets(fail_fast=True)
 
+        self.cleanup_custom()
+
+    def cleanup_custom(self) -> None:
+        """
+        Called by cleanup(), with no actual implementation, with the expectation that custom cleanup-code could
+        be added by the courseware developer. This method is meant to be overridden, or more realistically,
+        monkey-patched, into the class from the notebook.
+        :return: None
+        """
+
     def reset_learning_environment(self) -> None:
         """
         Used almost exclusively by the Reset notebook, invocation drops all databases, installed datasets and remove all working directories.
         Usage of this method is generally reserved for a "full" reset of a course which is common before invoke smoke tests.
-        :return:
+        :return: None
         """
         from dbacademy.dbhelper.workspace_cleaner_class import WorkspaceCleaner
 
@@ -536,6 +547,7 @@ class DBAcademyHelper:
     def conclude_setup(self) -> None:
         """
         Concludes the setup of DBAcademyHelper by advertising to the student the new state of the environment such as predefined path variables, databases and tables created on behalf of the student and the total setup time. Additionally, all path attributes are pushed to the Spark context for reference in SQL statements.
+        :return: None
         """
         from dbacademy import dbgems
 
@@ -618,7 +630,7 @@ class DBAcademyHelper:
         """
         Discovers the datasets used by this course and then prints their corresponding README files which should include the corresponding copyrights.
         :param mappings: Allows for redefinition of the location of the README.md file
-        :return:
+        :return: None
         """
         from dbacademy import dbgems
 
