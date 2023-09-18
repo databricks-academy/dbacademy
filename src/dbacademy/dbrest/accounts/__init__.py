@@ -1,9 +1,12 @@
-from dbacademy.dbrest import DBAcademyRestClient
+__all__ = ["AccountsClient"]
+
 from dbacademy.clients.rest.common import ApiContainer
 
 
 class AccountsClient(ApiContainer):
-    def __init__(self, client: DBAcademyRestClient, account_id: str):
+    from dbacademy.clients.rest.common import ApiClient
+
+    def __init__(self, client: ApiClient, account_id: str):
         self.client = client
         self.account_id = account_id
 

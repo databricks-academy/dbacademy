@@ -1,4 +1,5 @@
-from __future__ import annotations
+__all__ = ["DBAcademyRestClient"]
+
 from dbacademy.clients.rest.common import ApiClient
 
 

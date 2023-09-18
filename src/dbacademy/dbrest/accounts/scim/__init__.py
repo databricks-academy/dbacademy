@@ -3,7 +3,9 @@ from dbacademy.clients.rest.common import ApiContainer
 
 
 class AccountScimClient(ApiContainer):
-    def __init__(self, client: DBAcademyRestClient, account_id: str):
+    from dbacademy.clients.rest.common import ApiClient
+
+    def __init__(self, client: ApiClient, account_id: str):
         self.client = client      # Client API exposing other operations to this class
         self.account_id = account_id
 
