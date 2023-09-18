@@ -14,4 +14,4 @@ class AccountsClient(ApiContainer):
         self.scim = AccountScimClient(self.client, account_id=account_id)
 
         from dbacademy.dbrest.accounts.workspaces import WorkspacesClient
-        self.workspaces = WorkspacesClient(self, self.account_id)
+        self.workspaces = WorkspacesClient(self.client, self.account_id)
