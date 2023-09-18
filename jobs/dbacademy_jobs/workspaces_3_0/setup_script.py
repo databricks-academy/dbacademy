@@ -18,15 +18,6 @@ TABLE_ID = "tblF3cxlP8gcM9Rqr"
 DELETABLE_VIEW_ID = "viwCW83QNyJlMEMAk"
 air_table_client = AirTableClient(access_token=AIR_TABLE_TOKEN, base_id=BASE_ID, table_id=TABLE_ID)
 
-print("1) Create workspaces.")
-print("2) Delete all AirTable workspaces.")
-action = read_int("Select an action", 0)
-if action not in [1, 2]:
-    print(f"""\n{"-" * 100}\nAborting script; no command specified.""")
-    exit(1)
-
-print()
-print("-" * 100)
 env_codes = ["PROSVC", "CURR"]
 env_code = read_str(f"""Please select an environment {env_codes}""", env_codes[0]).upper()
 
@@ -92,96 +83,51 @@ def configure_workspace_setup(*,
     return wct, WorkspaceSetup(account, run_workspace_setup=_run_workspace_setup)
 
 
-if action == 2:
-    workspace_config_template, workspace_setup = configure_workspace_setup(_run_workspace_setup=True, _env_code=env_code, _workspace_numbers=list())
+if env_code == "CURR":
+    max_participants_default = 5
+elif env_code == "PROSVC":
+    max_participants_default = 250
+else:
+    raise Exception(f"""Unsupported environment, expected one of {env_codes}, found {env_code}.""")
 
-    records = air_table_client.read(view_id=DELETABLE_VIEW_ID)
+max_participants = read_int("\nMax Participants per Workspace", max_participants_default)
 
-    for record in records:
-        record_id = record.get("id")
-        fields = record.get("fields")
-        comments: str = fields.get("Comments")
-        workspace_url = fields.get("AWS Workspace URL")
-        reserved = fields.get("Reserved Workspaces")
-        reason = fields.get("Reason")
-        workspace_number = from_workspace_url([workspace_url])
+wsn_a = read_int("\nPlease enter the first workspace number to create", -1)
+if wsn_a < 0:
+    print(f"""\n{"-" * 100}\nAborting script; no workspace number""")
+    exit(1)
 
-        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        memo = f"{now}: Deleted workspace via automation script."
-        if comments is None or comments.strip() == "":
-            comments = memo
-        else:
-            comments = f"{memo}\n{comments}"
+wsn_b = read_int("Please enter the last workspace number to create", wsn_a)
 
-        if reserved:
-            print("\n"+(f"*" * 100))
-            print(f"* Skipping workspace #{workspace_number}, the workspace is reserved.")
-            print((f"*" * 100)+"\n")
-            continue
-        elif reason is not None and reason.strip():
-            print("\n"+(f"*" * 100))
-            print(f"* Skipping workspace #{workspace_number}, the workspace has a reservation comment.")
-            print((f"*" * 100)+"\n")
-            continue
+if wsn_a == wsn_b:
+    workspace_numbers = [wsn_a]
+else:
+    workspace_numbers = list(range(wsn_a, wsn_b+1))
 
-        print()
-        print("-" * 100)
-        if read_str(f"Please confirm the deletion of workspace #{workspace_number}.", "no") in CONFIRMATIONS:
-            workspace_setup.delete_workspace(workspace_number)
-            air_table_client.update(record_id, fields={
-                "Deleted?": True,
-                "Comments": comments,
-            })
-        else:
-            print(f"""Workspace #{workspace_number} will NOT be deleted.""")
+deleting_wsj = True
+# deleting_wsj = read_str("""\nDelete existing Workspace-Setup jobs""", "no").lower() in CONFIRMATIONS
 
-elif action == 1:
+ignored = []
+workspace_config_template, workspace_setup = configure_workspace_setup(_env_code=env_code,
+                                                                       _run_workspace_setup=True,
+                                                                       _ignored_workspaces=ignored,
+                                                                       _max_participants=max_participants,
+                                                                       _workspace_numbers=workspace_numbers)
 
-    if env_code == "CURR":
-        max_participants_default = 5
-    elif env_code == "PROSVC":
-        max_participants_default = 250
-    else:
-        raise Exception(f"""Unsupported environment, expected one of {env_codes}, found {env_code}.""")
+print()
+print("-"*100)
+print(f"""Env ID (PROSVC, CURR, etc): {env_code}""")
+print(f"""Max Users Per Workspace:    {max_participants}""")
+print(f"""Workspaces:                 {", ".join([str(n) for n in workspace_numbers])}""")
 
-    max_participants = read_int("\nMax Participants per Workspace", max_participants_default)
+print()
+advertise("Courses", workspace_config_template.course_definitions, 6, 15)
+advertise("Datasets", workspace_config_template.datasets, 5, 15)
+advertise("Skipping", ignored, 5, 15)
 
-    wsn_a = read_int("\nPlease enter the first workspace number to create", -1)
-    if wsn_a < 0:
-        print(f"""\n{"-" * 100}\nAborting script; no workspace number""")
-        exit(1)
+if read_str("""Please confirm you wish to create these workspaces""", "no").lower() in CONFIRMATIONS:
 
-    wsn_b = read_int("Please enter the last workspace number to create", wsn_a)
-
-    if wsn_a == wsn_b:
-        workspace_numbers = [wsn_a]
-    else:
-        workspace_numbers = list(range(wsn_a, wsn_b+1))
-
-    deleting_wsj = True
-    # deleting_wsj = read_str("""\nDelete existing Workspace-Setup jobs""", "no").lower() in CONFIRMATIONS
-
-    ignored = []
-    workspace_config_template, workspace_setup = configure_workspace_setup(_env_code=env_code,
-                                                                           _run_workspace_setup=True,
-                                                                           _ignored_workspaces=ignored,
-                                                                           _max_participants=max_participants,
-                                                                           _workspace_numbers=workspace_numbers)
-
-    print()
-    print("-"*100)
-    print(f"""Env ID (PROSVC, CURR, etc): {env_code}""")
-    print(f"""Max Users Per Workspace:    {max_participants}""")
-    print(f"""Workspaces:                 {", ".join([str(n) for n in workspace_numbers])}""")
-
-    print()
-    advertise("Courses", workspace_config_template.course_definitions, 6, 15)
-    advertise("Datasets", workspace_config_template.datasets, 5, 15)
-    advertise("Skipping", ignored, 5, 15)
-
-    if read_str("""Please confirm you wish to create these workspaces""", "no").lower() in CONFIRMATIONS:
-
-        FALSE = False  # easier for my eyes to recognize
-        workspace_setup.create_workspaces(remove_metastore=FALSE,      # This should always be False
-                                          remove_users=FALSE,          # This should always be False
-                                          uninstall_courseware=FALSE)  # This should always be False
+    FALSE = False  # easier for my eyes to recognize
+    workspace_setup.create_workspaces(remove_metastore=FALSE,      # This should always be False
+                                      remove_users=FALSE,          # This should always be False
+                                      uninstall_courseware=FALSE)  # This should always be False

@@ -4,7 +4,7 @@ from dbacademy.clients.rest.common import ApiClient
 
 class DBAcademyRestClient(ApiClient):
     """Databricks Academy REST API client."""
-    # from dbacademy.dbrest.accounts import AccountsClient
+    from dbacademy.dbrest.accounts import AccountsClient
 
     @classmethod
     def __get_notebook_endpoint(cls):
@@ -131,9 +131,9 @@ class DBAcademyRestClient(ApiClient):
         from dbacademy.dbrest.serving_endpoints import ServingEndpointsClient
         self.serving_endpoints = ServingEndpointsClient(self)
 
-    # def accounts(self, account_id: str) -> AccountsClient:
-    #     from dbacademy.dbrest.accounts import AccountsClient
-    #     self.accounts = AccountsClient(self)
+    def accounts(self, account_id: str) -> AccountsClient:
+        from dbacademy.dbrest.accounts import AccountsClient
+        return AccountsClient(self, account_id)
 
     def vprint(self, what):
         if self.verbose:

@@ -9,3 +9,6 @@ class AccountsClient(ApiContainer):
 
         from dbacademy.dbrest.accounts.scim import AccountScimClient
         self.scim = AccountScimClient(self.client, account_id=account_id)
+
+        from dbacademy.dbrest.accounts.workspaces import WorkspacesClient
+        self.workspaces = WorkspacesClient(self)
