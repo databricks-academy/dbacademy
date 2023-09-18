@@ -10,7 +10,7 @@ class WorkspacesClient(ApiContainer):
     def __init__(self, client: ApiClient, account_id: str):
         self.account_id = account_id
         self.client = client
-        self.base_url = f"{self.client.url}/api/2.0/accounts/{self.account_id}/workspace"
+        self.base_url = f"{self.client.url}/api/2.0/accounts/{self.account_id}/workspaces"
 
     def list(self) -> Optional[List[Dict[str, Any]]]:
         return self.client.api("GET", f"{self.base_url}")
