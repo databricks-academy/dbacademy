@@ -12,5 +12,9 @@ class SecretsClient(ApiContainer):
         self.base_url = f"{self.client.endpoint}/api/2.0/secrets"
 
     def scopes_list(self) -> List[Dict[str, Any]]:
-        response = self.client.api("GET", self.base_url)
-        return response.get("endpoints", list())
+        scopes = self.client.api("GET", f"{self.base_url}/scopes/list")
+        return scopes or list()
+
+    def secrets_list(self, scope: str) -> List[Dict[str, Any]]:
+        secrets = self.client.api("GET", f"{self.base_url}/secrets/list", scope=scope)
+        return secrets or list()
