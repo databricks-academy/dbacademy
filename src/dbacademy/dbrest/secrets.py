@@ -1,6 +1,6 @@
 __all__ = ["SecretsClient"]
 
-from typing import List, Any, Dict, Literal
+from typing import List, Any, Dict, Literal, Optional
 from dbacademy.clients.rest.common import ApiContainer
 
 
@@ -17,8 +17,20 @@ class SecretsClient(ApiContainer):
         response = self.client.api("GET", f"{self.base_url}/scopes/list")
         return response.get("scopes", list())
 
-    def scopes_create(self, scope: str, initial_manage_principal: str = None, scope_backend_type: SCOPE_BACKEND_TYPE = "DATABRICKS") -> None:
-        return self.client.api("POST", f"{self.base_url}/scopes/create", scope=scope, initial_manage_principal=initial_manage_principal, scope_backend_type=scope_backend_type)
+    def scopes_get_by_name(self, scope) -> Optional[Dict[str, Any]]:
+        for scope_data in self.scopes_list():
+            if scope_data.get("name") == scope:
+                return scope
+
+        return None
+
+    def scopes_create(self, scope: str, initial_manage_principal: str = None, scope_backend_type: SCOPE_BACKEND_TYPE = "DATABRICKS") -> Dict[str, Any]:
+        existing_scope = self.scopes_get_by_name(scope)
+        if existing_scope is not None:
+            return existing_scope
+        else:
+            self.client.api("POST", f"{self.base_url}/scopes/create", scope=scope, initial_manage_principal=initial_manage_principal, scope_backend_type=scope_backend_type)
+            return self.scopes_get_by_name(scope)
 
     def scopes_delete(self, scope: str) -> None:
         return self.client.api("POST", f"{self.base_url}/scopes/delete", scope=scope)
