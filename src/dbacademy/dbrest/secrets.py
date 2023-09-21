@@ -49,7 +49,7 @@ class SecretsClient(ApiContainer):
         return response.get("secrets", list())
 
     def get_by_name(self, scope: str, key: str) -> Optional[Dict[str, Any]]:
-        return self.client.api("GET", f"{self.base_url}/get", scope=scope, key=key)
+        return self.client.api("GET", f"{self.base_url}/get", scope=scope, key=key, _expected=[200,404])
 
     def create(self, scope: str, key: str, string_value: str, bytes_value: bytes = None) -> Dict[str, Any]:
         if bytes_value is not None:
