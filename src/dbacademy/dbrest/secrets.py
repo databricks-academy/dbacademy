@@ -36,12 +36,13 @@ class _ScopesClient(ApiContainer):
         return self.client.api("POST", f"{self.base_url}/delete", scope=scope)
 
 
-class _SecretsClient(ApiContainer):
+class SecretsClient(ApiContainer):
     from dbacademy.dbrest import DBAcademyRestClient
 
     def __init__(self, client: DBAcademyRestClient):
         self.client = client
         self.base_url = f"{self.client.endpoint}/api/2.0/secrets"
+        self.scopes = _ScopesClient(client)
 
     def list(self, scope: str) -> List[Dict[str, Any]]:
         response = self.client.api("GET", f"{self.base_url}/list", scope=scope)
@@ -62,11 +63,3 @@ class _SecretsClient(ApiContainer):
 
     def delete(self, scope: str, key: str) -> None:
         return self.client.api("POST", f"{self.base_url}/delete", scope=scope, key=key)
-
-
-class SecretsClient(ApiContainer):
-    from dbacademy.dbrest import DBAcademyRestClient
-
-    def __init__(self, client: DBAcademyRestClient):
-        self.scopes = _ScopesClient(client)
-        self.secrets = _SecretsClient(client)
