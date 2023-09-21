@@ -132,6 +132,9 @@ class DBAcademyRestClient(ApiClient):
         from dbacademy.dbrest.serving_endpoints import ServingEndpointsClient
         self.serving_endpoints = ServingEndpointsClient(self)
 
+        from dbacademy.dbrest.secrets import SecretsClient
+        self.secrets = SecretsClient(self)
+
     def accounts(self, account_id: str, username: str, password: str) -> AccountsClient:
         from dbacademy.dbrest.accounts import AccountsClient
         return AccountsClient(endpoint=self.endpoint, account_id=account_id, username=username, password=password)
