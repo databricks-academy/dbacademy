@@ -17,7 +17,7 @@ class SecretsClient(ApiContainer):
         scopes = self.client.api("GET", f"{self.base_url}/scopes/list")
         return scopes or list()
 
-    def scopes_create(self, scope: str, initial_manage_principal: str = "admins", scope_backend_type: SCOPE_BACKEND_TYPE = "DATABRICKS") -> None:
+    def scopes_create(self, scope: str, initial_manage_principal: str = None, scope_backend_type: SCOPE_BACKEND_TYPE = "DATABRICKS") -> None:
         return self.client.api("POST", f"{self.base_url}/scopes/create", scope=scope, initial_manage_principal=initial_manage_principal, scope_backend_type=scope_backend_type)
 
     def scopes_delete(self, scope: str) -> None:
