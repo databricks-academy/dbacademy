@@ -135,9 +135,10 @@ class DBAcademyRestClient(ApiClient):
         from dbacademy.dbrest.secrets import SecretsClient
         self.secrets = SecretsClient(self)
 
-    def accounts(self, account_id: str, username: str, password: str) -> AccountsClient:
+    @classmethod
+    def accounts(cls, account_id: str, username: str, password: str) -> AccountsClient:
         from dbacademy.dbrest.accounts import AccountsClient
-        return AccountsClient(endpoint=self.endpoint, account_id=account_id, username=username, password=password)
+        return AccountsClient(account_id=account_id, username=username, password=password)
 
     def vprint(self, what):
         if self.verbose:
