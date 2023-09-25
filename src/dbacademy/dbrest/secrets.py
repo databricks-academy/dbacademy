@@ -39,7 +39,7 @@ class _ScopesClient(ApiContainer):
 class _AclsClient(ApiContainer):
     from dbacademy.dbrest import DBAcademyRestClient
 
-    SCOPE_BACKEND_TYPE = Literal["DATABRICKS", "AZURE_KEYVAULT"]
+    SCOPE_PERMISSIONS = Literal["READ", "WRITE", "MANAGE"]
 
     def __init__(self, client: DBAcademyRestClient):
         self.client = client
@@ -53,7 +53,7 @@ class _AclsClient(ApiContainer):
         response = self.client.api("GET", f"{self.base_url}/list", scope=scope, principal=principal)
         return response.get("scopes")
 
-    def create(self, scope: str, principal: str, permission: str) -> Dict[str, Any]:
+    def create_or_update(self, scope: str, principal: str, permission: SCOPE_PERMISSIONS) -> Dict[str, Any]:
         response = self.client.api("POST", f"{self.base_url}/put", scope=scope, principal=principal, permission=permission)
         return response
 
