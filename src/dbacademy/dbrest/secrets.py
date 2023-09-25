@@ -53,9 +53,9 @@ class _AclsClient(ApiContainer):
         response = self.client.api("GET", f"{self.base_url}/list", scope=scope, principal=principal)
         return response.get("scopes")
 
-    def create_or_update(self, scope: str, principal: str, permission: SCOPE_PERMISSIONS) -> Dict[str, Any]:
-        response = self.client.api("POST", f"{self.base_url}/put", scope=scope, principal=principal, permission=permission)
-        return response
+    def create_or_update(self, scope: str, principal: str, permission: SCOPE_PERMISSIONS) -> None:
+        self.client.api("POST", f"{self.base_url}/put", scope=scope, principal=principal, permission=permission)
+        return None
 
     def delete_by_name(self, scope: str, principal: str) -> None:
         return self.client.api("POST", f"{self.base_url}/delete", scope=scope, principal=principal)
