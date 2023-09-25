@@ -45,8 +45,8 @@ class _AclsClient(ApiContainer):
         self.client = client
         self.base_url = f"{self.client.endpoint}/api/2.0/secrets/acls"
 
-    def list(self) -> List[Dict[str, Any]]:
-        response = self.client.api("GET", f"{self.base_url}/list")
+    def list(self, scope: str) -> List[Dict[str, Any]]:
+        response = self.client.api("GET", f"{self.base_url}/list", scope=scope)
         return response.get("scopes", list())
 
     def get_by_name(self, scope: str, principal: str) -> Optional[Dict[str, Any]]:
