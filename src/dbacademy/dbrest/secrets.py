@@ -36,6 +36,31 @@ class _ScopesClient(ApiContainer):
         return self.client.api("POST", f"{self.base_url}/delete", scope=scope)
 
 
+class _AclsClient(ApiContainer):
+    from dbacademy.dbrest import DBAcademyRestClient
+
+    SCOPE_BACKEND_TYPE = Literal["DATABRICKS", "AZURE_KEYVAULT"]
+
+    def __init__(self, client: DBAcademyRestClient):
+        self.client = client
+        self.base_url = f"{self.client.endpoint}/api/2.0/secrets/acls"
+
+    def list(self) -> List[Dict[str, Any]]:
+        response = self.client.api("GET", f"{self.base_url}/list")
+        return response.get("scopes", list())
+
+    def get_by_name(self, scope_name: str, principal: str) -> Optional[Dict[str, Any]]:
+        response = self.client.api("GET", f"{self.base_url}/list", scope_name=scope_name, principal=principal)
+        return response.get("scopes")
+
+    def create(self, scope: str, principal: str, permission: str) -> Dict[str, Any]:
+        response = self.client.api("POST", f"{self.base_url}/put", scope=scope, principal=principal, permission=permission)
+        return response
+
+    def delete_by_name(self, scope: str, principal: str) -> None:
+        return self.client.api("POST", f"{self.base_url}/delete", scope=scope, principal=principal)
+
+
 class SecretsClient(ApiContainer):
     from dbacademy.dbrest import DBAcademyRestClient
 
@@ -43,6 +68,7 @@ class SecretsClient(ApiContainer):
         self.client = client
         self.base_url = f"{self.client.endpoint}/api/2.0/secrets"
         self.scopes = _ScopesClient(client)
+        self.acls = _AclsClient(client)
 
     def list(self, scope: str) -> List[Dict[str, Any]]:
         response = self.client.api("GET", f"{self.base_url}/list", scope=scope)
