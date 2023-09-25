@@ -17,10 +17,10 @@ class _ScopesClient(ApiContainer):
         response = self.client.api("GET", f"{self.base_url}/list")
         return response.get("scopes", list())
 
-    def get_by_name(self, scope_name: str) -> Optional[Dict[str, Any]]:
-        for scope in self.list():
-            if scope.get("name") == scope_name:
-                return scope
+    def get_by_name(self, scope: str) -> Optional[Dict[str, Any]]:
+        for s in self.list():
+            if s.get("name") == scope:
+                return s
 
         return None
 
@@ -49,8 +49,8 @@ class _AclsClient(ApiContainer):
         response = self.client.api("GET", f"{self.base_url}/list")
         return response.get("scopes", list())
 
-    def get_by_name(self, scope_name: str, principal: str) -> Optional[Dict[str, Any]]:
-        response = self.client.api("GET", f"{self.base_url}/list", scope_name=scope_name, principal=principal)
+    def get_by_name(self, scope: str, principal: str) -> Optional[Dict[str, Any]]:
+        response = self.client.api("GET", f"{self.base_url}/list", scope=scope, principal=principal)
         return response.get("scopes")
 
     def create(self, scope: str, principal: str, permission: str) -> Dict[str, Any]:
