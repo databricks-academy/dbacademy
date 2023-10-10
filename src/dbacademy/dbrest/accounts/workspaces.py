@@ -15,8 +15,8 @@ class WorkspacesClient(ApiContainer):
     def list(self) -> Optional[List[Dict[str, Any]]]:
         return self.client.api("GET", f"{self.base_url}")
 
-    def get_by_id(self, id: str) -> Dict[str, Any]:
-        return self.client.api("GET", f"{self.base_url}/{id}")
+    def get_by_id(self, workspace_id: str) -> Dict[str, Any]:
+        return self.client.api("GET", f"{self.base_url}/{workspace_id}")
 
     def get_by_name(self, name: str):
         for workspace in self.list():

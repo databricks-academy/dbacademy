@@ -4,7 +4,6 @@ from dbacademy.clients.rest.common import ApiContainer
 
 
 class AccountsClient(ApiContainer):
-    from dbacademy.clients.rest.common import ApiClient
 
     def __init__(self, *, account_id: str, username: str, password: str):
         from dbacademy.dbrest.client import DBAcademyRestClient

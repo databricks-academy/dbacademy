@@ -73,6 +73,7 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.destroy_by_id(cluster_id_3)
 
     def test_default_cluster_for_single_user(self):
+        import json
         from dbacademy.common import Cloud
         from dbacademy.dbrest.clusters import ClusterConfig
 
@@ -122,6 +123,25 @@ class TestClusters(unittest.TestCase):
             },
             "spark_version": "11.3.x-scala2.12",
             "state": "PENDING",
+            "spec": {
+                "cluster_name": "Default Cluster",
+                "spark_version": "11.3.x-scala2.12",
+                "spark_conf": {
+                    "spark.master": "local[*]",
+                    "spark.databricks.cluster.profile": "singleNode"
+                },
+                "aws_attributes": {
+                    "availability": "ON_DEMAND"
+                },
+                "node_type_id": "i3.xlarge",
+                "custom_tags": {
+                    "ResourceClass": "SingleNode"
+                },
+                "autotermination_minutes": 10,
+                "single_user_name": "d8835420-9797-45f5-897b-6d81d7f80023",
+                "data_security_mode": "SINGLE_USER",
+                "num_workers": 0
+            },
         }
 
         for key in ignored:
@@ -144,15 +164,22 @@ class TestClusters(unittest.TestCase):
 
         for key in expected_keys:
             if key not in actual_keys:
-                self.assertTrue(False, f"Missing {key} in actual_keys")
+                print("-"*80)
+                print(json.dumps(cluster, indent=4))
+                print("-"*80)
+                self.assertTrue(False, f"""Missing "{key}" in actual_keys: {actual_keys}""")
 
         for key in actual_keys:
             if key not in expected_keys:
-                self.assertTrue(False, f"Missing {key} in expected_keys")
+                print("-"*80)
+                print(json.dumps(cluster, indent=4))
+                print("-"*80)
+                self.assertTrue(False, f"""Missing "{key}" in expected_keys: {expected_keys}""")
 
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_default_cluster(self):
+        import json
         from dbacademy.common import Cloud
         from dbacademy.dbrest.clusters import ClusterConfig
 
@@ -200,6 +227,23 @@ class TestClusters(unittest.TestCase):
             },
             "spark_version": "11.3.x-scala2.12",
             "state": "PENDING",
+            "spec": {
+                "cluster_name": "Default Cluster",
+                "spark_version": "11.3.x-scala2.12",
+                "spark_conf": {
+                    "spark.master": "local[*]",
+                    "spark.databricks.cluster.profile": "singleNode"
+                },
+                "aws_attributes": {
+                    "availability": "ON_DEMAND"
+                },
+                "node_type_id": "i3.xlarge",
+                "custom_tags": {
+                    "ResourceClass": "SingleNode"
+                },
+                "autotermination_minutes": 10,
+                "num_workers": 0
+            },
         }
 
         for key in ignored:
@@ -222,11 +266,17 @@ class TestClusters(unittest.TestCase):
 
         for key in expected_keys:
             if key not in actual_keys:
-                self.assertTrue(False, f"Missing {key} in actual_keys")
+                print("-"*80)
+                print(json.dumps(cluster, indent=4))
+                print("-"*80)
+                self.assertTrue(False, f"""Missing "{key}" in actual_keys: {actual_keys}""")
 
         for key in actual_keys:
             if key not in expected_keys:
-                self.assertTrue(False, f"Missing {key} in expected_keys")
+                print("-"*80)
+                print(json.dumps(cluster, indent=4))
+                print("-"*80)
+                self.assertTrue(False, f"""Missing "{key}" in expected_keys: {expected_keys}""")
 
         self.client.clusters.destroy_by_id(cluster_id)
 
@@ -641,6 +691,7 @@ class TestClusters(unittest.TestCase):
         self.assertIsNone(cluster)
 
     def test_get_by_name(self):
+        import json
         from dbacademy.common import Cloud
         from dbacademy.dbrest.clusters import ClusterConfig
         
@@ -655,15 +706,19 @@ class TestClusters(unittest.TestCase):
             autotermination_minutes=10))
 
         cluster_a = self.client.clusters.get_by_id(cluster_id)
-        if "state_message" in cluster_a:
-            del cluster_a["state_message"]
-
         cluster_b = self.client.clusters.get_by_name(cluster_name)
-        if "state_message" in cluster_b:
-            del cluster_b["state_message"]
+        for c in [cluster_a, cluster_b]:
+            if "state_message" in c:
+                del c["state_message"]
 
         self.maxDiff = None
-        self.assertEquals(cluster_a, cluster_b)
+        if cluster_a != cluster_b:
+            print("-"*80)
+            print(json.dumps(cluster_a, indent=4))
+            print("-"*80)
+            print(json.dumps(cluster_b, indent=4))
+            print("-"*80)
+            self.assertEquals(cluster_a, cluster_b)
 
     def test_list_deprecated(self):
         from dbacademy.common import Cloud

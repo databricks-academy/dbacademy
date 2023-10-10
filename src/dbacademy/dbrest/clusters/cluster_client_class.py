@@ -81,7 +81,7 @@ class ClustersClient(ApiContainer):
     def get_by_name(self, cluster_name) -> Optional[Dict[str, Any]]:
         for cluster in self.list_clusters():
             if cluster_name == cluster.get("cluster_name"):
-                return cluster
+                return self.get_by_id(cluster.get("cluster_id"))
 
         return None
 

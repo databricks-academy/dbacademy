@@ -10,8 +10,8 @@ class TestUsers(unittest.TestCase):
         client = DoceboRestClient.from_environ()
 
         try:
-            client.manage.user.login(username="jacob.parr@databricks.com",
-                                     password="asdf")
+            client.manage.users.login(username="jacob.parr@databricks.com",
+                                      password="asdf")
         except DatabricksApiException as e:
             self.assertEquals(400, e.http_code)
             self.assertEquals("Wrong credentials provided", e.message[0])
@@ -37,7 +37,7 @@ class TestUsers(unittest.TestCase):
         from dbacademy.clients.docebo import DoceboRestClient
 
         client = DoceboRestClient.from_environ()
-        users = client.manage.user.find_user("jacob.parr@databricks.com")
+        users = client.manage.users.find_user("jacob.parr@databricks.com")
         self.assertIsNotNone(users)
         self.assertTrue(len(users) > 0)
 

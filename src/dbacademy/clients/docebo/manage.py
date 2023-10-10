@@ -1,3 +1,5 @@
+__all__ = ["ManageClient"]
+
 from typing import Dict, Any, List
 from dbacademy.clients.docebo import DoceboRestClient
 from dbacademy.clients.rest.common import ApiContainer
@@ -8,10 +10,10 @@ class ManageClient(ApiContainer):
     def __init__(self, client: DoceboRestClient):
         self.client = client
 
-        self.user = UserClient(self.client)
+        self.users = UsersClient(self.client)
 
 
-class UserClient(ApiContainer):
+class UsersClient(ApiContainer):
     def __init__(self, client: DoceboRestClient):
         self.client = client
         url = self.client.url.rstrip("/")

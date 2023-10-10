@@ -1,4 +1,3 @@
-from dbacademy.dbrest import DBAcademyRestClient
 from dbacademy.clients.rest.common import ApiContainer
 
 

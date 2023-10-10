@@ -1,13 +1,7 @@
+__all__ = ["CoursesClient"]
+
 from dbacademy.clients.docebo import DoceboRestClient
 from dbacademy.clients.rest.common import ApiContainer
-
-
-class CourseClient(ApiContainer):
-
-    def __init__(self, client: DoceboRestClient):
-        self.client = client
-
-        self.courses = CoursesClient(self.client)
 
 
 class CoursesClient(ApiContainer):
@@ -32,4 +26,4 @@ class CoursesClient(ApiContainer):
 
     def get_course(self, course_id):
         response = self.client.api("GET", f"/course/v1/courses/{course_id}")
-        return response.get("data")
+        return response.get("data", None)
