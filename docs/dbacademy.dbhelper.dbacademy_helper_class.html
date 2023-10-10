@@ -46,13 +46,20 @@ See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.dprint</tt></d
 <dl><dt><a name="DBAcademyHelper-cleanup"><strong>cleanup</strong></a>(self, validate_datasets: bool = True) -&gt; None</dt><dd><tt>Cleans&nbsp;up&nbsp;the&nbsp;user&nbsp;environment&nbsp;by&nbsp;stopping&nbsp;any&nbsp;active&nbsp;streams,<br>
 dropping&nbsp;the&nbsp;database&nbsp;created&nbsp;by&nbsp;the&nbsp;call&nbsp;to&nbsp;<a href="#DBAcademyHelper-init">init</a>(),<br>
 cleaning&nbsp;out&nbsp;the&nbsp;user-specific&nbsp;catalog,&nbsp;and&nbsp;removing&nbsp;the&nbsp;user's<br>
-lesson-specific&nbsp;working&nbsp;directory&nbsp;and&nbsp;any&nbsp;assets&nbsp;created&nbsp;in&nbsp;that&nbsp;directory.</tt></dd></dl>
+lesson-specific&nbsp;working&nbsp;directory&nbsp;and&nbsp;any&nbsp;assets&nbsp;created&nbsp;in&nbsp;that&nbsp;directory.<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="DBAcademyHelper-cleanup_custom"><strong>cleanup_custom</strong></a>(self) -&gt; None</dt><dd><tt>Called&nbsp;by&nbsp;<a href="#DBAcademyHelper-cleanup">cleanup</a>(),&nbsp;with&nbsp;no&nbsp;actual&nbsp;implementation,&nbsp;with&nbsp;the&nbsp;expectation&nbsp;that&nbsp;custom&nbsp;cleanup-code&nbsp;could<br>
+be&nbsp;added&nbsp;by&nbsp;the&nbsp;courseware&nbsp;developer.&nbsp;This&nbsp;method&nbsp;is&nbsp;meant&nbsp;to&nbsp;be&nbsp;overridden,&nbsp;or&nbsp;more&nbsp;realistically,<br>
+monkey-patched,&nbsp;into&nbsp;the&nbsp;class&nbsp;from&nbsp;the&nbsp;notebook.<br>
+:return:&nbsp;None</tt></dd></dl>
 
 <dl><dt><a name="DBAcademyHelper-clock_start"><strong>clock_start</strong></a>(self) -&gt; int</dt></dl>
 
 <dl><dt><a name="DBAcademyHelper-clock_stopped"><strong>clock_stopped</strong></a>(self, start: int, end: str = '') -&gt; str</dt></dl>
 
-<dl><dt><a name="DBAcademyHelper-conclude_setup"><strong>conclude_setup</strong></a>(self) -&gt; None</dt><dd><tt>Concludes&nbsp;the&nbsp;setup&nbsp;of&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>&nbsp;by&nbsp;advertising&nbsp;to&nbsp;the&nbsp;student&nbsp;the&nbsp;new&nbsp;state&nbsp;of&nbsp;the&nbsp;environment&nbsp;such&nbsp;as&nbsp;predefined&nbsp;path&nbsp;variables,&nbsp;databases&nbsp;and&nbsp;tables&nbsp;created&nbsp;on&nbsp;behalf&nbsp;of&nbsp;the&nbsp;student&nbsp;and&nbsp;the&nbsp;total&nbsp;setup&nbsp;time.&nbsp;Additionally,&nbsp;all&nbsp;path&nbsp;attributes&nbsp;are&nbsp;pushed&nbsp;to&nbsp;the&nbsp;Spark&nbsp;context&nbsp;for&nbsp;reference&nbsp;in&nbsp;SQL&nbsp;statements.</tt></dd></dl>
+<dl><dt><a name="DBAcademyHelper-conclude_setup"><strong>conclude_setup</strong></a>(self) -&gt; None</dt><dd><tt>Concludes&nbsp;the&nbsp;setup&nbsp;of&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>&nbsp;by&nbsp;advertising&nbsp;to&nbsp;the&nbsp;student&nbsp;the&nbsp;new&nbsp;state&nbsp;of&nbsp;the&nbsp;environment&nbsp;such&nbsp;as&nbsp;predefined&nbsp;path&nbsp;variables,&nbsp;databases&nbsp;and&nbsp;tables&nbsp;created&nbsp;on&nbsp;behalf&nbsp;of&nbsp;the&nbsp;student&nbsp;and&nbsp;the&nbsp;total&nbsp;setup&nbsp;time.&nbsp;Additionally,&nbsp;all&nbsp;path&nbsp;attributes&nbsp;are&nbsp;pushed&nbsp;to&nbsp;the&nbsp;Spark&nbsp;context&nbsp;for&nbsp;reference&nbsp;in&nbsp;SQL&nbsp;statements.<br>
+:return:&nbsp;None</tt></dd></dl>
 
 <dl><dt><a name="DBAcademyHelper-dprint"><strong>dprint</strong></a>(self, message: str) -&gt; None</dt><dd><tt>Prints&nbsp;the&nbsp;specified&nbsp;message&nbsp;if&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>&nbsp;was&nbsp;initialized&nbsp;with&nbsp;debug=True<br>
 :param&nbsp;message:&nbsp;The&nbsp;message&nbsp;to&nbsp;be&nbsp;printed<br>
@@ -66,11 +73,11 @@ after&nbsp;instantiation&nbsp;but&nbsp;before&nbsp;initialization.<br>
 
 <dl><dt><a name="DBAcademyHelper-print_copyrights"><strong>print_copyrights</strong></a>(self, mappings: Optional[Dict[str, str]] = None) -&gt; None</dt><dd><tt>Discovers&nbsp;the&nbsp;datasets&nbsp;used&nbsp;by&nbsp;this&nbsp;course&nbsp;and&nbsp;then&nbsp;prints&nbsp;their&nbsp;corresponding&nbsp;README&nbsp;files&nbsp;which&nbsp;should&nbsp;include&nbsp;the&nbsp;corresponding&nbsp;copyrights.<br>
 :param&nbsp;mappings:&nbsp;Allows&nbsp;for&nbsp;redefinition&nbsp;of&nbsp;the&nbsp;location&nbsp;of&nbsp;the&nbsp;README.md&nbsp;file<br>
-:return:</tt></dd></dl>
+:return:&nbsp;None</tt></dd></dl>
 
 <dl><dt><a name="DBAcademyHelper-reset_learning_environment"><strong>reset_learning_environment</strong></a>(self) -&gt; None</dt><dd><tt>Used&nbsp;almost&nbsp;exclusively&nbsp;by&nbsp;the&nbsp;Reset&nbsp;notebook,&nbsp;invocation&nbsp;drops&nbsp;all&nbsp;databases,&nbsp;installed&nbsp;datasets&nbsp;and&nbsp;remove&nbsp;all&nbsp;working&nbsp;directories.<br>
 Usage&nbsp;of&nbsp;this&nbsp;method&nbsp;is&nbsp;generally&nbsp;reserved&nbsp;for&nbsp;a&nbsp;"full"&nbsp;reset&nbsp;of&nbsp;a&nbsp;course&nbsp;which&nbsp;is&nbsp;common&nbsp;before&nbsp;invoke&nbsp;smoke&nbsp;tests.<br>
-:return:</tt></dd></dl>
+:return:&nbsp;None</tt></dd></dl>
 
 <dl><dt><a name="DBAcademyHelper-reset_lesson"><strong>reset_lesson</strong></a>(self) -&gt; None</dt><dd><tt>Resets&nbsp;the&nbsp;lesson&nbsp;by&nbsp;calling&nbsp;DBAcademy.clean(validate_datasets=False)<br>
 :return:&nbsp;None</tt></dd></dl>

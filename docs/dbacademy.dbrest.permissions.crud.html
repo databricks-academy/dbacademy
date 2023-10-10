@@ -1,14 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><title>Python: module dbacademy.clients.rest.permissions.crud</title>
+<html><head><title>Python: module dbacademy.dbrest.permissions.crud</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head><body bgcolor="#f0f0f8">
 
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
 <tr bgcolor="#7799ee">
 <td valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.clients.html"><font color="#ffffff">clients</font></a>.<a href="dbacademy.clients.rest.html"><font color="#ffffff">rest</font></a>.<a href="dbacademy.clients.rest.permissions.html"><font color="#ffffff">permissions</font></a>.crud</strong></big></big></font></td
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbrest.html"><font color="#ffffff">dbrest</font></a>.<a href="dbacademy.dbrest.permissions.html"><font color="#ffffff">permissions</font></a>.crud</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cclients%5Crest%5Cpermissions%5Ccrud.py">c:\dvlp\dbacademy\src\dbacademy\clients\rest\permissions\crud.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbrest%5Cpermissions%5Ccrud.py">c:\dvlp\dbacademy\src\dbacademy\dbrest\permissions\crud.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -21,7 +21,7 @@
 <dt><font face="helvetica, arial"><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>(<a href="builtins.html#object">builtins.object</a>)
 </font></dt><dd>
 <dl>
-<dt><font face="helvetica, arial"><a href="dbacademy.clients.rest.permissions.crud.html#PermissionsCrud">PermissionsCrud</a>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbrest.permissions.crud.html#PermissionsCrud">PermissionsCrud</a>
 </font></dt></dl>
 </dd>
 </dl>
@@ -37,7 +37,7 @@
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
-<dd><a href="dbacademy.clients.rest.permissions.crud.html#PermissionsCrud">PermissionsCrud</a></dd>
+<dd><a href="dbacademy.dbrest.permissions.crud.html#PermissionsCrud">PermissionsCrud</a></dd>
 <dd><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
@@ -45,19 +45,19 @@
 Methods defined here:<br>
 <dl><dt><a name="PermissionsCrud-__init__"><strong>__init__</strong></a>(self, client: dbacademy.clients.rest.common.ApiClient, path: str, noun: str, *, singular: str = None, plural: str = None, id_key: str = None, name_key: str = None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#PermissionsCrud-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="PermissionsCrud-get"><strong>get</strong></a>(self, id_value: Union[int, str]) -&gt; Dict[str, Any]</dt></dl>
+<dl><dt><a name="PermissionsCrud-get"><strong>get</strong></a>(self, id_value: Union[int, str] = None) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="PermissionsCrud-get_levels"><strong>get_levels</strong></a>(self, id_value: Union[int, str]) -&gt; List[Dict[str, str]]</dt></dl>
+<dl><dt><a name="PermissionsCrud-get_levels"><strong>get_levels</strong></a>(self, id_value: Union[int, str] = None) -&gt; List[Dict[str, str]]</dt></dl>
 
-<dl><dt><a name="PermissionsCrud-replace"><strong>replace</strong></a>(self, id_value: Union[int, str], acl: Dict[str, Any])</dt></dl>
+<dl><dt><a name="PermissionsCrud-replace"><strong>replace</strong></a>(self, id_value: Union[int, str] = None, *, acl: Dict[str, Any])</dt></dl>
 
-<dl><dt><a name="PermissionsCrud-update"><strong>update</strong></a>(self, id_value: Union[int, str], what: Literal['user_name', 'group_name', 'service_principal_name'], value: str, permission_level: Literal[])</dt></dl>
+<dl><dt><a name="PermissionsCrud-update"><strong>update</strong></a>(self, id_value: Union[int, str] = None, *, what: Literal['user_name', 'group_name', 'service_principal_name'], value: str, permission_level: Literal[])</dt></dl>
 
-<dl><dt><a name="PermissionsCrud-update_group"><strong>update_group</strong></a>(self, id_value: Union[int, str], group_name, permission_level)</dt></dl>
+<dl><dt><a name="PermissionsCrud-update_group"><strong>update_group</strong></a>(self, id_value: Union[int, str] = None, *, group_name, permission_level)</dt></dl>
 
-<dl><dt><a name="PermissionsCrud-update_service_principal"><strong>update_service_principal</strong></a>(self, id_value: Union[int, str], service_principal_name, permission_level)</dt></dl>
+<dl><dt><a name="PermissionsCrud-update_service_principal"><strong>update_service_principal</strong></a>(self, id_value: Union[int, str] = None, *, service_principal_name, permission_level)</dt></dl>
 
-<dl><dt><a name="PermissionsCrud-update_user"><strong>update_user</strong></a>(self, id_value: Union[int, str], username, permission_level)</dt></dl>
+<dl><dt><a name="PermissionsCrud-update_user"><strong>update_user</strong></a>(self, id_value: Union[int, str] = None, *, username, permission_level)</dt></dl>
 
 <hr>
 Data and other attributes defined here:<br>

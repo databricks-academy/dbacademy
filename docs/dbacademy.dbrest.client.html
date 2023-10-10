@@ -32,7 +32,7 @@
 <font color="#000000" face="helvetica, arial"><a name="DBAcademyRestClient">class <strong>DBAcademyRestClient</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#DBAcademyRestClient">DBAcademyRestClient</a>(token:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;endpoint:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;'int'&nbsp;=&nbsp;0,&nbsp;*,&nbsp;user:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;password:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;client:&nbsp;'<a href="dbacademy.clients.rest.common.html#ApiClient">ApiClient</a>'&nbsp;=&nbsp;None,&nbsp;verbose:&nbsp;'bool'&nbsp;=&nbsp;False)<br>
+<td colspan=2><tt><a href="#DBAcademyRestClient">DBAcademyRestClient</a>(token:&nbsp;str&nbsp;=&nbsp;None,&nbsp;endpoint:&nbsp;str&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;int&nbsp;=&nbsp;0,&nbsp;*,&nbsp;user:&nbsp;str&nbsp;=&nbsp;None,&nbsp;password:&nbsp;str&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;str&nbsp;=&nbsp;None,&nbsp;client:&nbsp;dbacademy.clients.rest.common.<a href="dbacademy.clients.rest.common.html#ApiClient">ApiClient</a>&nbsp;=&nbsp;None,&nbsp;verbose:&nbsp;bool&nbsp;=&nbsp;False)<br>
 &nbsp;<br>
 Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -44,7 +44,7 @@ Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.<br>&nbsp;</tt></td></tr>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="DBAcademyRestClient-__init__"><strong>__init__</strong></a>(self, token: 'str' = None, endpoint: 'str' = None, throttle_seconds: 'int' = 0, *, user: 'str' = None, password: 'str' = None, authorization_header: 'str' = None, client: 'ApiClient' = None, verbose: 'bool' = False)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
+<dl><dt><a name="DBAcademyRestClient-__init__"><strong>__init__</strong></a>(self, token: str = None, endpoint: str = None, throttle_seconds: int = 0, *, user: str = None, password: str = None, authorization_header: str = None, client: dbacademy.clients.rest.common.ApiClient = None, verbose: bool = False)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
 &nbsp;<br>
 This&nbsp;is&nbsp;similar&nbsp;to&nbsp;<a href="dbacademy.clients.rest.common.html#ApiClient">ApiClient</a>.__init__&nbsp;except&nbsp;the&nbsp;parameter&nbsp;order&nbsp;is&nbsp;different&nbsp;to&nbsp;ensure&nbsp;backwards&nbsp;compatibility.<br>
 &nbsp;<br>
@@ -59,6 +59,14 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;throttle_seconds:&nbsp;Number&nbsp;of&nbsp;seconds&nbsp;to&nbsp;sleep&nbsp;between&nbsp;requests.</tt></dd></dl>
 
 <dl><dt><a name="DBAcademyRestClient-vprint"><strong>vprint</strong></a>(self, what)</dt></dl>
+
+<hr>
+Class methods defined here:<br>
+<dl><dt><a name="DBAcademyRestClient-accounts"><strong>accounts</strong></a>(account_id: str, username: str, password: str) -&gt; dbacademy.dbrest.accounts.AccountsClient<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>AccountsClient</strong> = &lt;class 'dbacademy.dbrest.accounts.AccountsClient'&gt;</dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
@@ -123,5 +131,5 @@ Data and other attributes inherited from <a href="dbacademy.clients.rest.common.
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>annotations</strong> = _Feature((3, 7, 0, 'beta', 1), (3, 10, 0, 'alpha', 0), 16777216)</td></tr></table>
+<td width="100%"><strong>__all__</strong> = ['DBAcademyRestClient']</td></tr></table>
 </body></html>

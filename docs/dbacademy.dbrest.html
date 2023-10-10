@@ -24,16 +24,19 @@
 <a href="dbacademy.dbrest.instance_pools.html">instance_pools</a><br>
 </td><td width="25%" valign=top><a href="dbacademy.dbrest.jobs.html"><strong>jobs</strong>&nbsp;(package)</a><br>
 <a href="dbacademy.dbrest.ml.html"><strong>ml</strong>&nbsp;(package)</a><br>
+<a href="dbacademy.dbrest.permissions.html"><strong>permissions</strong>&nbsp;(package)</a><br>
 <a href="dbacademy.dbrest.pipelines.html">pipelines</a><br>
 <a href="dbacademy.dbrest.repos.html">repos</a><br>
-<a href="dbacademy.dbrest.runs.html">runs</a><br>
-</td><td width="25%" valign=top><a href="dbacademy.dbrest.scim.html"><strong>scim</strong>&nbsp;(package)</a><br>
+</td><td width="25%" valign=top><a href="dbacademy.dbrest.runs.html">runs</a><br>
+<a href="dbacademy.dbrest.scim.html"><strong>scim</strong>&nbsp;(package)</a><br>
+<a href="dbacademy.dbrest.secrets.html">secrets</a><br>
 <a href="dbacademy.dbrest.serving_endpoints.html">serving_endpoints</a><br>
 <a href="dbacademy.dbrest.sql.html"><strong>sql</strong>&nbsp;(package)</a><br>
-<a href="dbacademy.dbrest.token_management.html">token_management</a><br>
+</td><td width="25%" valign=top><a href="dbacademy.dbrest.token_management.html">token_management</a><br>
 <a href="dbacademy.dbrest.tokens.html">tokens</a><br>
-</td><td width="25%" valign=top><a href="dbacademy.dbrest.uc.html">uc</a><br>
+<a href="dbacademy.dbrest.uc.html">uc</a><br>
 <a href="dbacademy.dbrest.workspace.html">workspace</a><br>
+<a href="dbacademy.dbrest.workspace_config.html">workspace_config</a><br>
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
@@ -62,7 +65,7 @@
 <font color="#000000" face="helvetica, arial"><a name="DBAcademyRestClient">class <strong>DBAcademyRestClient</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#DBAcademyRestClient">DBAcademyRestClient</a>(token:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;endpoint:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;'int'&nbsp;=&nbsp;0,&nbsp;*,&nbsp;user:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;password:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;client:&nbsp;'<a href="dbacademy.clients.rest.common.html#ApiClient">ApiClient</a>'&nbsp;=&nbsp;None,&nbsp;verbose:&nbsp;'bool'&nbsp;=&nbsp;False)<br>
+<td colspan=2><tt><a href="#DBAcademyRestClient">DBAcademyRestClient</a>(token:&nbsp;str&nbsp;=&nbsp;None,&nbsp;endpoint:&nbsp;str&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;int&nbsp;=&nbsp;0,&nbsp;*,&nbsp;user:&nbsp;str&nbsp;=&nbsp;None,&nbsp;password:&nbsp;str&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;str&nbsp;=&nbsp;None,&nbsp;client:&nbsp;dbacademy.clients.rest.common.<a href="dbacademy.clients.rest.common.html#ApiClient">ApiClient</a>&nbsp;=&nbsp;None,&nbsp;verbose:&nbsp;bool&nbsp;=&nbsp;False)<br>
 &nbsp;<br>
 Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -74,7 +77,7 @@ Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.<br>&nbsp;</tt></td></tr>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="DBAcademyRestClient-__init__"><strong>__init__</strong></a>(self, token: 'str' = None, endpoint: 'str' = None, throttle_seconds: 'int' = 0, *, user: 'str' = None, password: 'str' = None, authorization_header: 'str' = None, client: 'ApiClient' = None, verbose: 'bool' = False)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
+<dl><dt><a name="DBAcademyRestClient-__init__"><strong>__init__</strong></a>(self, token: str = None, endpoint: str = None, throttle_seconds: int = 0, *, user: str = None, password: str = None, authorization_header: str = None, client: dbacademy.clients.rest.common.ApiClient = None, verbose: bool = False)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
 &nbsp;<br>
 This&nbsp;is&nbsp;similar&nbsp;to&nbsp;<a href="dbacademy.clients.rest.common.html#ApiClient">ApiClient</a>.__init__&nbsp;except&nbsp;the&nbsp;parameter&nbsp;order&nbsp;is&nbsp;different&nbsp;to&nbsp;ensure&nbsp;backwards&nbsp;compatibility.<br>
 &nbsp;<br>
@@ -89,6 +92,14 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;throttle_seconds:&nbsp;Number&nbsp;of&nbsp;seconds&nbsp;to&nbsp;sleep&nbsp;between&nbsp;requests.</tt></dd></dl>
 
 <dl><dt><a name="DBAcademyRestClient-vprint"><strong>vprint</strong></a>(self, what)</dt></dl>
+
+<hr>
+Class methods defined here:<br>
+<dl><dt><a name="DBAcademyRestClient-accounts"><strong>accounts</strong></a>(account_id: str, username: str, password: str) -&gt; dbacademy.dbrest.accounts.AccountsClient<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>AccountsClient</strong> = &lt;class 'dbacademy.dbrest.accounts.AccountsClient'&gt;</dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
