@@ -19,6 +19,15 @@ class TestCoursesClient(unittest.TestCase):
         self.assertIsNotNone(sessions)
         self.assertTrue(len(sessions) > 0)
 
+    def test_get_sessions_by_course_no_sessions(self):
+        from dbacademy.clients.docebo import DoceboRestClient
+        client = DoceboRestClient.from_environ()
+
+        course_id = 874
+        sessions = client.sessions.get_sessions_by_course_id(course_id)
+        self.assertIsNotNone(sessions)
+        self.assertEqual(0, len(sessions))
+
     def test_get_events_by_session(self):
         from dbacademy.clients.docebo import DoceboRestClient
         client = DoceboRestClient.from_environ()
