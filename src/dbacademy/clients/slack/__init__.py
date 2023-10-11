@@ -2,6 +2,20 @@ __all__ = ["SlackThread"]
 
 from typing import List, Literal, Dict, Any, Optional, Union
 
+class Mention:
+    def __init__(self, _label: str, _handle: str, _id: Optional[str]):
+        self.label = _label
+        self.handle = _handle
+        self.id = _id
+
+
+class Mentions:
+    def __init__(self):
+        self.jacob_parr = Mention("Jacob Parr", "@jacob.parr", "@U5V5F358T")
+        self.mylene_biddle = Mention("Mylene Biddle", "@mylene.biddle", "@U05J73W61EJ")
+        self.lpt_alerts = Mention("LPT Alerts", "!subteam^SQDKRFZF0", None)
+
+
 class SlackThread(object):
 
     COLOR_GOOD = "good"
@@ -9,6 +23,8 @@ class SlackThread(object):
     COLOR_DANGER = "danger"
     # noinspection PyTypeHints
     COLOR_TYPE = Literal[COLOR_GOOD, COLOR_WARNING, COLOR_DANGER]
+
+    MENTIONS = Mentions()
 
     def __init__(self, channel: str, username: str, access_token: str, mentions: Union[str, List[str]] = None):
         self.thread_ts = None
@@ -182,6 +198,7 @@ class SlackThread(object):
         attachments = list() if attachments is None else attachments
 
         mentions = list() if mentions is None else mentions
+        mentions = mentions.handle if isinstance(mentions, Mention) else mentions
         mentions = list(mentions.split(",")) if isinstance(mentions, str) else mentions
 
         if color not in [SlackThread.COLOR_GOOD]:
@@ -190,7 +207,10 @@ class SlackThread(object):
 
         mentions_list = list()
         for i, mention in enumerate(mentions):
-            mentions_list.append(f"<@{mention}>")
+            if isinstance(mention, Mention):
+                mentions_list.append(f"<{mention.handle}>")
+            else:
+                mentions_list.append(f"<{mention}>")
 
         if len(mentions_list) > 0:
             message += "\ncc " + (", ".join(mentions_list))
