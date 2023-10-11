@@ -1,14 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><title>Python: module dbacademy.clients.docebo.courses</title>
+<html><head><title>Python: module dbacademy.clients.docebo.sessions</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head><body bgcolor="#f0f0f8">
 
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
 <tr bgcolor="#7799ee">
 <td valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.clients.html"><font color="#ffffff">clients</font></a>.<a href="dbacademy.clients.docebo.html"><font color="#ffffff">docebo</font></a>.courses</strong></big></big></font></td
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.clients.html"><font color="#ffffff">clients</font></a>.<a href="dbacademy.clients.docebo.html"><font color="#ffffff">docebo</font></a>.sessions</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cclients%5Cdocebo%5Ccourses.py">c:\dvlp\dbacademy\src\dbacademy\clients\docebo\courses.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cclients%5Cdocebo%5Csessions.py">c:\dvlp\dbacademy\src\dbacademy\clients\docebo\sessions.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -21,7 +21,7 @@
 <dt><font face="helvetica, arial"><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>(<a href="builtins.html#object">builtins.object</a>)
 </font></dt><dd>
 <dl>
-<dt><font face="helvetica, arial"><a href="dbacademy.clients.docebo.courses.html#CoursesClient">CoursesClient</a>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.docebo.sessions.html#SessionsClient">SessionsClient</a>
 </font></dt></dl>
 </dd>
 </dl>
@@ -29,29 +29,29 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="CoursesClient">class <strong>CoursesClient</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="SessionsClient">class <strong>SessionsClient</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#CoursesClient">CoursesClient</a>(client:&nbsp;dbacademy.clients.docebo.DoceboRestClient)<br>
+<td colspan=2><tt><a href="#SessionsClient">SessionsClient</a>(client:&nbsp;dbacademy.clients.docebo.DoceboRestClient)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
-<dd><a href="dbacademy.clients.docebo.courses.html#CoursesClient">CoursesClient</a></dd>
+<dd><a href="dbacademy.clients.docebo.sessions.html#SessionsClient">SessionsClient</a></dd>
 <dd><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="CoursesClient-__init__"><strong>__init__</strong></a>(self, client: dbacademy.clients.docebo.DoceboRestClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#CoursesClient-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="SessionsClient-__init__"><strong>__init__</strong></a>(self, client: dbacademy.clients.docebo.DoceboRestClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#SessionsClient-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="CoursesClient-get_course_by_id"><strong>get_course_by_id</strong></a>(self, course_id: Any) -&gt; Dict[str, Any]</dt></dl>
+<dl><dt><a name="SessionsClient-get_sessions_by_course_id"><strong>get_sessions_by_course_id</strong></a>(self, course_id: Any) -&gt; List[Dict[str, Any]]</dt></dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
-<dl><dt><a name="CoursesClient-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
+<dl><dt><a name="SessionsClient-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
 
-<dl><dt><a name="CoursesClient-help"><strong>help</strong></a>(self)</dt></dl>
+<dl><dt><a name="SessionsClient-help"><strong>help</strong></a>(self)</dt></dl>
 
 <hr>
 Data descriptors inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
@@ -72,5 +72,5 @@ Data and other attributes inherited from <a href="dbacademy.clients.rest.common.
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>__all__</strong> = ['CoursesClient']</td></tr></table>
+<td width="100%"><strong>__all__</strong> = ['SessionsClient']</td></tr></table>
 </body></html>

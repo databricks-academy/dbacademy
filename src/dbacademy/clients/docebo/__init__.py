@@ -60,6 +60,12 @@ class DoceboRestClient(ApiClient):
         from dbacademy.clients.docebo.courses import CoursesClient
         self.courses = CoursesClient(self)
 
+        from dbacademy.clients.docebo.events import EventsClient
+        self.events = EventsClient(self)
+
+        from dbacademy.clients.docebo.sessions import SessionsClient
+        self.sessions = SessionsClient(self)
+
     @staticmethod
     def authenticate(*, endpoint: str, consumer_key: str, consumer_secret: str, username: str, password: str) -> str:
         import requests
