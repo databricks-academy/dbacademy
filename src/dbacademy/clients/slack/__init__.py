@@ -35,7 +35,9 @@ class SlackThread(object):
         self.access_token = access_token
 
         mentions = list() if mentions is None else mentions
-        self.__mentions = list(mentions.split(",")) if isinstance(mentions, str) else mentions
+        mentions = mentions.handle if isinstance(mentions, Mention) else mentions
+        mentions = list(mentions.split(",")) if isinstance(mentions, str) else mentions
+        self.__mentions = mentions
 
         self.warnings = 0
         self.errors = 0
@@ -198,7 +200,7 @@ class SlackThread(object):
         attachments = list() if attachments is None else attachments
 
         mentions = list() if mentions is None else mentions
-        mentions = list(mentions.handle) if isinstance(mentions, Mention) else mentions
+        mentions = mentions.handle if isinstance(mentions, Mention) else mentions
         mentions = list(mentions.split(",")) if isinstance(mentions, str) else mentions
 
         if color not in [SlackThread.COLOR_GOOD]:

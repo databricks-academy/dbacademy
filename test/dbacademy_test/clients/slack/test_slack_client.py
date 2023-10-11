@@ -117,9 +117,9 @@ class SlackClientTests(unittest.TestCase):
         self.assertIsNone(thread.last_response)
 
         thread.send_msg(f"*{self.test_name}*\nThis is a test at {datetime.now()}", mentions=[SlackThread.MENTIONS.jacob_parr.handle,
-                                                                         SlackThread.MENTIONS.jacob_parr.id,
-                                                                         SlackThread.MENTIONS.lpt_alerts.handle,
-                                                                         SlackThread.MENTIONS.lpt_alerts.id])
+                                                                                             SlackThread.MENTIONS.jacob_parr.id,
+                                                                                             SlackThread.MENTIONS.lpt_alerts.handle,
+                                                                                             SlackThread.MENTIONS.lpt_alerts.id])
         first_ts = thread.thread_ts
         self.assertIsNotNone(first_ts)
         self.assertIsNotNone(thread.last_response)
@@ -155,7 +155,7 @@ class SlackClientTests(unittest.TestCase):
         if self.token is None:
             self.skipTest("SLACK_OAUTH_ACCESS_TOKEN is not set")
 
-        thread = SlackThread(CHANNEL, "Slack Test", self.token, mentions=SlackThread.MENTIONS.jacob_parr.handle)
+        thread = SlackThread(CHANNEL, "Slack Test", self.token, mentions=SlackThread.MENTIONS.jacob_parr)
         self.assertIsNone(thread.thread_ts)
         self.assertIsNone(thread.last_response)
 
