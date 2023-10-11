@@ -39,12 +39,12 @@
 <font color="#000000" face="helvetica, arial"><a name="SlackThread">class <strong>SlackThread</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#SlackThread">SlackThread</a>(channel,&nbsp;username,&nbsp;access_token)<br>
+<td colspan=2><tt><a href="#SlackThread">SlackThread</a>(channel:&nbsp;str,&nbsp;username:&nbsp;str,&nbsp;access_token:&nbsp;str,&nbsp;mentions:&nbsp;Union[str,&nbsp;List[str]]&nbsp;=&nbsp;None)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="SlackThread-__init__"><strong>__init__</strong></a>(self, channel, username, access_token)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="SlackThread-__init__"><strong>__init__</strong></a>(self, channel: str, username: str, access_token: str, mentions: Union[str, List[str]] = None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="SlackThread-send_error"><strong>send_error</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
 
@@ -64,6 +64,16 @@ Data descriptors defined here:<br>
 <dl><dt><strong>__weakref__</strong></dt>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>COLOR_DANGER</strong> = 'danger'</dl>
+
+<dl><dt><strong>COLOR_GOOD</strong> = 'good'</dl>
+
+<dl><dt><strong>COLOR_TYPE</strong> = typing.Literal['good', 'warning', 'danger']</dl>
+
+<dl><dt><strong>COLOR_WARNING</strong> = 'warning'</dl>
+
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">

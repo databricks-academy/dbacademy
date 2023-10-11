@@ -26,49 +26,49 @@ class SlackClientTests(unittest.TestCase):
         thread.exceptions = 0
         message, color = thread._rebuild_first_message()
         self.assertEqual("| 3 Warnings |\nThis is a test", message)
-        self.assertEqual("warning", color)
+        self.assertEqual(SlackThread.COLOR_WARNING, color)
 
         thread.warnings = 0
         thread.errors = 5
         thread.exceptions = 0
         message, color = thread._rebuild_first_message()
         self.assertEqual("| 5 Errors |\nThis is a test", message)
-        self.assertEqual("danger", color)
+        self.assertEqual(SlackThread.COLOR_DANGER, color)
 
         thread.warnings = 0
         thread.errors = 0
         thread.exceptions = 7
         message, color = thread._rebuild_first_message()
         self.assertEqual("| 7 Exceptions |\nThis is a test", message)
-        self.assertEqual("danger", color)
+        self.assertEqual(SlackThread.COLOR_DANGER, color)
 
         thread.warnings = 3
         thread.errors = 2
         thread.exceptions = 0
         message, color = thread._rebuild_first_message()
         self.assertEqual("| 2 Errors | 3 Warnings |\nThis is a test", message)
-        self.assertEqual("danger", color)
+        self.assertEqual(SlackThread.COLOR_DANGER, color)
 
         thread.warnings = 0
         thread.errors = 5
         thread.exceptions = 3
         message, color = thread._rebuild_first_message()
         self.assertEqual("| 3 Exceptions | 5 Errors |\nThis is a test", message)
-        self.assertEqual("danger", color)
+        self.assertEqual(SlackThread.COLOR_DANGER, color)
 
         thread.warnings = 1
         thread.errors = 0
         thread.exceptions = 7
         message, color = thread._rebuild_first_message()
         self.assertEqual("| 7 Exceptions | 1 Warnings |\nThis is a test", message)
-        self.assertEqual("danger", color)
+        self.assertEqual(SlackThread.COLOR_DANGER, color)
 
         thread.warnings = 1
         thread.errors = 2
         thread.exceptions = 7
         message, color = thread._rebuild_first_message()
         self.assertEqual("| 7 Exceptions | 2 Errors | 1 Warnings |\nThis is a test", message)
-        self.assertEqual("danger", color)
+        self.assertEqual(SlackThread.COLOR_DANGER, color)
 
     def test_split(self):
         if self.token is None:
@@ -97,7 +97,7 @@ class SlackClientTests(unittest.TestCase):
         thread.exceptions = 3
         message, color = thread._rebuild_first_message()
         self.assertEqual("| 3 Exceptions | 2 Errors | 1 Warnings |\nThis is a test with multiple lines.\nAnd this would be line #2", message)
-        self.assertEqual("danger", color)
+        self.assertEqual(SlackThread.COLOR_DANGER, color)
 
     def test_send_msg_with_mentions(self):
         from datetime import datetime
@@ -124,6 +124,42 @@ class SlackClientTests(unittest.TestCase):
         thread.send_msg("This is a test to U5V5F358T", mentions="U5V5F358T")
         first_ts = thread.thread_ts
         self.assertIsNotNone(first_ts)
+        self.assertIsNotNone(thread.last_response)
+        self.assertTrue(thread.last_response["ok"])
+
+    def test_send_msg_with_default_mentions(self):
+        from datetime import datetime
+
+        if self.token is None:
+            self.skipTest("SLACK_OAUTH_ACCESS_TOKEN is not set")
+
+        thread = SlackThread(CHANNEL, "Slack Test", self.token, mentions="jacob.parr")
+        self.assertIsNone(thread.thread_ts)
+        self.assertIsNone(thread.last_response)
+
+        thread.send_msg(f"This is the first message, sent at {datetime.now()}")
+        first_ts = thread.thread_ts
+        self.assertIsNotNone(first_ts)
+        self.assertIsNotNone(thread.last_response)
+        self.assertTrue(thread.last_response["ok"])
+
+        thread.send_msg("This is the second message")
+        self.assertEqual(first_ts, thread.thread_ts)
+        self.assertIsNotNone(thread.last_response)
+        self.assertTrue(thread.last_response["ok"])
+
+        thread.send_warning("This is a warning")
+        self.assertEqual(first_ts, thread.thread_ts)
+        self.assertIsNotNone(thread.last_response)
+        self.assertTrue(thread.last_response["ok"])
+
+        thread.send_error("This is an error")
+        self.assertEqual(first_ts, thread.thread_ts)
+        self.assertIsNotNone(thread.last_response)
+        self.assertTrue(thread.last_response["ok"])
+
+        thread.send_exception("This is an exception")
+        self.assertEqual(first_ts, thread.thread_ts)
         self.assertIsNotNone(thread.last_response)
         self.assertTrue(thread.last_response["ok"])
 

@@ -2,11 +2,15 @@ __all__ = ["SlackThread"]
 
 from typing import List, Literal, Dict, Any, Optional, Union
 
-COLOR_TYPE = Literal["good", "warning", "danger"]
-
 class SlackThread(object):
 
-    def __init__(self, channel, username, access_token):
+    COLOR_GOOD = "good"
+    COLOR_WARNING = "warning"
+    COLOR_DANGER = "danger"
+    # noinspection PyTypeHints
+    COLOR_TYPE = Literal[COLOR_GOOD, COLOR_WARNING, COLOR_DANGER]
+
+    def __init__(self, channel: str, username: str, access_token: str, mentions: Union[str, List[str]] = None):
         self.thread_ts = None
         self.initial_attachments = []
         self.last_response: Optional[Dict[str, Any]] = None
@@ -14,45 +18,23 @@ class SlackThread(object):
         self.username = username
         self.access_token = access_token
 
+        mentions = list() if mentions is None else mentions
+        self.__mentions = list(mentions.split(",")) if isinstance(mentions, str) else mentions
+
         self.warnings = 0
         self.errors = 0
         self.exceptions = 0
 
-    # def send_cc(self, users: Union[str, List[str]]):
-    #     users_list = list()
-    #
-    #     if isinstance(users, str):
-    #         users = list(users.split(","))
-    #
-    #     for i, user in enumerate(users):
-    #         assert user.startswith("@"), f"""Expected item #{i+1} to start with "@", found "{user}"."""
-    #         users_list.append(f"<{user}>")
-    #         # users_list.append(user)
-    #
-    #     message = "cc " + (", ".join(users_list)) + " some other text"
-    #
-    #     json_payload = {
-    #         "channel": self.channel,
-    #         "username": self.username,
-    #         "reply_broadcast": False,
-    #         "text": self.__encode(message),
-    #     }
-    #
-    #     if self.thread_ts:
-    #         json_payload["thread_ts"] = self.thread_ts
-    #
-    #     self.__send(json_payload)
-
     def send_msg(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -> Dict[str, Any]:
         encoded_message = self.__encode(message)
-        json_payload = self._chat_payload(reply_broadcast, "good", encoded_message, attachments=None, mentions=mentions)
+        json_payload = self._chat_payload(reply_broadcast, SlackThread.COLOR_GOOD, encoded_message, attachments=None, mentions=mentions)
         self.__send(json_payload)
 
         return self.last_response
 
     def send_warning(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -> Dict[str, Any]:
         encoded_message = self.__encode(message)
-        json_payload = self._chat_payload(reply_broadcast, "warning", encoded_message, attachments=None, mentions=mentions)
+        json_payload = self._chat_payload(reply_broadcast, SlackThread.COLOR_WARNING, encoded_message, attachments=None, mentions=mentions)
         self.__send(json_payload)
 
         self.warnings += 1
@@ -63,7 +45,7 @@ class SlackThread(object):
 
     def send_error(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -> Dict[str, Any]:
         encoded_message = self.__encode(message)
-        json_payload = self._chat_payload(reply_broadcast, "danger", encoded_message, attachments=None, mentions=mentions)
+        json_payload = self._chat_payload(reply_broadcast, SlackThread.COLOR_DANGER, encoded_message, attachments=None, mentions=mentions)
         self.__send(json_payload)
 
         self.errors += 1
@@ -82,7 +64,7 @@ class SlackThread(object):
         if str(error_msg).strip() != "NoneType: None":
             message += "\n```{}```".format(error_msg)
 
-        json_payload = self._chat_payload(reply_broadcast, "danger", message, attachments=None, mentions=mentions)
+        json_payload = self._chat_payload(reply_broadcast, SlackThread.COLOR_DANGER, message, attachments=None, mentions=mentions)
 
         self.__send(json_payload)
 
@@ -114,7 +96,7 @@ class SlackThread(object):
         text = parts[-1].strip()
         message = f"| {label}\n{text}"
 
-        color = "danger" if self.errors > 0 or self.exceptions > 0 else "warning"
+        color = SlackThread.COLOR_DANGER if self.errors > 0 or self.exceptions > 0 else SlackThread.COLOR_WARNING
         return message, color
 
     def __headers(self) -> Dict[str, Any]:
@@ -198,10 +180,13 @@ class SlackThread(object):
 
     def _chat_payload(self, reply_broadcast: bool, color: COLOR_TYPE, message: str, *, attachments: Optional[List[Dict[str, Any]]], mentions: Union[str, List[str]]) -> Dict[str, Any]:
         attachments = list() if attachments is None else attachments
-        mentions = list() if mentions is None else mentions
 
-        if isinstance(mentions, str):
-            mentions = list(mentions.split(","))
+        mentions = list() if mentions is None else mentions
+        mentions = list(mentions.split(",")) if isinstance(mentions, str) else mentions
+
+        if color not in [SlackThread.COLOR_GOOD]:
+            # Add thread mentions only if it's not good (e.g. warning or danger)
+            mentions.extend(self.__mentions)
 
         mentions_list = list()
         for i, mention in enumerate(mentions):
