@@ -141,6 +141,10 @@ def get_job_id(default=None):
     return get_tag(tag_name="jobId", default=default)
 
 
+def get_run_id(default=None):
+    return get_tag(tag_name="runId", default=default)
+
+
 def is_job():
     return get_job_id() is not None
 
