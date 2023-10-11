@@ -26,7 +26,7 @@ class SlackThread(object):
 
     MENTIONS = Mentions()
 
-    def __init__(self, channel: str, username: str, access_token: str, mentions: Union[str, List[str]] = None):
+    def __init__(self, channel: str, username: str, access_token: str, mentions: Union[str, Mention, List[str]] = None):
         self.thread_ts = None
         self.initial_attachments = []
         self.last_response: Optional[Dict[str, Any]] = None
@@ -41,14 +41,14 @@ class SlackThread(object):
         self.errors = 0
         self.exceptions = 0
 
-    def send_msg(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -> Dict[str, Any]:
+    def send_msg(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, Mention, List[str]] = None) -> Dict[str, Any]:
         encoded_message = self.__encode(message)
         json_payload = self._chat_payload(reply_broadcast, SlackThread.COLOR_GOOD, encoded_message, attachments=None, mentions=mentions)
         self.__send(json_payload)
 
         return self.last_response
 
-    def send_warning(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -> Dict[str, Any]:
+    def send_warning(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, Mention, List[str]] = None) -> Dict[str, Any]:
         encoded_message = self.__encode(message)
         json_payload = self._chat_payload(reply_broadcast, SlackThread.COLOR_WARNING, encoded_message, attachments=None, mentions=mentions)
         self.__send(json_payload)
@@ -59,7 +59,7 @@ class SlackThread(object):
 
         return self.last_response
 
-    def send_error(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -> Dict[str, Any]:
+    def send_error(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, Mention, List[str]] = None) -> Dict[str, Any]:
         encoded_message = self.__encode(message)
         json_payload = self._chat_payload(reply_broadcast, SlackThread.COLOR_DANGER, encoded_message, attachments=None, mentions=mentions)
         self.__send(json_payload)
@@ -70,7 +70,7 @@ class SlackThread(object):
 
         return self.last_response
 
-    def send_exception(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -> Dict[str, Any]:
+    def send_exception(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, Mention, List[str]] = None) -> Dict[str, Any]:
         import traceback
 
         message = self.__encode(message)
@@ -194,11 +194,11 @@ class SlackThread(object):
 
         return ret_val
 
-    def _chat_payload(self, reply_broadcast: bool, color: COLOR_TYPE, message: str, *, attachments: Optional[List[Dict[str, Any]]], mentions: Union[str, List[str]]) -> Dict[str, Any]:
+    def _chat_payload(self, reply_broadcast: bool, color: COLOR_TYPE, message: str, *, attachments: Optional[List[Dict[str, Any]]], mentions: Union[str, Mention, List[str]]) -> Dict[str, Any]:
         attachments = list() if attachments is None else attachments
 
         mentions = list() if mentions is None else mentions
-        mentions = mentions.handle if isinstance(mentions, Mention) else mentions
+        mentions = list(mentions.handle) if isinstance(mentions, Mention) else mentions
         mentions = list(mentions.split(",")) if isinstance(mentions, str) else mentions
 
         if color not in [SlackThread.COLOR_GOOD]:

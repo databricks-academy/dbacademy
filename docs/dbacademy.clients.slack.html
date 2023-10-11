@@ -39,20 +39,20 @@
 <font color="#000000" face="helvetica, arial"><a name="SlackThread">class <strong>SlackThread</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#SlackThread">SlackThread</a>(channel:&nbsp;str,&nbsp;username:&nbsp;str,&nbsp;access_token:&nbsp;str,&nbsp;mentions:&nbsp;Union[str,&nbsp;List[str]]&nbsp;=&nbsp;None)<br>
+<td colspan=2><tt><a href="#SlackThread">SlackThread</a>(channel:&nbsp;str,&nbsp;username:&nbsp;str,&nbsp;access_token:&nbsp;str,&nbsp;mentions:&nbsp;Union[str,&nbsp;dbacademy.clients.slack.Mention,&nbsp;List[str]]&nbsp;=&nbsp;None)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="SlackThread-__init__"><strong>__init__</strong></a>(self, channel: str, username: str, access_token: str, mentions: Union[str, List[str]] = None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="SlackThread-__init__"><strong>__init__</strong></a>(self, channel: str, username: str, access_token: str, mentions: Union[str, dbacademy.clients.slack.Mention, List[str]] = None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="SlackThread-send_error"><strong>send_error</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
+<dl><dt><a name="SlackThread-send_error"><strong>send_error</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, dbacademy.clients.slack.Mention, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="SlackThread-send_exception"><strong>send_exception</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
+<dl><dt><a name="SlackThread-send_exception"><strong>send_exception</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, dbacademy.clients.slack.Mention, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="SlackThread-send_msg"><strong>send_msg</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
+<dl><dt><a name="SlackThread-send_msg"><strong>send_msg</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, dbacademy.clients.slack.Mention, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="SlackThread-send_warning"><strong>send_warning</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
+<dl><dt><a name="SlackThread-send_warning"><strong>send_warning</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, dbacademy.clients.slack.Mention, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
 
 <dl><dt><a name="SlackThread-update_payload"><strong>update_payload</strong></a>(self, color: Literal['good', 'warning', 'danger'], message: str, attachments: List[Dict[str, Any]]) -&gt; Dict[str, Any]</dt></dl>
 
