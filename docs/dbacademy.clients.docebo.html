@@ -71,9 +71,9 @@ Args:<br>
 Static methods defined here:<br>
 <dl><dt><a name="DoceboRestClient-authenticate"><strong>authenticate</strong></a>(*, endpoint: str, consumer_key: str, consumer_secret: str, username: str, password: str) -&gt; str</dt></dl>
 
-<dl><dt><a name="DoceboRestClient-from_environ"><strong>from_environ</strong></a>() -&gt; 'DoceboRestClient'</dt></dl>
+<dl><dt><a name="DoceboRestClient-from_environ"><strong>from_environ</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None) -&gt; 'DoceboRestClient'</dt></dl>
 
-<dl><dt><a name="DoceboRestClient-from_workspace"><strong>from_workspace</strong></a>(scope: str) -&gt; 'DoceboRestClient'</dt></dl>
+<dl><dt><a name="DoceboRestClient-from_workspace"><strong>from_workspace</strong></a>(scope: str, *, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None) -&gt; 'DoceboRestClient'</dt></dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>

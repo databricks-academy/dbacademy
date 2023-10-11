@@ -1,12 +1,15 @@
 __all__ = ["SlackThread"]
 
+from typing import List, Literal, Dict, Any, Optional, Union
+
+COLOR_TYPE = Literal["good", "warning", "danger"]
 
 class SlackThread(object):
 
     def __init__(self, channel, username, access_token):
         self.thread_ts = None
         self.initial_attachments = []
-        self.last_response = None
+        self.last_response: Optional[Dict[str, Any]] = None
         self.channel = channel
         self.username = username
         self.access_token = access_token
@@ -15,35 +18,61 @@ class SlackThread(object):
         self.errors = 0
         self.exceptions = 0
 
-    def update_first_msg(self, color, message):
-        encoded = self.__encode(message)
-        json_payload = self.update_payload(color, encoded, self.initial_attachments)
-        self.__send(json_payload, post=False)
+    # def send_cc(self, users: Union[str, List[str]]):
+    #     users_list = list()
+    #
+    #     if isinstance(users, str):
+    #         users = list(users.split(","))
+    #
+    #     for i, user in enumerate(users):
+    #         assert user.startswith("@"), f"""Expected item #{i+1} to start with "@", found "{user}"."""
+    #         users_list.append(f"<{user}>")
+    #         # users_list.append(user)
+    #
+    #     message = "cc " + (", ".join(users_list)) + " some other text"
+    #
+    #     json_payload = {
+    #         "channel": self.channel,
+    #         "username": self.username,
+    #         "reply_broadcast": False,
+    #         "text": self.__encode(message),
+    #     }
+    #
+    #     if self.thread_ts:
+    #         json_payload["thread_ts"] = self.thread_ts
+    #
+    #     self.__send(json_payload)
 
-    def send_msg(self, message, reply_broadcast=False):
-        encoded = self.__encode(message)
-        json_payload = self.chat_payload(reply_broadcast, "good", encoded, [])
+    def send_msg(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -> Dict[str, Any]:
+        encoded_message = self.__encode(message)
+        json_payload = self._chat_payload(reply_broadcast, "good", encoded_message, attachments=None, mentions=mentions)
         self.__send(json_payload)
 
-    def send_warning(self, message, reply_broadcast=False):
-        encoded = self.__encode(message)
-        json_payload = self.chat_payload(reply_broadcast, "warning", encoded, [])
+        return self.last_response
+
+    def send_warning(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -> Dict[str, Any]:
+        encoded_message = self.__encode(message)
+        json_payload = self._chat_payload(reply_broadcast, "warning", encoded_message, attachments=None, mentions=mentions)
         self.__send(json_payload)
 
         self.warnings += 1
-        message, color = self.rebuild_first_message()
-        self.update_first_msg(color, self.__encode(message))
+        message, color = self._rebuild_first_message()
+        self._update_first_msg(color, self.__encode(message))
 
-    def send_error(self, message, reply_broadcast=False):
-        encoded = self.__encode(message)
-        json_payload = self.chat_payload(reply_broadcast, "danger", encoded, [])
+        return self.last_response
+
+    def send_error(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -> Dict[str, Any]:
+        encoded_message = self.__encode(message)
+        json_payload = self._chat_payload(reply_broadcast, "danger", encoded_message, attachments=None, mentions=mentions)
         self.__send(json_payload)
 
         self.errors += 1
-        message, color = self.rebuild_first_message()
-        self.update_first_msg(color, self.__encode(message))
+        message, color = self._rebuild_first_message()
+        self._update_first_msg(color, self.__encode(message))
 
-    def send_exception(self, message, reply_broadcast=False):
+        return self.last_response
+
+    def send_exception(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -> Dict[str, Any]:
         import traceback
 
         message = self.__encode(message)
@@ -53,15 +82,22 @@ class SlackThread(object):
         if str(error_msg).strip() != "NoneType: None":
             message += "\n```{}```".format(error_msg)
 
-        json_payload = self.chat_payload(reply_broadcast, "danger", message, [])
+        json_payload = self._chat_payload(reply_broadcast, "danger", message, attachments=None, mentions=mentions)
 
         self.__send(json_payload)
 
         self.exceptions += 1
-        message, color = self.rebuild_first_message()
-        self.update_first_msg(color, self.__encode(message))
+        message, color = self._rebuild_first_message()
+        self._update_first_msg(color, self.__encode(message))
 
-    def rebuild_first_message(self):
+        return self.last_response
+
+    def _update_first_msg(self, color: COLOR_TYPE, message: str):
+        encoded_message = self.__encode(message)
+        json_payload = self.update_payload(color, encoded_message, self.initial_attachments)
+        self.__send(json_payload, post=False)
+
+    def _rebuild_first_message(self) -> (str, COLOR_TYPE):
         label = ""
 
         if self.exceptions > 0:
@@ -81,7 +117,7 @@ class SlackThread(object):
         color = "danger" if self.errors > 0 or self.exceptions > 0 else "warning"
         return message, color
 
-    def __headers(self):
+    def __headers(self) -> Dict[str, Any]:
         assert self.access_token is not None, "Slack's OAuth Access Token must be specified"
 
         return {
@@ -90,7 +126,7 @@ class SlackThread(object):
             "Authorization": f"Bearer {self.access_token}"
         }
 
-    def __send(self, json_payload, post=True, attempts=1):
+    def __send(self, json_payload: Dict[str, Any], post: bool = True, attempts: int = 1) -> Dict[str, Any]:
         import time
         import requests
 
@@ -124,8 +160,10 @@ class SlackThread(object):
             self.thread_ts = response.json()["ts"]
             self.initial_attachments = json_payload["attachments"]
 
-    @staticmethod
-    def __encode(text):
+        return self.last_response
+
+    @classmethod
+    def __encode(cls, text: str) -> str:
         import re
 
         """
@@ -134,9 +172,17 @@ class SlackThread(object):
         text = re.sub("&", "&amp;", text)
         text = re.sub("<", "&lt;", text)
         text = re.sub(">", "&gt;", text)
+
+        for match_obj in re.finditer("&lt;@.*&gt;", text):
+            old_value = match_obj.group()
+            new_value = f"<{old_value[4:-4]}>"
+            text = text.replace(old_value, new_value)
+            pass
+
         return text
 
-    def update_payload(self, color, message, attachments):
+    def update_payload(self, color: COLOR_TYPE, message: str, attachments: List[Dict[str, Any]]) -> Dict[str, Any]:
+        assert len(attachments) > 0, f"""Expected at least one attachment."""
 
         attachments[0]["color"] = color
         attachments[0]["text"] = message
@@ -150,13 +196,28 @@ class SlackThread(object):
 
         return ret_val
 
-    def chat_payload(self, reply_broadcast, color, message, attachments):
+    def _chat_payload(self, reply_broadcast: bool, color: COLOR_TYPE, message: str, *, attachments: Optional[List[Dict[str, Any]]], mentions: Union[str, List[str]]) -> Dict[str, Any]:
+        attachments = list() if attachments is None else attachments
+        mentions = list() if mentions is None else mentions
 
-        attachments.append({
+        if isinstance(mentions, str):
+            mentions = list(mentions.split(","))
+
+        mentions_list = list()
+        for i, mention in enumerate(mentions):
+            mentions_list.append(f"<@{mention}>")
+
+        if len(mentions_list) > 0:
+            message += "\ncc " + (", ".join(mentions_list))
+
+        attachment = {
             "color": color,
             "text": message,
-            "mrkdwn_in": ["text"],
-        })
+        }
+        if color is not None:
+            attachment["mrkdwn_in"] = list("text")
+
+        attachments.append(attachment)
 
         ret_val = {
             "channel": self.channel,

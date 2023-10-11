@@ -46,21 +46,15 @@
 <td width="100%">Methods defined here:<br>
 <dl><dt><a name="SlackThread-__init__"><strong>__init__</strong></a>(self, channel, username, access_token)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="SlackThread-chat_payload"><strong>chat_payload</strong></a>(self, reply_broadcast, color, message, attachments)</dt></dl>
+<dl><dt><a name="SlackThread-send_error"><strong>send_error</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="SlackThread-rebuild_first_message"><strong>rebuild_first_message</strong></a>(self)</dt></dl>
+<dl><dt><a name="SlackThread-send_exception"><strong>send_exception</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="SlackThread-send_error"><strong>send_error</strong></a>(self, message, reply_broadcast=False)</dt></dl>
+<dl><dt><a name="SlackThread-send_msg"><strong>send_msg</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="SlackThread-send_exception"><strong>send_exception</strong></a>(self, message, reply_broadcast=False)</dt></dl>
+<dl><dt><a name="SlackThread-send_warning"><strong>send_warning</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="SlackThread-send_msg"><strong>send_msg</strong></a>(self, message, reply_broadcast=False)</dt></dl>
-
-<dl><dt><a name="SlackThread-send_warning"><strong>send_warning</strong></a>(self, message, reply_broadcast=False)</dt></dl>
-
-<dl><dt><a name="SlackThread-update_first_msg"><strong>update_first_msg</strong></a>(self, color, message)</dt></dl>
-
-<dl><dt><a name="SlackThread-update_payload"><strong>update_payload</strong></a>(self, color, message, attachments)</dt></dl>
+<dl><dt><a name="SlackThread-update_payload"><strong>update_payload</strong></a>(self, color: Literal['good', 'warning', 'danger'], message: str, attachments: List[Dict[str, Any]]) -&gt; Dict[str, Any]</dt></dl>
 
 <hr>
 Data descriptors defined here:<br>

@@ -7,29 +7,24 @@ class DoceboRestClient(ApiClient):
     """Docebo REST API client."""
 
     @staticmethod
-    def from_environ() -> "DoceboRestClient":
+    def from_environ(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None) -> "DoceboRestClient":
         import os
-        consumer_secret = os.environ.get("DOCEBO_CONSUMER_SECRET")
-        consumer_key = os.environ.get("DOCEBO_CONSUMER_KEY")
-        username = os.environ.get("DOCEBO_USERNAME")
-        password = os.environ.get("DOCEBO_PASSWORD")
-        endpoint = os.environ.get("DOCEBO_ENDPOINT")
 
-        return DoceboRestClient(endpoint=endpoint,
-                                username=username,
-                                password=password,
-                                consumer_key=consumer_key,
-                                consumer_secret=consumer_secret)
+        return DoceboRestClient(endpoint=endpoint or os.environ.get("DOCEBO_ENDPOINT"),
+                                username=username or os.environ.get("DOCEBO_USERNAME"),
+                                password=password or os.environ.get("DOCEBO_PASSWORD"),
+                                consumer_key=consumer_key or os.environ.get("DOCEBO_CONSUMER_KEY"),
+                                consumer_secret=consumer_secret or os.environ.get("DOCEBO_CONSUMER_SECRET"))
 
     @staticmethod
-    def from_workspace(scope: str) -> "DoceboRestClient":
+    def from_workspace(scope: str, *, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None) -> "DoceboRestClient":
         from dbacademy import dbgems
 
-        return DoceboRestClient(endpoint=dbgems.dbutils.secrets.get(scope, "endpoint"),
-                                username=dbgems.dbutils.secrets.get(scope, "username"),
-                                password=dbgems.dbutils.secrets.get(scope, "password"),
-                                consumer_key=dbgems.dbutils.secrets.get(scope, "consumer_key"),
-                                consumer_secret=dbgems.dbutils.secrets.get(scope, "consumer_secret"))
+        return DoceboRestClient(endpoint=endpoint or dbgems.dbutils.secrets.get(scope, "endpoint"),
+                                username=username or dbgems.dbutils.secrets.get(scope, "username"),
+                                password=password or dbgems.dbutils.secrets.get(scope, "password"),
+                                consumer_key=consumer_key or dbgems.dbutils.secrets.get(scope, "consumer_key"),
+                                consumer_secret=consumer_secret or dbgems.dbutils.secrets.get(scope, "consumer_secret"))
 
     def __init__(self,
                  endpoint: str = None,
