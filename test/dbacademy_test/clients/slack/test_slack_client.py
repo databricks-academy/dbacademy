@@ -232,5 +232,6 @@ class SlackClientTests(unittest.TestCase):
         self.assertIsNotNone(thread.last_response)
         self.assertTrue(thread.last_response["ok"])
 
+
 if __name__ == '__main__':
     unittest.main()

@@ -140,7 +140,8 @@ class AirTableClient(object):
 
     @staticmethod
     def __rate_limited(response: Response, attempt: int) -> bool:
-        import time, random
+        import time
+        import random
 
         rate_limited = response.text is not None and "RATE_LIMIT_REACHED" in response.text
         if rate_limited:

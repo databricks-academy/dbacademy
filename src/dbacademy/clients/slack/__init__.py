@@ -2,6 +2,7 @@ __all__ = ["SlackThread"]
 
 from typing import List, Literal, Dict, Any, Optional, Union
 
+
 class Mention:
     def __init__(self, _label: str, _handle: str, _id: Optional[str]):
         self.label = _label

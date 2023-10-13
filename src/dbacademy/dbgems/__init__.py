@@ -193,7 +193,8 @@ def jprint(value: dict, indent: int = 4):
 
 
 def lookup_current_module_version(module: str) -> str:
-    import json, pkg_resources
+    import json
+    import pkg_resources
 
     distribution = pkg_resources.get_distribution(module)
     name = distribution.project_name
@@ -303,7 +304,8 @@ def proof_of_life(expected_get_username,
     """
 
     # noinspection PyUnresolvedReferences
-    import dbruntime, pyspark
+    import dbruntime
+    import pyspark
     from dbacademy.common import Cloud
     from py4j.java_collections import JavaMap
 

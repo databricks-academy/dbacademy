@@ -133,7 +133,8 @@ class BuildConfig:
                  ignoring: list = None,
                  publishing_info: dict = None):
 
-        import uuid, time
+        import uuid
+        import time
         from dbacademy.common import Cloud
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.dbhelper.course_config_class import CourseConfig
