@@ -123,9 +123,10 @@ class ApiClientFactory(Generic[ApiType]):
                 if api_type != 'workspace':
                     continue
 
-                host = section[ApiClientFactory.SECTION_HOST]
-                token = section[ApiClientFactory.SECTION_TOKEN]
-                clients[section_name] = self.token_auth(hostname=host, token=token)
+                host = section.get(ApiClientFactory.SECTION_HOST)
+                token = section.get(ApiClientFactory.SECTION_TOKEN)
+                if host is not None and token is not None:
+                    clients[section_name] = self.token_auth(hostname=host, token=token)
 
         return clients
 
