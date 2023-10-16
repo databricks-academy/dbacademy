@@ -1,14 +1,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><title>Python: package dbacademy.clients.docebo</title>
+<html><head><title>Python: package dbacademy.clients.vocareum</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head><body bgcolor="#f0f0f8">
 
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
 <tr bgcolor="#7799ee">
 <td valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.clients.html"><font color="#ffffff">clients</font></a>.docebo</strong></big></big></font></td
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.clients.html"><font color="#ffffff">clients</font></a>.vocareum</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cclients%5Cdocebo%5C__init__.py">c:\dvlp\dbacademy\src\dbacademy\clients\docebo\__init__.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cclients%5Cvocareum%5C__init__.py">c:\dvlp\dbacademy\src\dbacademy\clients\vocareum\__init__.py</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -17,11 +17,10 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Package Contents</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="dbacademy.clients.docebo.courses.html">courses</a><br>
-</td><td width="25%" valign=top><a href="dbacademy.clients.docebo.events.html">events</a><br>
-</td><td width="25%" valign=top><a href="dbacademy.clients.docebo.manage.html">manage</a><br>
-</td><td width="25%" valign=top><a href="dbacademy.clients.docebo.sessions.html">sessions</a><br>
-</td></tr></table></td></tr></table><p>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="dbacademy.clients.vocareum.assignments.html">assignments</a><br>
+</td><td width="25%" valign=top><a href="dbacademy.clients.vocareum.courses.html">courses</a><br>
+</td><td width="25%" valign=top><a href="dbacademy.clients.vocareum.users.html">users</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -32,7 +31,7 @@
 <dt><font face="helvetica, arial"><a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>(<a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>)
 </font></dt><dd>
 <dl>
-<dt><font face="helvetica, arial"><a href="dbacademy.clients.docebo.html#DoceboRestClient">DoceboRestClient</a>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.vocareum.html#VocareumRestClient">VocareumRestClient</a>
 </font></dt></dl>
 </dd>
 </dl>
@@ -40,22 +39,22 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="DoceboRestClient">class <strong>DoceboRestClient</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="VocareumRestClient">class <strong>VocareumRestClient</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#DoceboRestClient">DoceboRestClient</a>(endpoint:&nbsp;str,&nbsp;throttle_seconds:&nbsp;int&nbsp;=&nbsp;0,&nbsp;*,&nbsp;username:&nbsp;str,&nbsp;password:&nbsp;str,&nbsp;consumer_key:&nbsp;str,&nbsp;consumer_secret:&nbsp;str)<br>
+<td colspan=2><tt><a href="#VocareumRestClient">VocareumRestClient</a>(endpoint:&nbsp;str&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;int&nbsp;=&nbsp;0,&nbsp;*,&nbsp;token:&nbsp;str)<br>
 &nbsp;<br>
-Docebo&nbsp;REST&nbsp;API&nbsp;client.<br>&nbsp;</tt></td></tr>
+See&nbsp;also&nbsp;the&nbsp;Vocareum&nbsp;API&nbsp;v2&nbsp;at&nbsp;<a href="https://documenter.getpostman.com/view/6736336/S11Exg4b?version=latest#intro">https://documenter.getpostman.com/view/6736336/S11Exg4b?version=latest#intro</a><br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
-<dd><a href="dbacademy.clients.docebo.html#DoceboRestClient">DoceboRestClient</a></dd>
+<dd><a href="dbacademy.clients.vocareum.html#VocareumRestClient">VocareumRestClient</a></dd>
 <dd><a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a></dd>
 <dd><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="DoceboRestClient-__init__"><strong>__init__</strong></a>(self, endpoint: str, throttle_seconds: int = 0, *, username: str, password: str, consumer_key: str, consumer_secret: str)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
+<dl><dt><a name="VocareumRestClient-__init__"><strong>__init__</strong></a>(self, endpoint: str = None, throttle_seconds: int = 0, *, token: str)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;url:&nbsp;The&nbsp;common&nbsp;base&nbsp;URL&nbsp;to&nbsp;the&nbsp;API&nbsp;endpoints.&nbsp;&nbsp;e.g.&nbsp;<a href="https://workspace.cloud.databricks.com/API/">https://workspace.cloud.databricks.com/API/</a><br>
@@ -69,15 +68,13 @@ Args:<br>
 
 <hr>
 Static methods defined here:<br>
-<dl><dt><a name="DoceboRestClient-authenticate"><strong>authenticate</strong></a>(*, endpoint: str, consumer_key: str, consumer_secret: str, username: str, password: str) -&gt; str</dt></dl>
+<dl><dt><a name="VocareumRestClient-from_environ"><strong>from_environ</strong></a>(*, endpoint: str = None, token: str = None, throttle_seconds: int = 0) -&gt; 'VocareumRestClient'</dt></dl>
 
-<dl><dt><a name="DoceboRestClient-from_environ"><strong>from_environ</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, throttle_seconds: int = 0) -&gt; 'DoceboRestClient'</dt></dl>
-
-<dl><dt><a name="DoceboRestClient-from_workspace"><strong>from_workspace</strong></a>(scope: str, *, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, throttle_seconds: int = 0) -&gt; 'DoceboRestClient'</dt></dl>
+<dl><dt><a name="VocareumRestClient-from_workspace"><strong>from_workspace</strong></a>(scope: str, *, endpoint: str = None, token: str = None, throttle_seconds: int = 0) -&gt; 'VocareumRestClient'</dt></dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
-<dl><dt><a name="DoceboRestClient-api"><strong>api</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', _data: 'dict' = None, *, _expected: 'HttpStatusCodes' = None, _result_type: 'Type[HttpReturnType]' = &lt;class 'dict'&gt;, _base_url: 'str' = None, **data: 'Any') -&gt; 'HttpReturnType'</dt><dd><tt>Invoke&nbsp;the&nbsp;Databricks&nbsp;REST&nbsp;API.<br>
+<dl><dt><a name="VocareumRestClient-api"><strong>api</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', _data: 'dict' = None, *, _expected: 'HttpStatusCodes' = None, _result_type: 'Type[HttpReturnType]' = &lt;class 'dict'&gt;, _base_url: 'str' = None, **data: 'Any') -&gt; 'HttpReturnType'</dt><dd><tt>Invoke&nbsp;the&nbsp;Databricks&nbsp;REST&nbsp;API.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_http_method:&nbsp;'GET',&nbsp;'PUT',&nbsp;'POST',&nbsp;'DELETE',&nbsp;'PATCH',&nbsp;'HEAD',&nbsp;or&nbsp;'OPTIONS'<br>
@@ -115,9 +112,9 @@ Data and other attributes inherited from <a href="dbacademy.clients.rest.common.
 
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
-<dl><dt><a name="DoceboRestClient-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
+<dl><dt><a name="VocareumRestClient-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
 
-<dl><dt><a name="DoceboRestClient-help"><strong>help</strong></a>(self)</dt></dl>
+<dl><dt><a name="VocareumRestClient-help"><strong>help</strong></a>(self)</dt></dl>
 
 <hr>
 Data descriptors inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
@@ -138,5 +135,5 @@ Data and other attributes inherited from <a href="dbacademy.clients.rest.common.
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>__all__</strong> = ['DoceboRestClient']</td></tr></table>
+<td width="100%"><strong>__all__</strong> = ['VocareumRestClient']</td></tr></table>
 </body></html>
