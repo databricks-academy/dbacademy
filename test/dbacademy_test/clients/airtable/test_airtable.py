@@ -37,6 +37,12 @@ class TestAirTAble(unittest.TestCase):
         self.assertEquals(1, len(records))
         self.assertEquals(2, records[0].get("fields").get("id"))
 
+        url = "https://training-classroom-767-knzbh.cloud.databricks.com"
+        records = air_table.read(filter_by_formula=f"{{AWS Workspace URL}} = '{url}'")
+        self.assertIsNotNone(records)
+        self.assertEquals(1, len(records))
+        self.assertEquals(url, records[0].get("fields").get("AWS Workspace URL"))
+
     def test_read_sorted_filtered(self):
 
         air_table = AirTableClient(access_token=ACCESS_TOKEN, base_id=BASE_ID, table_id=TABLE_ID)
