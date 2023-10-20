@@ -23,14 +23,134 @@
 </td><td width="25%" valign=top><a href="dbacademy.clients.docebo.sessions_api.html">sessions_api</a><br>
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>(<a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.docebo.html#DoceboRestClient">DoceboRestClient</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="DoceboRestClient">class <strong>DoceboRestClient</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#DoceboRestClient">DoceboRestClient</a>(*,&nbsp;endpoint:&nbsp;str,&nbsp;username:&nbsp;str,&nbsp;password:&nbsp;str,&nbsp;consumer_key:&nbsp;str,&nbsp;consumer_secret:&nbsp;str,&nbsp;verbose:&nbsp;bool,&nbsp;throttle_seconds:&nbsp;int,&nbsp;error_handler:&nbsp;dbacademy.clients.ClientErrorHandler)<br>
+&nbsp;<br>
+Docebo&nbsp;REST&nbsp;API&nbsp;client.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="dbacademy.clients.docebo.html#DoceboRestClient">DoceboRestClient</a></dd>
+<dd><a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a></dd>
+<dd><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="DoceboRestClient-__init__"><strong>__init__</strong></a>(self, *, endpoint: str, username: str, password: str, consumer_key: str, consumer_secret: str, verbose: bool, throttle_seconds: int, error_handler: dbacademy.clients.ClientErrorHandler)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;endpoint:&nbsp;The&nbsp;common&nbsp;base&nbsp;URL&nbsp;to&nbsp;the&nbsp;API&nbsp;endpoints.&nbsp;&nbsp;e.g.&nbsp;<a href="https://workspace.cloud.databricks.com/API/">https://workspace.cloud.databricks.com/API/</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;token:&nbsp;The&nbsp;API&nbsp;authentication&nbsp;token.&nbsp;&nbsp;Defaults&nbsp;to&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;username:&nbsp;The&nbsp;authentication&nbsp;username.&nbsp;&nbsp;Defaults&nbsp;to&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;password:&nbsp;The&nbsp;authentication&nbsp;password.&nbsp;&nbsp;Defaults&nbsp;to&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;authorization_header:&nbsp;The&nbsp;header&nbsp;to&nbsp;use&nbsp;for&nbsp;authentication.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;By&nbsp;default,&nbsp;it's&nbsp;generated&nbsp;from&nbsp;the&nbsp;token&nbsp;or&nbsp;password.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;client:&nbsp;A&nbsp;parent&nbsp;<a href="dbacademy.clients.rest.common.html#ApiClient">ApiClient</a>&nbsp;from&nbsp;which&nbsp;to&nbsp;clone&nbsp;settings.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;throttle_seconds:&nbsp;Number&nbsp;of&nbsp;seconds&nbsp;to&nbsp;sleep&nbsp;between&nbsp;requests.</tt></dd></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="DoceboRestClient-authenticate"><strong>authenticate</strong></a>(*, endpoint: str, consumer_key: str, consumer_secret: str, username: str, password: str) -&gt; str</dt></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>error_handler</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
+<dl><dt><a name="DoceboRestClient-api"><strong>api</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', _data: 'dict' = None, *, _expected: 'HttpStatusCodes' = None, _result_type: 'Type[HttpReturnType]' = &lt;class 'dict'&gt;, _base_url: 'str' = None, **data: 'Any') -&gt; 'HttpReturnType'</dt><dd><tt>Invoke&nbsp;the&nbsp;Databricks&nbsp;REST&nbsp;API.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_http_method:&nbsp;'GET',&nbsp;'PUT',&nbsp;'POST',&nbsp;'DELETE',&nbsp;'PATCH',&nbsp;'HEAD',&nbsp;or&nbsp;'OPTIONS'<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_endpoint_path:&nbsp;The&nbsp;path&nbsp;to&nbsp;append&nbsp;to&nbsp;the&nbsp;URL&nbsp;for&nbsp;the&nbsp;API&nbsp;endpoint,&nbsp;excluding&nbsp;the&nbsp;leading&nbsp;'/'.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;example:&nbsp;path="/api/2.0/secrets/put"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_data:&nbsp;Payload&nbsp;to&nbsp;attach&nbsp;to&nbsp;the&nbsp;HTTP&nbsp;request.&nbsp;&nbsp;GET&nbsp;requests&nbsp;encode&nbsp;as&nbsp;params,&nbsp;all&nbsp;others&nbsp;as&nbsp;json.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_expected:&nbsp;HTTP&nbsp;response&nbsp;status&nbsp;codes&nbsp;to&nbsp;treat&nbsp;as&nbsp;expected&nbsp;rather&nbsp;than&nbsp;as&nbsp;an&nbsp;error.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_result_type:&nbsp;Determines&nbsp;what&nbsp;type&nbsp;of&nbsp;result&nbsp;is&nbsp;returned.&nbsp;&nbsp;It&nbsp;may&nbsp;be&nbsp;any&nbsp;of&nbsp;the&nbsp;following:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;str:&nbsp;Return&nbsp;the&nbsp;body&nbsp;as&nbsp;a&nbsp;text&nbsp;str.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dict:&nbsp;Parse&nbsp;the&nbsp;body&nbsp;as&nbsp;json&nbsp;and&nbsp;return&nbsp;a&nbsp;dict.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bytes:&nbsp;Return&nbsp;the&nbsp;body&nbsp;as&nbsp;binary&nbsp;data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;requests.Response:&nbsp;Return&nbsp;the&nbsp;HTTP&nbsp;response&nbsp;object.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None:&nbsp;Return&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_base_url:&nbsp;Overrides&nbsp;self.<strong>endpoint</strong>,&nbsp;allowing&nbsp;alternative&nbsp;URL&nbsp;paths.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;**data:&nbsp;Any&nbsp;kwargs&nbsp;are&nbsp;appended&nbsp;to&nbsp;the&nbsp;_data&nbsp;payload.&nbsp;&nbsp;Values&nbsp;here&nbsp;take&nbsp;priority&nbsp;over&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specified&nbsp;in&nbsp;_data.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;return&nbsp;value&nbsp;varies&nbsp;depending&nbsp;on&nbsp;the&nbsp;requested&nbsp;_return_type.&nbsp;&nbsp;See&nbsp;above.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;requests.HTTPError:&nbsp;If&nbsp;the&nbsp;API&nbsp;returns&nbsp;an&nbsp;error&nbsp;and&nbsp;on_error='raise'.</tt></dd></dl>
+
+<dl><dt><a name="DoceboRestClient-vprint"><strong>vprint</strong></a>(self, what)</dt></dl>
+
+<hr>
+Readonly properties inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
+<dl><dt><strong>endpoint</strong></dt>
+</dl>
+<dl><dt><strong>password</strong></dt>
+</dl>
+<dl><dt><strong>throttle_seconds</strong></dt>
+</dl>
+<dl><dt><strong>username</strong></dt>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
+<dl><dt><strong>__annotations__</strong> = {'dns_retry': 'bool', 'dns_verify': 'bool', 'trace': 'bool'}</dl>
+
+<dl><dt><strong>dns_retry</strong> = False</dl>
+
+<dl><dt><strong>dns_verify</strong> = True</dl>
+
+<dl><dt><strong>trace</strong> = False</dl>
+
+<hr>
+Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
+<dl><dt><a name="DoceboRestClient-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
+
+<dl><dt><a name="DoceboRestClient-help"><strong>help</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
+<dl><dt><strong>T</strong> = ~T</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
 <td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-from_args"><strong>from_args</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, verbose=False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000002AE255D6160&gt;) -&gt; dbacademy.clients.docebo.DoceboRestClient</dt></dl>
- <dl><dt><a name="-from_environ"><strong>from_environ</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, scope: str = 'DOCEBO', verbose=False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000002AE255D6190&gt;) -&gt; dbacademy.clients.docebo.DoceboRestClient</dt></dl>
- <dl><dt><a name="-from_workspace"><strong>from_workspace</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, scope: str = 'DOCEBO', verbose=False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000002AE255D6100&gt;) -&gt; dbacademy.clients.docebo.DoceboRestClient</dt></dl>
+<td width="100%"><dl><dt><a name="-from_args"><strong>from_args</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, verbose=False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001AFCA4F4E80&gt;) -&gt; dbacademy.clients.docebo.DoceboRestClient</dt></dl>
+ <dl><dt><a name="-from_environ"><strong>from_environ</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, scope: str = 'DOCEBO', verbose=False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001AFCA4F4EB0&gt;) -&gt; dbacademy.clients.docebo.DoceboRestClient</dt></dl>
+ <dl><dt><a name="-from_workspace"><strong>from_workspace</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, scope: str = 'DOCEBO', verbose=False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001AFCA4F4EE0&gt;) -&gt; dbacademy.clients.docebo.DoceboRestClient</dt></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
@@ -38,5 +158,5 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>__all__</strong> = ['from_args', 'from_environ', 'from_workspace']</td></tr></table>
+<td width="100%"><strong>__all__</strong> = ['DoceboRestClient', 'from_args', 'from_environ', 'from_workspace']</td></tr></table>
 </body></html>

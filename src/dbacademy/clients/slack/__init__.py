@@ -1,4 +1,4 @@
-__all__ = ["from_args", "GOOD", "WARNING", "DANGER"]
+__all__ = ["SlackThread", "from_args", "GOOD", "WARNING", "DANGER"]
 
 from typing import List, Dict, Any, Optional, Union
 from dbacademy.common import validate

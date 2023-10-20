@@ -1,4 +1,4 @@
-__all__ = ["from_args", "from_environ", "from_workspace"]
+__all__ = ["AirTableRestClient", "from_args", "from_environ", "from_workspace"]
 
 from dbacademy.clients.rest.common import ApiClient
 from dbacademy.clients.airtable.tables_api import TablesAPI

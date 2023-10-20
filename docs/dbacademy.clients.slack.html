@@ -19,6 +19,51 @@
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.slack.html#SlackThread">SlackThread</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="SlackThread">class <strong>SlackThread</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#SlackThread">SlackThread</a>(channel:&nbsp;str,&nbsp;username:&nbsp;str,&nbsp;access_token:&nbsp;str,&nbsp;mentions:&nbsp;Union[str,&nbsp;dbacademy.clients.slack.Mention,&nbsp;List[str],&nbsp;NoneType])<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="SlackThread-__init__"><strong>__init__</strong></a>(self, channel: str, username: str, access_token: str, mentions: Union[str, dbacademy.clients.slack.Mention, List[str], NoneType])</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="SlackThread-send_error"><strong>send_error</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, dbacademy.clients.slack.Mention, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
+
+<dl><dt><a name="SlackThread-send_exception"><strong>send_exception</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, dbacademy.clients.slack.Mention, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
+
+<dl><dt><a name="SlackThread-send_msg"><strong>send_msg</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, dbacademy.clients.slack.Mention, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
+
+<dl><dt><a name="SlackThread-send_warning"><strong>send_warning</strong></a>(self, message: str, reply_broadcast: bool = False, *, mentions: Union[str, dbacademy.clients.slack.Mention, List[str]] = None) -&gt; Dict[str, Any]</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
 <td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
@@ -35,5 +80,5 @@
 <td width="100%"><strong>DANGER</strong> = &lt;dbacademy.clients.slack.Level object&gt;<br>
 <strong>GOOD</strong> = &lt;dbacademy.clients.slack.Level object&gt;<br>
 <strong>WARNING</strong> = &lt;dbacademy.clients.slack.Level object&gt;<br>
-<strong>__all__</strong> = ['from_args', 'GOOD', 'WARNING', 'DANGER']</td></tr></table>
+<strong>__all__</strong> = ['SlackThread', 'from_args', 'GOOD', 'WARNING', 'DANGER']</td></tr></table>
 </body></html>
