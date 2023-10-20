@@ -41,8 +41,8 @@ class TestUtils(unittest.TestCase):
     def test_validate_type(self):
 
         def dummy(value: int):
-            from dbacademy.common import validate_type
-            value = validate_type(value, "value", int)
+            from dbacademy.common import validate
+            value = validate.int_value(value=value)
             self.assertEqual(1, value)
 
         dummy(1)
@@ -51,7 +51,7 @@ class TestUtils(unittest.TestCase):
             # noinspection PyTypeChecker
             dummy("1")
         except AssertionError as e:
-            self.assertEqual("""Expected the parameter "value" to be of type <class 'int'>, found <class 'str'>""", str(e))
+            self.assertEqual("""Error-Type | Expected the parameter "value" to be None or of type <class 'int'>, found <class 'str'>""", str(e))
 
 
 if __name__ == '__main__':

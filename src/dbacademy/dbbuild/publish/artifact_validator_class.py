@@ -1,11 +1,13 @@
+__all__ = ["ArtifactValidator"]
+
 from typing import Optional
+from dbacademy.dbbuild.publish.publisher_class import Publisher
+from dbacademy.dbbuild.publish.translator_class import Translator
+from dbacademy.dbbuild.publish.publishing_info_class import Translation
+from dbacademy.clients.databricks import DBAcademyRestClient
 
 
 class ArtifactValidator:
-    from dbacademy.dbbuild.publish.publisher_class import Publisher
-    from dbacademy.dbbuild.publish.translator_class import Translator
-    from dbacademy.dbrest import DBAcademyRestClient
-    from dbacademy.dbbuild.publish.publishing_info_class import Translation
 
     @staticmethod
     def from_publisher(publisher: Publisher) -> "ArtifactValidator":
@@ -46,7 +48,7 @@ class ArtifactValidator:
                                  common_language=translator.common_language)
 
     def __init__(self, *, build_name: str, version: str, core_version: str, client: DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str, translation: Translation, i18n: bool, common_language: str) -> None:
-        from dbacademy import common
+        from dbacademy.common import validate
         from dbacademy.dbbuild.publish.publishing_info_class import Translation
 
         self.build_name = build_name
@@ -62,7 +64,7 @@ class ArtifactValidator:
         self.i18n = i18n
         self.common_language = common_language
 
-        self.translation = None if translation is None else common.validate_type(translation, "translation", Translation)
+        self.translation = None if translation is None else validate.any_value(Translation, translation=translation)
 
     def validate_publishing_processes(self) -> None:
         from dbacademy.dbhelper.validations.validation_suite_class import ValidationSuite
@@ -164,7 +166,7 @@ class ArtifactValidator:
     def __validate_published_docs(self, version: str) -> bool:
         import os
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
-        from dbacademy.clients.google.google_client_class import GoogleClient
+        from dbacademy.clients import google
 
         if self.translation is None:
             print(f"| PASSED: No documents to validate")
@@ -173,13 +175,13 @@ class ArtifactValidator:
         print()
         print(f"Validating export of Google docs ({version})")
 
-        google_client = GoogleClient()
+        google_client = google.from_workspace()
         docs_publisher = DocsPublisher(build_name=self.build_name, version=self.version, translation=self.translation)
 
         total = len(self.translation.document_links)
         for i, link in enumerate(self.translation.document_links):
-            file_id = google_client.to_gdoc_id(gdoc_url=link)
-            file = google_client.file_get(file_id)
+            file_id = google_client.drive.to_gdoc_id(gdoc_url=link)
+            file = google_client.drive.file_get(file_id)
             name = file.get("name")
             folder_id = file.get("id")
             print(f"| {i+1} of {total}: {name} (https://drive.google.com/drive/folders/{folder_id})")

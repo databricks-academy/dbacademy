@@ -19,7 +19,7 @@ assert account_password is not None, f"""Set environment variable "{f"WORKSPACE_
 
 # Accounts console client
 accounts_api = AccountsApi(account_id=account_id,
-                           user=account_username,
+                           username=account_username,
                            password=account_password)
 
 
@@ -242,7 +242,7 @@ def create_workspace(config: WorkspaceConfig):
 
     # Cloud specific settings for the Universal Workspace-Setup
     print("Cloud specific settings for the Universal Workspace-Setup")
-    if ".cloud.databricks.com" in workspace.url:  # AWS
+    if ".cloud.databricks.com" in workspace.endpoint:  # AWS
         cloud_attributes = {
             "node_type_id": "i3.xlarge",
             "aws_attributes": {
@@ -251,7 +251,7 @@ def create_workspace(config: WorkspaceConfig):
                 "spot_bid_price_percent": 100
             },
         }
-    elif ".gcp.databricks.com" in workspace.url:  # GCP
+    elif ".gcp.databricks.com" in workspace.endpoint:  # GCP
         cloud_attributes = {
             "node_type_id": "n1-highmem-4",
             "gcp_attributes": {
@@ -259,7 +259,7 @@ def create_workspace(config: WorkspaceConfig):
                 "availability": "PREEMPTIBLE_WITH_FALLBACK_GCP",
             },
         }
-    elif ".azuredatabricks.net" in workspace.url:  # Azure
+    elif ".azuredatabricks.net" in workspace.endpoint:  # Azure
         cloud_attributes = {
             "node_type_id": "Standard_DS3_v2",
             "azure_attributes": {
@@ -272,7 +272,7 @@ def create_workspace(config: WorkspaceConfig):
 
     # Run the Universal Workspace-Setup
     print("Run the Universal Workspace-Setup")
-    workspace_hostname = re.match("https://([^/]+)/api/", workspace.url)[1]
+    workspace_hostname = re.match("https://([^/]+)/api/", workspace.endpoint)[1]
     job_spec = {
         "name": "DBAcademy Workspace-Setup",
         "timeout_seconds": 60 * 60 * 6,  # 6 hours

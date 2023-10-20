@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-from typing import Any, Container, Dict, Type, TypeVar, Union
+__all__ = ["ApiContainer", "ApiClient", "DatabricksApiException",
+           "HttpStatusCodes", "HttpMethod", "HttpReturnType", "IfNotExists", "IfExists",
+           "Item", "ItemId", "ItemOrId", "Cloud"]
+
+import requests
+from pprint import pformat
+from dbacademy.clients import ClientErrorHandler
+from typing import Any, Container, Dict, Type, TypeVar, Union, Optional
 
 try:
     from typing import Literal
 except ImportError:
     from typing_extensions import Literal
-
-from pprint import pformat
-import requests
-
-__all__ = ["ApiContainer", "ApiClient", "DatabricksApiException",
-           "HttpStatusCodes", "HttpMethod", "HttpReturnType", "IfNotExists", "IfExists",
-           "Item", "ItemId", "ItemOrId", "Cloud"]
 
 HttpStatusCodes = Union[int, Container[int]]
 HttpMethod = Literal["GET", "PUT", "POST", "DELETE", "PATCH", "HEAD", "OPTIONS"]
@@ -59,28 +59,28 @@ class ApiContainer(object):
 
 class ApiClient(ApiContainer):
 
-    url: str = None
     dns_verify: bool = True
     dns_retry: bool = False
     trace: bool = False
 
     def __init__(self,
-                 url: str,
+                 endpoint: str,
                  *,
                  token: str = None,
-                 user: str = None,
+                 username: str = None,
                  password: str = None,
                  authorization_header: str = None,
                  client: ApiClient = None,
                  throttle_seconds: int = 0,
-                 verbose: bool = False):
+                 verbose: bool = False,
+                 error_handler: Optional[ClientErrorHandler] = ClientErrorHandler()):
         """
         Create a Databricks REST API client.
 
         Args:
-            url: The common base URL to the API endpoints.  e.g. https://workspace.cloud.databricks.com/API/
+            endpoint: The common base URL to the API endpoints.  e.g. https://workspace.cloud.databricks.com/API/
             token: The API authentication token.  Defaults to None.
-            user: The authentication username.  Defaults to None.
+            username: The authentication username.  Defaults to None.
             password: The authentication password.  Defaults to None.
             authorization_header: The header to use for authentication.
                 By default, it's generated from the token or password.
@@ -100,27 +100,28 @@ class ApiClient(ApiContainer):
         self.storage = None
         self.private_access = None
 
-        # if verbose: print("ApiClient.__init__, url: " + url)
-        # if verbose: print("ApiClient.__init__, client: " + str(client))
+        if verbose:
+            print("ApiClient.__init__, endpoint: " + endpoint)
+            print("ApiClient.__init__, client: " + str(client))
 
-        if client and "://" not in url:
-            url = client.url.lstrip("/") + "/" + url.rstrip("/")
+        if client and "://" not in endpoint:
+            endpoint = client.endpoint.lstrip("/") + "/" + endpoint.rstrip("/")
 
         if authorization_header:
             pass
         elif token is not None:
             authorization_header = 'Bearer ' + token
-        elif user is not None and password is not None:
+        elif username is not None and password is not None:
             import base64
-            encoded_auth = (user + ":" + password).encode()
+            encoded_auth = (username + ":" + password).encode()
             authorization_header = "Basic " + base64.standard_b64encode(encoded_auth).decode()
         elif client is not None:
             authorization_header = client.session.headers["Authorization"]
         else:
             pass  # This is an unauthenticated clients
 
-        if not url.endswith("/"):
-            url += "/"
+        if endpoint.endswith("/"):
+            endpoint = endpoint.rstrip("/")
 
         # TODO @jacob: We are having production issues where Databricks is rate limiting us. As a result,
         #   we need to apply a throttle, but we don't want to be advertising that to students.
@@ -128,11 +129,13 @@ class ApiClient(ApiContainer):
         #     s = "" if throttle_seconds == 1 else "s"
         #     print_warning("WARNING", f"Requests are being throttled by {throttle_seconds} second{s} per request.")
 
-        self.url = url
         self.token = token
-        self.user = user
-        self.password = password
-        self.throttle_seconds = throttle_seconds
+        self.__endpoint = endpoint
+        self.__username = username
+        self.__password = password
+        self.__throttle_seconds = throttle_seconds
+        self.__error_handler = error_handler
+
         self.read_timeout = 300   # seconds
         self.connect_timeout = 5  # seconds
         self._last_request_timestamp = 0
@@ -171,16 +174,56 @@ class ApiClient(ApiContainer):
         self.session.mount('http://', self.http_adapter)
         self.session.mount('https://', self.http_adapter)
 
-    def api(self, _http_method: HttpMethod, _endpoint_path: str, _data: dict = None, *,
-            _expected: HttpStatusCodes = None, _result_type: Type[HttpReturnType] = dict,
-            _base_url: str = None, **data: Any) -> HttpReturnType:
+    def vprint(self, what):
+        if self.verbose:
+            print(what)
+
+    @property
+    def throttle_seconds(self) -> int:
+        return self.__throttle_seconds
+
+    @property
+    def error_handler(self) -> ClientErrorHandler:
+        return self.__error_handler
+
+    @property
+    def endpoint(self):
+        return self.__endpoint
+
+    # @property
+    # def url(self):
+    #     """Alias for endpoint"""
+    #     return self.__endpoint
+
+    @property
+    def username(self):
+        return self.__username
+
+    # @property
+    # def user(self):
+    #     """Alias for username"""
+    #     return self.__username
+
+    @property
+    def password(self):
+        return self.__password
+
+    def api(self,
+            _http_method: HttpMethod,
+            _endpoint_path: str,
+            _data: dict = None,
+            *,
+            _expected: HttpStatusCodes = None,
+            _result_type: Type[HttpReturnType] = dict,
+            _base_url: str = None,
+            **data: Any) -> HttpReturnType:
         """
         Invoke the Databricks REST API.
 
         Args:
             _http_method: 'GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'HEAD', or 'OPTIONS'
             _endpoint_path: The path to append to the URL for the API endpoint, excluding the leading '/'.
-                For example: path="2.0/secrets/put"
+                For example: path="/api/2.0/secrets/put"
             _data: Payload to attach to the HTTP request.  GET requests encode as params, all others as json.
             _expected: HTTP response status codes to treat as expected rather than as an error.
             _result_type: Determines what type of result is returned.  It may be any of the following:
@@ -189,7 +232,7 @@ class ApiClient(ApiContainer):
                bytes: Return the body as binary data.
                requests.Response: Return the HTTP response object.
                None: Return None.
-            _base_url: Overrides self.url, allowing alternative URL paths.
+            _base_url: Overrides self.endpoint, allowing alternative URL paths.
             **data: Any kwargs are appended to the _data payload.  Values here take priority over values
                specified in _data.
 
@@ -209,7 +252,7 @@ class ApiClient(ApiContainer):
             _data = _data.copy()
             _data.update(data)
 
-        _base_url: str = urljoin(self.url, _base_url)
+        _base_url: str = urljoin(self.endpoint, _base_url)
 
         if self.dns_verify:
             self._verify_hostname(_base_url)
@@ -220,9 +263,9 @@ class ApiClient(ApiContainer):
             _endpoint_path = _endpoint_path[len(_base_url):]
 
         elif _endpoint_path.startswith("http"):
-            raise ValueError(f"endpoint_path must be relative url, not {_endpoint_path !r}.")
+            raise ValueError(f"endpoint_path must be relative endpoint, not {_endpoint_path !r}.")
         
-        url = _base_url + _endpoint_path.lstrip("/")
+        endpoint = _base_url.rstrip("/") + "/" + _endpoint_path.lstrip("/")
         timeout = (self.connect_timeout, self.read_timeout)
         connection_errors = 0
 
@@ -235,13 +278,13 @@ class ApiClient(ApiContainer):
                 if _http_method in ('GET', 'HEAD', 'OPTIONS'):
                     params = {k: str(v).lower() if isinstance(v, bool) else v for k, v in _data.items()}
                     if self.trace:
-                        print(f"{_http_method} {url}: {params=}")
-                    response = self.session.request(_http_method, url, params=params, timeout=timeout)
+                        print(f"{_http_method} {endpoint}: {params=}")
+                    response = self.session.request(_http_method, endpoint, params=params, timeout=timeout)
                 else:
                     json_data = json.dumps(_data)
                     if self.trace:
-                        print(f"{_http_method} {url}: data={json_data}")
-                    response = self.session.request(_http_method, url, data=json_data, timeout=timeout)
+                        print(f"{_http_method} {endpoint}: data={json_data}")
+                    response = self.session.request(_http_method, endpoint, data=json_data, timeout=timeout)
 
                 if response.status_code == 500:
                     if "REQUEST_LIMIT_EXCEEDED" not in response.text:
@@ -259,7 +302,7 @@ class ApiClient(ApiContainer):
             # Attempt 1=1s, 2=1s, 3=5s, 4=16s, 5=13s, etc...
             duration = math.ceil(attempt * attempt / 2)
             if verbose:
-                print(f"Retrying after {duration}s, attempt {attempt+1} of {self.max_retries+1}: {_http_method} {url}")
+                print(f"Retrying after {duration}s, attempt {attempt+1} of {self.max_retries+1}: {_http_method} {endpoint}")
             time.sleep(duration)
 
         if response is None:  # "None" should never happen
@@ -291,31 +334,32 @@ class ApiClient(ApiContainer):
                 }
         # TODO @doug.bateman: missing else clause
 
-    def _verify_hostname(self, url: str) -> None:
+    @classmethod
+    def _verify_hostname(cls, test_url: str) -> None:
         """Verify the host for the url-endpoint exists.  Throws socket.gaierror if it does not."""
         import time
         from urllib.parse import urlparse
         from socket import gethostbyname, gaierror
         from requests.exceptions import ConnectionError
 
-        if not self.dns_retry:
-            url = urlparse(url)
+        if not cls.dns_retry:
+            test_url = urlparse(test_url)
             try:
-                gethostbyname(url.hostname)
+                gethostbyname(test_url.hostname)
             except gaierror as e:
-                raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}".""") from e
+                raise ConnectionError(f"""DNS lookup for hostname failed for "{test_url.hostname}".""") from e
         else:
             retries = 10
             last_exception = None
-            url = urlparse(url)
+            test_url = urlparse(test_url)
             for i in range(0, retries):
                 try:
-                    gethostbyname(url.hostname)
+                    gethostbyname(test_url.hostname)
                     return
                 except gaierror as e:
                     last_exception = e
                     time.sleep(i*2)
-            raise ConnectionError(f"""DNS lookup for hostname failed for "{url.hostname}" after {retries} retries.""") from last_exception
+            raise ConnectionError(f"""DNS lookup for hostname failed for "{test_url.hostname}" after {retries} retries.""") from last_exception
 
     def _throttle_calls(self):
         if self.throttle_seconds <= 0:

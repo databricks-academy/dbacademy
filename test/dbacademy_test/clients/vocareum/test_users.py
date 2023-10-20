@@ -1,12 +1,11 @@
 import unittest
+from dbacademy.clients import vocareum
 
 
 class TestVocareumRestClient(unittest.TestCase):
 
     def test_list_users(self):
-        from dbacademy.clients.vocareum import VocareumRestClient
-
-        client = VocareumRestClient.from_environ()
+        client = vocareum.from_environ()
         self.assertIsNotNone(client)
 
         users = client.courses.id("87112").users.list()
@@ -14,14 +13,12 @@ class TestVocareumRestClient(unittest.TestCase):
 
         user_ids = [u.get("id") for u in users]
 
-        expected_count = 510
+        expected_count = 511
         self.assertEqual(expected_count, len(user_ids))
         self.assertEqual(expected_count, len(set(user_ids)))
 
     def test_get_user(self):
-        from dbacademy.clients.vocareum import VocareumRestClient
-
-        client = VocareumRestClient.from_environ()
+        client = vocareum.from_environ()
         self.assertIsNotNone(client)
 
         user = client.courses.id("87112").users.id("2615039").get()

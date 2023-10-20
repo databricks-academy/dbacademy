@@ -2,7 +2,7 @@ from typing import Type, List, Dict, Union, Any, Optional, Callable
 
 
 class BuildConfig:
-    from dbacademy.dbrest import DBAcademyRestClient
+    from dbacademy.clients.databricks import DBAcademyRestClient
 
     LANGUAGE_OPTIONS_DEFAULT = "Default"
 
@@ -24,10 +24,10 @@ class BuildConfig:
         :return:
         """
         import json
-        from dbacademy import common
+        from dbacademy.common import validate
 
-        common.validate_type(file, "file", str)
-        common.validate_type(version, "version", str)
+        validate.str_value(file=file)
+        validate.str_value(version=version)
 
         with open(file) as f:
             return BuildConfig.load_config(config=json.load(f), version=version, **kwargs)
@@ -40,10 +40,10 @@ class BuildConfig:
         :param version: The current version being published. Expected to be one of BuildConfig.VERSIONS_LIST or an actual version number in the form of "vX.Y.Z"
         :return:
         """
-        from dbacademy import common
+        from dbacademy.common import validate
 
-        common.validate_type(config, "config", Dict)
-        common.validate_type(version, "version", str)
+        validate.dict_value(config=config)
+        validate.str_value(version=version)
 
         if kwargs is not None:
             for k, v in kwargs.items():
@@ -621,8 +621,9 @@ class BuildConfig:
         :return: None
         """
         from dbacademy import common
+        from dbacademy.common import validate
 
-        cloud = common.validate_type(cloud, "cloud", str).upper()
+        cloud = validate.str_value(cloud=cloud).upper()
 
         assert self.validated, f"Cannot validate smoke-tests until the build configuration passes validation. See BuildConfig.validate()"
 

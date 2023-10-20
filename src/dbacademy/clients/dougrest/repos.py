@@ -6,7 +6,7 @@ class Repos(ApiContainer):
         self.databricks = databricks
 
     def list(self):
-        repos = self.databricks.api("GET", "2.0/repos").get("repos", [])
+        repos = self.databricks.api("GET", "/api/2.0/repos").get("repos", [])
         return repos
 
     def list_by_path(self):
@@ -28,7 +28,7 @@ class Repos(ApiContainer):
         #        for k,v in data.items():
         #          if v is None:
         #            del data[k]
-        self.databricks.api("POST", "2.0/repos", data)
+        self.databricks.api("POST", "/api/2.0/repos", data)
 
     # TODO Rename parameter "repo_id"
     # noinspection PyShadowingBuiltins
@@ -42,5 +42,5 @@ class Repos(ApiContainer):
             if not repo:
                 raise DatabricksApiException("Repo not found at: " + workspace_path)
             id = repo["id"]
-        self.databricks.api("DELETE", f"2.0/repos/{id}")
+        self.databricks.api("DELETE", f"/api/2.0/repos/{id}")
         return id

@@ -1,8 +1,10 @@
+__all__ = ["Classroom"]
+
+import re
 from dbacademy.clients.dougrest import DatabricksApi
 
 
 class Classroom(object):
-    import re
 
     def __init__(self, num_students, class_number=None, username_pattern=None,
                  hostname=None, access_token=None, databricks_api=None, spark_version="11.3.x-cpu-ml-scala2.12"):

@@ -3,7 +3,7 @@ from typing import Callable, List, TypeVar, Optional, Union, Dict, Any
 
 class WorkspaceHelper:
     from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
-    from dbacademy.dbrest import DBAcademyRestClient
+    from dbacademy.clients.databricks import DBAcademyRestClient
 
     T = TypeVar("T")
 

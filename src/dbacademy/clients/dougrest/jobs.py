@@ -63,7 +63,7 @@ class Jobs(ApiContainer):
             else:
                 raise DatabricksApiException(f"Ambiguous command.  Multiple jobs with name={job!r} found.", 400)
         if isinstance(job, int):
-            job = self.databricks.api("GET", "2.1/jobs/get", _data={"job_id": job})
+            job = self.databricks.api("GET", "/api/2.1/jobs/get", _data={"job_id": job})
             return [job] if return_list else job
         raise ValueError(
             f"DatabricksApi.jobs.delete(job): job must be id:int, name:str, job:dict.  Found: {job!r}.")
@@ -71,7 +71,7 @@ class Jobs(ApiContainer):
     def list(self):
         offset = 0
         while True:
-            response = self.databricks.api("GET", "2.1/jobs/list", limit=25, offset=offset)
+            response = self.databricks.api("GET", "/api/2.1/jobs/list", limit=25, offset=offset)
             jobs = response.get('jobs', [])
             yield from jobs
             offset += len(jobs)
@@ -101,7 +101,7 @@ class Jobs(ApiContainer):
             settings = job["settings"]
         else:
             settings = job
-        return self.databricks.api("POST", "2.1/jobs/update", job_id=job["job_id"], new_settings=settings)
+        return self.databricks.api("POST", "/api/2.1/jobs/update", job_id=job["job_id"], new_settings=settings)
 
     def delete(self, job, *, if_not_exists="error"):
         if isinstance(job, str):
@@ -117,11 +117,11 @@ class Jobs(ApiContainer):
             raise ValueError(
                 f"DatabricksApi.jobs.delete(job): job must be id:int, name:str, job:dict.  Found: {job!s}.")
         if if_not_exists == "error":
-            self.databricks.api("POST", "2.1/jobs/delete", _data={"job_id": job})
+            self.databricks.api("POST", "/api/2.1/jobs/delete", _data={"job_id": job})
             return 1
         elif if_not_exists == "ignore":
             try:
-                self.databricks.api("POST", "2.1/jobs/delete", _data={"job_id": job})
+                self.databricks.api("POST", "/api/2.1/jobs/delete", _data={"job_id": job})
                 return 1
             except DatabricksApiException as e:
                 if e.http_code == 404 and e.error_code == 'RESOURCE_DOES_NOT_EXIST':
@@ -170,9 +170,9 @@ class Jobs(ApiContainer):
         spec.update(**args)
         if if_exists == "overwrite":
             self.delete(name, if_not_exists="ignore")
-            return self.databricks.api("POST", "2.1/jobs/create", _data=spec)["job_id"]
+            return self.databricks.api("POST", "/api/2.1/jobs/create", _data=spec)["job_id"]
         elif not self.exists(name) or if_exists == "proceed":
-            return self.databricks.api("POST", "2.1/jobs/create", _data=spec)["job_id"]
+            return self.databricks.api("POST", "/api/2.1/jobs/create", _data=spec)["job_id"]
         elif if_exists == "ignore":
             return self.get(name)
         elif if_exists == "error":
@@ -201,10 +201,10 @@ class Jobs(ApiContainer):
                 spec[param] = local_vars[param]
 
         if if_not_exists == "error":
-            return self.databricks.api("POST", "2.1/jobs/run-now", _data=spec)
+            return self.databricks.api("POST", "/api/2.1/jobs/run-now", _data=spec)
         elif if_not_exists == "ignore":
             try:
-                return self.databricks.api("POST", "2.1/jobs/run-now", _data=spec)
+                return self.databricks.api("POST", "/api/2.1/jobs/run-now", _data=spec)
             except DatabricksApiException as e:
                 if e.http_code == 404 and e.error_code == 'RESOURCE_DOES_NOT_EXIST':
                     return None

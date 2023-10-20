@@ -1,15 +1,13 @@
 import unittest
+from dbacademy.clients import docebo
 
 
 class TestDoceboRestClient(unittest.TestCase):
 
     def test_create(self):
-        from dbacademy.clients.docebo import DoceboRestClient
-
-        client = DoceboRestClient.from_environ()
+        client = docebo.from_environ()
         self.assertIsNotNone(client)
-
-        self.assertEquals("https://databricks.docebosaas.com/", client.url)
+        self.assertEquals("https://databricks.docebosaas.com", client.endpoint)
 
 
 if __name__ == '__main__':

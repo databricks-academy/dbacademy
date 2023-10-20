@@ -1,5 +1,6 @@
-from typing import List, Dict, Any, Union
+__all__ = ["Instructors"]
 
+from typing import List, Dict, Any, Union
 from dbacademy.clients.cloudlabs import Tenant
 from dbacademy.clients.cloudlabs.labs import Lab, Labs
 from dbacademy.clients.rest.common import ApiContainer
@@ -8,6 +9,7 @@ Instructor = Dict[str, Any]
 
 
 class Instructors(ApiContainer):
+
     def __init__(self, tenant: Tenant):
         self.tenant = tenant
 

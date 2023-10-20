@@ -2,7 +2,7 @@ from typing import Union, List, Dict
 
 
 class BuildUtils:
-    from dbacademy.dbrest import DBAcademyRestClient
+    from dbacademy.clients.databricks import DBAcademyRestClient
 
     def __init__(self):
         pass

@@ -1,15 +1,14 @@
 import unittest
+from dbacademy.clients import vocareum
 
 
 class TestVocareumRestClient(unittest.TestCase):
 
     def test_create_client(self):
-        from dbacademy.clients.vocareum import VocareumRestClient
-
-        client = VocareumRestClient.from_environ()
+        client = vocareum.from_environ()
         self.assertIsNotNone(client)
 
-        self.assertEquals("https://api.vocareum.com/api/v2/", client.url)
+        self.assertEquals("https://api.vocareum.com/api/v2", client.endpoint)
 
 
 if __name__ == '__main__':

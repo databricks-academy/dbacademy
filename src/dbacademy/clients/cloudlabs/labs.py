@@ -1,5 +1,6 @@
-from typing import List, Dict, Any, Union, Iterable
+__all__ = ["Lab", "Labs"]
 
+from typing import List, Dict, Any, Union, Iterable
 from dbacademy.clients.cloudlabs import Tenant
 from dbacademy.clients.dougrest import DatabricksApi
 from dbacademy.clients.dougrest.workspace import Workspace

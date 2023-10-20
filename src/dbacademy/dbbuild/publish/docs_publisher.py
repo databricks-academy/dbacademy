@@ -1,23 +1,23 @@
+__all__ = ["DocsPublisher"]
+
+import io
 from typing import Dict
+from dbacademy.dbbuild.publish.publishing_info_class import Translation
 
 
 class DocsPublisher:
-    import io
-    from dbacademy.dbbuild.publish.publishing_info_class import Translation
-    from dbacademy.clients.google.google_client_class import GoogleClient
 
     def __init__(self, build_name: str, version: str, translation: Translation):
-        from dbacademy.clients.google.google_client_class import GoogleClient
-
+        from dbacademy.clients import google
         self.__translation = translation
         self.__build_name = build_name
         self.__version = version
         self.__pdfs = dict()
-        self.__google_client = GoogleClient()
+        self.__google_client = google.from_workspace()
 
-    @property
-    def google_client(self) -> GoogleClient:
-        return self.__google_client
+    # @property
+    # def google_client(self) -> GoogleClient:
+    #     return self.__google_client
 
     @property
     def translation(self) -> Translation:
@@ -32,20 +32,20 @@ class DocsPublisher:
         return self.__version
 
     def get_distribution_path(self, *, version: str, file: Dict[str, str]) -> str:
-        file_name = self.__google_client.to_file_name(file)
+        file_name = self.__google_client.drive.to_file_name(file)
         return f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{version}-PENDING/{file_name}"
 
     def __download_google_doc(self, *, index: int, total: int, gdoc_id: str = None, gdoc_url: str = None) -> (str, str):
         from dbacademy import dbgems
 
-        gdoc_id = self.google_client.to_gdoc_id(gdoc_id=gdoc_id, gdoc_url=gdoc_url)
-        file = self.google_client.file_get(gdoc_id)
+        gdoc_id = self.__google_client.drive.to_gdoc_id(gdoc_id=gdoc_id, gdoc_url=gdoc_url)
+        file = self.__google_client.drive.file_get(gdoc_id)
         name = file.get("name")
-        file_name = self.google_client.to_file_name(file)
+        file_name = self.__google_client.drive.to_file_name(file)
 
         print(f"| Processing {index + 1} of {total}: {name}")
 
-        file_bytes = self.google_client.file_export(gdoc_id)
+        file_bytes = self.__google_client.drive.file_export(gdoc_id)
 
         self.__save_pdfs(file_bytes, f"/dbfs/FileStore/tmp/{file_name}")
         self.__save_pdfs(file_bytes, self.get_distribution_path(version=self.version, file=file))
@@ -75,7 +75,7 @@ class DocsPublisher:
 
     def process_pdfs(self) -> None:
         from dbacademy import common
-        from dbacademy.clients.google.google_client_class import GoogleClientException
+        from dbacademy.clients.google.google_client_exception import GoogleClientException
 
         print("Exporting Google Docs as PDFs:")
         total = len(self.translation.document_links)
@@ -97,16 +97,16 @@ class DocsPublisher:
         print("Publishing Google Docs:")
 
         parent_folder_id = self.translation.published_docs_folder.split("/")[-1]
-        files = self.__google_client.folder_list(folder_id=parent_folder_id)
+        files = self.__google_client.drive.folder_list(folder_id=parent_folder_id)
         folders = [f for f in files if f.get("name") == f"v{self.version}"]
 
         for folder in folders:
             folder_id = folder.get("id")
             folder_name = folder.get("name")
-            self.__google_client.folder_delete(folder_id)
+            self.__google_client.drive.folder_delete(folder_id)
             print(f"| Deleted existing published folder {folder_name} (https://drive.google.com/drive/folders/{folder_id})")
 
-        folder = self.__google_client.folder_create(parent_folder_id=parent_folder_id, folder_name=f"v{self.version}")
+        folder = self.__google_client.drive.folder_create(parent_folder_id=parent_folder_id, folder_name=f"v{self.version}")
 
         folder_id = folder.get("id")
         folder_name = folder.get("name")
@@ -114,12 +114,12 @@ class DocsPublisher:
 
         total = len(self.translation.document_links)
         for index, link in enumerate(self.translation.document_links):
-            gdoc_id = self.google_client.to_gdoc_id(gdoc_url=link)
-            file = self.google_client.file_get(file_id=gdoc_id)
+            gdoc_id = self.__google_client.drive.to_gdoc_id(gdoc_url=link)
+            file = self.__google_client.drive.file_get(file_id=gdoc_id)
             name = file.get("name")
 
             print(f"| Copying {index + 1} of {total}: {name} ({link})")
-            self.google_client.file_copy(file_id=gdoc_id, name=name, parent_folder_id=folder_id)
+            self.__google_client.drive.file_copy(file_id=gdoc_id, name=name, parent_folder_id=folder_id)
 
     def to_html(self) -> str:
         html = """<html><body style="font-size:16px">"""

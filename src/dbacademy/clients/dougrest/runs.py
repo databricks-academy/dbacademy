@@ -28,7 +28,7 @@ class Runs(ApiContainer):
     # noinspection PyUnusedLocal
     def get(self, run: Union[int, dict], *, if_not_exists: str = "error") -> dict:
         run = self._id(run)
-        return self.databricks.api("GET", "2.1/jobs/runs/get", _data={"run_id": run})
+        return self.databricks.api("GET", "/api/2.1/jobs/runs/get", _data={"run_id": run})
 
     # TODO Remove unused parameter
     # noinspection PyUnusedLocal
@@ -39,7 +39,7 @@ class Runs(ApiContainer):
         else:
             run = self._id(run)
         try:
-            return self.databricks.api("GET", "2.1/jobs/runs/get-output", _data={"run_id": run})
+            return self.databricks.api("GET", "/api/2.1/jobs/runs/get-output", _data={"run_id": run})
         except DatabricksApiException as e:
             if e.http_code == 400 and "Retrieving the output of runs with multiple tasks is not supported" in e.message:
                 tasks = self.databricks.jobs.runs.get(run).get("tasks", ())
@@ -63,25 +63,25 @@ class Runs(ApiContainer):
                   "start_time_from", "start_time_to")
         values = locals()
         spec = {k: values[k] for k in params if values[k] is not None}
-        return self.databricks.api("GET", "2.1/jobs/runs/list", _data=spec).get("runs", [])
+        return self.databricks.api("GET", "/api/2.1/jobs/runs/list", _data=spec).get("runs", [])
 
     def delete(self, run: Union[int, dict], *, if_not_exists: str = "error") -> dict:
         run = self._id(run)
         if if_not_exists == "ignore":
-            return self.databricks.api("POST", "2.1/jobs/runs/delete", _data={"run_id": run})
+            return self.databricks.api("POST", "/api/2.1/jobs/runs/delete", _data={"run_id": run})
         else:
             try:
-                return self.databricks.api("POST", "2.1/jobs/runs/delete", _data={"run_id": run})
+                return self.databricks.api("POST", "/api/2.1/jobs/runs/delete", _data={"run_id": run})
             except DatabricksApiException as e:
                 raise e
 
     def cancel(self, run: Union[int, dict], *, if_not_exists: str = "error") -> dict:
         run = self._id(run)
         if if_not_exists == "ignore":
-            return self.databricks.api("POST", "2.1/jobs/runs/cancel", _data={"run_id": run})
+            return self.databricks.api("POST", "/api/2.1/jobs/runs/cancel", _data={"run_id": run})
         else:
             try:
-                return self.databricks.api("POST", "2.1/jobs/runs/cancel", _data={"run_id": run})
+                return self.databricks.api("POST", "/api/2.1/jobs/runs/cancel", _data={"run_id": run})
             except DatabricksApiException as e:
                 raise e
 

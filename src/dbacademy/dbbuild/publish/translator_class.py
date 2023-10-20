@@ -5,7 +5,7 @@ class Translator:
     from dbacademy.dbbuild.publish.publisher_class import Publisher
 
     def __init__(self, publisher: Publisher):
-        from dbacademy import common
+        from dbacademy.common import validate
         from dbacademy.dbbuild.publish.publisher_class import Publisher
 
         # By default, we are not validated
@@ -17,7 +17,7 @@ class Translator:
         self.__created_docs = False
         self.__validated_artifacts = False
 
-        self.publisher = common.validate_type(publisher, "publisher", Publisher)
+        self.publisher = validate.any_value(Publisher, publisher=publisher)
 
         # Copied from build_config
         self.username = publisher.username

@@ -1,7 +1,6 @@
 from typing import List, Optional, Callable, Dict, Any
 
-from dbacademy.clients.airtable import AirTableClient
-from dbacademy.dbrest import DBAcademyRestClient
+from dbacademy.clients import databricks
 from dbacademy.clients.rest.common import DatabricksApiException
 from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
@@ -12,8 +11,6 @@ class WorkspaceTrio:
     from dbacademy.clients.classrooms.classroom import Classroom
 
     def __init__(self, workspace_config: WorkspaceConfig, workspace_api: WorkspaceAPI, classroom: Optional[Classroom]):
-        from dbacademy.dbrest import DBAcademyRestClient
-
         self.__workspace_config = workspace_config
         self.__workspace_api = workspace_api
         self.__classroom = classroom
@@ -22,22 +19,18 @@ class WorkspaceTrio:
         self.__number = workspace_config.workspace_number
         self.__existing_users: Optional[Dict[str, Any]] = None
 
-        if self.workspace_api.url.endswith("/api/"):
-            endpoint = self.workspace_api.url[:-5]
-        elif self.workspace_api.url.endswith("/"):
-            endpoint = self.workspace_api.url[:-1]
+        if self.workspace_api.endpoint.endswith("/api/"):
+            endpoint = self.workspace_api.endpoint[:-5]
+        elif self.workspace_api.endpoint.endswith("/"):
+            endpoint = self.workspace_api.endpoint[:-1]
         else:
-            endpoint = self.workspace_api.url
+            endpoint = self.workspace_api.endpoint
 
-        self.__client = DBAcademyRestClient(authorization_header=self.workspace_api.authorization_header, endpoint=endpoint)
-        self.__client.dns_retry = True
+        self.client = databricks.from_auth_header(authorization_header=self.workspace_api.authorization_header, endpoint=endpoint)
+        self.client.dns_retry = True
 
     def __str__(self) -> str:
         return f"{self.name} #{self.number}"
-
-    @property
-    def client(self) -> DBAcademyRestClient:
-        return self.__client
 
     def get_by_username(self, username) -> Optional[Dict[str, Any]]:
         for user in self.existing_users:
@@ -83,16 +76,17 @@ class WorkspaceSetup:
 
     def __init__(self, account_config: AccountConfig, run_workspace_setup: bool):
         import os
-        from dbacademy import common
+        from dbacademy.common import validate
         from dbacademy.clients.dougrest import AccountsApi
+        from dbacademy.clients import airtable
         from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
 
         self.__errors: List[str] = list()
         self.__workspaces: List[WorkspaceTrio] = list()
-        self.__account_config = common.verify_type(AccountConfig, non_none=True, account_config=account_config)
+        self.__account_config = validate.any_value(AccountConfig, account_config=account_config, non_none=True)
 
         self.__accounts_api = AccountsApi(account_id=self.account_config.account_id,
-                                          user=self.account_config.username,
+                                          username=self.account_config.username,
                                           password=self.account_config.password)
         # self.__accounts_api.dns_retry = True
         self.__run_workspace_setup = run_workspace_setup
@@ -100,9 +94,9 @@ class WorkspaceSetup:
         self.__air_table_records: List[Dict[str, Any]] = list()
         air_table_token = os.environ.get("AIR-TABLE-PERSONAL-ACCESS-TOKEN")
         assert air_table_token is not None, f"""The environment variable "AIR-TABLE-PERSONAL-ACCESS-TOKEN" must be specified, not found."""
-        base_id = "appNCMjJ2yMKUrTbo"
-        table_id = "tblF3cxlP8gcM9Rqr"
-        self.air_table_client = AirTableClient(access_token=air_table_token, base_id=base_id, table_id=table_id)
+
+        self.airtable_client = airtable.from_args(access_token=air_table_token, base_id="appNCMjJ2yMKUrTbo")
+        self.airtable_table = self.airtable_client.table("tblF3cxlP8gcM9Rqr")
 
     @property
     def run_workspace_setup(self) -> bool:
@@ -276,7 +270,7 @@ class WorkspaceSetup:
 
     def create_workspaces(self, *, remove_users: bool, remove_metastore: bool, uninstall_courseware: bool = False):
 
-        self.__air_table_records = self.air_table_client.read()
+        self.__air_table_records = self.airtable_table.query()
 
         naming_pattern = self.account_config.workspace_config_template.workspace_name_pattern
         not_using_classroom = not naming_pattern.startswith("classroom-")
@@ -629,7 +623,7 @@ class WorkspaceSetup:
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             comments = f"{now}: Created workspace via automation script."
 
-            self.air_table_client.insert({
+            self.airtable_table.insert({
                 "AWS Workspace URL": new_url,
                 "Comments": comments
             })

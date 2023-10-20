@@ -2,7 +2,7 @@ from typing import Union, List, Optional
 
 
 class WarehousesHelper:
-    from dbacademy.dbrest import DBAcademyRestClient
+    from dbacademy.clients.databricks import DBAcademyRestClient
     from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
     from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
 
@@ -103,7 +103,7 @@ class WarehousesHelper:
         from dbacademy.clients.rest.common import DatabricksApiException
         from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
-        from dbacademy.dbrest.sql.endpoints import RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT, CLUSTER_SIZE_2X_SMALL
+        from dbacademy.clients.databricks.sql.endpoints import RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT, CLUSTER_SIZE_2X_SMALL
 
         lab_id = lab_id or WorkspaceHelper.get_lab_id()
         workspace_description = workspace_description or WorkspaceHelper.get_workspace_description()

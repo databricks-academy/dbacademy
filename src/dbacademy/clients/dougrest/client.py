@@ -13,20 +13,20 @@ class DatabricksApi(dict, ApiClient):
         "GCP": "n1-standard-4",
     }
 
-    def __init__(self, hostname=None, *, token=None, user=None, password=None, authorization_header=None, deployment_name=None):
+    def __init__(self, hostname=None, *, token=None, username=None, password=None, authorization_header=None, deployment_name=None):
         from dbacademy import dbgems
 
         if hostname:
-            url = f'https://{hostname}/api/'
+            url = f'https://{hostname}'
         else:
-            url = dbgems.get_notebooks_api_endpoint() + "/api/"
+            url = dbgems.get_notebooks_api_endpoint()
 
         if not any((authorization_header, token, password)):
             token = dbgems.get_notebooks_api_token()
 
         super(dict, self).__init__(url,
                                    token=token,
-                                   user=user,
+                                   username=username,
                                    password=password,
                                    authorization_header=authorization_header)
 
@@ -76,8 +76,8 @@ class DatabricksApi(dict, ApiClient):
         from dbacademy.clients.dougrest.workspace import Workspace
         self.workspace = Workspace(self)
 
-        from dbacademy.dbrest.permissions import Permissions
-        from dbacademy.dbrest.client import DBAcademyRestClient
+        from dbacademy.clients.databricks.permissions import Permissions
+        from dbacademy.clients import databricks
 
-        dbrest_client = DBAcademyRestClient(client=self)
+        dbrest_client = databricks.from_client(client=self)
         self.permissions = Permissions(client=dbrest_client)

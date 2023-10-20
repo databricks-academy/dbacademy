@@ -2,7 +2,7 @@ from typing import Callable, TypeVar, List
 
 
 class DatabasesHelper:
-    from dbacademy.dbrest import DBAcademyRestClient
+    from dbacademy.clients.databricks import DBAcademyRestClient
     from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
     from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
 

@@ -1,6 +1,6 @@
 from typing import Dict, Any
 
-from dbacademy.dbrest.cluster_policies import ClustersPolicyClient
+from dbacademy.clients.databricks.cluster_policies import ClustersPolicyClient
 from dbacademy.clients.rest.common import ApiContainer, IfExists, DatabricksApiException
 
 
@@ -12,14 +12,14 @@ class Clusters(ApiContainer):
     # TODO Rename parameter to "cluster_id"
     # noinspection PyShadowingBuiltins
     def get(self, id: str) -> Dict[str, Any]:
-        return self.databricks.api("GET", "2.0/clusters/get", _data={"cluster_id": id})
+        return self.databricks.api("GET", "/api/2.0/clusters/get", _data={"cluster_id": id})
 
     def list(self):
-        response = self.databricks.api("GET", "2.0/clusters/list")
+        response = self.databricks.api("GET", "/api/2.0/clusters/list")
         return response.get("clusters", [])
 
     def list_by_name(self):
-        response = self.databricks.api("GET", "2.0/clusters/list")
+        response = self.databricks.api("GET", "/api/2.0/clusters/list")
         return {c["cluster_name"]: c for c in response.get("clusters", ())}
 
     def create(self, cluster_name, node_type_id=None, driver_node_type_id=None,
@@ -92,14 +92,14 @@ class Clusters(ApiContainer):
                 return data
             else:
                 raise ValueError("if_exists must be one of create, error, ignore, overwrite, or update")
-        response = self.databricks.api("POST", "2.0/clusters/create", data)
+        response = self.databricks.api("POST", "/api/2.0/clusters/create", data)
         data["cluster_id"] = response["cluster_id"]
         if not start:
             self.terminate(response["cluster_id"])
         return data
 
     def update(self, cluster):
-        response = self.databricks.api("POST", "2.0/clusters/edit", cluster)
+        response = self.databricks.api("POST", "/api/2.0/clusters/edit", cluster)
         return response
 
     def edit(self, cluster_id, cluster_name=None, *, machine_type=None, driver_machine_type=None,
@@ -140,35 +140,35 @@ class Clusters(ApiContainer):
             }
             data["custom_tags"] = {"ResourceClass": "SingleNode"}
         data.update(cluster_spec)
-        self.databricks.api("POST", "2.0/clusters/edit", data)
+        self.databricks.api("POST", "/api/2.0/clusters/edit", data)
         return cluster_id
 
     # TODO rename to parameter to cluster_id
     # noinspection PyShadowingBuiltins
     def start(self, id):
         data = {"cluster_id": id}
-        response = self.databricks.api("POST", "2.0/clusters/start", data)
+        response = self.databricks.api("POST", "/api/2.0/clusters/start", data)
         return response
 
     # TODO rename to parameter to cluster_id
     # noinspection PyShadowingBuiltins
     def restart(self, id):
         data = {"cluster_id": id}
-        response = self.databricks.api("POST", "2.0/clusters/restart", data)
+        response = self.databricks.api("POST", "/api/2.0/clusters/restart", data)
         return response
 
     # TODO rename to parameter to cluster_id
     # noinspection PyShadowingBuiltins
     def terminate(self, id):
         data = {"cluster_id": id}
-        response = self.databricks.api("POST", "2.0/clusters/delete", data)
+        response = self.databricks.api("POST", "/api/2.0/clusters/delete", data)
         return response
 
     # TODO rename to parameter to cluster_id
     # noinspection PyShadowingBuiltins
     def delete(self, id):
         data = {"cluster_id": id}
-        response = self.databricks.api("POST", "2.0/clusters/permanent-delete", data)
+        response = self.databricks.api("POST", "/api/2.0/clusters/permanent-delete", data)
         return response
 
     def create_or_start(self, name, machine_type=None, driver_machine_type=None,
@@ -213,7 +213,7 @@ class Clusters(ApiContainer):
                                        } for name, permission in group_permissions.items()
                                    ]
         }
-        return self.databricks.api("PUT", f"2.0/preview/permissions/clusters/{cluster_id}", data)
+        return self.databricks.api("PUT", f"/api/2.0/preview/permissions/clusters/{cluster_id}", data)
 
     def add_to_acl(self, cluster_id, user_permissions: Dict[str, str] = None, group_permissions: Dict[str, str] = None):
         user_permissions = user_permissions or dict()
@@ -233,4 +233,4 @@ class Clusters(ApiContainer):
                                        } for group_name, permission in group_permissions.items()
                                    ]
         }
-        return self.databricks.api("PATCH", f"2.0/preview/permissions/clusters/{cluster_id}", data)
+        return self.databricks.api("PATCH", f"/api/2.0/preview/permissions/clusters/{cluster_id}", data)

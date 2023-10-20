@@ -2,7 +2,7 @@ import os
 from dbacademy.common import Cloud
 from dbacademy.dbgems import stable_hash
 from dbacademy.dbhelper import WorkspaceHelper
-from dbacademy.dbrest import DBAcademyRestClient
+from dbacademy.clients import databricks
 
 
 def to_workspace_name(_event_id: int) -> str:
@@ -80,7 +80,7 @@ username = os.environ.get(f"WORKSPACE_SETUP_{env_code}_USERNAME")         # The 
 password = os.environ.get(f"WORKSPACE_SETUP_{env_code}_PASSWORD")         # The password employed by the REST client
 endpoint = f"https://training-{workspace_name}.cloud.databricks.com"      # Construct the endpoint's URL
 
-client = DBAcademyRestClient(endpoint=endpoint, user=username, password=password)
+client = databricks.from_username(endpoint=endpoint, username=username, password=password)
 assert len(client.workspace.ls("/")) > 0, f"Expected at least one file."  # Testing connection
 
 job_name = WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME                       # The job's name allowing for configuration by convention

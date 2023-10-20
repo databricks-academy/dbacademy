@@ -7,7 +7,7 @@ from dbacademy.clients.rest.crud import CRUD
 
 class Pools(CRUD):
     def __init__(self, databricks: DatabricksApi):
-        super().__init__(databricks, "2.0/instance-pools", "instance_pool")
+        super().__init__(databricks, "/api/2.0/instance-pools", "instance_pool")
         self.databricks = databricks
 
     def _list(self, *, _expected: HttpStatusCodes = None) -> List[Item]:
@@ -41,7 +41,7 @@ class Pools(CRUD):
             'enable_elastic_disk': True,
             'preloaded_spark_versions': [self.databricks.default_preloaded_versions],
         }
-        response = self.databricks.api("POST", "2.0/instance-pools/create", data)
+        response = self.databricks.api("POST", "/api/2.0/instance-pools/create", data)
         return response["instance_pool_id"]
 
     def edit(self, pool, min_idle):
@@ -51,7 +51,7 @@ class Pools(CRUD):
                       'node_type_id', 'idle_instance_autotermination_minutes']
         data = {key: pool[key] for key in valid_keys}
         data["min_idle_instances"] = min_idle
-        self.databricks.api("POST", "2.0/instance-pools/edit", **data)
+        self.databricks.api("POST", "/api/2.0/instance-pools/edit", **data)
         return pool["instance_pool_id"]
 
     def edit_by_name(self, name, min_idle):
@@ -88,7 +88,7 @@ class Pools(CRUD):
                                        } for group_name, permission in group_permissions.items()
                                    ]
         }
-        return self.databricks.api("PUT", f"2.0/preview/permissions/instance-pools/{instance_pool_id}", data)
+        return self.databricks.api("PUT", f"/api/2.0/preview/permissions/instance-pools/{instance_pool_id}", data)
 
     def add_to_acl(self, instance_pool_id,
                    user_permissions: Dict[str, str] = None,
@@ -111,4 +111,4 @@ class Pools(CRUD):
                                        } for name, permission in group_permissions.items()
                                    ]
         }
-        return self.databricks.api("PATCH", f"2.0/preview/permissions/instance-pools/{instance_pool_id}", data)
+        return self.databricks.api("PATCH", f"/api/2.0/preview/permissions/instance-pools/{instance_pool_id}", data)

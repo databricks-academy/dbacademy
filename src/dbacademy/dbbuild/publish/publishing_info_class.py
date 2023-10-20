@@ -1,11 +1,13 @@
+__all__ = ["SlackChannel", "Announcements", "Translation", "PublishingInfo"]
+
 from typing import Dict, List, Any
-from dbacademy import common
+from dbacademy.common import validate
 
 
 class SlackChannel:
     def __init__(self, name: str, url: str):
-        self.__url = common.validate_type(url, "url", str)
-        self.__name = common.validate_type(name, "name", str)
+        self.__url = validate.str_value(url=url)
+        self.__name = validate.str_value(name=name)
 
     @property
     def name(self):
@@ -21,11 +23,11 @@ class Announcements:
         self.__email_addresses = email_addresses
         self.__slack_channels = slack_channels
 
-        common.validate_type(email_addresses, "email_addresses", List)
-        common.validate_element_type(email_addresses, "email_addresses", str)
+        validate.list_value(email_addresses=email_addresses)
+        validate.element_type(email_addresses, "email_addresses", str)
 
-        common.validate_type(slack_channels, "slack_channels", List)
-        common.validate_element_type(slack_channels, "slack_channels", SlackChannel)
+        validate.list_value(slack_channels=slack_channels)
+        validate.element_type(slack_channels, "slack_channels", SlackChannel)
 
     @property
     def email_addresses(self) -> List[str]:
@@ -39,12 +41,11 @@ class Announcements:
 class Translation:
     def __init__(self, language, data: Dict[str, Any]):
         self.__language = language
-        self.__release_repo = common.validate_type(data.get("release_repo"), "release_repo", str)
+        self.__release_repo = validate.str_value(release_repo=data.get("release_repo"))
+        self.__published_docs_folder = validate.str_value(published_docs_folder=data.get("published_docs_folder"))
 
-        self.__published_docs_folder = common.validate_type(data.get("published_docs_folder"), "published_docs_folder", str)
-
-        self.__document_links = common.validate_type(data.get("document_links"), "document_links", List)
-        common.validate_element_type(self.__document_links, "links", str)
+        self.__document_links = validate.list_value(document_links=data.get("document_links"))
+        validate.element_type(self.__document_links, "links", str)
 
     @property
     def language(self):

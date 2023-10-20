@@ -3,12 +3,10 @@ Common libraries that do not depend on other libraries.
 This was moved out of dbgems because dbgems has a dependency on pyspark.
 """
 from __future__ import annotations
-
-from typing import Callable, Any, Iterable
-
+from typing import Callable
 from dbacademy.common.cloud_class import Cloud
 
-__all__ = ["deprecated", "overrides", "print_title", "print_warning", "CachedStaticProperty", "validate_type", "validate_element_type", "Cloud"]
+__all__ = ["deprecated", "overrides", "print_title", "print_warning", "CachedStaticProperty", "Cloud"]
 
 deprecation_log_level = "error"
 
@@ -81,76 +79,6 @@ class CachedStaticProperty:
         result = self.func()
         setattr(owner, self.func.__name__, result)
         return result
-
-
-# @deprecated("Use verify_type() instead")
-def validate_type(actual_value: Any, name: str, expected_type: Any):
-    msg = f"""Expected the parameter "{name}" to be of type {expected_type}, found {type(actual_value)}"""
-    assert isinstance(actual_value, expected_type), msg
-    return actual_value
-
-
-E_NOT_NONE = "Error-Not-None"
-E_TYPE = "Error-Type"
-E_MIN_L = "Error-Min-Len"
-E_MIN_V = "Error-Min-Value"
-
-
-def verify_type(parameter_type: Any, *, min_length: int = None, non_none: Any = None, min_value=None, **kwargs):
-    import numbers
-
-    assert len(kwargs) == 1, f"validate_type_2() expects two and only two parameters."
-
-    parameter_name = list(kwargs)[0]
-    value = kwargs.get(parameter_name)
-
-    # Logically not None if we have a min_length
-    non_none = True if min_length is not None else non_none
-
-    if non_none is not None:
-        assert type(non_none) == bool, f"""Expected the parameter "non_none" to be of type bool, found {type(non_none)}"""
-
-        # These collections cannot be None so default them to empty list or dict.
-        if parameter_type == list and value is None:
-            value = list()
-        elif parameter_type == dict and value is None:
-            value = dict()
-
-        if value is None:
-            raise AssertionError(f"""{E_NOT_NONE}| The parameter "{parameter_name}" must  not be "None".""")
-
-        # No issues with it being None, now verify the actual type
-        if type(value) != parameter_type:
-            msg = f"""{E_TYPE}| Expected the parameter "{parameter_name}" to be of type {parameter_type}, found {type(value)}"""
-            raise AssertionError(msg)
-    else:
-        # Already expected that "value" can be None
-        if value is not None and type(value) != parameter_type:
-            msg = f"""{E_TYPE}| Expected the parameter "{parameter_name}" to be None or of type {parameter_type}, found {type(value)}"""
-            raise AssertionError(msg)
-
-    # No issues with the type, now verify value attributes.
-    if min_length is not None:
-        assert type(min_length) == int, f"""Expected the parameter "min_length" to be of type int, found {type(min_length)}"""
-        if len(value) < min_length:
-            raise AssertionError(f"""{E_MIN_L}| The parameter "{parameter_name}" must have a minimum length of {min_length}, found "{len(value)}".""")
-
-    if min_value is not None:
-        assert type(min_value) == int, f"""Expected the parameter "min_value" to be of type int, found {type(min_value)}"""
-        if not isinstance(value, numbers.Number):
-            raise AssertionError(f"""{E_TYPE}| The parameter "{parameter_name}" must be numerical, found "{type(value)}".""")
-
-        if value < min_value:
-            raise AssertionError(f"""{E_MIN_V}| The parameter "{parameter_name}" must have a minimum value of {min_value}, found "{value}".""")
-
-    return value
-
-
-def validate_element_type(actual_values: Iterable[Any], name, expected_type):
-    validate_type(actual_values, "actual_values", Iterable)
-    for i, actual_value in enumerate(actual_values):
-        msg = f"""Expected element {i} of "{name}" to be of type {expected_type}, found {type(actual_value)}"""
-        assert isinstance(actual_value, expected_type), msg
 
 
 def clean_string(value, replacement: str = "_") -> str:

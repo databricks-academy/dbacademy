@@ -1,24 +1,29 @@
-from typing import Any, Type
-import time
+__all__ = ["Workspace", "Workspaces"]
 
-from dbacademy.common import overrides
-from dbacademy.clients.dougrest.accounts.crud import AccountsCRUD, IfNotExists, IfExists
 from dbacademy.clients.dougrest.client import DatabricksApi, DatabricksApiException
-from dbacademy.clients.rest.common import HttpMethod, HttpReturnType, HttpStatusCodes
+
+from typing import Any, Type
+from dbacademy.common import overrides
+from dbacademy.clients.rest.common import HttpMethod, HttpReturnType, HttpStatusCodes, IfExists, IfNotExists
+from dbacademy.clients.dougrest.accounts.crud import AccountsCRUD
 
 
 class Workspace(DatabricksApi):
-    def __init__(self, data_dict, accounts_api):
+    from dbacademy.clients.dougrest.accounts import AccountsApi
+
+    def __init__(self, data_dict, accounts_api: AccountsApi):
         hostname = data_dict.get("deployment_name")
         auth = accounts_api.session.headers["Authorization"]
         self.accounts = accounts_api
-        self.user = accounts_api.user
+
         super().__init__(hostname + ".cloud.databricks.com",
-                         user=self.user,
+                         username=accounts_api.username,
                          authorization_header=auth)
         self.update(data_dict)
 
     def wait_until_ready(self, timeout_seconds=30 * 60):
+        import time
+
         start = time.time()
         while self["workspace_status"] == "PROVISIONING":
             workspace_id = self["workspace_id"]
@@ -30,6 +35,8 @@ class Workspace(DatabricksApi):
                 time.sleep(15)
 
     def wait_until_gone(self, timeout_seconds=30*60):
+        import time
+
         workspace_id = self["workspace_id"]
         start = time.time()
         while True:
@@ -40,18 +47,24 @@ class Workspace(DatabricksApi):
             time.sleep(15)
 
     @overrides
-    def api(self, _http_method: HttpMethod, _endpoint_path: str, _data: dict = None, *,
-            _expected: HttpStatusCodes = None, _result_type: Type[HttpReturnType] = dict,
-            _base_url: str = None, **data: Any) -> HttpReturnType:
+    def api(self,
+            _http_method: HttpMethod,
+            _endpoint_path: str,
+            _data: dict = None, *,
+            _expected: HttpStatusCodes = None,
+            _result_type: Type[HttpReturnType] = dict,
+            _base_url: str = None,
+            **data: Any) -> HttpReturnType:
+
         self.wait_until_ready()
         try:
             return super().api(_http_method, _endpoint_path, _data,
                                _expected=_expected, _result_type=_result_type,
                                _base_url=_base_url, **data)
         except DatabricksApiException as e:
-            if e.http_code == 401 and self.user is not None:
+            if e.http_code == 401 and self.username is not None:
                 try:
-                    self.add_as_admin(self.user)
+                    self.add_as_admin(self.username)
                 except DatabricksApiException:
                     raise e
                 return super().api(_http_method, _endpoint_path, _data,

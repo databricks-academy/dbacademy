@@ -1,10 +1,9 @@
-from typing import Dict, Any, List, Callable, cast, Optional
+__all__ = ["Commands", "scan_workspaces", "find_workspace"]
 
+from typing import Dict, Any, List, Callable, cast, Optional
 from dbacademy.clients.dougrest import DatabricksApi
 from dbacademy.clients.dougrest.accounts.workspaces import Workspace
 from dbacademy.clients.rest.common import DatabricksApiException
-
-__all__ = ["Commands", "scan_workspaces", "find_workspace"]
 
 
 class Commands(object):
@@ -14,7 +13,7 @@ class Commands(object):
         from urllib.parse import urlparse
         from dns.resolver import resolve
         import re
-        hostname = urlparse(ws.url).netloc
+        hostname = urlparse(ws.endpoint).netloc
         control_plane = resolve(hostname, 'CNAME')[0].to_text()
         region = re.search("^[^-.]*", control_plane)[0]
         return region
@@ -111,10 +110,10 @@ class Commands(object):
 
     @staticmethod
     def warehouses_create_shared(ws: Workspace):
-        from dbacademy.dbrest import DBAcademyRestClient
+        from dbacademy.clients import databricks
         from dbacademy.dbhelper.warehouses_helper_class import WarehousesHelper
         endpoints = ws.sql.warehouses.list()
-        client = DBAcademyRestClient(endpoint=ws.url[:-len("/api/")], authorization_header=ws.authorization_header)
+        client = databricks.from_auth_header(endpoint=ws.endpoint[:-len("/api/")], authorization_header=ws.authorization_header)
         if not endpoints:
             WarehousesHelper.create_sql_warehouse(
                 client=client,
@@ -291,15 +290,15 @@ class Commands(object):
         results = []
         page_token = ""
         while True:
-            response = ws.api("GET", "2.0/pipelines", page_token=page_token)
+            response = ws.api("GET", "/api/2.0/pipelines", page_token=page_token)
             for pipe in response.get("statuses", {}):
                 if pipe["state"] == "IDLE":
                     continue
-                pipe = ws.api("GET", f"2.0/pipelines/{pipe['pipeline_id']}")
+                pipe = ws.api("GET", f"/api/2.0/pipelines/{pipe['pipeline_id']}")
                 if pipe["spec"]["continuous"]:
                     print("CONTINUOUS", pipe['pipeline_id'])
                     pipe["spec"]["continuous"] = False
-                    ws.api("PUT", f"2.0/pipelines/{pipe['pipeline_id']}", pipe["spec"])
+                    ws.api("PUT", f"/api/2.0/pipelines/{pipe['pipeline_id']}", pipe["spec"])
                     results.append({"pipeline": pipe["name"], "action": "Cancel continuous"})
             if "next_page_token" in response:
                 page_token = response["next_page_token"]
@@ -309,9 +308,9 @@ class Commands(object):
             if cluster.get("cluster_source") in ["PIPELINE", "PIPELINE_MAINTENANCE"] and cluster.get(
                     "cluster_name").startswith("dlt-execution-"):
                 pipeline_id = cluster["cluster_name"][len("dlt-execution-"):]
-                pipeline = ws.api("GET", f"2.0/pipelines/{pipeline_id}")
+                pipeline = ws.api("GET", f"/api/2.0/pipelines/{pipeline_id}")
                 if "latest_updates" in pipeline:
-                    lastrun_str = ws.api("GET", f"2.0/pipelines/{pipeline_id}").get("latest_updates", [{}])[
+                    lastrun_str = ws.api("GET", f"/api/2.0/pipelines/{pipeline_id}").get("latest_updates", [{}])[
                         0].get("creation_time")
                     lastrun = dp.parse(lastrun_str).timestamp() if lastrun_str else None
                 else:
@@ -325,9 +324,9 @@ class Commands(object):
     def models_stop(ws: Workspace):
         """Undeploy any ML Models being served"""
         results = []
-        model_endpoints = ws.api("GET", "2.0/preview/mlflow/endpoints/list").get("endpoints", [])
+        model_endpoints = ws.api("GET", "/api/2.0/preview/mlflow/endpoints/list").get("endpoints", [])
         for ep in model_endpoints:
-            ws.api("POST", "2.0/preview/mlflow/endpoints/disable", _data=ep)
+            ws.api("POST", "/api/2.0/preview/mlflow/endpoints/disable", _data=ep)
             results.append(ep)
         return results
 
@@ -581,7 +580,7 @@ class Commands(object):
     @staticmethod
     def _cloud_specific_attributes(ws: Workspace):
         # Cloud specific values
-        if ".cloud.databricks.com" in ws.url:
+        if ".cloud.databricks.com" in ws.endpoint:
             cloud_attributes = {
                 "node_type_id": "i3.xlarge",
                 "aws_attributes": {
@@ -590,7 +589,7 @@ class Commands(object):
                     "spot_bid_price_percent": 100
                 },
             }
-        elif ".gcp.databricks.com" in ws.url:
+        elif ".gcp.databricks.com" in ws.endpoint:
             cloud_attributes = {
                 "node_type_id": "n1-highmem-4",
                 "gcp_attributes": {
@@ -598,7 +597,7 @@ class Commands(object):
                     "availability": "PREEMPTIBLE_WITH_FALLBACK_GCP",
                 },
             }
-        elif ".azuredatabricks.net" in ws.url:
+        elif ".azuredatabricks.net" in ws.endpoint:
             cloud_attributes = {
                 "node_type_id": "Standard_DS3_v2",
                 "azure_attributes": {
@@ -627,7 +626,7 @@ class Commands(object):
         spark_version = spark_version or "11.3.x-cpu-ml-scala2.12"
 
         import re
-        workspace_hostname = re.match("https://([^/]+)/api/", ws.url)[1]
+        workspace_hostname = re.match("https://([^/]+)/api/", ws.endpoint)[1]
 
         if datasets is None:
             datasets = list()
@@ -705,13 +704,13 @@ class Commands(object):
         if runs:
             run_id = runs[0]["run_id"]
         else:
-            response = ws.api("POST", "/2.1/jobs/run-now", {"job_id": job_id})
+            response = ws.api("POST", "/api/2.1/jobs/run-now", {"job_id": job_id})
             run_id = response["run_id"]
 
         # Poll for job completion
         from time import sleep
         while True:
-            response = ws.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
+            response = ws.api("GET", f"/api/2.1/jobs/runs/get?run_id={run_id}")
             life_cycle_state = response.get("state").get("life_cycle_state")
             if life_cycle_state not in ["PENDING", "RUNNING", "TERMINATING"]:
                 result = response.get("state").get("result_state")
@@ -730,7 +729,7 @@ class Commands(object):
                 return "No Workspace-Setup found."
 
             import re
-            workspace_hostname = re.match("https://([^/]+)/api/", ws.url)[1]
+            workspace_hostname = re.match("https://([^/]+)/api/", ws.endpoint)[1]
 
             # Spec for the job to run
             if all_users:
@@ -802,7 +801,7 @@ class Commands(object):
             if runs:
                 run_id = runs[0]["run_id"]
             else:
-                response = ws.api("POST", "/2.1/jobs/run-now", {"job_id": job_id})
+                response = ws.api("POST", "/api/2.1/jobs/run-now", {"job_id": job_id})
                 run_id = response["run_id"]
 
             # Poll for job completion
@@ -813,7 +812,7 @@ class Commands(object):
                 pass
 
             # while True:
-            #     response = workspace.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
+            #     response = workspace.api("GET", f"/api/2.1/jobs/runs/get?run_id={run_id}")
             #     if response["state"]["life_cycle_state"] not in ["PENDING", "RUNNING", "TERMINATING"]:
             #         result = response["state"]["result_state"]
             #         return result
@@ -825,7 +824,7 @@ class Commands(object):
         import time
 
         wait = 60  # seconds
-        response = ws.api("GET", f"/2.1/jobs/runs/get?run_id={run_id}")
+        response = ws.api("GET", f"/api/2.1/jobs/runs/get?run_id={run_id}")
         state = response["state"]["life_cycle_state"]
         job_id = response.get("job_id", 0)
 
@@ -845,7 +844,7 @@ class Commands(object):
     def policies_create(cluster_spec: Dict, event: Dict):
         def do_policies_create(ws: Workspace):
             import re
-            workspace_hostname = re.match(r"^https://([^/]+)/.*$", ws.url)[1]
+            workspace_hostname = re.match(r"^https://([^/]+)/.*$", ws.endpoint)[1]
             machine_type = cluster_spec["node_type_id"]
             autotermination = cluster_spec["autotermination_minutes"]
             spark_version = cluster_spec["spark_version"]
@@ -868,7 +867,7 @@ class Commands(object):
 
             instance_pool = ws.pools.get_by_name(instance_pool_name, if_not_exists="ignore")
             if not instance_pool:
-                instance_pool = ws.api("POST", "2.0/instance-pools/create", instance_pool_spec)
+                instance_pool = ws.api("POST", "/api/2.0/instance-pools/create", instance_pool_spec)
                 instance_pool_id = instance_pool["instance_pool_id"]
             else:
                 instance_pool_id = instance_pool["instance_pool_id"]
@@ -1003,7 +1002,7 @@ class Commands(object):
         """Add Doug's Azure Service Principal"""
         client_id = "4d5472a4-eaa9-47bf-8a9f-e8581f865be1"
         try:
-            ws.api("POST", "2.0/preview/scim/v2/ServicePrincipals", {
+            ws.api("POST", "/api/2.0/preview/scim/v2/ServicePrincipals", {
                 "schemas": ["urn:ietf:params:scim:schemas:core:2.0:ServicePrincipal"],
                 "applicationId": client_id,
             })
@@ -1026,7 +1025,7 @@ def find_workspace(workspaces: List[DatabricksApi], *, name: str = None, url: st
     if name:
         return next(w for w in workspaces if w["workspace_name"] == name)
     elif url:
-        return next(w for w in workspaces if url in w.url)
+        return next(w for w in workspaces if url in w.endpoint)
     else:
         raise Exception("getWorkspace: must provide workspace name or url")
 
@@ -1041,7 +1040,7 @@ def scan_workspaces(function: Callable[[Workspace], Any], workspaces: List[Datab
     if name:
         workspaces = (w for w in workspaces if w["workspace_name"] == name)
     elif url:
-        workspaces = (w for w in workspaces if url in w.url)
+        workspaces = (w for w in workspaces if url in w.endpoint)
 
     def check_workspace(ws: Workspace):
         try:
@@ -1088,8 +1087,8 @@ def scan_workspaces(function: Callable[[Workspace], Any], workspaces: List[Datab
             result_field = (("result", ""),)
         workspace_field = (
             ("deployment", r[0]["deployment_name"]),
-            ("workspace", r[0].url[:-4]),
-            ("instructor", r[0].user or "")
+            ("workspace", r[0].endpoint[:-4]),
+            ("instructor", r[0].username or "")
         )
         exception_field = (("exception", str(r[2]) if r[2] else ""),)
         row = OrderedDict(chain(workspace_field, result_field, exception_field))

@@ -32,12 +32,12 @@
 <font color="#000000" face="helvetica, arial"><a name="ArtifactValidator">class <strong>ArtifactValidator</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#ArtifactValidator">ArtifactValidator</a>(*,&nbsp;build_name:&nbsp;str,&nbsp;version:&nbsp;str,&nbsp;core_version:&nbsp;str,&nbsp;client:&nbsp;dbacademy.dbrest.client.DBAcademyRestClient,&nbsp;target_repo_url:&nbsp;str,&nbsp;temp_repo_dir:&nbsp;str,&nbsp;temp_work_dir:&nbsp;str,&nbsp;username:&nbsp;str,&nbsp;translation:&nbsp;dbacademy.dbbuild.publish.publishing_info_class.Translation,&nbsp;i18n:&nbsp;bool,&nbsp;common_language:&nbsp;str)&nbsp;-&amp;gt;&nbsp;None<br>
+<td colspan=2><tt><a href="#ArtifactValidator">ArtifactValidator</a>(*,&nbsp;build_name:&nbsp;str,&nbsp;version:&nbsp;str,&nbsp;core_version:&nbsp;str,&nbsp;client:&nbsp;dbacademy.clients.databricks.DBAcademyRestClient,&nbsp;target_repo_url:&nbsp;str,&nbsp;temp_repo_dir:&nbsp;str,&nbsp;temp_work_dir:&nbsp;str,&nbsp;username:&nbsp;str,&nbsp;translation:&nbsp;dbacademy.dbbuild.publish.publishing_info_class.Translation,&nbsp;i18n:&nbsp;bool,&nbsp;common_language:&nbsp;str)&nbsp;-&amp;gt;&nbsp;None<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="ArtifactValidator-__init__"><strong>__init__</strong></a>(self, *, build_name: str, version: str, core_version: str, client: dbacademy.dbrest.client.DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str, translation: dbacademy.dbbuild.publish.publishing_info_class.Translation, i18n: bool, common_language: str) -&gt; None</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="ArtifactValidator-__init__"><strong>__init__</strong></a>(self, *, build_name: str, version: str, core_version: str, client: dbacademy.clients.databricks.DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str, translation: dbacademy.dbbuild.publish.publishing_info_class.Translation, i18n: bool, common_language: str) -&gt; None</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="ArtifactValidator-validate_publishing_processes"><strong>validate_publishing_processes</strong></a>(self) -&gt; None</dt></dl>
 
@@ -55,16 +55,6 @@ Data descriptors defined here:<br>
 <dl><dt><strong>__weakref__</strong></dt>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
-<hr>
-Data and other attributes defined here:<br>
-<dl><dt><strong>DBAcademyRestClient</strong> = &lt;class 'dbacademy.dbrest.client.DBAcademyRestClient'&gt;<dd><tt>Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.</tt></dl>
-
-<dl><dt><strong>Publisher</strong> = &lt;class 'dbacademy.dbbuild.publish.publisher_class.Publisher'&gt;</dl>
-
-<dl><dt><strong>Translation</strong> = &lt;class 'dbacademy.dbbuild.publish.publishing_info_class.Translation'&gt;</dl>
-
-<dl><dt><strong>Translator</strong> = &lt;class 'dbacademy.dbbuild.publish.translator_class.Translator'&gt;</dl>
-
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
@@ -72,5 +62,5 @@ Data and other attributes defined here:<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>Optional</strong> = typing.Optional</td></tr></table>
+<td width="100%"><strong>__all__</strong> = ['ArtifactValidator']</td></tr></table>
 </body></html>

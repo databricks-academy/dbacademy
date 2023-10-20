@@ -6,7 +6,7 @@ class Groups(ApiContainer):
         self.databricks = databricks
 
     def list(self):
-        return self.databricks.api("GET", "2.0/preview/scim/v2/Groups")["Resources"]
+        return self.databricks.api("GET", "/api/2.0/preview/scim/v2/Groups")["Resources"]
 
     def list_by_name(self):
         return {g["displayName"]: g for g in self.list()}
@@ -29,7 +29,7 @@ class Groups(ApiContainer):
             group_id = self.get(group_name=group_name)["id"]
         else:
             raise Exception("Must provide group, group_id, or group_name")
-        return self.databricks.api("PATCH", f"2.0/preview/scim/v2/Groups/{group_id}", _data={
+        return self.databricks.api("PATCH", f"/api/2.0/preview/scim/v2/Groups/{group_id}", _data={
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
             "Operations": [{"op": "add", "path": "entitlements", "value": [{"value": entitlement}]}]
         })
@@ -43,7 +43,7 @@ class Groups(ApiContainer):
             group_id = self.get(group_name=group_name)["id"]
         else:
             raise Exception("Must provide group, group_id, or group_name")
-        return self.databricks.api("PATCH", f"2.0/preview/scim/v2/Groups/{group_id}", _data={
+        return self.databricks.api("PATCH", f"/api/2.0/preview/scim/v2/Groups/{group_id}", _data={
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
             "Operations": [{
                 "op": "remove",

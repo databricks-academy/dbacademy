@@ -12,14 +12,6 @@
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
-<tr bgcolor="#aa55cc">
-<td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
-    
-<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="time.html">time</a><br>
-</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
-<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
@@ -46,7 +38,7 @@
 <font color="#000000" face="helvetica, arial"><a name="Workspace">class <strong>Workspace</strong></a>(<a href="dbacademy.clients.dougrest.client.html#DatabricksApi">dbacademy.clients.dougrest.client.DatabricksApi</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#Workspace">Workspace</a>(data_dict,&nbsp;accounts_api)<br>
+<td colspan=2><tt><a href="#Workspace">Workspace</a>(data_dict,&nbsp;accounts_api:&nbsp;dbacademy.clients.dougrest.accounts.AccountsApi)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -60,7 +52,7 @@
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="Workspace-__init__"><strong>__init__</strong></a>(self, data_dict, accounts_api)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#Workspace-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="Workspace-__init__"><strong>__init__</strong></a>(self, data_dict, accounts_api: dbacademy.clients.dougrest.accounts.AccountsApi)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#Workspace-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="Workspace-add_as_admin"><strong>add_as_admin</strong></a>(self, username)</dt></dl>
 
@@ -69,7 +61,7 @@ Methods defined here:<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_http_method:&nbsp;'GET',&nbsp;'PUT',&nbsp;'POST',&nbsp;'DELETE',&nbsp;'PATCH',&nbsp;'HEAD',&nbsp;or&nbsp;'OPTIONS'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_endpoint_path:&nbsp;The&nbsp;path&nbsp;to&nbsp;append&nbsp;to&nbsp;the&nbsp;URL&nbsp;for&nbsp;the&nbsp;API&nbsp;endpoint,&nbsp;excluding&nbsp;the&nbsp;leading&nbsp;'/'.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;example:&nbsp;path="2.0/secrets/put"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;example:&nbsp;path="/api/2.0/secrets/put"<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_data:&nbsp;Payload&nbsp;to&nbsp;attach&nbsp;to&nbsp;the&nbsp;HTTP&nbsp;request.&nbsp;&nbsp;GET&nbsp;requests&nbsp;encode&nbsp;as&nbsp;params,&nbsp;all&nbsp;others&nbsp;as&nbsp;json.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_expected:&nbsp;HTTP&nbsp;response&nbsp;status&nbsp;codes&nbsp;to&nbsp;treat&nbsp;as&nbsp;expected&nbsp;rather&nbsp;than&nbsp;as&nbsp;an&nbsp;error.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_result_type:&nbsp;Determines&nbsp;what&nbsp;type&nbsp;of&nbsp;result&nbsp;is&nbsp;returned.&nbsp;&nbsp;It&nbsp;may&nbsp;be&nbsp;any&nbsp;of&nbsp;the&nbsp;following:<br>
@@ -78,7 +70,7 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bytes:&nbsp;Return&nbsp;the&nbsp;body&nbsp;as&nbsp;binary&nbsp;data.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;requests.Response:&nbsp;Return&nbsp;the&nbsp;HTTP&nbsp;response&nbsp;object.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None:&nbsp;Return&nbsp;None.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;_base_url:&nbsp;Overrides&nbsp;self.<strong>url</strong>,&nbsp;allowing&nbsp;alternative&nbsp;URL&nbsp;paths.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_base_url:&nbsp;Overrides&nbsp;self.<strong>endpoint</strong>,&nbsp;allowing&nbsp;alternative&nbsp;URL&nbsp;paths.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;**data:&nbsp;Any&nbsp;kwargs&nbsp;are&nbsp;appended&nbsp;to&nbsp;the&nbsp;_data&nbsp;payload.&nbsp;&nbsp;Values&nbsp;here&nbsp;take&nbsp;priority&nbsp;over&nbsp;values<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specified&nbsp;in&nbsp;_data.<br>
 &nbsp;<br>
@@ -91,6 +83,10 @@ Raises:<br>
 <dl><dt><a name="Workspace-wait_until_gone"><strong>wait_until_gone</strong></a>(self, timeout_seconds=1800)</dt></dl>
 
 <dl><dt><a name="Workspace-wait_until_ready"><strong>wait_until_ready</strong></a>(self, timeout_seconds=1800)</dt></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>AccountsApi</strong> = &lt;class 'dbacademy.clients.dougrest.accounts.AccountsApi'&gt;</dl>
 
 <hr>
 Data descriptors inherited from <a href="dbacademy.clients.dougrest.client.html#DatabricksApi">dbacademy.clients.dougrest.client.DatabricksApi</a>:<br>
@@ -189,16 +185,30 @@ Data and other attributes inherited from <a href="builtins.html#dict">builtins.d
 <dl><dt><strong>__hash__</strong> = None</dl>
 
 <hr>
+Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
+<dl><dt><a name="Workspace-vprint"><strong>vprint</strong></a>(self, what)</dt></dl>
+
+<hr>
+Readonly properties inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
+<dl><dt><strong>endpoint</strong></dt>
+</dl>
+<dl><dt><strong>error_handler</strong></dt>
+</dl>
+<dl><dt><strong>password</strong></dt>
+</dl>
+<dl><dt><strong>throttle_seconds</strong></dt>
+</dl>
+<dl><dt><strong>username</strong></dt>
+</dl>
+<hr>
 Data and other attributes inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
-<dl><dt><strong>__annotations__</strong> = {'dns_retry': 'bool', 'dns_verify': 'bool', 'trace': 'bool', 'url': 'str'}</dl>
+<dl><dt><strong>__annotations__</strong> = {'dns_retry': 'bool', 'dns_verify': 'bool', 'trace': 'bool'}</dl>
 
 <dl><dt><strong>dns_retry</strong> = False</dl>
 
 <dl><dt><strong>dns_verify</strong> = True</dl>
 
 <dl><dt><strong>trace</strong> = False</dl>
-
-<dl><dt><strong>url</strong> = None</dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
@@ -411,11 +421,5 @@ Data and other attributes inherited from <a href="dbacademy.clients.rest.common.
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>Any</strong> = typing.Any<br>
-<strong>HttpMethod</strong> = typing.Literal['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']<br>
-<strong>HttpReturnType</strong> = ~HttpReturnType<br>
-<strong>HttpStatusCodes</strong> = typing.Union[int, typing.Container[int]]<br>
-<strong>IfExists</strong> = typing.Literal['create', 'error', 'ignore', 'overwrite', 'update']<br>
-<strong>IfNotExists</strong> = typing.Literal['error', 'ignore']<br>
-<strong>Type</strong> = typing.Type</td></tr></table>
+<td width="100%"><strong>__all__</strong> = ['Workspace', 'Workspaces']</td></tr></table>
 </body></html>

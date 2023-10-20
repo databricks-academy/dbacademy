@@ -51,7 +51,7 @@
 <font color="#000000" face="helvetica, arial"><a name="ApiClient">class <strong>ApiClient</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiContainer">ApiContainer</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#ApiClient">ApiClient</a>(url:&nbsp;'str',&nbsp;*,&nbsp;token:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;user:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;password:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;client:&nbsp;'<a href="#ApiClient">ApiClient</a>'&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;'int'&nbsp;=&nbsp;0,&nbsp;verbose:&nbsp;'bool'&nbsp;=&nbsp;False)<br>
+<td colspan=2><tt><a href="#ApiClient">ApiClient</a>(endpoint:&nbsp;'str',&nbsp;*,&nbsp;token:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;username:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;password:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;client:&nbsp;'<a href="#ApiClient">ApiClient</a>'&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;'int'&nbsp;=&nbsp;0,&nbsp;verbose:&nbsp;'bool'&nbsp;=&nbsp;False,&nbsp;error_handler:&nbsp;'Optional[ClientErrorHandler]'&nbsp;=&nbsp;&amp;lt;dbacademy.clients.ClientErrorHandler&nbsp;<a href="builtins.html#object">object</a>&nbsp;at&nbsp;0x000002AE25397E50&amp;gt;)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -62,12 +62,12 @@
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="ApiClient-__init__"><strong>__init__</strong></a>(self, url: 'str', *, token: 'str' = None, user: 'str' = None, password: 'str' = None, authorization_header: 'str' = None, client: 'ApiClient' = None, throttle_seconds: 'int' = 0, verbose: 'bool' = False)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
+<dl><dt><a name="ApiClient-__init__"><strong>__init__</strong></a>(self, endpoint: 'str', *, token: 'str' = None, username: 'str' = None, password: 'str' = None, authorization_header: 'str' = None, client: 'ApiClient' = None, throttle_seconds: 'int' = 0, verbose: 'bool' = False, error_handler: 'Optional[ClientErrorHandler]' = &lt;dbacademy.clients.ClientErrorHandler object at 0x000002AE25397E50&gt;)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
 &nbsp;<br>
 Args:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;url:&nbsp;The&nbsp;common&nbsp;base&nbsp;URL&nbsp;to&nbsp;the&nbsp;API&nbsp;endpoints.&nbsp;&nbsp;e.g.&nbsp;<a href="https://workspace.cloud.databricks.com/API/">https://workspace.cloud.databricks.com/API/</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;endpoint:&nbsp;The&nbsp;common&nbsp;base&nbsp;URL&nbsp;to&nbsp;the&nbsp;API&nbsp;endpoints.&nbsp;&nbsp;e.g.&nbsp;<a href="https://workspace.cloud.databricks.com/API/">https://workspace.cloud.databricks.com/API/</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;token:&nbsp;The&nbsp;API&nbsp;authentication&nbsp;token.&nbsp;&nbsp;Defaults&nbsp;to&nbsp;None.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;user:&nbsp;The&nbsp;authentication&nbsp;username.&nbsp;&nbsp;Defaults&nbsp;to&nbsp;None.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;username:&nbsp;The&nbsp;authentication&nbsp;username.&nbsp;&nbsp;Defaults&nbsp;to&nbsp;None.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;password:&nbsp;The&nbsp;authentication&nbsp;password.&nbsp;&nbsp;Defaults&nbsp;to&nbsp;None.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;authorization_header:&nbsp;The&nbsp;header&nbsp;to&nbsp;use&nbsp;for&nbsp;authentication.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;By&nbsp;default,&nbsp;it's&nbsp;generated&nbsp;from&nbsp;the&nbsp;token&nbsp;or&nbsp;password.<br>
@@ -79,7 +79,7 @@ Args:<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_http_method:&nbsp;'GET',&nbsp;'PUT',&nbsp;'POST',&nbsp;'DELETE',&nbsp;'PATCH',&nbsp;'HEAD',&nbsp;or&nbsp;'OPTIONS'<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_endpoint_path:&nbsp;The&nbsp;path&nbsp;to&nbsp;append&nbsp;to&nbsp;the&nbsp;URL&nbsp;for&nbsp;the&nbsp;API&nbsp;endpoint,&nbsp;excluding&nbsp;the&nbsp;leading&nbsp;'/'.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;example:&nbsp;path="2.0/secrets/put"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;example:&nbsp;path="/api/2.0/secrets/put"<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_data:&nbsp;Payload&nbsp;to&nbsp;attach&nbsp;to&nbsp;the&nbsp;HTTP&nbsp;request.&nbsp;&nbsp;GET&nbsp;requests&nbsp;encode&nbsp;as&nbsp;params,&nbsp;all&nbsp;others&nbsp;as&nbsp;json.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_expected:&nbsp;HTTP&nbsp;response&nbsp;status&nbsp;codes&nbsp;to&nbsp;treat&nbsp;as&nbsp;expected&nbsp;rather&nbsp;than&nbsp;as&nbsp;an&nbsp;error.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_result_type:&nbsp;Determines&nbsp;what&nbsp;type&nbsp;of&nbsp;result&nbsp;is&nbsp;returned.&nbsp;&nbsp;It&nbsp;may&nbsp;be&nbsp;any&nbsp;of&nbsp;the&nbsp;following:<br>
@@ -88,7 +88,7 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bytes:&nbsp;Return&nbsp;the&nbsp;body&nbsp;as&nbsp;binary&nbsp;data.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;requests.Response:&nbsp;Return&nbsp;the&nbsp;HTTP&nbsp;response&nbsp;<a href="builtins.html#object">object</a>.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None:&nbsp;Return&nbsp;None.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;_base_url:&nbsp;Overrides&nbsp;self.<strong>url</strong>,&nbsp;allowing&nbsp;alternative&nbsp;URL&nbsp;paths.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;_base_url:&nbsp;Overrides&nbsp;self.<strong>endpoint</strong>,&nbsp;allowing&nbsp;alternative&nbsp;URL&nbsp;paths.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;**data:&nbsp;Any&nbsp;kwargs&nbsp;are&nbsp;appended&nbsp;to&nbsp;the&nbsp;_data&nbsp;payload.&nbsp;&nbsp;Values&nbsp;here&nbsp;take&nbsp;priority&nbsp;over&nbsp;values<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;specified&nbsp;in&nbsp;_data.<br>
 &nbsp;<br>
@@ -98,17 +98,29 @@ Returns:<br>
 Raises:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;requests.HTTPError:&nbsp;If&nbsp;the&nbsp;API&nbsp;returns&nbsp;an&nbsp;error&nbsp;and&nbsp;on_error='raise'.</tt></dd></dl>
 
+<dl><dt><a name="ApiClient-vprint"><strong>vprint</strong></a>(self, what)</dt></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>endpoint</strong></dt>
+</dl>
+<dl><dt><strong>error_handler</strong></dt>
+</dl>
+<dl><dt><strong>password</strong></dt>
+</dl>
+<dl><dt><strong>throttle_seconds</strong></dt>
+</dl>
+<dl><dt><strong>username</strong></dt>
+</dl>
 <hr>
 Data and other attributes defined here:<br>
-<dl><dt><strong>__annotations__</strong> = {'dns_retry': 'bool', 'dns_verify': 'bool', 'trace': 'bool', 'url': 'str'}</dl>
+<dl><dt><strong>__annotations__</strong> = {'dns_retry': 'bool', 'dns_verify': 'bool', 'trace': 'bool'}</dl>
 
 <dl><dt><strong>dns_retry</strong> = False</dl>
 
 <dl><dt><strong>dns_verify</strong> = True</dl>
 
 <dl><dt><strong>trace</strong> = False</dl>
-
-<dl><dt><strong>url</strong> = None</dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">ApiContainer</a>:<br>

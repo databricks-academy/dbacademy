@@ -1,22 +1,16 @@
 import os
-from dbacademy.clients.airtable import AirTableClient
 from typing import List
-from datetime import datetime
 from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
 from dbacademy_jobs.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
 from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 from dbacademy_jobs.workspaces_3_0.support.workspace_setup_class import WorkspaceSetup
-from dbacademy_jobs.workspaces_3_0.support import read_str, read_int, advertise, from_workspace_url
+from dbacademy_jobs.workspaces_3_0.support import read_str, read_int, advertise
 
 
 CONFIRMATIONS = ["y", "yes", "1", "t", "true"]
 
 AIR_TABLE_TOKEN = os.environ.get("AIR-TABLE-PERSONAL-ACCESS-TOKEN")
 assert AIR_TABLE_TOKEN is not None, f"""The environment variable "AIR-TABLE-PERSONAL-ACCESS-TOKEN" must be specified, not found."""
-BASE_ID = "appNCMjJ2yMKUrTbo"
-TABLE_ID = "tblF3cxlP8gcM9Rqr"
-DELETABLE_VIEW_ID = "viwCW83QNyJlMEMAk"
-air_table_client = AirTableClient(access_token=AIR_TABLE_TOKEN, base_id=BASE_ID, table_id=TABLE_ID)
 
 env_codes = ["PROSVC", "CURR"]
 env_code = read_str(f"""Please select an environment {env_codes}""", env_codes[0]).upper()

@@ -1,16 +1,15 @@
 from __future__ import annotations
 
+__all__ = ["CloudlabsApi", "Tenant"]
+
 from functools import cached_property
 from typing import Dict
-
 from dbacademy.clients.rest.common import ApiClient
-
-__all__ = ["CloudlabsApi", "Tenant"]
 
 
 class Tenant(ApiClient):
     def __init__(self, cloudlabs: CloudlabsApi, tenant: Dict):
-        super().__init__(cloudlabs.url, token=cloudlabs.token)
+        super().__init__(cloudlabs.endpoint, token=cloudlabs.token)
         self.__dict__.update(tenant)
         self.cloudlabs = cloudlabs
         self.name = tenant["Name"]

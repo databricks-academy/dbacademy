@@ -28,9 +28,9 @@ class WorkspaceConfig:
         :param datasets: see the corresponding property
         """
         from dbacademy.dbhelper import WorkspaceHelper
-        from dbacademy import common
+        from dbacademy.common import validate
 
-        self.__max_participants = common.verify_type(int, min_value=0, max_participants=max_participants)
+        self.__max_participants = validate.int_value(min_value=0, max_participants=max_participants)
 
         assert workspace_number is None or type(workspace_number) == int, f"""The parameter "workspace_number" must be None or an integral value, found {type(workspace_number)}."""
         assert workspace_number is None or workspace_number >= 0, f"""The parameter "workspace_number" must be None or greater than zero, found "{workspace_number}"."""
@@ -56,7 +56,7 @@ class WorkspaceConfig:
 
         # assert type(entitlements) == dict, f"""The parameter "entitlements" must be a dictionary value, found {type(entitlements)}."""
         # assert len(entitlements) > 3, f"""The parameter "entitlements" must have a length > 0, found "{username_pattern}"."""
-        self.__entitlements = common.verify_type(dict, non_none=True, entitlements=entitlements)
+        self.__entitlements = validate.dict_value(non_none=True, entitlements=entitlements)
 
         assert type(username_pattern) == str, f"""The parameter "username_pattern" must be a string value, found {type(username_pattern)}."""
         assert len(username_pattern) > 3, f"""The parameter "username_pattern" must have a length > 0, found "{username_pattern}"."""
@@ -110,7 +110,7 @@ class WorkspaceConfig:
 
         # Create the group analyst and instructors
         self.__workspace_group = dict()
-        workspace_group = common.verify_type(dict, non_none=True, workspace_group=workspace_group)
+        workspace_group = validate.dict_value(non_none=True, workspace_group=workspace_group)
 
         # Start by initializing groups as an empty list
         for group_name in workspace_group:

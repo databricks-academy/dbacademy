@@ -6,13 +6,13 @@ class Warehouses(ApiContainer):
         self.databricks = databricks
 
     def get_by_id(self, warehouse_id):
-        return self.databricks.api("GET", f"2.0/sql/warehouses/{warehouse_id}")
+        return self.databricks.api("GET", f"/api/2.0/sql/warehouses/{warehouse_id}")
 
     def get_by_name(self, name):
         return next((ep for ep in self.list() if ep["name"] == name), None)
 
     def list(self):
-        response = self.databricks.api("GET", "2.0/sql/warehouses/")
+        response = self.databricks.api("GET", "/api/2.0/sql/warehouses/")
         return response.get("warehouses", [])
 
     def list_by_name(self):
@@ -34,12 +34,12 @@ class Warehouses(ApiContainer):
         if timeout_minutes and timeout_minutes > 0:
             data["auto_stop_mins"] = timeout_minutes
         data.update(spec)
-        response = self.databricks.api("POST", "2.0/sql/warehouses/", data)
+        response = self.databricks.api("POST", "/api/2.0/sql/warehouses/", data)
         return response["id"]
 
     def edit(self, warehouse):
         warehouse_id = warehouse["id"]
-        response = self.databricks.api("POST", f"2.0/sql/warehouses/{warehouse_id}/edit", warehouse)
+        response = self.databricks.api("POST", f"/api/2.0/sql/warehouses/{warehouse_id}/edit", warehouse)
         return response
 
     # TODO Remove noinspection PyUnusedLocal once tested
@@ -62,17 +62,17 @@ class Warehouses(ApiContainer):
             data["auto_stop_mins"] = timeout_minutes
         if preview_channel:
             data["channel"] = {"name": "CHANNEL_NAME_PREVIEW"}
-        response = self.databricks.api("POST", f"2.0/sql/warehouses/{id}/edit", data)
+        response = self.databricks.api("POST", f"/api/2.0/sql/warehouses/{id}/edit", data)
         return response["id"]
 
     def start(self, warehouse_id):
-        response = self.databricks.api("POST", f"2.0/sql/warehouses/{warehouse_id}/start")
+        response = self.databricks.api("POST", f"/api/2.0/sql/warehouses/{warehouse_id}/start")
         return response
 
     def stop(self, warehouse_id):
-        response = self.databricks.api("POST", f"2.0/sql/warehouses/{warehouse_id}/stop")
+        response = self.databricks.api("POST", f"/api/2.0/sql/warehouses/{warehouse_id}/stop")
         return response
 
     def delete(self, warehouse_id):
-        response = self.databricks.api("DELETE", f"2.0/sql/warehouses/{warehouse_id}")
+        response = self.databricks.api("DELETE", f"/api/2.0/sql/warehouses/{warehouse_id}")
         return response

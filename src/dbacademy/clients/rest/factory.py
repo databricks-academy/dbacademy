@@ -2,9 +2,8 @@ __all__ = ["dbrest_factory", "dougrest_factory"]
 
 from functools import cache
 from typing import Dict, Generic, Type, TypeVar, Union, Optional
-
-from dbacademy.dbrest.client import DBAcademyRestClient
 from dbacademy.clients.dougrest import AccountsApi, DatabricksApi
+from dbacademy.clients.databricks import DBAcademyRestClient
 
 ApiType = TypeVar('ApiType', bound=Union[DatabricksApi, DBAcademyRestClient])
 
@@ -72,22 +71,26 @@ class ApiClientFactory(Generic[ApiType]):
         return url
 
     def token_auth(self, hostname: str, token: str) -> ApiType:
+        from dbacademy.clients import databricks
+
         hostname = ApiClientFactory.extract_hostname(hostname)
         endpoint = f"https://{hostname}"
         if self.api_type == DatabricksApi:
             return DatabricksApi(hostname, token=token)
         elif self.api_type == DBAcademyRestClient:
-            return DBAcademyRestClient(token, endpoint)
+            return databricks.from_token(token, endpoint)
         else:
             raise ValueError(f"Unknown ApiClient class: " + str(ApiType))
 
     def password_auth(self, hostname: str, username: str, password: str) -> ApiType:
+        from dbacademy.clients import databricks
+
         hostname = ApiClientFactory.extract_hostname(hostname)
         endpoint = f"https://{hostname}"
         if self.api_type == DatabricksApi:
-            return DatabricksApi(hostname=hostname, user=username, password=password)
+            return DatabricksApi(hostname=hostname, username=username, password=password)
         elif self.api_type == DBAcademyRestClient:
-            return DBAcademyRestClient(endpoint=endpoint, user=username, password=password)
+            return databricks.from_username(endpoint=endpoint, username=username, password=password)
         else:
             raise ValueError(f"Unknown ApiClient class: " + str(ApiType))
 
@@ -163,7 +166,7 @@ class ApiClientFactory(Generic[ApiType]):
         username = os.getenv(ApiClientFactory.ENV_DATABRICKS_ACCOUNT_NAME)
         password = os.getenv(ApiClientFactory.ENV_DATABRICKS_ACCOUNT_PASS)
         if acct_id and username and password:
-            clients[ApiClientFactory.PROFILE_ENVIRONMENT] = AccountsApi(acct_id, user=username, password=password)
+            clients[ApiClientFactory.PROFILE_ENVIRONMENT] = AccountsApi(acct_id, username=username, password=password)
 
         for path in ('.databrickscfg', '~/.databrickscfg'):
             path = os.path.expanduser(path)
@@ -178,9 +181,9 @@ class ApiClientFactory(Generic[ApiType]):
                     continue
                 section_name = section_name[3:]
                 account_id = section['id']
-                user = section['username']
+                username = section['username']
                 password = section['password']
-                clients[section_name] = AccountsApi(account_id, user=user, password=password)
+                clients[section_name] = AccountsApi(account_id, username=username, password=password)
                 if default is None:
                     default = clients[section_name]
 

@@ -35,7 +35,7 @@ class DBAcademyHelper:
         See also DBAcademyHelper.dprint
         """
         from dbacademy import dbgems
-        from dbacademy.dbrest import DBAcademyRestClient
+        from dbacademy.clients import databricks
         from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
         from dbacademy.dbhelper.dev_helper_class import DevHelper
         from dbacademy.dbhelper.validations.validation_helper_class import ValidationHelper
@@ -59,7 +59,7 @@ class DBAcademyHelper:
         self.naming_params = {"course": self.course_config.course_code}
 
         # The following objects provide advanced support for modifying the learning environment.
-        self.client = DBAcademyRestClient()
+        self.client = databricks.from_workspace()
         self.workspace = WorkspaceHelper(self)
         self.dev = DevHelper(self)
         self.tests = ValidationHelper(self)

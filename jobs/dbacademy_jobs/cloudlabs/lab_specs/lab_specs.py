@@ -2,7 +2,6 @@ import json
 from enum import Enum
 from typing import Dict, Any, Optional
 from dataclasses import dataclass
-from dbacademy.dbrest.client import DBAcademyRestClient
 from dbacademy.common.cloud_class import Cloud
 
 
@@ -89,6 +88,8 @@ class LabSpec:
 
 
 def create_lab(*, lab_specs: Dict[str, LabSpec], global_config: Dict[str, Any], global_cloud_config: Dict[str, Any], cloud: str, i: int, lab_spec_def: Dict[str, Any]):
+    from dbacademy.clients import databricks
+
     base_name = lab_spec_def.get("name")
     assert base_name is not None, f"""The parameter "name" was not found for lab #{i}."""
 
@@ -104,8 +105,7 @@ def create_lab(*, lab_specs: Dict[str, LabSpec], global_config: Dict[str, Any], 
 
     try:
         lab_spec = LabSpec(**definition)
-        lab_spec.api = DBAcademyRestClient(token=lab_spec.token,
-                                           endpoint=lab_spec.url)
+        lab_spec.api = databricks.from_token(token=lab_spec.token, endpoint=lab_spec.url)
         assert name not in lab_specs.keys(), f"""Duplicate lab name, found "{name}" twice."""
         lab_specs[name] = lab_spec
 

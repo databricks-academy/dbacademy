@@ -47,13 +47,13 @@ Static methods defined here:<br>
 
 <dl><dt><a name="ClustersHelper-add_default_policy"><strong>add_default_policy</strong></a>(definition: Dict[str, Any], name: str, value: str)</dt></dl>
 
-<dl><dt><a name="ClustersHelper-create_all_purpose_policy"><strong>create_all_purpose_policy</strong></a>(*, client: dbacademy.dbrest.client.DBAcademyRestClient, instance_pool_id: str, spark_version: str, autotermination_minutes_max: int, autotermination_minutes_default: int) -&gt; None</dt></dl>
+<dl><dt><a name="ClustersHelper-create_all_purpose_policy"><strong>create_all_purpose_policy</strong></a>(*, client: dbacademy.clients.databricks.DBAcademyRestClient, instance_pool_id: str, spark_version: str, autotermination_minutes_max: int, autotermination_minutes_default: int) -&gt; None</dt></dl>
 
-<dl><dt><a name="ClustersHelper-create_dlt_policy"><strong>create_dlt_policy</strong></a>(*, client: dbacademy.dbrest.client.DBAcademyRestClient, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -&gt; None</dt></dl>
+<dl><dt><a name="ClustersHelper-create_dlt_policy"><strong>create_dlt_policy</strong></a>(*, client: dbacademy.clients.databricks.DBAcademyRestClient, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -&gt; None</dt></dl>
 
-<dl><dt><a name="ClustersHelper-create_jobs_policy"><strong>create_jobs_policy</strong></a>(*, client: dbacademy.dbrest.client.DBAcademyRestClient, instance_pool_id: str, spark_version: str) -&gt; None</dt></dl>
+<dl><dt><a name="ClustersHelper-create_jobs_policy"><strong>create_jobs_policy</strong></a>(*, client: dbacademy.clients.databricks.DBAcademyRestClient, instance_pool_id: str, spark_version: str) -&gt; None</dt></dl>
 
-<dl><dt><a name="ClustersHelper-create_named_instance_pool"><strong>create_named_instance_pool</strong></a>(*, client: dbacademy.dbrest.client.DBAcademyRestClient, name, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str, node_type_id: str, preloaded_spark_version: str)</dt></dl>
+<dl><dt><a name="ClustersHelper-create_named_instance_pool"><strong>create_named_instance_pool</strong></a>(*, client: dbacademy.clients.databricks.DBAcademyRestClient, name, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str, node_type_id: str, preloaded_spark_version: str)</dt></dl>
 
 <hr>
 Data descriptors defined here:<br>
@@ -67,7 +67,7 @@ Data descriptors defined here:<br>
 Data and other attributes defined here:<br>
 <dl><dt><strong>DBAcademyHelper</strong> = &lt;class 'dbacademy.dbhelper.dbacademy_helper_class.DBAcademyHelper'&gt;</dl>
 
-<dl><dt><strong>DBAcademyRestClient</strong> = &lt;class 'dbacademy.dbrest.client.DBAcademyRestClient'&gt;<dd><tt>Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.</tt></dl>
+<dl><dt><strong>DBAcademyRestClient</strong> = &lt;class 'dbacademy.clients.databricks.DBAcademyRestClient'&gt;<dd><tt>Databricks&nbsp;Academy&nbsp;REST&nbsp;API&nbsp;client.</tt></dl>
 
 <dl><dt><strong>POLICIES</strong> = ['DBAcademy', 'DBAcademy Jobs', 'DBAcademy DLT']</dl>
 

@@ -1,5 +1,6 @@
-from typing import List, Dict, Any, Union
+__all__ = ["Templates"]
 
+from typing import List, Dict, Any, Union
 from dbacademy.clients.cloudlabs import Tenant
 from dbacademy.clients.rest.common import ApiContainer, DatabricksApiException
 

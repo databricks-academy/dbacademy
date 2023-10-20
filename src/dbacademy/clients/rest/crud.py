@@ -1,9 +1,8 @@
-from abc import ABCMeta, abstractmethod
-from typing import List
-
-from dbacademy.clients.rest.common import *
-
 __all__ = ["CRUD"]
+
+from typing import List
+from abc import ABCMeta, abstractmethod
+from dbacademy.clients.rest.common import *
 
 
 class CRUD(ApiContainer, metaclass=ABCMeta):

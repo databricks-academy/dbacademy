@@ -2,7 +2,7 @@ from typing import TypeVar, Union, Dict, Any
 
 
 class ClustersHelper:
-    from dbacademy.dbrest import DBAcademyRestClient
+    from dbacademy.clients.databricks import DBAcademyRestClient
     from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
     from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
 

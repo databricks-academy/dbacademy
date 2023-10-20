@@ -1,47 +1,64 @@
 from __future__ import annotations
 
-from dbacademy.clients.dougrest.accounts.budgets import Budgets
-from dbacademy.clients.dougrest.accounts.credentials import Credentials
-from dbacademy.clients.dougrest.accounts.keys import CustomerManagedKeys
-from dbacademy.clients.dougrest.accounts.logs import LogDeliveryConfigurations
-from dbacademy.clients.dougrest.accounts.metastores import Metastores
-from dbacademy.clients.dougrest.accounts.network import NetworkConfigurations
-from dbacademy.clients.dougrest.accounts.private_access import PrivateAccessSettings
-from dbacademy.clients.dougrest.accounts.storage import StorageConfigurations
-from dbacademy.clients.dougrest.accounts.users import Users
-from dbacademy.clients.dougrest.accounts.vpc import VpcEndpoints
-from dbacademy.clients.dougrest.accounts.workspaces import Workspaces
-from dbacademy.clients.rest.common import *
-
 __all__ = ["AccountsApi"]
+
+from typing import Union
+from dbacademy.clients.rest.common import ApiClient
+from dbacademy.common import Cloud
 
 
 class AccountsApi(ApiClient):
 
     def __init__(self, account_id: str, *,
-                 user: str = None, password: str = None,
+                 username: str = None, password: str = None,
                  token: str = None,
-                 cloud: Cloud = "AWS") -> None:
-        if cloud == "AWS":
+                 cloud: Union[str, Cloud] = Cloud.AWS) -> None:
+
+        if type(cloud) is str:
+            cloud = Cloud[cloud]
+
+        if cloud == Cloud.AWS:
             url = f'https://accounts.cloud.databricks.com/api/2.0/accounts/{account_id}'
-        elif cloud == "GCP":
+        elif cloud == Cloud.GCP:
             url = f'https://accounts.gcp.databricks.com/api/2.0/accounts/{account_id}'
-        elif cloud == "MSA":
+        elif cloud == Cloud.MSA:
             url = f'https://accounts.azuredatabricks.net/api/2.0/accounts/{account_id}'
         else:
             raise ValueError(f"Cloud must be AWS, GCP, or MSA.  Found: {cloud!r}")
-        super().__init__(url, user=user, password=password, token=token)
+        super().__init__(url, username=username, password=password, token=token)
         self.session.headers["X-Databricks-Account-Console-API-Version"] = "2.0"
-        self.user = user
+
         self.account_id = account_id
+
+        from dbacademy.clients.dougrest.accounts.budgets import Budgets
         self.budgets = Budgets(self)
+
+        from dbacademy.clients.dougrest.accounts.credentials import Credentials
         self.credentials = Credentials(self)
+
+        from dbacademy.clients.dougrest.accounts.keys import CustomerManagedKeys
         self.keys = CustomerManagedKeys(self)
+
+        from dbacademy.clients.dougrest.accounts.logs import LogDeliveryConfigurations
         self.logs = LogDeliveryConfigurations(self)
+
+        from dbacademy.clients.dougrest.accounts.metastores import Metastores
         self.metastores = Metastores(self)
+
+        from dbacademy.clients.dougrest.accounts.network import NetworkConfigurations
         self.networks = NetworkConfigurations(self)
+
+        from dbacademy.clients.dougrest.accounts.private_access import PrivateAccessSettings
         self.private_access = PrivateAccessSettings(self)
+
+        from dbacademy.clients.dougrest.accounts.storage import StorageConfigurations
         self.storage = StorageConfigurations(self)
+
+        from dbacademy.clients.dougrest.accounts.users import Users
         self.users = Users(self)
+
+        from dbacademy.clients.dougrest.accounts.vpc import VpcEndpoints
         self.vpc = VpcEndpoints(self)
+
+        from dbacademy.clients.dougrest.accounts.workspaces import Workspaces
         self.workspaces = Workspaces(self)

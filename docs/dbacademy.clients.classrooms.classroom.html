@@ -12,6 +12,14 @@
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="re.html">re</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
@@ -91,110 +99,12 @@ Data and other attributes defined here:<br>
 
 <dl><dt><strong>invalid_char_regex</strong> = re.compile('\\W')</dl>
 
-<dl><dt><strong>re</strong> = &lt;module 're' from 'C:\\Users\\JacobParr\\.conda\\envs\\dbacademy\\lib\\re.py'&gt;<dd><tt>Support&nbsp;for&nbsp;regular&nbsp;expressions&nbsp;(RE).<br>
-&nbsp;<br>
-This&nbsp;module&nbsp;provides&nbsp;regular&nbsp;expression&nbsp;matching&nbsp;operations&nbsp;similar&nbsp;to<br>
-those&nbsp;found&nbsp;in&nbsp;Perl.&nbsp;&nbsp;It&nbsp;supports&nbsp;both&nbsp;8-bit&nbsp;and&nbsp;Unicode&nbsp;strings;&nbsp;both<br>
-the&nbsp;pattern&nbsp;and&nbsp;the&nbsp;strings&nbsp;being&nbsp;processed&nbsp;can&nbsp;contain&nbsp;null&nbsp;bytes&nbsp;and<br>
-characters&nbsp;outside&nbsp;the&nbsp;US&nbsp;ASCII&nbsp;range.<br>
-&nbsp;<br>
-Regular&nbsp;expressions&nbsp;can&nbsp;contain&nbsp;both&nbsp;special&nbsp;and&nbsp;ordinary&nbsp;characters.<br>
-Most&nbsp;ordinary&nbsp;characters,&nbsp;like&nbsp;"A",&nbsp;"a",&nbsp;or&nbsp;"0",&nbsp;are&nbsp;the&nbsp;simplest<br>
-regular&nbsp;expressions;&nbsp;they&nbsp;simply&nbsp;match&nbsp;themselves.&nbsp;&nbsp;You&nbsp;can<br>
-concatenate&nbsp;ordinary&nbsp;characters,&nbsp;so&nbsp;last&nbsp;matches&nbsp;the&nbsp;string&nbsp;'last'.<br>
-&nbsp;<br>
-The&nbsp;special&nbsp;characters&nbsp;are:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;"."&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;any&nbsp;character&nbsp;except&nbsp;a&nbsp;newline.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;"^"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;string.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;"$"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;string&nbsp;or&nbsp;just&nbsp;before&nbsp;the&nbsp;newline&nbsp;at<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;string.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;"*"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;0&nbsp;or&nbsp;more&nbsp;(greedy)&nbsp;repetitions&nbsp;of&nbsp;the&nbsp;preceding&nbsp;RE.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Greedy&nbsp;means&nbsp;that&nbsp;it&nbsp;will&nbsp;match&nbsp;as&nbsp;many&nbsp;repetitions&nbsp;as&nbsp;possible.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;"+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;1&nbsp;or&nbsp;more&nbsp;(greedy)&nbsp;repetitions&nbsp;of&nbsp;the&nbsp;preceding&nbsp;RE.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;"?"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;0&nbsp;or&nbsp;1&nbsp;(greedy)&nbsp;of&nbsp;the&nbsp;preceding&nbsp;RE.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;*?,+?,??&nbsp;Non-greedy&nbsp;versions&nbsp;of&nbsp;the&nbsp;previous&nbsp;three&nbsp;special&nbsp;characters.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;{m,n}&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;from&nbsp;m&nbsp;to&nbsp;n&nbsp;repetitions&nbsp;of&nbsp;the&nbsp;preceding&nbsp;RE.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;{m,n}?&nbsp;&nbsp;&nbsp;Non-greedy&nbsp;version&nbsp;of&nbsp;the&nbsp;above.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;"\\"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Either&nbsp;escapes&nbsp;special&nbsp;characters&nbsp;or&nbsp;signals&nbsp;a&nbsp;special&nbsp;sequence.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;[]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicates&nbsp;a&nbsp;set&nbsp;of&nbsp;characters.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;"^"&nbsp;as&nbsp;the&nbsp;first&nbsp;character&nbsp;indicates&nbsp;a&nbsp;complementing&nbsp;set.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;"|"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A|B,&nbsp;creates&nbsp;an&nbsp;RE&nbsp;that&nbsp;will&nbsp;match&nbsp;either&nbsp;A&nbsp;or&nbsp;B.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(...)&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;RE&nbsp;inside&nbsp;the&nbsp;parentheses.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;contents&nbsp;can&nbsp;be&nbsp;retrieved&nbsp;or&nbsp;matched&nbsp;later&nbsp;in&nbsp;the&nbsp;string.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(?aiLmsux)&nbsp;The&nbsp;letters&nbsp;set&nbsp;the&nbsp;corresponding&nbsp;flags&nbsp;defined&nbsp;below.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(?:...)&nbsp;&nbsp;Non-grouping&nbsp;version&nbsp;of&nbsp;regular&nbsp;parentheses.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(?P&lt;name&gt;...)&nbsp;The&nbsp;substring&nbsp;matched&nbsp;by&nbsp;the&nbsp;group&nbsp;is&nbsp;accessible&nbsp;by&nbsp;name.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(?P=name)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;text&nbsp;matched&nbsp;earlier&nbsp;by&nbsp;the&nbsp;group&nbsp;named&nbsp;name.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(?#...)&nbsp;&nbsp;A&nbsp;comment;&nbsp;ignored.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(?=...)&nbsp;&nbsp;Matches&nbsp;if&nbsp;...&nbsp;matches&nbsp;next,&nbsp;but&nbsp;doesn't&nbsp;consume&nbsp;the&nbsp;string.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(?!...)&nbsp;&nbsp;Matches&nbsp;if&nbsp;...&nbsp;doesn't&nbsp;match&nbsp;next.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(?&lt;=...)&nbsp;Matches&nbsp;if&nbsp;preceded&nbsp;by&nbsp;...&nbsp;(must&nbsp;be&nbsp;fixed&nbsp;length).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(?&lt;!...)&nbsp;Matches&nbsp;if&nbsp;not&nbsp;preceded&nbsp;by&nbsp;...&nbsp;(must&nbsp;be&nbsp;fixed&nbsp;length).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(?(id/name)yes|no)&nbsp;Matches&nbsp;yes&nbsp;pattern&nbsp;if&nbsp;the&nbsp;group&nbsp;with&nbsp;id/name&nbsp;matched,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;(optional)&nbsp;no&nbsp;pattern&nbsp;otherwise.<br>
-&nbsp;<br>
-The&nbsp;special&nbsp;sequences&nbsp;consist&nbsp;of&nbsp;"\\"&nbsp;and&nbsp;a&nbsp;character&nbsp;from&nbsp;the&nbsp;list<br>
-below.&nbsp;&nbsp;If&nbsp;the&nbsp;ordinary&nbsp;character&nbsp;is&nbsp;not&nbsp;on&nbsp;the&nbsp;list,&nbsp;then&nbsp;the<br>
-resulting&nbsp;RE&nbsp;will&nbsp;match&nbsp;the&nbsp;second&nbsp;character.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;\number&nbsp;&nbsp;Matches&nbsp;the&nbsp;contents&nbsp;of&nbsp;the&nbsp;group&nbsp;of&nbsp;the&nbsp;same&nbsp;number.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;\A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;only&nbsp;at&nbsp;the&nbsp;start&nbsp;of&nbsp;the&nbsp;string.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;\Z&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;only&nbsp;at&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;string.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;\b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;empty&nbsp;string,&nbsp;but&nbsp;only&nbsp;at&nbsp;the&nbsp;start&nbsp;or&nbsp;end&nbsp;of&nbsp;a&nbsp;word.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;\B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;empty&nbsp;string,&nbsp;but&nbsp;not&nbsp;at&nbsp;the&nbsp;start&nbsp;or&nbsp;end&nbsp;of&nbsp;a&nbsp;word.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;\d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;any&nbsp;decimal&nbsp;digit;&nbsp;equivalent&nbsp;to&nbsp;the&nbsp;set&nbsp;[0-9]&nbsp;in<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bytes&nbsp;patterns&nbsp;or&nbsp;string&nbsp;patterns&nbsp;with&nbsp;the&nbsp;ASCII&nbsp;flag.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In&nbsp;string&nbsp;patterns&nbsp;without&nbsp;the&nbsp;ASCII&nbsp;flag,&nbsp;it&nbsp;will&nbsp;match&nbsp;the&nbsp;whole<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;range&nbsp;of&nbsp;Unicode&nbsp;digits.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;\D&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;any&nbsp;non-digit&nbsp;character;&nbsp;equivalent&nbsp;to&nbsp;[^\d].<br>
-&nbsp;&nbsp;&nbsp;&nbsp;\s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;any&nbsp;whitespace&nbsp;character;&nbsp;equivalent&nbsp;to&nbsp;[&nbsp;\t\n\r\f\v]&nbsp;in<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bytes&nbsp;patterns&nbsp;or&nbsp;string&nbsp;patterns&nbsp;with&nbsp;the&nbsp;ASCII&nbsp;flag.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In&nbsp;string&nbsp;patterns&nbsp;without&nbsp;the&nbsp;ASCII&nbsp;flag,&nbsp;it&nbsp;will&nbsp;match&nbsp;the&nbsp;whole<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;range&nbsp;of&nbsp;Unicode&nbsp;whitespace&nbsp;characters.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;\S&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;any&nbsp;non-whitespace&nbsp;character;&nbsp;equivalent&nbsp;to&nbsp;[^\s].<br>
-&nbsp;&nbsp;&nbsp;&nbsp;\w&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;any&nbsp;alphanumeric&nbsp;character;&nbsp;equivalent&nbsp;to&nbsp;[a-zA-Z0-9_]<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;in&nbsp;bytes&nbsp;patterns&nbsp;or&nbsp;string&nbsp;patterns&nbsp;with&nbsp;the&nbsp;ASCII&nbsp;flag.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In&nbsp;string&nbsp;patterns&nbsp;without&nbsp;the&nbsp;ASCII&nbsp;flag,&nbsp;it&nbsp;will&nbsp;match&nbsp;the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;range&nbsp;of&nbsp;Unicode&nbsp;alphanumeric&nbsp;characters&nbsp;(letters&nbsp;plus&nbsp;digits<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;plus&nbsp;underscore).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;With&nbsp;LOCALE,&nbsp;it&nbsp;will&nbsp;match&nbsp;the&nbsp;set&nbsp;[0-9_]&nbsp;plus&nbsp;characters&nbsp;defined<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;letters&nbsp;for&nbsp;the&nbsp;current&nbsp;locale.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;\W&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;the&nbsp;complement&nbsp;of&nbsp;\w.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;\\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Matches&nbsp;a&nbsp;literal&nbsp;backslash.<br>
-&nbsp;<br>
-This&nbsp;module&nbsp;exports&nbsp;the&nbsp;following&nbsp;functions:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;match&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Match&nbsp;a&nbsp;regular&nbsp;expression&nbsp;pattern&nbsp;to&nbsp;the&nbsp;beginning&nbsp;of&nbsp;a&nbsp;string.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;fullmatch&nbsp;Match&nbsp;a&nbsp;regular&nbsp;expression&nbsp;pattern&nbsp;to&nbsp;all&nbsp;of&nbsp;a&nbsp;string.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;search&nbsp;&nbsp;&nbsp;&nbsp;Search&nbsp;a&nbsp;string&nbsp;for&nbsp;the&nbsp;presence&nbsp;of&nbsp;a&nbsp;pattern.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;sub&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Substitute&nbsp;occurrences&nbsp;of&nbsp;a&nbsp;pattern&nbsp;found&nbsp;in&nbsp;a&nbsp;string.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;subn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Same&nbsp;as&nbsp;sub,&nbsp;but&nbsp;also&nbsp;return&nbsp;the&nbsp;number&nbsp;of&nbsp;substitutions&nbsp;made.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;split&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Split&nbsp;a&nbsp;string&nbsp;by&nbsp;the&nbsp;occurrences&nbsp;of&nbsp;a&nbsp;pattern.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;findall&nbsp;&nbsp;&nbsp;Find&nbsp;all&nbsp;occurrences&nbsp;of&nbsp;a&nbsp;pattern&nbsp;in&nbsp;a&nbsp;string.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;finditer&nbsp;&nbsp;Return&nbsp;an&nbsp;iterator&nbsp;yielding&nbsp;a&nbsp;Match&nbsp;<a href="builtins.html#object">object</a>&nbsp;for&nbsp;each&nbsp;match.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;compile&nbsp;&nbsp;&nbsp;Compile&nbsp;a&nbsp;pattern&nbsp;into&nbsp;a&nbsp;Pattern&nbsp;<a href="builtins.html#object">object</a>.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;purge&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clear&nbsp;the&nbsp;regular&nbsp;expression&nbsp;cache.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;escape&nbsp;&nbsp;&nbsp;&nbsp;Backslash&nbsp;all&nbsp;non-alphanumerics&nbsp;in&nbsp;a&nbsp;string.<br>
-&nbsp;<br>
-Each&nbsp;function&nbsp;other&nbsp;than&nbsp;purge&nbsp;and&nbsp;escape&nbsp;can&nbsp;take&nbsp;an&nbsp;optional&nbsp;'flags'&nbsp;argument<br>
-consisting&nbsp;of&nbsp;one&nbsp;or&nbsp;more&nbsp;of&nbsp;the&nbsp;following&nbsp;module&nbsp;constants,&nbsp;joined&nbsp;by&nbsp;"|".<br>
-A,&nbsp;L,&nbsp;and&nbsp;U&nbsp;are&nbsp;mutually&nbsp;exclusive.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;ASCII&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;string&nbsp;patterns,&nbsp;make&nbsp;\w,&nbsp;\W,&nbsp;\b,&nbsp;\B,&nbsp;\d,&nbsp;\D<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;match&nbsp;the&nbsp;corresponding&nbsp;ASCII&nbsp;character&nbsp;categories<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(rather&nbsp;than&nbsp;the&nbsp;whole&nbsp;Unicode&nbsp;categories,&nbsp;which&nbsp;is&nbsp;the<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;bytes&nbsp;patterns,&nbsp;this&nbsp;flag&nbsp;is&nbsp;the&nbsp;only&nbsp;available<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;behaviour&nbsp;and&nbsp;needn't&nbsp;be&nbsp;specified.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;I&nbsp;&nbsp;IGNORECASE&nbsp;&nbsp;Perform&nbsp;case-insensitive&nbsp;matching.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;L&nbsp;&nbsp;LOCALE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Make&nbsp;\w,&nbsp;\W,&nbsp;\b,&nbsp;\B,&nbsp;dependent&nbsp;on&nbsp;the&nbsp;current&nbsp;locale.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;M&nbsp;&nbsp;MULTILINE&nbsp;&nbsp;&nbsp;"^"&nbsp;matches&nbsp;the&nbsp;beginning&nbsp;of&nbsp;lines&nbsp;(after&nbsp;a&nbsp;newline)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;well&nbsp;as&nbsp;the&nbsp;string.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"$"&nbsp;matches&nbsp;the&nbsp;end&nbsp;of&nbsp;lines&nbsp;(before&nbsp;a&nbsp;newline)&nbsp;as&nbsp;well<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;as&nbsp;the&nbsp;end&nbsp;of&nbsp;the&nbsp;string.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;S&nbsp;&nbsp;DOTALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"."&nbsp;matches&nbsp;any&nbsp;character&nbsp;at&nbsp;all,&nbsp;including&nbsp;the&nbsp;newline.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;X&nbsp;&nbsp;VERBOSE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ignore&nbsp;whitespace&nbsp;and&nbsp;comments&nbsp;for&nbsp;nicer&nbsp;looking&nbsp;RE's.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;U&nbsp;&nbsp;UNICODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For&nbsp;compatibility&nbsp;only.&nbsp;Ignored&nbsp;for&nbsp;string&nbsp;patterns&nbsp;(it<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is&nbsp;the&nbsp;default),&nbsp;and&nbsp;forbidden&nbsp;for&nbsp;bytes&nbsp;patterns.<br>
-&nbsp;<br>
-This&nbsp;module&nbsp;also&nbsp;defines&nbsp;an&nbsp;exception&nbsp;'error'.</tt></dl>
-
-</td></tr></table></td></tr></table>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['Classroom']</td></tr></table>
 </body></html>

@@ -12,6 +12,14 @@
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="io.html">io</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
@@ -51,8 +59,6 @@
 Readonly properties defined here:<br>
 <dl><dt><strong>build_name</strong></dt>
 </dl>
-<dl><dt><strong>google_client</strong></dt>
-</dl>
 <dl><dt><strong>translation</strong></dt>
 </dl>
 <dl><dt><strong>version</strong></dt>
@@ -65,46 +71,6 @@ Data descriptors defined here:<br>
 <dl><dt><strong>__weakref__</strong></dt>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
-<hr>
-Data and other attributes defined here:<br>
-<dl><dt><strong>GoogleClient</strong> = &lt;class 'dbacademy.clients.google.google_client_class.GoogleClient'&gt;</dl>
-
-<dl><dt><strong>Translation</strong> = &lt;class 'dbacademy.dbbuild.publish.publishing_info_class.Translation'&gt;</dl>
-
-<dl><dt><strong>io</strong> = &lt;module 'io' from 'C:\\Users\\JacobParr\\.conda\\envs\\dbacademy\\lib\\io.py'&gt;<dd><tt>The&nbsp;io&nbsp;module&nbsp;provides&nbsp;the&nbsp;Python&nbsp;interfaces&nbsp;to&nbsp;stream&nbsp;handling.&nbsp;The<br>
-builtin&nbsp;open&nbsp;function&nbsp;is&nbsp;defined&nbsp;in&nbsp;this&nbsp;module.<br>
-&nbsp;<br>
-At&nbsp;the&nbsp;top&nbsp;of&nbsp;the&nbsp;I/O&nbsp;hierarchy&nbsp;is&nbsp;the&nbsp;abstract&nbsp;base&nbsp;class&nbsp;IOBase.&nbsp;It<br>
-defines&nbsp;the&nbsp;basic&nbsp;interface&nbsp;to&nbsp;a&nbsp;stream.&nbsp;Note,&nbsp;however,&nbsp;that&nbsp;there&nbsp;is&nbsp;no<br>
-separation&nbsp;between&nbsp;reading&nbsp;and&nbsp;writing&nbsp;to&nbsp;streams;&nbsp;implementations&nbsp;are<br>
-allowed&nbsp;to&nbsp;raise&nbsp;an&nbsp;OSError&nbsp;if&nbsp;they&nbsp;do&nbsp;not&nbsp;support&nbsp;a&nbsp;given&nbsp;operation.<br>
-&nbsp;<br>
-Extending&nbsp;IOBase&nbsp;is&nbsp;RawIOBase&nbsp;which&nbsp;deals&nbsp;simply&nbsp;with&nbsp;the&nbsp;reading&nbsp;and<br>
-writing&nbsp;of&nbsp;raw&nbsp;bytes&nbsp;to&nbsp;a&nbsp;stream.&nbsp;FileIO&nbsp;subclasses&nbsp;RawIOBase&nbsp;to&nbsp;provide<br>
-an&nbsp;interface&nbsp;to&nbsp;OS&nbsp;files.<br>
-&nbsp;<br>
-BufferedIOBase&nbsp;deals&nbsp;with&nbsp;buffering&nbsp;on&nbsp;a&nbsp;raw&nbsp;byte&nbsp;stream&nbsp;(RawIOBase).&nbsp;Its<br>
-subclasses,&nbsp;BufferedWriter,&nbsp;BufferedReader,&nbsp;and&nbsp;BufferedRWPair&nbsp;buffer<br>
-streams&nbsp;that&nbsp;are&nbsp;readable,&nbsp;writable,&nbsp;and&nbsp;both&nbsp;respectively.<br>
-BufferedRandom&nbsp;provides&nbsp;a&nbsp;buffered&nbsp;interface&nbsp;to&nbsp;random&nbsp;access<br>
-streams.&nbsp;BytesIO&nbsp;is&nbsp;a&nbsp;simple&nbsp;stream&nbsp;of&nbsp;in-memory&nbsp;bytes.<br>
-&nbsp;<br>
-Another&nbsp;IOBase&nbsp;subclass,&nbsp;TextIOBase,&nbsp;deals&nbsp;with&nbsp;the&nbsp;encoding&nbsp;and&nbsp;decoding<br>
-of&nbsp;streams&nbsp;into&nbsp;text.&nbsp;TextIOWrapper,&nbsp;which&nbsp;extends&nbsp;it,&nbsp;is&nbsp;a&nbsp;buffered&nbsp;text<br>
-interface&nbsp;to&nbsp;a&nbsp;buffered&nbsp;raw&nbsp;stream&nbsp;(`BufferedIOBase`).&nbsp;Finally,&nbsp;StringIO<br>
-is&nbsp;an&nbsp;in-memory&nbsp;stream&nbsp;for&nbsp;text.<br>
-&nbsp;<br>
-Argument&nbsp;names&nbsp;are&nbsp;not&nbsp;part&nbsp;of&nbsp;the&nbsp;specification,&nbsp;and&nbsp;only&nbsp;the&nbsp;arguments<br>
-of&nbsp;open()&nbsp;are&nbsp;intended&nbsp;to&nbsp;be&nbsp;used&nbsp;as&nbsp;keyword&nbsp;arguments.<br>
-&nbsp;<br>
-data:<br>
-&nbsp;<br>
-DEFAULT_BUFFER_SIZE<br>
-&nbsp;<br>
-&nbsp;&nbsp;&nbsp;An&nbsp;int&nbsp;containing&nbsp;the&nbsp;default&nbsp;buffer&nbsp;size&nbsp;used&nbsp;by&nbsp;the&nbsp;module's&nbsp;buffered<br>
-&nbsp;&nbsp;&nbsp;I/O&nbsp;classes.&nbsp;open()&nbsp;uses&nbsp;the&nbsp;file's&nbsp;blksize&nbsp;(as&nbsp;obtained&nbsp;by&nbsp;os.stat)&nbsp;if<br>
-&nbsp;&nbsp;&nbsp;possible.</tt></dl>
-
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
@@ -112,5 +78,5 @@ DEFAULT_BUFFER_SIZE<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>Dict</strong> = typing.Dict</td></tr></table>
+<td width="100%"><strong>__all__</strong> = ['DocsPublisher']</td></tr></table>
 </body></html>

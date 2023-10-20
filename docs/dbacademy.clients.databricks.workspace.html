@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.clients.databricks.workspace</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.clients.html"><font color="#ffffff">clients</font></a>.<a href="dbacademy.clients.databricks.html"><font color="#ffffff">databricks</font></a>.workspace</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cclients%5Cdatabricks%5Cworkspace.py">c:\dvlp\dbacademy\src\dbacademy\clients\databricks\workspace.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.databricks.workspace.html#WorkspaceClient">WorkspaceClient</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="WorkspaceClient">class <strong>WorkspaceClient</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#WorkspaceClient">WorkspaceClient</a>(client:&nbsp;dbacademy.clients.rest.common.ApiClient)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="dbacademy.clients.databricks.workspace.html#WorkspaceClient">WorkspaceClient</a></dd>
+<dd><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="WorkspaceClient-__init__"><strong>__init__</strong></a>(self, client: dbacademy.clients.rest.common.ApiClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#WorkspaceClient-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="WorkspaceClient-delete_path"><strong>delete_path</strong></a>(self, path: str) -&gt; Dict[str, Any]</dt></dl>
+
+<dl><dt><a name="WorkspaceClient-export_dbc"><strong>export_dbc</strong></a>(self, path: str) -&gt; bytes</dt></dl>
+
+<dl><dt><a name="WorkspaceClient-export_notebook"><strong>export_notebook</strong></a>(self, path: str) -&gt; str</dt></dl>
+
+<dl><dt><a name="WorkspaceClient-get_status"><strong>get_status</strong></a>(self, path: str) -&gt; Optional[dict]</dt></dl>
+
+<dl><dt><a name="WorkspaceClient-import_dbc_files"><strong>import_dbc_files</strong></a>(self, target_path: str, source_url: str, overwrite: bool = True, local_file_path: str = None) -&gt; Dict[str, Any]</dt></dl>
+
+<dl><dt><a name="WorkspaceClient-import_html_file"><strong>import_html_file</strong></a>(self, html_path: str, content: str, overwrite: bool = True) -&gt; Dict[str, Any]</dt></dl>
+
+<dl><dt><a name="WorkspaceClient-import_notebook"><strong>import_notebook</strong></a>(self, language: str, notebook_path: str, content: str, overwrite: bool = True) -&gt; Dict[str, Any]</dt></dl>
+
+<dl><dt><a name="WorkspaceClient-ls"><strong>ls</strong></a>(self, path: str, recursive: bool = False, object_types: List[str] = None) -&gt; Optional[List[Dict[str, Any]]]</dt></dl>
+
+<dl><dt><a name="WorkspaceClient-mkdirs"><strong>mkdirs</strong></a>(self, path: str) -&gt; Dict[str, Any]</dt></dl>
+
+<hr>
+Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
+<dl><dt><a name="WorkspaceClient-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
+
+<dl><dt><a name="WorkspaceClient-help"><strong>help</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
+<dl><dt><strong>T</strong> = ~T</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['WorkspaceClient']</td></tr></table>
+</body></html>

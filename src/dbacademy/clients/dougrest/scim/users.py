@@ -6,7 +6,7 @@ from dbacademy.clients.rest.common import ApiContainer, DatabricksApiException, 
 class Users(ApiContainer):
     def __init__(self, databricks):
         self.databricks = databricks
-        self.path = "2.0/preview"
+        self.path = "/api/2.0/preview"
 
     def list(self, start=1, count=1000, *, exclude_roles=False):
         kwargs = {"excludedAttributes": "roles"} if exclude_roles else {}

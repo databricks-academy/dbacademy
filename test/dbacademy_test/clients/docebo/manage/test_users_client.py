@@ -4,10 +4,10 @@ import unittest
 class TestUsers(unittest.TestCase):
 
     def test_login_failure(self):
-        from dbacademy.clients.docebo import DoceboRestClient
         from dbacademy.clients.rest.common import DatabricksApiException
+        from dbacademy.clients import docebo
 
-        client = DoceboRestClient.from_environ()
+        client = docebo.from_environ()
 
         try:
             client.manage.users.login(username="jacob.parr@databricks.com",
@@ -18,9 +18,9 @@ class TestUsers(unittest.TestCase):
 
     def test_login_success(self):
         import os
-        from dbacademy.clients.docebo import DoceboRestClient
+        from dbacademy.clients import docebo
 
-        client = DoceboRestClient.from_environ()
+        client = docebo.from_environ()
         username = os.environ.get("DOCEBO_UNIT_TEST_USERNAME")
         password = os.environ.get("DOCEBO_UNIT_TEST_PASSWORD")
 
@@ -34,9 +34,9 @@ class TestUsers(unittest.TestCase):
         self.assertEquals("bearer", response.get("token_type"))
 
     def test_find_users(self):
-        from dbacademy.clients.docebo import DoceboRestClient
+        from dbacademy.clients import docebo
 
-        client = DoceboRestClient.from_environ()
+        client = docebo.from_environ()
         users = client.manage.users.find_user("jacob.parr@databricks.com")
         self.assertIsNotNone(users)
         self.assertTrue(len(users) > 0)

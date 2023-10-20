@@ -1,11 +1,14 @@
-from typing import Union, List
+__all__ = ["AccountsCRUD"]
 
-from dbacademy.common import overrides
-from dbacademy.clients.rest.common import *
+from typing import Union, List
 from dbacademy.clients.rest.crud import CRUD
+from dbacademy.common import overrides
+
+from dbacademy.clients.rest.common import HttpStatusCodes, Item, ItemId
 
 
 class AccountsCRUD(CRUD):
+
     @overrides
     def _list(self, *, _expected: HttpStatusCodes = None) -> List[Item]:
         """Returns a list of all {plural}."""

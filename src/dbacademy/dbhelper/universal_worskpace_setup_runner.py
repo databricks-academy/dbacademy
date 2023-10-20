@@ -6,13 +6,13 @@ class UniversalWorkspaceSetupRunner:
 
     def __init__(self, *, token: str, endpoint: str, course_config: CourseConfig, workspace_name: str):
         from dbacademy.common import Cloud
-        from dbacademy.dbrest.client import DBAcademyRestClient
+        from dbacademy.clients import databricks
 
         self.event_id = 0
         self.course_name = course_config.course_name
         self.data_source_version = course_config.data_source_version
         self.workspace_name = workspace_name
-        self.client = DBAcademyRestClient(token=token, endpoint=endpoint)
+        self.client = databricks.from_token(token=token, endpoint=endpoint)
         self.event_description = f"Workspace {workspace_name}"
 
         self.default_spark_version = course_config.supported_dbrs[0]

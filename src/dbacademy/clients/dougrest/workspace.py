@@ -6,7 +6,7 @@ class Workspace(ApiContainer):
         self.databricks = databricks
 
     def list(self, workspace_path, sort_key=lambda f: f['path']):
-        files = self.databricks.api("GET", "2.0/workspace/list", {"path": workspace_path}).get("objects", [])
+        files = self.databricks.api("GET", "/api/2.0/workspace/list", {"path": workspace_path}).get("objects", [])
         return sorted(files, key=sort_key)
 
     def list_names(self, workspace_path, sort_key=lambda f: f['path']):
@@ -22,7 +22,7 @@ class Workspace(ApiContainer):
                 yield from self.walk(f['path'])
 
     def mkdirs(self, workspace_path):
-        self.databricks.api("POST", "2.0/workspace/mkdirs", {"path": workspace_path})
+        self.databricks.api("POST", "/api/2.0/workspace/mkdirs", {"path": workspace_path})
 
     def copy(self, source_path, target_path, *, target_connection=None, if_exists="overwrite", exclude=None, dry_run=False):
         exclude = exclude or set()
@@ -147,7 +147,7 @@ class Workspace(ApiContainer):
             return not files
 
     def delete(self, workspace_path, recursive=True):
-        self.databricks.api("POST", "2.0/workspace/delete", {
+        self.databricks.api("POST", "/api/2.0/workspace/delete", {
             "path": workspace_path,
             "recursive": "true" if recursive else "false"
         })
@@ -183,14 +183,14 @@ class Workspace(ApiContainer):
             "language": language,
         }
         try:
-            return self.databricks.api("POST", "2.0/workspace/import", data)
+            return self.databricks.api("POST", "/api/2.0/workspace/import", data)
         except DatabricksApiException as e:
             if e.error_code != "RESOURCE_ALREADY_EXISTS":
                 raise e
             else:
                 if if_exists == "overwrite":
                     self.delete(workspace_path)
-                    return self.databricks.api("POST", "2.0/workspace/import", data)
+                    return self.databricks.api("POST", "/api/2.0/workspace/import", data)
                 elif if_exists == "ignore":
                     pass
                 elif if_exists == "error":
@@ -207,6 +207,6 @@ class Workspace(ApiContainer):
             "format": format,
         }
         if format == "DBC":
-            return self.databricks.api("GET", "2.0/workspace/export", data, _result_type=bytes)
+            return self.databricks.api("GET", "/api/2.0/workspace/export", data, _result_type=bytes)
         else:
-            return self.databricks.api("GET", "2.0/workspace/export", data, _result_type=str)
+            return self.databricks.api("GET", "/api/2.0/workspace/export", data, _result_type=str)

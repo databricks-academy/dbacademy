@@ -1,3 +1,5 @@
+__all__ = ["MyHTMLParser"]
+
 """
 Logic used to mine Cloudlabs lab configurations during Data and AI summit.  This logic needs refactoring.
 """
@@ -37,7 +39,7 @@ class MyHTMLParser(HTMLParser):
 web = requests.Session()
 
 web.headers['User-Agent'] = 'Mozilla/5.0'
-# TODO Doug, I don't know how to address this one - or at least I dont' want to invest the time :-p
+# TODO Doug, I don't know how to address this one - or at least I don't want to invest the time :-p
 # noinspection PyTypeChecker
 cookies = re.search("'Cookie: ([^']*)'", curl_login)[1].strip().split("; ")
 # noinspection PyTypeChecker

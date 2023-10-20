@@ -70,8 +70,8 @@ class TestSuite:
 
     def create_test_job(self, *, job_name: str, notebook_path: str, policy_id: str = None):
         import re
-        from dbacademy.dbrest.jobs import JobConfig
-        from dbacademy.dbrest.clusters import JobClusterConfig
+        from dbacademy.clients.databricks.jobs.job_config_classes import JobConfig
+        from dbacademy.clients.databricks.clusters.cluster_config_class import JobClusterConfig
         from dbacademy.common import Cloud
 
         self.build_config.spark_conf["dbacademy.smoke-test"] = "true"
