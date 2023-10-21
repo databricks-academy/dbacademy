@@ -1,11 +1,26 @@
-__all__ = ["AirTableRestClient", "from_args", "from_environ", "from_workspace"]
+__all__ = ["from_args", "from_environment", "from_workspace", "TableConfig"]
 
+from typing import Optional
 from dbacademy.clients.rest.common import ApiClient
 from dbacademy.clients.airtable.tables_api import TablesAPI
 from dbacademy.clients import ClientErrorHandler
 from dbacademy.clients.airtable.at_utils import AirTableUtils
 
 DEFAULT_SCOPE = "AIRTABLE"
+
+
+class TableConfig:
+    def __init__(self, base_id: Optional[str], table_id: Optional[str]):
+        self.__base_id = base_id
+        self.__table_id = table_id
+
+    @property
+    def base_id(self) -> str:
+        return self.__base_id
+
+    @property
+    def table_id(self) -> str:
+        return self.__table_id
 
 
 class AirTableRestClient(ApiClient):
@@ -51,39 +66,40 @@ class AirTableRestClient(ApiClient):
 
 
 def from_args(*,
-              base_id: str,
               access_token: str,
+              base_id: str = None,
+              # Common parameters
               verbose: bool = False,
               throttle_seconds: int = 0,
               error_handler: ClientErrorHandler = ClientErrorHandler()) -> AirTableRestClient:
 
-    return AirTableRestClient(base_id=base_id,
-                              access_token=access_token,
+    return AirTableRestClient(access_token=access_token,
+                              base_id=base_id,
                               verbose=verbose,
                               throttle_seconds=throttle_seconds,
                               error_handler=error_handler)
 
 
-def from_environ(*,
-                 base_id: str,
-                 access_token: str = None,
-                 # Common parameters
-                 scope: str = DEFAULT_SCOPE,
-                 verbose: bool = False,
-                 throttle_seconds: int = 0,
-                 error_handler: ClientErrorHandler = ClientErrorHandler()) -> AirTableRestClient:
+def from_environment(*,
+                     access_token: str = None,
+                     base_id: str = None,
+                     # Common parameters
+                     scope: str = DEFAULT_SCOPE,
+                     verbose: bool = False,
+                     throttle_seconds: int = 0,
+                     error_handler: ClientErrorHandler = ClientErrorHandler()) -> AirTableRestClient:
     import os
 
-    return AirTableRestClient(base_id=base_id or os.environ.get(f"{scope}_BASE_ID") or os.environ.get("BASE_ID"),
-                              access_token=access_token or os.environ.get(f"{scope}_TOKEN") or os.environ.get("TOKEN"),
-                              verbose=verbose,
-                              throttle_seconds=throttle_seconds,
-                              error_handler=error_handler)
+    return from_args(access_token=access_token or os.environ.get(f"{scope}_TOKEN") or os.environ.get("TOKEN"),
+                     base_id=base_id,
+                     verbose=verbose,
+                     throttle_seconds=throttle_seconds,
+                     error_handler=error_handler)
 
 
 def from_workspace(*,
-                   base_id: str,
-                   access_token: str,
+                   access_token: str = None,
+                   base_id: str = None,
                    # Common parameters
                    scope: str = DEFAULT_SCOPE,
                    verbose: bool = False,
@@ -92,8 +108,37 @@ def from_workspace(*,
 
     from dbacademy import dbgems
 
-    return AirTableRestClient(access_token=access_token,
-                              base_id=base_id or dbgems.dbutils.secrets.get(scope, "base_id"),
-                              verbose=verbose,
-                              throttle_seconds=throttle_seconds,
-                              error_handler=error_handler)
+    return from_args(access_token=access_token or dbgems.dbutils.secrets.get(scope, "token"),
+                     base_id=base_id,
+                     verbose=verbose,
+                     throttle_seconds=throttle_seconds,
+                     error_handler=error_handler)
+
+
+def from_table_config(table_config: TableConfig,
+                      *,
+                      access_token: str = None,
+                      # Common parameters
+                      scope: str = DEFAULT_SCOPE,
+                      verbose: bool = False,
+                      throttle_seconds: int = 0,
+                      error_handler: ClientErrorHandler = ClientErrorHandler()) -> TablesAPI:
+
+    import os
+
+    if access_token is None:
+        # Load from the notebook before the environment
+        from dbacademy import dbgems
+        access_token = dbgems.dbutils.secrets.get(scope, "token")
+
+    if access_token is None:
+        # Load from environment last
+        access_token = os.environ.get(f"{scope}_TOKEN") or os.environ.get("TOKEN")
+
+    client = from_args(access_token=access_token,
+                       base_id=table_config.base_id,
+                       verbose=verbose,
+                       throttle_seconds=throttle_seconds,
+                       error_handler=error_handler)
+
+    return client.table(table_config.table_id)

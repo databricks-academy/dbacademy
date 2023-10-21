@@ -6,7 +6,7 @@ class TestVocareumRestClient(unittest.TestCase):
 
     def test_list_assignments(self):
 
-        client = vocareum.from_environ()
+        client = vocareum.from_environment()
         self.assertIsNotNone(client)
 
         assignments = client.courses.id("87112").assignments.list()
@@ -20,7 +20,7 @@ class TestVocareumRestClient(unittest.TestCase):
 
     def test_get_assignment(self):
 
-        client = vocareum.from_environ()
+        client = vocareum.from_environment()
         self.assertIsNotNone(client)
 
         assignment = client.courses.id("87112").assignments.id("1858312").get()

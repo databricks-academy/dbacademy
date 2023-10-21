@@ -5,7 +5,7 @@ from dbacademy.clients import vocareum
 class TestVocareumRestClient(unittest.TestCase):
 
     def test_create_client(self):
-        client = vocareum.from_environ()
+        client = vocareum.from_environment()
         self.assertIsNotNone(client)
 
         self.assertEquals("https://api.vocareum.com/api/v2", client.endpoint)

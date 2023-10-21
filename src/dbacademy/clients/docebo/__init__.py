@@ -1,4 +1,4 @@
-__all__ = ["DoceboRestClient", "from_args", "from_environ", "from_workspace"]
+__all__ = ["DoceboRestClient", "from_args", "from_environment", "from_workspace"]
 
 from dbacademy.clients.rest.common import ApiClient
 from dbacademy.clients import ClientErrorHandler
@@ -95,17 +95,17 @@ def from_args(*,
                             error_handler=error_handler)
 
 
-def from_environ(*,
-                 endpoint: str = None,
-                 username: str = None,
-                 password: str = None,
-                 consumer_key: str = None,
-                 consumer_secret: str = None,
-                 # Common parameters
-                 scope: str = DEFAULT_SCOPE,
-                 verbose=False,
-                 throttle_seconds: int = 0,
-                 error_handler: ClientErrorHandler = ClientErrorHandler()) -> DoceboRestClient:
+def from_environment(*,
+                     endpoint: str = None,
+                     username: str = None,
+                     password: str = None,
+                     consumer_key: str = None,
+                     consumer_secret: str = None,
+                     # Common parameters
+                     scope: str = DEFAULT_SCOPE,
+                     verbose=False,
+                     throttle_seconds: int = 0,
+                     error_handler: ClientErrorHandler = ClientErrorHandler()) -> DoceboRestClient:
     import os
 
     return DoceboRestClient(endpoint=endpoint or os.environ.get(f"{scope}_ENDPOINT") or os.environ.get("ENDPOINT"),

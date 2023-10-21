@@ -1,4 +1,4 @@
-__all__ = ["from_args", "from_environ", "from_workspace"]
+__all__ = ["from_args", "from_environment", "from_workspace"]
 
 from dbacademy.clients.rest.common import ApiClient
 
@@ -36,12 +36,12 @@ def from_args(*,
                               token=token)
 
 
-def from_environ(*,
-                 endpoint: str = None,
-                 # Common parameters
-                 scope: str = DEFAULT_SCOPE,
-                 token: str = None,
-                 throttle_seconds: int = 0) -> VocareumRestClient:
+def from_environment(*,
+                     endpoint: str = None,
+                     # Common parameters
+                     scope: str = DEFAULT_SCOPE,
+                     token: str = None,
+                     throttle_seconds: int = 0) -> VocareumRestClient:
     import os
 
     return VocareumRestClient(throttle_seconds=throttle_seconds,

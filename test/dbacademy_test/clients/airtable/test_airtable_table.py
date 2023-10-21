@@ -3,23 +3,25 @@ __all__ = ["TestAirClientTable"]
 import unittest
 from dbacademy.clients import airtable
 
-BASE_ID = "appijNwbRAAYFLcQr"   # Smoke-Tests
-TABLE_ID = "tblmBKMz2uyFdM2Dj"  # Test-Table
+smoke_test_config = airtable.TableConfig(base_id="appijNwbRAAYFLcQr",    # Smoke-Tests
+                                         table_id="tblmBKMz2uyFdM2Dj")   # Test-Table
 
 
 class TestAirClientTable(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.client = airtable.from_environ(base_id=BASE_ID)
+        self.tables_api = self.tables_api = airtable.from_table_config(smoke_test_config)
+        self.assertIsNotNone(self.tables_api)
+        self.assertEqual(self.tables_api.table_id, smoke_test_config.table_id)
 
     def test_read(self):
-        records = self.client.table(TABLE_ID).query()
+        records = self.tables_api.query()
 
         self.assertIsNotNone(records)
         self.assertTrue(len(records) > 3, f"Expected at least 3, found {len(records)}")
 
     def test_read_sorted(self):
-        records = self.client.table(TABLE_ID).query(sort_by="id")
+        records = self.tables_api.query(sort_by="id")
 
         self.assertIsNotNone(records)
         self.assertTrue(len(records) > 3, f"Expected at least 3, found {len(records)}")
@@ -28,20 +30,20 @@ class TestAirClientTable(unittest.TestCase):
         self.assertEquals(3, records[2].get("fields").get("id"))
 
     def test_read_filtered(self):
-        records = self.client.table(TABLE_ID).query(filter_by_formula="id = 2")
+        records = self.tables_api.query(filter_by_formula="id = 2")
 
         self.assertIsNotNone(records)
         self.assertEquals(1, len(records))
         self.assertEquals(2, records[0].get("fields").get("id"))
 
         url = "https://training-classroom-767-knzbh.cloud.databricks.com"
-        records = self.client.table(TABLE_ID).query(filter_by_formula=f"{{AWS Workspace URL}} = '{url}'")
+        records = self.tables_api.query(filter_by_formula=f"{{AWS Workspace URL}} = '{url}'")
         self.assertIsNotNone(records)
         self.assertEquals(1, len(records))
         self.assertEquals(url, records[0].get("fields").get("AWS Workspace URL"))
 
     def test_read_sorted_filtered(self):
-        records = self.client.table(TABLE_ID).query(filter_by_formula="Assignee = 'Jacob Parr'", sort_by="id")
+        records = self.tables_api.query(filter_by_formula="Assignee = 'Jacob Parr'", sort_by="id")
 
         self.assertIsNotNone(records)
         self.assertEquals(2, len(records))
@@ -55,7 +57,7 @@ class TestAirClientTable(unittest.TestCase):
     def test_update(self):
         from datetime import datetime
 
-        records = self.client.table(TABLE_ID).query(filter_by_formula="id = 1")
+        records = self.tables_api.query(filter_by_formula="id = 1")
 
         self.assertIsNotNone(records)
         self.assertEquals(1, len(records))
@@ -64,18 +66,18 @@ class TestAirClientTable(unittest.TestCase):
         record_id = records[0].get("id")
         when_a = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")+".000Z"
 
-        self.client.table(TABLE_ID).update_by_id(record_id, fields={
+        self.tables_api.update_by_id(record_id, fields={
             "When": when_a
         })
 
-        records = self.client.table(TABLE_ID).query(filter_by_formula="id = 1")
+        records = self.tables_api.query(filter_by_formula="id = 1")
         when_b = records[0].get("fields").get("When")
         self.assertEquals(when_a, when_b)
 
     def test_insert_delete(self):
         from datetime import datetime
 
-        response = self.client.table(TABLE_ID).insert({
+        response = self.tables_api.insert({
             "Notes": "This is a test",
             "Assignee": None,
             "Status": "Whatever",
@@ -83,7 +85,7 @@ class TestAirClientTable(unittest.TestCase):
             "AWS Workspace URL": "https://example.com",
         })
         record_id = response.get("id")
-        self.client.table(TABLE_ID).delete_by_id(record_id)
+        self.tables_api.delete_by_id(record_id)
 
 
 if __name__ == '__main__':

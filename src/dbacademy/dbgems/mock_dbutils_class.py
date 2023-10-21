@@ -62,8 +62,15 @@ class MockNotebook:
 
 
 class MockSecrets:
+
+    SECRETS = dict()
+
     def __init__(self):
         pass
+
+    @classmethod
+    def get(cls, scope: str, key: str) -> str:
+        return cls.SECRETS.get(f"{scope}-{key}")
 
 
 class MockDBUtils:

@@ -5,7 +5,7 @@ from dbacademy.clients import vocareum
 class TestVocareumRestClient(unittest.TestCase):
 
     def test_list_users(self):
-        client = vocareum.from_environ()
+        client = vocareum.from_environment()
         self.assertIsNotNone(client)
 
         users = client.courses.id("87112").users.list()
@@ -18,7 +18,7 @@ class TestVocareumRestClient(unittest.TestCase):
         self.assertEqual(expected_count, len(set(user_ids)))
 
     def test_get_user(self):
-        client = vocareum.from_environ()
+        client = vocareum.from_environment()
         self.assertIsNotNone(client)
 
         user = client.courses.id("87112").users.id("2615039").get()

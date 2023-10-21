@@ -9,10 +9,13 @@ from dbacademy.clients.rest.common import ApiContainer
 class TablesAPI(ApiContainer):
 
     def __init__(self, client: ApiClient, table_id: str, at_utils: AirTableUtils):
-        self.__client = client
-        self.__table_id = table_id
+        from dbacademy.common import validate
+        from dbacademy.clients import airtable
+
+        self.__client: airtable.AirTableRestClient = validate.any_value(airtable.AirTableRestClient, client=client, required=True)
+        self.__table_id = validate.str_value(table_id=table_id)
+        self.__at_utils: AirTableUtils = validate.any_value(AirTableUtils, at_utils=at_utils, required=True)
         self.__table_url = f"{client.endpoint}/{table_id}"
-        self.__at_utils = at_utils
 
     @property
     def at_utils(self) -> AirTableUtils:

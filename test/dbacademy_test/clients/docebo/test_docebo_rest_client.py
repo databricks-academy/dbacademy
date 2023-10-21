@@ -5,7 +5,7 @@ from dbacademy.clients import docebo
 class TestDoceboRestClient(unittest.TestCase):
 
     def test_create(self):
-        client = docebo.from_environ()
+        client = docebo.from_environment()
         self.assertIsNotNone(client)
         self.assertEquals("https://databricks.docebosaas.com", client.endpoint)
 

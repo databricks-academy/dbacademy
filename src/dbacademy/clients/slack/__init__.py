@@ -264,12 +264,12 @@ def from_args(*,
                        mentions=mentions)
 
 
-def from_environ(*,
-                 # scope: str = "SLACK",
-                 channel: str,
-                 username: str,
-                 access_token: str = None,
-                 mentions: Union[str, Mention, List[str]] = None):
+def from_environment(*,
+                     # scope: str = "SLACK",
+                     channel: str,
+                     username: str,
+                     access_token: str = None,
+                     mentions: Union[str, Mention, List[str]] = None):
     import os
     scope = "SLACK"
 

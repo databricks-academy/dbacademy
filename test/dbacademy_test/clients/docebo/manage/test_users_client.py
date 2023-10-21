@@ -7,7 +7,7 @@ class TestUsers(unittest.TestCase):
         from dbacademy.clients.rest.common import DatabricksApiException
         from dbacademy.clients import docebo
 
-        client = docebo.from_environ()
+        client = docebo.from_environment()
 
         try:
             client.manage.users.login(username="jacob.parr@databricks.com",
@@ -20,7 +20,7 @@ class TestUsers(unittest.TestCase):
         import os
         from dbacademy.clients import docebo
 
-        client = docebo.from_environ()
+        client = docebo.from_environment()
         username = os.environ.get("DOCEBO_UNIT_TEST_USERNAME")
         password = os.environ.get("DOCEBO_UNIT_TEST_PASSWORD")
 
@@ -36,7 +36,7 @@ class TestUsers(unittest.TestCase):
     def test_find_users(self):
         from dbacademy.clients import docebo
 
-        client = docebo.from_environ()
+        client = docebo.from_environment()
         users = client.manage.users.find_user("jacob.parr@databricks.com")
         self.assertIsNotNone(users)
         self.assertTrue(len(users) > 0)
