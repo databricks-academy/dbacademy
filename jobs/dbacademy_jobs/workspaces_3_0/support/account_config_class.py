@@ -45,9 +45,9 @@ class AccountConfig:
         print(f"Username:      {username}")
 
         self.__region = validate.str_value(min_length=1, region=region)
-        self.__ignored_workspaces = validate.list_value(non_none=True, ignored_workspaces=ignored_workspaces)
-        self.__uc_storage_config = validate.any_value(UcStorageConfig, non_none=True, uc_storage_config=uc_storage_config)
-        self.__workspace_config_template = validate.any_value(WorkspaceConfig, non_none=True, workspace_config_template=workspace_config_template)
+        self.__ignored_workspaces = validate.list_value(ignored_workspaces=ignored_workspaces, required=True)
+        self.__uc_storage_config = validate.any_value(UcStorageConfig, uc_storage_config=uc_storage_config, required=True)
+        self.__workspace_config_template = validate.any_value(WorkspaceConfig, workspace_config_template=workspace_config_template, required=True)
 
         self.__workspaces = list()
 

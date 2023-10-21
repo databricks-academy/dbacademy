@@ -9,9 +9,6 @@ from dbacademy_jobs.workspaces_3_0.support import read_str, read_int, advertise
 
 CONFIRMATIONS = ["y", "yes", "1", "t", "true"]
 
-AIR_TABLE_TOKEN = os.environ.get("AIR-TABLE-PERSONAL-ACCESS-TOKEN")
-assert AIR_TABLE_TOKEN is not None, f"""The environment variable "AIR-TABLE-PERSONAL-ACCESS-TOKEN" must be specified, not found."""
-
 env_codes = ["PROSVC", "CURR"]
 env_code = read_str(f"""Please select an environment {env_codes}""", env_codes[0]).upper()
 

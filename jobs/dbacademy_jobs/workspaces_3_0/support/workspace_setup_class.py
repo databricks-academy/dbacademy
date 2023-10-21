@@ -83,7 +83,7 @@ class WorkspaceSetup:
 
         self.__errors: List[str] = list()
         self.__workspaces: List[WorkspaceTrio] = list()
-        self.__account_config = validate.any_value(AccountConfig, account_config=account_config, non_none=True)
+        self.__account_config = validate.any_value(AccountConfig, account_config=account_config, required=True)
 
         self.__accounts_api = AccountsApi(account_id=self.account_config.account_id,
                                           username=self.account_config.username,
@@ -92,10 +92,8 @@ class WorkspaceSetup:
         self.__run_workspace_setup = run_workspace_setup
 
         self.__air_table_records: List[Dict[str, Any]] = list()
-        air_table_token = os.environ.get("AIR-TABLE-PERSONAL-ACCESS-TOKEN")
-        assert air_table_token is not None, f"""The environment variable "AIR-TABLE-PERSONAL-ACCESS-TOKEN" must be specified, not found."""
 
-        self.airtable_client = airtable.from_args(access_token=air_table_token, base_id="appNCMjJ2yMKUrTbo")
+        self.airtable_client = airtable.from_environment(base_id="appNCMjJ2yMKUrTbo")
         self.airtable_table = self.airtable_client.table("tblF3cxlP8gcM9Rqr")
 
     @property
@@ -127,7 +125,7 @@ class WorkspaceSetup:
     @classmethod
     def __get_metastore(cls, workspace_api: Workspace, workspace_name: str) -> Optional[Dict[str, Any]]:
 
-        for metastore in workspace_api.api("GET", f"2.1/unity-catalog/metastores").get("metastores", list()):
+        for metastore in workspace_api.api("GET", f"/api/2.1/unity-catalog/metastores").get("metastores", list()):
             if workspace_name == metastore.get("name"):
                 return metastore
 
@@ -143,9 +141,9 @@ class WorkspaceSetup:
 
         try:
             # Removed the currently assigned metastore
-            assigned_metastore = trio.workspace_api.api("GET", f"2.1/unity-catalog/current-metastore-assignment")
+            assigned_metastore = trio.workspace_api.api("GET", f"/api/2.1/unity-catalog/current-metastore-assignment")
             metastore_id = assigned_metastore.get("metastore_id")
-            trio.workspace_api.api("DELETE", f"2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
+            trio.workspace_api.api("DELETE", f"/api/2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
                 "metastore_id": metastore_id
             })
         except DatabricksApiException as e:
@@ -159,7 +157,7 @@ class WorkspaceSetup:
             print(f"""The metastore "{workspace_name}" does not exist.""")
         else:
             metastore_id = metastore.get("metastore_id")
-            trio.workspace_api.api("DELETE", f"2.1/unity-catalog/metastores/{metastore_id}", {
+            trio.workspace_api.api("DELETE", f"/api/2.1/unity-catalog/metastores/{metastore_id}", {
                 "force": True
             })
 
@@ -475,16 +473,16 @@ class WorkspaceSetup:
     @classmethod
     def __enable_features(cls, trio: WorkspaceTrio):
         # Enabling serverless endpoints.
-        settings = trio.workspace_api.api("GET", "2.0/sql/config/endpoints")
+        settings = trio.workspace_api.api("GET", "/api/2.0/sql/config/endpoints")
         feature_name = "enable_serverless_compute"
         feature_status = True
         settings[feature_name] = feature_status
-        trio.workspace_api.api("PUT", "2.0/sql/config/endpoints", settings)
+        trio.workspace_api.api("PUT", "/api/2.0/sql/config/endpoints", settings)
 
-        new_feature_status = trio.workspace_api.api("GET", "2.0/sql/config/endpoints").get(feature_name)
+        new_feature_status = trio.workspace_api.api("GET", "/api/2.0/sql/config/endpoints").get(feature_name)
         assert new_feature_status == feature_status, f"""Expected "{feature_name}" to be "{feature_status}", found "{new_feature_status}"."""
 
-        trio.workspace_api.api("PATCH", "2.0/workspace-conf", {
+        trio.workspace_api.api("PATCH", "/api/2.0/workspace-conf", {
                "enable-X-Frame-Options": "false",  # Turn off iframe prevention
                "intercomAdminConsent": "false",    # Turn off product welcome
                "enableDbfsFileBrowser": "true",    # Enable DBFS UI
@@ -790,7 +788,7 @@ class WorkspaceSetup:
     def __create_storage_credentials(self, trio: WorkspaceTrio, metastore_id: str):
         # Create a storage credential for the access_connector
 
-        credentials = trio.workspace_api.api("GET", f"2.1/unity-catalog/storage-credentials/{trio.name}", _expected=[200, 404])
+        credentials = trio.workspace_api.api("GET", f"/api/2.1/unity-catalog/storage-credentials/{trio.name}", _expected=[200, 404])
 
         if credentials is None:
             credentials = {
@@ -809,12 +807,12 @@ class WorkspaceSetup:
                     "access_connector_id": self.account_config.uc_storage_config.msa_access_connector_id
                 }
 
-            credentials = trio.workspace_api.api("POST", "2.1/unity-catalog/storage-credentials", credentials)
+            credentials = trio.workspace_api.api("POST", "/api/2.1/unity-catalog/storage-credentials", credentials)
 
         storage_root_credential_id = credentials.get("id")
 
         # Set storage root credential.
-        trio.workspace_api.api("PATCH", f"2.1/unity-catalog/metastores/{metastore_id}", {
+        trio.workspace_api.api("PATCH", f"/api/2.1/unity-catalog/metastores/{metastore_id}", {
             "storage_root_credential_id": storage_root_credential_id
         })
 
@@ -822,7 +820,7 @@ class WorkspaceSetup:
     def __utils_assign_metastore_to_workspace(cls, trio: WorkspaceTrio, metastore_id: str):
         # Assign the metastore to the workspace
         workspace_id = trio.workspace_api.get("workspace_id")
-        trio.workspace_api.api("PUT", f"2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
+        trio.workspace_api.api("PUT", f"/api/2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
             "metastore_id": metastore_id,
             "default_catalog_name": "main"
         })
@@ -831,7 +829,7 @@ class WorkspaceSetup:
     def __utils_update_uc_permissions(cls, trio: WorkspaceTrio, metastore_id: str):
         try:
             # Grant all users permission to create resources in the metastore
-            trio.workspace_api.api("PATCH", f"2.1/unity-catalog/permissions/metastore/{metastore_id}", {
+            trio.workspace_api.api("PATCH", f"/api/2.1/unity-catalog/permissions/metastore/{metastore_id}", {
                 "changes": [{
                     "principal": "account users",
                     "add": ["CREATE CATALOG", "CREATE EXTERNAL LOCATION", "CREATE SHARE", "CREATE RECIPIENT", "CREATE PROVIDER"]
@@ -842,7 +840,7 @@ class WorkspaceSetup:
 
     def __utils_enable_delta_sharing(self, trio: WorkspaceTrio, metastore_id: str):
         try:
-            trio.workspace_api.api("PATCH", f"2.1/unity-catalog/metastores/{metastore_id}", {
+            trio.workspace_api.api("PATCH", f"/api/2.1/unity-catalog/metastores/{metastore_id}", {
                 "owner": self.account_config.uc_storage_config.meta_store_owner,
                 "delta_sharing_scope": "INTERNAL_AND_EXTERNAL",
                 "delta_sharing_recipient_token_lifetime_in_seconds": 90 * 24 * 60 * 60,
@@ -857,7 +855,7 @@ class WorkspaceSetup:
     @classmethod
     def __utils_find_metastore(cls, trio: WorkspaceTrio) -> Optional[str]:
         # According to the docs, there is no pagination for this call.
-        response = trio.workspace_api.api("GET", "2.1/unity-catalog/metastores")
+        response = trio.workspace_api.api("GET", "/api/2.1/unity-catalog/metastores")
         metastores = response.get("metastores", list())
         for metastore in metastores:
             if metastore.get("name") == trio.workspace_config.name:
@@ -868,7 +866,7 @@ class WorkspaceSetup:
     def __utils_get_or_create_metastore(self, trio: WorkspaceTrio) -> str:
         try:
             # Check to see if a metastore is assigned
-            metastore = trio.workspace_api.api("GET", f"2.1/unity-catalog/current-metastore-assignment")
+            metastore = trio.workspace_api.api("GET", f"/api/2.1/unity-catalog/current-metastore-assignment")
             print(f"""Using previously assigned metastore for "{trio.workspace_config.name}".""")
             return metastore.get("metastore_id")
 
@@ -884,7 +882,7 @@ class WorkspaceSetup:
 
         # Create a new metastore
         print(f"""Creating metastore for "{trio.workspace_config.name}".""")
-        metastore = trio.workspace_api.api("POST", "2.1/unity-catalog/metastores", {
+        metastore = trio.workspace_api.api("POST", "/api/2.1/unity-catalog/metastores", {
             "name": trio.workspace_config.name,
             "storage_root": self.account_config.uc_storage_config.storage_root,
             "region": self.account_config.uc_storage_config.region

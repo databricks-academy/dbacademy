@@ -9,7 +9,7 @@ E_MIN_V = "Error-Min-Value"
 def any_value(parameter_type: Type, *, min_length: int = None, required: Optional[bool] = None, min_value=None, **kwargs) -> Any:
     import numbers
 
-    assert len(kwargs) == 1, f"verify_type(..) expects one and only one parameter."
+    assert len(kwargs) == 1, f"verify_type({kwargs}) expects one and only one parameter, found {len(kwargs)}."
 
     parameter_name = list(kwargs)[0]
     value = kwargs.get(parameter_name)

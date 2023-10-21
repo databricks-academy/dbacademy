@@ -18,14 +18,14 @@ class AccountsApi(ApiClient):
             cloud = Cloud[cloud]
 
         if cloud == Cloud.AWS:
-            url = f'https://accounts.cloud.databricks.com/api/2.0/accounts/{account_id}'
+            endpoint = f'https://accounts.cloud.databricks.com/api/2.0/accounts/{account_id}'
         elif cloud == Cloud.GCP:
-            url = f'https://accounts.gcp.databricks.com/api/2.0/accounts/{account_id}'
+            endpoint = f'https://accounts.gcp.databricks.com/api/2.0/accounts/{account_id}'
         elif cloud == Cloud.MSA:
-            url = f'https://accounts.azuredatabricks.net/api/2.0/accounts/{account_id}'
+            endpoint = f'https://accounts.azuredatabricks.net/api/2.0/accounts/{account_id}'
         else:
             raise ValueError(f"Cloud must be AWS, GCP, or MSA.  Found: {cloud!r}")
-        super().__init__(url, username=username, password=password, token=token)
+        super().__init__(endpoint, username=username, password=password, token=token)
         self.session.headers["X-Databricks-Account-Console-API-Version"] = "2.0"
 
         self.account_id = account_id

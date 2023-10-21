@@ -139,7 +139,7 @@ def create_workspace(config: WorkspaceConfig):
     # Add instructors to the workspace as admins
     print("Add instructors to the workspace as admins")
     for username in config.instructors:
-        workspace.api("POST", "2.0/preview/scim/v2/Users", {
+        workspace.api("POST", "/api/2.0/preview/scim/v2/Users", {
             "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
             "userName": username,
             "groups": [{"value": admins_group_id}]
@@ -149,7 +149,7 @@ def create_workspace(config: WorkspaceConfig):
     print("Add users to the workspace")
     usernames = set(config.users) - set(config.users)  # Avoid duplicates
     for username in usernames:
-        workspace.api("POST", "2.0/preview/scim/v2/Users", {
+        workspace.api("POST", "/api/2.0/preview/scim/v2/Users", {
             "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
             "userName": username,
         })
@@ -168,7 +168,7 @@ def create_workspace(config: WorkspaceConfig):
 
     # Create a new metastore
     print("Create a new metastore")
-    metastore_id = workspace.api("POST", "2.1/unity-catalog/metastores", {
+    metastore_id = workspace.api("POST", "/api/2.1/unity-catalog/metastores", {
         "name": config.workspace_name,
         "storage_root": config.uc_storage_root,
         "region": config.region
@@ -176,7 +176,7 @@ def create_workspace(config: WorkspaceConfig):
 
     # Configure the metastore settings
     print("Configure the metastore settings")
-    workspace.api("PATCH", f"2.1/unity-catalog/metastores/{metastore_id}", {
+    workspace.api("PATCH", f"/api/2.1/unity-catalog/metastores/{metastore_id}", {
         "owner": instructors_group_name,
         "delta_sharing_scope": "INTERNAL_AND_EXTERNAL",
         "delta_sharing_recipient_token_lifetime_in_seconds": 90 * 24 * 60 * 60,  # 90 days
@@ -186,14 +186,14 @@ def create_workspace(config: WorkspaceConfig):
     # Assign the metastore to the workspace
     print("Assign the metastore to the workspace")
     workspace_id = workspace["workspace_id"]
-    workspace.api("PUT", f"2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
+    workspace.api("PUT", f"/api/2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
         "metastore_id": metastore_id,
         "default_catalog_name": "main"
     })
 
     # Grant all users the permissions to create resources in the metastore
     print("Grant all users the permissions to create resources in the metastore")
-    workspace.api("PATCH", f"2.1/unity-catalog/permissions/metastore/{metastore_id}", {
+    workspace.api("PATCH", f"/api/2.1/unity-catalog/permissions/metastore/{metastore_id}", {
         "changes": [{
             "principal": "account users",
             "add": ["CREATE CATALOG", "CREATE EXTERNAL LOCATION", "CREATE SHARE", "CREATE RECIPIENT", "CREATE PROVIDER"]
@@ -215,21 +215,21 @@ def create_workspace(config: WorkspaceConfig):
         credentials_spec["azure_managed_identity"] = {
             "access_connector_id": config.uc_msa_access_connector_id
         }
-    credentials = workspace.api("POST", "2.1/unity-catalog/storage-credentials", credentials_spec)
+    credentials = workspace.api("POST", "/api/2.1/unity-catalog/storage-credentials", credentials_spec)
     storage_root_credential_id = credentials["id"]
-    workspace.api("PATCH", f"2.1/unity-catalog/metastores/{metastore_id}", {
+    workspace.api("PATCH", f"/api/2.1/unity-catalog/metastores/{metastore_id}", {
         "storage_root_credential_id": storage_root_credential_id
     })
 
     # Enable serverless SQL Warehouses
     print("Enable serverless SQL Warehouses")
-    settings = workspace.api("GET", "2.0/sql/config/endpoints")
+    settings = workspace.api("GET", "/api/2.0/sql/config/endpoints")
     settings["enable_serverless_compute"] = True
-    workspace.api("PUT", "2.0/sql/config/endpoints", settings)
+    workspace.api("PUT", "/api/2.0/sql/config/endpoints", settings)
 
     # Configure workspace feature flags
     print("Configure workspace feature flags")
-    workspace.api("PATCH", "2.0/workspace-conf", {
+    workspace.api("PATCH", "/api/2.0/workspace-conf", {
         "enable-X-Frame-Options": "false",  # Turn off iframe prevention
         "intercomAdminConsent": "false",  # Turn off product welcome
         "enableDbfsFileBrowser": "true",  # Enable DBFS UI
@@ -369,13 +369,13 @@ def remove_workspace(workspace_name):
     # Remove the metastore
     print("Remove the metastore")
     try:
-        response = workspace_api.api("GET", f"2.1/unity-catalog/current-metastore-assignment")
+        response = workspace_api.api("GET", f"/api/2.1/unity-catalog/current-metastore-assignment")
         metastore_id = response["metastore_id"]
         workspace_id = response["workspace_id"]
-        workspace_api.api("DELETE", f"2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
+        workspace_api.api("DELETE", f"/api/2.1/unity-catalog/workspaces/{workspace_id}/metastore", {
             "metastore_id": metastore_id
         })
-        workspace_api.api("DELETE", f"2.1/unity-catalog/metastores/{metastore_id}", {
+        workspace_api.api("DELETE", f"/api/2.1/unity-catalog/metastores/{metastore_id}", {
             "force": True
         })
     except DatabricksApiException as e:
