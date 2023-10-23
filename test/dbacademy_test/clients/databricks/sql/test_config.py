@@ -3,8 +3,7 @@ __all__ = ["SqlConfigTests"]
 import unittest
 from typing import Dict, Any
 from dbacademy.clients import databricks
-
-unit_test_service_principle = "d8835420-9797-45f5-897b-6d81d7f80023"
+from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS
 
 
 class SqlConfigTests(unittest.TestCase):
@@ -14,7 +13,7 @@ class SqlConfigTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.client = databricks.from_token(scope="DBACADEMY_UNIT_TESTS")
+        cls.client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS)
 
     def test_get(self):
         config = self.client.sql.config.get()

@@ -93,7 +93,7 @@ class JobsClient(ApiContainer):
 
     def list(self, expand_tasks: bool = False):
         offset = 0  # Start with zero
-        limit = 25  # Default maximum
+        limit = 100  # Our default maximum
 
         target_url = f"{self.client.endpoint}/api/2.1/jobs/list?limit={limit}&expand_tasks={expand_tasks}"
         response = self.client.api("GET", target_url)
@@ -101,7 +101,8 @@ class JobsClient(ApiContainer):
 
         while response.get("has_more", False):
             offset += limit
-            response = self.client.api("GET", f"{target_url}&offset={offset}")
+            page_token = response.get('next_page_token')
+            response = self.client.api("GET", f"{target_url}&page_token={page_token}")
             all_jobs.extend(response.get("jobs", list()))
 
         return all_jobs

@@ -2,14 +2,13 @@ __all__ = ["TestJobsClient"]
 
 import unittest
 from dbacademy.clients import databricks
-
-unit_test_service_principle = "d8835420-9797-45f5-897b-6d81d7f80023"
+from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS, UNIT_TEST_SERVICE_PRINCIPLE
 
 
 class TestJobsClient(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.__client = databricks.from_token(scope="DBACADEMY_UNIT_TESTS")
+        self.__client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.tearDown()
 
     def tearDown(self) -> None:
@@ -23,8 +22,25 @@ class TestJobsClient(unittest.TestCase):
     def client(self):
         return self.__client
 
-    def test_create_git_job(self):
-        import json
+    def test_get_by_name(self):
+        orig_job = self.__create_job()
+        orig_job_id = orig_job.get("job_id")
+        orig_name = orig_job.get("settings", dict()).get("name")
+
+        job = self.client.jobs.get_by_name(orig_name)
+        self.assertIsNotNone(job)
+        self.assertEqual(orig_job_id, job.get("job_id"))
+        self.assertEqual(orig_name, orig_job.get("settings", dict()).get("name"))
+
+    def test_get_by_id(self):
+        orig_job = self.__create_job()
+        orig_job_id = orig_job.get("job_id")
+
+        job = self.client.jobs.get_by_id(orig_job_id)
+        self.assertIsNotNone(job)
+        self.assertEqual(orig_job_id, job.get("job_id"))
+
+    def __create_job(self):
         from dbacademy.clients.databricks.jobs.job_config_classes import JobConfig
         from dbacademy.clients.databricks.clusters.cluster_config_class import JobClusterConfig
         from dbacademy.dbhelper import WorkspaceHelper
@@ -52,11 +68,17 @@ class TestJobsClient(unittest.TestCase):
                                                  autotermination_minutes=None))
 
         job_id = self.client.jobs.create_from_config(config)
-        job = self.client.jobs.get_by_id(job_id)
+        return self.client.jobs.get_by_id(job_id)
+
+    def test_create_git_job(self):
+        import json
+
+        job = self.__create_job()
+        job_id = job.get("job_id")
 
         self.assertEquals(job_id, job.get("job_id"))
-        self.assertEquals(unit_test_service_principle, job.get("creator_user_name"))
-        self.assertEquals(unit_test_service_principle, job.get("run_as_user_name"))
+        self.assertEquals(UNIT_TEST_SERVICE_PRINCIPLE, job.get("creator_user_name"))
+        self.assertEquals(UNIT_TEST_SERVICE_PRINCIPLE, job.get("run_as_user_name"))
         self.assertEquals(True, job.get("run_as_owner"))
 
         settings = job.get("settings")

@@ -8,6 +8,7 @@
 import unittest
 
 from dbacademy.clients.rest.factory import dbrest_factory
+from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS
 
 
 class TestDBAcademyRestClient(unittest.TestCase):
@@ -18,23 +19,23 @@ class TestDBAcademyRestClient(unittest.TestCase):
     def test_create(self):
         from dbacademy.clients import databricks
 
-        client = databricks.from_token(scope="DBACADEMY_UNIT_TESTS")
+        client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.assertIsNotNone(client)
         self.assertEqual("https://curriculum-unit-tests.cloud.databricks.com", client.endpoint)
 
-        client = databricks.from_token(scope="DBACADEMY_UNIT_TESTS", endpoint="https://curriculum-unit-tests.cloud.databricks.com")
+        client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS, endpoint="https://curriculum-unit-tests.cloud.databricks.com")
         self.assertIsNotNone(client)
         self.assertEqual("https://curriculum-unit-tests.cloud.databricks.com", client.endpoint)
 
-        client = databricks.from_token(scope="DBACADEMY_UNIT_TESTS", endpoint="https://curriculum-unit-tests.cloud.databricks.com/")
+        client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS, endpoint="https://curriculum-unit-tests.cloud.databricks.com/")
         self.assertIsNotNone(client)
         self.assertEqual("https://curriculum-unit-tests.cloud.databricks.com", client.endpoint)
 
-        client = databricks.from_token(scope="DBACADEMY_UNIT_TESTS", endpoint="https://curriculum-unit-tests.cloud.databricks.com/api")
+        client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS, endpoint="https://curriculum-unit-tests.cloud.databricks.com/api")
         self.assertIsNotNone(client)
         self.assertEqual("https://curriculum-unit-tests.cloud.databricks.com", client.endpoint)
 
-        client = databricks.from_token(scope="DBACADEMY_UNIT_TESTS", endpoint="https://curriculum-unit-tests.cloud.databricks.com/api/")
+        client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS, endpoint="https://curriculum-unit-tests.cloud.databricks.com/api/")
         self.assertIsNotNone(client)
         self.assertEqual("https://curriculum-unit-tests.cloud.databricks.com", client.endpoint)
 

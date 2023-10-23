@@ -1,12 +1,14 @@
 import unittest
 
+from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS
+
 
 class TestGroups(unittest.TestCase):
 
     def setUp(self) -> None:
         from dbacademy.clients import databricks
 
-        self.__client = databricks.from_token(scope="DBACADEMY_UNIT_TESTS")
+        self.__client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.tearDown()
 
     def tearDown(self) -> None:

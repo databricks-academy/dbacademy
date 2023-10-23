@@ -4,14 +4,13 @@ import time, json, unittest
 from dbacademy.common import Cloud
 from dbacademy.clients import databricks
 from dbacademy.clients.databricks.clusters.cluster_config_class import ClusterConfig, Availability
-
-unit_test_service_principle = "d8835420-9797-45f5-897b-6d81d7f80023"
+from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS, UNIT_TEST_SERVICE_PRINCIPLE
 
 
 class TestClusters(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.__client = databricks.from_token(scope="DBACADEMY_UNIT_TESTS")
+        self.__client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.tearDown()
 
     def tearDown(self) -> None:
@@ -73,7 +72,7 @@ class TestClusters(unittest.TestCase):
             node_type_id="i3.xlarge",
             num_workers=0,
             autotermination_minutes=10,
-            single_user_name=unit_test_service_principle))
+            single_user_name=UNIT_TEST_SERVICE_PRINCIPLE))
         cluster = self.client.clusters.get_by_id(cluster_id)
 
         ignored = ["last_activity_time", "last_restarted_time", "last_state_loss_time", "start_time", "aws_attributes", "state_message"]
@@ -83,14 +82,14 @@ class TestClusters(unittest.TestCase):
             "cluster_id": cluster_id,
             "cluster_name": "Default Cluster",
             "cluster_source": "API",
-            "creator_user_name": unit_test_service_principle,
+            "creator_user_name": UNIT_TEST_SERVICE_PRINCIPLE,
             "custom_tags": {
                 "ResourceClass": "SingleNode"
             },
             "data_security_mode": "SINGLE_USER",
             "default_tags": {
                 "Vendor": "Databricks",
-                "Creator": unit_test_service_principle,
+                "Creator": UNIT_TEST_SERVICE_PRINCIPLE,
                 "ClusterName": "Default Cluster",
                 "ClusterId": cluster_id
             },
@@ -105,7 +104,7 @@ class TestClusters(unittest.TestCase):
             "instance_source": {"node_type_id": "i3.xlarge"},
             "node_type_id": "i3.xlarge",
             "num_workers": 0,
-            "single_user_name": unit_test_service_principle,
+            "single_user_name": UNIT_TEST_SERVICE_PRINCIPLE,
             "spark_conf": {
                 "spark.master": "local[*]",
                 "spark.databricks.cluster.profile": "singleNode"
@@ -127,7 +126,7 @@ class TestClusters(unittest.TestCase):
                     "ResourceClass": "SingleNode"
                 },
                 "autotermination_minutes": 10,
-                "single_user_name": "d8835420-9797-45f5-897b-6d81d7f80023",
+                "single_user_name": UNIT_TEST_SERVICE_PRINCIPLE,
                 "data_security_mode": "SINGLE_USER",
                 "num_workers": 0
             },
@@ -186,13 +185,13 @@ class TestClusters(unittest.TestCase):
             "cluster_id": cluster_id,
             "cluster_name": "Default Cluster",
             "cluster_source": "API",
-            "creator_user_name": unit_test_service_principle,
+            "creator_user_name": UNIT_TEST_SERVICE_PRINCIPLE,
             "custom_tags": {
                 "ResourceClass": "SingleNode"
             },
             "default_tags": {
                 "Vendor": "Databricks",
-                "Creator": unit_test_service_principle,
+                "Creator": UNIT_TEST_SERVICE_PRINCIPLE,
                 "ClusterName": "Default Cluster",
                 "ClusterId": cluster_id
             },
@@ -339,10 +338,10 @@ class TestClusters(unittest.TestCase):
             node_type_id="i3.xlarge",
             num_workers=0,
             autotermination_minutes=10,
-            single_user_name=unit_test_service_principle))
+            single_user_name=UNIT_TEST_SERVICE_PRINCIPLE))
         cluster = self.client.clusters.get_by_id(cluster_id)
 
-        self.assertEquals(unit_test_service_principle, cluster.get("single_user_name"))
+        self.assertEquals(UNIT_TEST_SERVICE_PRINCIPLE, cluster.get("single_user_name"))
         self.assertEquals("SINGLE_USER", cluster.get("data_security_mode"))
 
         self.assertEquals(0, cluster.get("num_workers"))

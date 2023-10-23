@@ -4,8 +4,7 @@ import unittest
 from dbacademy.clients import databricks
 from dbacademy.dbhelper import WorkspaceHelper
 from dbacademy.clients.databricks.sql.endpoints import CLUSTER_SIZE_2X_SMALL, RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT
-
-unit_test_service_principle = "d8835420-9797-45f5-897b-6d81d7f80023"
+from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS
 
 
 class StatementTests(unittest.TestCase):
@@ -15,7 +14,7 @@ class StatementTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.client = databricks.from_token(scope="DBACADEMY_UNIT_TESTS")
+        cls.client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS)
 
         warehouse = cls.client.sql.warehouses.create_or_update(
             name="Unit-Tests Warehouse",
