@@ -3,6 +3,8 @@ __all__ = ["from_args", "from_args_aws"]
 from typing import Union
 from dbacademy.common import Cloud
 from dbacademy.clients.rest.common import ApiClient
+from dbacademy.clients.databricks.accounts.scim import AccountScimApi
+from dbacademy.clients.databricks.accounts.workspaces import WorkspacesApi
 
 
 class AccountsClient(ApiClient):
@@ -26,15 +28,17 @@ class AccountsClient(ApiClient):
 
         self.__account_id = account_id
 
-        from dbacademy.clients.databricks.accounts.scim import AccountScimClient
-        self.scim = AccountScimClient(self, account_id=account_id)
-
-        from dbacademy.clients.databricks.accounts.workspaces import WorkspacesClient
-        self.workspaces = WorkspacesClient(self, self.account_id)
-
     @property
     def account_id(self) -> str:
         return self.__account_id
+
+    @property
+    def scim(self) -> AccountScimApi:
+        return AccountScimApi(self, account_id=self.account_id)
+
+    @property
+    def workspaces(self) -> WorkspacesApi:
+        return WorkspacesApi(self, self.account_id)
 
 
 def from_args(*,

@@ -1,10 +1,10 @@
-__all__ = ["WorkspacesClient"]
+__all__ = ["WorkspacesApi"]
 
 from typing import Dict, Any, List, Optional
 from dbacademy.clients.rest.common import ApiContainer
 
 
-class WorkspacesClient(ApiContainer):
+class WorkspacesApi(ApiContainer):
     from dbacademy.clients.rest.common import ApiClient
 
     def __init__(self, client: ApiClient, account_id: str):

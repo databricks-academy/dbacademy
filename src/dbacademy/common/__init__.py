@@ -100,7 +100,7 @@ def load_databricks_cfg(path: str):
             if line.startswith("["):
                 section_name = line.strip()[1:-1]
                 sections[section_name] = dict()
-            elif line.strip() != "":
+            elif line.strip() != "" and not line.strip().startswith("#"):
                 pos = line.index("=")
                 key = line[:pos].strip()
                 value = line[pos + 1:].strip()

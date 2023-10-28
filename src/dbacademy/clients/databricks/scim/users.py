@@ -7,22 +7,22 @@ from dbacademy.clients.rest.common import ApiClient, ApiContainer
 class ScimUsersClient(ApiContainer):
     def __init__(self, client: ApiClient):
         self.client = client      # Client API exposing other operations to this class
+        self.base_url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users"
 
-    def list(self) -> List[Dict[str, Any]]:
-        try:
-            response = self.client.api("GET", f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users", count=1000, excludedAttributes="roles")
+    def list(self, users: List[Dict[str, Any]] = None, start_index: int = 1, users_per_request: int = 1000) -> List[Dict[str, Any]]:
+        users = users or list()
 
-            users = response.get("Resources", list())
-            total_results = response.get("totalResults")
+        response = self.client.api("GET", self.base_url, startIndex=start_index, count=users_per_request, excludedAttributes="roles")
+        new_users = response.get("Resources", list())
+        users.extend(new_users)
 
-            assert len(users) == int(total_results), f"""The returned value "totalResults" ({total_results}) does not match the number of records ({len(users)}) returned."""
+        if len(new_users) > 0:
+            return self.list(users, len(users)+1)
 
-            return users
-        except Exception as e:
-            raise e
+        return users
 
     def get_by_id(self, user_id: str) -> Dict[str, Any]:
-        url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
+        url = f"{self.base_url}/{user_id}"
         return self.client.api("GET", url)
 
     def get_by_username(self, username: str) -> Optional[Dict[str, Any]]:
@@ -31,7 +31,7 @@ class ScimUsersClient(ApiContainer):
 
         name = urllib.parse.quote(username)
 
-        response = self.client.api("GET", f"""{self.client.endpoint}/api/2.0/preview/scim/v2/Users?excludedAttributes=roles&filter=userName eq "{name}""")
+        response = self.client.api("GET", f"""{self.base_url}?excludedAttributes=roles&filter=userName eq "{name}""")
         users = response.get("Resources", list())
         total_results = response.get("totalResults")
         assert len(users) == int(total_results), f"""The returned value "totalResults" ({total_results}) does not match the number of records ({len(users)}) returned."""
@@ -42,15 +42,8 @@ class ScimUsersClient(ApiContainer):
 
         return None
 
-    def get_by_name(self, name: str) -> Optional[Dict[str, Any]]:
-        for user in self.list():
-            if name == user.get("userName"):
-                return user
-
-        return None
-
     def delete_by_id(self, user_id: str) -> None:
-        url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
+        url = f"{self.base_url}/{user_id}"
         self.client.api("DELETE", url, _expected=204)
         return None
 
@@ -70,8 +63,7 @@ class ScimUsersClient(ApiContainer):
                 "entitlements": []
             }
 
-            url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users"
-            return self.client.api("POST", url, payload, _expected=(200, 201))
+            return self.client.api("POST", self.base_url, payload, _expected=(200, 201))
         except Exception as e:
             raise e
 
@@ -120,7 +112,7 @@ class ScimUsersClient(ApiContainer):
                 }
             ]
         }
-        url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
+        url = f"{self.base_url}/{user_id}"
         return self.client.api("PATCH", url, payload)
 
     def remove_entitlement(self, user_id: str, entitlement: str) -> Dict[str, Any]:
@@ -133,5 +125,5 @@ class ScimUsersClient(ApiContainer):
                 }
             ]
         }
-        url = f"{self.client.endpoint}/api/2.0/preview/scim/v2/Users/{user_id}"
+        url = f"{self.base_url}/{user_id}"
         return self.client.api("PATCH", url, params)
