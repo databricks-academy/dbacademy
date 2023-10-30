@@ -1,14 +1,15 @@
-__all__ = ["ServingEndpointsClient"]
+__all__ = ["ServingEndpointsApi"]
 
+from typing import List, Dict, Any
 from dbacademy.clients.rest.common import ApiClient, ApiContainer
 
 
-class ServingEndpointsClient(ApiContainer):
+class ServingEndpointsApi(ApiContainer):
     def __init__(self, client: ApiClient):
         self.client = client
         self.base_url = f"{self.client.endpoint}/api/2.0/serving-endpoints"
 
-    def list_endpoints(self) -> dict:
+    def list(self) -> List[Dict[str, Any]]:
         response = self.client.api("GET", self.base_url)
         return response.get("endpoints", list())
 

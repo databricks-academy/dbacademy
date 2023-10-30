@@ -350,7 +350,7 @@ class WorkspaceCleaner:
         unique_name = self._get_unique_name(lesson_only)
 
         try:
-            existing_endpoints = self.__da.client.serving_endpoints.list_endpoints()
+            existing_endpoints = self.__da.client.serving_endpoints.list()
         except DatabricksApiException as e:
             if e.http_code == 404 and e.error_code == "FEATURE_DISABLED":
                 common.print_warning(title="Feature Disabled", message=e.message)

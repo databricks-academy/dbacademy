@@ -53,12 +53,7 @@ class ClustersClient(ApiContainer):
         cluster = self.client.api("POST", f"{self.base_uri}/create", _data=params)
         return cluster.get("cluster_id")
 
-    # I'm not 100% sure this isn't called outside of this library -JDP
-    @common.deprecated(reason="Use ClustersClient.list_clusters() instead")
-    def list(self):
-        return self.list_clusters()
-
-    def list_clusters(self) -> List[Dict[str, Any]]:
+    def list(self) -> List[Dict[str, Any]]:
         response = self.client.api("GET", f"{self.base_uri}/list")
         return response.get("clusters", list())
 
@@ -77,7 +72,7 @@ class ClustersClient(ApiContainer):
         return self.client.api("GET", f"{self.base_uri}/get?cluster_id={cluster_id}", _expected=[200, 400])
 
     def get_by_name(self, cluster_name) -> Optional[Dict[str, Any]]:
-        for cluster in self.list_clusters():
+        for cluster in self.list():
             if cluster_name == cluster.get("cluster_name"):
                 return self.get_by_id(cluster.get("cluster_id"))
 

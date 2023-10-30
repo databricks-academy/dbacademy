@@ -298,6 +298,10 @@ class ApiClient(ApiContainer):
                 connection_errors += 1
                 if connection_errors >= 2:
                     raise e
+            except requests.exceptions.ReadTimeout as e:
+                connection_errors += 1
+                if connection_errors >= 2:
+                    raise e
 
             # Attempt 1=1s, 2=1s, 3=5s, 4=16s, 5=13s, etc...
             duration = math.ceil(attempt * attempt / 2)

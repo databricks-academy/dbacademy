@@ -156,8 +156,8 @@ class DBAcademyRestClient(ApiClient):
         from dbacademy.clients.databricks.workspace_config import WorkspaceConfigClient
         self.workspace_config = WorkspaceConfigClient(self)
 
-        from dbacademy.clients.databricks.serving_endpoints import ServingEndpointsClient
-        self.serving_endpoints = ServingEndpointsClient(self)
+        from dbacademy.clients.databricks.serving_endpoints import ServingEndpointsApi
+        self.serving_endpoints = ServingEndpointsApi(self)
 
         from dbacademy.clients.databricks.secrets import SecretsClient
         self.secrets = SecretsClient(self)

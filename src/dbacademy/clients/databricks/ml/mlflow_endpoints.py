@@ -10,9 +10,9 @@ class MLflowEndpointsClient(ApiContainer):
         self.client = client
         self.base_uri = f"{self.client.endpoint}/api/2.0/preview/mlflow/endpoints"
 
-    def list_endpoints(self) -> List[Dict[str, Any]]:
+    def list(self) -> List[Dict[str, Any]]:
         response = self.client.api("GET", f"{self.base_uri}/list")
-        return response.get("endpoints", [])
+        return response.get("endpoints", list())
 
     def get_status(self, model_name: str) -> Dict[str, Any]:
         response = self.client.api("GET", f"{self.base_uri}/get-status?registered_model_name={model_name}")
@@ -55,7 +55,7 @@ class MLflowEndpointsClient(ApiContainer):
             url += f"?registered_model_name={model_name}"
 
         response = self.client.api("GET", url)
-        return response.get("endpoint_versions", [])
+        return response.get("endpoint_versions", list())
 
     def wait_for_endpoint_version(self, model_name: str, version_name: str, delay_seconds: int = 10, timeout: int = 10*60) -> None:
         import time
