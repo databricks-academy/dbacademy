@@ -14,7 +14,7 @@ class TestClusters(unittest.TestCase):
         self.tearDown()
 
     def tearDown(self) -> None:
-        clusters = self.client.clusters.list_clusters()
+        clusters = self.client.clusters.list()
         for cluster in clusters:
             cluster_id = cluster.get("cluster_id")
             self.client.clusters.destroy_by_id(cluster_id)
@@ -53,7 +53,7 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.terminate_by_id(cluster_id_2)
         self.client.clusters.terminate_by_id(cluster_id_3)
 
-        clusters = self.client.clusters.list_clusters()
+        clusters = self.client.clusters.list()
         self.assertEquals(3, len(clusters))
         self.assertTrue(clusters[0].get("cluster_name") in ["Life Cycle #1", "Life Cycle #2", "Life Cycle #3"])
         self.assertTrue(clusters[1].get("cluster_name") in ["Life Cycle #1", "Life Cycle #2", "Life Cycle #3"])
@@ -672,21 +672,6 @@ class TestClusters(unittest.TestCase):
             print(json.dumps(cluster_b, indent=4))
             print("-"*80)
             self.assertEquals(cluster_a, cluster_b)
-
-    def test_list_deprecated(self):
-
-        self.client.clusters.create_from_config(ClusterConfig(
-            cloud=Cloud.AWS,
-            cluster_name="Deprecated List",
-            spark_version="11.3.x-scala2.12",
-            node_type_id="i3.xlarge",
-            num_workers=0,
-            autotermination_minutes=10))
-        try:
-            self.client.clusters.list()
-            raise Exception("Expected DeprecationWarning")
-        except DeprecationWarning as e:
-            self.assertEquals("dbacademy.clients.databricks.clusters.cluster_client_class.list(self): Use ClustersClient.list_clusters() instead", str(e))
 
     def test_get_deprecated(self):
 

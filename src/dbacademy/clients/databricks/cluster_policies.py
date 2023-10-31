@@ -1,6 +1,6 @@
 __all__ = ["ClustersPolicyClient"]
 
-from typing import Optional
+from typing import Optional, Dict, Any
 from dbacademy.clients.rest.common import ApiContainer, ApiClient
 
 
@@ -23,7 +23,7 @@ class ClustersPolicyClient(ApiContainer):
         # Does not support pagination
         return self.client.api("GET", f"{self.base_uri}/list").get("policies", [])
 
-    def create(self, name: str, definition: dict):
+    def create(self, name: str, definition: Dict[str, Any]):
         import json
         assert type(name) == str, f"Expected name to be of type str, found {type(name)}"
         assert type(definition) == dict, f"Expected definition to be of type dict, found {type(definition)}"
@@ -36,7 +36,7 @@ class ClustersPolicyClient(ApiContainer):
         policy_id = response.get("policy_id")
         return self.get_by_id(policy_id)
 
-    def update_by_name(self, name: str, definition: dict):
+    def update_by_name(self, name: str, definition: Dict[str, Any]):
         policy = self.get_by_name(name)
         assert policy is not None, f"A policy named \"{name}\" was not found."
 
@@ -44,7 +44,7 @@ class ClustersPolicyClient(ApiContainer):
 
         return self.update_by_id(policy_id, name, definition)
 
-    def update_by_id(self, policy_id: str, name: str, definition: dict):
+    def update_by_id(self, policy_id: str, name: str, definition: Dict[str, Any]):
         import json
         assert type(policy_id) == str, f"Expected id to be of type str, found {type(policy_id)}"
         assert type(name) == str, f"Expected name to be of type str, found {type(name)}"

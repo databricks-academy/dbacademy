@@ -1,5 +1,6 @@
-from typing import List, Dict
+__all__ = ["Users"]
 
+from typing import List, Dict, Any
 from dbacademy.clients.rest.common import ApiContainer, DatabricksApiException, IfExists
 
 
@@ -29,11 +30,12 @@ class Users(ApiContainer):
         if if_not_exists == "error":
             raise DatabricksApiException(f"User({username!r}) not found", 404)
 
-    def overwrite(self, user: dict):
+    def overwrite(self, user: Dict[str, Any]):
         user_id = user["id"]
         return self.databricks.api("PUT", f"{self.path}/scim/v2/Users/{user_id}", _data=user)
 
-    def patch(self, user: dict, operations: List[Dict]):
+    def patch(self, user: Dict[str, Any], operations: List[Dict[str, Any]]):
+
         user_id = user["id"]
         data = {
             "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
@@ -41,7 +43,7 @@ class Users(ApiContainer):
         }
         return self.databricks.api("PATCH", f"{self.path}/scim/v2/Users/{user_id}", _data=data)
 
-    def set_entitlements(self, user: dict, entitlements: Dict[str, bool]):
+    def set_entitlements(self, user: Dict[str, Any], entitlements: Dict[str, bool]):
         adds = []
         removes = []
         for entitlement_name, entitlement_value in entitlements.items():
@@ -67,7 +69,7 @@ class Users(ApiContainer):
         if operations:
             return self.patch(user, operations)
 
-    def set_cluster_create(self, user: dict, cluster_create: bool = None, pool_create: bool = None):
+    def set_cluster_create(self, user: Dict[str, Any], cluster_create: bool = None, pool_create: bool = None):
         entitlements = {
             "allow-cluster-create": cluster_create,
             "allow-instance-pool-create": pool_create,

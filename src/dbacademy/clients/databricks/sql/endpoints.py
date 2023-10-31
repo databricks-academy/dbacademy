@@ -19,6 +19,7 @@ __all__ = ["SqlWarehousesClient",
            "CLUSTER_SIZE_4X_LARGE",
            "CLUSTER_SIZES"]
 
+from typing import Dict, Any, List
 from dbacademy.clients.rest.common import ApiClient, ApiContainer
 
 COST_OPTIMIZED = "COST_OPTIMIZED"
@@ -99,7 +100,7 @@ class SqlWarehousesClient(ApiContainer):
                          enable_photon: bool = True,
                          spot_instance_policy: str = RELIABILITY_OPTIMIZED,
                          channel: str = CHANNEL_NAME_CURRENT,
-                         tags: dict = None):
+                         tags: Dict[str, Any] = None):
 
         endpoint = self.get_by_name(name)
 
@@ -139,7 +140,7 @@ class SqlWarehousesClient(ApiContainer):
                enable_photon: bool = True,
                spot_instance_policy: str = RELIABILITY_OPTIMIZED,
                channel: str = CHANNEL_NAME_CURRENT,
-               tags: dict = None):
+               tags: Dict[str, Any] = None):
 
         tags = dict() if tags is None else tags
         assert spot_instance_policy in SPOT_POLICIES, f"Expected spot_instance_policy to be one of {SPOT_POLICIES}, found {spot_instance_policy}"
@@ -174,7 +175,19 @@ class SqlWarehousesClient(ApiContainer):
         result = self.client.api("POST", f"{self.base_uri}", params)
         return self.get_by_id(result.get("id"))
 
-    def edit(self, endpoint_id: str, name: str = None, cluster_size: str = None, enable_serverless_compute: bool = None, min_num_clusters: int = None, max_num_clusters: int = None, auto_stop_mins: int = None, enable_photon: bool = None, spot_instance_policy: str = None, channel: str = None, tags: dict = None):
+    def edit(self,
+             endpoint_id: str,
+             name: str = None,
+             cluster_size: str = None,
+             enable_serverless_compute: bool = None,
+             min_num_clusters: int = None,
+             max_num_clusters: int = None,
+             auto_stop_mins: int = None,
+             enable_photon: bool = None,
+             spot_instance_policy: str = None,
+             channel: str = None,
+             tags: Dict[str, Any] = None):
+
         return self.update(endpoint_id, name, cluster_size, enable_serverless_compute, min_num_clusters, max_num_clusters, auto_stop_mins, enable_photon, spot_instance_policy, channel, tags)
 
     # TODO doug.bateman@databricks.com: Potential bugs.
@@ -190,7 +203,7 @@ class SqlWarehousesClient(ApiContainer):
                enable_photon: bool = None,
                spot_instance_policy: str = None,
                channel: str = None,
-               tags: dict = None):
+               tags: Dict[str, Any] = None):
 
         params = dict()
 
@@ -230,8 +243,7 @@ class SqlWarehousesClient(ApiContainer):
             params["tags"] = {
                 "custom_tags": []
             }
-            for key in tags:
-                value = tags[key]
+            for key, value in tags.items():
                 params.get("tags").get("custom_tags").append({
                     "key": key,
                     "value": value
@@ -241,7 +253,7 @@ class SqlWarehousesClient(ApiContainer):
         return self.get_by_id(endpoint_id)
 
     @staticmethod
-    def to_endpoint_name(user, naming_template: str, naming_params: dict):
+    def to_endpoint_name(user, naming_template: str, naming_params: Dict[str, Any]):
         username = user.get("userName")
 
         if "{da_hash}" in naming_template:
@@ -255,7 +267,7 @@ class SqlWarehousesClient(ApiContainer):
 
     def create_user_endpoints(self,
                               naming_template: str,
-                              naming_params: dict,
+                              naming_params: Dict[str, Any],
                               cluster_size: str,
                               enable_serverless_compute: bool,
                               min_num_clusters: int = 1,
@@ -264,8 +276,8 @@ class SqlWarehousesClient(ApiContainer):
                               enable_photon: bool = True,
                               spot_instance_policy: str = RELIABILITY_OPTIMIZED,
                               channel: str = CHANNEL_NAME_CURRENT,
-                              tags: dict = None,
-                              users: list = None):
+                              tags: Dict[str, Any] = None,
+                              users: List[Dict[str, Any]] = None):
         """Creates one SQL endpoint per user in the current workspace. The list of users can be limited to a subset of users with the "users" parameter.
     Parameters: 
         naming_template (str): The template used to name each user's endpoint.
@@ -301,7 +313,7 @@ class SqlWarehousesClient(ApiContainer):
     def create_user_endpoint(self,
                              user,
                              naming_template: str,
-                             naming_params: dict,
+                             naming_params: Dict[str, Any],
                              cluster_size: str,
                              enable_serverless_compute: bool,
                              min_num_clusters: int,
@@ -310,7 +322,7 @@ class SqlWarehousesClient(ApiContainer):
                              enable_photon: bool,
                              spot_instance_policy: str,
                              channel: str,
-                             tags: dict):
+                             tags: Dict[str, Any]):
         username = user.get("userName")
         active = user.get("active")
         
@@ -344,11 +356,19 @@ class SqlWarehousesClient(ApiContainer):
                                                                  username=username,
                                                                  permission_level="CAN_MANAGE")
 
-    def delete_user_endpoints(self, naming_template: str, naming_params: dict, users: list = None):
+    def delete_user_endpoints(self,
+                              naming_template: str,
+                              naming_params: Dict[str, Any],
+                              users: List[Dict[str, Any]] = None):
+
         for user in self.client.scim().users().to_users_list(users):
             self.delete_user_endpoint(user=user, naming_template=naming_template, naming_params=naming_params)
 
-    def delete_user_endpoint(self, user, naming_template: str, naming_params: dict):
+    def delete_user_endpoint(self,
+                             user: Dict[str, Any],
+                             naming_template: str,
+                             naming_params: Dict[str, Any]):
+
         username = user.get("userName")
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
@@ -360,11 +380,19 @@ class SqlWarehousesClient(ApiContainer):
 
         print(f"Skipping deletion of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found\n")
 
-    def start_user_endpoints(self, naming_template: str, naming_params: dict, users: list = None):
+    def start_user_endpoints(self,
+                             naming_template: str,
+                             naming_params: Dict[str, Any],
+                             users: List[Dict[str, Any]] = None):
+
         for user in self.client.scim().users().to_users_list(users):
             self.start_user_endpoint(user=user, naming_template=naming_template, naming_params=naming_params)
 
-    def start_user_endpoint(self, user, naming_template: str, naming_params: dict):
+    def start_user_endpoint(self,
+                            user: Dict[str, Any],
+                            naming_template: str,
+                            naming_params: Dict[str, Any]):
+
         username = user.get("userName")
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
@@ -376,11 +404,19 @@ class SqlWarehousesClient(ApiContainer):
 
         print(f"Skipping start of the endpoint \"{endpoint_name}\" for the user \"{username}\": Not found\n")
 
-    def stop_user_endpoints(self, naming_template: str, naming_params: dict, users: list = None):
+    def stop_user_endpoints(self,
+                            naming_template: str,
+                            naming_params: Dict[str, Any],
+                            users: List[Dict[str, Any]] = None):
+
         for user in self.client.scim().users().to_users_list(users):
             self.stop_user_endpoint(user=user, naming_template=naming_template, naming_params=naming_params)
 
-    def stop_user_endpoint(self, user, naming_template: str, naming_params: dict):
+    def stop_user_endpoint(self,
+                           user: Dict[str, Any],
+                           naming_template: str,
+                           naming_params: Dict[str, Any]):
+
         username = user.get("userName")
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 

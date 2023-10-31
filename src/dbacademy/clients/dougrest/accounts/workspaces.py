@@ -2,7 +2,7 @@ __all__ = ["Workspace", "Workspaces"]
 
 from dbacademy.clients.dougrest.client import DatabricksApi, DatabricksApiException
 
-from typing import Any, Type
+from typing import Any, Type, Dict
 from dbacademy.common import overrides
 from dbacademy.clients.rest.common import HttpMethod, HttpReturnType, HttpStatusCodes, IfExists, IfNotExists
 from dbacademy.clients.dougrest.accounts.crud import AccountsCRUD
@@ -50,7 +50,7 @@ class Workspace(DatabricksApi):
     def api(self,
             _http_method: HttpMethod,
             _endpoint_path: str,
-            _data: dict = None, *,
+            _data: Dict[str, Any] = None, *,
             _expected: HttpStatusCodes = None,
             _result_type: Type[HttpReturnType] = dict,
             _base_url: str = None,
@@ -91,7 +91,7 @@ class Workspaces(AccountsCRUD):
         self.client: AccountsApi = client
 
     @overrides
-    def _wrap(self, item: dict) -> Workspace:
+    def _wrap(self, item: Dict[str, Any]) -> Workspace:
         if "workspace_id" not in item:
             raise ValueError(f"Invalid response.  Expected workspace dict, found: {item}")
         return Workspace(item, self.client) if item is not None else None

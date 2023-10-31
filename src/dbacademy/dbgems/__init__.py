@@ -2,7 +2,7 @@
 This module includes helper functions specifically aimed at code developed in and maintained in Notebooks.
 Examples include wrappers around tags, notebook state variables, and the full body of functions exposed by dbutils.
 """
-from typing import Union, Any, Callable, Optional, List
+from typing import Union, Any, Callable, Optional, List, Dict
 
 from dbacademy import common
 from dbacademy.dbgems.mock_dbutils_class import MockDBUtils
@@ -185,7 +185,7 @@ def get_notebooks_api_token() -> str:
     return dbutils.notebook.entry_point.getDbutils().notebook().getContext().apiToken().getOrElse(None)
 
 
-def jprint(value: dict, indent: int = 4):
+def jprint(value: Dict[str, Any], indent: int = 4):
     assert type(value) == dict or type(value) == list, f"Expected value to be of type \"dict\" or \"list\", found \"{type(value)}\". "
 
     import json

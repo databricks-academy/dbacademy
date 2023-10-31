@@ -10,7 +10,7 @@ from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS
 class StatementTests(unittest.TestCase):
 
     warehouse_id: str = None
-    client = databricks.none_reference()
+    client: databricks.DBAcademyRestClient = None
 
     @classmethod
     def setUpClass(cls) -> None:

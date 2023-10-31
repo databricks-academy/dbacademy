@@ -273,7 +273,18 @@ class ValidationSuite(object):
                                         hint=hint,
                                         test_function=lambda: actual_value() in expected_values))
 
-    def test_sequence(self, actual_value: Callable[[], list], expected_value: list, test_column_order: bool, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None):
+    def test_sequence(self,
+                      actual_value: Callable[[], List[Any]],
+                      expected_value: List[Any],
+                      test_column_order: bool,
+                      description: str,
+                      *,
+                      test_case_id: str = None,
+                      points: int = 1,
+                      depends_on: Iterable[str] = None,
+                      escape_html: bool = False,
+                      hint=None):
+
         from dbacademy.dbhelper.validations.validation_class import Validation
 
         return self.add_test(Validation(suite=self,
@@ -334,7 +345,10 @@ class ValidationSuite(object):
         pass
 
     @staticmethod
-    def compare_lists(value_a: list, value_b: list, test_column_order: bool):
+    def compare_lists(value_a: List[Any],
+                      value_b: List[Any],
+                      test_column_order: bool):
+
         if value_a is None and value_b is None:
             return True
 

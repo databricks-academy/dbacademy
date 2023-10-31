@@ -1,7 +1,7 @@
 __all__ = ["SqlQueriesClient"]
 
 import builtins
-
+from typing import Dict, Any
 from dbacademy.clients.rest.common import ApiClient, ApiContainer
 
 
@@ -54,13 +54,13 @@ class SqlQueriesClient(ApiContainer):
         else:
             return self.get_by_name(query_name=query_name, queries=queries, page=page+1)
 
-    def clone(self, query: dict):
+    def clone(self, query: Dict[str, Any]):
         create_def = self.existing_to_create(query)
         create_def["name"] = "Clone - "+create_def["name"]
         return self.create_from_dict(query)
 
     @staticmethod
-    def existing_to_create(query: dict):
+    def existing_to_create(query: Dict[str, Any]):
         assert type(query) == dict, f"Expected the \"query\" parameter to be of type dict, found {type(query)}"
 
         for key in list(query.keys()):
@@ -69,10 +69,17 @@ class SqlQueriesClient(ApiContainer):
 
         return query
 
-    def create_from_dict(self, params: dict):
+    def create_from_dict(self, params: Dict[str, Any]):
         return self.client.api("POST", f"{self.base_uri}", params)
 
-    def create(self, name: str, query: str, description: str = None, schedule: dict = None, options: dict = None, data_source_id: str = None):
+    def create(self,
+               name: str,
+               query: str,
+               description: str = None,
+               schedule: Dict[str, Any] = None,
+               options: Dict[str, Any] = None,
+               data_source_id: str = None):
+
         params = dict()
         params["data_source_id"] = data_source_id
         params["query"] = query
@@ -82,11 +89,19 @@ class SqlQueriesClient(ApiContainer):
         params["options"] = builtins.dict() if options is None else options
         return self.create_from_dict(params)
 
-    def update_from_dict(self, id_value: str, params: dict):
+    def update_from_dict(self, id_value: str, params: Dict[str, Any]):
         assert len(params.keys()) > 0, "Expected at least one parameter."
         return self.client.api("POST", f"{self.base_uri}/{id_value}", params)
 
-    def update(self, id_value: str, name: str = None, query: str = None, description: str = None, schedule: dict = None, options: dict = None, data_source_id: str = None):
+    def update(self,
+               id_value: str,
+               name: str = None,
+               query: str = None,
+               description: str = None,
+               schedule: Dict[str, Any] = None,
+               options: Dict[str, Any] = None,
+               data_source_id: str = None):
+
         params = dict()
 
         if name is not None:

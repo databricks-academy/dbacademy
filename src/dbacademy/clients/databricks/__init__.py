@@ -4,6 +4,25 @@ from typing import Optional
 from dbacademy.clients.rest.common import ApiClient
 from dbacademy.clients import ClientErrorHandler
 
+from dbacademy.clients.databricks.secrets import SecretsClient
+from dbacademy.clients.databricks.clusters.cluster_client_class import ClustersClient
+from dbacademy.clients.databricks.cluster_policies import ClustersPolicyClient
+from dbacademy.clients.databricks.instance_pools import InstancePoolsClient
+from dbacademy.clients.databricks.jobs.jobs_client_class import JobsClient
+from dbacademy.clients.databricks.ml import MlClient
+from dbacademy.clients.databricks.permissions import Permissions
+from dbacademy.clients.databricks.pipelines import PipelinesClient
+from dbacademy.clients.databricks.repos import ReposClient
+from dbacademy.clients.databricks.runs import RunsClient
+from dbacademy.clients.databricks.scim import ScimClient
+from dbacademy.clients.databricks.sql import SqlClient
+from dbacademy.clients.databricks.tokens import TokensClient
+from dbacademy.clients.databricks.token_management import TokenManagementClient
+from dbacademy.clients.databricks.uc import UcClient
+from dbacademy.clients.databricks.workspace import WorkspaceClient
+from dbacademy.clients.databricks.workspace_config import WorkspaceConfigClient
+from dbacademy.clients.databricks.serving_endpoints import ServingEndpointsApi
+
 DEFAULT_SCOPE = "DBACADEMY"
 
 
@@ -108,64 +127,82 @@ class DBAcademyRestClient(ApiClient):
                          throttle_seconds=throttle_seconds,
                          error_handler=error_handler)
 
-        from dbacademy.clients.databricks.clusters.cluster_client_class import ClustersClient
-        self.clusters = ClustersClient(self)
+    @property
+    def clusters(self) -> ClustersClient:
+        return ClustersClient(self)
 
-        from dbacademy.clients.databricks.cluster_policies import ClustersPolicyClient
-        self.cluster_policies = ClustersPolicyClient(self)
+    @property
+    def cluster_policies(self) -> ClustersPolicyClient:
+        return ClustersPolicyClient(self)
 
-        from dbacademy.clients.databricks.instance_pools import InstancePoolsClient
-        self.instance_pools = InstancePoolsClient(self)
+    @property
+    def instance_pools(self) -> InstancePoolsClient:
+        return InstancePoolsClient(self)
 
-        from dbacademy.clients.databricks.jobs.jobs_client_class import JobsClient
-        self.jobs = JobsClient(self)
+    @property
+    def jobs(self) -> JobsClient:
+        return JobsClient(self)
 
-        from dbacademy.clients.databricks.ml import MlClient
-        self.ml = MlClient(self)
+    @property
+    def ml(self) -> MlClient:
+        return MlClient(self)
 
-        from dbacademy.clients.databricks.permissions import Permissions
-        self.permissions = Permissions(self)
+    @property
+    def permissions(self) -> Permissions:
+        return Permissions(self)
 
-        from dbacademy.clients.databricks.pipelines import PipelinesClient
-        self.pipelines = PipelinesClient(self)
+    @property
+    def pipelines(self) -> PipelinesClient:
+        return PipelinesClient(self)
 
-        from dbacademy.clients.databricks.repos import ReposClient
-        self.repos = ReposClient(self)
+    @property
+    def repos(self) -> ReposClient:
+        return ReposClient(self)
 
-        from dbacademy.clients.databricks.runs import RunsClient
-        self.runs = RunsClient(self)
+    @property
+    def runs(self) -> RunsClient:
+        return RunsClient(self)
 
-        from dbacademy.clients.databricks.scim import ScimClient
-        self.scim = ScimClient(self)
+    @property
+    def scim(self) -> ScimClient:
+        return ScimClient(self)
 
-        from dbacademy.clients.databricks.sql import SqlClient
-        self.sql = SqlClient(self)
+    @property
+    def sql(self) -> SqlClient:
+        return SqlClient(self)
 
-        from dbacademy.clients.databricks.tokens import TokensClient
-        self.tokens = TokensClient(self)
+    @property
+    def tokens(self) -> TokensClient:
+        return TokensClient(self)
 
-        from dbacademy.clients.databricks.token_management import TokenManagementClient
-        self.token_management = TokenManagementClient(self)
+    @property
+    def token_management(self) -> TokenManagementClient:
+        return TokenManagementClient(self)
 
-        from dbacademy.clients.databricks.uc import UcClient
-        self.uc = UcClient(self)
+    @property
+    def uc(self) -> UcClient:
+        return UcClient(self)
 
-        from dbacademy.clients.databricks.workspace import WorkspaceClient
-        self.workspace = WorkspaceClient(self)
+    @property
+    def workspace(self) -> WorkspaceClient:
+        return WorkspaceClient(self)
 
-        from dbacademy.clients.databricks.workspace_config import WorkspaceConfigClient
-        self.workspace_config = WorkspaceConfigClient(self)
+    @property
+    def workspace_config(self) -> WorkspaceConfigClient:
+        return WorkspaceConfigClient(self)
 
-        from dbacademy.clients.databricks.serving_endpoints import ServingEndpointsApi
-        self.serving_endpoints = ServingEndpointsApi(self)
+    @property
+    def serving_endpoints(self) -> ServingEndpointsApi:
+        return ServingEndpointsApi(self)
 
-        from dbacademy.clients.databricks.secrets import SecretsClient
-        self.secrets = SecretsClient(self)
+    @property
+    def secrets(self) -> SecretsClient:
+        return SecretsClient(self)
 
 
-def none_reference() -> Optional[DBAcademyRestClient]:
-    """Returns a None instance of DBAcademyRestClient, used to set an initial value to None while retaining the type information."""
-    return None
+# def none_reference() -> Optional[DBAcademyRestClient]:
+#     """Returns a None instance of DBAcademyRestClient, used to set an initial value to None while retaining the type information."""
+#     return None
 
 
 def __load(name: str, value: str, scope: str) -> str:

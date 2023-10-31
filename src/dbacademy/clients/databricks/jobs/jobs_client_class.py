@@ -40,7 +40,7 @@ class JobsClient(ApiContainer):
         response = self.client.api("POST", f"{self.client.endpoint}/api/2.1/jobs/create", params)
         return response.get("job_id")
 
-    def run_now(self, job_id: str, notebook_params: dict = None):
+    def run_now(self, job_id: str, notebook_params: Dict[str, Any] = None):
         payload = {
             "job_id": job_id
         }
@@ -169,3 +169,36 @@ class JobsClient(ApiContainer):
 
         self.client.vprint(f"...deleted {deleted} jobs")
         return None
+
+    def update_schedule(self, *, _job_id: str, _paused: bool) -> Dict[str, Any]:
+        payload = {
+            "job_id": _job_id,
+            "settings": {
+                "schedule": {
+                    "pause_status": "PAUSED" if _paused else "UNPAUSED"
+                }
+            }
+        }
+        return self.client.api("POST", f"{self.base_uri}/update", payload)
+
+    def update_continuous(self, *, _job_id: str, _paused: bool) -> Dict[str, Any]:
+        payload = {
+            "job_id": _job_id,
+            "settings": {
+                "continuous": {
+                    "pause_status": "PAUSED" if _paused else "UNPAUSED"
+                }
+            }
+        }
+        return self.client.api("POST", f"{self.base_uri}/update", payload)
+
+    def update_trigger(self, *, _job_id: str, _paused: bool) -> Dict[str, Any]:
+        payload = {
+            "job_id": _job_id,
+            "settings": {
+                "trigger": {
+                    "pause_status": "PAUSED" if _paused else "UNPAUSED"
+                }
+            }
+        }
+        return self.client.api("POST", f"{self.base_uri}/update", payload)

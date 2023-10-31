@@ -211,7 +211,7 @@ class ApiClient(ApiContainer):
     def api(self,
             _http_method: HttpMethod,
             _endpoint_path: str,
-            _data: dict = None,
+            _data: Dict[str, Any] = None,
             *,
             _expected: HttpStatusCodes = None,
             _result_type: Type[HttpReturnType] = dict,

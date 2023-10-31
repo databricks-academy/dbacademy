@@ -75,7 +75,6 @@ class WorkspaceSetup:
     from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
 
     def __init__(self, account_config: AccountConfig, run_workspace_setup: bool):
-        import os
         from dbacademy.common import validate
         from dbacademy.clients.dougrest import AccountsApi
         from dbacademy.clients import airtable

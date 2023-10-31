@@ -53,7 +53,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         state = StateVariables()
         state.i18n_guid_map = {"--i18n-TBD": "whatever"}
         notebook = self.create_notebook()
-        notebook.update_command(state=state, language="Python", command=command, i=3, other_notebooks=[], debugging=False)
+        notebook.update_command(state=state, language="Python", command=command, i=3, other_notebooks=list(), debugging=False)
 
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
@@ -72,7 +72,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         state = StateVariables()
         state.i18n_guid_map = {"--i18n-TBD": "whatever"}
         notebook = self.create_notebook()
-        notebook.update_command(state=state, language="Python", command=command, i=3, other_notebooks=[], debugging=False)
+        notebook.update_command(state=state, language="Python", command=command, i=3, other_notebooks=list(), debugging=False)
 
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
@@ -91,7 +91,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         state = StateVariables()
         state.i18n_guid_map = {"--i18n-TBD": "whatever"}
         notebook = self.create_notebook()
-        notebook.update_command(state=state, language="Python", command=command, i=3, other_notebooks=[], debugging=False)
+        notebook.update_command(state=state, language="Python", command=command, i=3, other_notebooks=list(), debugging=False)
 
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
@@ -110,7 +110,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         state = StateVariables()
         state.i18n_guid_map = {"--i18n-TBD": "whatever"}
         notebook = self.create_notebook()
-        notebook.update_command(state=state, language="Python", command=command, i=3, other_notebooks=[], debugging=False)
+        notebook.update_command(state=state, language="Python", command=command, i=3, other_notebooks=list(), debugging=False)
 
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
@@ -125,7 +125,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         state = StateVariables()
         state.i18n_guid_map = {"--i18n-TBD": "whatever"}
         notebook = self.create_notebook()
-        notebook.update_command(state=state, language="Python", command=command, i=3, other_notebooks=[], debugging=False)
+        notebook.update_command(state=state, language="Python", command=command, i=3, other_notebooks=list(), debugging=False)
 
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
@@ -143,7 +143,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         state = StateVariables()
         state.i18n_guid_map = {"--i18n-TBD": "whatever"}
         notebook = self.create_notebook()
-        notebook.update_command(state=state, language="Python", command=command, i=3, other_notebooks=[], debugging=False)
+        notebook.update_command(state=state, language="Python", command=command, i=3, other_notebooks=list(), debugging=False)
 
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
@@ -165,8 +165,8 @@ class TestNotebookDefI18NBody(unittest.TestCase):
             "--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a": "whatever"
         }
         notebook = self.create_notebook()
-        notebook.update_command(state=state, language="Python", command=command_a, i=3, other_notebooks=[], debugging=False)
-        notebook.update_command(state=state, language="Python", command=command_b, i=4, other_notebooks=[], debugging=False)
+        notebook.update_command(state=state, language="Python", command=command_a, i=3, other_notebooks=list(), debugging=False)
+        notebook.update_command(state=state, language="Python", command=command_b, i=4, other_notebooks=list(), debugging=False)
 
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
@@ -192,8 +192,8 @@ class TestNotebookDefI18NBody(unittest.TestCase):
             guid_b: "# MAGIC # Some Title",
         }
         notebook = self.create_notebook()
-        notebook.update_command(state=state, language="Python", command=command_a, i=3, other_notebooks=[], debugging=False)
-        notebook.update_command(state=state, language="Python", command=command_b, i=4, other_notebooks=[], debugging=False)
+        notebook.update_command(state=state, language="Python", command=command_a, i=3, other_notebooks=list(), debugging=False)
+        notebook.update_command(state=state, language="Python", command=command_b, i=4, other_notebooks=list(), debugging=False)
 
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
@@ -206,7 +206,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         state = StateVariables()
         state.i18n_guid_map = {"--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a": "# MAGIC # Some Title"}
         notebook = self.create_notebook()
-        actual = notebook.update_command(state=state, language="Python", command=command, i=4, other_notebooks=[], debugging=False)
+        actual = notebook.update_command(state=state, language="Python", command=command, i=4, other_notebooks=list(), debugging=False)
 
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
@@ -224,7 +224,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         state = StateVariables()
         state.i18n_guid_map = i18n_guid_map
         notebook = self.create_notebook()
-        actual = notebook.update_command(state=state, language="Python", command=command, i=4, other_notebooks=[], debugging=False)
+        actual = notebook.update_command(state=state, language="Python", command=command, i=4, other_notebooks=list(), debugging=False)
 
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
@@ -240,7 +240,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         state = StateVariables()
         state.i18n_guid_map = {"--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a": "-- MAGIC # Some Title"}
         notebook = self.create_notebook()
-        actual = notebook.update_command(state=state, language="SQL", command=command, i=4, other_notebooks=[], debugging=False)
+        actual = notebook.update_command(state=state, language="SQL", command=command, i=4, other_notebooks=list(), debugging=False)
 
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(0, notebook)
@@ -256,7 +256,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         state = StateVariables()
         state.i18n_guid_map = {"--i18n-TBD": "whatever"}
         notebook = self.create_notebook()
-        notebook.update_command(state=state, language="SQL", command=command, i=4, other_notebooks=[], debugging=False)
+        notebook.update_command(state=state, language="SQL", command=command, i=4, other_notebooks=list(), debugging=False)
 
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)

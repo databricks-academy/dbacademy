@@ -66,7 +66,7 @@ class Translation:
 
 class PublishingInfo:
 
-    def __init__(self, publishing_info: dict):
+    def __init__(self, publishing_info: Dict[str, Any]):
         a = publishing_info.get("announcements")
         self.__announcements = Announcements(email_addresses=a.get("email_addresses"),
                                              slack_channels=[SlackChannel(name=c.get("name"), url=c.get("url")) for c in a.get("slack_channels")])

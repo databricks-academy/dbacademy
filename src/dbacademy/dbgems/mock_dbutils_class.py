@@ -1,3 +1,8 @@
+__all__ = ["MockNotebook", "MockOptional", "MockSecrets", "MockWidgets", "MockDBUtils", "MockEntryPointNotebook", "MockEntryPoint", "MockEntryPointDBUtils", "MockEntryPointContext", "MockFileSystem"]
+
+from typing import Dict, Any
+
+
 class MockOptional:
     def __init__(self, value: str):
         self.value = value
@@ -57,7 +62,7 @@ class MockWidgets:
 
 class MockNotebook:
     @staticmethod
-    def run(path: str, timeout_seconds: int, arguments: dict):
+    def run(path: str, timeout_seconds: int, arguments: Dict[str, Any]):
         pass
 
 

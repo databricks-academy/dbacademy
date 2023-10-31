@@ -1,3 +1,5 @@
+__all__ = ["BuildConfig"]
+
 from typing import Type, List, Dict, Union, Any, Optional, Callable
 
 
@@ -125,13 +127,13 @@ class BuildConfig:
                  source_dir: str = None,
                  source_repo: str = None,
                  readme_file_name: str = None,
-                 spark_conf: dict = None,
-                 job_arguments: dict = None,
+                 spark_conf: Dict[str, Any] = None,
+                 job_arguments: Dict[str, Any] = None,
                  include_solutions: bool = True,
                  i18n: bool = False,
                  i18n_language: str = None,
-                 ignoring: list = None,
-                 publishing_info: dict = None):
+                 ignoring: List[str] = None,
+                 publishing_info: Dict[str, Any] = None):
 
         import uuid
         import time
@@ -153,7 +155,7 @@ class BuildConfig:
         self.supported_dbrs = supported_dbrs or []
 
         self.language_options = None
-        self.ignoring = [] if ignoring is None else ignoring
+        self.ignoring = list() if ignoring is None else ignoring
 
         self.i18n = i18n
         self.i18n_language = i18n_language

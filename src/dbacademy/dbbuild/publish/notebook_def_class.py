@@ -1,4 +1,7 @@
-from typing import Callable, Union, List, Dict
+__all__ = ["NotebookDef", "NotebookError", "StateVariables"]
+
+from typing import Callable, Union, List, Dict, Any
+from dbacademy.dbbuild.build_config_class import BuildConfig
 
 
 class NotebookError:
@@ -34,37 +37,21 @@ class StateVariables:
         self.found_footer_directive = False
 
 
-class NotebookDef:
-    from dbacademy.dbbuild.build_config_class import BuildConfig
-
-    D_TODO = "TODO"
-    D_ANSWER = "ANSWER"
-    D_SOURCE_ONLY = "SOURCE_ONLY"
-    D_DUMMY = "DUMMY"
-    D_TROUBLESHOOTING_CONTENT = "TROUBLESHOOTING_CONTENT"
-    D_INSTALL_LIBRARIES = "INSTALL_LIBRARIES"
-
-    D_INCLUDE_HEADER_TRUE = "INCLUDE_HEADER_TRUE"
-    D_INCLUDE_HEADER_FALSE = "INCLUDE_HEADER_FALSE"
-    D_INCLUDE_FOOTER_TRUE = "INCLUDE_FOOTER_TRUE"
-    D_INCLUDE_FOOTER_FALSE = "INCLUDE_FOOTER_FALSE"
-
-    SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY, D_TROUBLESHOOTING_CONTENT, D_INSTALL_LIBRARIES,
-                            D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
-
+class NotebookDefData:
     def __init__(self,
                  *,
                  build_config: BuildConfig,
                  path: str,
-                 replacements: dict,
+                 replacements: Dict[str, Any],
                  include_solution: bool,
                  test_round: int,
                  ignored: bool,
                  order: int,
                  i18n: bool,
                  i18n_language: Union[None, str],
-                 ignoring: list,
+                 ignoring: List[str],
                  version: str):
+
         from dbacademy.dbbuild.build_config_class import BuildConfig
 
         assert type(build_config) == BuildConfig, f"""Expected the parameter "build_config" to be of type "BuildConfig", found "{type(build_config)}" """
@@ -91,6 +78,39 @@ class NotebookDef:
 
         self.ignoring = ignoring
         self.version = version
+
+
+class NotebookDef(NotebookDefData):
+
+    D_TODO = "TODO"
+    D_ANSWER = "ANSWER"
+    D_SOURCE_ONLY = "SOURCE_ONLY"
+    D_DUMMY = "DUMMY"
+    D_TROUBLESHOOTING_CONTENT = "TROUBLESHOOTING_CONTENT"
+    D_INSTALL_LIBRARIES = "INSTALL_LIBRARIES"
+
+    D_INCLUDE_HEADER_TRUE = "INCLUDE_HEADER_TRUE"
+    D_INCLUDE_HEADER_FALSE = "INCLUDE_HEADER_FALSE"
+    D_INCLUDE_FOOTER_TRUE = "INCLUDE_FOOTER_TRUE"
+    D_INCLUDE_FOOTER_FALSE = "INCLUDE_FOOTER_FALSE"
+
+    SUPPORTED_DIRECTIVES = [D_SOURCE_ONLY, D_ANSWER, D_TODO, D_DUMMY, D_TROUBLESHOOTING_CONTENT, D_INSTALL_LIBRARIES,
+                            D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
+
+    def __init__(self, *,
+                 build_config: BuildConfig,
+                 path: str,
+                 replacements: Dict[str, Any],
+                 include_solution: bool,
+                 test_round: int,
+                 ignored: bool,
+                 order: int,
+                 i18n: bool,
+                 i18n_language: Union[None, str],
+                 ignoring: List[str],
+                 version: str):
+
+        super().__init__(build_config=build_config, path=path, replacements=replacements, include_solution=include_solution, test_round=test_round, ignored=ignored, order=order, i18n=i18n, i18n_language=i18n_language, ignoring=ignoring, version=version)
 
     def __str__(self):
         result = self.path
@@ -133,7 +153,13 @@ class NotebookDef:
         if print_warnings:
             self.assert_no_warnings()
 
-    def test_notebook_exists(self, i, what, original_target, target, other_notebooks):
+    def test_notebook_exists(self,
+                             i: int,
+                             what: str,
+                             original_target: str,
+                             target: str,
+                             other_notebooks: List[NotebookDefData]):
+
         if not target.startswith("../") and not target.startswith("./"):
             self.warn(lambda: False, f"Cmd #{i+1} | Found unexpected, relative, {what} target: \"{original_target}\" resolved as \"{target}\"".strip())
             return
@@ -201,7 +227,7 @@ class NotebookDef:
 
         return command
 
-    def test_run_cells(self, language: str, command: str, i: int, other_notebooks: list) -> None:
+    def test_run_cells(self, language: str, command: str, i: int, other_notebooks: List[NotebookDefData]) -> None:
         """
         Validates %run cells meet specific requirements
         :param language: The language of the corresponding notebook
@@ -244,7 +270,11 @@ class NotebookDef:
     #         if "single-tick" not in self.ignoring:
     #             self.warn(lambda: False, f"Cmd #{i+1} | Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
 
-    def validate_md_link(self, i, command, other_notebooks):
+    def validate_md_link(self,
+                         i: int,
+                         command: str,
+                         other_notebooks: List[NotebookDefData]):
+
         """Test for MD links to be replaced with html links"""
 
         import re
@@ -384,7 +414,13 @@ class NotebookDef:
 
         return command
 
-    def update_md_cells(self, state: StateVariables, cm: str, command: str, i: int, other_notebooks: list, cell_title: str) -> str:
+    def update_md_cells(self,
+                        state: StateVariables,
+                        cm: str,
+                        command: str,
+                        i: int,
+                        other_notebooks: List[NotebookDefData],
+                        cell_title: str) -> str:
 
         # First verify that the specified command is a mark-down cell
         if not command.startswith(f"{cm} MAGIC %md"):
@@ -570,18 +606,24 @@ For more current information, please see <a href="https://files.training.databri
 
         return command
 
-    def publish(self, source_dir: str, target_dir: str, i18n_resources_dir: str, verbose: bool, debugging: bool, other_notebooks: list) -> None:
+    def publish(self,
+                source_dir: str,
+                target_dir: str,
+                i18n_resources_dir: str,
+                verbose: bool,
+                debugging: bool,
+                other_notebooks: List[NotebookDefData]) -> None:
+
+        from dbacademy.common import validate
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
-        assert type(source_dir) == str, f"""Expected the parameter "source_dir" to be of type "str", found "{type(source_dir)}" """
-        assert type(target_dir) == str, f"""Expected the parameter "target_dir" to be of type "str", found "{type(target_dir)}" """
-        assert type(i18n_resources_dir) == str, f"""Expected the parameter "resources_dir" to be of type "str", found "{type(i18n_resources_dir)}" """
-        assert type(verbose) == bool, f"""Expected the parameter "verbose" to be of type "bool", found "{type(verbose)}" """
-        assert type(debugging) == bool, f"""Expected the parameter "debugging" to be of type "bool", found "{type(debugging)}" """
-
-        assert type(other_notebooks) == list, f"""Expected the parameter "other_notebooks" to be of type "list", found "{type(other_notebooks)}" """
-        for i, notebook in enumerate(other_notebooks):
-            assert type(other_notebooks[i]) == NotebookDef, f"""Expected the parameter "other_notebooks[{i}]" to be of type "NotebookDef", found "{type(other_notebooks[i])}" """
+        validate.str_value(source_dir=source_dir, required=True)
+        validate.str_value(target_dir=target_dir, required=True)
+        validate.str_value(i18n_resources_dir=i18n_resources_dir, required=True)
+        validate.bool_value(verbose=verbose, required=True)
+        validate.bool_value(debugging=debugging, required=True)
+        validate.list_value(other_notebooks=other_notebooks)
+        validate.element_type(other_notebooks, "other_notebooks", NotebookDef)
 
         self.errors = list()
         self.warnings = list()
@@ -645,7 +687,13 @@ For more current information, please see <a href="https://files.training.databri
             BuildUtils.print_if(verbose, f"...publishing {len(state.solutions_commands)} commands")
             self.publish_notebook(language, state.solutions_commands, solutions_notebook_path, print_warnings=False)
 
-    def update_command(self, *, state: StateVariables, language: str, command: str, i: int, other_notebooks: list, debugging: bool) -> str:
+    def update_command(self, *,
+                       state: StateVariables,
+                       language: str,
+                       command: str,
+                       i: int,
+                       other_notebooks: List[NotebookDefData],
+                       debugging: bool) -> str:
 
         cell_title = None
         cm = self.get_comment_marker(language)
@@ -779,7 +827,11 @@ For more current information, please see <a href="https://files.training.databri
 
         return command
 
-    def publish_resource(self, language: str, md_commands: list, target_dir: str, natural_language: str) -> None:
+    def publish_resource(self,
+                         language: str,
+                         md_commands: List[str],
+                         target_dir: str,
+                         natural_language: str) -> None:
         import os
 
         m = self.get_comment_marker(language)
@@ -808,7 +860,12 @@ For more current information, please see <a href="https://files.training.databri
         with open(target_file, "w") as w:
             w.write(final_source)
 
-    def publish_notebook(self, language: str, commands: list, target_path: str, print_warnings: bool) -> None:
+    def publish_notebook(self,
+                         language: str,
+                         commands: List[str],
+                         target_path: str,
+                         print_warnings: bool) -> None:
+
         m = self.get_comment_marker(language)
         final_source = f"{m} Databricks notebook source\n"
 

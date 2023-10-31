@@ -25,7 +25,11 @@ class SqlConfigClient(ApiContainer):
 
         return self.update_all(settings)
 
-    def edit(self, security_policy: str, instance_profile_arn: str, data_access_config: dict, sql_configuration_parameters: dict):
+    def edit(self,
+             security_policy: str,
+             instance_profile_arn: str,
+             data_access_config: Dict[str, Any],
+             sql_configuration_parameters: Dict[str, Any]):
 
         assert security_policy in SECURITY_POLICIES, f"Expected security_policy to be one of {SECURITY_POLICIES}, found {security_policy}"
 
