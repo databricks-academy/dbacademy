@@ -1,6 +1,6 @@
 __all__ = ["JobsClient"]
 
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from dbacademy import common
 from dbacademy.clients.rest.common import ApiClient, ApiContainer
 
@@ -15,29 +15,29 @@ class JobsClient(ApiContainer):
         self.client: DBAcademyRestClient = validate.any_value(DBAcademyRestClient, client=client, required=True)
         self.base_uri = f"{self.client.endpoint}/api/2.1/jobs"
 
-    @common.deprecated("Use JobsClient.create_from_config() instead")
-    def create(self, params) -> Dict[str, Any]:
-        from dbacademy import common
+    # @common.deprecated("Use JobsClient.create_from_config() instead")
+    # def create(self, params) -> Dict[str, Any]:
+    #     from dbacademy import common
+    #
+    #     if "notebook_task" in params:
+    #         common.print_warning("DEPRECATION WARNING", "You are using the Jobs 2.0 version of create as noted by the existence of the notebook_task parameter.\nPlease upgrade to the 2.1 version.")
+    #         return self.create_2_0(params)
+    #     else:
+    #         return self.create_2_1(params)
 
-        if "notebook_task" in params:
-            common.print_warning("DEPRECATION WARNING", "You are using the Jobs 2.0 version of create as noted by the existence of the notebook_task parameter.\nPlease upgrade to the 2.1 version.")
-            return self.create_2_0(params)
-        else:
-            return self.create_2_1(params)
+    # @common.deprecated("Use JobsClient.create_from_config() instead")
+    # def create_2_0(self, params) -> Dict[str, Any]:
+    #     return self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/create", params)
 
-    @common.deprecated("Use JobsClient.create_from_config() instead")
-    def create_2_0(self, params) -> Dict[str, Any]:
-        return self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/create", params)
-
-    @common.deprecated("Use JobsClient.create_from_config() instead")
-    def create_2_1(self, params) -> Dict[str, Any]:
-        return self.client.api("POST", f"{self.client.endpoint}/api/2.1/jobs/create", params)
+    # @common.deprecated("Use JobsClient.create_from_config() instead")
+    # def create_2_1(self, params) -> Dict[str, Any]:
+    #     return self.client.api("POST", f"{self.base_uri}/create", params)
 
     def create_from_config(self, config: JobConfig) -> str:
         return self.create_from_dict(config.params)
 
     def create_from_dict(self, params: Dict[str, Any]) -> str:
-        response = self.client.api("POST", f"{self.client.endpoint}/api/2.1/jobs/create", params)
+        response = self.client.api("POST", f"{self.base_uri}/create", params)
         return response.get("job_id")
 
     def run_now(self, job_id: str, notebook_params: Dict[str, Any] = None):
@@ -64,7 +64,7 @@ class JobsClient(ApiContainer):
             job_ids = [j.get("job_id") for j in jobs_list if name == j.get("settings").get("name")]
             return (False, None) if len(job_ids) == 0 else (True, self.get_by_id(job_ids[0]))
 
-        target_url = f"{self.client.endpoint}/api/2.1/jobs/list?limit={limit}"
+        target_url = f"{self.base_uri}/list?limit={limit}"
         response = self.client.api("GET", target_url)
         jobs = response.get("jobs", list())
 
@@ -87,7 +87,7 @@ class JobsClient(ApiContainer):
         limit = min(25, limit)
         offset = max(0, offset)
 
-        target_url = f"{self.client.endpoint}/api/2.1/jobs/list?offset={offset}&limit={limit}&expand_tasks={expand_tasks}"
+        target_url = f"{self.base_uri}/list?offset={offset}&limit={limit}&expand_tasks={expand_tasks}"
         response = self.client.api("GET", target_url)
         return response.get("jobs", list())
 
@@ -95,7 +95,7 @@ class JobsClient(ApiContainer):
         offset = 0  # Start with zero
         limit = 100  # Our default maximum
 
-        target_url = f"{self.client.endpoint}/api/2.1/jobs/list?limit={limit}&expand_tasks={expand_tasks}"
+        target_url = f"{self.base_uri}/list?limit={limit}&expand_tasks={expand_tasks}"
         response = self.client.api("GET", target_url)
         all_jobs = response.get("jobs", list())
 
@@ -170,35 +170,69 @@ class JobsClient(ApiContainer):
         self.client.vprint(f"...deleted {deleted} jobs")
         return None
 
-    def update_schedule(self, *, _job_id: str, _paused: bool) -> Dict[str, Any]:
+    def update_schedule(self, *,
+                        _job_id: Optional[str],
+                        _paused: Optional[bool],
+                        _quartz_cron_expression: Optional[str],
+                        _timezone_id: Optional[str]) -> Dict[str, Any]:
+
+        paused = None if _paused is None else ("PAUSED" if _paused else "UNPAUSED")
+
+        job = self.get_by_id(_job_id)
+        settings = job.get("settings")
+        schedule = settings.get("schedule")
+
         payload = {
             "job_id": _job_id,
-            "settings": {
+            "new_settings": {
                 "schedule": {
-                    "pause_status": "PAUSED" if _paused else "UNPAUSED"
+                    "timezone_id": _timezone_id or schedule.get("timezone_id"),
+                    "quartz_cron_expression": _quartz_cron_expression or schedule.get("quartz_cron_expression"),
+                    "pause_status": paused or schedule.get("pause_status"),
                 }
             }
         }
-        return self.client.api("POST", f"{self.base_uri}/update", payload)
+        self.client.api("POST", f"{self.base_uri}/update", payload)
+        return self.get_by_id(_job_id)
 
     def update_continuous(self, *, _job_id: str, _paused: bool) -> Dict[str, Any]:
         payload = {
             "job_id": _job_id,
-            "settings": {
+            "new_settings": {
                 "continuous": {
                     "pause_status": "PAUSED" if _paused else "UNPAUSED"
                 }
             }
         }
-        return self.client.api("POST", f"{self.base_uri}/update", payload)
+        self.client.api("POST", f"{self.base_uri}/update", payload)
+        return self.get_by_id(_job_id)
 
-    def update_trigger(self, *, _job_id: str, _paused: bool) -> Dict[str, Any]:
+    def update_trigger(self, *,
+                       _job_id: str,
+                       _paused: Optional[bool],
+                       _url: Optional[str],
+                       _min_time_between_triggers_seconds: Optional[int],
+                       _wait_after_last_change_seconds: Optional[int]) -> Dict[str, Any]:
+
+        paused = None if _paused is None else ("PAUSED" if _paused else "UNPAUSED")
+
+        job = self.get_by_id(_job_id)
+        settings = job.get("settings")
+        trigger = settings.get("trigger")
+        file_arrival = trigger.get("file_arrival")
+
         payload = {
             "job_id": _job_id,
-            "settings": {
+            "new_settings": {
                 "trigger": {
-                    "pause_status": "PAUSED" if _paused else "UNPAUSED"
+                    "pause_status": paused or trigger.get("pause_status"),
+                    "file_arrival": {
+                        "url": _url or file_arrival.get("url"),
+                        "min_time_between_triggers_seconds": _min_time_between_triggers_seconds or file_arrival.get("min_time_between_triggers_seconds"),
+                        "wait_after_last_change_seconds": _wait_after_last_change_seconds or file_arrival.get("wait_after_last_change_seconds"),
+                    }
                 }
             }
         }
-        return self.client.api("POST", f"{self.base_uri}/update", payload)
+        self.client.api("POST", f"{self.base_uri}/update", payload)
+        return self.get_by_id(_job_id)

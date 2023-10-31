@@ -4,16 +4,19 @@ import os
 from typing import List, Dict, Any, Optional, Literal, Union
 from dbacademy.clients.databricks import DBAcademyRestClient
 
-required_users = {
+# noinspection PyPep8Naming
+DISABLED = False
+
+_found_users = {
     "jacob.parr@databricks.com": False
 }
 
 
-def err(_value: str) -> str:
+def _err(_value: str) -> str:
     return "" if _value is None else f"[{_value}]"
 
 
-def test(failures: List[str], _failed: bool, _label: str, _passed: bool) -> (bool, str):
+def _eval(failures: List[str], _failed: bool, _label: str, _passed: bool) -> (bool, str):
     if _passed:
         return _failed, None
     else:
@@ -142,9 +145,9 @@ class Watchdog:
 
             if hours > max_hours:
                 # All jobs should be canceled within N hours.
-                failed, schedule_failure = test(failures, failed, "SCHEDULED", schedule_paused is None or schedule_paused == "PAUSED")
-                failed, continuous_failure = test(failures, failed, "CONTINUOUS", continuous_paused is None or continuous_paused == "PAUSED")
-                failed, trigger_failure = test(failures, failed, "TRIGGER", trigger_paused is None or trigger_paused == "PAUSED")
+                failed, schedule_failure = _eval(failures, failed, "SCHEDULED", schedule_paused is None or schedule_paused == "PAUSED")
+                failed, continuous_failure = _eval(failures, failed, "CONTINUOUS", continuous_paused is None or continuous_paused == "PAUSED")
+                failed, trigger_failure = _eval(failures, failed, "TRIGGER", trigger_paused is None or trigger_paused == "PAUSED")
             else:
                 schedule_failure = None
                 continuous_failure = None
@@ -156,27 +159,30 @@ class Watchdog:
             message += f"""\n  | Created:    {created_time} ({hours:.3} hours)"""
             message += f"""\n  | Format:     {job_format}"""
             message += f"""\n  | Run As:     {run_as}"""
-            message += f"""\n  | Trigger:    {trigger_paused} {err(trigger_failure)}"""
+            message += f"""\n  | Trigger:    {trigger_paused} {_err(trigger_failure)}"""
             message += f"""\n  |             {trigger}"""
-            message += f"""\n  | Continuous: {continuous_paused} {err(continuous_failure)}"""
+            message += f"""\n  | Continuous: {continuous_paused} {_err(continuous_failure)}"""
             message += f"""\n  |             {continuous}"""
-            message += f"""\n  | Schedule:   {schedule_paused} {err(schedule_failure)}"""
+            message += f"""\n  | Schedule:   {schedule_paused} {_err(schedule_failure)}"""
             message += f"""\n  |             {schedule}"""
 
             if schedule_failure is not None and _pause:
                 message += f"\n  | Paused schedule."
-                response = self.workspace_client.jobs.update_schedule(_job_id=job_id, _paused=True)
-                print(response)
-
+                self.workspace_client.jobs.update_schedule(_job_id=job_id,
+                                                           _paused=True,
+                                                           _quartz_cron_expression=None,
+                                                           _timezone_id=None)
             if continuous_failure is not None and _pause:
                 message += f"\n  | Paused continuous."
-                response = self.workspace_client.jobs.update_continuous(_job_id=job_id, _paused=True)
-                print(response)
+                self.workspace_client.jobs.update_continuous(_job_id=job_id, _paused=True)
 
             if trigger_paused is not None and _pause:
                 message += f"\n  | Paused trigger."
-                response = self.workspace_client.jobs.update_trigger(_job_id=job_id, _paused=True)
-                print(response)
+                self.workspace_client.jobs.update_trigger(_job_id=job_id,
+                                                          _paused=True,
+                                                          _url=None,
+                                                          _min_time_between_triggers_seconds=None,
+                                                          _wait_after_last_change_seconds=None)
 
             if failed:
                 self.__log_error(message, _scope="JOBS", _failures=failures)
@@ -208,23 +214,23 @@ class Watchdog:
                 failed = False
                 failures = list()
 
-                failed, hours_failure = test(failures, failed, "LONG-RUNNING", hours < 9)
-                failed, num_workers_failure = test(failures, failed, "NON-ZERO-WORKERS", num_workers == 0)
-                failed, policy_failure = test(failures, failed, "POLICY-VIOLATION", policy_name in ClustersHelper.POLICIES)
-                failed, node_type_failure = test(failures, failed, "NODE-TYPE", node_type_id == "i3.xlarge")
-                failed, auto_term_failure = test(failures, failed, "AUTO-TERMINATION", autotermination_minutes == 120)
+                failed, hours_failure = _eval(failures, failed, "LONG-RUNNING", hours < 9)
+                failed, num_workers_failure = _eval(failures, failed, "NON-ZERO-WORKERS", num_workers == 0)
+                failed, policy_failure = _eval(failures, failed, "POLICY-VIOLATION", policy_name in ClustersHelper.POLICIES)
+                failed, node_type_failure = _eval(failures, failed, "NODE-TYPE", node_type_id == "i3.xlarge")
+                failed, auto_term_failure = _eval(failures, failed, "AUTO-TERMINATION", autotermination_minutes <= 120)
 
                 message = ""
                 message += f"""\n{state[0]}{state[1:].lower()} Cluster"""
                 message += f"""\n  | Cluster:   {cluster_name}"""
-                message += f"""\n  | Started:   {restarted_duration} ({hours:.3} hours) {err(hours_failure)}"""
+                message += f"""\n  | Started:   {restarted_duration} ({hours:.3} hours) {_err(hours_failure)}"""
                 message += f"""\n  | Creator:   {creator_username}"""
                 message += f"""\n  | Username:  {single_username}"""
-                message += f"""\n  | Node Type: {node_type_id} {err(node_type_failure)}"""
-                message += f"""\n  | Auto Term: {autotermination_minutes} minutes {err(auto_term_failure)}"""
-                message += f"""\n  | Workers:   {num_workers} {err(num_workers_failure)}"""
+                message += f"""\n  | Node Type: {node_type_id} {_err(node_type_failure)}"""
+                message += f"""\n  | Auto Term: {autotermination_minutes} minutes {_err(auto_term_failure)}"""
+                message += f"""\n  | Workers:   {num_workers} {_err(num_workers_failure)}"""
                 message += f"""\n  | Source:    {cluster_source}"""
-                message += f"""\n  | Policy:    {policy_name} {err(policy_failure)}"""
+                message += f"""\n  | Policy:    {policy_name} {_err(policy_failure)}"""
 
                 if _terminate:
                     message += f"\n  | Terminating cluster {cluster_name}"
@@ -243,17 +249,21 @@ class Watchdog:
                     self.__log_error(message, _scope="CLUSTERS", _failures=failures)
 
     def __analyse_users(self, _add_missing_users: bool):
+        import copy
+
+        found_users = copy.deepcopy(_found_users)
         users = self.workspace_client.scim.users.list()
+
         for user in users:
             username = user.get("userName")
 
-            if username in required_users.keys():
-                required_users[username] = True
+            if username in found_users.keys():
+                found_users[username] = True
 
             elif not username.endswith("@databricks.com") and self.workspace_name not in ["trainers"]:
                 self.__log_error(f"Unauthorized user: {username}", _failures=["USERS-NOT-DB"])
 
-        for username, found in required_users.items():
+        for username, found in found_users.items():
             if not found and _add_missing_users:
                 self.__log_info(f"Added user {username}")
                 user = self.workspace_client.scim.users.create(username)
@@ -325,20 +335,25 @@ class Watchdog:
 
     def analyse(self) -> None:
         print()
-        workspaces = self.accounts_client.workspaces.list()
-        for workspace in workspaces:
 
-            # noinspection PyPep8Naming
-            DISABLED = False
+        count = 0
+        workspaces = self.accounts_client.workspaces.list()
+        workspace_filter = None  # ["classroom-868-83vgw"]
+
+        for workspace in workspaces:
+            count += 1
+            workspace_name = workspace.get("workspace_name")
+            if workspace_filter and workspace_name not in workspace_filter:
+                continue
 
             self.__analyse_workspace(_workspace=workspace,
-                                     _analyse_users=DISABLED,
-                                     _analyse_serving_endpoints=DISABLED,
+                                     _analyse_users=True,
+                                     _analyse_serving_endpoints=True,
                                      _analyse_workflows=True,
                                      _pause_workflow=True,
-                                     _analyse_clusters=DISABLED,
-                                     _terminate_clusters=DISABLED)
-        print(f"Processed {len(workspaces)} workspaces")
+                                     _analyse_clusters=True,
+                                     _terminate_clusters=True)
+        print(f"Processed {count} workspaces")
 
 
 Watchdog().analyse()

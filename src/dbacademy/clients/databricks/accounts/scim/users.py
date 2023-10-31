@@ -73,8 +73,8 @@ class AccountScimUsersApi(ApiContainer):
             validate.str_value(first_name=first_name, required=True)
             validate.str_value(last_name=first_name, required=True)
 
-            operations.append(Operation(Operation.REPLACE, "name.familyName", first_name))
-            operations.append(Operation(Operation.REPLACE, "name.givenName", last_name))
+            operations.append(Operation(Operation.REPLACE, "name.givenName", first_name))
+            operations.append(Operation(Operation.REPLACE, "name.familyName", last_name))
             operations.append(Operation(Operation.REPLACE, "displayName", f"{first_name} {last_name}"))
 
         validate.list_value(operations=operations, min_length=1)
