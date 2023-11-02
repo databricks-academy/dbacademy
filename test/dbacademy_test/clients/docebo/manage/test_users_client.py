@@ -10,8 +10,8 @@ class TestUsers(unittest.TestCase):
         client = docebo.from_environment()
 
         try:
-            client.manage.users.login(username="jacob.parr@databricks.com",
-                                      password="asdf")
+            client.manage.user_login(username="mickey.mouse@disney.com",
+                                     password="asdf")
         except DatabricksApiException as e:
             self.assertEquals(400, e.http_code)
             self.assertEquals("Wrong credentials provided", e.message[0])
@@ -27,7 +27,7 @@ class TestUsers(unittest.TestCase):
         if username is None or password is None:
             self.skipTest("DOCEBO_UNIT_TEST_USERNAME or DOCEBO_UNIT_TEST_PASSWORD were not found")
 
-        response = client.manage.user.login(username=username, password=password)
+        response = client.manage.user_login(username=username, password=password)
 
         self.assertIsNotNone(response)
         self.assertEquals("7200", response.get("expires_in"))

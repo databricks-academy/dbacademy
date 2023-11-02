@@ -2,6 +2,10 @@ __all__ = ["DoceboRestClient", "from_args", "from_environment", "from_workspace"
 
 from dbacademy.clients.rest.common import ApiClient
 from dbacademy.clients import ClientErrorHandler
+from dbacademy.clients.docebo.manage_api import ManageAPI
+from dbacademy.clients.docebo.courses_api import CoursesAPI
+from dbacademy.clients.docebo.events_api import EventsAPI
+from dbacademy.clients.docebo.sessions_api import SessionsAPI
 
 DEFAULT_SCOPE = "DOCEBO"
 
@@ -38,17 +42,21 @@ class DoceboRestClient(ApiClient):
                          throttle_seconds=throttle_seconds,
                          error_handler=error_handler)
 
-        from dbacademy.clients.docebo.manage_api import ManageAPI
-        self.manage = ManageAPI(self)
+    @property
+    def manage(self) -> ManageAPI:
+        return ManageAPI(self)
 
-        from dbacademy.clients.docebo.courses_api import CoursesAPI
-        self.courses = CoursesAPI(self)
+    @property
+    def courses(self) -> CoursesAPI:
+        return CoursesAPI(self)
 
-        from dbacademy.clients.docebo.events_api import EventsAPI
-        self.events = EventsAPI(self)
+    @property
+    def events(self) -> EventsAPI:
+        return EventsAPI(self)
 
-        from dbacademy.clients.docebo.sessions_api import SessionsAPI
-        self.sessions = SessionsAPI(self)
+    @property
+    def sessions(self) -> SessionsAPI:
+        return SessionsAPI(self)
 
     @property
     def error_handler(self) -> ClientErrorHandler:

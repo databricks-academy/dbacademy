@@ -46,6 +46,14 @@
 Methods defined here:<br>
 <dl><dt><a name="ManageAPI-__init__"><strong>__init__</strong></a>(self, client: dbacademy.clients.rest.common.ApiClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#ManageAPI-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
+<dl><dt><a name="ManageAPI-user_login"><strong>user_login</strong></a>(self, username: str, password: str, client_timezone_textual: str = None, client_timezone: int = None, issue_refresh_token: bool = None) -&gt; Dict[str, Any]</dt></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>client</strong></dt>
+</dl>
+<dl><dt><strong>users</strong></dt>
+</dl>
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
 <dl><dt><a name="ManageAPI-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
@@ -85,8 +93,6 @@ Methods defined here:<br>
 <dl><dt><a name="UsersAPI-__init__"><strong>__init__</strong></a>(self, client: dbacademy.clients.rest.common.ApiClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#UsersAPI-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="UsersAPI-find_user"><strong>find_user</strong></a>(self, username: str) -&gt; List[Dict[str, Any]]</dt></dl>
-
-<dl><dt><a name="UsersAPI-login"><strong>login</strong></a>(self, username: str, password: str, client_timezone_textual: str = None, client_timezone: int = None, issue_refresh_token: bool = None)</dt></dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
