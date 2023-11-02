@@ -51,7 +51,7 @@ class TestUtils(unittest.TestCase):
             # noinspection PyTypeChecker
             dummy("1")
         except AssertionError as e:
-            self.assertEqual("""Error-Type | Expected the parameter "value" to be None or of type <class 'int'>, found <class 'str'>""", str(e))
+            self.assertEqual("""Error-Type | Expected the parameter 'value' to be None or of type <class 'int'>, found <class 'str'>.""", str(e))
 
 
 if __name__ == '__main__':
