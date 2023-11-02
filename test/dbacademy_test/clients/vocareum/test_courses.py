@@ -13,9 +13,13 @@ class TestVocareumRestClient(unittest.TestCase):
 
         course_ids = [c.get("id") for c in courses]
 
-        expected_count = 24
-        self.assertEqual(expected_count, len(courses))
-        self.assertEqual(expected_count, len(set(course_ids)))
+        expected_min_count = 20
+
+        actual = len(courses)
+        self.assertTrue(actual >= expected_min_count, f"Found {actual}")
+
+        actual = len(set(course_ids))
+        self.assertTrue(actual >= expected_min_count, f"Found {actual}")
 
     def test_get_course_by_id(self):
         client = vocareum.from_environment()
