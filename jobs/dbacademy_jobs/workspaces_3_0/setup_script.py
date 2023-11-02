@@ -88,12 +88,14 @@ if wsn_a < 0:
     print(f"""\n{"-" * 100}\nAborting script; no workspace number""")
     exit(1)
 
-wsn_b = read_int("Please enter the last workspace number to create", wsn_a)
+wsn_b = read_str("Please enter the last workspace number to create", "+25")
 
-if wsn_a == wsn_b:
+if str(wsn_a) == wsn_b:
     workspace_numbers = [wsn_a]
+elif wsn_b.startswith("+"):
+    workspace_numbers = list(range(wsn_a, wsn_a+int(wsn_b)))
 else:
-    workspace_numbers = list(range(wsn_a, wsn_b+1))
+    workspace_numbers = list(range(wsn_a, int(wsn_b)+1))
 
 deleting_wsj = True
 # deleting_wsj = read_str("""\nDelete existing Workspace-Setup jobs""", "no").lower() in CONFIRMATIONS
