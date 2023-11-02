@@ -17,10 +17,11 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-any_value"><strong>any_value</strong></a>(parameter_type: Type, *, min_length: int = None, required: Optional[bool] = None, min_value=None, **kwargs) -&gt; Any</dt></dl>
+<td width="100%"><dl><dt><a name="-any_value"><strong>any_value</strong></a>(parameter_type: Type, *, min_length: int = None, required: bool = None, min_value: numbers.Number = None, **kwargs) -&gt; Any</dt></dl>
  <dl><dt><a name="-bool_value"><strong>bool_value</strong></a>(min_length: int = None, required: Optional[bool] = None, min_value=None, **kwargs) -&gt; bool</dt></dl>
  <dl><dt><a name="-dict_value"><strong>dict_value</strong></a>(min_length: int = None, required: Optional[bool] = None, min_value=None, **kwargs) -&gt; dict</dt></dl>
  <dl><dt><a name="-element_type"><strong>element_type</strong></a>(actual_values: Iterable[Any], name, expected_type)</dt></dl>
+ <dl><dt><a name="-float_value"><strong>float_value</strong></a>(min_length: int = None, required: Optional[bool] = None, min_value=None, **kwargs) -&gt; int</dt></dl>
  <dl><dt><a name="-int_value"><strong>int_value</strong></a>(min_length: int = None, required: Optional[bool] = None, min_value=None, **kwargs) -&gt; int</dt></dl>
  <dl><dt><a name="-iterable_value"><strong>iterable_value</strong></a>(min_length: int = None, required: Optional[bool] = None, min_value=None, **kwargs) -&gt; Iterable</dt></dl>
  <dl><dt><a name="-list_value"><strong>list_value</strong></a>(min_length: int = None, required: Optional[bool] = None, min_value=None, **kwargs) -&gt; list</dt></dl>
@@ -33,6 +34,7 @@
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><strong>Any</strong> = typing.Any<br>
+<strong>E_INTERNAL</strong> = 'Error-Internal'<br>
 <strong>E_MIN_L</strong> = 'Error-Min-Len'<br>
 <strong>E_MIN_V</strong> = 'Error-Min-Value'<br>
 <strong>E_NOT_NONE</strong> = 'Error-Not-None'<br>
