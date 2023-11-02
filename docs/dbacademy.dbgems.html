@@ -61,7 +61,7 @@ When&nbsp;running&nbsp;under&nbsp;test,&nbsp;the&nbsp;value&nbsp;is&nbsp;pulled&
  <dl><dt><a name="-is_curriculum_workspace"><strong>is_curriculum_workspace</strong></a>() -&gt; bool</dt></dl>
  <dl><dt><a name="-is_generating_docs"><strong>is_generating_docs</strong></a>() -&gt; bool</dt></dl>
  <dl><dt><a name="-is_job"><strong>is_job</strong></a>()</dt></dl>
- <dl><dt><a name="-jprint"><strong>jprint</strong></a>(value: dict, indent: int = 4)</dt></dl>
+ <dl><dt><a name="-jprint"><strong>jprint</strong></a>(value: Dict[str, Any], indent: int = 4)</dt></dl>
  <dl><dt><a name="-lookup_current_module_version"><strong>lookup_current_module_version</strong></a>(module: str) -&gt; str</dt></dl>
  <dl><dt><a name="-proof_of_life"><strong>proof_of_life</strong></a>(expected_get_username, expected_get_tag, expected_get_browser_host_name, expected_get_workspace_id, expected_get_notebook_path, expected_get_notebook_name, expected_get_notebook_dir, expected_get_notebooks_api_endpoint)</dt><dd><tt>Because&nbsp;it&nbsp;is&nbsp;too&nbsp;difficult&nbsp;to&nbsp;validate&nbsp;this&nbsp;from&nbsp;the&nbsp;command&nbsp;line,&nbsp;this&nbsp;function<br>
 simply&nbsp;invokes&nbsp;all&nbsp;the&nbsp;functions&nbsp;as&nbsp;proof&nbsp;of&nbsp;life</tt></dd></dl>
@@ -82,6 +82,7 @@ When&nbsp;running&nbsp;under&nbsp;test,&nbsp;the&nbsp;value&nbsp;is&nbsp;stored&
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><strong>Any</strong> = typing.Any<br>
 <strong>Callable</strong> = typing.Callable<br>
+<strong>Dict</strong> = typing.Dict<br>
 <strong>GENERATING_DOCS</strong> = 'generating_docs'<br>
 <strong>List</strong> = typing.List<br>
 <strong>MOCK_CONFIG</strong> = {}<br>

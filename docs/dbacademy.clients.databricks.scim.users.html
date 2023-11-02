@@ -55,11 +55,9 @@ Methods defined here:<br>
 
 <dl><dt><a name="ScimUsersClient-get_by_id"><strong>get_by_id</strong></a>(self, user_id: str) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="ScimUsersClient-get_by_name"><strong>get_by_name</strong></a>(self, name: str) -&gt; Optional[Dict[str, Any]]</dt></dl>
-
 <dl><dt><a name="ScimUsersClient-get_by_username"><strong>get_by_username</strong></a>(self, username: str) -&gt; Optional[Dict[str, Any]]</dt></dl>
 
-<dl><dt><a name="ScimUsersClient-list"><strong>list</strong></a>(self) -&gt; List[Dict[str, Any]]</dt></dl>
+<dl><dt><a name="ScimUsersClient-list"><strong>list</strong></a>(self, users: List[Dict[str, Any]] = None, start_index: int = 1, users_per_request: int = 1000) -&gt; List[Dict[str, Any]]</dt></dl>
 
 <dl><dt><a name="ScimUsersClient-remove_entitlement"><strong>remove_entitlement</strong></a>(self, user_id: str, entitlement: str) -&gt; Dict[str, Any]</dt></dl>
 

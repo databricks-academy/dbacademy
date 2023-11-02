@@ -51,7 +51,7 @@
 <font color="#000000" face="helvetica, arial"><a name="ApiClient">class <strong>ApiClient</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiContainer">ApiContainer</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#ApiClient">ApiClient</a>(endpoint:&nbsp;'str',&nbsp;*,&nbsp;token:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;username:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;password:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;client:&nbsp;'<a href="#ApiClient">ApiClient</a>'&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;'int'&nbsp;=&nbsp;0,&nbsp;verbose:&nbsp;'bool'&nbsp;=&nbsp;False,&nbsp;error_handler:&nbsp;'Optional[ClientErrorHandler]'&nbsp;=&nbsp;&amp;lt;dbacademy.clients.ClientErrorHandler&nbsp;<a href="builtins.html#object">object</a>&nbsp;at&nbsp;0x00000207D7C97EB0&amp;gt;)<br>
+<td colspan=2><tt><a href="#ApiClient">ApiClient</a>(endpoint:&nbsp;'str',&nbsp;*,&nbsp;token:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;username:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;password:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;client:&nbsp;'<a href="#ApiClient">ApiClient</a>'&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;'int'&nbsp;=&nbsp;0,&nbsp;verbose:&nbsp;'bool'&nbsp;=&nbsp;False,&nbsp;error_handler:&nbsp;'Optional[ClientErrorHandler]'&nbsp;=&nbsp;&amp;lt;dbacademy.clients.ClientErrorHandler&nbsp;<a href="builtins.html#object">object</a>&nbsp;at&nbsp;0x000001F21AB37EB0&amp;gt;)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -62,7 +62,7 @@
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="ApiClient-__init__"><strong>__init__</strong></a>(self, endpoint: 'str', *, token: 'str' = None, username: 'str' = None, password: 'str' = None, authorization_header: 'str' = None, client: 'ApiClient' = None, throttle_seconds: 'int' = 0, verbose: 'bool' = False, error_handler: 'Optional[ClientErrorHandler]' = &lt;dbacademy.clients.ClientErrorHandler object at 0x00000207D7C97EB0&gt;)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
+<dl><dt><a name="ApiClient-__init__"><strong>__init__</strong></a>(self, endpoint: 'str', *, token: 'str' = None, username: 'str' = None, password: 'str' = None, authorization_header: 'str' = None, client: 'ApiClient' = None, throttle_seconds: 'int' = 0, verbose: 'bool' = False, error_handler: 'Optional[ClientErrorHandler]' = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001F21AB37EB0&gt;)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;endpoint:&nbsp;The&nbsp;common&nbsp;base&nbsp;URL&nbsp;to&nbsp;the&nbsp;API&nbsp;endpoints.&nbsp;&nbsp;e.g.&nbsp;<a href="https://workspace.cloud.databricks.com/API/">https://workspace.cloud.databricks.com/API/</a><br>
@@ -74,7 +74,7 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;client:&nbsp;A&nbsp;parent&nbsp;<a href="#ApiClient">ApiClient</a>&nbsp;from&nbsp;which&nbsp;to&nbsp;clone&nbsp;settings.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;throttle_seconds:&nbsp;Number&nbsp;of&nbsp;seconds&nbsp;to&nbsp;sleep&nbsp;between&nbsp;requests.</tt></dd></dl>
 
-<dl><dt><a name="ApiClient-api"><strong>api</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', _data: 'dict' = None, *, _expected: 'HttpStatusCodes' = None, _result_type: 'Type[HttpReturnType]' = &lt;class 'dict'&gt;, _base_url: 'str' = None, **data: 'Any') -&gt; 'HttpReturnType'</dt><dd><tt>Invoke&nbsp;the&nbsp;Databricks&nbsp;REST&nbsp;API.<br>
+<dl><dt><a name="ApiClient-api"><strong>api</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', _data: 'Dict[str, Any]' = None, *, _expected: 'HttpStatusCodes' = None, _result_type: 'Type[HttpReturnType]' = &lt;class 'dict'&gt;, _base_url: 'str' = None, **data: 'Any') -&gt; 'HttpReturnType'</dt><dd><tt>Invoke&nbsp;the&nbsp;Databricks&nbsp;REST&nbsp;API.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_http_method:&nbsp;'GET',&nbsp;'PUT',&nbsp;'POST',&nbsp;'DELETE',&nbsp;'PATCH',&nbsp;'HEAD',&nbsp;or&nbsp;'OPTIONS'<br>

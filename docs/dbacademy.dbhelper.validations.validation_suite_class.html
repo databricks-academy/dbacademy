@@ -77,7 +77,7 @@
 
 <dl><dt><a name="ValidationSuite-test_schema_field"><strong>test_schema_field</strong></a>(self, struct_type: Callable[[], pyspark.sql.types.StructType], expected_name: str, expected_type: str, expected_nullable: str = None, *, description: str = None, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
 
-<dl><dt><a name="ValidationSuite-test_sequence"><strong>test_sequence</strong></a>(self, actual_value: Callable[[], list], expected_value: list, test_column_order: bool, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
+<dl><dt><a name="ValidationSuite-test_sequence"><strong>test_sequence</strong></a>(self, actual_value: Callable[[], List[Any]], expected_value: List[Any], test_column_order: bool, description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
 
 <dl><dt><a name="ValidationSuite-test_true"><strong>test_true</strong></a>(self, actual_value: Callable[[], bool], description: str, *, test_case_id: str = None, points: int = 1, depends_on: Iterable[str] = None, escape_html: bool = False, hint=None)</dt></dl>
 
@@ -89,7 +89,7 @@ Static methods defined here:<br>
 
 <dl><dt><a name="ValidationSuite-compare_floats"><strong>compare_floats</strong></a>(value_a: float, value_b: float, tolerance: float = 0.01)</dt></dl>
 
-<dl><dt><a name="ValidationSuite-compare_lists"><strong>compare_lists</strong></a>(value_a: list, value_b: list, test_column_order: bool)</dt></dl>
+<dl><dt><a name="ValidationSuite-compare_lists"><strong>compare_lists</strong></a>(value_a: List[Any], value_b: List[Any], test_column_order: bool)</dt></dl>
 
 <dl><dt><a name="ValidationSuite-compare_row"><strong>compare_row</strong></a>(row_a: pyspark.sql.types.Row, row_b: pyspark.sql.types.Row)</dt></dl>
 

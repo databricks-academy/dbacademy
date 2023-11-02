@@ -53,12 +53,6 @@
 Methods defined here:<br>
 <dl><dt><a name="JobsClient-__init__"><strong>__init__</strong></a>(self, client: dbacademy.clients.rest.common.ApiClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#JobsClient-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="JobsClient-create"><strong>create</strong></a>(self, params) -&gt; Dict[str, Any]</dt></dl>
-
-<dl><dt><a name="JobsClient-create_2_0"><strong>create_2_0</strong></a>(self, params) -&gt; Dict[str, Any]</dt></dl>
-
-<dl><dt><a name="JobsClient-create_2_1"><strong>create_2_1</strong></a>(self, params) -&gt; Dict[str, Any]</dt></dl>
-
 <dl><dt><a name="JobsClient-create_from_config"><strong>create_from_config</strong></a>(self, config: dbacademy.clients.databricks.jobs.job_config_classes.JobConfig) -&gt; str</dt></dl>
 
 <dl><dt><a name="JobsClient-create_from_dict"><strong>create_from_dict</strong></a>(self, params: Dict[str, Any]) -&gt; str</dt></dl>
@@ -79,7 +73,13 @@ Methods defined here:<br>
 
 <dl><dt><a name="JobsClient-list_n"><strong>list_n</strong></a>(self, offset: int = 0, limit: int = 25, expand_tasks: bool = False)</dt></dl>
 
-<dl><dt><a name="JobsClient-run_now"><strong>run_now</strong></a>(self, job_id: str, notebook_params: dict = None)</dt></dl>
+<dl><dt><a name="JobsClient-run_now"><strong>run_now</strong></a>(self, job_id: str, notebook_params: Dict[str, Any] = None)</dt></dl>
+
+<dl><dt><a name="JobsClient-update_continuous"><strong>update_continuous</strong></a>(self, *, _job_id: str, _paused: bool) -&gt; Dict[str, Any]</dt></dl>
+
+<dl><dt><a name="JobsClient-update_schedule"><strong>update_schedule</strong></a>(self, *, _job_id: Optional[str], _paused: Optional[bool], _quartz_cron_expression: Optional[str], _timezone_id: Optional[str]) -&gt; Dict[str, Any]</dt></dl>
+
+<dl><dt><a name="JobsClient-update_trigger"><strong>update_trigger</strong></a>(self, *, _job_id: str, _paused: Optional[bool], _url: Optional[str], _min_time_between_triggers_seconds: Optional[int], _wait_after_last_change_seconds: Optional[int]) -&gt; Dict[str, Any]</dt></dl>
 
 <hr>
 Data and other attributes defined here:<br>

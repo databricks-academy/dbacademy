@@ -45,13 +45,13 @@
 Methods defined here:<br>
 <dl><dt><a name="TokenManagementClient-__init__"><strong>__init__</strong></a>(self, client: dbacademy.clients.rest.common.ApiClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#TokenManagementClient-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="TokenManagementClient-create_on_behalf_of_service_principal"><strong>create_on_behalf_of_service_principal</strong></a>(self, application_id: str, comment: str, lifetime_seconds: int)</dt></dl>
+<dl><dt><a name="TokenManagementClient-create_on_behalf_of_service_principal"><strong>create_on_behalf_of_service_principal</strong></a>(self, application_id: str, comment: str, lifetime_seconds: Optional[int]) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="TokenManagementClient-delete_by_id"><strong>delete_by_id</strong></a>(self, token_id)</dt></dl>
+<dl><dt><a name="TokenManagementClient-delete_by_id"><strong>delete_by_id</strong></a>(self, token_id: str) -&gt; None</dt></dl>
 
-<dl><dt><a name="TokenManagementClient-get_by_id"><strong>get_by_id</strong></a>(self, token_id)</dt></dl>
+<dl><dt><a name="TokenManagementClient-get_by_id"><strong>get_by_id</strong></a>(self, token_id: str) -&gt; Dict[str, Any]</dt></dl>
 
-<dl><dt><a name="TokenManagementClient-list"><strong>list</strong></a>(self)</dt></dl>
+<dl><dt><a name="TokenManagementClient-list"><strong>list</strong></a>(self) -&gt; List[Dict[str, Any]]</dt></dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>

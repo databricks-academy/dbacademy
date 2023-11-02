@@ -39,21 +39,21 @@
 <td width="100%">Methods defined here:<br>
 <dl><dt><a name="ClustersHelper-__init__"><strong>__init__</strong></a>(self, workspace: dbacademy.dbhelper.workspace_helper_class.WorkspaceHelper, da: dbacademy.dbhelper.dbacademy_helper_class.DBAcademyHelper)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="ClustersHelper-create_instance_pool"><strong>create_instance_pool</strong></a>(self, *, preloaded_spark_version: str, min_idle_instances: int = 0, idle_instance_autotermination_minutes: int = 15, node_type_id: str = None, org_id: str, lab_id: str, workspace_name: str, workspace_description: str)</dt></dl>
+<dl><dt><a name="ClustersHelper-create_instance_pool"><strong>create_instance_pool</strong></a>(self, *, preloaded_spark_version: str, min_idle_instances: int = 0, idle_instance_autotermination_minutes: int = 15, node_type_id: str = None, org_id: str, lab_id: str, workspace_name: str, workspace_description: str) -&gt; str</dt></dl>
 
 <hr>
 Static methods defined here:<br>
-<dl><dt><a name="ClustersHelper-add_custom_tag"><strong>add_custom_tag</strong></a>(definition: Dict[str, Any], name: str, value: str, default_value: str = 'UNKNOWN')</dt></dl>
+<dl><dt><a name="ClustersHelper-add_custom_tag"><strong>add_custom_tag</strong></a>(definition: Dict[str, Any], name: str, value: str, default_value: str = 'UNKNOWN') -&gt; None</dt></dl>
 
-<dl><dt><a name="ClustersHelper-add_default_policy"><strong>add_default_policy</strong></a>(definition: Dict[str, Any], name: str, value: str)</dt></dl>
+<dl><dt><a name="ClustersHelper-add_default_policy"><strong>add_default_policy</strong></a>(definition: Dict[str, Any], name: str, value: str) -&gt; None</dt></dl>
 
-<dl><dt><a name="ClustersHelper-create_all_purpose_policy"><strong>create_all_purpose_policy</strong></a>(*, client: dbacademy.clients.databricks.DBAcademyRestClient, instance_pool_id: str, spark_version: str, autotermination_minutes_max: int, autotermination_minutes_default: int) -&gt; None</dt></dl>
+<dl><dt><a name="ClustersHelper-create_all_purpose_policy"><strong>create_all_purpose_policy</strong></a>(*, client: dbacademy.clients.databricks.DBAcademyRestClient, instance_pool_id: str, spark_version: str, autotermination_minutes_max: int, autotermination_minutes_default: int) -&gt; str</dt></dl>
 
-<dl><dt><a name="ClustersHelper-create_dlt_policy"><strong>create_dlt_policy</strong></a>(*, client: dbacademy.clients.databricks.DBAcademyRestClient, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -&gt; None</dt></dl>
+<dl><dt><a name="ClustersHelper-create_dlt_policy"><strong>create_dlt_policy</strong></a>(*, client: dbacademy.clients.databricks.DBAcademyRestClient, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -&gt; str</dt></dl>
 
-<dl><dt><a name="ClustersHelper-create_jobs_policy"><strong>create_jobs_policy</strong></a>(*, client: dbacademy.clients.databricks.DBAcademyRestClient, instance_pool_id: str, spark_version: str) -&gt; None</dt></dl>
+<dl><dt><a name="ClustersHelper-create_jobs_policy"><strong>create_jobs_policy</strong></a>(*, client: dbacademy.clients.databricks.DBAcademyRestClient, instance_pool_id: str, spark_version: str) -&gt; str</dt></dl>
 
-<dl><dt><a name="ClustersHelper-create_named_instance_pool"><strong>create_named_instance_pool</strong></a>(*, client: dbacademy.clients.databricks.DBAcademyRestClient, name, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str, node_type_id: str, preloaded_spark_version: str)</dt></dl>
+<dl><dt><a name="ClustersHelper-create_named_instance_pool"><strong>create_named_instance_pool</strong></a>(*, client: dbacademy.clients.databricks.DBAcademyRestClient, name: str, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str, node_type_id: str, preloaded_spark_version: str) -&gt; str</dt></dl>
 
 <hr>
 Data descriptors defined here:<br>

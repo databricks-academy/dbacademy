@@ -85,8 +85,46 @@ Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;throttle_seconds:&nbsp;Number&nbsp;of&nbsp;seconds&nbsp;to&nbsp;sleep&nbsp;between&nbsp;requests.</tt></dd></dl>
 
 <hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>cluster_policies</strong></dt>
+</dl>
+<dl><dt><strong>clusters</strong></dt>
+</dl>
+<dl><dt><strong>instance_pools</strong></dt>
+</dl>
+<dl><dt><strong>jobs</strong></dt>
+</dl>
+<dl><dt><strong>ml</strong></dt>
+</dl>
+<dl><dt><strong>permissions</strong></dt>
+</dl>
+<dl><dt><strong>pipelines</strong></dt>
+</dl>
+<dl><dt><strong>repos</strong></dt>
+</dl>
+<dl><dt><strong>runs</strong></dt>
+</dl>
+<dl><dt><strong>scim</strong></dt>
+</dl>
+<dl><dt><strong>secrets</strong></dt>
+</dl>
+<dl><dt><strong>serving_endpoints</strong></dt>
+</dl>
+<dl><dt><strong>sql</strong></dt>
+</dl>
+<dl><dt><strong>token_management</strong></dt>
+</dl>
+<dl><dt><strong>tokens</strong></dt>
+</dl>
+<dl><dt><strong>uc</strong></dt>
+</dl>
+<dl><dt><strong>workspace</strong></dt>
+</dl>
+<dl><dt><strong>workspace_config</strong></dt>
+</dl>
+<hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
-<dl><dt><a name="DBAcademyRestClient-api"><strong>api</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', _data: 'dict' = None, *, _expected: 'HttpStatusCodes' = None, _result_type: 'Type[HttpReturnType]' = &lt;class 'dict'&gt;, _base_url: 'str' = None, **data: 'Any') -&gt; 'HttpReturnType'</dt><dd><tt>Invoke&nbsp;the&nbsp;Databricks&nbsp;REST&nbsp;API.<br>
+<dl><dt><a name="DBAcademyRestClient-api"><strong>api</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', _data: 'Dict[str, Any]' = None, *, _expected: 'HttpStatusCodes' = None, _result_type: 'Type[HttpReturnType]' = &lt;class 'dict'&gt;, _base_url: 'str' = None, **data: 'Any') -&gt; 'HttpReturnType'</dt><dd><tt>Invoke&nbsp;the&nbsp;Databricks&nbsp;REST&nbsp;API.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_http_method:&nbsp;'GET',&nbsp;'PUT',&nbsp;'POST',&nbsp;'DELETE',&nbsp;'PATCH',&nbsp;'HEAD',&nbsp;or&nbsp;'OPTIONS'<br>
@@ -159,12 +197,12 @@ Data and other attributes inherited from <a href="dbacademy.clients.rest.common.
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-from_args"><strong>from_args</strong></a>(*, token: str = None, endpoint: str = None, username: str = None, password: str = None, authorization_header: str = None, client: dbacademy.clients.rest.common.ApiClient = None, verbose: bool = False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x00000207D6F9EBB0&gt;) -&gt; dbacademy.clients.databricks.DBAcademyRestClient</dt></dl>
- <dl><dt><a name="-from_auth_header"><strong>from_auth_header</strong></a>(*, endpoint: str = None, authorization_header: str = None, scope: str = 'DBACADEMY', verbose: bool = False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x00000207D80653A0&gt;) -&gt; dbacademy.clients.databricks.DBAcademyRestClient</dt></dl>
+<td width="100%"><dl><dt><a name="-from_args"><strong>from_args</strong></a>(*, token: str = None, endpoint: str = None, username: str = None, password: str = None, authorization_header: str = None, client: dbacademy.clients.rest.common.ApiClient = None, verbose: bool = False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001F21ADC61C0&gt;) -&gt; dbacademy.clients.databricks.DBAcademyRestClient</dt></dl>
+ <dl><dt><a name="-from_auth_header"><strong>from_auth_header</strong></a>(*, endpoint: str = None, authorization_header: str = None, scope: str = 'DBACADEMY', verbose: bool = False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001F21ADC8850&gt;) -&gt; dbacademy.clients.databricks.DBAcademyRestClient</dt></dl>
  <dl><dt><a name="-from_client"><strong>from_client</strong></a>(client: dbacademy.clients.rest.common.ApiClient) -&gt; dbacademy.clients.databricks.DBAcademyRestClient</dt></dl>
- <dl><dt><a name="-from_token"><strong>from_token</strong></a>(token: str = None, endpoint: str = None, scope: str = 'DBACADEMY', verbose: bool = False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x00000207D80653D0&gt;) -&gt; dbacademy.clients.databricks.DBAcademyRestClient</dt></dl>
- <dl><dt><a name="-from_username"><strong>from_username</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, scope: str = 'DBACADEMY', verbose: bool = False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x00000207D8065100&gt;) -&gt; dbacademy.clients.databricks.DBAcademyRestClient</dt></dl>
- <dl><dt><a name="-from_workspace"><strong>from_workspace</strong></a>(*, verbose: bool = False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x00000207D8065370&gt;) -&gt; dbacademy.clients.databricks.DBAcademyRestClient</dt></dl>
+ <dl><dt><a name="-from_token"><strong>from_token</strong></a>(token: str = None, endpoint: str = None, scope: str = 'DBACADEMY', verbose: bool = False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001F21ADC8760&gt;) -&gt; dbacademy.clients.databricks.DBAcademyRestClient</dt></dl>
+ <dl><dt><a name="-from_username"><strong>from_username</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, scope: str = 'DBACADEMY', verbose: bool = False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001F21ADC82E0&gt;) -&gt; dbacademy.clients.databricks.DBAcademyRestClient</dt></dl>
+ <dl><dt><a name="-from_workspace"><strong>from_workspace</strong></a>(*, verbose: bool = False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001F21ADC8820&gt;) -&gt; dbacademy.clients.databricks.DBAcademyRestClient</dt></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">

@@ -77,7 +77,7 @@ Readonly properties defined here:<br>
 </dl>
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
-<dl><dt><a name="DoceboRestClient-api"><strong>api</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', _data: 'dict' = None, *, _expected: 'HttpStatusCodes' = None, _result_type: 'Type[HttpReturnType]' = &lt;class 'dict'&gt;, _base_url: 'str' = None, **data: 'Any') -&gt; 'HttpReturnType'</dt><dd><tt>Invoke&nbsp;the&nbsp;Databricks&nbsp;REST&nbsp;API.<br>
+<dl><dt><a name="DoceboRestClient-api"><strong>api</strong></a>(self, _http_method: 'HttpMethod', _endpoint_path: 'str', _data: 'Dict[str, Any]' = None, *, _expected: 'HttpStatusCodes' = None, _result_type: 'Type[HttpReturnType]' = &lt;class 'dict'&gt;, _base_url: 'str' = None, **data: 'Any') -&gt; 'HttpReturnType'</dt><dd><tt>Invoke&nbsp;the&nbsp;Databricks&nbsp;REST&nbsp;API.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;_http_method:&nbsp;'GET',&nbsp;'PUT',&nbsp;'POST',&nbsp;'DELETE',&nbsp;'PATCH',&nbsp;'HEAD',&nbsp;or&nbsp;'OPTIONS'<br>
@@ -148,9 +148,9 @@ Data and other attributes inherited from <a href="dbacademy.clients.rest.common.
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-from_args"><strong>from_args</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, verbose=False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x00000207D8019610&gt;) -&gt; dbacademy.clients.docebo.DoceboRestClient</dt></dl>
- <dl><dt><a name="-from_environment"><strong>from_environment</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, scope: str = 'DOCEBO', verbose=False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x00000207D80199D0&gt;) -&gt; dbacademy.clients.docebo.DoceboRestClient</dt></dl>
- <dl><dt><a name="-from_workspace"><strong>from_workspace</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, scope: str = 'DOCEBO', verbose=False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x00000207D8019700&gt;) -&gt; dbacademy.clients.docebo.DoceboRestClient</dt></dl>
+<td width="100%"><dl><dt><a name="-from_args"><strong>from_args</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, verbose=False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001F21ADDDC10&gt;) -&gt; dbacademy.clients.docebo.DoceboRestClient</dt></dl>
+ <dl><dt><a name="-from_environment"><strong>from_environment</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, scope: str = 'DOCEBO', verbose=False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001F21ADDDEB0&gt;) -&gt; dbacademy.clients.docebo.DoceboRestClient</dt></dl>
+ <dl><dt><a name="-from_workspace"><strong>from_workspace</strong></a>(*, endpoint: str = None, username: str = None, password: str = None, consumer_key: str = None, consumer_secret: str = None, scope: str = 'DOCEBO', verbose=False, throttle_seconds: int = 0, error_handler: dbacademy.clients.ClientErrorHandler = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001F21ADDDB20&gt;) -&gt; dbacademy.clients.docebo.DoceboRestClient</dt></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
