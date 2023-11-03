@@ -118,8 +118,19 @@ class WorkspaceSetup:
     @classmethod
     def __for_each_workspace(cls, workspaces: List[WorkspaceTrio], some_action: Callable[[WorkspaceTrio], None]) -> None:
         from multiprocessing.pool import ThreadPool
-        with ThreadPool(len(workspaces)) as pool:
-            pool.map(some_action, workspaces)
+        from dbacademy.clients.dougrest.accounts import workspaces as statuses
+
+        failed_workspaces = [w for w in workspaces if w.workspace_api.get("workspace_status") != statuses.STATUS_RUNNING]
+        running_workspaces = [w for w in workspaces if w.workspace_api.get("workspace_status") == statuses.STATUS_RUNNING]
+
+        count_running_workspaces = len(running_workspaces)
+        count_failed_workspaces = len(failed_workspaces)
+        count_workspaces = len(workspaces)
+
+        assert count_running_workspaces + count_failed_workspaces == count_workspaces, f"The count of failed ({count_failed_workspaces}) & running ({count_running_workspaces}) workspaces does not equal the total number of workspaces, {count_workspaces}."
+
+        with ThreadPool(len(running_workspaces)) as pool:
+            pool.map(some_action, running_workspaces)
 
     @classmethod
     def __get_metastore(cls, workspace_api: Workspace, workspace_name: str) -> Optional[Dict[str, Any]]:
@@ -311,7 +322,8 @@ class WorkspaceSetup:
         # Workspaces were all created synchronously, blocking here until we confirm that all workspaces are created.
         for workspace in self.__workspaces:
             print(f"""Waiting for the creation of workspace "{workspace.workspace_config.name}" to finish provisioning...""")
-            workspace.workspace_api.wait_until_ready()
+            if not workspace.workspace_api.wait_until_ready():
+                print(f"""Workspace "{workspace.workspace_config.name}" failed to provision.""")
 
         #############################################################
         # Remove any users before doing anything like adding them.
@@ -488,6 +500,7 @@ class WorkspaceSetup:
                "enableWebTerminal": "true",        # Enable Web Terminal
                "enableExportNotebook": "true",     # We will disable this in due time
                "enableTokensConfig": "true",       # Newer courses need access to the tokens config
+               # "enableAclsConfig": "true",         # Enable Table Access Controls
         })
 
     def __remove_users(self, trio: WorkspaceTrio):
