@@ -1,10 +1,10 @@
-__all__ = ["UcClient"]
+__all__ = ["UcApi"]
 
 from typing import Optional
 from dbacademy.clients.rest.common import ApiClient, ApiContainer
 
 
-class MetastoresClient(ApiContainer):
+class MetastoresApi(ApiContainer):
     def __init__(self, client: ApiClient):
         self.client = client
         self.base_url = f"{self.client.endpoint}/api/2.1/unity-catalog/metastores"
@@ -27,7 +27,7 @@ class MetastoresClient(ApiContainer):
         return self.client.api("DELETE", f"{self.base_url}/{object_id}")
 
 
-class Workspaces(ApiContainer):
+class WorkspaceApi(ApiContainer):
     def __init__(self, client: ApiClient, workspace_id: str):
         self.client = client
         self.base_url = f"{self.client.endpoint}/api/2.1/unity-catalog/workspaces/{workspace_id}/metastore"
@@ -54,15 +54,17 @@ class Workspaces(ApiContainer):
         return self.client.api("DELETE", self.base_url)
 
 
-class UcClient(ApiContainer):
+class UcApi(ApiContainer):
     def __init__(self, client: ApiClient):
         self.client = client
         self.base_url = f"{self.client.endpoint}/api/2.1/unity-catalog"
 
-        self.metastores = MetastoresClient(self.client)
+    @property
+    def metastores(self) -> MetastoresApi:
+        return MetastoresApi(self.client)
 
-    def workspaces(self, workspace_id: str) -> Workspaces:
-        return Workspaces(self.client, workspace_id)
+    def workspace(self, workspace_id: str) -> WorkspaceApi:
+        return WorkspaceApi(self.client, workspace_id)
 
     def metastore_summary(self):
         return self.client.api("GET", f"{self.base_url}/metastore_summary")

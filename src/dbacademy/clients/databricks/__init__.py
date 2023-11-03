@@ -18,7 +18,7 @@ from dbacademy.clients.databricks.scim import ScimClient
 from dbacademy.clients.databricks.sql import SqlClient
 from dbacademy.clients.databricks.tokens import TokensClient
 from dbacademy.clients.databricks.token_management import TokenManagementClient
-from dbacademy.clients.databricks.uc import UcClient
+from dbacademy.clients.databricks.uc import UcApi
 from dbacademy.clients.databricks.workspace import WorkspaceClient
 from dbacademy.clients.databricks.workspace_config import WorkspaceConfigClient
 from dbacademy.clients.databricks.serving_endpoints import ServingEndpointsApi
@@ -180,8 +180,8 @@ class DBAcademyRestClient(ApiClient):
         return TokenManagementClient(self)
 
     @property
-    def uc(self) -> UcClient:
-        return UcClient(self)
+    def uc(self) -> UcApi:
+        return UcApi(self)
 
     @property
     def workspace(self) -> WorkspaceClient:

@@ -88,7 +88,7 @@ class SqlWarehousesClient(ApiContainer):
 
     def list(self):
         result = self.client.api("GET", self.base_uri)
-        return result.get("warehouses", [])
+        return result.get("warehouses", list())
 
     def create_or_update(self,
                          name: str,

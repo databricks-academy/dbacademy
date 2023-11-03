@@ -1,15 +1,19 @@
-__all__ = ["Workspace", "Workspaces"]
-
-from dbacademy.clients.dougrest.client import DatabricksApi, DatabricksApiException
+__all__ = ["Workspace", "Workspaces", "STATUS_FAILED", "STATUS_PROVISIONING", "STATUS_UNKNOWN"]
 
 from typing import Any, Type, Dict
+from dbacademy.clients.dougrest.client import DatabricksApi, DatabricksApiException
+from dbacademy.clients.dougrest.accounts import AccountsApi
 from dbacademy.common import overrides
 from dbacademy.clients.rest.common import HttpMethod, HttpReturnType, HttpStatusCodes, IfExists, IfNotExists
 from dbacademy.clients.dougrest.accounts.crud import AccountsCRUD
 
+STATUS_FAILED = "FAILED"
+STATUS_RUNNING = "RUNNING"
+STATUS_UNKNOWN = "UNKNOWN"
+STATUS_PROVISIONING = "PROVISIONING"
+
 
 class Workspace(DatabricksApi):
-    from dbacademy.clients.dougrest.accounts import AccountsApi
 
     def __init__(self, data_dict, accounts_api: AccountsApi):
         hostname = data_dict.get("deployment_name")
@@ -25,20 +29,30 @@ class Workspace(DatabricksApi):
         import time
 
         start = time.time()
-        while self["workspace_status"] == "PROVISIONING":
-            workspace_id = self["workspace_id"]
+
+        while self.get("workspace_status") == STATUS_PROVISIONING:
+            workspace_id = self.get("workspace_id")
             data = self.accounts.workspaces.get_by_id(workspace_id)
             self.update(data)
             if time.time() - start > timeout_seconds:
                 raise TimeoutError(f"Workspace not ready after waiting {timeout_seconds} seconds")
-            if self["workspace_status"] == "PROVISIONING":
+            if self.get("workspace_status") == STATUS_PROVISIONING:
                 time.sleep(15)
+
+        final_status = self.get("workspace_status")
+        if final_status == STATUS_FAILED:
+            return False
+        elif final_status != STATUS_RUNNING:
+            return False
+
+        return True
 
     def wait_until_gone(self, timeout_seconds=30*60):
         import time
 
-        workspace_id = self["workspace_id"]
         start = time.time()
+        workspace_id = self.get("workspace_id")
+
         while True:
             if not self.accounts.workspaces.get_by_id(workspace_id, if_not_exists="ignore"):
                 break
@@ -75,7 +89,9 @@ class Workspace(DatabricksApi):
 
     def add_as_admin(self, username):
         user = self.accounts.users.get_by_username(username, if_not_exists="error")
-        return self.accounts.api("PUT", f"workspaces/{self['workspace_id']}/roleassignments/principals/{user['id']}",
+        user_id = user.get("id")
+        workspace_id = self.get("workspace_id")
+        return self.accounts.api("PUT", f"workspaces/{workspace_id}/roleassignments/principals/{user_id}",
                                  _base_url=f"/api/2.0/preview/accounts/{self.accounts.account_id}/", roles=["ADMIN"])
 
 
