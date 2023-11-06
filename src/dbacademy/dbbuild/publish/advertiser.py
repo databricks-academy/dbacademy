@@ -1,6 +1,10 @@
+__all__ = ["Advertiser"]
+
+from dbacademy.dbbuild.change_log_class import ChangeLog
+from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
+
+
 class Advertiser:
-    from dbacademy.dbbuild.change_log_class import ChangeLog
-    from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
 
     def __init__(self, *, name: str, version: str, change_log: ChangeLog, publishing_info: PublishingInfo, source_repo: str, common_language):
         self.__name = name

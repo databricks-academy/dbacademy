@@ -2,7 +2,7 @@ import json
 from enum import Enum
 from typing import Dict, Any, Optional
 from dataclasses import dataclass
-from dbacademy.common.cloud_class import Cloud
+from dbacademy.common import Cloud
 
 
 class Special(Enum):

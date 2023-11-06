@@ -36,18 +36,30 @@ class AccountConfig:
         from dbacademy_jobs.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
         from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
-        self.__account_id = validate.str_value(min_length=1, account_id=account_id)
-        self.__password = validate.str_value(min_length=1, password=password)
-        self.__username = validate.str_value(min_length=1, username=username)
+        validate.str_value(min_length=1, account_id=account_id)
+        self.__account_id = account_id
+
+        validate.str_value(min_length=1, password=password)
+        self.__password = password
+
+        validate.str_value(min_length=1, username=username)
+        self.__username = username
 
         print(f"Account ID:    {account_id}")
         print(f"Password:      {password[0]}***{password[-1]}")
         print(f"Username:      {username}")
 
-        self.__region = validate.str_value(min_length=1, region=region)
-        self.__ignored_workspaces = validate.list_value(ignored_workspaces=ignored_workspaces, required=True)
-        self.__uc_storage_config = validate.any_value(UcStorageConfig, uc_storage_config=uc_storage_config, required=True)
-        self.__workspace_config_template = validate.any_value(WorkspaceConfig, workspace_config_template=workspace_config_template, required=True)
+        validate.str_value(min_length=1, region=region)
+        self.__region = region
+
+        validate.list_value(ignored_workspaces=ignored_workspaces, required=True)
+        self.__ignored_workspaces = ignored_workspaces
+
+        validate.any_value(UcStorageConfig, uc_storage_config=uc_storage_config, required=True)
+        self.__uc_storage_config = uc_storage_config
+
+        validate.any_value(WorkspaceConfig, workspace_config_template=workspace_config_template, required=True)
+        self.__workspace_config_template = workspace_config_template
 
         self.__workspaces = list()
 

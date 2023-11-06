@@ -1,19 +1,21 @@
 __all__ = ["StatementTests"]
 
 import unittest
-from dbacademy.clients import databricks
-from dbacademy.dbhelper import WorkspaceHelper
-from dbacademy.clients.databricks.sql.endpoints import CLUSTER_SIZE_2X_SMALL, RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT
-from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS
 
 
 class StatementTests(unittest.TestCase):
+    from dbacademy.clients import databricks
 
     warehouse_id: str = None
     client: databricks.DBAcademyRestClient = None
 
     @classmethod
     def setUpClass(cls) -> None:
+        from dbacademy.clients import databricks
+        from dbacademy.dbhelper import dbh_constants
+        from dbacademy.clients.databricks.sql.endpoints import CLUSTER_SIZE_2X_SMALL, RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT
+        from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS
+
         cls.client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS)
 
         warehouse = cls.client.sql.warehouses.create_or_update(
@@ -27,8 +29,8 @@ class StatementTests(unittest.TestCase):
             spot_instance_policy=RELIABILITY_OPTIMIZED,
             channel=CHANNEL_NAME_CURRENT,
             tags={
-                f"dbacademy.{WorkspaceHelper.PARAM_EVENT_ID}": "n/a",
-                f"dbacademy.{WorkspaceHelper.PARAM_EVENT_DESCRIPTION}": "SQL warehouse created for unit testing",
+                f"dbacademy.{dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_ID}": "n/a",
+                f"dbacademy.{dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_DESCRIPTION}": "SQL warehouse created for unit testing",
                 f"dbacademy.workspace": "curriculum-unit-tests.cloud.databricks.com",
                 f"dbacademy.org_id": "2967772011441968",
                 f"dbacademy.source": "DBAcademy Library Unit-Tests",

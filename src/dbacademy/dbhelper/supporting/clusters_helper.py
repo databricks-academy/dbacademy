@@ -1,25 +1,18 @@
-from typing import TypeVar, Union, Dict, Any
+__all__ = ["ClustersHelper"]
+
+from typing import Union, Dict, Any
+from dbacademy.dbhelper import dbh_constants
+from dbacademy.clients.databricks import DBAcademyRestClient
 
 
 class ClustersHelper:
-    from dbacademy.clients.databricks import DBAcademyRestClient
-    from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
-    from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
 
-    T = TypeVar("T")
+    def __init__(self, db_academy_rest_client: DBAcademyRestClient):
+        from dbacademy.common import validate
+        from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 
-    POLICY_ALL_PURPOSE = "DBAcademy"
-    POLICY_JOBS_ONLY = "DBAcademy Jobs"
-    POLICY_DLT_ONLY = "DBAcademy DLT"
-    POLICIES = [POLICY_ALL_PURPOSE, POLICY_JOBS_ONLY, POLICY_DLT_ONLY]
-
-    POOL_DEFAULT_NAME = "DBAcademy"
-    POOLS = [POOL_DEFAULT_NAME]
-
-    def __init__(self, workspace: WorkspaceHelper, da: DBAcademyHelper):
-        self.da = da
-        self.client = da.client
-        self.workspace = workspace
+        self.__client = validate.any_value(db_academy_rest_client=db_academy_rest_client, parameter_type=DBAcademyRestClient, required=True)
+        self.__workspace = WorkspaceHelper(self.__client)
 
     def create_instance_pool(self, *,
                              preloaded_spark_version: str,
@@ -31,20 +24,17 @@ class ClustersHelper:
                              workspace_name: str,
                              workspace_description: str) -> str:
 
-        return ClustersHelper.create_named_instance_pool(name=ClustersHelper.POOL_DEFAULT_NAME,
-                                                         client=self.client,
-                                                         min_idle_instances=min_idle_instances,
-                                                         idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
-                                                         node_type_id=node_type_id,
-                                                         preloaded_spark_version=preloaded_spark_version,
-                                                         lab_id=lab_id or self.workspace.lab_id,
-                                                         workspace_description=workspace_description or self.workspace.description,
-                                                         workspace_name=workspace_name or self.workspace.workspace_name,
-                                                         org_id=org_id or self.workspace.org_id)
+        return self.create_named_instance_pool(name=dbh_constants.CLUSTERS_HELPER.POOL_DEFAULT_NAME,
+                                               min_idle_instances=min_idle_instances,
+                                               idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
+                                               node_type_id=node_type_id,
+                                               preloaded_spark_version=preloaded_spark_version,
+                                               lab_id=lab_id or self.__workspace.lab_id,
+                                               workspace_description=workspace_description or self.__workspace.description,
+                                               workspace_name=workspace_name or self.__workspace.workspace_name,
+                                               org_id=org_id or self.__workspace.org_id)
 
-    @staticmethod
-    def create_named_instance_pool(*,
-                                   client: DBAcademyRestClient,
+    def create_named_instance_pool(self, *,
                                    name: str,
                                    min_idle_instances: int,
                                    idle_instance_autotermination_minutes: int,
@@ -57,8 +47,8 @@ class ClustersHelper:
 
         from dbacademy import dbgems
         from dbacademy import common
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
-        from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
+        from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 
         lab_id = lab_id or WorkspaceHelper.get_lab_id()
         workspace_description = workspace_description or WorkspaceHelper.get_workspace_description()
@@ -66,29 +56,29 @@ class ClustersHelper:
         org_id = org_id or dbgems.get_org_id()
 
         tags = [
-            (f"dbacademy.pool.{WorkspaceHelper.PARAM_EVENT_ID}", common.clean_string(lab_id)),
-            (f"dbacademy.pool.{WorkspaceHelper.PARAM_EVENT_DESCRIPTION}", common.clean_string(workspace_description)),
-            (f"dbacademy.pool.{WorkspaceHelper.PARAM_WORKSPACE_NAME}", common.clean_string(workspace_name)),
-            (f"dbacademy.pool.{WorkspaceHelper.PARAM_ORG_ID}", common.clean_string(org_id)),
-            (f"dbacademy.pool.{WorkspaceHelper.PARAM_SOURCE}", common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else lab_id))
+            (f"dbacademy.pool.{dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_ID}", common.clean_string(lab_id)),
+            (f"dbacademy.pool.{dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_DESCRIPTION}", common.clean_string(workspace_description)),
+            (f"dbacademy.pool.{dbh_constants.WORKSPACE_HELPER.PARAM_WORKSPACE_NAME}", common.clean_string(workspace_name)),
+            (f"dbacademy.pool.{dbh_constants.WORKSPACE_HELPER.PARAM_ORG_ID}", common.clean_string(org_id)),
+            (f"dbacademy.pool.{dbh_constants.WORKSPACE_HELPER.PARAM_SOURCE}", common.clean_string("Smoke-Test" if DBAcademyHelper.is_smoke_test() else lab_id))
         ]
 
         # We cannot update some pool attributes once they are created.
         # To address this, we need to delete it then create it.
-        client.instance_pools.delete_by_name(name)
+        self.__client.instance_pools.delete_by_name(name)
 
-        pool = client.instance_pools.create_or_update(instance_pool_name=name,
-                                                      idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
-                                                      min_idle_instances=min_idle_instances,
-                                                      node_type_id=node_type_id,
-                                                      preloaded_spark_version=preloaded_spark_version,
-                                                      tags=tags)
+        pool = self.__client.instance_pools.create_or_update(instance_pool_name=name,
+                                                             idle_instance_autotermination_minutes=idle_instance_autotermination_minutes,
+                                                             min_idle_instances=min_idle_instances,
+                                                             node_type_id=node_type_id,
+                                                             preloaded_spark_version=preloaded_spark_version,
+                                                             tags=tags)
         instance_pool_id = pool.get("instance_pool_id")
 
         # With the pool created, make sure that all users can attach to it.
-        client.permissions.pools.update_group(id_value=instance_pool_id,
-                                              group_name="users",
-                                              permission_level="CAN_ATTACH_TO")
+        self.__client.permissions.pools.update_group(id_value=instance_pool_id,
+                                                     group_name="users",
+                                                     permission_level="CAN_ATTACH_TO")
 
         dbgems.display_html(f"""
         <html style="margin:0"><body style="margin:0"><div style="margin:0">
@@ -98,9 +88,7 @@ class ClustersHelper:
 
         return instance_pool_id
 
-    @staticmethod
-    def __create_cluster_policy(*,
-                                client: DBAcademyRestClient,
+    def __create_cluster_policy(self, *,
                                 instance_pool_id: Union[None, str],
                                 name: str,
                                 definition: Dict[str, Any]) -> str:
@@ -122,18 +110,18 @@ class ClustersHelper:
 
         # Some attributes of a policy cannot be updated once created.
         # To get around this, we first delete the policy.
-        policy = client.cluster_policies.get_by_name(name)
+        policy = self.__client.cluster_policies.get_by_name(name)
         if policy:
-            client.cluster_policies.delete_by_id(policy["policy_id"])
+            self.__client.cluster_policies.delete_by_id(policy["policy_id"])
 
-        policy = client.cluster_policies.create_or_update(name, definition)
+        policy = self.__client.cluster_policies.create_or_update(name, definition)
 
         policy_id = policy.get("policy_id")
 
         # With the pool created, make sure that all users can attach to it.
-        client.permissions.cluster_policies.update_group(id_value=policy_id,
-                                                         group_name="users",
-                                                         permission_level="CAN_USE")
+        self.__client.permissions.cluster_policies.update_group(id_value=policy_id,
+                                                                group_name="users",
+                                                                permission_level="CAN_USE")
 
         dbgems.display_html(f"""
         <html style="margin:0"><body style="margin:0"><div style="margin:0">
@@ -143,9 +131,7 @@ class ClustersHelper:
 
         return policy_id
 
-    @staticmethod
-    def create_all_purpose_policy(*,
-                                  client: DBAcademyRestClient,
+    def create_all_purpose_policy(self, *,
                                   instance_pool_id: str,
                                   spark_version: str,
                                   autotermination_minutes_max: int,
@@ -188,16 +174,13 @@ class ClustersHelper:
                 "defaultValue": "STANDARD"
             },
         }
-        ClustersHelper.add_default_policy(definition, "spark_version", spark_version)
+        self.add_default_policy(definition, "spark_version", spark_version)
 
-        return ClustersHelper.__create_cluster_policy(client=client,
-                                                      instance_pool_id=instance_pool_id,
-                                                      name=ClustersHelper.POLICY_ALL_PURPOSE,
-                                                      definition=definition)
+        return self.__create_cluster_policy(instance_pool_id=instance_pool_id,
+                                            name=dbh_constants.CLUSTERS_HELPER.POLICY_ALL_PURPOSE,
+                                            definition=definition)
 
-    @staticmethod
-    def create_jobs_policy(*,
-                           client: DBAcademyRestClient,
+    def create_jobs_policy(self, *,
                            instance_pool_id: str,
                            spark_version: str) -> str:
 
@@ -227,22 +210,19 @@ class ClustersHelper:
         }
         ClustersHelper.add_default_policy(definition, "spark_version", spark_version)
 
-        return ClustersHelper.__create_cluster_policy(client=client,
-                                                      instance_pool_id=instance_pool_id,
-                                                      name=ClustersHelper.POLICY_JOBS_ONLY,
-                                                      definition=definition)
+        return self.__create_cluster_policy(instance_pool_id=instance_pool_id,
+                                            name=dbh_constants.CLUSTERS_HELPER.POLICY_JOBS_ONLY,
+                                            definition=definition)
 
-    @staticmethod
-    def create_dlt_policy(*,
-                          client: DBAcademyRestClient,
+    def create_dlt_policy(self, *,
                           lab_id: str,
                           workspace_description: str,
                           workspace_name: str,
                           org_id: str) -> str:
 
         from dbacademy import common, dbgems
-        from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
         org_id = org_id or dbgems.get_org_id()
         lab_id = lab_id or WorkspaceHelper.get_lab_id()
@@ -266,17 +246,13 @@ class ClustersHelper:
             },
         }
 
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_EVENT_ID, lab_id)
+        self.add_custom_tag(definition, dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_ID, lab_id)
+        self.add_custom_tag(definition, dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_DESCRIPTION, workspace_description)
+        self.add_custom_tag(definition, dbh_constants.WORKSPACE_HELPER.PARAM_SOURCE, "Smoke-Test" if DBAcademyHelper.is_smoke_test() else common.clean_string(lab_id))
+        self.add_custom_tag(definition, dbh_constants.WORKSPACE_HELPER.PARAM_ORG_ID, org_id)
+        self.add_custom_tag(definition, dbh_constants.WORKSPACE_HELPER.PARAM_WORKSPACE_NAME, workspace_name)
 
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_EVENT_DESCRIPTION, workspace_description)
-
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_SOURCE, "Smoke-Test" if DBAcademyHelper.is_smoke_test() else common.clean_string(lab_id))
-
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_ORG_ID, org_id)
-
-        ClustersHelper.add_custom_tag(definition, WorkspaceHelper.PARAM_WORKSPACE_NAME, workspace_name)
-
-        return ClustersHelper.__create_cluster_policy(client=client, instance_pool_id=None, name=ClustersHelper.POLICY_DLT_ONLY, definition=definition)
+        return self.__create_cluster_policy(instance_pool_id=None, name=dbh_constants.CLUSTERS_HELPER.POLICY_DLT_ONLY, definition=definition)
 
     @staticmethod
     def add_default_policy(definition: Dict[str, Any], name: str, value: str) -> None:
@@ -292,8 +268,8 @@ class ClustersHelper:
             "isOptional": True
         }
 
-    @staticmethod
-    def add_custom_tag(definition: Dict[str, Any], name: str, value: str, default_value: str = "UNKNOWN") -> None:
+    @classmethod
+    def add_custom_tag(cls, definition: Dict[str, Any], name: str, value: str, default_value: str = "UNKNOWN") -> None:
         from dbacademy import common
 
         key = f"custom_tags.dbacademy.{name}"

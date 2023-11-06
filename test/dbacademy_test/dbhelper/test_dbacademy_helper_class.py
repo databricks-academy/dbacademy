@@ -1,4 +1,5 @@
 import unittest
+from dbacademy.dbhelper import dbh_constants
 
 
 class TestDBAcademyHelper(unittest.TestCase):
@@ -17,34 +18,34 @@ class TestDBAcademyHelper(unittest.TestCase):
 
     def test_get_dbacademy_datasets_path(self):
         from dbacademy import dbgems
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
         path = DBAcademyHelper.get_dbacademy_datasets_path()
         self.assertEquals("dbfs:/mnt/dbacademy-datasets", path)
 
-        dbgems.MOCK_CONFIG[DBAcademyHelper.SPARK_CONF_PATHS_DATASETS] = "dbfs:/alternative/dbacademy-datasets"
+        dbgems.MOCK_CONFIG[dbh_constants.DBACADEMY_HELPER.SPARK_CONF_PATHS_DATASETS] = "dbfs:/alternative/dbacademy-datasets"
         path = DBAcademyHelper.get_dbacademy_datasets_path()
         self.assertEquals("dbfs:/alternative/dbacademy-datasets", path)
 
     def test_get_dbacademy_users_path(self):
         from dbacademy import dbgems
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
         path = DBAcademyHelper.get_dbacademy_users_path()
         self.assertEquals("dbfs:/mnt/dbacademy-users", path)
 
-        dbgems.MOCK_CONFIG[DBAcademyHelper.SPARK_CONF_PATHS_USERS] = "dbfs:/alternative/dbacademy-users"
+        dbgems.MOCK_CONFIG[dbh_constants.DBACADEMY_HELPER.SPARK_CONF_PATHS_USERS] = "dbfs:/alternative/dbacademy-users"
         path = DBAcademyHelper.get_dbacademy_users_path()
         self.assertEquals("dbfs:/alternative/dbacademy-users", path)
 
     def test_get_dbacademy_datasets_staging(self):
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
         path = DBAcademyHelper.get_dbacademy_datasets_staging()
         self.assertEquals("dbfs:/mnt/dbacademy-datasets-staging", path)
 
     def test_to_unique_name(self):
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
         name = DBAcademyHelper.to_unique_name(username="mickey.mouse@disney.com", course_code="test", lesson_name=None, sep="-")
         self.assertEquals("mickey-mouse-g4qd-da-test", name)
@@ -53,13 +54,13 @@ class TestDBAcademyHelper(unittest.TestCase):
         self.assertEquals("mickey_mouse_g4qd_da_test_smoke_test", name)
 
     def test_to_catalog_name_prefix(self):
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
         name = DBAcademyHelper.to_catalog_name_prefix(username="mickey.mouse@disney.com")
         self.assertEquals("mickey_mouse_g4qd_da", name)
 
     def test_to_catalog_name(self):
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
         name = DBAcademyHelper.to_catalog_name(username="donald.duck@disney.com", lesson_name=None)
         self.assertEquals("donald_duck_511r_da", name)
@@ -68,13 +69,13 @@ class TestDBAcademyHelper(unittest.TestCase):
         self.assertEquals("mickey_mouse_g4qd_da_lesson_12", name)
 
     def test_to_schema_name_prefix(self):
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
         name = DBAcademyHelper.to_schema_name_prefix(username="mickey.mouse@disney.com", course_code="test")
         self.assertEquals("mickey_mouse_g4qd_da_test", name)
 
     def test_to_schema_name(self):
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
         name = DBAcademyHelper.to_schema_name(username="donald.duck@disney.com", course_code="qwer", lesson_name=None)
         self.assertEquals("donald_duck_511r_da_qwer", name)
@@ -84,11 +85,11 @@ class TestDBAcademyHelper(unittest.TestCase):
 
     def test_is_smoke_test(self):
         from dbacademy import dbgems
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
         self.assertFalse(DBAcademyHelper.is_smoke_test())
 
-        dbgems.MOCK_CONFIG[DBAcademyHelper.SPARK_CONF_SMOKE_TEST] = "True"
+        dbgems.MOCK_CONFIG[dbh_constants.DBACADEMY_HELPER.SPARK_CONF_SMOKE_TEST] = "True"
         self.assertTrue(DBAcademyHelper.is_smoke_test())
 
     # def test_to_username_hash(self):

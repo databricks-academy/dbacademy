@@ -1,5 +1,6 @@
 from typing import List, Optional, Callable, Dict, Any
 
+from dbacademy.dbhelper import dbh_constants
 from dbacademy.clients import databricks
 from dbacademy.clients.rest.common import DatabricksApiException
 from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
@@ -82,7 +83,9 @@ class WorkspaceSetup:
 
         self.__errors: List[str] = list()
         self.__workspaces: List[WorkspaceTrio] = list()
-        self.__account_config = validate.any_value(AccountConfig, account_config=account_config, required=True)
+
+        validate.any_value(AccountConfig, account_config=account_config, required=True)
+        self.__account_config = account_config
 
         self.__accounts_api = AccountsApi(account_id=self.account_config.account_id,
                                           username=self.account_config.username,
@@ -212,7 +215,7 @@ class WorkspaceSetup:
         return workspaces
 
     def remove_workspace_setup_jobs(self):
-        from dbacademy.dbhelper import WorkspaceHelper
+        from dbacademy.dbhelper import dbh_constants
 
         print("\n")
         print("-"*100)
@@ -221,10 +224,10 @@ class WorkspaceSetup:
         print(f"Removing Universal-Workspace-Setup jobs for {len(workspaces)} workspaces.""")
 
         for trio in workspaces:
-            job = trio.client.jobs.get_by_name(WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME)
+            job = trio.client.jobs.get_by_name(dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP_JOB_NAME)
             if job is not None:
                 # Now that we have ran the job, delete the Bootstrap job.
-                trio.client.jobs.delete_by_job_id(job.get("job_id"))
+                trio.client.jobs.delete_by_id(job.get("job_id"))
 
     def __delete_workspace(self, trio: WorkspaceTrio):
         import traceback
@@ -428,7 +431,7 @@ class WorkspaceSetup:
     @classmethod
     def __install_courseware(cls, trio: WorkspaceTrio):
         import os
-        from dbacademy.dbhelper import WorkspaceHelper
+        from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 
         for course_def in trio.workspace_config.course_definitions:
 
@@ -463,7 +466,7 @@ class WorkspaceSetup:
 
     @classmethod
     def __uninstall_courseware(cls, trio: WorkspaceTrio):
-        from dbacademy.dbhelper import WorkspaceHelper
+        from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 
         usernames = [u.get("userName") for u in trio.client.scim.users.list()]
 
@@ -639,24 +642,25 @@ class WorkspaceSetup:
             })
 
     def __validate_pool_and_policies(self, trio: WorkspaceTrio) -> List[str]:
-        from dbacademy.dbhelper import ClustersHelper
 
         errors = list()
 
-        if trio.client.instance_pools.get_by_name(ClustersHelper.POOL_DEFAULT_NAME) is None:
-            errors.append(self.log_error(f"""The instance pool "{ClustersHelper.POOL_DEFAULT_NAME}" was not found for {trio.name}"""))
+        if trio.client.instance_pools.get_by_name(dbh_constants.DBACADEMY_HELPER.POOL_DEFAULT_NAME) is None:
+            errors.append(self.log_error(f"""The instance pool "{dbh_constants.DBACADEMY_HELPER.POOL_DEFAULT_NAME}" was not found for {trio.name}"""))
 
-        for policy_name in [ClustersHelper.POLICY_ALL_PURPOSE, ClustersHelper.POLICY_JOBS_ONLY, ClustersHelper.POLICY_DLT_ONLY]:
+        for policy_name in [dbh_constants.DBACADEMY_HELPER.POLICY_ALL_PURPOSE,
+                            dbh_constants.DBACADEMY_HELPER.POLICY_JOBS_ONLY,
+                            dbh_constants.DBACADEMY_HELPER.POLICY_DLT_ONLY]:
             if trio.client.cluster_policies.get_by_name(policy_name) is None:
                 errors.append(self.log_error(f"""The cluster policy "{policy_name}" was not found for {trio.name}"""))
 
         return errors
 
     def __validate_workspace_setup_job(self, trio: WorkspaceTrio) -> List[str]:
-        from dbacademy.dbhelper import WorkspaceHelper
+        from dbacademy.dbhelper import dbh_constants
 
         # Check the Workspace Setup job should be last
-        job = trio.client.jobs.get_by_name(WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME)
+        job = trio.client.jobs.get_by_name(dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP_JOB_NAME)
         if job is None:
             return [self.log_error(f"Workspace-Setup job not found for {trio.name}")]
 
@@ -680,13 +684,12 @@ class WorkspaceSetup:
     def __run_workspace_setup_job(self, trio: WorkspaceTrio):
         import time
         import traceback
-        from dbacademy.dbhelper import WorkspaceHelper
 
         start = time.time()
         try:
             # If the job exist delete it to address cases where the job is misconfigured
             # and leaving it would only result in re-running the misconfigured job.
-            trio.client.jobs.delete_by_name(WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME, success_only=False)
+            trio.client.jobs.delete_by_name(dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP_JOB_NAME, success_only=False)
 
             # We deleted it or it never existed.
             job_id = self.__create_job(trio)

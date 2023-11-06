@@ -1,13 +1,16 @@
+__all__ = ["WorkspaceCleaner"]
+
 from typing import Optional
+from dbacademy.dbhelper import dbh_constants
 
 
 class WorkspaceCleaner:
-    from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
-    
-    def __init__(self, da: DBAcademyHelper):
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
 
-        self.__da: DBAcademyHelper = da
+    def __init__(self, db_academy_helper):
+        from dbacademy.common import validate
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
+
+        self.__da = validate.any_value(db_academy_helper=db_academy_helper, parameter_type=DBAcademyHelper, required=True)
         self.__unique_name: Optional[str] = None
 
     def reset_lesson(self) -> None:
@@ -65,18 +68,16 @@ class WorkspaceCleaner:
         print(f"| The learning environment was successfully reset {dbgems.clock_stopped(start)}.")
 
     def __drop_instance_pool(self):
-        from dbacademy.dbhelper import ClustersHelper
 
-        for pool_name in ClustersHelper.POOLS:
+        for pool_name in dbh_constants.DBACADEMY_HELPER.POOLS:
             pool = self.__da.client.instance_pools.get_by_name(pool_name)
             if pool is not None:
                 print(f"| Dropping the instance pool \"{pool_name}\".")
                 self.__da.client.instance_pools.delete_by_name(pool_name)
 
     def __drop_cluster_policies(self):
-        from dbacademy.dbhelper import ClustersHelper
 
-        for policy_name in ClustersHelper.POLICIES:
+        for policy_name in dbh_constants.DBACADEMY_HELPER.POLICIES:
             policy = self.__da.client.cluster_policies.get_by_name(policy_name)
             if policy is not None:
                 print(f"| Dropping the cluster policy \"{policy_name}\".")
@@ -84,7 +85,7 @@ class WorkspaceCleaner:
 
     def __reset_working_dir(self) -> None:
         from dbacademy import dbgems
-        from dbacademy.dbhelper.paths_class import Paths
+        from dbacademy.dbhelper.paths import Paths
 
         print(f"| Deleting working directory root \"{self.__da.working_dir_root}\".")
         if Paths.exists(self.__da.working_dir_root):
@@ -92,7 +93,7 @@ class WorkspaceCleaner:
 
     def __reset_datasets(self) -> None:
         from dbacademy import dbgems
-        from dbacademy.dbhelper.paths_class import Paths
+        from dbacademy.dbhelper.paths import Paths
 
         print(f"| Deleting datasets \"{self.__da.paths.datasets}\".")
         if Paths.exists(self.__da.paths.datasets):
@@ -100,7 +101,7 @@ class WorkspaceCleaner:
 
     def __reset_archives(self) -> None:
         from dbacademy import dbgems
-        from dbacademy.dbhelper.paths_class import Paths
+        from dbacademy.dbhelper.paths import Paths
 
         print(f"| Deleting archives \"{self.__da.paths.archives}\".")
         if Paths.exists(self.__da.paths.datasets):
@@ -114,7 +115,6 @@ class WorkspaceCleaner:
 
     def __reset_databases(self) -> None:
         from dbacademy import dbgems
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
         from pyspark.sql.utils import AnalysisException
 
         # Drop all user-specific catalogs
@@ -131,10 +131,11 @@ class WorkspaceCleaner:
         catalog_names = self.__list_catalogs()
         for catalog_name in catalog_names:
             # There are potentially two "default" catalogs from which we need to remove user-specific schemas
-            if catalog_name in [DBAcademyHelper.CATALOG_SPARK_DEFAULT, DBAcademyHelper.CATALOG_UC_DEFAULT]:
+            if catalog_name in [dbh_constants.DBACADEMY_HELPER.CATALOG_SPARK_DEFAULT,
+                                dbh_constants.DBACADEMY_HELPER.CATALOG_UC_DEFAULT]:
                 schema_names = [d.databaseName for d in dbgems.spark.sql(f"SHOW DATABASES IN {catalog_name}").collect()]
                 for schema_name in schema_names:
-                    if schema_name.startswith(self.__da.schema_name_prefix) and schema_name != DBAcademyHelper.SCHEMA_DEFAULT:
+                    if schema_name.startswith(self.__da.schema_name_prefix) and schema_name != dbh_constants.DBACADEMY_HELPER.SCHEMA_DEFAULT:
                         print(f"| Dropping the schema \"{catalog_name}.{schema_name}\"")
                         self._drop_database(f"{catalog_name}.{schema_name}")
 

@@ -1,8 +1,10 @@
+__all__ = ["Translator"]
+
 from typing import Optional
+from dbacademy.dbbuild.publish.publisher_class import Publisher
 
 
 class Translator:
-    from dbacademy.dbbuild.publish.publisher_class import Publisher
 
     def __init__(self, publisher: Publisher):
         from dbacademy.common import validate

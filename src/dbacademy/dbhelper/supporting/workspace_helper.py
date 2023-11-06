@@ -1,43 +1,19 @@
+__all__ = ["WorkspaceHelper"]
+
 from typing import Callable, List, TypeVar, Optional, Union, Dict, Any
+from dbacademy.dbhelper import dbh_constants
+from dbacademy.dbhelper.lesson_config import LessonConfig
+from dbacademy.clients.databricks import DBAcademyRestClient
+
+T = TypeVar("T")
 
 
 class WorkspaceHelper:
-    from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
-    from dbacademy.clients.databricks import DBAcademyRestClient
 
-    T = TypeVar("T")
+    def __init__(self, db_academy_rest_client: DBAcademyRestClient):
+        from dbacademy.common import validate
 
-    WORKSPACE_SETUP_JOB_NAME = "DBAcademy Workspace-Setup"
-    BOOTSTRAP_JOB_NAME = "DBAcademy Workspace-Setup (Bootstrap)"
-
-    PARAM_EVENT_ID = "event_id"
-    PARAM_EVENT_DESCRIPTION = "event_description"
-    PARAM_CONFIGURE_FOR = "configure_for"
-    PARAM_POOLS_NODE_TYPE_ID = "pools_node_type_id"
-    PARAM_DEFAULT_SPARK_VERSION = "default_spark_version"
-    PARAM_DATASETS = "datasets"
-    PARAM_COURSES = "courses"
-    PARAM_SOURCE = "source"
-    PARAM_ORG_ID = "org_id"
-    PARAM_WORKSPACE_NAME = "workspace_name"
-
-    CONFIGURE_FOR_ALL_USERS = "All Users"
-    CONFIGURE_FOR_MISSING_USERS_ONLY = "Missing Users Only"
-    CONFIGURE_FOR_CURRENT_USER_ONLY = "Current User Only"
-
-    CONFIGURE_FOR_OPTIONS = ["", CONFIGURE_FOR_ALL_USERS, CONFIGURE_FOR_MISSING_USERS_ONLY, CONFIGURE_FOR_CURRENT_USER_ONLY]
-    CONFIGURE_FOR_VALID_OPTIONS = CONFIGURE_FOR_OPTIONS[1:]  # all but empty-string
-
-    def __init__(self, da: DBAcademyHelper):
-        from dbacademy.dbhelper.warehouses_helper_class import WarehousesHelper
-        from dbacademy.dbhelper.databases_helper_class import DatabasesHelper
-        from dbacademy.dbhelper.clusters_helper_class import ClustersHelper
-
-        self.da = da
-        self.client = da.client
-        self.warehouses = WarehousesHelper(self, da)
-        self.databases = DatabasesHelper(self, da)
-        self.clusters = ClustersHelper(self, da)
+        self.__client = validate.any_value(db_academy_rest_client=db_academy_rest_client, parameter_type=DBAcademyRestClient, required=True)
 
         self._usernames = None
         self.__existing_databases = None
@@ -47,13 +23,13 @@ class WorkspaceHelper:
     def get_spark_version():
         from dbacademy import dbgems
 
-        return dbgems.get_parameter(WorkspaceHelper.PARAM_DEFAULT_SPARK_VERSION)
+        return dbgems.get_parameter(dbh_constants.WORKSPACE_HELPER.PARAM_DEFAULT_SPARK_VERSION)
 
     @staticmethod
     def get_lab_id():
         from dbacademy import dbgems
 
-        return dbgems.get_parameter(WorkspaceHelper.PARAM_EVENT_ID)
+        return dbgems.get_parameter(dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_ID)
 
     @staticmethod
     def get_workspace_name():
@@ -65,13 +41,13 @@ class WorkspaceHelper:
     def get_workspace_description():
         from dbacademy import dbgems
 
-        return dbgems.get_parameter(WorkspaceHelper.PARAM_EVENT_DESCRIPTION)
+        return dbgems.get_parameter(dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_DESCRIPTION)
 
     @staticmethod
     def install_datasets(datasets: Union[str, List[str]]):
         from dbacademy import dbgems
-        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
-        from dbacademy.dbhelper import DBAcademyHelper
+        from dbacademy.dbhelper.dataset_manager import DatasetManager
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
         if datasets is not None:
             if type(datasets) == list:
@@ -163,22 +139,20 @@ class WorkspaceHelper:
                 if data_source_version == versions[-1] and len(versions) > 1:
                     print("\n" + ("-" * 100) + "\n")
 
-    @classmethod
-    def __parse_args(cls, client: DBAcademyRestClient, courses_arg: str, usernames: List[str]) -> (List[str], Dict[str, Any]):
+    def __parse_args(self, courses_arg: str, usernames: List[str]) -> (List[str], Dict[str, Any]):
 
         if courses_arg is None or courses_arg.strip() in ("", "null", "None"):
             print("No courses specified.")
             return list(), None
 
         course_defs = [c.strip() for c in courses_arg.split(",")]
-        usernames = usernames or [u.get("userName") for u in client.scim.users.list()]
+        usernames = usernames or [u.get("userName") for u in self.__client.scim.users.list()]
 
         return usernames, course_defs
 
-    @classmethod
-    def uninstall_courseware(cls, client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
+    def uninstall_courseware(self, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
 
-        usernames, course_defs = cls.__parse_args(client, courses_arg, usernames)
+        usernames, course_defs = self.__parse_args(courses_arg, usernames)
 
         for username in usernames:
             print(f"Uninstalling courses for {username}")
@@ -192,14 +166,13 @@ class WorkspaceHelper:
                     install_dir = f"/Users/{username}/{subdirectory}/{course}"
 
                 print(install_dir)
-                client.workspace.delete_path(install_dir)
+                self.__client.workspace.delete_path(install_dir)
 
             print("-" * 80)
 
-    @classmethod
-    def install_courseware(cls, client: DBAcademyRestClient, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
+    def install_courseware(self, courses_arg: str, subdirectory: str, usernames: List[str] = None) -> None:
 
-        usernames, course_defs = cls.__parse_args(client, courses_arg, usernames)
+        usernames, course_defs = self.__parse_args(courses_arg, usernames)
 
         for username in usernames:
 
@@ -218,7 +191,7 @@ class WorkspaceHelper:
 
                 print(f" - {install_dir}")
 
-                files = client.workspace.ls(install_dir)
+                files = self.__client.workspace.ls(install_dir)
                 count = 0 if files is None else len(files)
                 if count > 0:
                     print(f" - Skipping, course already exists.")
@@ -226,7 +199,7 @@ class WorkspaceHelper:
                     #     path = file.get("path")
                     #     print(f" - {path}")
                 else:
-                    client.workspace.import_dbc_files(install_dir, download_url)
+                    self.__client.workspace.import_dbc_files(install_dir, download_url)
                     print(f" - Installed.")
 
             print("-" * 80)
@@ -277,25 +250,21 @@ class WorkspaceHelper:
         except Exception as e:
             raise Exception(f"""Unexpected exception parsing query parameters "{query}".""") from e
 
-    @staticmethod
-    def add_entitlement_allow_instance_pool_create(client: DBAcademyRestClient):
-        group = client.scim.groups.get_by_name("users")
-        client.scim.groups.add_entitlement(group.get("id"), "allow-instance-pool-create")
+    def add_entitlement_allow_instance_pool_create(self):
+        group = self.__client.scim.groups.get_by_name("users")
+        self.__client.scim.groups.add_entitlement(group.get("id"), "allow-instance-pool-create")
 
-    @staticmethod
-    def add_entitlement_workspace_access(client: DBAcademyRestClient):
-        group = client.scim.groups.get_by_name("users")
-        client.scim.groups.add_entitlement(group.get("id"), "workspace-access")
+    def add_entitlement_workspace_access(self):
+        group = self.__client.scim.groups.get_by_name("users")
+        self.__client.scim.groups.add_entitlement(group.get("id"), "workspace-access")
 
-    @staticmethod
-    def add_entitlement_allow_cluster_create(client: DBAcademyRestClient):
-        group = client.scim.groups.get_by_name("users")
-        client.scim.groups.add_entitlement(group.get("id"), "allow-cluster-create")
+    def add_entitlement_allow_cluster_create(self):
+        group = self.__client.scim.groups.get_by_name("users")
+        self.__client.scim.groups.add_entitlement(group.get("id"), "allow-cluster-create")
 
-    @staticmethod
-    def add_entitlement_databricks_sql_access(client: DBAcademyRestClient):
-        group = client.scim.groups.get_by_name("users")
-        client.scim.groups.add_entitlement(group.get("id"), "databricks-sql-access")
+    def add_entitlement_databricks_sql_access(self):
+        group = self.__client.scim.groups.get_by_name("users")
+        self.__client.scim.groups.add_entitlement(group.get("id"), "databricks-sql-access")
 
     @staticmethod
     def do_for_all_users(usernames: List[str], f: Callable[[str], T]) -> List[T]:
@@ -330,27 +299,36 @@ class WorkspaceHelper:
             # dbgems.get_tags() can throw exceptions in some secure contexts
             return dbgems.get_notebooks_api_endpoint()
 
-    def get_usernames(self, configure_for: str):
-        assert configure_for in WorkspaceHelper.CONFIGURE_FOR_VALID_OPTIONS, f"Who the workspace is being configured for must be specified, found \"{configure_for}\". Options include {WorkspaceHelper.CONFIGURE_FOR_VALID_OPTIONS}"
+    def get_usernames(self, *,
+                      configure_for: str,
+                      lesson_config: Optional[LessonConfig]):
+
+        from dbacademy.common import validate
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
+
+        assert configure_for in dbh_constants.WORKSPACE_HELPER.CONFIGURE_FOR_VALID_OPTIONS, f"Who the workspace is being configured for must be specified, found \"{configure_for}\". Options include {dbh_constants.WORKSPACE_HELPER.CONFIGURE_FOR_VALID_OPTIONS}"
 
         if self._usernames is None:
-            users = self.client.scim().users().list()
+            users = self.__client.scim().users().list()
             self._usernames = [r.get("userName") for r in users]
             self._usernames.sort()
 
-        if configure_for == WorkspaceHelper.CONFIGURE_FOR_CURRENT_USER_ONLY:
+        if configure_for == dbh_constants.WORKSPACE_HELPER.CONFIGURE_FOR_CURRENT_USER_ONLY:
+            validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
             # Override for the current user only
-            return [self.da.username]
+            return [lesson_config.username]
 
-        elif configure_for == WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY:
+        elif configure_for == dbh_constants.WORKSPACE_HELPER.CONFIGURE_FOR_MISSING_USERS_ONLY:
+            validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+
             # TODO - This isn't going to hold up long-term, maybe track per-user properties in this respect.
             # The presumption here is that if the user doesn't have their own
             # database, then they are also missing the rest of their config.
             missing_users = set()
 
-            if self.da.lesson_config.requires_uc:
+            if lesson_config.requires_uc:
                 for username in self._usernames:
-                    prefix = self.da.to_catalog_name_prefix(username=username)
+                    prefix = DBAcademyHelper.to_catalog_name_prefix(username=username)
                     for catalog_name in self.existing_catalogs:
                         if catalog_name.startswith(prefix):
                             break
@@ -362,7 +340,8 @@ class WorkspaceHelper:
                     #         missing_users.add(username)
             else:
                 for username in self._usernames:
-                    prefix = self.da.to_schema_name_prefix(username=username, course_code=self.da.course_config.course_code)
+                    prefix = DBAcademyHelper.to_schema_name_prefix(username=username, course_code=lesson_config.course_config.course_code)
+
                     for schema_name in self.existing_databases:
                         if schema_name.startswith(prefix):
                             break
@@ -409,16 +388,16 @@ class WorkspaceHelper:
     def lab_id(self):
         from dbacademy import dbgems
         from dbacademy import common
-        from dbacademy.dbhelper import DBAcademyHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
-        lab_id = "Smoke Test" if DBAcademyHelper.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_EVENT_ID, None)
+        lab_id = "Smoke Test" if DBAcademyHelper.is_smoke_test() else dbgems.get_parameter(dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_ID, None)
         return None if lab_id is None else common.clean_string(lab_id)
 
     @property
     def description(self):
         from dbacademy import dbgems
         from dbacademy import common
-        from dbacademy.dbhelper import DBAcademyHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
-        description = "This is a smoke test" if DBAcademyHelper.is_smoke_test() else dbgems.get_parameter(WorkspaceHelper.PARAM_EVENT_DESCRIPTION, None)
+        description = "This is a smoke test" if DBAcademyHelper.is_smoke_test() else dbgems.get_parameter(dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_DESCRIPTION, None)
         return None if description is None else common.clean_string(description)

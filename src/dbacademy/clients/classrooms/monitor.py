@@ -111,13 +111,16 @@ class Commands(object):
     @staticmethod
     def warehouses_create_shared(ws: Workspace):
         from dbacademy.clients import databricks
-        from dbacademy.dbhelper.warehouses_helper_class import WarehousesHelper
+        from dbacademy.dbhelper import dbh_constants
+        from dbacademy.dbhelper.supporting.warehouses_helper import WarehousesHelper
+        from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
+
         endpoints = ws.sql.warehouses.list()
         client = databricks.from_auth_header(endpoint=ws.endpoint[:-len("/api/")], authorization_header=ws.authorization_header)
         if not endpoints:
-            WarehousesHelper.create_sql_warehouse(
-                client=client,
-                name=WarehousesHelper.WAREHOUSES_DEFAULT_NAME,
+            ware_houses_helper = WarehousesHelper(client, workspace_helper=WorkspaceHelper(client))
+            ware_houses_helper.create_sql_warehouse(
+                name=dbh_constants.WAREHOUSE_HELPER.WAREHOUSES_DEFAULT_NAME,
                 for_user=None,
                 auto_stop_mins=None,
                 min_num_clusters=2,
@@ -613,8 +616,11 @@ class Commands(object):
     def universal_setup(ws: DatabricksApi, *, node_type_id: str = None, spark_version: str = None,
                         datasets: List[str] = None, lab_id: str = None, description: str = None,
                         courses: List[str] = None):
+
+        from dbacademy.dbhelper import dbh_constants
+
         ws: Workspace = cast(Workspace, ws)
-        from dbacademy.dbhelper import WorkspaceHelper
+
         if ws.cloud == "AWS":
             node_type_id = node_type_id or "i3.xlarge"
         elif ws.cloud == "MSA":
@@ -635,7 +641,7 @@ class Commands(object):
 
         # Spec for the job to run
         job_spec = {
-            "name": WorkspaceHelper.BOOTSTRAP_JOB_NAME,
+            "name": dbh_constants.WORKSPACE_HELPER.BOOTSTRAP_JOB_NAME,
             # TODO - 6 hours might be a "little" too long?
             "timeout_seconds": 60 * 60 * 6,  # 6 hours
             "max_concurrent_runs": 1,
@@ -644,12 +650,12 @@ class Commands(object):
                 "notebook_task": {
                     "notebook_path": "Workspace-Setup",
                     "base_parameters": {
-                        WorkspaceHelper.PARAM_EVENT_ID: lab_id or "Unknown",
-                        WorkspaceHelper.PARAM_EVENT_DESCRIPTION: description or "Unknown",
-                        WorkspaceHelper.PARAM_POOLS_NODE_TYPE_ID: node_type_id,
-                        WorkspaceHelper.PARAM_DEFAULT_SPARK_VERSION: spark_version,
-                        WorkspaceHelper.PARAM_DATASETS: ",".join(datasets),
-                        WorkspaceHelper.PARAM_COURSES: ",".join(courses),
+                        dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_ID: lab_id or "Unknown",
+                        dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_DESCRIPTION: description or "Unknown",
+                        dbh_constants.WORKSPACE_HELPER.PARAM_POOLS_NODE_TYPE_ID: node_type_id,
+                        dbh_constants.WORKSPACE_HELPER.PARAM_DEFAULT_SPARK_VERSION: spark_version,
+                        dbh_constants.WORKSPACE_HELPER.PARAM_DATASETS: ",".join(datasets),
+                        dbh_constants.WORKSPACE_HELPER.PARAM_COURSES: ",".join(courses),
                     },
                     "source": "GIT"
                 },
@@ -720,22 +726,22 @@ class Commands(object):
     @staticmethod
     def workspace_setup(courseware_spec: Dict, cluster_spec: Dict, event: Dict, all_users=False):
         def do_workspace_setup(ws: Workspace):
+            import re
             import requests as web
-            from dbacademy.dbhelper import WorkspaceHelper
+            from dbacademy.dbhelper import dbh_constants
 
             courseware_url = courseware_spec["repo"]
             response = web.get(courseware_url + "/blob/published/Includes/Workspace-Setup.py")
             if response.status_code != 200:  # If file exists
                 return "No Workspace-Setup found."
 
-            import re
             workspace_hostname = re.match("https://([^/]+)/api/", ws.endpoint)[1]
 
             # Spec for the job to run
             if all_users:
-                configure_for = WorkspaceHelper.CONFIGURE_FOR_ALL_USERS
+                configure_for = dbh_constants.WORKSPACE_HELPER.CONFIGURE_FOR_ALL_USERS
             else:
-                configure_for = WorkspaceHelper.CONFIGURE_FOR_MISSING_USERS_ONLY
+                configure_for = dbh_constants.WORKSPACE_HELPER.CONFIGURE_FOR_MISSING_USERS_ONLY
             job_spec = {
                 "name": "Workspace-Setup",
                 "timeout_seconds": 60 * 60 * 6,  # 6 hours
@@ -745,9 +751,9 @@ class Commands(object):
                     "notebook_task": {
                         "notebook_path": "Includes/Workspace-Setup",
                         "base_parameters": {
-                            WorkspaceHelper.PARAM_EVENT_ID: event.get("name", "Unknown"),
-                            WorkspaceHelper.PARAM_EVENT_DESCRIPTION: event.get("description", "Unknown"),
-                            WorkspaceHelper.PARAM_CONFIGURE_FOR: configure_for,
+                            dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_ID: event.get("name", "Unknown"),
+                            dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_DESCRIPTION: event.get("description", "Unknown"),
+                            dbh_constants.WORKSPACE_HELPER.PARAM_CONFIGURE_FOR: configure_for,
                         },
                         "source": "GIT"
                     },

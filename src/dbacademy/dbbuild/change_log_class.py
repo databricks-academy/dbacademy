@@ -1,3 +1,5 @@
+__all__ = ["ChangeLog"]
+
 from typing import Optional
 
 

@@ -1,5 +1,9 @@
+__all__ = ["Validation"]
+
+from typing import Callable, Any, Iterable
+
+
 class Validation(object):
-    from typing import Callable, Any, List
 
     __slots__ = ('description', 'test_function', 'test_case_id', 'unique_id', 'depends_on', 'escape_html', 'points', 'hint', "actual_value")
 
@@ -12,7 +16,7 @@ class Validation(object):
                  actual_value: Callable[[], Any],
                  description: str,
                  test_case_id: str,
-                 depends_on: List[str],
+                 depends_on: Iterable[str],
                  escape_html: bool,
                  points: int,
                  hint):
@@ -35,8 +39,12 @@ class Validation(object):
         self.test_function = test_function
         self.actual_value = actual_value
 
+        # Default to the last test suite if not defined.
         depends_on = depends_on if depends_on is not None else [suite.last_test_id()]
-        self.depends_on = depends_on if type(depends_on) is list else [depends_on]
+
+        # Create and copy the iterable into our local reference.
+        self.depends_on = list()
+        self.depends_on.extend(depends_on)
 
     def update_hint(self):
         from html import escape

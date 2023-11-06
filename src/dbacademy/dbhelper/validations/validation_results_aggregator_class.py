@@ -1,8 +1,10 @@
+__all__ = ["ValidationResultsAggregator"]
+
 from typing import Dict
+from dbacademy.dbhelper.validations.validation_result_class import ValidationResult
 
 
 class __ValidationResultsAggregator(object):
-    from dbacademy.dbhelper.validations.validation_result_class import ValidationResult
 
     test_results: Dict[str, ValidationResult] = dict()
 
@@ -28,9 +30,9 @@ class __ValidationResultsAggregator(object):
 
     def display_results(self):
         from dbacademy import dbgems
-        from dbacademy.dbhelper.validations import _TEST_RESULTS_STYLE
+        from dbacademy.dbhelper.validations import TEST_RESULTS_STYLE
 
-        dbgems.display_html(_TEST_RESULTS_STYLE + f"""
+        dbgems.display_html(TEST_RESULTS_STYLE + f"""
     <table class='results'>
       <tr><th colspan="2">Test Summary</th></tr>
       <tr><td>Number of Passing Tests</td><td style="text-align:right">{self.score}</td></tr>

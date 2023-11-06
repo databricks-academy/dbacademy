@@ -77,9 +77,7 @@ class AccountScimUsersApi(ApiContainer):
             operations.append(Operation(Operation.REPLACE, "name.familyName", last_name))
             operations.append(Operation(Operation.REPLACE, "displayName", f"{first_name} {last_name}"))
 
-        validate.list_value(operations=operations, min_length=1)
-        validate.element_type(operations, "operations", Operation)
-
+        validate.list_of_type(operations=operations, element_type=Operation)
         assert len(operations) > 0, f"No changes where specified; please provide at least one parameter."
 
         operations_list: List[Dict[str, Any]] = list()

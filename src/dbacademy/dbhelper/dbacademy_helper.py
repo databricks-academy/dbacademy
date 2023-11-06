@@ -1,27 +1,19 @@
+__all__ = ["DBAcademyHelper"]
+
 from typing import Union, Optional, Dict
+from dbacademy.common import validate
+from dbacademy.clients.databricks import DBAcademyRestClient
+from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
+from dbacademy.dbhelper.supporting.dev_helper import DevHelper
+from dbacademy.dbhelper.lesson_config import LessonConfig
+from dbacademy.dbhelper.course_config import CourseConfig
+from pyspark.sql.streaming import StreamingQuery
+from dbacademy.dbhelper.paths import Paths
+from dbacademy.dbhelper.validations import ValidationHelper
+from dbacademy.dbhelper import dbh_constants
 
 
 class DBAcademyHelper:
-    from dbacademy import common
-    from dbacademy.dbhelper.lesson_config_class import LessonConfig
-    from dbacademy.dbhelper.course_config_class import CourseConfig
-    from pyspark.sql.streaming import StreamingQuery
-    from dbacademy.dbhelper.paths_class import Paths
-
-    SCHEMA_DEFAULT = "default"
-    SCHEMA_INFORMATION = "information_schema"
-
-    SPARK_CONF_SMOKE_TEST = "dbacademy.smoke-test"
-    SPARK_CONF_PATHS_DATASETS = "dbacademy.paths.datasets"
-    SPARK_CONF_PATHS_USERS = "dbacademy.paths.users"
-    SPARK_CONF_DATA_SOURCE_URI = "dbacademy.data-source-uri"
-    SPARK_CONF_PROTECTED_EXECUTION = "dbacademy.protected-execution"
-    SPARK_CONF_CLUSTER_TAG_SPARK_VERSION = "spark.databricks.clusterUsageTags.sparkVersion"
-
-    CATALOG_SPARK_DEFAULT = "spark_catalog"
-    CATALOG_UC_DEFAULT = "hive_metastore"
-
-    TROUBLESHOOT_ERROR_TEMPLATE = """{error} Please see the "Troubleshooting | {section}" section of the "Version Info" notebook for more information."""
 
     def __init__(self,
                  course_config: CourseConfig,
@@ -36,19 +28,17 @@ class DBAcademyHelper:
         """
         from dbacademy import dbgems
         from dbacademy.clients import databricks
-        from dbacademy.dbhelper.workspace_helper_class import WorkspaceHelper
-        from dbacademy.dbhelper.dev_helper_class import DevHelper
-        from dbacademy.dbhelper.validations.validation_helper_class import ValidationHelper
-        from dbacademy.dbhelper.paths_class import Paths
+        from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
+        from dbacademy.dbhelper.supporting.dev_helper import DevHelper
+        from dbacademy.dbhelper.validations import ValidationHelper
+        from dbacademy.dbhelper.paths import Paths
 
-        assert lesson_config is not None, f"The parameter lesson_config:LessonConfig must be specified."
-        lesson_config.assert_valid()
-        self.__lesson_config = lesson_config
+        self.__lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        self.__lesson_config.assert_valid()
 
-        assert course_config is not None, f"The parameter course_config:CourseConfig must be specified."
-        self.__course_config = course_config
+        self.__course_config = validate.any_value(course_config=course_config, parameter_type=CourseConfig, required=True)
 
-        self.__debug = debug
+        self.__debug = validate.bool_value(debug=debug, required=True)
         self.__start = dbgems.clock_start()
 
         # Initialized in the call to init()
@@ -59,10 +49,10 @@ class DBAcademyHelper:
         self.naming_params = {"course": self.course_config.course_code}
 
         # The following objects provide advanced support for modifying the learning environment.
-        self.client = databricks.from_workspace()
-        self.workspace = WorkspaceHelper(self)
-        self.dev = DevHelper(self)
-        self.tests = ValidationHelper(self)
+        self.__client = databricks.from_workspace()
+        self.__workspace = WorkspaceHelper(self.__client)
+        self.__dev = DevHelper(self)
+        self.__tests = ValidationHelper(self)
 
         # Are we running under test? If so we can "optimize" for parallel execution
         # without affecting the student's runtime-experience. As in the student can
@@ -89,7 +79,7 @@ class DBAcademyHelper:
         # This is the location in our Azure data repository of the datasets for this lesson
         self.__staging_source_uri = f"{DBAcademyHelper.get_dbacademy_datasets_staging()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
         default_data_source_uri = f"wasbs://courseware@dbacademy.blob.core.windows.net/{self.course_config.data_source_name}/{self.course_config.data_source_version}"
-        self.__data_source_uri = dbgems.get_parameter(DBAcademyHelper.SPARK_CONF_DATA_SOURCE_URI, default_data_source_uri)
+        self.__data_source_uri = dbgems.get_parameter(dbh_constants.DBACADEMY_HELPER.SPARK_CONF_DATA_SOURCE_URI, default_data_source_uri)
         try:
             files = dbgems.dbutils.fs.ls(self.staging_source_uri)
             if len(files) > 0:
@@ -113,13 +103,29 @@ class DBAcademyHelper:
                              _datasets=f"{self.working_dir_root}/datasets",
                              _archives=f"{DBAcademyHelper.get_dbacademy_datasets_path()}/{self.course_config.data_source_name}/{self.course_config.data_source_version}")
 
-        self.__lesson_config.lock_mutations()
+        self.__lesson_config.lock_mutations(self.__course_config)
 
         # With requirements initialized, we can
         # test various assertions about our environment
         self.__validate_spark_version()
         self.__validate_dbfs_writes(DBAcademyHelper.get_dbacademy_users_path())
         self.__validate_dbfs_writes(DBAcademyHelper.get_dbacademy_datasets_path())
+
+    @property
+    def client(self) -> DBAcademyRestClient:
+        return self.__client
+
+    @property
+    def workspace(self) -> WorkspaceHelper:
+        return self.__workspace
+
+    @property
+    def dev(self) -> DevHelper:
+        return self.__dev
+
+    @property
+    def tests(self) -> ValidationHelper:
+        return self.__tests
 
     @property
     def paths(self) -> Paths:
@@ -134,7 +140,7 @@ class DBAcademyHelper:
         :return: the location of the DBAcademy datasets.
         """
         from dbacademy import dbgems
-        return dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PATHS_DATASETS, default="dbfs:/mnt/dbacademy-datasets")
+        return dbgems.get_spark_config(dbh_constants.DBACADEMY_HELPER.SPARK_CONF_PATHS_DATASETS, default="dbfs:/mnt/dbacademy-datasets")
 
     @classmethod
     def get_dbacademy_users_path(cls) -> str:
@@ -145,7 +151,7 @@ class DBAcademyHelper:
         :return: the location of the DBAcademy user's directory.
         """
         from dbacademy import dbgems
-        return dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PATHS_USERS, default="dbfs:/mnt/dbacademy-users")
+        return dbgems.get_spark_config(dbh_constants.DBACADEMY_HELPER.SPARK_CONF_PATHS_USERS, default="dbfs:/mnt/dbacademy-users")
 
     @classmethod
     def get_dbacademy_datasets_staging(cls) -> str:
@@ -278,7 +284,7 @@ class DBAcademyHelper:
         :param username: The full email address of a user. See also `LessonConfig.username`
         :return: The catalog name composited from the specified username
         """
-        return DBAcademyHelper.to_catalog_name(username=username, lesson_name=None)
+        return cls.to_catalog_name(username=username, lesson_name=None)
 
     @property
     def catalog_name(self) -> str:
@@ -289,11 +295,11 @@ class DBAcademyHelper:
         """
         if not self.lesson_config.is_uc_enabled_workspace:
             # If this is not a UC workspace, then we use the default for spark
-            return DBAcademyHelper.CATALOG_SPARK_DEFAULT
+            return dbh_constants.DBACADEMY_HELPER.CATALOG_SPARK_DEFAULT
 
         elif not self.lesson_config.create_catalog:
             # We are not creating a catalog, use teh default value
-            return DBAcademyHelper.CATALOG_UC_DEFAULT
+            return dbh_constants.DBACADEMY_HELPER.CATALOG_UC_DEFAULT
 
         else:
             # If we are creating a catalog, we will use a user-specific catalog
@@ -313,7 +319,7 @@ class DBAcademyHelper:
         """
         from dbacademy import dbgems
         from dbacademy import common
-        from dbacademy.dbhelper.lesson_config_class import LessonConfig
+        from dbacademy.dbhelper.lesson_config import LessonConfig
 
         local_part = username.split("@")[0]
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
@@ -342,7 +348,7 @@ class DBAcademyHelper:
         :return: the prefix for all schema names that may be created for this consumer during the usage of a course or DBAcademyHelper.SCHEMA_DEFAULT if LessonConfig.create_catalog = True
         """
         if self.lesson_config.create_catalog:
-            return DBAcademyHelper.SCHEMA_DEFAULT
+            return dbh_constants.DBACADEMY_HELPER.SCHEMA_DEFAULT
         else:
             return self.to_schema_name_prefix(username=self.username,
                                               course_code=self.course_config.course_code)
@@ -366,7 +372,7 @@ class DBAcademyHelper:
         :return: the prescribed name of the schema that the consumer is expected to use or DBAcademyHelper.SCHEMA_DEFAULT if LessonConfig.create_catalog = True
         """
         if self.lesson_config.create_catalog:
-            return DBAcademyHelper.SCHEMA_DEFAULT
+            return dbh_constants.DBACADEMY_HELPER.SCHEMA_DEFAULT
         else:
             return self.to_schema_name(username=self.username,
                                        course_code=self.course_config.course_code,
@@ -386,7 +392,7 @@ class DBAcademyHelper:
         """
         from dbacademy import dbgems
         from dbacademy import common
-        from dbacademy.dbhelper.lesson_config_class import LessonConfig
+        from dbacademy.dbhelper.lesson_config import LessonConfig
 
         local_part = username.split("@")[0]
         hash_basis = f"{username}{dbgems.get_workspace_id()}"
@@ -417,21 +423,11 @@ class DBAcademyHelper:
         :return: Returns true if the notebook is running as a smoke test.
         """
         from dbacademy import dbgems
-        return dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_SMOKE_TEST, "false").lower() == "true"
-
-    @common.deprecated("Use dbgems.clock_start() instead.")
-    def clock_start(self) -> int:
-        from dbacademy import dbgems
-        return dbgems.clock_start()
-
-    @common.deprecated("Use dbgems.clock_stopped() instead.")
-    def clock_stopped(self, start: int, end: str = "") -> str:
-        from dbacademy import dbgems
-        return dbgems.clock_stopped(start, end)
+        return dbgems.get_spark_config(dbh_constants.DBACADEMY_HELPER.SPARK_CONF_SMOKE_TEST, "false").lower() == "true"
 
     # noinspection PyMethodMayBeStatic
     def __troubleshoot_error(self, error: str, section: str) -> str:
-        return DBAcademyHelper.TROUBLESHOOT_ERROR_TEMPLATE.format(error=error, section=section)
+        return dbh_constants.DBACADEMY_HELPER.TROUBLESHOOT_ERROR_TEMPLATE.format(error=error, section=section)
 
     @classmethod
     def monkey_patch(cls, function_ref, delete=True):
@@ -454,7 +450,7 @@ class DBAcademyHelper:
         after instantiation but before initialization.
         :return: None
         """
-        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
+        from dbacademy.dbhelper.dataset_manager import DatasetManager
 
         if self.lesson_config.create_catalog:
             assert not self.lesson_config.create_schema, f"Creation of the schema (LessonConfig.create_schema=True) is not supported while creating the catalog (LessonConfig.create_catalog=True)"
@@ -515,8 +511,8 @@ class DBAcademyHelper:
         lesson-specific working directory and any assets created in that directory.
         :return: None
         """
-        from dbacademy.dbhelper.workspace_cleaner_class import WorkspaceCleaner
-        from dbacademy.dbhelper.dataset_manager_class import DatasetManager
+        from dbacademy.dbhelper.workspace_cleaner import WorkspaceCleaner
+        from dbacademy.dbhelper.dataset_manager import DatasetManager
 
         WorkspaceCleaner(self).reset_lesson()
 
@@ -540,7 +536,7 @@ class DBAcademyHelper:
         Usage of this method is generally reserved for a "full" reset of a course which is common before invoke smoke tests.
         :return: None
         """
-        from dbacademy.dbhelper.workspace_cleaner_class import WorkspaceCleaner
+        from dbacademy.dbhelper.workspace_cleaner import WorkspaceCleaner
 
         WorkspaceCleaner(self).reset_learning_environment()
 
@@ -581,13 +577,13 @@ class DBAcademyHelper:
             schemas = [s[0] for s in dbgems.sql(f"SHOW SCHEMAS IN {self.catalog_name}").collect()]
         elif self.lesson_config.requires_uc:
             # No telling how many schemas there may be, we would only care about the default
-            schemas = [DBAcademyHelper.SCHEMA_DEFAULT]
+            schemas = [dbh_constants.DBACADEMY_HELPER.SCHEMA_DEFAULT]
         else:
             # With no catalog, there can only be one schema.
             schemas = [self.schema_name]
 
-        if DBAcademyHelper.SCHEMA_INFORMATION in schemas:
-            del schemas[schemas.index(DBAcademyHelper.SCHEMA_INFORMATION)]
+        if dbh_constants.DBACADEMY_HELPER.SCHEMA_INFORMATION in schemas:
+            del schemas[schemas.index(dbh_constants.DBACADEMY_HELPER.SCHEMA_INFORMATION)]
 
         for i, schema in enumerate(schemas):
             if i > 0:
@@ -657,9 +653,9 @@ class DBAcademyHelper:
     def __validate_spark_version(self) -> None:
         from dbacademy import dbgems, common
 
-        self.__current_dbr = dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_CLUSTER_TAG_SPARK_VERSION, default=None)
+        self.__current_dbr = dbgems.get_spark_config(dbh_constants.DBACADEMY_HELPER.SPARK_CONF_CLUSTER_TAG_SPARK_VERSION, default=None)
 
-        if self.__current_dbr is None and not dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PROTECTED_EXECUTION, default=None):
+        if self.__current_dbr is None and not dbgems.get_spark_config(dbh_constants.DBACADEMY_HELPER.SPARK_CONF_PROTECTED_EXECUTION, default=None):
             # In some random scenarios, the spark version will come back None because the tags are not yet initialized.
             # In this case, we can query the cluster and ask it for its spark version instead.
             self.__current_dbr = dbgems.get_tag("sparkVersion")
@@ -687,7 +683,7 @@ class DBAcademyHelper:
         from dbacademy import common
         from contextlib import redirect_stdout
 
-        if not dbgems.get_spark_config(DBAcademyHelper.SPARK_CONF_PROTECTED_EXECUTION, default=None):
+        if not dbgems.get_spark_config(dbh_constants.DBACADEMY_HELPER.SPARK_CONF_PROTECTED_EXECUTION, default=None):
             notebook_path = common.clean_string(dbgems.get_notebook_path())
             username = common.clean_string(self.username)
             file = f"{test_dir}/temp/dbacademy-{self.course_config.course_code}-{username}-{notebook_path}.txt"

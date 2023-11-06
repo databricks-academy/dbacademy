@@ -2,6 +2,7 @@ __all__ = ["NotebookDef", "NotebookError", "StateVariables"]
 
 from typing import Callable, Union, List, Dict, Any
 from dbacademy.dbbuild.build_config_class import BuildConfig
+from dbacademy.dbhelper import dbh_constants
 
 
 class NotebookError:
@@ -537,7 +538,7 @@ class NotebookDef(NotebookDefData):
         solutions_commands.append(command)
 
     def build_troubleshooting_cells(self, students_commands: List[str], solutions_commands: List[str]):
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
         self.append_both(students_commands, solutions_commands, """
 %md ## Trouble Shooting
@@ -590,7 +591,6 @@ This course will require you to create a catalog (typically in conjunction with 
 For more current information, please see <a href="https://files.training.databricks.com/static/troubleshooting.html#cannot-create-catalog" target="_blank">Troubleshooting Creating Catalogs</a>""".strip())
 
     def build_install_libraries_cell(self, command, i):
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
 
         lines = [line for line in command.split("\n") if line.strip().startswith("version =") or line.strip().startswith("version=")]
         if self.test(lambda: len(lines) == 1, f"Expected one and only one line that starts with \"version =\", found {len(lines)}."):
@@ -600,7 +600,7 @@ For more current information, please see <a href="https://files.training.databri
                 pos_b = version_line.find("\"", pos_a+1)
                 if self.test(lambda: pos_b >= 0, f"Cmd #{i+1} | Unable to parse the dbacademy library version for the INSTALL_LIBRARIES directive: {version_line}."):
                     version = version_line[pos_a+1:pos_b]
-                    template = DBAcademyHelper.TROUBLESHOOT_ERROR_TEMPLATE.replace("\"", "\\\"")
+                    template = dbh_constants.DBACADEMY_HELPER.TROUBLESHOOT_ERROR_TEMPLATE.replace("\"", "\\\"")
                     source = NotebookDef.SOURCE_INSTALL_LIBRARIES.format(template=template, version=version)
                     return source
 
@@ -622,8 +622,8 @@ For more current information, please see <a href="https://files.training.databri
         validate.str_value(i18n_resources_dir=i18n_resources_dir, required=True)
         validate.bool_value(verbose=verbose, required=True)
         validate.bool_value(debugging=debugging, required=True)
-        validate.list_value(other_notebooks=other_notebooks)
-        validate.element_type(other_notebooks, "other_notebooks", NotebookDef)
+
+        other_notebooks: List[NotebookDefData] = validate.list_of_type(other_notebooks=other_notebooks, element_type=NotebookDefData, auto_create=True)
 
         self.errors = list()
         self.warnings = list()

@@ -1,5 +1,5 @@
 import unittest
-from dbacademy.dbhelper.course_config_class import CourseConfig
+from dbacademy.dbhelper.course_config import CourseConfig
 
 
 class MyTestCase(unittest.TestCase):

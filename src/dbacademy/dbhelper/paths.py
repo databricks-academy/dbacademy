@@ -1,5 +1,9 @@
+__all__ = ["Paths"]
+
+from dbacademy.dbhelper.lesson_config import LessonConfig
+
+
 class Paths:
-    from dbacademy.dbhelper.lesson_config_class import LessonConfig
 
     def __init__(self, *, _lesson_config: LessonConfig, _working_dir_root: str, _datasets: str, _archives: str):
 

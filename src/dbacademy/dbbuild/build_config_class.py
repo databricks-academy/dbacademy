@@ -1,10 +1,10 @@
 __all__ = ["BuildConfig"]
 
 from typing import Type, List, Dict, Union, Any, Optional, Callable
+from dbacademy.clients.databricks import DBAcademyRestClient
 
 
 class BuildConfig:
-    from dbacademy.clients.databricks import DBAcademyRestClient
 
     LANGUAGE_OPTIONS_DEFAULT = "Default"
 
@@ -139,7 +139,7 @@ class BuildConfig:
         import time
         from dbacademy.common import Cloud
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
-        from dbacademy.dbhelper.course_config_class import CourseConfig
+        from dbacademy.dbhelper.course_config import CourseConfig
         from dbacademy import dbgems
         from dbacademy.clients.rest.factory import dbrest_factory
 

@@ -1,3 +1,6 @@
+__all__ = ["TestSuite"]
+
+
 class TestSuite:
     from dbacademy.dbbuild.build_config_class import BuildConfig
 

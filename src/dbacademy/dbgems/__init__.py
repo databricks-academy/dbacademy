@@ -2,10 +2,9 @@
 This module includes helper functions specifically aimed at code developed in and maintained in Notebooks.
 Examples include wrappers around tags, notebook state variables, and the full body of functions exposed by dbutils.
 """
-from typing import Union, Any, Callable, Optional, List, Dict
+__all__ = ["get_spark_config", "set_spark_config", "get_mock_value", "check_deprecation_logging_enabled", "sql", "get_parameter", "get_tags", "get_tag", "get_workspace_id", "get_workspace_url", "get_username", "get_browser_host_name", "get_notebook_name", "get_notebook_dir", "get_notebook_path", "get_notebooks_api_endpoint", "get_notebooks_api_token", "get_job_id", "get_org_id", "get_run_id", "active_streams", "jprint", "lookup_current_module_version", "is_curriculum_workspace", "validate_dependencies", "proof_of_life", "display_html", "display", "GENERATING_DOCS", "is_generating_docs", "stable_hash", "clock_start", "clock_stopped", "find_global", "is_job", "spark", "sc", "dbutils"]
 
-from dbacademy import common
-from dbacademy.dbgems.mock_dbutils_class import MockDBUtils
+from typing import Union, Any, Callable, Optional, List, Dict
 
 
 SPARK_CONF_DEPENDENCY_WARNING = "dbacademy.dependency.warning"
@@ -85,30 +84,6 @@ def get_parameter(name: str, default: Any = "") -> Union[None, str]:
             raise ex
         else:
             return default
-
-
-@common.deprecated("Use dbacademy.common.Cloud.current_cloud() instead")
-def get_cloud() -> str:
-    """
-    Indicates which cloud the current workspace is deployed into
-    :return: One of GCP, AWS or MSA
-    """
-    import os
-
-    config_path = "/databricks/common/conf/deploy.conf"
-    if not os.path.exists(config_path):
-        return "UNK"
-
-    with open(config_path) as f:
-        for line in f:
-            if "databricks.instance.metadata.cloudProvider" in line and "\"GCP\"" in line:
-                return "GCP"
-            elif "databricks.instance.metadata.cloudProvider" in line and "\"AWS\"" in line:
-                return "AWS"
-            elif "databricks.instance.metadata.cloudProvider" in line and "\"Azure\"" in line:
-                return "MSA"
-
-    raise Exception("Unable to identify the cloud provider.")
 
 
 def get_tags():
@@ -227,6 +202,7 @@ def is_curriculum_workspace() -> bool:
 def validate_dependencies(module: str, curriculum_workspaces_only=True) -> bool:
     # Don't do anything unless this is in one of the Curriculum Workspaces
     from dbacademy.clients import github
+    from dbacademy import common
 
     testable = curriculum_workspaces_only is False or is_curriculum_workspace()
     try:
@@ -306,7 +282,7 @@ def proof_of_life(expected_get_username,
     # noinspection PyUnresolvedReferences
     import dbruntime
     import pyspark
-    from dbacademy.common import Cloud
+    from dbacademy.common.cloud_class import Cloud
     from py4j.java_collections import JavaMap
 
     assert isinstance(dbutils, dbruntime.dbutils.DBUtils), f"Expected {dbruntime.dbutils.DBUtils}, found {type(dbutils)}"
@@ -403,12 +379,6 @@ def stable_hash(*args: Any, length: int) -> str:
     return "".join(result)
 
 
-@common.deprecated("Use dbacademy.common.clean_string() instead")
-def clean_string(value, replacement: str = "_") -> str:
-    from dbacademy import common
-    return common.clean_string(value, replacement)
-
-
 def clock_start() -> int:
     import time
     return int(time.time())
@@ -449,6 +419,9 @@ def active_streams() -> List:
 try:
     # noinspection PyUnresolvedReferences
     import pyspark
+    # noinspection PyUnresolvedReferences
+    from dbacademy.dbgems.mock_dbutils_class import MockDBUtils
+
     spark: Union[None, "pyspark.sql.SparkSession"] = find_global("spark")
     sc: Union[None, "pyspark.SparkContext"] = find_global("sc")
     dbutils: Union[MockDBUtils, None] = find_global("dbutils")

@@ -102,10 +102,9 @@ class DBAcademyRestClient(ApiClient):
         # if not any([authorization_header, user, password]):
         #     token = token or self.__get_notebook_token()
 
-        endpoint = validate.str_value(endpoint=endpoint, required=True)
-        if endpoint is not None:
-            endpoint = endpoint.rstrip("/")
-            endpoint = endpoint.rstrip("/api")
+        validate.str_value(endpoint=endpoint, required=True)
+        endpoint = endpoint.rstrip("/")
+        endpoint = endpoint.rstrip("/api")
 
         # Cleanup the API URL
         # if endpoint is None:

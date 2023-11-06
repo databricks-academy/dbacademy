@@ -6,8 +6,11 @@ from dbacademy.common import validate
 
 class SlackChannel:
     def __init__(self, name: str, url: str):
-        self.__url = validate.str_value(url=url)
-        self.__name = validate.str_value(name=name)
+        validate.str_value(url=url)
+        self.__url = url
+
+        validate.str_value(name=name)
+        self.__name = name
 
     @property
     def name(self):
@@ -20,14 +23,8 @@ class SlackChannel:
 
 class Announcements:
     def __init__(self, email_addresses: List[str], slack_channels: List[SlackChannel]):
-        self.__email_addresses = email_addresses
-        self.__slack_channels = slack_channels
-
-        validate.list_value(email_addresses=email_addresses)
-        validate.element_type(email_addresses, "email_addresses", str)
-
-        validate.list_value(slack_channels=slack_channels)
-        validate.element_type(slack_channels, "slack_channels", SlackChannel)
+        self.__email_addresses = validate.list_of_strings(email_addresses=email_addresses, auto_create=True)
+        self.__slack_channels = validate.list_of_type(slack_channels=slack_channels, element_type=SlackChannel, auto_create=True)
 
     @property
     def email_addresses(self) -> List[str]:
@@ -43,9 +40,7 @@ class Translation:
         self.__language = language
         self.__release_repo = validate.str_value(release_repo=data.get("release_repo"))
         self.__published_docs_folder = validate.str_value(published_docs_folder=data.get("published_docs_folder"))
-
-        self.__document_links = validate.list_value(document_links=data.get("document_links"))
-        validate.element_type(self.__document_links, "links", str)
+        self.__document_links = validate.list_of_strings(document_links=data.get("document_links"), auto_create=True)
 
     @property
     def language(self):

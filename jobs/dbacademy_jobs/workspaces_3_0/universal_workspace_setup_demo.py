@@ -1,7 +1,7 @@
 import os
 from dbacademy.common import Cloud
 from dbacademy.dbgems import stable_hash
-from dbacademy.dbhelper import WorkspaceHelper
+from dbacademy.dbhelper import dbh_constants
 from dbacademy.clients import databricks
 
 
@@ -83,7 +83,7 @@ endpoint = f"https://training-{workspace_name}.cloud.databricks.com"      # Cons
 client = databricks.from_username(endpoint=endpoint, username=username, password=password)
 assert len(client.workspace.ls("/")) > 0, f"Expected at least one file."  # Testing connection
 
-job_name = WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME                       # The job's name allowing for configuration by convention
+job_name = dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP_JOB_NAME                       # The job's name allowing for configuration by convention
 client.jobs.delete_by_name(job_name, False)                               # Hard coded into the corresponding JSON file.)
 job_id = create_job(Cloud.AWS, event_id, workspace_name, "Demo")          # Create the job using the DBRest client
 run_id = client.jobs.run_now(job_id).get("run_id")                        # Run the job using the DBRest client

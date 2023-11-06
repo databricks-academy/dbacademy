@@ -1,3 +1,5 @@
+__all__ = ["CourseConfig"]
+
 from typing import List, Optional
 
 

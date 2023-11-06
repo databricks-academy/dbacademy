@@ -39,6 +39,7 @@ class TestUtils(unittest.TestCase):
             pass
 
     def test_validate_type(self):
+        from dbacademy.common.validate import ValidationError
 
         def dummy(value: int):
             from dbacademy.common import validate
@@ -50,7 +51,7 @@ class TestUtils(unittest.TestCase):
         try:
             # noinspection PyTypeChecker
             dummy("1")
-        except AssertionError as e:
+        except ValidationError as e:
             self.assertEqual("""Error-Type | Expected the parameter 'value' to be None or of type <class 'int'>, found <class 'str'>.""", str(e))
 
 

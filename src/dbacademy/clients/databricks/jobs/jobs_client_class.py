@@ -1,12 +1,11 @@
 __all__ = ["JobsClient"]
 
 from typing import Dict, Any, Optional
-from dbacademy import common
 from dbacademy.clients.rest.common import ApiClient, ApiContainer
+from dbacademy.clients.databricks.jobs.job_config_classes import JobConfig
 
 
 class JobsClient(ApiContainer):
-    from dbacademy.clients.databricks.jobs.job_config_classes import JobConfig
 
     def __init__(self, client: ApiClient):
         from dbacademy.common import validate
@@ -14,24 +13,6 @@ class JobsClient(ApiContainer):
 
         self.client: DBAcademyRestClient = validate.any_value(DBAcademyRestClient, client=client, required=True)
         self.base_uri = f"{self.client.endpoint}/api/2.1/jobs"
-
-    # @common.deprecated("Use JobsClient.create_from_config() instead")
-    # def create(self, params) -> Dict[str, Any]:
-    #     from dbacademy import common
-    #
-    #     if "notebook_task" in params:
-    #         common.print_warning("DEPRECATION WARNING", "You are using the Jobs 2.0 version of create as noted by the existence of the notebook_task parameter.\nPlease upgrade to the 2.1 version.")
-    #         return self.create_2_0(params)
-    #     else:
-    #         return self.create_2_1(params)
-
-    # @common.deprecated("Use JobsClient.create_from_config() instead")
-    # def create_2_0(self, params) -> Dict[str, Any]:
-    #     return self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/create", params)
-
-    # @common.deprecated("Use JobsClient.create_from_config() instead")
-    # def create_2_1(self, params) -> Dict[str, Any]:
-    #     return self.client.api("POST", f"{self.base_uri}/create", params)
 
     def create_from_config(self, config: JobConfig) -> str:
         return self.create_from_dict(config.params)
@@ -48,10 +29,6 @@ class JobsClient(ApiContainer):
             payload["notebook_params"] = notebook_params
 
         return self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/run-now", payload)
-
-    @common.deprecated("Use JobsClient.get_by_id() instead")
-    def get(self, job_id):
-        return self.get_by_id(job_id)
 
     def get_by_id(self, job_id):
         return self.client.api("GET", f"{self.client.endpoint}/api/2.0/jobs/get?job_id={job_id}")
@@ -106,10 +83,6 @@ class JobsClient(ApiContainer):
             all_jobs.extend(response.get("jobs", list()))
 
         return all_jobs
-
-    @common.deprecated("Use JobsClient.delete_by_id() instead")
-    def delete_by_job_id(self, job_id):
-        self.delete_by_id(job_id)
 
     def delete_by_id(self, job_id):
         self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/delete", job_id=job_id)

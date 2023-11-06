@@ -1,5 +1,4 @@
 import unittest
-from dbacademy.dbhelper.validations.validation_suite_class import ValidationSuite
 
 
 class TestTesting(unittest.TestCase):
@@ -8,6 +7,8 @@ class TestTesting(unittest.TestCase):
     SUITE_NAME = "Whatever"
 
     def test_suite(self):
+        from dbacademy.dbhelper.validations import ValidationSuite
+
         suite = ValidationSuite(self.SUITE_NAME)
         self.validate_test_suite(suite, False, 0)
 
@@ -23,6 +24,7 @@ class TestTesting(unittest.TestCase):
         self.assertEqual(test_case.description, self.DESCRIPTION)
 
     def test_is_none(self):
+        from dbacademy.dbhelper.validations import ValidationSuite
 
         for actual_value, expected_passed in [(None, True), ("Bananas", False)]:
 
@@ -35,6 +37,7 @@ class TestTesting(unittest.TestCase):
             self.validate_test_case(test_case, actual_value)
 
     def test_not_none(self):
+        from dbacademy.dbhelper.validations import ValidationSuite
 
         for actual_value, expected_passed in [(None, False), ("Bananas", True)]:
 

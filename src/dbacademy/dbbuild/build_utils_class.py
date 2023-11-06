@@ -1,8 +1,10 @@
+__all__ = ["BuildUtils"]
+
 from typing import Union, List, Dict
+from dbacademy.clients.databricks import DBAcademyRestClient
 
 
 class BuildUtils:
-    from dbacademy.clients.databricks import DBAcademyRestClient
 
     def __init__(self):
         pass
@@ -33,7 +35,7 @@ class BuildUtils:
 
     # noinspection PyUnusedLocal
     @staticmethod
-    def write_file(*, data: bytearray, target_file: str, overwrite: bool, target_name):
+    def write_file(*, data: bytes, target_file: str, overwrite: bool, target_name):
         import os
         if target_file.endswith("_meta.json"):
             print(f"\nWriting Meta File to {target_name}:\n   {target_file}")

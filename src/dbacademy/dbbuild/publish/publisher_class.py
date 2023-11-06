@@ -80,7 +80,7 @@ class Publisher:
 
     @publishing_mode.setter
     def publishing_mode(self, publishing_mode: Optional[str]) -> None:
-        from dbacademy.dbbuild import BuildConfig
+        from dbacademy.dbbuild.build_config_class import BuildConfig
 
         if self.version in BuildConfig.VERSIONS_LIST:
             # Building, Testing or Translating
@@ -161,7 +161,7 @@ class Publisher:
         from dbacademy import common, dbgems
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.dbbuild.build_utils_class import BuildUtils
-        from dbacademy.dbbuild import BuildConfig
+        from dbacademy.dbbuild.build_config_class import BuildConfig
 
         if self.version in BuildConfig.VERSIONS_LIST:
             self.assert_validated_config()

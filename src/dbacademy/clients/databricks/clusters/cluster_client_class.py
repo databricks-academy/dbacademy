@@ -3,44 +3,14 @@ __all__ = ["ClustersClient"]
 from dbacademy.common import validate
 from typing import Optional, Dict, Any, List
 from dbacademy.clients.rest.common import ApiContainer, ApiClient
+from dbacademy.clients.databricks.clusters.cluster_config_class import ClusterConfig
 
 
 class ClustersClient(ApiContainer):
-    from dbacademy.clients.databricks.clusters.cluster_config_class import ClusterConfig
-    from dbacademy import common
 
     def __init__(self, client: ApiClient):
         self.client = client
         self.base_uri = f"{self.client.endpoint}/api/2.0/clusters"
-
-    # @common.deprecated(f"Use ClusterClient.create_from_config() instead")
-    # def create(self, *,
-    #            cluster_name: str,
-    #            spark_version: str,
-    #            node_type_id: str,
-    #            driver_node_type_id: str = None,
-    #            num_workers: int,
-    #            autotermination_minutes: int,
-    #            single_user_name: str = None,
-    #            on_demand: bool = True,
-    #            spark_conf: Optional[Dict[str, Any]] = None,
-    #            libraries: List[Dict[str, Any]] = None,
-    #            **kwargs) -> str:
-    #     from dbacademy.clients.databricks.clusters import ClusterConfig, Availability
-    #
-    #     config = ClusterConfig(cluster_name=cluster_name,
-    #                            spark_version=spark_version,
-    #                            node_type_id=node_type_id,
-    #                            driver_node_type_id=driver_node_type_id,
-    #                            num_workers=num_workers,
-    #                            autotermination_minutes=autotermination_minutes,
-    #                            single_user_name=single_user_name,
-    #                            availability=Availability.ON_DEMAND if on_demand else Availability.SPOT_WITH_FALLBACK,
-    #                            spark_conf=spark_conf,
-    #                            libraries=libraries,
-    #                            **kwargs)
-    #
-    #     return self.create_from_config(config)
 
     def create_from_config(self, config: ClusterConfig) -> str:
         return self.create_from_dict(config.params)
@@ -62,11 +32,6 @@ class ClustersClient(ApiContainer):
         return response.get("node_types", list())
 
     # I'm not 100% sure this isn't called outside of this library -JDP
-    @common.deprecated("Use ClustersClient.get_by_id() or ClustersClient.get_by_name() instead")
-    def get(self, cluster_id):
-        cluster_id = validate.str_value(cluster_id=cluster_id)
-        return self.client.api("GET", f"{self.base_uri}/get?cluster_id={cluster_id}")
-
     def get_by_id(self, cluster_id) -> Optional[Dict[str, Any]]:
         cluster_id = validate.str_value(cluster_id=cluster_id)
         return self.client.api("GET", f"{self.base_uri}/get?cluster_id={cluster_id}", _expected=[200, 400])

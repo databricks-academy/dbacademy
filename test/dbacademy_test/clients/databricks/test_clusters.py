@@ -673,20 +673,20 @@ class TestClusters(unittest.TestCase):
             print("-"*80)
             self.assertEquals(cluster_a, cluster_b)
 
-    def test_get_deprecated(self):
-
-        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
-            cloud=Cloud.AWS,
-            cluster_name="Deprecated Get",
-            spark_version="11.3.x-scala2.12",
-            node_type_id="i3.xlarge",
-            num_workers=0,
-            autotermination_minutes=10))
-        try:
-            self.client.clusters.get(cluster_id)
-            raise Exception("Expected DeprecationWarning")
-        except DeprecationWarning as e:
-            self.assertEquals("dbacademy.clients.databricks.clusters.cluster_client_class.get(self, cluster_id): Use ClustersClient.get_by_id() or ClustersClient.get_by_name() instead", str(e))
+    # def test_get_deprecated(self):
+    #
+    #     cluster_id = self.client.clusters.create_from_config(ClusterConfig(
+    #         cloud=Cloud.AWS,
+    #         cluster_name="Deprecated Get",
+    #         spark_version="11.3.x-scala2.12",
+    #         node_type_id="i3.xlarge",
+    #         num_workers=0,
+    #         autotermination_minutes=10))
+    #     try:
+    #         self.client.clusters.get_by_id(cluster_id)
+    #         raise Exception("Expected DeprecationWarning")
+    #     except DeprecationWarning as e:
+    #         self.assertEquals("dbacademy.clients.databricks.clusters.cluster_client_class.get(self, cluster_id): Use ClustersClient.get_by_id() or ClustersClient.get_by_name() instead", str(e))
 
     def test_list_node_types(self):
         types = self.client.clusters.list_node_types()

@@ -1,13 +1,14 @@
 __all__ = ["TestJobsClient"]
 
 import unittest
-from dbacademy.clients import databricks
-from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS, UNIT_TEST_SERVICE_PRINCIPLE
 
 
 class TestJobsClient(unittest.TestCase):
 
     def setUp(self) -> None:
+        from dbacademy.clients import databricks
+        from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS
+
         self.__client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.tearDown()
 
@@ -43,8 +44,8 @@ class TestJobsClient(unittest.TestCase):
     def __create_job(self):
         from dbacademy.clients.databricks.jobs.job_config_classes import JobConfig
         from dbacademy.clients.databricks.clusters.cluster_config_class import JobClusterConfig
-        from dbacademy.dbhelper import WorkspaceHelper
         from dbacademy.common import Cloud
+        from dbacademy.dbhelper import dbh_constants
 
         config = JobConfig(job_name="Job from Git",
                            timeout_seconds=333,
@@ -55,10 +56,10 @@ class TestJobsClient(unittest.TestCase):
 
         task_config = config.add_task(task_key="Workspace-Setup", description="Just a sample job", timeout_seconds=555)
         task_config.task.notebook("Workspace-Setup", source="GIT", base_parameters={
-            WorkspaceHelper.PARAM_EVENT_ID: "Testing 123",
-            WorkspaceHelper.PARAM_EVENT_DESCRIPTION: "This is a test of the Emergency Broadcast System. This is only a test.",
-            WorkspaceHelper.PARAM_POOLS_NODE_TYPE_ID: "i3.xlarge",
-            WorkspaceHelper.PARAM_DEFAULT_SPARK_VERSION: "11.3.x-scala2.12"
+            dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_ID: "Testing 123",
+            dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_DESCRIPTION: "This is a test of the Emergency Broadcast System. This is only a test.",
+            dbh_constants.WORKSPACE_HELPER.PARAM_POOLS_NODE_TYPE_ID: "i3.xlarge",
+            dbh_constants.WORKSPACE_HELPER.PARAM_DEFAULT_SPARK_VERSION: "11.3.x-scala2.12"
         })
         task_config.cluster.new(JobClusterConfig(cloud=Cloud.AWS,
                                                  spark_version="11.3.x-scala2.12",
@@ -72,6 +73,7 @@ class TestJobsClient(unittest.TestCase):
 
     def test_create_git_job(self):
         import json
+        from dbacademy_test.clients.databricks import UNIT_TEST_SERVICE_PRINCIPLE
 
         job = self.__create_job()
         job_id = job.get("job_id")

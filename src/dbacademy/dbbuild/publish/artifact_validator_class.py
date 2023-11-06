@@ -67,7 +67,7 @@ class ArtifactValidator:
         self.translation = None if translation is None else validate.any_value(Translation, translation=translation)
 
     def validate_publishing_processes(self) -> None:
-        from dbacademy.dbhelper.validations.validation_suite_class import ValidationSuite
+        from dbacademy.dbhelper.validations import ValidationSuite
 
         suite = ValidationSuite(name="Distribution")
         suite.test_true(actual_value=lambda: self.__validate_distribution_dbc(), description=f"DBC in Distribution System (v{self.version}-PENDING)", depends_on=[])

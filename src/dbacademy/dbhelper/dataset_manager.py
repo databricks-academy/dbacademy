@@ -1,8 +1,10 @@
+__all__ = ["DatasetManager"]
+
 from typing import Optional, List
+from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
 
 class DatasetManager:
-    from dbacademy.dbhelper import DBAcademyHelper
 
     @staticmethod
     def from_dbacademy_helper(da: DBAcademyHelper):
@@ -97,7 +99,7 @@ class DatasetManager:
         when the storage and compute are, for example, on opposite sides of the world.
         """
         from dbacademy import dbgems
-        from dbacademy.dbhelper.paths_class import Paths
+        from dbacademy.dbhelper.paths import Paths
 
         action = "Install" if self.archives_path is None else "Download"
         what = "datasets" if self.archives_path is None else "archive"
@@ -160,7 +162,7 @@ class DatasetManager:
     def unpack_archive(self) -> None:
         import shutil
         from dbacademy import dbgems
-        from dbacademy.dbhelper.paths_class import Paths
+        from dbacademy.dbhelper.paths import Paths
 
         unpack_start = dbgems.clock_start()
         if self.archives_path is None:

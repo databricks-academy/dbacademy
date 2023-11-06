@@ -1,4 +1,8 @@
+__all__ = ["LessonConfig"]
+
 from typing import Optional, Dict, Any
+from dbacademy.dbhelper import dbh_constants
+from dbacademy.dbhelper.course_config import CourseConfig
 
 
 class LessonConfig:
@@ -28,7 +32,7 @@ class LessonConfig:
         """
         from dbacademy import dbgems
 
-        self.__mutable = True
+        self.__course_config = None
 
         self.__name = None
         self.__clean_name = None
@@ -77,15 +81,20 @@ class LessonConfig:
         if self.create_catalog and self.create_schema:
             raise AssertionError(f"Cannot create a user-specific schema when creating UC catalogs")
 
-    def lock_mutations(self) -> None:
+    def lock_mutations(self, course_config: CourseConfig) -> None:
         """
         Called by DBAcademy.init() to lock this object from future mutations.
         :return: None
         """
-        self.__mutable = False
+        self.__course_config = course_config
 
     def __assert_mutable(self) -> None:
-        assert self.__mutable, f"LessonConfig is no longer mutable; DBAcademyHelper has already been initialized."
+        assert self.__course_config is None, f"LessonConfig is no longer mutable; DBAcademyHelper has already been initialized."
+
+    @property
+    def course_config(self) -> Optional[CourseConfig]:
+        """The course that this lesson belongs too. This value is initially null and is set by DBAcademyHelper once initialized."""
+        return self.__course_config
 
     @property
     def installing_datasets(self) -> bool:
@@ -201,8 +210,6 @@ class LessonConfig:
         default catalog name for non-UC environments.
         :return: True if this is a UC environment
         """
-        from dbacademy.dbhelper.dbacademy_helper_class import DBAcademyHelper
-
         # Implementation here might be a bit odd, but the idea here is that if our
         # initial catalog was "spark_catalog" then it's not UC. If the catalog is
         # "hive_metastore" then we know it is UC, but that is also true if the catalog
@@ -212,7 +219,7 @@ class LessonConfig:
         initial_catalog = self.initial_catalog
         if initial_catalog is None:
             return False  # If not set then not UC
-        elif initial_catalog == DBAcademyHelper.CATALOG_SPARK_DEFAULT:
+        elif initial_catalog == dbh_constants.DBACADEMY_HELPER.CATALOG_SPARK_DEFAULT:
             return False  # If is "spark_catalog", then not UC
         else:
             return True  # In all other cases, assumed to be UC.

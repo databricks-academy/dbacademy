@@ -1,8 +1,9 @@
 __all__ = ["UniversalWorkspaceSetupRunner"]
 
+from dbacademy.dbhelper.course_config import CourseConfig
+
 
 class UniversalWorkspaceSetupRunner:
-    from dbacademy.dbhelper.course_config_class import CourseConfig
 
     def __init__(self, *, token: str, endpoint: str, course_config: CourseConfig, workspace_name: str):
         from dbacademy.common import Cloud
@@ -28,12 +29,12 @@ class UniversalWorkspaceSetupRunner:
 
     def run(self):
         import time
-        from dbacademy.dbhelper import WorkspaceHelper
+        from dbacademy.dbhelper import dbh_constants
 
         start = time.time()
         print("Running the Universal Workspace Setup job...")
 
-        self.client.jobs.delete_by_name(WorkspaceHelper.WORKSPACE_SETUP_JOB_NAME, success_only=False)
+        self.client.jobs.delete_by_name(dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP_JOB_NAME, success_only=False)
 
         job_id = self.create_job()
         print(f"| Created job {job_id}")

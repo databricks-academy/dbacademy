@@ -1,4 +1,8 @@
+__all__ = ["TestInstance"]
+
+
 class TestInstance:
+
     def __init__(self, build_config, notebook, test_dir, test_type):
         import hashlib
 

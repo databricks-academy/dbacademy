@@ -23,7 +23,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
 
     @staticmethod
     def create_notebook():
-        from dbacademy.dbbuild import BuildConfig
+        from dbacademy.dbbuild.build_config_class import BuildConfig
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
 
         version = "1.2.3"

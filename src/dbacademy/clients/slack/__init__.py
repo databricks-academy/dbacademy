@@ -37,7 +37,7 @@ class SlackThread(object):
 
     def __init__(self, channel: str, username: str, access_token: str, mentions: Optional[Union[str, Mention, List[str]]]):
         self.thread_ts = None
-        self.initial_attachments = []
+        self.initial_attachments = list()
         self.last_response: Optional[Dict[str, Any]] = None
         self.channel = channel
         self.username = username
@@ -193,9 +193,7 @@ class SlackThread(object):
     def _update_payload(self, level: Level, message: str, attachments: List[Dict[str, Any]]) -> Dict[str, Any]:
         validate.any_value(Level, level=level, required=True)
         validate.str_value(message=message, required=True)
-
-        validate.list_value(attachments=attachments, required=True)
-        validate.element_type(attachments, "attachments", dict)
+        validate.list_of_type(attachments=attachments, element_type=Dict, required=True)
 
         assert len(attachments) > 0, f"""Expected at least one attachment."""
 

@@ -1,5 +1,9 @@
+__all__ = ["ValidationResult"]
+
+from dbacademy.dbhelper.validations.validation_class import Validation
+
+
 class ValidationResult(object):
-    from dbacademy.dbhelper.validations.validation_class import Validation
 
     __slots__ = ('test', 'skipped', 'passed', 'status', 'points', 'exception', 'message')
 

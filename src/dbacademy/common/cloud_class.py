@@ -1,3 +1,5 @@
+__all__ = ["Cloud"]
+
 from enum import Enum
 
 
@@ -18,33 +20,6 @@ class Cloud(Enum):
     @property
     def is_gcp(self) -> bool:
         return self == Cloud.GCP
-
-    # @staticmethod
-    # def is_aws(actual_cloud: Union[str, "Cloud"]) -> bool:
-    #     """
-    #     :param actual_cloud: the actual value against which to test or `Cloud.current` if `actual_cloud == None`
-    #     :return: True if this is a workspace backed by Amazon Web Services (AWS)
-    #     """
-    #     actual_cloud = actual_cloud if type(actual_cloud) == str else actual_cloud.value
-    #     return Cloud.AWS.value == actual_cloud
-    #
-    # @staticmethod
-    # def is_msa(actual_cloud: Union[str, "Cloud"]) -> bool:
-    #     """
-    #     :param actual_cloud: the actual value against which to test or `Cloud.current` if `actual_cloud == None`
-    #     :return: True if this is a workspace backed by Microsoft Azure (MSA)
-    #     """
-    #     actual_cloud = actual_cloud if type(actual_cloud) == str else actual_cloud.value
-    #     return Cloud.MSA.value == actual_cloud
-    #
-    # @staticmethod
-    # def is_gcp(actual_cloud: Union[str, "Cloud"]) -> bool:
-    #     """
-    #     :param actual_cloud: the actual value against which to test or `Cloud.current` if `actual_cloud == None`
-    #     :return: True if this is a workspace backed by Google Cloud Platform (GCP)
-    #     """
-    #     actual_cloud = actual_cloud if type(actual_cloud) == str else actual_cloud.value
-    #     return Cloud.GCP.value == actual_cloud
 
     @staticmethod
     def current_cloud() -> "Cloud":

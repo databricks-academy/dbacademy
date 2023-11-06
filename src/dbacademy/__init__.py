@@ -23,6 +23,7 @@ Misc [REST] APIs
 Special Projects:
 * workspaces_3_0:
 """
+__all__ = ["validate_dependencies"]
 
 
 def validate_dependencies():
