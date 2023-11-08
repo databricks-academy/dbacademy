@@ -5,6 +5,8 @@ from dbacademy.dbhelper.course_config import CourseConfig
 class MyTestCase(unittest.TestCase):
 
     def test_course_config_supported_dbrs_empty(self):
+        from dbacademy.common.validate import ValidationError
+
         try:
             CourseConfig(_course_code="test",
                          _course_name="Some Unit Test",
@@ -16,8 +18,8 @@ class MyTestCase(unittest.TestCase):
                          _expected_dbrs="{{supported_dbrs}}")
             raise Exception("Expected Assertion Error")
 
-        except AssertionError as e:
-            self.assertEquals("At least one supported DBR must be defined.", str(e))
+        except ValidationError as e:
+            self.assertEquals("Error-Min-Len | The parameter '_supported_dbrs' must have a minimum length of 1, found 0.", e.message)
 
     def test_course_config_supported_dbrs_length(self):
         try:
