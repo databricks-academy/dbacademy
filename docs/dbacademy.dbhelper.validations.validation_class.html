@@ -32,12 +32,12 @@
 <font color="#000000" face="helvetica, arial"><a name="Validation">class <strong>Validation</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#Validation">Validation</a>(*,&nbsp;suite,&nbsp;test_function:&nbsp;Callable[[],&nbsp;Any],&nbsp;actual_value:&nbsp;Callable[[],&nbsp;Any],&nbsp;description:&nbsp;str,&nbsp;test_case_id:&nbsp;str,&nbsp;depends_on:&nbsp;List[str],&nbsp;escape_html:&nbsp;bool,&nbsp;points:&nbsp;int,&nbsp;hint)<br>
+<td colspan=2><tt><a href="#Validation">Validation</a>(*,&nbsp;suite,&nbsp;test_function:&nbsp;Callable[[],&nbsp;Any],&nbsp;actual_value:&nbsp;Callable[[],&nbsp;Any],&nbsp;description:&nbsp;str,&nbsp;test_case_id:&nbsp;str,&nbsp;depends_on:&nbsp;Iterable[str],&nbsp;escape_html:&nbsp;bool,&nbsp;points:&nbsp;int,&nbsp;hint)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="Validation-__init__"><strong>__init__</strong></a>(self, *, suite, test_function: Callable[[], Any], actual_value: Callable[[], Any], description: str, test_case_id: str, depends_on: List[str], escape_html: bool, points: int, hint)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="Validation-__init__"><strong>__init__</strong></a>(self, *, suite, test_function: Callable[[], Any], actual_value: Callable[[], Any], description: str, test_case_id: str, depends_on: Iterable[str], escape_html: bool, points: int, hint)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="Validation-update_hint"><strong>update_hint</strong></a>(self)</dt></dl>
 
@@ -61,28 +61,12 @@ Data descriptors defined here:<br>
 </dl>
 <dl><dt><strong>unique_id</strong></dt>
 </dl>
-<hr>
-Data and other attributes defined here:<br>
-<dl><dt><strong>Any</strong> = typing.Any<dd><tt>Special&nbsp;type&nbsp;indicating&nbsp;an&nbsp;unconstrained&nbsp;type.<br>
-&nbsp;<br>
--&nbsp;Any&nbsp;is&nbsp;compatible&nbsp;with&nbsp;every&nbsp;type.<br>
--&nbsp;Any&nbsp;assumed&nbsp;to&nbsp;have&nbsp;all&nbsp;methods.<br>
--&nbsp;All&nbsp;values&nbsp;assumed&nbsp;to&nbsp;be&nbsp;instances&nbsp;of&nbsp;Any.<br>
-&nbsp;<br>
-Note&nbsp;that&nbsp;all&nbsp;the&nbsp;above&nbsp;statements&nbsp;are&nbsp;true&nbsp;from&nbsp;the&nbsp;point&nbsp;of&nbsp;view&nbsp;of<br>
-static&nbsp;type&nbsp;checkers.&nbsp;At&nbsp;runtime,&nbsp;Any&nbsp;should&nbsp;not&nbsp;be&nbsp;used&nbsp;with&nbsp;instance<br>
-or&nbsp;class&nbsp;checks.</tt></dl>
-
-<dl><dt><strong>Callable</strong> = typing.Callable<dd><tt>Callable&nbsp;type;&nbsp;Callable[[int],&nbsp;str]&nbsp;is&nbsp;a&nbsp;function&nbsp;of&nbsp;(int)&nbsp;-&gt;&nbsp;str.<br>
-&nbsp;<br>
-The&nbsp;subscription&nbsp;syntax&nbsp;must&nbsp;always&nbsp;be&nbsp;used&nbsp;with&nbsp;exactly&nbsp;two<br>
-values:&nbsp;the&nbsp;argument&nbsp;list&nbsp;and&nbsp;the&nbsp;return&nbsp;type.&nbsp;&nbsp;The&nbsp;argument&nbsp;list<br>
-must&nbsp;be&nbsp;a&nbsp;list&nbsp;of&nbsp;types&nbsp;or&nbsp;ellipsis;&nbsp;the&nbsp;return&nbsp;type&nbsp;must&nbsp;be&nbsp;a&nbsp;single&nbsp;type.<br>
-&nbsp;<br>
-There&nbsp;is&nbsp;no&nbsp;syntax&nbsp;to&nbsp;indicate&nbsp;optional&nbsp;or&nbsp;keyword&nbsp;arguments,<br>
-such&nbsp;function&nbsp;types&nbsp;are&nbsp;rarely&nbsp;used&nbsp;as&nbsp;callback&nbsp;types.</tt></dl>
-
-<dl><dt><strong>List</strong> = typing.List<dd><tt>A&nbsp;generic&nbsp;version&nbsp;of&nbsp;list.</tt></dl>
-
-</td></tr></table></td></tr></table>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['Validation']</td></tr></table>
 </body></html>

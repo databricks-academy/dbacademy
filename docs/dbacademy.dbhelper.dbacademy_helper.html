@@ -1,16 +1,25 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><title>Python: module dbacademy.dbhelper.dbacademy_helper_class</title>
+<html><head><title>Python: module dbacademy.dbhelper.dbacademy_helper</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 </head><body bgcolor="#f0f0f8">
 
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
 <tr bgcolor="#7799ee">
 <td valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbhelper.html"><font color="#ffffff">dbhelper</font></a>.dbacademy_helper_class</strong></big></big></font></td
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbhelper.html"><font color="#ffffff">dbhelper</font></a>.dbacademy_helper</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbhelper%5Cdbacademy_helper_class.py">c:\dvlp\dbacademy\src\dbacademy\dbhelper\dbacademy_helper_class.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbhelper%5Cdbacademy_helper.py">c:\dvlp\dbacademy\src\dbacademy\dbhelper\dbacademy_helper.py</a></font></td></tr></table>
     <p></p>
 <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="dbacademy.dbhelper.dbh_constants.html">dbacademy.dbhelper.dbh_constants</a><br>
+</td><td width="25%" valign=top><a href="dbacademy.common.validate.html">dbacademy.common.validate</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
@@ -21,7 +30,7 @@
 <dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
 </font></dt><dd>
 <dl>
-<dt><font face="helvetica, arial"><a href="dbacademy.dbhelper.dbacademy_helper_class.html#DBAcademyHelper">DBAcademyHelper</a>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbhelper.dbacademy_helper.html#DBAcademyHelper">DBAcademyHelper</a>
 </font></dt></dl>
 </dd>
 </dl>
@@ -32,12 +41,12 @@
 <font color="#000000" face="helvetica, arial"><a name="DBAcademyHelper">class <strong>DBAcademyHelper</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#DBAcademyHelper">DBAcademyHelper</a>(course_config:&nbsp;dbacademy.dbhelper.course_config_class.CourseConfig,&nbsp;lesson_config:&nbsp;dbacademy.dbhelper.lesson_config_class.LessonConfig,&nbsp;debug:&nbsp;bool&nbsp;=&nbsp;False)<br>
+<td colspan=2><tt><a href="#DBAcademyHelper">DBAcademyHelper</a>(course_config:&nbsp;dbacademy.dbhelper.course_config.CourseConfig,&nbsp;lesson_config:&nbsp;dbacademy.dbhelper.lesson_config.LessonConfig,&nbsp;debug:&nbsp;bool&nbsp;=&nbsp;False)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="DBAcademyHelper-__init__"><strong>__init__</strong></a>(self, course_config: dbacademy.dbhelper.course_config_class.CourseConfig, lesson_config: dbacademy.dbhelper.lesson_config_class.LessonConfig, debug: bool = False)</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>&nbsp;from&nbsp;the&nbsp;specified&nbsp;course&nbsp;and&nbsp;lesson&nbsp;config<br>
+<dl><dt><a name="DBAcademyHelper-__init__"><strong>__init__</strong></a>(self, course_config: dbacademy.dbhelper.course_config.CourseConfig, lesson_config: dbacademy.dbhelper.lesson_config.LessonConfig, debug: bool = False)</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>&nbsp;from&nbsp;the&nbsp;specified&nbsp;course&nbsp;and&nbsp;lesson&nbsp;config<br>
 :param&nbsp;course_config:&nbsp;Those&nbsp;configuration&nbsp;parameters&nbsp;that&nbsp;remain&nbsp;consistent&nbsp;from&nbsp;the&nbsp;duration&nbsp;of&nbsp;a&nbsp;course<br>
 :param&nbsp;lesson_config:&nbsp;Those&nbsp;configuration&nbsp;parameters&nbsp;that&nbsp;may&nbsp;change&nbsp;from&nbsp;lesson&nbsp;to&nbsp;lesson<br>
 :param&nbsp;debug:&nbsp;Enables&nbsp;debug&nbsp;print&nbsp;messages.<br>
@@ -53,10 +62,6 @@ lesson-specific&nbsp;working&nbsp;directory&nbsp;and&nbsp;any&nbsp;assets&nbsp;c
 be&nbsp;added&nbsp;by&nbsp;the&nbsp;courseware&nbsp;developer.&nbsp;This&nbsp;method&nbsp;is&nbsp;meant&nbsp;to&nbsp;be&nbsp;overridden,&nbsp;or&nbsp;more&nbsp;realistically,<br>
 monkey-patched,&nbsp;into&nbsp;the&nbsp;class&nbsp;from&nbsp;the&nbsp;notebook.<br>
 :return:&nbsp;None</tt></dd></dl>
-
-<dl><dt><a name="DBAcademyHelper-clock_start"><strong>clock_start</strong></a>(self) -&gt; int</dt></dl>
-
-<dl><dt><a name="DBAcademyHelper-clock_stopped"><strong>clock_stopped</strong></a>(self, start: int, end: str = '') -&gt; str</dt></dl>
 
 <dl><dt><a name="DBAcademyHelper-conclude_setup"><strong>conclude_setup</strong></a>(self) -&gt; None</dt><dd><tt>Concludes&nbsp;the&nbsp;setup&nbsp;of&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>&nbsp;by&nbsp;advertising&nbsp;to&nbsp;the&nbsp;student&nbsp;the&nbsp;new&nbsp;state&nbsp;of&nbsp;the&nbsp;environment&nbsp;such&nbsp;as&nbsp;predefined&nbsp;path&nbsp;variables,&nbsp;databases&nbsp;and&nbsp;tables&nbsp;created&nbsp;on&nbsp;behalf&nbsp;of&nbsp;the&nbsp;student&nbsp;and&nbsp;the&nbsp;total&nbsp;setup&nbsp;time.&nbsp;Additionally,&nbsp;all&nbsp;path&nbsp;attributes&nbsp;are&nbsp;pushed&nbsp;to&nbsp;the&nbsp;Spark&nbsp;context&nbsp;for&nbsp;reference&nbsp;in&nbsp;SQL&nbsp;statements.<br>
 :return:&nbsp;None</tt></dd></dl>
@@ -157,13 +162,11 @@ See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.catalog_name<b
 :param&nbsp;course_code:&nbsp;The&nbsp;course's&nbsp;code.&nbsp;See&nbsp;also&nbsp;CourseConfig.course_code<br>
 :return:&nbsp;The&nbsp;schema&nbsp;name&nbsp;composited&nbsp;from&nbsp;the&nbsp;specified&nbsp;username&nbsp;and&nbsp;course_code</tt></dd></dl>
 
-<dl><dt><a name="DBAcademyHelper-to_unique_name"><strong>to_unique_name</strong></a>(*, username: str, course_code: str, lesson_name: Optional[str], sep: str) -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;unique&nbsp;name&nbsp;to&nbsp;be&nbsp;used&nbsp;in&nbsp;creating&nbsp;jobs,&nbsp;warehouses,&nbsp;DLT&nbsp;pipelines,&nbsp;experiments&nbsp;and&nbsp;other&nbsp;user&nbsp;&amp;&nbsp;course&nbsp;specific&nbsp;artifacts.<br>
+<dl><dt><a name="DBAcademyHelper-to_unique_name"><strong>to_unique_name</strong></a>(lesson_config: dbacademy.dbhelper.lesson_config.LessonConfig, sep: str) -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>A&nbsp;utility&nbsp;function&nbsp;that&nbsp;produces&nbsp;a&nbsp;unique&nbsp;name&nbsp;to&nbsp;be&nbsp;used&nbsp;in&nbsp;creating&nbsp;jobs,&nbsp;warehouses,&nbsp;DLT&nbsp;pipelines,&nbsp;experiments&nbsp;and&nbsp;other&nbsp;user&nbsp;&amp;&nbsp;course&nbsp;specific&nbsp;artifacts.<br>
 The&nbsp;pattern&nbsp;consist&nbsp;of&nbsp;the&nbsp;local&nbsp;part&nbsp;of&nbsp;the&nbsp;email&nbsp;address,&nbsp;a&nbsp;4-character&nbsp;hash,&nbsp;"da"&nbsp;for&nbsp;DBAcademy&nbsp;and&nbsp;the&nbsp;course's&nbsp;code.&nbsp;The&nbsp;value&nbsp;is&nbsp;then&nbsp;converted&nbsp;to&nbsp;lower&nbsp;case<br>
 after&nbsp;which&nbsp;all&nbsp;non-alpha&nbsp;and&nbsp;non-digits&nbsp;are&nbsp;replaced&nbsp;with&nbsp;hyphens.<br>
 See&nbsp;also&nbsp;<a href="#DBAcademyHelper">DBAcademyHelper</a>.unique_name<br>
-:param&nbsp;username:&nbsp;The&nbsp;full&nbsp;email&nbsp;address&nbsp;of&nbsp;a&nbsp;user.&nbsp;See&nbsp;also&nbsp;`LessonConfig.username`<br>
-:param&nbsp;course_code:&nbsp;The&nbsp;course's&nbsp;code.&nbsp;See&nbsp;also&nbsp;`CourseConfig.course_code`<br>
-:param&nbsp;lesson_name:&nbsp;The&nbsp;lesson's&nbsp;name&nbsp;(usually&nbsp;None).&nbsp;See&nbsp;also&nbsp;`LessonConfig.name`<br>
+:param&nbsp;lesson_config:&nbsp;The&nbsp;lesson's&nbsp;configuration.&nbsp;See&nbsp;also&nbsp;`LessonConfig`&nbsp;and&nbsp;`CourseConfig`<br>
 :param&nbsp;sep:&nbsp;The&nbsp;seperator&nbsp;to&nbsp;use&nbsp;between&nbsp;words,&nbsp;defaults&nbsp;to&nbsp;a&nbsp;hyphen<br>
 :return:&nbsp;The&nbsp;unique&nbsp;name&nbsp;composited&nbsp;from&nbsp;the&nbsp;specified&nbsp;username&nbsp;and&nbsp;course_code</tt></dd></dl>
 
@@ -177,6 +180,8 @@ See&nbsp;also&nbsp;DBAcademyHelper.to_catalog_name<br>
 <dl><dt><strong>catalog_name_prefix</strong></dt>
 <dd><tt>See&nbsp;also&nbsp;DBAcademyHelper.to_catalog_name_prefix<br>
 :return:&nbsp;the&nbsp;prefix&nbsp;for&nbsp;all&nbsp;catalog&nbsp;names&nbsp;that&nbsp;may&nbsp;be&nbsp;created&nbsp;for&nbsp;this&nbsp;consumer&nbsp;during&nbsp;the&nbsp;usage&nbsp;of&nbsp;a&nbsp;course.</tt></dd>
+</dl>
+<dl><dt><strong>client</strong></dt>
 </dl>
 <dl><dt><strong>course_config</strong></dt>
 <dd><tt>:return:&nbsp;the&nbsp;course's&nbsp;general&nbsp;configuration</tt></dd>
@@ -202,6 +207,8 @@ Trinary&nbsp;location:&nbsp;DBAcademyHelper.client.clusters.get_current_spark_ve
 from&nbsp;to&nbsp;bring&nbsp;data&nbsp;into&nbsp;the&nbsp;workspace&nbsp;and&nbsp;avoid&nbsp;cloud-cloud&nbsp;file&nbsp;reads&nbsp;through&nbsp;the&nbsp;entire&nbsp;course.<br>
 :return:</tt></dd>
 </dl>
+<dl><dt><strong>dev</strong></dt>
+</dl>
 <dl><dt><strong>lesson_config</strong></dt>
 <dd><tt>:return:&nbsp;the&nbsp;lesson&nbsp;specific&nbsp;configuration</tt></dd>
 </dl>
@@ -220,11 +227,15 @@ from&nbsp;to&nbsp;bring&nbsp;data&nbsp;into&nbsp;the&nbsp;workspace&nbsp;and&nbs
 loaded&nbsp;and&nbsp;validated&nbsp;against&nbsp;as&nbsp;compared&nbsp;to&nbsp;the&nbsp;datasets&nbsp;in&nbsp;the&nbsp;more&nbsp;repository&nbsp;that&nbsp;is&nbsp;typically&nbsp;installed.<br>
 :return:</tt></dd>
 </dl>
+<dl><dt><strong>tests</strong></dt>
+</dl>
 <dl><dt><strong>working_dir_root</strong></dt>
 <dd><tt>This&nbsp;is&nbsp;the&nbsp;common&nbsp;super-directory&nbsp;for&nbsp;each&nbsp;lesson,&nbsp;removal&nbsp;of&nbsp;which&nbsp;is&nbsp;designed&nbsp;to&nbsp;ensure<br>
 that&nbsp;all&nbsp;assets&nbsp;created&nbsp;by&nbsp;students&nbsp;is&nbsp;removed.&nbsp;As&nbsp;such,&nbsp;it&nbsp;is&nbsp;not&nbsp;attached&nbsp;to&nbsp;the&nbsp;path<br>
 object&nbsp;to&nbsp;hide&nbsp;it&nbsp;from&nbsp;students.&nbsp;Used&nbsp;almost&nbsp;exclusively&nbsp;in&nbsp;the&nbsp;Rest&nbsp;notebook.<br>
 :return:&nbsp;the&nbsp;location&nbsp;of&nbsp;the&nbsp;working&nbsp;directory&nbsp;root</tt></dd>
+</dl>
+<dl><dt><strong>workspace</strong></dt>
 </dl>
 <hr>
 Data descriptors defined here:<br>
@@ -234,48 +245,6 @@ Data descriptors defined here:<br>
 <dl><dt><strong>__weakref__</strong></dt>
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
-<hr>
-Data and other attributes defined here:<br>
-<dl><dt><strong>CATALOG_SPARK_DEFAULT</strong> = 'spark_catalog'</dl>
-
-<dl><dt><strong>CATALOG_UC_DEFAULT</strong> = 'hive_metastore'</dl>
-
-<dl><dt><strong>CourseConfig</strong> = &lt;class 'dbacademy.dbhelper.course_config_class.CourseConfig'&gt;</dl>
-
-<dl><dt><strong>LessonConfig</strong> = &lt;class 'dbacademy.dbhelper.lesson_config_class.LessonConfig'&gt;</dl>
-
-<dl><dt><strong>Paths</strong> = &lt;class 'dbacademy.dbhelper.paths_class.Paths'&gt;</dl>
-
-<dl><dt><strong>SCHEMA_DEFAULT</strong> = 'default'</dl>
-
-<dl><dt><strong>SCHEMA_INFORMATION</strong> = 'information_schema'</dl>
-
-<dl><dt><strong>SPARK_CONF_CLUSTER_TAG_SPARK_VERSION</strong> = 'spark.databricks.clusterUsageTags.sparkVersion'</dl>
-
-<dl><dt><strong>SPARK_CONF_DATA_SOURCE_URI</strong> = 'dbacademy.data-source-uri'</dl>
-
-<dl><dt><strong>SPARK_CONF_PATHS_DATASETS</strong> = 'dbacademy.paths.datasets'</dl>
-
-<dl><dt><strong>SPARK_CONF_PATHS_USERS</strong> = 'dbacademy.paths.users'</dl>
-
-<dl><dt><strong>SPARK_CONF_PROTECTED_EXECUTION</strong> = 'dbacademy.protected-execution'</dl>
-
-<dl><dt><strong>SPARK_CONF_SMOKE_TEST</strong> = 'dbacademy.smoke-test'</dl>
-
-<dl><dt><strong>StreamingQuery</strong> = &lt;class 'pyspark.sql.streaming.StreamingQuery'&gt;<dd><tt>A&nbsp;handle&nbsp;to&nbsp;a&nbsp;query&nbsp;that&nbsp;is&nbsp;executing&nbsp;continuously&nbsp;in&nbsp;the&nbsp;background&nbsp;as&nbsp;new&nbsp;data&nbsp;arrives.<br>
-All&nbsp;these&nbsp;methods&nbsp;are&nbsp;thread-safe.<br>
-&nbsp;<br>
-..&nbsp;versionadded::&nbsp;2.0.0<br>
-&nbsp;<br>
-Notes<br>
------<br>
-This&nbsp;API&nbsp;is&nbsp;evolving.</tt></dl>
-
-<dl><dt><strong>TROUBLESHOOT_ERROR_TEMPLATE</strong> = '{error} Please see the "Troubleshooting | {secti...the "Version Info" notebook for more information.'</dl>
-
-<dl><dt><strong>common</strong> = &lt;module 'dbacademy.common' from 'C:\\dvlp\\dbacademy\\src\\dbacademy\\common\\__init__.py'&gt;<dd><tt>Common&nbsp;libraries&nbsp;that&nbsp;do&nbsp;not&nbsp;depend&nbsp;on&nbsp;other&nbsp;libraries.<br>
-This&nbsp;was&nbsp;moved&nbsp;out&nbsp;of&nbsp;dbgems&nbsp;because&nbsp;dbgems&nbsp;has&nbsp;a&nbsp;dependency&nbsp;on&nbsp;pyspark.</tt></dl>
-
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
@@ -283,7 +252,5 @@ This&nbsp;was&nbsp;moved&nbsp;out&nbsp;of&nbsp;dbgems&nbsp;because&nbsp;dbgems&n
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>Dict</strong> = typing.Dict<br>
-<strong>Optional</strong> = typing.Optional<br>
-<strong>Union</strong> = typing.Union</td></tr></table>
+<td width="100%"><strong>__all__</strong> = ['DBAcademyHelper']</td></tr></table>
 </body></html>

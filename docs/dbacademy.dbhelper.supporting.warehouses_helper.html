@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dbhelper.supporting.warehouses_helper</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbhelper.html"><font color="#ffffff">dbhelper</font></a>.<a href="dbacademy.dbhelper.supporting.html"><font color="#ffffff">supporting</font></a>.warehouses_helper</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbhelper%5Csupporting%5Cwarehouses_helper.py">c:\dvlp\dbacademy\src\dbacademy\dbhelper\supporting\warehouses_helper.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="dbacademy.common.validate.html">dbacademy.common.validate</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbhelper.supporting.warehouses_helper.html#WarehousesHelper">WarehousesHelper</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="WarehousesHelper">class <strong>WarehousesHelper</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#WarehousesHelper">WarehousesHelper</a>(db_academy_reset_client:&nbsp;dbacademy.clients.databricks.DBAcademyRestClient,&nbsp;workspace_helper:&nbsp;dbacademy.dbhelper.supporting.workspace_helper.WorkspaceHelper)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="WarehousesHelper-__init__"><strong>__init__</strong></a>(self, db_academy_reset_client: dbacademy.clients.databricks.DBAcademyRestClient, workspace_helper: dbacademy.dbhelper.supporting.workspace_helper.WorkspaceHelper)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="WarehousesHelper-create_shared_sql_warehouse"><strong>create_shared_sql_warehouse</strong></a>(self, *, name: str, auto_stop_mins=None, enable_serverless_compute=True) -&gt; str</dt><dd><tt>#&nbsp;TODO&nbsp;-&nbsp;Change&nbsp;enable_serverless_compute&nbsp;to&nbsp;default&nbsp;to&nbsp;True&nbsp;once&nbsp;serverless&nbsp;is&nbsp;mainstream</tt></dd></dl>
+
+<dl><dt><a name="WarehousesHelper-create_sql_warehouse"><strong>create_sql_warehouse</strong></a>(self, *, name: str, auto_stop_mins: Optional[int], min_num_clusters, max_num_clusters, enable_serverless_compute: bool, lab_id: str = None, workspace_description: str = None, workspace_name: str = None, org_id: str = None, for_user: Optional[str] = None) -&gt; str</dt><dd><tt>:param&nbsp;name:<br>
+:param&nbsp;auto_stop_mins:<br>
+:param&nbsp;min_num_clusters:<br>
+:param&nbsp;max_num_clusters:<br>
+:param&nbsp;enable_serverless_compute:<br>
+:param&nbsp;lab_id:<br>
+:param&nbsp;workspace_description:<br>
+:param&nbsp;workspace_name:<br>
+:param&nbsp;org_id:<br>
+:param&nbsp;for_user:<br>
+:return:&nbsp;The&nbsp;warehouse/endpoint&nbsp;id&nbsp;that&nbsp;was&nbsp;created.</tt></dd></dl>
+
+<dl><dt><a name="WarehousesHelper-create_sql_warehouse_for"><strong>create_sql_warehouse_for</strong></a>(self, *, username: str, lesson_config: dbacademy.dbhelper.lesson_config.LessonConfig, auto_stop_mins: Optional[int] = None, enable_serverless_compute: bool = True)</dt></dl>
+
+<dl><dt><a name="WarehousesHelper-create_sql_warehouses"><strong>create_sql_warehouses</strong></a>(self, *, auto_stop_mins: Optional[int] = None, lesson_config: dbacademy.dbhelper.lesson_config.LessonConfig, enable_serverless_compute: bool = True) -&gt; None</dt></dl>
+
+<dl><dt><a name="WarehousesHelper-delete_sql_warehouses"><strong>delete_sql_warehouses</strong></a>(self, lesson_config: dbacademy.dbhelper.lesson_config.LessonConfig) -&gt; None</dt></dl>
+
+<dl><dt><a name="WarehousesHelper-delete_sql_warehouses_for"><strong>delete_sql_warehouses_for</strong></a>(self, lesson_config: dbacademy.dbhelper.lesson_config.LessonConfig) -&gt; None</dt></dl>
+
+<dl><dt><a name="WarehousesHelper-execute_statements"><strong>execute_statements</strong></a>(self, warehouse_id: str, statements: List[str]) -&gt; None</dt></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>autoscale_max</strong></dt>
+</dl>
+<dl><dt><strong>autoscale_min</strong></dt>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['WarehousesHelper']</td></tr></table>
+</body></html>

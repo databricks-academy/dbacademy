@@ -114,7 +114,9 @@ is&nbsp;a&nbsp;read-only&nbsp;view&nbsp;of&nbsp;the&nbsp;internal&nbsp;mapping.<
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-deprecated"><strong>deprecated</strong></a>(reason=None, action='warn') -&gt; 'Callable'</dt><dd><tt>Decorator&nbsp;to&nbsp;indicate&nbsp;that&nbsp;a&nbsp;function&nbsp;should&nbsp;no&nbsp;longer&nbsp;be&nbsp;used.</tt></dd></dl>
+<td width="100%"><dl><dt><a name="-clean_string"><strong>clean_string</strong></a>(value, replacement: 'str' = '_') -&gt; 'str'</dt></dl>
+ <dl><dt><a name="-deprecated"><strong>deprecated</strong></a>(reason=None, action='warn') -&gt; 'Callable'</dt><dd><tt>Decorator&nbsp;to&nbsp;indicate&nbsp;that&nbsp;a&nbsp;function&nbsp;should&nbsp;no&nbsp;longer&nbsp;be&nbsp;used.</tt></dd></dl>
+ <dl><dt><a name="-load_databricks_cfg"><strong>load_databricks_cfg</strong></a>(path: 'str')</dt></dl>
  <dl><dt><a name="-overrides"><strong>overrides</strong></a>(func: 'Callable' = None, check_signature: 'bool' = True) -&gt; 'Callable'</dt><dd><tt>Decorator&nbsp;to&nbsp;indicate&nbsp;that&nbsp;a&nbsp;function&nbsp;overrides&nbsp;a&nbsp;base-class&nbsp;function.</tt></dd></dl>
  <dl><dt><a name="-print_title"><strong>print_title</strong></a>(title: 'str', divider: 'str' = '-', length: 'int' = 100) -&gt; 'None'</dt></dl>
  <dl><dt><a name="-print_warning"><strong>print_warning</strong></a>(title: 'str', message: 'str', length: 'int' = 100) -&gt; 'None'</dt></dl>
@@ -125,5 +127,6 @@ is&nbsp;a&nbsp;read-only&nbsp;view&nbsp;of&nbsp;the&nbsp;internal&nbsp;mapping.<
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>__all__</strong> = ['deprecated', 'overrides', 'print_title', 'print_warning', 'CachedStaticProperty', 'Cloud']</td></tr></table>
+<td width="100%"><strong>__all__</strong> = ['deprecation_log_level', 'deprecated', 'overrides', 'print_title', 'print_warning', 'CachedStaticProperty', 'clean_string', 'load_databricks_cfg', 'Cloud']<br>
+<strong>deprecation_log_level</strong> = 'error'</td></tr></table>
 </body></html>

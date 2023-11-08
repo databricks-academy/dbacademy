@@ -12,14 +12,6 @@
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
-<tr bgcolor="#aa55cc">
-<td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
-    
-<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="dbacademy.common.html">dbacademy.common</a><br>
-</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
-<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
@@ -59,11 +51,7 @@ Methods defined here:<br>
 
 <dl><dt><a name="JobsClient-delete_by_id"><strong>delete_by_id</strong></a>(self, job_id)</dt></dl>
 
-<dl><dt><a name="JobsClient-delete_by_job_id"><strong>delete_by_job_id</strong></a>(self, job_id)</dt></dl>
-
 <dl><dt><a name="JobsClient-delete_by_name"><strong>delete_by_name</strong></a>(self, job_names, success_only: bool) -&gt; None</dt></dl>
-
-<dl><dt><a name="JobsClient-get"><strong>get</strong></a>(self, job_id)</dt></dl>
 
 <dl><dt><a name="JobsClient-get_by_id"><strong>get_by_id</strong></a>(self, job_id)</dt></dl>
 
@@ -80,10 +68,6 @@ Methods defined here:<br>
 <dl><dt><a name="JobsClient-update_schedule"><strong>update_schedule</strong></a>(self, *, _job_id: Optional[str], _paused: Optional[bool], _quartz_cron_expression: Optional[str], _timezone_id: Optional[str]) -&gt; Dict[str, Any]</dt></dl>
 
 <dl><dt><a name="JobsClient-update_trigger"><strong>update_trigger</strong></a>(self, *, _job_id: str, _paused: Optional[bool], _url: Optional[str], _min_time_between_triggers_seconds: Optional[int], _wait_after_last_change_seconds: Optional[int]) -&gt; Dict[str, Any]</dt></dl>
-
-<hr>
-Data and other attributes defined here:<br>
-<dl><dt><strong>JobConfig</strong> = &lt;class 'dbacademy.clients.databricks.jobs.job_config_classes.JobConfig'&gt;</dl>
 
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>

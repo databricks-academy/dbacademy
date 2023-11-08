@@ -21,7 +21,7 @@
 <dt><font face="helvetica, arial"><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>(<a href="builtins.html#object">builtins.object</a>)
 </font></dt><dd>
 <dl>
-<dt><font face="helvetica, arial"><a href="dbacademy.clients.databricks.uc.html#UcClient">UcClient</a>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.databricks.uc.html#UcApi">UcApi</a>
 </font></dt></dl>
 </dd>
 </dl>
@@ -29,33 +29,37 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="UcClient">class <strong>UcClient</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="UcApi">class <strong>UcApi</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#UcClient">UcClient</a>(client:&nbsp;dbacademy.clients.rest.common.ApiClient)<br>
+<td colspan=2><tt><a href="#UcApi">UcApi</a>(client:&nbsp;dbacademy.clients.rest.common.ApiClient)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
-<dd><a href="dbacademy.clients.databricks.uc.html#UcClient">UcClient</a></dd>
+<dd><a href="dbacademy.clients.databricks.uc.html#UcApi">UcApi</a></dd>
 <dd><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="UcClient-__init__"><strong>__init__</strong></a>(self, client: dbacademy.clients.rest.common.ApiClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#UcClient-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="UcApi-__init__"><strong>__init__</strong></a>(self, client: dbacademy.clients.rest.common.ApiClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#UcApi-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="UcClient-get_current_metastore_assignment"><strong>get_current_metastore_assignment</strong></a>(self)</dt></dl>
+<dl><dt><a name="UcApi-get_current_metastore_assignment"><strong>get_current_metastore_assignment</strong></a>(self)</dt></dl>
 
-<dl><dt><a name="UcClient-metastore_summary"><strong>metastore_summary</strong></a>(self)</dt></dl>
+<dl><dt><a name="UcApi-metastore_summary"><strong>metastore_summary</strong></a>(self)</dt></dl>
 
-<dl><dt><a name="UcClient-workspaces"><strong>workspaces</strong></a>(self, workspace_id: str) -&gt; dbacademy.clients.databricks.uc.Workspaces</dt></dl>
+<dl><dt><a name="UcApi-workspace"><strong>workspace</strong></a>(self, workspace_id: str) -&gt; dbacademy.clients.databricks.uc.WorkspaceApi</dt></dl>
 
 <hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>metastores</strong></dt>
+</dl>
+<hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
-<dl><dt><a name="UcClient-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
+<dl><dt><a name="UcApi-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
 
-<dl><dt><a name="UcClient-help"><strong>help</strong></a>(self)</dt></dl>
+<dl><dt><a name="UcApi-help"><strong>help</strong></a>(self)</dt></dl>
 
 <hr>
 Data descriptors inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
@@ -76,5 +80,5 @@ Data and other attributes inherited from <a href="dbacademy.clients.rest.common.
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>__all__</strong> = ['UcClient']</td></tr></table>
+<td width="100%"><strong>__all__</strong> = ['UcApi']</td></tr></table>
 </body></html>

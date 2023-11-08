@@ -29,15 +29,12 @@ Examples&nbsp;include&nbsp;wrappers&nbsp;around&nbsp;tags,&nbsp;notebook&nbsp;st
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl><dt><a name="-active_streams"><strong>active_streams</strong></a>() -&gt; List</dt></dl>
  <dl><dt><a name="-check_deprecation_logging_enabled"><strong>check_deprecation_logging_enabled</strong></a>()</dt></dl>
- <dl><dt><a name="-clean_string"><strong>clean_string</strong></a>(value, replacement: str = '_') -&gt; str</dt></dl>
  <dl><dt><a name="-clock_start"><strong>clock_start</strong></a>() -&gt; int</dt></dl>
  <dl><dt><a name="-clock_stopped"><strong>clock_stopped</strong></a>(start: int, end: str = '') -&gt; str</dt></dl>
  <dl><dt><a name="-display"><strong>display</strong></a>(html) -&gt; None</dt></dl>
  <dl><dt><a name="-display_html"><strong>display_html</strong></a>(html) -&gt; None</dt></dl>
  <dl><dt><a name="-find_global"><strong>find_global</strong></a>(target)</dt></dl>
  <dl><dt><a name="-get_browser_host_name"><strong>get_browser_host_name</strong></a>(default=None)</dt></dl>
- <dl><dt><a name="-get_cloud"><strong>get_cloud</strong></a>() -&gt; str</dt><dd><tt>Indicates&nbsp;which&nbsp;cloud&nbsp;the&nbsp;current&nbsp;workspace&nbsp;is&nbsp;deployed&nbsp;into<br>
-:return:&nbsp;One&nbsp;of&nbsp;GCP,&nbsp;AWS&nbsp;or&nbsp;MSA</tt></dd></dl>
  <dl><dt><a name="-get_job_id"><strong>get_job_id</strong></a>(default=None)</dt></dl>
  <dl><dt><a name="-get_mock_value"><strong>get_mock_value</strong></a>(key: str, function: Callable[[], Any]) -&gt; Any</dt></dl>
  <dl><dt><a name="-get_notebook_dir"><strong>get_notebook_dir</strong></a>(offset=-1) -&gt; str</dt></dl>
@@ -80,17 +77,8 @@ When&nbsp;running&nbsp;under&nbsp;test,&nbsp;the&nbsp;value&nbsp;is&nbsp;stored&
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>Any</strong> = typing.Any<br>
-<strong>Callable</strong> = typing.Callable<br>
-<strong>Dict</strong> = typing.Dict<br>
-<strong>GENERATING_DOCS</strong> = 'generating_docs'<br>
-<strong>List</strong> = typing.List<br>
-<strong>MOCK_CONFIG</strong> = {}<br>
-<strong>MOCK_VALUES</strong> = {}<br>
-<strong>Optional</strong> = typing.Optional<br>
-<strong>SPARK_CONF_DEPENDENCY_WARNING</strong> = 'dbacademy.dependency.warning'<br>
-<strong>SPARK_CONF_DEPRECATION_LOGGING</strong> = 'dbacademy.deprecation.logging'<br>
-<strong>Union</strong> = typing.Union<br>
+<td width="100%"><strong>GENERATING_DOCS</strong> = 'generating_docs'<br>
+<strong>__all__</strong> = ['get_spark_config', 'set_spark_config', 'get_mock_value', 'check_deprecation_logging_enabled', 'sql', 'get_parameter', 'get_tags', 'get_tag', 'get_workspace_id', 'get_workspace_url', 'get_username', 'get_browser_host_name', 'get_notebook_name', 'get_notebook_dir', 'get_notebook_path', 'get_notebooks_api_endpoint', 'get_notebooks_api_token', 'get_job_id', 'get_org_id', 'get_run_id', ...]<br>
 <strong>__annotations__</strong> = {'dbutils': typing.Optional[dbacademy.dbgems.mock_dbutils_class.MockDBUtils], 'sc': typing.Optional[ForwardRef('pyspark.SparkContext')], 'spark': typing.Optional[ForwardRef('pyspark.sql.SparkSession')]}<br>
 <strong>dbutils</strong> = None<br>
 <strong>sc</strong> = None<br>

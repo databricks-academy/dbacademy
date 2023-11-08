@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dbhelper.supporting.clusters_helper</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbhelper.html"><font color="#ffffff">dbhelper</font></a>.<a href="dbacademy.dbhelper.supporting.html"><font color="#ffffff">supporting</font></a>.clusters_helper</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbhelper%5Csupporting%5Cclusters_helper.py">c:\dvlp\dbacademy\src\dbacademy\dbhelper\supporting\clusters_helper.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="dbacademy.dbhelper.dbh_constants.html">dbacademy.dbhelper.dbh_constants</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbhelper.supporting.clusters_helper.html#ClustersHelper">ClustersHelper</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ClustersHelper">class <strong>ClustersHelper</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#ClustersHelper">ClustersHelper</a>(db_academy_rest_client:&nbsp;dbacademy.clients.databricks.DBAcademyRestClient)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="ClustersHelper-__init__"><strong>__init__</strong></a>(self, db_academy_rest_client: dbacademy.clients.databricks.DBAcademyRestClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="ClustersHelper-create_all_purpose_policy"><strong>create_all_purpose_policy</strong></a>(self, *, instance_pool_id: str, spark_version: str, autotermination_minutes_max: int, autotermination_minutes_default: int) -&gt; str</dt></dl>
+
+<dl><dt><a name="ClustersHelper-create_dlt_policy"><strong>create_dlt_policy</strong></a>(self, *, lab_id: str, workspace_description: str, workspace_name: str, org_id: str) -&gt; str</dt></dl>
+
+<dl><dt><a name="ClustersHelper-create_instance_pool"><strong>create_instance_pool</strong></a>(self, *, preloaded_spark_version: str, min_idle_instances: int = 0, idle_instance_autotermination_minutes: int = 15, node_type_id: str = None, org_id: str, lab_id: str, workspace_name: str, workspace_description: str) -&gt; str</dt></dl>
+
+<dl><dt><a name="ClustersHelper-create_jobs_policy"><strong>create_jobs_policy</strong></a>(self, *, instance_pool_id: str, spark_version: str) -&gt; str</dt></dl>
+
+<dl><dt><a name="ClustersHelper-create_named_instance_pool"><strong>create_named_instance_pool</strong></a>(self, *, name: str, min_idle_instances: int, idle_instance_autotermination_minutes: int, lab_id: str, workspace_description: str, workspace_name: str, org_id: str, node_type_id: str, preloaded_spark_version: str) -&gt; str</dt></dl>
+
+<hr>
+Class methods defined here:<br>
+<dl><dt><a name="ClustersHelper-add_custom_tag"><strong>add_custom_tag</strong></a>(definition: Dict[str, Any], name: str, value: str, default_value: str = 'UNKNOWN') -&gt; None<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt></dl>
+
+<hr>
+Static methods defined here:<br>
+<dl><dt><a name="ClustersHelper-add_default_policy"><strong>add_default_policy</strong></a>(definition: Dict[str, Any], name: str, value: str) -&gt; None</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['ClustersHelper']</td></tr></table>
+</body></html>
