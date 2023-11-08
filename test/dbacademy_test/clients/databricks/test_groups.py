@@ -37,11 +37,11 @@ class TestGroups(unittest.TestCase):
 
         members = group.get("members")
         self.assertEquals(1, len(members))
-        self.assertEquals({
-            "display": "jacob.parr@databricks.com",
-            "value": "8598139271121446",
-            "$ref": "Users/8598139271121446"
-        }, members[0])
+
+        self.assertEqual(3, len(members[0]))
+        self.assertEqual("Jacob Parr", members[0].get("display"))
+        self.assertEqual("8598139271121446", members[0].get("value"))
+        self.assertEqual("Users/8598139271121446", members[0].get("$ref"))
 
         groups = group.get("groups")
         self.assertEquals(0, len(groups))

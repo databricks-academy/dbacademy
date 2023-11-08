@@ -10,7 +10,6 @@ class WorkspaceHelperConstants:
 
         self.PARAM_EVENT_ID = "event_id"
         self.PARAM_EVENT_DESCRIPTION = "event_description"
-        self.PARAM_CONFIGURE_FOR = "configure_for"
         self.PARAM_POOLS_NODE_TYPE_ID = "pools_node_type_id"
         self.PARAM_DEFAULT_SPARK_VERSION = "default_spark_version"
         self.PARAM_DATASETS = "datasets"
@@ -18,13 +17,6 @@ class WorkspaceHelperConstants:
         self.PARAM_SOURCE = "source"
         self.PARAM_ORG_ID = "org_id"
         self.PARAM_WORKSPACE_NAME = "workspace_name"
-
-        self.CONFIGURE_FOR_ALL_USERS = "All Users"
-        self.CONFIGURE_FOR_MISSING_USERS_ONLY = "Missing Users Only"
-        self.CONFIGURE_FOR_CURRENT_USER_ONLY = "Current User Only"
-
-        self.CONFIGURE_FOR_OPTIONS = ["", self.CONFIGURE_FOR_ALL_USERS, self.CONFIGURE_FOR_MISSING_USERS_ONLY, self.CONFIGURE_FOR_CURRENT_USER_ONLY]
-        self.CONFIGURE_FOR_VALID_OPTIONS = self.CONFIGURE_FOR_OPTIONS[1:]  # all but empty-string
 
 
 class ClustersHelperConstants:

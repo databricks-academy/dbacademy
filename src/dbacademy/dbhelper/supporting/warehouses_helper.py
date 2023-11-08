@@ -26,29 +26,23 @@ class WarehousesHelper:
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
         return 1 if DBAcademyHelper.is_smoke_test() else 20
 
-    def delete_sql_warehouses_for(self, username: str, lesson_config: LessonConfig) -> None:
+    def delete_sql_warehouses_for(self, lesson_config: LessonConfig) -> None:
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
-        name = DBAcademyHelper.to_unique_name(username=username,
-                                              course_code=lesson_config.course_config.course_code,
-                                              lesson_name=lesson_config.name,
-                                              sep="-")
+        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+
+        name = DBAcademyHelper.to_unique_name(lesson_config=lesson_config, sep="-")
 
         self.__client.sql.warehouses.delete_by_name(name=name)
 
-    def delete_sql_warehouses(self, configure_for: str, lesson_config: LessonConfig) -> None:
+    def delete_sql_warehouses(self, lesson_config: LessonConfig) -> None:
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 
-        validate.str_value(configure_for=configure_for, required=True)
-        # TODO determine if this is actually required or not.
-        validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=False)
+        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
 
-        usernames = self.__workspace_helper.get_usernames(configure_for=configure_for,
-                                                          lesson_config=lesson_config)
+        usernames = self.__workspace_helper.get_usernames(lesson_config=lesson_config)
 
-        WorkspaceHelper.do_for_all_users(usernames,
-                                         lambda username: self.delete_sql_warehouses_for(username=username,
-                                                                                         lesson_config=lesson_config))
+        WorkspaceHelper.do_for_all_users(usernames, lambda username: self.delete_sql_warehouses_for(lesson_config=lesson_config))
 
     def execute_statements(self, warehouse_id: str, statements: List[str]) -> None:
         import json
@@ -66,14 +60,15 @@ class WarehousesHelper:
                 print(json.dumps(results, indent=4))
 
     def create_sql_warehouses(self, *,
-                              configure_for: str,
                               auto_stop_mins: Optional[int] = None,
                               lesson_config: LessonConfig,
                               enable_serverless_compute: bool = True) -> None:
 
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 
-        usernames = self.__workspace_helper.get_usernames(configure_for=configure_for, lesson_config=lesson_config)
+        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+
+        usernames = self.__workspace_helper.get_usernames(lesson_config=lesson_config)
 
         WorkspaceHelper.do_for_all_users(usernames, lambda username: self.create_sql_warehouse_for(username=username,
                                                                                                    auto_stop_mins=auto_stop_mins,
@@ -83,8 +78,6 @@ class WarehousesHelper:
     def create_sql_warehouse_for(self, *,
                                  username: str,
                                  lesson_config: LessonConfig,
-                                 # course_code: str,
-                                 # lesson_name: str,
                                  auto_stop_mins: Optional[int] = None,
                                  enable_serverless_compute: bool = True):
 
@@ -92,10 +85,12 @@ class WarehousesHelper:
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
-        name = DBAcademyHelper.to_unique_name(username=username,
-                                              course_code=lesson_config.course_config.course_code,
-                                              lesson_name=lesson_config.name,
-                                              sep="-")
+        username = validate.str_value(username=username, required=True)
+        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        auto_stop_mins = validate.int_value(auto_stop_mins=auto_stop_mins, required=False)
+        enable_serverless_compute = validate.bool_value(enable_serverless_compute=enable_serverless_compute, required=True)
+
+        name = DBAcademyHelper.to_unique_name(lesson_config=lesson_config, sep="-")
 
         return self.create_sql_warehouse(name=name,
                                          for_user=username,

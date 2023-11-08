@@ -234,35 +234,33 @@ class DBAcademyHelper:
         :param sep: The seperator to use between words
         :return: a unique name consisting of the consumer's username, and the course code.
         """
-        return self.to_unique_name(username=self.username,
-                                   course_code=self.course_config.course_code,
-                                   lesson_name=self.lesson_config.name,
-                                   sep=sep)
+        return self.to_unique_name(lesson_config=self.lesson_config, sep=sep)
 
     @classmethod
-    def to_unique_name(cls, *, username: str, course_code: str, lesson_name: Optional[str], sep: str) -> str:
+    def to_unique_name(cls, lesson_config: LessonConfig, sep: str) -> str:
         """
         A utility function that produces a unique name to be used in creating jobs, warehouses, DLT pipelines, experiments and other user & course specific artifacts.
         The pattern consist of the local part of the email address, a 4-character hash, "da" for DBAcademy and the course's code. The value is then converted to lower case
         after which all non-alpha and non-digits are replaced with hyphens.
         See also DBAcademyHelper.unique_name
-        :param username: The full email address of a user. See also `LessonConfig.username`
-        :param course_code: The course's code. See also `CourseConfig.course_code`
-        :param lesson_name: The lesson's name (usually None). See also `LessonConfig.name`
+        :param lesson_config: The lesson's configuration. See also `LessonConfig` and `CourseConfig`
         :param sep: The seperator to use between words, defaults to a hyphen
         :return: The unique name composited from the specified username and course_code
         """
         from dbacademy import dbgems
         from dbacademy import common
 
-        local_part = username.split("@")[0]
-        hash_basis = f"{username}{dbgems.get_workspace_id()}"
+        sep = validate.str_value(sep=sep, required=True)
+        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+
+        local_part = lesson_config.username.split("@")[0]
+        hash_basis = f"{lesson_config.username}{dbgems.get_workspace_id()}"
         username_hash = dbgems.stable_hash(hash_basis, length=4)
 
-        if lesson_name is None:
-            name = f"{local_part} {username_hash} da {course_code}"
+        if lesson_config.name is None:
+            name = f"{local_part} {username_hash} da {lesson_config.course_config.course_code}"
         else:
-            name = f"{local_part} {username_hash} da {course_code} {lesson_name}"
+            name = f"{local_part} {username_hash} da {lesson_config.course_config.course_code} {lesson_config.name}"
 
         return common.clean_string(name, replacement=sep).lower()
 

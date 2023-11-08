@@ -1,48 +1,54 @@
 __all__ = ["CourseConfig"]
 
-from typing import List, Optional
+from typing import List, Optional, Union
 
 
 class CourseConfig:
 
     def __init__(self, *,
-                 course_code: str,
-                 course_name: str,
-                 data_source_version: str,
-                 install_min_time: str,
-                 install_max_time: str,
-                 supported_dbrs: List[str],
-                 expected_dbrs: str):
+                 _course_code: str,
+                 _course_name: str,
+                 _data_source_version: str,
+                 _install_min_time: str,
+                 _install_max_time: str,
+                 _supported_dbrs: Union[str, List[str]],
+                 _expected_dbrs: str):
         """
         The CourseConfig encapsulates those parameters that should never change for the entire duration of a course
         compared to the LessonConfig which encapsulates parameters that may change from lesson to lesson
-        :param course_code: See the property by the same name
-        :param course_name: See the property by the same name
-        :param data_source_version: See the property by the same name
-        :param install_min_time: See the property by the same name
-        :param install_max_time: See the property by the same name
-        :param supported_dbrs: See the property by the same name
-        :param expected_dbrs: See the property by the same name
+        :param _course_code: See the property by the same name
+        :param _course_name: See the property by the same name
+        :param _data_source_version: See the property by the same name
+        :param _install_min_time: See the property by the same name
+        :param _install_max_time: See the property by the same name
+        :param _supported_dbrs: See the property by the same name
+        :param _expected_dbrs: See the property by the same name
         """
-        self.__course_code = course_code
-        self.__build_name = CourseConfig.to_build_name(course_name)
 
-        self.__course_name = course_name
-        self.__data_source_version = data_source_version
+        from dbacademy.common import validate
 
-        self.__install_min_time = install_min_time
-        self.__install_max_time = install_max_time
+        self.__course_code = validate.str_value(_course_code=_course_code, required=True)
+        self.__course_name = validate.str_value(_course_name=_course_name, required=True)
+        self.__build_name = CourseConfig.to_build_name(self.course_name)
 
-        assert len(supported_dbrs) > 0, f"At least one supported DBR must be defined."
-        self.__supported_dbrs = [str(d) for d in supported_dbrs]
+        self.__data_source_version = validate.str_value(_data_source_version=_data_source_version, required=True)
 
-        self.__expected_dbrs = expected_dbrs
-        if expected_dbrs != "{{supported_dbrs}}":
+        self.__install_min_time = validate.str_value(_install_min_time=_install_min_time, required=True)
+        self.__install_max_time = validate.str_value(_install_max_time=_install_max_time, required=True)
+
+        _supported_dbrs = [_supported_dbrs] if isinstance(_supported_dbrs, str) else _supported_dbrs
+        validate.list_of_strings(_supported_dbrs=_supported_dbrs, required=True)
+        self.__supported_dbrs = validate.list_value(_supported_dbrs=_supported_dbrs, min_length=1)
+
+        self.__expected_dbrs = validate.str_value(_expected_dbrs=_expected_dbrs, required=True)
+
+        # Verify that the expected and supported list of DBRs match.
+        if self.expected_dbrs != "{{supported_dbrs}}":
             # This value is filled in at build time and ignored otherwise.
-            expected_dbrs = [e.strip() for e in expected_dbrs.split(",")]
-            assert len(supported_dbrs) == len(expected_dbrs), f"The supported and expected list of DBRs does not match: {len(supported_dbrs)} (supported) vs {len(expected_dbrs)} (expected)"
-            for dbr in supported_dbrs:
-                assert dbr in expected_dbrs, f"The supported DBR \"{dbr}\" was not find in the list of expected dbrs: {expected_dbrs}"
+            expected_dbr_values = [e.strip() for e in self.expected_dbrs.split(",")]
+            assert len(self.supported_dbrs) == len(expected_dbr_values), f"The supported and expected list of DBRs does not match: {len(self.supported_dbrs)} (supported) vs {len(expected_dbr_values)} (expected)"
+            for dbr in self.supported_dbrs:
+                assert dbr in expected_dbr_values, f"The supported DBR \"{dbr}\" was not find in the list of expected dbrs: {expected_dbr_values}"
 
     @property
     def course_code(self) -> str:

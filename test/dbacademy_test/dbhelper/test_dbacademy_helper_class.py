@@ -44,13 +44,62 @@ class TestDBAcademyHelper(unittest.TestCase):
         path = DBAcademyHelper.get_dbacademy_datasets_staging()
         self.assertEquals("dbfs:/mnt/dbacademy-datasets-staging", path)
 
-    def test_to_unique_name(self):
+    def test_to_unique_name_no_lesson(self):
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
+        from dbacademy.dbhelper.lesson_config import LessonConfig
+        from dbacademy.dbhelper.course_config import CourseConfig
 
-        name = DBAcademyHelper.to_unique_name(username="mickey.mouse@disney.com", course_code="test", lesson_name=None, sep="-")
+        course_config = CourseConfig(_course_code="test",
+                                     _course_name="Testing 123",
+                                     _data_source_version="v01",
+                                     _install_min_time="1 min",
+                                     _install_max_time="5 min",
+                                     _supported_dbrs=["spark-123"],
+                                     _expected_dbrs="spark-123")
+
+        lesson_config = LessonConfig(_name=None,
+                                     _create_schema=False,
+                                     _create_catalog=False,
+                                     _requires_uc=False,
+                                     _install_datasets=False,
+                                     _enable_streaming_support=False,
+                                     _enable_ml_support=False,
+                                     _mocks={
+                                         "__username": "mickey.mouse@disney.com"
+                                     })
+
+        lesson_config.lock_mutations(course_config)
+
+        name = DBAcademyHelper.to_unique_name(lesson_config=lesson_config, sep="-")
         self.assertEquals("mickey-mouse-g4qd-da-test", name)
 
-        name = DBAcademyHelper.to_unique_name(username="mickey.mouse@disney.com", course_code="test", lesson_name="Smoke Test", sep="_")
+    def test_to_unique_name_with_lesson(self):
+        from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
+        from dbacademy.dbhelper.lesson_config import LessonConfig
+        from dbacademy.dbhelper.course_config import CourseConfig
+
+        course_config = CourseConfig(_course_code="test",
+                                     _course_name="Testing 123",
+                                     _data_source_version="v01",
+                                     _install_min_time="1 min",
+                                     _install_max_time="5 min",
+                                     _supported_dbrs=["spark-123"],
+                                     _expected_dbrs="spark-123")
+
+        lesson_config = LessonConfig(_name="Smoke Test",
+                                     _create_schema=False,
+                                     _create_catalog=False,
+                                     _requires_uc=False,
+                                     _install_datasets=False,
+                                     _enable_streaming_support=False,
+                                     _enable_ml_support=False,
+                                     _mocks={
+                                         "__username": "mickey.mouse@disney.com"
+                                     })
+
+        lesson_config.lock_mutations(course_config)
+
+        name = DBAcademyHelper.to_unique_name(lesson_config=lesson_config, sep="_")
         self.assertEquals("mickey_mouse_g4qd_da_test_smoke_test", name)
 
     def test_to_catalog_name_prefix(self):

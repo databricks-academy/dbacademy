@@ -259,7 +259,7 @@ class WorkspaceCleaner:
         if lesson_only:
             self.__unique_name = self.__da.unique_name("-")
         else:
-            self.__unique_name = self.__da.to_unique_name(username=self.__da.username, course_code=self.__da.course_config.course_code, lesson_name=None, sep="-")
+            self.__unique_name = self.__da.to_unique_name(lesson_config=self.__da.lesson_config, sep="-")
 
         return self.__unique_name
 

@@ -1,7 +1,7 @@
 # __all__ = ["DatabasesHelper"]
 __all__ = []
 
-from typing import Callable, List, Optional
+from typing import Callable, List
 from dbacademy.dbhelper import dbh_constants
 from dbacademy.common import validate
 from dbacademy.clients.databricks import DBAcademyRestClient
@@ -15,15 +15,11 @@ class DatabasesHelper:
         self.__client = validate.any_value(db_academy_rest_client=db_academy_rest_client, parameter_type=DBAcademyRestClient, required=True)
         self.__workspace_helper = validate.any_value(workspace_helper=workspace_helper, parameter_type=WorkspaceHelper, required=True)
 
-    def drop_databases(self, *,
-                       configure_for: str,
-                       lesson_config: LessonConfig) -> None:
+    def drop_databases(self, lesson_config: LessonConfig) -> None:
 
-        validate.str_value(configure_for=configure_for, required=True)
-        validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
 
-        usernames = self.__workspace_helper.get_usernames(configure_for=configure_for,
-                                                          lesson_config=lesson_config)
+        usernames = self.__workspace_helper.get_usernames(lesson_config=lesson_config)
         groups = self.__to_group_of(usernames=usernames, max_group_size=50)
 
         for i, group in enumerate(groups):
@@ -63,13 +59,11 @@ class DatabasesHelper:
         if not dropped:
             print(f"| ({index+1}/{count}) Database not dropped for {username}")
 
-    def drop_catalogs(self, *, configure_for: str, lesson_config: LessonConfig) -> None:
+    def drop_catalogs(self, lesson_config: LessonConfig) -> None:
 
-        validate.str_value(configure_for=configure_for, required=True)
-        validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
 
-        self.__workspace_helper.do_for_all_users(self.__workspace_helper.get_usernames(configure_for=configure_for,
-                                                                                       lesson_config=lesson_config),
+        self.__workspace_helper.do_for_all_users(self.__workspace_helper.get_usernames(lesson_config=lesson_config),
                                                  lambda username: self.__drop_catalogs_for(username=username,
                                                                                            lesson_config=lesson_config))
 
@@ -78,12 +72,10 @@ class DatabasesHelper:
         self.__workspace_helper.clear_existing_databases()
         self.__workspace_helper.clear_existing_catalogs()
 
-    def __drop_catalogs_for(self, *,
-                            username: str,
-                            lesson_config: LessonConfig) -> None:
+    def __drop_catalogs_for(self, username: str, lesson_config: LessonConfig) -> None:
 
-        validate.str_value(username=username, required=True)
-        validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        username = validate.str_value(username=username, required=True)
+        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
 
         from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
@@ -121,20 +113,17 @@ class DatabasesHelper:
         return groups
 
     def create_databases(self, *,
-                         configure_for: str,
                          drop_existing: bool,
-                         lesson_config: Optional[LessonConfig],
+                         lesson_config: LessonConfig,
                          post_create: Callable[[str, str], None] = None) -> None:
 
-        validate.str_value(configure_for=configure_for, required=True)
-        validate.bool_value(drop_existing=drop_existing, required=True)
-        validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
-        validate.any_value(post_create=post_create, parameter_type=Callable, required=False)
+        drop_existing = validate.bool_value(drop_existing=drop_existing, required=True)
+        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        post_create = validate.any_value(post_create=post_create, parameter_type=Callable, required=False)
 
         print(f"| Creating user-specific databases.")
 
-        usernames = self.__workspace_helper.get_usernames(configure_for=configure_for,
-                                                          lesson_config=lesson_config)
+        usernames = self.__workspace_helper.get_usernames(lesson_config=lesson_config)
 
         groups = self.__to_group_of(usernames=usernames, max_group_size=50)
 
@@ -192,18 +181,15 @@ class DatabasesHelper:
         return print(msg)
 
     def create_catalog(self, *, 
-                       configure_for: str, 
-                       drop_existing: bool, 
+                       drop_existing: bool,
                        lesson_config: LessonConfig,
                        post_create: Callable[[str, str], None] = None) -> None:
 
-        configure_for = validate.str_value(configure_for=configure_for, required=True)
         drop_existing = validate.bool_value(drop_existing=drop_existing, required=True)
         lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
         post_create = validate.any_value(post_create=post_create, parameter_type=Callable, required=False)
         
-        usernames = self.__workspace_helper.get_usernames(configure_for=configure_for,
-                                                          lesson_config=lesson_config)
+        usernames = self.__workspace_helper.get_usernames(lesson_config=lesson_config)
         
         self.__workspace_helper.do_for_all_users(usernames, lambda username: self.__create_catalog_for(username=username,
                                                                                                        drop_existing=drop_existing,

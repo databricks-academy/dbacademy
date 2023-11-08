@@ -724,7 +724,7 @@ class Commands(object):
             sleep(60)  # seconds
 
     @staticmethod
-    def workspace_setup(courseware_spec: Dict, cluster_spec: Dict, event: Dict, all_users=False):
+    def workspace_setup(courseware_spec: Dict, cluster_spec: Dict, event: Dict):
         def do_workspace_setup(ws: Workspace):
             import re
             import requests as web
@@ -738,10 +738,6 @@ class Commands(object):
             workspace_hostname = re.match("https://([^/]+)/api/", ws.endpoint)[1]
 
             # Spec for the job to run
-            if all_users:
-                configure_for = dbh_constants.WORKSPACE_HELPER.CONFIGURE_FOR_ALL_USERS
-            else:
-                configure_for = dbh_constants.WORKSPACE_HELPER.CONFIGURE_FOR_MISSING_USERS_ONLY
             job_spec = {
                 "name": "Workspace-Setup",
                 "timeout_seconds": 60 * 60 * 6,  # 6 hours
@@ -753,7 +749,6 @@ class Commands(object):
                         "base_parameters": {
                             dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_ID: event.get("name", "Unknown"),
                             dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_DESCRIPTION: event.get("description", "Unknown"),
-                            dbh_constants.WORKSPACE_HELPER.PARAM_CONFIGURE_FOR: configure_for,
                         },
                         "source": "GIT"
                     },

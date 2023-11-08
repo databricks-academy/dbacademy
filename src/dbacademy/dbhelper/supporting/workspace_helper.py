@@ -299,58 +299,39 @@ class WorkspaceHelper:
             # dbgems.get_tags() can throw exceptions in some secure contexts
             return dbgems.get_notebooks_api_endpoint()
 
-    def get_usernames(self, *,
-                      configure_for: str,
-                      lesson_config: Optional[LessonConfig]):
-
+    def get_usernames(self, lesson_config: LessonConfig):
         from dbacademy.common import validate
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
-        assert configure_for in dbh_constants.WORKSPACE_HELPER.CONFIGURE_FOR_VALID_OPTIONS, f"Who the workspace is being configured for must be specified, found \"{configure_for}\". Options include {dbh_constants.WORKSPACE_HELPER.CONFIGURE_FOR_VALID_OPTIONS}"
+        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
 
         if self._usernames is None:
             users = self.__client.scim().users().list()
             self._usernames = [r.get("userName") for r in users]
             self._usernames.sort()
 
-        if configure_for == dbh_constants.WORKSPACE_HELPER.CONFIGURE_FOR_CURRENT_USER_ONLY:
-            validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
-            # Override for the current user only
-            return [lesson_config.username]
+        # TODO - This isn't going to hold up long-term, maybe track per-user properties in this respect.
+        # The presumption here is that if the user doesn't have their own
+        # database, then they are also missing the rest of their config.
+        missing_users = set()
 
-        elif configure_for == dbh_constants.WORKSPACE_HELPER.CONFIGURE_FOR_MISSING_USERS_ONLY:
-            validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        if lesson_config.requires_uc:
+            for username in self._usernames:
+                prefix = DBAcademyHelper.to_catalog_name_prefix(username=username)
+                for catalog_name in self.existing_catalogs:
+                    if catalog_name.startswith(prefix):
+                        break
+                else:
+                    missing_users.add(username)
+        else:
+            for username in self._usernames:
+                prefix = DBAcademyHelper.to_schema_name_prefix(username=username, course_code=lesson_config.course_config.course_code)
 
-            # TODO - This isn't going to hold up long-term, maybe track per-user properties in this respect.
-            # The presumption here is that if the user doesn't have their own
-            # database, then they are also missing the rest of their config.
-            missing_users = set()
-
-            if lesson_config.requires_uc:
-                for username in self._usernames:
-                    prefix = DBAcademyHelper.to_catalog_name_prefix(username=username)
-                    for catalog_name in self.existing_catalogs:
-                        if catalog_name.startswith(prefix):
-                            break
-                    else:
-                        missing_users.add(username)
-
-                    # for catalog_name in self.existing_catalogs:
-                    #     if catalog_name.startswith(prefix):
-                    #         missing_users.add(username)
-            else:
-                for username in self._usernames:
-                    prefix = DBAcademyHelper.to_schema_name_prefix(username=username, course_code=lesson_config.course_config.course_code)
-
-                    for schema_name in self.existing_databases:
-                        if schema_name.startswith(prefix):
-                            break
-                    else:
-                        missing_users.add(username)
-
-                    # for schema_name in self.existing_databases:
-                    #     if schema_name.startswith(prefix):
-                    #         missing_users.add(username)
+                for schema_name in self.existing_databases:
+                    if schema_name.startswith(prefix):
+                        break
+                else:
+                    missing_users.add(username)
 
             missing_users = list(missing_users)
             missing_users.sort()
