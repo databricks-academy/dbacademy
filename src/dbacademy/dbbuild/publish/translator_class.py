@@ -278,9 +278,17 @@ class Translator:
     def extract_i18n_guid(cls, cm: str, command: str) -> (str, str):
         line_zero = command.strip().split("\n")[0]
 
-        prefix = f"{cm} DBTITLE 0,"
-        if line_zero.startswith(prefix):
-            # This is the new method, use the same prefix and suffix is end-of-=line
+        prefix_0 = f"{cm} DBTITLE 0,"
+        prefix_1 = f"{cm} DBTITLE 1,"
+
+        if line_zero.startswith(prefix_0):
+            # This is the new method, use the same prefix and suffix as end-of-=line
+            prefix = prefix_0
+            suffix = None
+            extra = ""
+        elif line_zero.startswith(prefix_1):
+            # This is the new method, use the same prefix and suffix as end-of-=line
+            prefix = prefix_1
             suffix = None
             extra = ""
         else:
