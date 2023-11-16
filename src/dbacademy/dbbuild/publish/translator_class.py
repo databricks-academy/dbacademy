@@ -282,17 +282,23 @@ class Translator:
         prefix_1 = f"{cm} DBTITLE 1,"
 
         if line_zero.startswith(prefix_0):
-            # This is the new method, use the same prefix and suffix as end-of-=line
+            # This is the new method, use the same suffix as end-of-line
             prefix = prefix_0
             suffix = None
             extra = ""
         elif line_zero.startswith(prefix_1):
-            # This is the new method, use the same prefix and suffix as end-of-=line
+            # This is the new method, use the same suffix as end-of-line
             prefix = prefix_1
             suffix = None
             extra = ""
+        elif line_zero.startswith(f"{cm} MAGIC %md --i18n-"):
+            # This is the old "source" method, use the same suffix as end-of-line
+            prefix = f"{cm} MAGIC %md"
+            suffix = None
+            extra = ""
+
         else:
-            # This is the old method, use the xml/html prefix and suffix
+            # This is the old "translated" method, use the xml/html prefix and suffix
             prefix = "<i18n value=\""
             suffix = "/>"
             extra = "--i18n-"
