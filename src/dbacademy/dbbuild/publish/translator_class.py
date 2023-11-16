@@ -275,44 +275,54 @@ class Translator:
             self.assert_no_changes_in_target_repo()
 
     @classmethod
-    def extract_i18n_guid(cls, cm: str, command: str) -> (str, str):
-        line_zero = command.strip().split("\n")[0]
-
+    def extract_i18n_guid(cls, *, i: int, cm: str, command: str, scan_line: str) -> str:
         prefix_0 = f"{cm} DBTITLE 0,"
         prefix_1 = f"{cm} DBTITLE 1,"
+        prefix_md = f"{cm} MAGIC %md"
+        prefix_html = "<i18n value=\""
 
-        if line_zero.startswith(prefix_0):
+        if scan_line.startswith(prefix_0):
             # This is the new method, use the same suffix as end-of-line
-            prefix = prefix_0
-            suffix = None
-            extra = ""
-        elif line_zero.startswith(prefix_1):
-            # This is the new method, use the same suffix as end-of-line
-            prefix = prefix_1
-            suffix = None
-            extra = ""
-        elif line_zero.startswith(f"{cm} MAGIC %md --i18n-"):
-            # This is the old "source" method, use the same suffix as end-of-line
-            prefix = f"{cm} MAGIC %md"
-            suffix = None
-            extra = ""
+            guid = cls.extract_i18n_guid_with_prefix(scan_line=scan_line, prefix=prefix_0, suffix=None, extra="")
 
+            if guid:
+                return guid
+            else:
+                line_one = command.strip().split("\n")[1]
+                return cls.extract_i18n_guid(i=i, cm=cm, command=command, scan_line=line_one)
+
+        elif scan_line.startswith(prefix_1):
+            # This is the new method, use the same suffix as end-of-line
+            guid = cls.extract_i18n_guid_with_prefix(scan_line=scan_line, prefix=prefix_1, suffix=None, extra="")
+
+            if guid:
+                return guid
+            else:
+                line_one = command.strip().split("\n")[1]
+                return cls.extract_i18n_guid(i=i, cm=cm, command=command, scan_line=line_one)
+
+        elif scan_line.startswith(prefix_md):
+            # This is the old "md-source" method, use the same suffix as end-of-line
+            return cls.extract_i18n_guid_with_prefix(scan_line=scan_line, prefix=prefix_md, suffix=None, extra="")
+
+        elif scan_line.startswith(prefix_html):
+            # This is the "html-translated" method, use the xml/html prefix and suffix
+            return cls.extract_i18n_guid_with_prefix(scan_line=scan_line, prefix=prefix_html, suffix="/>", extra="--i18n-")
         else:
-            # This is the old "translated" method, use the xml/html prefix and suffix
-            prefix = "<i18n value=\""
-            suffix = "/>"
-            extra = "--i18n-"
+            raise Exception(f"Cmd #{i + 1} | Unable to find the i18n marker in.")
 
-        pos_a = line_zero.find(prefix)
+    @classmethod
+    def extract_i18n_guid_with_prefix(cls, *, scan_line: str, prefix: str, suffix: Optional[str], extra: str) -> Optional[str]:
+        pos_a = scan_line.find(prefix)
         if pos_a == -1:
-            return None, line_zero
+            return None
 
         prefix_len = len(prefix)
-        pos_b = len(line_zero) if suffix is None else line_zero.find(suffix)-1
+        pos_b = len(scan_line) if suffix is None else scan_line.find(suffix)-1
 
-        guid = f"{extra}{line_zero[pos_a+prefix_len:pos_b]}"
+        guid = f"{extra}{scan_line[pos_a+prefix_len:pos_b]}"
         guid = None if len(guid.strip()) == 0 else guid
-        return guid, line_zero
+        return guid
 
     def assert_validated(self):
         assert self.validated, f"Cannot publish until the validator's configuration passes validation. Ensure that Translator.validate() was called and that all assignments passed"
@@ -394,8 +404,8 @@ class Translator:
 
             for i, command in enumerate(commands):
                 command = command.strip()
-                guid, line_zero = self.extract_i18n_guid(cm, command)
-                # print(f" - #{i+1:0>3} {guid}")
+                line_zero = command.strip().split("\n")[0]
+                guid = self.extract_i18n_guid(i=i, cm=cm, command=command, scan_line=line_zero)
 
                 if guid is None:
                     new_commands.append(command)                            # No GUID, it's %python or other type of command, not MD
