@@ -309,7 +309,7 @@ class Translator:
             # This is the "html-translated" method, use the xml/html prefix and suffix
             return cls.extract_i18n_guid_with_prefix(scan_line=scan_line, prefix=prefix_html, suffix="/>", extra="--i18n-")
         else:
-            raise Exception(f"Cmd #{i + 1} | Unable to find the i18n marker in.")
+            raise Exception(f"Cmd #{i + 1} | Unable to find the i18n marker in the command's title.")
 
     @classmethod
     def extract_i18n_guid_with_prefix(cls, *, scan_line: str, prefix: str, suffix: Optional[str], extra: str) -> Optional[str]:
