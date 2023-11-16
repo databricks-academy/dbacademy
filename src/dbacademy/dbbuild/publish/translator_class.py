@@ -309,7 +309,7 @@ class Translator:
             # This is the "html-translated" method, use the xml/html prefix and suffix
             return cls.extract_i18n_guid_with_prefix(scan_line=scan_line, prefix=prefix_html, suffix="/>", extra="--i18n-")
         else:
-            raise None
+            return None
 
     @classmethod
     def extract_i18n_guid_with_prefix(cls, *, scan_line: str, prefix: str, suffix: Optional[str], extra: str) -> Optional[str]:
