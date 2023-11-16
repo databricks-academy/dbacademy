@@ -274,8 +274,8 @@ class Translator:
             self.__changes_in_target_repo = len(results)
             self.assert_no_changes_in_target_repo()
 
-    @staticmethod
-    def __extract_i18n_guid(cm: str, command: str) -> (str, str):
+    @classmethod
+    def extract_i18n_guid(cls, cm: str, command: str) -> (str, str):
         line_zero = command.strip().split("\n")[0]
 
         prefix = f"{cm} DBTITLE 0,"
@@ -380,7 +380,7 @@ class Translator:
 
             for i, command in enumerate(commands):
                 command = command.strip()
-                guid, line_zero = self.__extract_i18n_guid(cm, command)
+                guid, line_zero = self.extract_i18n_guid(cm, command)
                 # print(f" - #{i+1:0>3} {guid}")
 
                 if guid is None:
