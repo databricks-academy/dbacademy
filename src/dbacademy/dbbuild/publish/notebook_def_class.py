@@ -415,6 +415,14 @@ class NotebookDef(NotebookDefData):
 
         return command
 
+    @classmethod
+    def is_markdown(cls, *, cm: str, command: str):
+        return command.startswith(f"{cm} MAGIC %md")
+
+    @classmethod
+    def is_not_markdown(cls, *, cm: str, command: str):
+        return not cls.is_markdown(cm=cm, command=command)
+
     def update_md_cells(self,
                         state: StateVariables,
                         cm: str,
@@ -424,7 +432,7 @@ class NotebookDef(NotebookDefData):
                         cell_title: str) -> str:
 
         # First verify that the specified command is a mark-down cell
-        if not command.startswith(f"{cm} MAGIC %md"):
+        if not self.is_markdown(cm=cm, command=command):
             return command
             
         # No longer enforcing this requirement
@@ -469,7 +477,7 @@ class NotebookDef(NotebookDefData):
             command = commands[i].lstrip()
 
             cm = self.get_comment_marker(language)
-            if command.startswith(f"{cm} MAGIC %md"):
+            if self.is_markdown(cm=cm, command=command):
                 md_commands.append(command)
 
         if len(md_commands) == 0:
@@ -803,7 +811,7 @@ For more current information, please see <a href="https://files.training.databri
         for token in bdc_tokens:
             self.test(lambda: token not in command, f"""Cmd #{i + 1} | Found the token "{token}" """)
 
-        if not command.startswith(f"{cm} MAGIC %md"):
+        if not self.is_markdown(cm=cm, command=command):
             if language.lower() == "python":
                 if "lang-python" not in self.ignoring:
                     self.warn(lambda: "%python" not in command, f"""Cmd #{i + 1} | Found "%python" in a Python notebook""")
