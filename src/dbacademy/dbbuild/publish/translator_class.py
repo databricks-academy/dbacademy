@@ -275,7 +275,7 @@ class Translator:
             self.assert_no_changes_in_target_repo()
 
     @classmethod
-    def extract_i18n_guid(cls, *, i: int, cm: str, command: str, scan_line: str) -> str:
+    def extract_i18n_guid(cls, *, i: int, cm: str, command: str, scan_line: str) -> Optional[str]:
         prefix_0 = f"{cm} DBTITLE 0,"
         prefix_1 = f"{cm} DBTITLE 1,"
         prefix_md = f"{cm} MAGIC %md"
