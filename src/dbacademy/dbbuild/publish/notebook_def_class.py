@@ -502,6 +502,10 @@ class NotebookDef(NotebookDefData):
         return command.startswith(f"{cm} {dbb_constants.NOTEBOOKS.DBTITLE} ")
 
     @classmethod
+    def is_not_titled(cls, *, cm: str, command: str):
+        return not cls.is_titled(cm=cm, command=command)
+
+    @classmethod
     def update_md_cells(cls,
                         logger: NotebookLogger,
                         i18n: bool,
@@ -1009,7 +1013,9 @@ For more current information, please see <a href="https://files.training.databri
 
         parent_dir = "/".join(target_path.split("/")[0:-1])
         self.client.workspace().mkdirs(parent_dir)
-        self.client.workspace().import_notebook(language.upper(), target_path, final_source)
+        self.client.workspace().import_notebook(language=language.upper(),
+                                                notebook_path=target_path,
+                                                content=final_source)
 
     def clean_todo_cell(self, source_language, command, i):
         new_command = ""
