@@ -70,8 +70,6 @@ class Translator:
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.common import print_warning
 
-        self.assert_validated()
-
         add_guid = validate.bool_value(add_guid=add_guid, required=True)
 
         print_warning("USE WITH CAUTION", ("Use this method with caution as it has undergone only minimal testing.\n"
