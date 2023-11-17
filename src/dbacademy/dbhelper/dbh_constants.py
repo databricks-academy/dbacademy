@@ -7,10 +7,6 @@ from typing import List
 class WorkspaceHelperConstants:
 
     @property
-    def UWS_CONFIG_PATH(self) -> str:
-        return "dbfs:/mnt/dbacademy/uws.json"
-
-    @property
     def WORKSPACE_SETUP(self) -> str:
         return "Workspace-Setup"
 

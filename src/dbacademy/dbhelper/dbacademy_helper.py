@@ -116,28 +116,25 @@ class DBAcademyHelper:
     @classmethod
     def __validate_uws(cls):
         import json, os
+        from dbacademy.dbhelper.supporting.universal_worskpace_setup_runner import UniversalWorkspaceSetupRunner
 
-        uws_config_path = dbh_constants.WORKSPACE_HELPER.UWS_CONFIG_PATH.replace("dbfs:/", "/dbfs/")
-        if not os.path.exists(uws_config_path):
+        uws = UniversalWorkspaceSetupRunner.read_config()
+        if uws is None:
             cls.__print_uws_error_message()
             raise AssertionError(f"Invalid Workspace Configuration")
 
-        with open(uws_config_path) as f:
-            config_json = f.read()
+        uws_status: str = uws.get("status", "UNKNOWN")
 
-            uws: Dict[str, Any] = json.loads(config_json)
-            uws_status: str = uws.get("status", "UNKNOWN")
+        if uws_status.upper() != "COMPLETED":
+            cls.__print_uws_error_message()
+            print(f"""The status was not "COMPLETED", found, "{uws_status}".""")
 
-            if uws_status.upper() != "COMPLETED":
-                cls.__print_uws_error_message()
-                print(f"""The status was not "COMPLETED", found, "{uws_status}".""")
+            uws_log: List[str] = uws.get("log", ["0 - EMPTY"])
+            uws_log.sort()
 
-                uws_log: List[str] = uws.get("log", ["0 - EMPTY"])
-                uws_log.sort()
-
-                for entry in uws_log:
-                    print(f"| {entry}")
-                raise AssertionError(f"Invalid Workspace Configuration")
+            for entry in uws_log:
+                print(f"| {entry}")
+            raise AssertionError(f"Invalid Workspace Configuration")
 
     @classmethod
     def __print_uws_error_message(cls):

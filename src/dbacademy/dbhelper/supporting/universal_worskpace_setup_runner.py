@@ -1,7 +1,10 @@
 __all__ = ["UniversalWorkspaceSetupRunner"]
 
+from typing import Dict, Any, Optional
 from dbacademy.clients.databricks import DBAcademyRestClient
 from dbacademy.dbhelper.course_config import CourseConfig
+
+UWS_CONFIG_PATH = "dbfs:/mnt/dbacademy/uws.json"
 
 
 class UniversalWorkspaceSetupRunner:
@@ -59,6 +62,27 @@ class UniversalWorkspaceSetupRunner:
     @property
     def pools_node_type_id(self) -> str:
         return self.__pools_node_type_id
+
+    @classmethod
+    def read_config(cls) -> Optional[Dict[str, Any]]:
+        import os, json
+
+        uws_config_path = UWS_CONFIG_PATH.replace("dbfs:/", "/dbfs/")
+        if not os.path.exists(uws_config_path):
+            return None
+
+        with open(uws_config_path, "r") as f:
+            config_json = f.read()
+            return json.loads(config_json)
+
+    @classmethod
+    def write_config(cls, uws: Dict[str, Any]) -> None:
+        import json
+
+        uws_config_path = UWS_CONFIG_PATH.replace("dbfs:/", "/dbfs/")
+
+        with open(uws_config_path, "w") as f:
+            f.write(json.dumps(uws, indent=4))
 
     def run(self):
         import time
