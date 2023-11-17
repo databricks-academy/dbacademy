@@ -2,7 +2,7 @@ __all__ = ["Translator"]
 
 from typing import Optional
 from dbacademy.dbbuild.publish.publisher_class import Publisher
-
+from dbacademy.dbbuild import dbb_constants
 
 class Translator:
 
@@ -276,8 +276,8 @@ class Translator:
 
     @classmethod
     def extract_i18n_guid(cls, *, i: int, cm: str, command: str, scan_line: str) -> Optional[str]:
-        prefix_0 = f"{cm} DBTITLE 0,"
-        prefix_1 = f"{cm} DBTITLE 1,"
+        prefix_0 = f"{cm} {dbb_constants.NOTEBOOKS.DBTITLE} 0,"
+        prefix_1 = f"{cm} {dbb_constants.NOTEBOOKS.DBTITLE} 1,"
         prefix_md = f"{cm} MAGIC %md "
         prefix_html = "<i18n value=\""
 
@@ -419,7 +419,7 @@ class Translator:
                     cmd_lines = [f"{cm} MAGIC {x}" for x in replacements]   # Prefix the magic command to each line
 
                     lines = [line_zero]                                     # The first line doesn't exist in the guid map
-                    if "DBTITLE" in command:
+                    if dbb_constants.NOTEBOOKS.DBTITLE in command:
                         # This is the new format, add %md or %md-sandbox
                         lines.append("%md-sandbox" if "%md-sandbox" in command else "%md")
 
