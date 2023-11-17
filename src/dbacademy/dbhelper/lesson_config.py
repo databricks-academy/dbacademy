@@ -7,28 +7,28 @@ from dbacademy.dbhelper.course_config import CourseConfig
 
 class LessonConfig:
     def __init__(self, *,
-                 _name: Optional[str],
-                 _create_schema: bool,
-                 _create_catalog: bool,
-                 _requires_uc: bool,
-                 _install_datasets: bool,
-                 _enable_streaming_support: bool,
-                 _enable_ml_support: bool,
-                 _mocks: Optional[Dict[str, Any]] = None):
+                 name: Optional[str],
+                 create_schema: bool,
+                 create_catalog: bool,
+                 requires_uc: bool,
+                 install_datasets: bool,
+                 enable_streaming_support: bool,
+                 enable_ml_support: bool,
+                 mocks: Optional[Dict[str, Any]] = None):
         """
         The LessonConfig encapsulates those parameters that may change from one lesson to another compared to the CourseConfig which
         encapsulates parameters that should never change for the entire duration of a course.
 
         This object is mutable until DBAcademyHelper.init() is called at which time mutations are prohibited. This behavior aims to
         avoid situations where parameters are changed but not reflected in the DBAcademyHelper instance
-        :param _name: See the property by the same name
-        :param _create_schema: See the property by the same name
-        :param _create_catalog: See the property by the same name
-        :param _requires_uc: See the property by the same name
-        :param _install_datasets: See the property by the same name
-        :param _enable_streaming_support: See the property by the same name
-        :param _enable_ml_support: See the property by the same name
-        :param _mocks: Used for testing, allows for mocking out the parameters __username, __initial_schema and __initial_catalog
+        :param name: See the property by the same name
+        :param create_schema: See the property by the same name
+        :param create_catalog: See the property by the same name
+        :param requires_uc: See the property by the same name
+        :param install_datasets: See the property by the same name
+        :param enable_streaming_support: See the property by the same name
+        :param enable_ml_support: See the property by the same name
+        :param mocks: Used for testing, allows for mocking out the parameters __username, __initial_schema and __initial_catalog
         """
         from dbacademy import dbgems
         from dbacademy.common import validate
@@ -39,26 +39,26 @@ class LessonConfig:
         # setting the actual value through the provided setter method.
 
         self.__name = None
-        self.__clean_name = None
-        self.name = validate.str_value(_name=_name, required=False)
+        self.__clean_name = None  # Use "setter" to initialize
+        self.name = validate.str_value(name=name, required=False)
 
         self.__installing_datasets = None  # the terms are slightly different for readability
-        self.installing_datasets = validate.bool_value(_install_datasets=_install_datasets, required=True)
+        self.installing_datasets = validate.bool_value(install_datasets=install_datasets, required=True)
 
-        self.__requires_uc = None
-        self.requires_uc = validate.bool_value(_requires_uc=_requires_uc, required=True)
+        self.__requires_uc = None  # Use "setter" to initialize
+        self.requires_uc = validate.bool_value(requires_uc=requires_uc, required=True)
 
-        self.__enable_streaming_support = None
-        self.enable_streaming_support = validate.bool_value(_enable_streaming_support=_enable_streaming_support, required=True)
+        self.__enable_streaming_support = None  # Use "setter" to initialize
+        self.enable_streaming_support = validate.bool_value(enable_streaming_support=enable_streaming_support, required=True)
 
-        self.__enable_ml_support = None
-        self.enable_ml_support = validate.bool_value(_enable_ml_support=_enable_ml_support, required=True)
+        self.__enable_ml_support = None  # Use "setter" to initialize
+        self.enable_ml_support = validate.bool_value(enable_ml_support=enable_ml_support, required=True)
 
-        self.__create_schema = None
-        self.create_schema = validate.bool_value(_create_schema=_create_schema, required=True)
+        self.__create_schema = None  # Use "setter" to initialize
+        self.create_schema = validate.bool_value(create_schema=create_schema, required=True)
 
-        self.__create_catalog = None
-        self.create_catalog = validate.bool_value(_create_catalog=_create_catalog, required=True)
+        self.__create_catalog = None  # Use "setter" to initialize
+        self.create_catalog = validate.bool_value(create_catalog=create_catalog, required=True)
 
         try:
             # Load all three values with a single query
@@ -73,7 +73,7 @@ class LessonConfig:
             self.__initial_catalog = None
 
         # Mock out the following attributes if specified.
-        mocks = validate.dict_value(_mocks=_mocks or dict(), required=True)
+        mocks = validate.dict_value(mocks=mocks or dict(), required=True)
 
         self.__username = mocks.get("__username", self.__username)
         self.__initial_schema = mocks.get("__initial_schema", self.__initial_schema)
