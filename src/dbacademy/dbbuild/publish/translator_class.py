@@ -79,8 +79,8 @@ class Translator:
 
         for source_notebook_path in source_files:
 
+            print("=" * 100)
             print(f"Processing {source_notebook_path}")
-            print("=" * 80)
 
             source_info = dbacademy_rest_client.workspace().get_status(source_notebook_path)
             language = source_info.get("language")
@@ -130,6 +130,7 @@ class Translator:
             dbacademy_rest_client.workspace().import_notebook(language=language.upper(),
                                                               notebook_path=source_notebook_path,
                                                               content=new_source)
+            print()
 
     def __select_i18n_language(self, source_repo: str):
         from dbacademy import dbgems
