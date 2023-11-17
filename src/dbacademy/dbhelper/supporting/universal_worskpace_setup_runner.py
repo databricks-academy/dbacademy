@@ -77,7 +77,7 @@ class UniversalWorkspaceSetupRunner:
 
     @classmethod
     def uws_status(cls, status: str) -> None:
-        cls.uws_append_message(f"Status: {status}")
+        cls.uws_append_message(f"Status >> {status}")
         uws = cls.uws_read()
         uws["status"] = status
         cls.uws_write(uws)
