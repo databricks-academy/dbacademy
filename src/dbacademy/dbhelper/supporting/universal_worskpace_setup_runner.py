@@ -93,16 +93,9 @@ class UniversalWorkspaceSetupRunner:
 
     @classmethod
     def uws_reset(cls) -> None:
-        import json
 
-        uws_config_path = UWS_CONFIG_PATH.replace("dbfs:/", "/dbfs/")
-
-        with open(uws_config_path, "w") as f:
-            uws = {
-                "status": "STARTED",
-                "log": ["Status >> STARTED"]
-            }
-            f.write(json.dumps(uws, indent=4))
+        cls.uws_write({"status": "UNKNOWN", "log": []})
+        cls.uws_status("STARTED")
 
     @classmethod
     def uws_append_message(cls, message: str) -> None:
