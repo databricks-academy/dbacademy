@@ -641,14 +641,14 @@ class Commands(object):
 
         # Spec for the job to run
         job_spec = {
-            "name": dbh_constants.WORKSPACE_HELPER.BOOTSTRAP_JOB_NAME,
+            "name": dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP_JOB_NAME,
             # TODO - 6 hours might be a "little" too long?
             "timeout_seconds": 60 * 60 * 6,  # 6 hours
             "max_concurrent_runs": 1,
             "tasks": [{
-                "task_key": "Workspace-Setup",
+                "task_key": dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP,
                 "notebook_task": {
-                    "notebook_path": "Workspace-Setup",
+                    "notebook_path": dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP,
                     "base_parameters": {
                         dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_ID: lab_id or "Unknown",
                         dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_DESCRIPTION: description or "Unknown",
@@ -659,11 +659,11 @@ class Commands(object):
                     },
                     "source": "GIT"
                 },
-                "job_cluster_key": "Workspace-Setup-Cluster",
+                "job_cluster_key": f"{dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP}-Cluster",
                 "timeout_seconds": 0
             }],
             "job_clusters": [{
-                "job_cluster_key": "Workspace-Setup-Cluster",
+                "job_cluster_key": f"{dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP}-Cluster",
                 "new_cluster": {
                     "spark_version": "11.3.x-scala2.12",
                     "spark_conf": {
@@ -686,7 +686,7 @@ class Commands(object):
                 }
             }],
             "git_source": {
-                "git_url": "https://github.com/databricks-academy/workspace-setup.git",
+                "git_url": f"https://github.com/databricks-academy/{dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP.lower()}.git",
                 "git_provider": "gitHub",
                 "git_branch": "main"
             },
@@ -731,32 +731,32 @@ class Commands(object):
             from dbacademy.dbhelper import dbh_constants
 
             courseware_url = courseware_spec["repo"]
-            response = web.get(courseware_url + "/blob/published/Includes/Workspace-Setup.py")
+            response = web.get(courseware_url + f"/blob/published/Includes/{dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP}.py")
             if response.status_code != 200:  # If file exists
-                return "No Workspace-Setup found."
+                return f"No {dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP} found."
 
             workspace_hostname = re.match("https://([^/]+)/api/", ws.endpoint)[1]
 
             # Spec for the job to run
             job_spec = {
-                "name": "Workspace-Setup",
+                "name": dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP,
                 "timeout_seconds": 60 * 60 * 6,  # 6 hours
                 "max_concurrent_runs": 1,
                 "tasks": [{
-                    "task_key": "Workspace-Setup",
+                    "task_key": dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP,
                     "notebook_task": {
-                        "notebook_path": "Includes/Workspace-Setup",
+                        "notebook_path": f"Includes/{dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP}",
                         "base_parameters": {
                             dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_ID: event.get("name", "Unknown"),
                             dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_DESCRIPTION: event.get("description", "Unknown"),
                         },
                         "source": "GIT"
                     },
-                    "job_cluster_key": "Workspace-Setup",
+                    "job_cluster_key": dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP,
                     "timeout_seconds": 0
                 }],
                 "job_clusters": [{
-                    "job_cluster_key": "Workspace-Setup",
+                    "job_cluster_key": dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP,
                     "new_cluster": {
                         "spark_version": cluster_spec["spark_version"],
                         "spark_conf": {

@@ -68,21 +68,21 @@ class UniversalWorkspaceSetupRunner:
         life_cycle_state = state.get("life_cycle_state")
         if life_cycle_state == "SKIPPED":
             print(
-                f"""Skipped Universal-Workspace-Setup (job #{job_id}, run #{run_id}) for "{self.workspace_name}" | {state_message}.""")
+                f"""Skipped {dbh_constants.WORKSPACE_HELPER.UNIVERSAL_WORKSPACE_SETUP} (job #{job_id}, run #{run_id}) for "{self.workspace_name}" | {state_message}.""")
             return
 
         elif life_cycle_state != "TERMINATED":
             raise Exception(
-                f"""Expected the final life cycle state of Universal-Workspace-Setup to be "TERMINATED", found "{life_cycle_state}" for "{self.workspace_name}" | {state_message}""")
+                f"""Expected the final life cycle state of {dbh_constants.WORKSPACE_HELPER.UNIVERSAL_WORKSPACE_SETUP} to be "TERMINATED", found "{life_cycle_state}" for "{self.workspace_name}" | {state_message}""")
 
         else:
             result_state = state.get("result_state")
             if result_state != "SUCCESS":
                 raise Exception(
-                    f"""Expected the final state of Universal-Workspace-Setup to be "SUCCESS", found "{result_state}" for "{self.workspace_name}" | {state_message}""")
+                    f"""Expected the final state of {dbh_constants.WORKSPACE_HELPER.UNIVERSAL_WORKSPACE_SETUP} to be "SUCCESS", found "{result_state}" for "{self.workspace_name}" | {state_message}""")
 
         duration = int((time.time() - start) / 60)
-        print(f"""Finished Universal-Workspace-Setup (job #{job_id}, run #{run_id}) for "{self.workspace_name}" ({duration} minutes).""")
+        print(f"""Finished {dbh_constants.WORKSPACE_HELPER.UNIVERSAL_WORKSPACE_SETUP} (job #{job_id}, run #{run_id}) for "{self.workspace_name}" ({duration} minutes).""")
 
     def create_job(self) -> str:
         import requests, json

@@ -2,6 +2,7 @@ __all__ = ["BuildConfig"]
 
 from typing import Type, List, Dict, Union, Any, Optional, Callable
 from dbacademy.clients.databricks import DBAcademyRestClient
+from dbacademy.dbhelper import dbh_constants
 
 
 class BuildConfig:
@@ -271,6 +272,9 @@ class BuildConfig:
             include_solution = self.include_solutions  # Initialize to the default value
             path = entity["path"][len(self.source_dir) + 1:]  # Get the notebook's path relative to the source root
 
+            error_message = f"""The {dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP} pattern is no longer supported; please update to the {dbh_constants.WORKSPACE_HELPER.UNIVERSAL_WORKSPACE_SETUP} pattern."""
+            assert path.lower() != f"includes/{dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP.lower()}", error_message
+
             if "includes/" in path.lower():  # Any folder that ends in "includes/"
                 test_round = 0  # Never test notebooks in the "includes" folders
 
@@ -279,7 +283,7 @@ class BuildConfig:
                 test_round = 1            # Add to test_round #1
                 include_solution = False  # Exclude from the solutions folder
 
-            if path.lower() == "includes/workspace-setup":
+            if path.lower() == f"includes/{dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP.lower()}":
                 order = 1                 # Reset needs to run first.
                 test_round = 1            # Add to test_round #1
                 include_solution = False  # Exclude from the solutions folder

@@ -1,6 +1,6 @@
 __all__ = ["DBAcademyHelper"]
 
-from typing import Union, Optional, Dict
+from typing import Union, Optional, Dict, List, Any
 from dbacademy.common import validate
 from dbacademy.clients.databricks import DBAcademyRestClient
 from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
@@ -26,12 +26,15 @@ class DBAcademyHelper:
         :param debug: Enables debug print messages.
         See also DBAcademyHelper.dprint
         """
+        import json
         from dbacademy import dbgems
         from dbacademy.clients import databricks
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
         from dbacademy.dbhelper.supporting.dev_helper import DevHelper
         from dbacademy.dbhelper.validations import ValidationHelper
         from dbacademy.dbhelper.paths import Paths
+
+        self.__validate_uws()
 
         self.__lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
         self.__lesson_config.assert_valid()
@@ -110,6 +113,38 @@ class DBAcademyHelper:
         self.__validate_spark_version()
         self.__validate_dbfs_writes(DBAcademyHelper.get_dbacademy_users_path())
         self.__validate_dbfs_writes(DBAcademyHelper.get_dbacademy_datasets_path())
+
+    @classmethod
+    def __validate_uws(cls):
+        import json
+        from dbacademy import dbgems
+
+        try:
+            dbgems.dbutils.fs.ls(dbh_constants.WORKSPACE_HELPER.UWS_CONFIG_PATH)
+        except Exception:
+            cls.__print_uws_error_message()
+            raise AssertionError(f"Invalid Workspace Configuration")
+
+        config_json = dbgems.dbutils.fs.head(file=dbh_constants.WORKSPACE_HELPER.UWS_CONFIG_PATH, max_bytes=999999)
+
+        uws: Dict[str, Any] = json.loads(config_json)
+        uws_status: str = uws.get("status", "UNKNOWN")
+
+        if uws_status.upper() != "COMPLETED":
+            cls.__print_uws_error_message()
+            print(f"""The status was not "COMPLETED", found, "{uws_status}".""")
+
+            uws_log: List[str] = uws.get("log", ["0 - EMPTY"])
+            uws_log.sort()
+
+            for entry in uws_log:
+                print(f"| {entry}")
+            raise AssertionError(f"Invalid Workspace Configuration")
+
+    @classmethod
+    def __print_uws_error_message(cls):
+        print(f"This courseware requires the environment to be configured with DBAcademy's {dbh_constants.WORKSPACE_HELPER.UNIVERSAL_WORKSPACE_SETUP}.")
+        print(f"Please update the workspace accordingly or use a properly configured workspace.")
 
     @property
     def client(self) -> DBAcademyRestClient:

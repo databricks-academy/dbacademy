@@ -7,12 +7,20 @@ from typing import List
 class WorkspaceHelperConstants:
 
     @property
-    def WORKSPACE_SETUP_JOB_NAME(self) -> str:
-        return "DBAcademy Workspace-Setup"
+    def UWS_CONFIG_PATH(self) -> str:
+        return "dbfs:/mnt/dbacademy/uws.json"
 
     @property
-    def BOOTSTRAP_JOB_NAME(self) -> str:
-        return "DBAcademy Workspace-Setup (Bootstrap)"
+    def WORKSPACE_SETUP(self) -> str:
+        return "Workspace-Setup"
+
+    @property
+    def UNIVERSAL_WORKSPACE_SETUP(self) -> str:
+        return "Universal-Workspace-Setup"
+
+    @property
+    def WORKSPACE_SETUP_JOB_NAME(self) -> str:
+        return f"DBAcademy's {self.UNIVERSAL_WORKSPACE_SETUP}"
 
     @property
     def PARAM_EVENT_ID(self) -> str:

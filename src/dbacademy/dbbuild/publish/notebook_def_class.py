@@ -602,11 +602,11 @@ The following section provides general information about troubleshooting coursew
 Databricks Academy often requires the student to have admin privileges in a workspace to effect changes. In some cases, this is a byproduct of working through the courseware. However, in many cases, this is to configure the environment for users that would otherwise not require admin privileges.\n
 For more current information, please <a href="https://files.training.databricks.com/static/troubleshooting.html#admin-required" target="_blank">Troubleshooting Admin Requirements</a>""".strip())
 
-        self.append_both(students_commands, solutions_commands, """
+        self.append_both(students_commands, solutions_commands, f"""
 %md ### Workspace Not Configured\n
 Some of the content produced by Databricks Academy requires configuration (or re-configuration) of the workspace and its assets. This configuration includes complete tasks like creating cluster policies, cluster pools, granting specific user permissions, and other such tasks.\n
-This error generally indicates that the notebook [Workspace-Setup]($./Includes/Workspace-Setup) was not executed.\n
-For more current information, please <a href="https://files.training.databricks.com/static/troubleshooting.html#workspace-setup" target="_blank">Troubleshooting Workspace Setup</a>""".strip())
+This error generally indicates that the notebook [{dbh_constants.WORKSPACE_HELPER.UNIVERSAL_WORKSPACE_SETUP}]($./Includes/{dbh_constants.WORKSPACE_HELPER.UNIVERSAL_WORKSPACE_SETUP}) was not executed.\n
+For more current information, please <a href="https://files.training.databricks.com/static/troubleshooting.html#{dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP.lower()}" target="_blank">Troubleshooting Workspace Setup</a>""".strip())
 
         self.append_both(students_commands, solutions_commands, """
 %md ### Spark Version\n
