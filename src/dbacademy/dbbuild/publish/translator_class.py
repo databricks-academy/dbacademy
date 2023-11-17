@@ -152,9 +152,8 @@ class Translator:
 
                     # Add the title back to the command
                     if add_guid:
+                        # If we are removing the GUID, we just don't insert that line.
                         lines.insert(0, f"# {dbb_constants.NOTEBOOKS.DBTITLE} 1,--i18n-{guid}")
-                    else:
-                        lines.insert(0, f"# {dbb_constants.NOTEBOOKS.DBTITLE} 0")
 
                 new_command = "\n".join(lines)
                 new_commands.append(new_command)
