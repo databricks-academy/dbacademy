@@ -378,7 +378,7 @@ class Publisher:
 
     # Used by notebooks
     # TODO Cannot define return type without circular dependencies
-    def to_translator(self):
+    def to_translator(self, require_language: bool = True):
         """
         Creates an instance of the Translator class from this class
         :return: Translator
@@ -386,7 +386,7 @@ class Publisher:
         from dbacademy.dbbuild.publish.translator_class import Translator
         self.assert_validated_config()
 
-        return Translator(self)
+        return Translator(self, require_language)
 
     # Used by notebooks
     # TODO Cannot define return type without circular dependencies
