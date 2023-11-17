@@ -216,7 +216,7 @@ class Watchdog:
 
                 failed, hours_failure = _eval(failures, failed, "LONG-RUNNING", hours < 9)
                 failed, num_workers_failure = _eval(failures, failed, "NON-ZERO-WORKERS", num_workers == 0)
-                failed, policy_failure = _eval(failures, failed, "POLICY-VIOLATION", policy_name in dbh_constants.DBACADEMY_HELPER.POLICIES)
+                failed, policy_failure = _eval(failures, failed, "POLICY-VIOLATION", policy_name in dbh_constants.CLUSTERS_HELPER.POLICIES)
                 failed, node_type_failure = _eval(failures, failed, "NODE-TYPE", node_type_id == "i3.xlarge")
                 failed, auto_term_failure = _eval(failures, failed, "AUTO-TERMINATION", autotermination_minutes <= 120)
 

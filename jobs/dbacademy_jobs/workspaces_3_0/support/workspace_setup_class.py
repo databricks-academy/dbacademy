@@ -645,12 +645,12 @@ class WorkspaceSetup:
 
         errors = list()
 
-        if trio.client.instance_pools.get_by_name(dbh_constants.DBACADEMY_HELPER.POOL_DEFAULT_NAME) is None:
-            errors.append(self.log_error(f"""The instance pool "{dbh_constants.DBACADEMY_HELPER.POOL_DEFAULT_NAME}" was not found for {trio.name}"""))
+        if trio.client.instance_pools.get_by_name(dbh_constants.CLUSTERS_HELPER.POOL_DEFAULT_NAME) is None:
+            errors.append(self.log_error(f"""The instance pool "{dbh_constants.CLUSTERS_HELPER.POOL_DEFAULT_NAME}" was not found for {trio.name}"""))
 
-        for policy_name in [dbh_constants.DBACADEMY_HELPER.POLICY_ALL_PURPOSE,
-                            dbh_constants.DBACADEMY_HELPER.POLICY_JOBS_ONLY,
-                            dbh_constants.DBACADEMY_HELPER.POLICY_DLT_ONLY]:
+        for policy_name in [dbh_constants.CLUSTERS_HELPER.POLICY_ALL_PURPOSE,
+                            dbh_constants.CLUSTERS_HELPER.POLICY_JOBS_ONLY,
+                            dbh_constants.CLUSTERS_HELPER.POLICY_DLT_ONLY]:
             if trio.client.cluster_policies.get_by_name(policy_name) is None:
                 errors.append(self.log_error(f"""The cluster policy "{policy_name}" was not found for {trio.name}"""))
 
