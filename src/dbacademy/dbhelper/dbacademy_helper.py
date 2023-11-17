@@ -127,7 +127,7 @@ class DBAcademyHelper:
 
             uws: Dict[str, Any] = json.loads(config_json)
             uws_status: str = uws.get("status", "UNKNOWN")
-    
+
             if uws_status.upper() != "COMPLETED":
                 cls.__print_uws_error_message()
                 print(f"""The status was not "COMPLETED", found, "{uws_status}".""")
@@ -142,7 +142,7 @@ class DBAcademyHelper:
     @classmethod
     def __print_uws_error_message(cls):
         print(f"This courseware requires the environment to be configured with DBAcademy's {dbh_constants.WORKSPACE_HELPER.UNIVERSAL_WORKSPACE_SETUP}.")
-        print(f"Please update the workspace accordingly or use a properly configured workspace.")
+        print(f"Please update the workspace accordingly or use a DBAcademy provided workspace.")
 
     @property
     def client(self) -> DBAcademyRestClient:
