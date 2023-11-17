@@ -92,6 +92,19 @@ class UniversalWorkspaceSetupRunner:
             f.write(json.dumps(uws, indent=4))
 
     @classmethod
+    def uws_reset(cls) -> None:
+        import json
+
+        uws_config_path = UWS_CONFIG_PATH.replace("dbfs:/", "/dbfs/")
+
+        with open(uws_config_path, "w") as f:
+            uws = {
+                "status": "STARTED",
+                "log": ["Status >> STARTED"]
+            }
+            f.write(json.dumps(uws, indent=4))
+
+    @classmethod
     def uws_append_message(cls, message: str) -> None:
         print(f"| {message}")
 
@@ -108,6 +121,8 @@ class UniversalWorkspaceSetupRunner:
 
         start = time.time()
         print("Running the Universal Workspace Setup job...")
+
+        self.uws_reset()
 
         self.delete_job()
 
