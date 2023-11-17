@@ -77,9 +77,7 @@ class Translator:
                                            "Most notably, moving GUIDs from %md commands into the title.\n"
                                            "The results can be validated by comparing diffs while committing."))
 
-        source_notebooks = self.client.workspace().ls(source_dir, True)
-        source_paths = [n.get("path") for n in source_notebooks]
-        source_files = [p for p in source_paths if not p.startswith(f"{source_dir}/Includes/")]
+        source_files = [n.get("path") for n in self.client.workspace().ls(source_dir, True)]
 
         for source_notebook_path in source_files:
 
