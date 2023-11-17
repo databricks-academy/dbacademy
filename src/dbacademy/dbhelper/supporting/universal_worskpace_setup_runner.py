@@ -64,7 +64,7 @@ class UniversalWorkspaceSetupRunner:
         return self.__pools_node_type_id
 
     @classmethod
-    def read_config(cls) -> Optional[Dict[str, Any]]:
+    def uws_read(cls) -> Optional[Dict[str, Any]]:
         import os, json
 
         uws_config_path = UWS_CONFIG_PATH.replace("dbfs:/", "/dbfs/")
@@ -76,14 +76,14 @@ class UniversalWorkspaceSetupRunner:
             return json.loads(config_json)
 
     @classmethod
-    def write_status(cls, status: str) -> None:
-        cls.append_log_message(f"Status: {status}")
-        uws = cls.read_config()
+    def uws_status(cls, status: str) -> None:
+        cls.uws_append_message(f"Status: {status}")
+        uws = cls.uws_read()
         uws["status"] = status
-        cls.write_config(uws)
+        cls.uws_write(uws)
 
     @classmethod
-    def write_config(cls, uws: Dict[str, Any]) -> None:
+    def uws_write(cls, uws: Dict[str, Any]) -> None:
         import json
 
         uws_config_path = UWS_CONFIG_PATH.replace("dbfs:/", "/dbfs/")
@@ -92,13 +92,15 @@ class UniversalWorkspaceSetupRunner:
             f.write(json.dumps(uws, indent=4))
 
     @classmethod
-    def append_log_message(cls, message: str) -> None:
+    def uws_append_message(cls, message: str) -> None:
         print(f"| {message}")
 
-        uws = cls.read_config() or dict()
+        uws = cls.uws_read() or dict()
         uws["log"] = uws.get("log", list())
         i = len(uws["log"])
         uws.get("log").append(f"{i+1} - {message}")
+
+        cls.uws_write(uws)
 
     def run(self):
         import time
@@ -113,9 +115,9 @@ class UniversalWorkspaceSetupRunner:
 
         run = self.client.jobs.run_now(job_id)
         run_id = run.get("run_id")
-        self.append_log_message(f"Started Run {run_id}")
+        self.uws_append_message(f"Started Run {run_id}")
 
-        self.append_log_message(f"Blocking On Run {run_id}")
+        self.uws_append_message(f"Blocking On Run {run_id}")
         response = self.wait_for_job_run(job_id, run_id)
         # self.append_log_message(f"Run {run_id}: Completed")
 
@@ -127,24 +129,24 @@ class UniversalWorkspaceSetupRunner:
 
         life_cycle_state = state.get("life_cycle_state")
         if life_cycle_state == "SKIPPED":
-            self.append_log_message(f"Run {run_id}: Skipped")
+            self.uws_append_message(f"Run {run_id}: Skipped")
             return
 
         elif life_cycle_state != "TERMINATED":
-            self.append_log_message(f"Run {run_id}: Failed, {life_cycle_state}")
+            self.uws_append_message(f"Run {run_id}: Failed, {life_cycle_state}")
             raise Exception(f"""Expected the final life cycle state of {dbh_constants.WORKSPACE_HELPER.UNIVERSAL_WORKSPACE_SETUP} to be "TERMINATED", found "{life_cycle_state}" for "{self.workspace_name}" | {state_message}""")
 
         else:
             result_state = state.get("result_state")
             if result_state != "SUCCESS":
-                self.append_log_message(f"Run {run_id}: Failed, {life_cycle_state}-{result_state}")
+                self.uws_append_message(f"Run {run_id}: Failed, {life_cycle_state}-{result_state}")
                 raise Exception(f"""Expected the final state of {dbh_constants.WORKSPACE_HELPER.UNIVERSAL_WORKSPACE_SETUP} to be "SUCCESS", found "{result_state}" for "{self.workspace_name}" | {state_message}""")
             else:
-                self.append_log_message(f"Run {run_id}: Success")
-                self.write_status("COMPLETED")
+                self.uws_append_message(f"Run {run_id}: Success")
+                self.uws_status("COMPLETED")
 
         duration = int((time.time() - start) / 60)
-        self.append_log_message(f"Duration: {duration} minutes")
+        self.uws_append_message(f"Duration: {duration} minutes")
         print(f"""Finished {dbh_constants.WORKSPACE_HELPER.UNIVERSAL_WORKSPACE_SETUP} (job #{job_id}, run #{run_id}) for "{self.workspace_name}" ({duration} minutes).""")
 
     def delete_job(self) -> None:
@@ -152,11 +154,11 @@ class UniversalWorkspaceSetupRunner:
         job = self.client.jobs.get_by_name(dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP_JOB_NAME)
 
         if job is None:
-            self.append_log_message("Delete Job: Skipped")
+            self.uws_append_message("Delete Job: Skipped")
         else:
             job_id = job.get("job_id")
             self.client.jobs.delete_by_id(job_id)
-            self.append_log_message(f"Deleted Job {job_id}")
+            self.uws_append_message(f"Deleted Job {job_id}")
 
     def create_job(self) -> str:
         import requests, json
@@ -178,7 +180,7 @@ class UniversalWorkspaceSetupRunner:
         config = json.loads(config_text)
 
         job_id = self.client.jobs.create_from_dict(config)
-        self.append_log_message(f"Created Job {job_id}")
+        self.uws_append_message(f"Created Job {job_id}")
 
         return job_id
 
