@@ -1,4 +1,4 @@
-__all__ = ["NotebookDef", "NotebookError", "StateVariables"]
+__all__ = ["NotebookDef", "NotebookError", "StateVariables", "NotebookLogger"]
 
 from typing import Callable, Union, List, Dict, Any
 from dbacademy.dbbuild.build_config_class import BuildConfig
@@ -16,6 +16,39 @@ class NotebookError:
         return self.message
 
 
+class NotebookLogger:
+
+    def __init__(self):
+        self.__errors: List[NotebookError] = list()
+        self.__warnings: List[NotebookError] = list()
+
+    @property
+    def errors(self) -> List[NotebookError]:
+        return self.__errors
+
+    @property
+    def warnings(self) -> List[NotebookError]:
+        return self.__warnings
+
+    def reset(self):
+        self.__errors = list()
+        self.__warnings = list()
+
+    def warn(self, assertion: Callable[[], bool], message: str) -> bool:
+        if assertion is None or not assertion():
+            self.warnings.append(NotebookError(message))
+            return False
+        else:
+            return True
+
+    def test(self, assertion: Callable[[], bool], message: str) -> bool:
+        if assertion is None or not assertion():
+            self.errors.append(NotebookError(message))
+            return False
+        else:
+            return True
+        
+        
 class StateVariables:
     def __init__(self):
         self.i18n_guid_map: Dict[str, str] = dict()
@@ -60,6 +93,8 @@ class NotebookDefData:
         assert type(replacements) == dict, f"""Expected the parameter "replacements" to be of type "dict", found "{type(replacements)}" """
         assert type(include_solution) == bool, f"""Expected the parameter "include_solution" to be of type "bool", found "{type(include_solution)}" """
 
+        self.__logger: NotebookLogger = NotebookLogger()
+
         self.build_config = build_config
         self.client = build_config.client
         self.path = path
@@ -73,12 +108,16 @@ class NotebookDefData:
         self.ignored = ignored
         self.order = order
 
-        self.i18n = i18n
-        self.i18n_language = i18n_language
-        self.i18n_guids = list()
+        self.i18n: bool = i18n
+        self.i18n_language: Union[None, str] = i18n_language
+        self.i18n_guids: List[str] = list()
 
         self.ignoring = ignoring
         self.version = version
+
+    @property
+    def logger(self) -> NotebookLogger:
+        return self.__logger
 
 
 class NotebookDef(NotebookDefData):
@@ -119,20 +158,6 @@ class NotebookDef(NotebookDefData):
         result += f"\n - replacements = {self.replacements}"
         return result or ""
 
-    def test(self, assertion: Callable[[], bool], message: str) -> bool:
-        if assertion is None or not assertion():
-            self.errors.append(NotebookError(message))
-            return False
-        else:
-            return True
-
-    def warn(self, assertion: Callable[[], bool], message: str) -> bool:
-        if assertion is None or not assertion():
-            self.warnings.append(NotebookError(message))
-            return False
-        else:
-            return True
-
     def assert_no_warnings(self) -> None:
         if len(self.warnings) > 0:
             what = "warning was" if len(self.warnings) == 1 else "warnings were"
@@ -154,7 +179,10 @@ class NotebookDef(NotebookDefData):
         if print_warnings:
             self.assert_no_warnings()
 
-    def test_notebook_exists(self,
+    @classmethod
+    def test_notebook_exists(cls, *,
+                             logger: NotebookLogger,
+                             path: str,
                              i: int,
                              what: str,
                              original_target: str,
@@ -162,7 +190,7 @@ class NotebookDef(NotebookDefData):
                              other_notebooks: List[NotebookDefData]):
 
         if not target.startswith("../") and not target.startswith("./"):
-            self.warn(lambda: False, f"Cmd #{i+1} | Found unexpected, relative, {what} target: \"{original_target}\" resolved as \"{target}\"".strip())
+            logger.warn(lambda: False, f"Cmd #{i+1} | Found unexpected, relative, {what} target: \"{original_target}\" resolved as \"{target}\"".strip())
             return
 
         all_paths = set()
@@ -189,8 +217,8 @@ class NotebookDef(NotebookDefData):
         elif target.startswith("./"):
             target = target[2:]
 
-        if "/" in self.path:
-            parent = '/'.join(self.path.split("/")[:offset])
+        if "/" in path:
+            parent = '/'.join(path.split("/")[:offset])
             target = f"{parent}/{target}"
 
         if target.startswith("/"):
@@ -199,8 +227,8 @@ class NotebookDef(NotebookDefData):
         notebooks = [n for n in all_paths if target == n]
 
         message = f"Cmd #{i+1} | Cannot find notebook for the {what} target: \"{original_target}\" resolved as \"{target}\""
-        # self.test(lambda: len(notebooks) != 0, message)
-        self.test(lambda: len(notebooks) != 0, message)
+        # self.__logger.test(lambda: len(notebooks) != 0, message)
+        logger.test(lambda: len(notebooks) != 0, message)
 
     def test_pip_cells(self, language: str, command: str, i: int) -> str:
         """
@@ -224,7 +252,7 @@ class NotebookDef(NotebookDefData):
         for repo in ["dbacademy-helper", "dbacademy-rest", "dbacademy-gems", "dbacademy-courseware"]:
             full_repo = f"https://github.com/databricks-academy/{repo}"
             message = f"Cmd #{i + 1} | Using unsupported repo, {full_repo} is no longer supported; please use https://github.com/databricks-academy/dbacademy instead."
-            self.test(lambda: full_repo not in command, message)
+            self.__logger.test(lambda: full_repo not in command, message)
 
         return command
 
@@ -251,7 +279,7 @@ class NotebookDef(NotebookDefData):
             link = link[1:]
             pos = link.find("\"")
             if pos < 0:
-                self.warn(lambda: False, f"Cmd #{i+1} | Missing closing quote in %run target")
+                self.__logger.warn(lambda: False, f"Cmd #{i+1} | Missing closing quote in %run target")
                 return
             else:
                 link = link[:pos]
@@ -260,7 +288,13 @@ class NotebookDef(NotebookDefData):
             if pos > 0:
                 link = link[:pos]
 
-        self.test_notebook_exists(i, "%run", link, link, other_notebooks)
+        self.test_notebook_exists(logger=self.__logger, 
+                                  path=self.path, 
+                                  i=i, 
+                                  what="%run", 
+                                  original_target=link, 
+                                  target=link, 
+                                  other_notebooks=other_notebooks)
 
     # def validate_single_tick(self, i, command):
     #     """Test for usage of single-ticks that should also be bolded"""
@@ -269,9 +303,12 @@ class NotebookDef(NotebookDefData):
     #
     #     for result in re.findall(r"[^\*]`[^\s]*`[^\*]", command):
     #         if "single-tick" not in self.ignoring:
-    #             self.warn(lambda: False, f"Cmd #{i+1} | Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
+    #             self.__logger.warn(lambda: False, f"Cmd #{i+1} | Found a single-tick block, expected the **`xx`** pattern: \"{result}\"")
 
-    def validate_md_link(self,
+    @classmethod
+    def validate_md_link(cls, *,
+                         logger: NotebookLogger,
+                         path: str,
                          i: int,
                          command: str,
                          other_notebooks: List[NotebookDefData]):
@@ -290,22 +327,32 @@ class NotebookDef(NotebookDefData):
             if match:
                 original_target = match.group()[1:-1]
                 target = original_target[1:]
-                self.test_notebook_exists(i, "MD link", original_target, target, other_notebooks)
+                cls.test_notebook_exists(logger=logger,
+                                         path=path,
+                                         i=i, 
+                                         what="MD link", 
+                                         original_target=original_target, 
+                                         target=target, 
+                                         other_notebooks=other_notebooks)
             else:
                 pass
                 # This is not a notebook link, need to validate that the link exists.
 
-    @staticmethod
-    def parse_html_links(command):
+    @classmethod
+    def parse_html_links(cls, command):
         import re
         return re.findall(r"<a .*?</a>", command)
 
-    def validate_html_link(self, i, command):
+    @classmethod
+    def validate_html_link(cls, *, 
+                           logger: NotebookLogger, 
+                           i: int, 
+                           command: str) -> None:
         """Test all HTML links to ensure they have a target set to _blank"""
 
-        for link in self.parse_html_links(command):
+        for link in cls.parse_html_links(command):
             if "target=\"_blank\"" not in link:
-                self.warn(lambda: False, f"Cmd #{i+1} | Found HTML link without the required target=\"_blank\": {link}")
+                logger.warn(lambda: False, f"Cmd #{i+1} | Found HTML link without the required target=\"_blank\": {link}")
 
             # Need to validate that the link exists.
 
@@ -322,7 +369,10 @@ class NotebookDef(NotebookDefData):
 
             prefix = f"Cmd #{i+1} "
             padding = " "*len(prefix)
-            return self.warn(lambda: False, template.format(prefix=prefix, what=what, padding=padding, line=line))
+            return self.__logger.warn(lambda: False, template.format(prefix=prefix, 
+                                                                     what=what, 
+                                                                     padding=padding, 
+                                                                     line=line))
 
     def test_source_cells(self, language: str, command: str, i: int) -> str:
 
@@ -342,7 +392,16 @@ class NotebookDef(NotebookDefData):
 
         return command
 
-    def replace_guid_body(self, state: StateVariables, cm: str, command: str, i: int):
+    @classmethod
+    def replace_guid_body(cls, 
+                          logger: NotebookLogger,
+                          i18n_language: str,
+                          i18n_guids: List[str],
+                          state: StateVariables, 
+                          cm: str, 
+                          command: str, 
+                          i: int):
+        
         lines = command.strip().split("\n")
         line_0 = lines[0][7+len(cm):]
 
@@ -357,27 +416,27 @@ class NotebookDef(NotebookDefData):
 
         debug_info = line_0
 
-        passed = self.test(lambda: len(lines) > 1, f"Cmd #{i + 1} | Expected MD to have more than 1 line of code with i18n enabled: {debug_info}")
+        passed = logger.test(lambda: len(lines) > 1, f"Cmd #{i + 1} | Expected MD to have more than 1 line of code with i18n enabled: {debug_info}")
 
         if len(parts) == 1:
-            passed = passed and self.test(lambda: False, f"Cmd #{i + 1} | Missing the i18n directive: {debug_info}")
+            passed = passed and logger.test(lambda: False, f"Cmd #{i + 1} | Missing the i18n directive: {debug_info}")
         else:
-            passed = passed and self.test(lambda: len(parts) == 2, f"Cmd #{i + 1} | Expected the first line of MD to have only two words, found {len(parts)}: {debug_info}")
-            passed = passed and self.test(lambda: parts[0] in ["%md", "%md-sandbox"], f"Cmd #{i + 1} | Expected word[0] of the first line of MD to be \"%md\" or \"%md-sandbox\", found {parts[0]}: {debug_info}")
-            passed = passed and self.test(lambda: guid.startswith("--i18n-"), f"Cmd #{i + 1} | Expected word[1] of the first line of MD to start with \"--i18n-\", found {guid}: {debug_info}")
+            passed = passed and logger.test(lambda: len(parts) == 2, f"Cmd #{i + 1} | Expected the first line of MD to have only two words, found {len(parts)}: {debug_info}")
+            passed = passed and logger.test(lambda: parts[0] in ["%md", "%md-sandbox"], f"Cmd #{i + 1} | Expected word[0] of the first line of MD to be \"%md\" or \"%md-sandbox\", found {parts[0]}: {debug_info}")
+            passed = passed and logger.test(lambda: guid.startswith("--i18n-"), f"Cmd #{i + 1} | Expected word[1] of the first line of MD to start with \"--i18n-\", found {guid}: {debug_info}")
 
         if passed:
-            passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Cmd #{i + 1} | Duplicate i18n GUID found: {guid}")
+            passed = passed and logger.test(lambda: guid not in i18n_guids, f"Cmd #{i + 1} | Duplicate i18n GUID found: {guid}")
 
         if passed:
-            self.i18n_guids.append(guid)
+            i18n_guids.append(guid)
 
-            if not self.i18n_language:
+            if i18n_language is not None:
                 # This is a "standard" publish, just remove the i18n directive
                 del lines[0]  # Remove the i18n directive
             else:
                 # We must confirm that the replacement GUID actually exists
-                if self.warn(lambda: guid in state.i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
+                if logger.warn(lambda: guid in state.i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {i18n_language}"):
                     lines = state.i18n_guid_map.get(guid).split("\n")
 
             lines.insert(0, f"{cm} MAGIC {md_tag}")
@@ -386,29 +445,39 @@ class NotebookDef(NotebookDefData):
 
         return command
 
-    def replace_guid_title(self, state: StateVariables, cm: str, command: str, i: int, cell_title: str):
+    @classmethod
+    def replace_guid_title(cls, *, 
+                           logger: NotebookLogger,
+                           i18n_language: str,
+                           i18n_guids: List[str],
+                           state: StateVariables, 
+                           cm: str, 
+                           command: str, 
+                           i: int, 
+                           cell_title: str):
+        
         parts = cell_title.split(",")
         if len(parts) == 1:
-            self.test(lambda: False, f"Cmd #{i + 1} | Missing the i18n directive, no title.")
+            logger.test(lambda: False, f"Cmd #{i + 1} | Missing the i18n directive, no title.")
             return command
 
         guid = parts[1].strip()
         if len(guid) == 0:
-            self.test(lambda: False, f"Cmd #{i + 1} | Missing the i18n directive, no title.")
+            logger.test(lambda: False, f"Cmd #{i + 1} | Missing the i18n directive, no title.")
             return command
 
         guid_parts = guid.split(" ")
-        if self.test(lambda: len(guid_parts) == 1, f"""Cmd #{i + 1} | Expected the title to have only one word, found {len(guid_parts)}: {guid}"""):
+        if logger.test(lambda: len(guid_parts) == 1, f"""Cmd #{i + 1} | Expected the title to have only one word, found {len(guid_parts)}: {guid}"""):
 
-            passed = self.test(lambda: guid.startswith("--i18n-"), f"Cmd #{i + 1} | Expected the cell title to start with \"--i18n-\", found {guid}: {cell_title}")
-            passed = passed and self.test(lambda: guid not in self.i18n_guids, f"Cmd #{i + 1} | Duplicate i18n GUID found: {guid}")
+            passed = logger.test(lambda: guid.startswith("--i18n-"), f"Cmd #{i + 1} | Expected the cell title to start with \"--i18n-\", found {guid}: {cell_title}")
+            passed = passed and logger.test(lambda: guid not in i18n_guids, f"Cmd #{i + 1} | Duplicate i18n GUID found: {guid}")
 
             if passed:
-                self.i18n_guids.append(guid)
+                i18n_guids.append(guid)
 
-                if self.i18n_language:
+                if i18n_language:
                     # We must confirm that the replacement GUID actually exists
-                    if self.warn(lambda: guid in state.i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {self.i18n_language}"):
+                    if logger.warn(lambda: guid in state.i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {i18n_language}"):
                         command = state.i18n_guid_map.get(guid)
 
                 command = f"{cm} DBTITLE 0,{guid}\n{command}"
@@ -423,7 +492,17 @@ class NotebookDef(NotebookDefData):
     def is_not_markdown(cls, *, cm: str, command: str):
         return not cls.is_markdown(cm=cm, command=command)
 
-    def update_md_cells(self,
+    @classmethod
+    def is_titled(cls, *, cm: str, command: str):
+        return command.startswith(f"{cm} DBTITLE ")
+
+    @classmethod
+    def update_md_cells(cls,
+                        logger: NotebookLogger,
+                        i18n: bool,
+                        i18n_language: str,
+                        i18n_guids: List[str],
+                        path: str,
                         state: StateVariables,
                         cm: str,
                         command: str,
@@ -432,24 +511,46 @@ class NotebookDef(NotebookDefData):
                         cell_title: str) -> str:
 
         # First verify that the specified command is a mark-down cell
-        if not self.is_markdown(cm=cm, command=command):
+        if not cls.is_markdown(cm=cm, command=command):
             return command
             
         # No longer enforcing this requirement
         # self.validate_single_tick(i, command)
 
-        self.validate_md_link(i, command, other_notebooks)
-        self.validate_html_link(i, command)
+        cls.validate_md_link(logger=logger, 
+                             path=path, 
+                             i=i, 
+                             command=command, 
+                             other_notebooks=other_notebooks)
+        
+        cls.validate_html_link(logger=logger,
+                               i=i, 
+                               command=command)
 
-        if not self.i18n:
+        if not i18n:
             # This is the deprecated form, still need to validate it until fully replaced
-            self.test(lambda: "--i18n-" not in command, f"Cmd #{i+1} | Found the \"--i18n-\" marker but i18n processing is disabled.")
-            self.test(lambda: cell_title is None or "--i18n-" not in cell_title, f"Cmd #{i+1} | Found the \"--i18n-\" marker in the cell title but i18n processing is disabled.")
+            logger.test(lambda: "--i18n-" not in command, f"Cmd #{i+1} | Found the \"--i18n-\" marker but i18n processing is disabled.")
+            logger.test(lambda: cell_title is None or "--i18n-" not in cell_title, f"Cmd #{i+1} | Found the \"--i18n-\" marker in the cell title but i18n processing is disabled.")
             return command
+
         elif cell_title is None:
-            return self.replace_guid_body(state=state, cm=cm, command=command, i=i)
+            return cls.replace_guid_body(logger=logger,
+                                         i18n_language=i18n_language,
+                                         i18n_guids=i18n_guids,
+                                         state=state, 
+                                         cm=cm, 
+                                         command=command, 
+                                         i=i)
+
         else:
-            return self.replace_guid_title(state=state, cm=cm, command=command, i=i, cell_title=cell_title)
+            return cls.replace_guid_title(logger=logger,
+                                          i18n_language=i18n_language,
+                                          i18n_guids=i18n_guids,
+                                          state=state, 
+                                          cm=cm, 
+                                          command=command, 
+                                          i=i, 
+                                          cell_title=cell_title)
 
     def create_resource_bundle(self, natural_language: str, source_dir: str, target_dir: str) -> None:
         natural_language = None if natural_language is None else natural_language.lower()
@@ -498,7 +599,7 @@ class NotebookDef(NotebookDefData):
                 return source
 
         # i18n_language better be None if the file doesn't exist, or it's in the "ignored" round zero or one
-        self.warn(lambda: self.i18n_language is None or self.test_round in [0, 1], f"Resource not found ({self.test_round}): {i18n_source_path}")
+        self.__logger.warn(lambda: self.i18n_language is None or self.test_round in [0, 1], f"Resource not found ({self.test_round}): {i18n_source_path}")
 
         return None
 
@@ -514,7 +615,7 @@ class NotebookDef(NotebookDefData):
         parts = re.split(r"^<hr>--i18n-|^<hr sandbox>--i18n-", i18n_source, flags=re.MULTILINE)
 
         name = parts[0].strip()[3:]
-        self.test(lambda: name == self.path, f"Expected the notebook \"{self.path}\" but found\n                      \"{name}\"")
+        self.__logger.test(lambda: name == self.path, f"Expected the notebook \"{self.path}\" but found\n                      \"{name}\"")
 
         for part in parts[1:]:
             guid, value = self.parse_guid_and_value(part)
@@ -601,12 +702,12 @@ For more current information, please see <a href="https://files.training.databri
     def build_install_libraries_cell(self, command, i):
 
         lines = [line for line in command.split("\n") if line.strip().startswith("version =") or line.strip().startswith("version=")]
-        if self.test(lambda: len(lines) == 1, f"Expected one and only one line that starts with \"version =\", found {len(lines)}."):
+        if self.__logger.test(lambda: len(lines) == 1, f"Expected one and only one line that starts with \"version =\", found {len(lines)}."):
             version_line = lines[0]
             pos_a = version_line.find("\"")
-            if self.test(lambda: pos_a >= 0, f"Cmd #{i+1} | Unable to parse the dbacademy library version for the INSTALL_LIBRARIES directive: {version_line}."):
+            if self.__logger.test(lambda: pos_a >= 0, f"Cmd #{i+1} | Unable to parse the dbacademy library version for the INSTALL_LIBRARIES directive: {version_line}."):
                 pos_b = version_line.find("\"", pos_a+1)
-                if self.test(lambda: pos_b >= 0, f"Cmd #{i+1} | Unable to parse the dbacademy library version for the INSTALL_LIBRARIES directive: {version_line}."):
+                if self.__logger.test(lambda: pos_b >= 0, f"Cmd #{i+1} | Unable to parse the dbacademy library version for the INSTALL_LIBRARIES directive: {version_line}."):
                     version = version_line[pos_a+1:pos_b]
                     template = dbh_constants.DBACADEMY_HELPER.TROUBLESHOOT_ERROR_TEMPLATE.replace("\"", "\\\"")
                     source = NotebookDef.SOURCE_INSTALL_LIBRARIES.format(template=template, version=version)
@@ -633,9 +734,8 @@ For more current information, please see <a href="https://files.training.databri
 
         other_notebooks: List[NotebookDefData] = validate.list_of_type(other_notebooks=other_notebooks, element_type=NotebookDefData, auto_create=True)
 
-        self.errors = list()
-        self.warnings = list()
-        self.i18n_guids = list()
+        self.__logger = NotebookLogger()
+        self.i18n_guids: List[str] = list()
 
         print()
         print("=" * 80)
@@ -666,9 +766,9 @@ For more current information, please see <a href="https://files.training.databri
                                 other_notebooks=other_notebooks,
                                 debugging=debugging)
 
-        self.test(lambda: state.found_header_directive, f"One of the two header directives ({NotebookDef.D_INCLUDE_HEADER_TRUE} or {NotebookDef.D_INCLUDE_HEADER_FALSE}) were not found.")
-        self.test(lambda: state.found_footer_directive, f"One of the two footer directives ({NotebookDef.D_INCLUDE_FOOTER_TRUE} or {NotebookDef.D_INCLUDE_FOOTER_FALSE}) were not found.")
-        self.test(lambda: state.answer_count >= state.todo_count, f"Found more {NotebookDef.D_TODO} commands ({state.todo_count}) than {NotebookDef.D_ANSWER} commands ({state.answer_count})")
+        self.__logger.test(lambda: state.found_header_directive, f"One of the two header directives ({NotebookDef.D_INCLUDE_HEADER_TRUE} or {NotebookDef.D_INCLUDE_HEADER_FALSE}) were not found.")
+        self.__logger.test(lambda: state.found_footer_directive, f"One of the two footer directives ({NotebookDef.D_INCLUDE_FOOTER_TRUE} or {NotebookDef.D_INCLUDE_FOOTER_FALSE}) were not found.")
+        self.__logger.test(lambda: state.answer_count >= state.todo_count, f"Found more {NotebookDef.D_TODO} commands ({state.todo_count}) than {NotebookDef.D_ANSWER} commands ({state.answer_count})")
 
         if state.include_header is True:
             state.students_commands.insert(0, self.get_header_cell(language))
@@ -680,7 +780,7 @@ For more current information, please see <a href="https://files.training.databri
 
         for key in ["\"", "*", "<", ">", "?", "\\", "|", ":"]:
             # Not checking for forward slash as the platform itself enforces this.
-            self.warn(lambda: key not in self.path,  f"Found invalid character {key} in notebook name: {self.path}")
+            self.__logger.warn(lambda: key not in self.path,  f"Found invalid character {key} in notebook name: {self.path}")
 
         # Create the student's notebooks
         students_notebook_path = f"{target_dir}/{self.path}"
@@ -708,8 +808,9 @@ For more current information, please see <a href="https://files.training.databri
 
         if not self.i18n:
             # If we are not translating, then this feature must be excluded.
-            self.test(lambda: "DBTITLE" not in command, f"Cmd #{i + 1} | Cell titles are only supported for translated courses, please remove to continue.")
-        elif command.startswith(f"{cm} DBTITLE "):
+            self.__logger.test(lambda: "DBTITLE" not in command, f"Cmd #{i + 1} | Cell titles are only supported for translated courses, please remove to continue.")
+
+        elif self.is_titled(cm=cm, command=command):
             lines = command.split("\n")           # Split the command into lines
             cell_title = lines[0].strip()         # The title is the first line
             del lines[0]                          # Delete the tile from the lines
@@ -719,7 +820,17 @@ For more current information, please see <a href="https://files.training.databri
         command = self.test_source_cells(language, command, i)
 
         # Misc tests specific to %md cells along with i18n specific rewrites
-        command = self.update_md_cells(state, cm, command, i, other_notebooks, cell_title)
+        command = self.update_md_cells(logger=self.__logger,
+                                       i18n=self.i18n,
+                                       i18n_language=self.i18n_language,
+                                       i18n_guids=self.i18n_guids,
+                                       path=self.path,
+                                       state=state,
+                                       cm=cm,
+                                       command=command,
+                                       i=i,
+                                       other_notebooks=other_notebooks,
+                                       cell_title=cell_title)
 
         # Misc tests specific to %run cells
         self.test_run_cells(language, command, i, other_notebooks)
@@ -758,7 +869,7 @@ For more current information, please see <a href="https://files.training.databri
         for directive in directives:
             if directive not in [NotebookDef.D_INCLUDE_HEADER_TRUE, NotebookDef.D_INCLUDE_HEADER_FALSE, NotebookDef.D_INCLUDE_FOOTER_TRUE, NotebookDef.D_INCLUDE_FOOTER_FALSE]:
                 directive_count += 1
-        self.test(lambda: directive_count <= 1, f"Cmd #{i + 1} | Found multiple directives ({directive_count}): {directives}")
+        self.__logger.test(lambda: directive_count <= 1, f"Cmd #{i + 1} | Found multiple directives ({directive_count}): {directives}")
 
         # Process the various directives
         if command.strip() == "":
@@ -809,29 +920,29 @@ For more current information, please see <a href="https://files.training.databri
                       "NEW_PART", "{dbr}"]
 
         for token in bdc_tokens:
-            self.test(lambda: token not in command, f"""Cmd #{i + 1} | Found the token "{token}" """)
+            self.__logger.test(lambda: token not in command, f"""Cmd #{i + 1} | Found the token "{token}" """)
 
         if not self.is_markdown(cm=cm, command=command):
             if language.lower() == "python":
                 if "lang-python" not in self.ignoring:
-                    self.warn(lambda: "%python" not in command, f"""Cmd #{i + 1} | Found "%python" in a Python notebook""")
+                    self.__logger.warn(lambda: "%python" not in command, f"""Cmd #{i + 1} | Found "%python" in a Python notebook""")
             elif language.lower() == "sql":
                 if "lang-sql" not in self.ignoring:
-                    self.warn(lambda: "%sql" not in command, f"""Cmd #{i + 1} | Found "%sql" in a SQL notebook""")
+                    self.__logger.warn(lambda: "%sql" not in command, f"""Cmd #{i + 1} | Found "%sql" in a SQL notebook""")
             elif language.lower() == "scala":
                 if "lang-scala" not in self.ignoring:
-                    self.warn(lambda: "%scala" not in command, f"""Cmd #{i + 1} | Found "%scala" in a Scala notebook""")
+                    self.__logger.warn(lambda: "%scala" not in command, f"""Cmd #{i + 1} | Found "%scala" in a Scala notebook""")
             elif language.lower() == "r":
                 # We have to check both cases so as not to catch %run by accident
                 if "lang-r" not in self.ignoring:
-                    self.warn(lambda: "%r " not in command, f"""Cmd #{i + 1} | Found "%r" in an R notebook""")
-                    self.warn(lambda: "%r\n" not in command, f"""Cmd #{i + 1} | Found "%r" in an R notebook""")
+                    self.__logger.warn(lambda: "%r " not in command, f"""Cmd #{i + 1} | Found "%r" in an R notebook""")
+                    self.__logger.warn(lambda: "%r\n" not in command, f"""Cmd #{i + 1} | Found "%r" in an R notebook""")
             else:
                 raise Exception(f"The language {language} is not supported")
 
         for year in range(2017, 2999):
             tag = f"{year} Databricks, Inc"
-            self.test(lambda: tag not in command, f"""Cmd #{i + 1} | Found copyright ({tag}) """)
+            self.__logger.test(lambda: tag not in command, f"""Cmd #{i + 1} | Found copyright ({tag}) """)
 
         return command
 
@@ -918,10 +1029,10 @@ For more current information, please see <a href="https://files.training.databri
                 new_command += line
 
             elif (index == first) and line.strip() not in [f"{prefix} {NotebookDef.D_TODO}"]:
-                self.test(lambda: False, f"""Cmd #{i + 1} | Expected line #{index + 1} to be the "{NotebookDef.D_TODO}" directive: "{line}" """)
+                self.__logger.test(lambda: False, f"""Cmd #{i + 1} | Expected line #{index + 1} to be the "{NotebookDef.D_TODO}" directive: "{line}" """)
 
             elif not line.startswith(prefix) and line.strip() != "" and line.strip() != f"{source_m} MAGIC":
-                self.test(lambda: False, f"""Cmd #{i + 1} | Expected line #{index + 1} to be commented out: "{line}" with prefix "{prefix}" """)
+                self.__logger.test(lambda: False, f"""Cmd #{i + 1} | Expected line #{index + 1} to be commented out: "{line}" with prefix "{prefix}" """)
 
             elif line.strip().startswith(f"{prefix} {NotebookDef.D_TODO}"):
                 # Add as-is
@@ -960,11 +1071,11 @@ For more current information, please see <a href="https://files.training.databri
         mustache_pattern = re.compile(r"{{[a-zA-Z\-\\_\\#\\/]*}}")
         result = mustache_pattern.search(contents)
         if result is not None:
-            self.test(lambda: False, f"A mustache pattern was detected after all replacements were processed: {result}")
+            self.__logger.test(lambda: False, f"A mustache pattern was detected after all replacements were processed: {result}")
 
         for icon in [":HINT:", ":CAUTION:", ":BESTPRACTICE:", ":SIDENOTE:", ":NOTE:"]:
             if icon in contents:
-                self.test(lambda: False, f"The deprecated {icon} pattern was found after all replacements were processed.")
+                self.__logger.test(lambda: False, f"The deprecated {icon} pattern was found after all replacements were processed.")
 
         # No longer supported
         # replacements[":HINT:"] =         """<img src="https://files.training.databricks.com/images/icon_hint_24.png"/>&nbsp;**Hint:**"""
@@ -1084,15 +1195,15 @@ For more current information, please see <a href="https://files.training.databri
 
                 elif directive != mod_directive:
                     if mod_directive in [f"__{NotebookDef.D_TODO}", f"___{NotebookDef.D_TODO}"]:
-                        self.test(lambda: False, f"Cmd #{i+1} | Found double-comment of TODO directive")
+                        self.__logger.test(lambda: False, f"Cmd #{i+1} | Found double-comment of TODO directive")
 
                     # print(f"Skipping directive: {directive} vs {mod_directive}")
                     pass  # Number and symbols are not used in directives
 
                 else:
-                    result_a = self.warn(lambda: " " not in directive, f"""Cmd #{i+1} | Whitespace found in directive "{directive}": {line}""")
-                    result_b = self.warn(lambda: "-" not in directive, f"""Cmd #{i+1} | Hyphen found in directive "{directive}": {line}""")
-                    result_c = self.warn(lambda: directive in NotebookDef.SUPPORTED_DIRECTIVES, f"""Cmd #{i+1} | Unsupported directive "{directive}", see dbacademy.dbpublish.help_html() for more information.""")
+                    result_a = self.__logger.warn(lambda: " " not in directive, f"""Cmd #{i+1} | Whitespace found in directive "{directive}": {line}""")
+                    result_b = self.__logger.warn(lambda: "-" not in directive, f"""Cmd #{i+1} | Hyphen found in directive "{directive}": {line}""")
+                    result_c = self.__logger.warn(lambda: directive in NotebookDef.SUPPORTED_DIRECTIVES, f"""Cmd #{i+1} | Unsupported directive "{directive}", see dbacademy.dbpublish.help_html() for more information.""")
                     if result_a and result_b and result_c:
                         directives.append(line)
 
