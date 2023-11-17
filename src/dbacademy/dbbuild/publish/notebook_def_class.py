@@ -3,6 +3,7 @@ __all__ = ["NotebookDef", "NotebookError", "StateVariables", "NotebookLogger"]
 from typing import Callable, Union, List, Dict, Any
 from dbacademy.dbbuild.build_config_class import BuildConfig
 from dbacademy.dbhelper import dbh_constants
+from dbacademy.dbbuild import dbb_constants
 
 
 class NotebookError:
@@ -440,7 +441,7 @@ class NotebookDef(NotebookDefData):
                     lines = state.i18n_guid_map.get(guid).split("\n")
 
             lines.insert(0, f"{cm} MAGIC {md_tag}")
-            lines.insert(0, f"{cm} DBTITLE 0,{guid}")
+            lines.insert(0, f"{cm} {dbb_constants.NOTEBOOKS.DBTITLE} 0,{guid}")
             command = "\n".join(lines)
 
         return command
@@ -480,7 +481,7 @@ class NotebookDef(NotebookDefData):
                     if logger.warn(lambda: guid in state.i18n_guid_map, f"The GUID \"{guid}\" was not found for the translation of {i18n_language}"):
                         command = state.i18n_guid_map.get(guid)
 
-                command = f"{cm} DBTITLE 0,{guid}\n{command}"
+                command = f"{cm} {dbb_constants.NOTEBOOKS.DBTITLE} 0,{guid}\n{command}"
 
         return command
 
@@ -498,7 +499,7 @@ class NotebookDef(NotebookDefData):
 
     @classmethod
     def is_titled(cls, *, cm: str, command: str):
-        return command.startswith(f"{cm} DBTITLE ")
+        return command.startswith(f"{cm} {dbb_constants.NOTEBOOKS.DBTITLE} ")
 
     @classmethod
     def update_md_cells(cls,
@@ -812,7 +813,7 @@ For more current information, please see <a href="https://files.training.databri
 
         if not self.i18n:
             # If we are not translating, then this feature must be excluded.
-            self.__logger.test(lambda: "DBTITLE" not in command, f"Cmd #{i + 1} | Cell titles are only supported for translated courses, please remove to continue.")
+            self.__logger.test(lambda: dbb_constants.NOTEBOOKS.DBTITLE not in command, f"Cmd #{i + 1} | Cell titles are only supported for translated courses, please remove to continue.")
 
         elif self.is_titled(cm=cm, command=command):
             lines = command.split("\n")           # Split the command into lines
@@ -990,7 +991,7 @@ For more current information, please see <a href="https://files.training.databri
                          print_warnings: bool) -> None:
 
         m = self.get_comment_marker(language)
-        final_source = f"{m} Databricks notebook source\n"
+        final_source = f"{m} {dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}\n"
 
         # Processes all commands except the last
         for command in commands[:-1]:
