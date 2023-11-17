@@ -169,21 +169,25 @@ class Translator:
         self.resources_folder = f"{source_repo}/Resources"
 
         resources = self.client.workspace().ls(self.resources_folder) or list()
-        self.language_options = [r.get("path").split("/")[-1] for r in resources]
-        self.language_options = [p for p in self.language_options if not p.startswith("english-") and not p.startswith("_")]
-        self.language_options.sort()
+        language_options = [r.get("path").split("/")[-1] for r in resources]
+        language_options = [p for p in language_options if not p.startswith("english-") and not p.startswith("_")]
+        language_options.sort()
 
-        default_langauge = self.language_options[0] if len(self.language_options) > 0 else ""
+        if len(language_options) == 0:
+            language_options.append("")
+
+        default_langauge = language_options[0] if len(language_options) > 0 else ""
         print(f"""Default Language: "{default_langauge}".""")
+        print(f"""Language Options: "{language_options}".""")
 
         dbgems.dbutils.widgets.dropdown("i18n_language",
                                         default_langauge,
-                                        self.language_options,
+                                        language_options,
                                         "i18n Language")
 
         self.i18n_language = dbgems.get_parameter("i18n_language", None)
         assert self.i18n_language is not None, f"The i18n language must be specified."
-        assert self.i18n_language in self.language_options, f"The selected version must be one of {self.language_options}, found \"{self.i18n_language}\"."
+        assert self.i18n_language in language_options, f"The selected version must be one of {language_options}, found \"{self.i18n_language}\"."
 
         for notebook in self.notebooks:
             notebook.i18n_language = self.i18n_language
