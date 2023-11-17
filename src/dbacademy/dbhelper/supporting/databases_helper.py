@@ -1,7 +1,7 @@
 # __all__ = ["DatabasesHelper"]
 __all__ = []
 
-from typing import Callable, List
+from typing import Callable, List, Dict
 from dbacademy.dbhelper import dbh_constants
 from dbacademy.common import validate
 from dbacademy.clients.databricks import DBAcademyRestClient
@@ -283,15 +283,16 @@ class DatabasesHelper:
                 },
             ],
         }
-        cluster_params = params.get("tasks")[0].get("new_cluster")
-        cluster_params["spark_version"] = spark_version
+        new_cluster = params.get("tasks")[0].get("new_cluster")
+        new_cluster["spark_version"] = spark_version
 
         if self.__client.clusters().get_current_instance_pool_id() is not None:
-            cluster_params["instance_pool_id"] = self.__client.clusters().get_current_instance_pool_id()
+            new_cluster["instance_pool_id"] = self.__client.clusters().get_current_instance_pool_id()
         else:
-            cluster_params["node_type_id"] = self.__client.clusters().get_current_node_type_id()
+            new_cluster["node_type_id"] = self.__client.clusters().get_current_node_type_id()
             if Cloud.current_cloud().is_aws:
-                cluster_params["aws_attributes"] = {"availability": "ON_DEMAND"}
+                aws_attributes: Dict[str, str] = {"availability": "ON_DEMAND"}
+                new_cluster["aws_attributes"] = aws_attributes
 
         create_response = self.__client.jobs().create(params)
         job_id = create_response.get("job_id")
