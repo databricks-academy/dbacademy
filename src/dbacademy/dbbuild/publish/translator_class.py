@@ -146,9 +146,9 @@ class Translator:
                         if add_guid:
                             print(f"Cmd #{i+1} | Adding GUID: {guid}")
                     else:
+                        guid = guid[7:]
                         if not add_guid:
                             print(f"Cmd #{i+1} | Removing GUID: {guid}")
-                        guid = guid[7:]
 
                     # Add the title back to the command
                     if add_guid:
