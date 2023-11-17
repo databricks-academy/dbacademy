@@ -168,7 +168,7 @@ class Translator:
 
         self.resources_folder = f"{source_repo}/Resources"
 
-        resources = self.client.workspace().ls(self.resources_folder)
+        resources = self.client.workspace().ls(self.resources_folder) or list()
         self.language_options = [r.get("path").split("/")[-1] for r in resources]
         self.language_options = [p for p in self.language_options if not p.startswith("english-") and not p.startswith("_")]
         self.language_options.sort()
