@@ -174,7 +174,7 @@ class Translator:
         self.language_options.sort()
 
         default_langauge = self.language_options[0] if len(self.language_options) > 0 else ""
-        print(f"""Default Language: "{default_langauge}".")
+        print(f"""Default Language: "{default_langauge}".""")
 
         dbgems.dbutils.widgets.dropdown("i18n_language",
                                         default_langauge,
