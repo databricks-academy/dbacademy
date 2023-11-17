@@ -137,7 +137,7 @@ class WarehouseHelperConstants:
         return "DBAcademy Warehouse"
 
 
-WORKSPACE_HELPER = WorkspaceHelperConstants()
-CLUSTERS_HELPER = ClustersHelperConstants()
-DBACADEMY_HELPER = DBAcademyHelperConstants()
-WAREHOUSE_HELPER = WarehouseHelperConstants()
+WORKSPACE_HELPER: WorkspaceHelperConstants = WorkspaceHelperConstants()
+CLUSTERS_HELPER: ClustersHelperConstants = ClustersHelperConstants()
+DBACADEMY_HELPER: DBAcademyHelperConstants = DBAcademyHelperConstants()
+WAREHOUSE_HELPER: WarehouseHelperConstants = WarehouseHelperConstants()
