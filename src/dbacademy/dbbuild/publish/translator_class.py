@@ -115,10 +115,10 @@ class Translator:
                         line_zero = line_zero[:pos].strip() if pos >= 0 else line_zero.strip()
 
                         if line_zero not in [f"{cm} MAGIC %md", f"{cm} MAGIC %md-sandbox"]:
-                            length = min(10, len(line_zero))
+                            length = min(20, len(line_zero))
                             tail = line_zero[:length] + "..."
                             message = f"""Cmd #{i+1} | Line zero contains more than just "%md" and "%md-sandbox", found "{tail}"."""
-                            print(message)
+                            print(message+"\n")
                             raise AssertionError(message)
 
                         lines.insert(0, line_zero)
