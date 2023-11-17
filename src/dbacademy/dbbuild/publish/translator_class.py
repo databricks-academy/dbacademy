@@ -57,10 +57,10 @@ class Translator:
         self.__select_i18n_language(publisher.source_repo)
 
     @classmethod
-    def inject_i18n_guids(cls, client: DBAcademyRestClient, source_dir: str) -> None:
+    def update_i18n_guids(cls, *, dbacademy_rest_client: DBAcademyRestClient, source_dir: str) -> None:
         """
         Used predominately by Notebook-based scripts, this command adds GUIDs when missing or moves the GUID from the %md line to the title.
-        :param client: an instance of DBAcademyRestClient
+        :param dbacademy_rest_client: an instance of DBAcademyRestClient
         :param source_dir: The source directory to update
         :return: None
         """
@@ -71,7 +71,7 @@ class Translator:
 
         print_warning("USE WITH CAUTION", "Use this method with caution as it has undergone only minimal testing. Most notably, moving GUIDs from %md commands into the title.")
 
-        source_notebooks = client.workspace().ls(source_dir, True)
+        source_notebooks = dbacademy_rest_client.workspace().ls(source_dir, True)
         source_paths = [n.get("path") for n in source_notebooks]
         source_files = [p for p in source_paths if not p.startswith(f"{source_dir}/Includes/")]
 
@@ -80,12 +80,12 @@ class Translator:
             print(f"Processing {source_notebook_path}")
             print("=" * 80)
 
-            source_info = client.workspace().get_status(source_notebook_path)
+            source_info = dbacademy_rest_client.workspace().get_status(source_notebook_path)
             language = source_info.get("language")
             cmd_delim = NotebookDef.get_cmd_delim(language)
             cm = NotebookDef.get_comment_marker(language)
 
-            raw_source = client.workspace().export_notebook(source_notebook_path)
+            raw_source = dbacademy_rest_client.workspace().export_notebook(source_notebook_path)
             raw_lines = raw_source.split("\n")
 
             assert raw_lines[0] == f"{cm} {dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}", f"""Expected line zero to be "{dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}"."""
@@ -126,9 +126,9 @@ class Translator:
             new_source = f"{cm} {dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}\n"
             new_source += f"\n{cmd_delim}\n".join(new_commands)
 
-            client.workspace().import_notebook(language=language.upper(),
-                                               notebook_path=source_notebook_path,
-                                               content=new_source)
+            dbacademy_rest_client.workspace().import_notebook(language=language.upper(),
+                                                              notebook_path=source_notebook_path,
+                                                              content=new_source)
 
     def __select_i18n_language(self, source_repo: str):
         from dbacademy import dbgems
