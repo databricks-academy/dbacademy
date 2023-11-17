@@ -1072,9 +1072,8 @@ For more current information, please see <a href="https://files.training.databri
     def replace_contents(self, contents: str):
         import re
 
-        for key in self.replacements:
+        for key, new_value in self.replacements.items():
             old_value = "{{" + key + "}}"
-            new_value = self.replacements[key]
             contents = contents.replace(old_value, str(new_value))
 
         # TODO Fix this error after a proper unit tests is created.
