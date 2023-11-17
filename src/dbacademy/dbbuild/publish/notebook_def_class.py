@@ -490,7 +490,7 @@ class NotebookDef(NotebookDefData):
         if cls.is_titled(cm=cm, command=command):
             del lines[0]
 
-        return command.startswith(f"{cm} MAGIC %md")
+        return lines[0].startswith(f"{cm} MAGIC %md")
 
     @classmethod
     def is_not_markdown(cls, *, cm: str, command: str):
