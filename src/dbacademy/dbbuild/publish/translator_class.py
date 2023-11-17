@@ -124,11 +124,11 @@ class Translator:
                             pass  # We can leave as-is
 
                         elif line_zero.startswith(magic_md):
-                            next_line = line_zero[len(magic_md):].strip()
+                            next_line = f"{cm} {line_zero[len(magic_md):].strip()}"
                             line_zero = magic_md
 
                         elif line_zero.startswith(magic_md_sandbox):
-                            next_line = line_zero[len(magic_md_sandbox):].strip()
+                            next_line = f"{cm} {line_zero[len(magic_md_sandbox):].strip()}"
                             line_zero = magic_md_sandbox
 
                         # Add the "next_line" if it exists.
