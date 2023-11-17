@@ -1,9 +1,13 @@
 __all__ = ["Translator"]
 
-from typing import Optional
+from typing import Optional, Literal
 from dbacademy.dbbuild.publish.publisher_class import Publisher
 from dbacademy.dbbuild import dbb_constants
 from dbacademy.clients.databricks import DBAcademyRestClient
+
+UPDATE_GUID_ADD = "Add GUID"
+UPDATE_GUID_REMOVE = "Remove GUID"
+UPDATE_GUID_ACTION = Literal[UPDATE_GUID_ADD, UPDATE_GUID_REMOVE]
 
 
 class Translator:
@@ -57,11 +61,12 @@ class Translator:
         self.__select_i18n_language(publisher.source_repo)
 
     @classmethod
-    def update_i18n_guids(cls, client: DBAcademyRestClient, source_dir: str) -> None:
+    def update_i18n_guids(cls, client: DBAcademyRestClient, source_dir: str, action: UPDATE_GUID_ACTION) -> None:
         """
         Used predominately by Notebook-based scripts, this command adds GUIDs when missing or moves the GUID from the %md line to the title.
         :param client: an instance of DBAcademyRestClient
         :param source_dir: The source directory to update
+        :param action: Action that indicates if the GUID should be added or removed.
         :return: None
         """
         import uuid
@@ -72,6 +77,10 @@ class Translator:
 
         client = validate.any_value(dbacademy_rest_client=client, parameter_type=DBAcademyRestClient, required=True)
         source_dir = validate.str_value(source_dir=source_dir, required=True)
+        action = validate.str_value(action=action, required=True)
+
+        expected_actions = [UPDATE_GUID_ADD, UPDATE_GUID_REMOVE]
+        assert action in expected_actions, f"""The parameter "action" must be one of {expected_actions}, found "{action}"."""
 
         print_warning("USE WITH CAUTION", ("Use this method with caution as it has undergone only minimal testing.\n"
                                            "Most notably, moving GUIDs from %md commands into the title.\n"
@@ -141,12 +150,18 @@ class Translator:
                     # Add the title back in
                     if guid is None:
                         guid = uuid.uuid4()
-                        print(f"Cmd #{i+1} | Adding GUID: {guid}")
+                        if action == UPDATE_GUID_ADD:
+                            print(f"Cmd #{i+1} | Adding GUID: {guid}")
                     else:
                         guid = guid[7:]
 
                     # Add the title back to the command
-                    lines.insert(0, f"# {dbb_constants.NOTEBOOKS.DBTITLE} 1,--i18n-{guid}")
+                    if action == UPDATE_GUID_ADD:
+                        lines.insert(0, f"# {dbb_constants.NOTEBOOKS.DBTITLE} 1,--i18n-{guid}")
+                    elif action == UPDATE_GUID_REMOVE:
+                        lines.insert(0, f"# {dbb_constants.NOTEBOOKS.DBTITLE} 0")
+                    else:
+                        raise Exception(f"""Unsupported action, "{action}".""")
 
                 new_command = "\n".join(lines)
                 new_commands.append(new_command)
