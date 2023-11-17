@@ -65,9 +65,13 @@ class Translator:
         :return: None
         """
         import uuid
+        from dbacademy.common import validate
         from dbacademy.dbbuild import dbb_constants
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.common import print_warning
+
+        dbacademy_rest_client = validate.any_value(dbacademy_rest_client=dbacademy_rest_client, parameter_type=DBAcademyRestClient, required=True)
+        source_dir = validate.str_value(source_dir=source_dir, required=True)
 
         print_warning("USE WITH CAUTION", ("Use this method with caution as it has undergone only minimal testing.\n"
                                            "Most notably, moving GUIDs from %md commands into the title.\n"
