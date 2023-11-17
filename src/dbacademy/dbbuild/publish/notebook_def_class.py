@@ -1075,7 +1075,7 @@ For more current information, please see <a href="https://files.training.databri
         for key in self.replacements:
             old_value = "{{" + key + "}}"
             new_value = self.replacements[key]
-            contents = contents.replace(old_value, new_value)
+            contents = contents.replace(old_value, str(new_value))
 
         # TODO Fix this error after a proper unit tests is created.
         # noinspection RegExpDuplicateCharacterInClass
