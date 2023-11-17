@@ -1,7 +1,8 @@
+__all__ = ["TestNotebookDef"]
+
 import unittest
 import typing
-
-from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef, NotebookError, NotebookLogger
+from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef, NotebookError
 
 
 class TestNotebookDef(unittest.TestCase):
@@ -9,19 +10,19 @@ class TestNotebookDef(unittest.TestCase):
     def __init__(self, method_name):
         super().__init__(method_name)
 
-    def assert_n_errors(self, expected: int, logger: NotebookLogger):
-        message = f"Expected {expected} errors, found {len(logger.errors)}"
-        for error in logger.errors:
+    def assert_n_errors(self, expected: int, notebook: NotebookDef):
+        message = f"Expected {expected} errors, found {len(notebook.logger.errors)}"
+        for error in notebook.logger.errors:
             message += f"\n{error.message}"
 
-        self.assertEqual(expected, len(logger.errors), f"Expected {expected} errors, found {len(logger.errors)}")
+        self.assertEqual(expected, len(notebook.logger.errors), f"Expected {expected} errors, found {len(notebook.logger.errors)}")
 
-    def assert_n_warnings(self, expected: int, logger: NotebookLogger):
-        message = f"Expected {expected} errors, found {len(logger.warnings)}"
-        for warning in logger.warnings:
+    def assert_n_warnings(self, expected: int, notebook: NotebookDef):
+        message = f"Expected {expected} errors, found {len(notebook.logger.warnings)}"
+        for warning in notebook.logger.warnings:
             message += f"\n{warning.message}"
 
-        self.assertEqual(expected, len(logger.warnings), message)
+        self.assertEqual(expected, len(notebook.logger.warnings), message)
 
     def assert_message(self, messages: typing.List[NotebookError], index, message):
         self.assertEqual(message, messages[index].message)
@@ -93,40 +94,40 @@ class TestNotebookDef(unittest.TestCase):
         command = r"# MAGIC %pip install git+https://github.com/databricks-academy/dbacademy"
         notebook = self.create_notebook()
         notebook.test_pip_cells(language="Python", command=command, i=3)
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(0, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+        self.assertEqual(0, len(notebook.logger.warnings), f"Expected 0 warnings, found {len(notebook.logger.errors)}")
+        self.assertEqual(0, len(notebook.logger.errors), f"Expected 0 error, found {len(notebook.logger.errors)}")
 
         command = r"# MAGIC %pip install git+https://github.com/databricks-academy/dbacademy-gems"
         notebook = self.create_notebook()
         notebook.test_pip_cells(language="Python", command=command, i=3)
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(1, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+        self.assertEqual(0, len(notebook.logger.warnings), f"Expected 0 warnings, found {len(notebook.logger.errors)}")
+        self.assertEqual(1, len(notebook.logger.errors), f"Expected 0 error, found {len(notebook.logger.errors)}")
         expected = "Cmd #4 | Using unsupported repo, https://github.com/databricks-academy/dbacademy-gems is no longer supported; please use https://github.com/databricks-academy/dbacademy instead."
-        self.assertEqual(expected, notebook.errors[0].message)
+        self.assertEqual(expected, notebook.logger.errors[0].message)
 
         command = r"# MAGIC %pip install git+https://github.com/databricks-academy/dbacademy-rest"
         notebook = self.create_notebook()
         notebook.test_pip_cells(language="Python", command=command, i=3)
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(1, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+        self.assertEqual(0, len(notebook.logger.warnings), f"Expected 0 warnings, found {len(notebook.logger.errors)}")
+        self.assertEqual(1, len(notebook.logger.errors), f"Expected 0 error, found {len(notebook.logger.errors)}")
         expected = "Cmd #4 | Using unsupported repo, https://github.com/databricks-academy/dbacademy-rest is no longer supported; please use https://github.com/databricks-academy/dbacademy instead."
-        self.assertEqual(expected, notebook.errors[0].message)
+        self.assertEqual(expected, notebook.logger.errors[0].message)
 
         command = r"# MAGIC %pip install git+https://github.com/databricks-academy/dbacademy-helper"
         notebook = self.create_notebook()
         notebook.test_pip_cells(language="Python", command=command, i=3)
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(1, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+        self.assertEqual(0, len(notebook.logger.warnings), f"Expected 0 warnings, found {len(notebook.logger.errors)}")
+        self.assertEqual(1, len(notebook.logger.errors), f"Expected 0 error, found {len(notebook.logger.errors)}")
         expected = "Cmd #4 | Using unsupported repo, https://github.com/databricks-academy/dbacademy-helper is no longer supported; please use https://github.com/databricks-academy/dbacademy instead."
-        self.assertEqual(expected, notebook.errors[0].message)
+        self.assertEqual(expected, notebook.logger.errors[0].message)
 
         command = r"# MAGIC %pip install git+https://github.com/databricks-academy/dbacademy-courseware"
         notebook = self.create_notebook()
         notebook.test_pip_cells(language="Python", command=command, i=3)
-        self.assertEqual(0, len(notebook.warnings), f"Expected 0 warnings, found {len(notebook.errors)}")
-        self.assertEqual(1, len(notebook.errors), f"Expected 0 error, found {len(notebook.errors)}")
+        self.assertEqual(0, len(notebook.logger.warnings), f"Expected 0 warnings, found {len(notebook.logger.errors)}")
+        self.assertEqual(1, len(notebook.logger.errors), f"Expected 0 error, found {len(notebook.logger.errors)}")
         expected = "Cmd #4 | Using unsupported repo, https://github.com/databricks-academy/dbacademy-courseware is no longer supported; please use https://github.com/databricks-academy/dbacademy instead."
-        self.assertEqual(expected, notebook.errors[0].message)
+        self.assertEqual(expected, notebook.logger.errors[0].message)
 
         # MAGIC git+https://github.com/databricks-academy/dbacademy-gems@4.5.6 \
         # MAGIC git+https://github.com/databricks-academy/dbacademy-@7.8.9 \
@@ -154,56 +155,29 @@ class TestNotebookDef(unittest.TestCase):
 # """.strip()
 #         self.assertEqual(expected_message, actual_message)
 
-    def test_parse_links(self):
-        notebook = self.create_notebook()
-
-        links = notebook.parse_html_links("""
-            # MAGIC %md --i18n-TBD
-            # MAGIC # Bla bla bla""".strip())
-        self.assertEqual(0, len(links))
-
-        links = notebook.parse_html_links("""
-            # MAGIC %md --i18n-TBD
-            # MAGIC # <a href="https://example.com" target="_blank">some link</a>
-            # MAGIC # Bla bla bla""".strip())
-        self.assertEqual(1, len(links))
-
-        links = notebook.parse_html_links("""
-            # MAGIC %md --i18n-TBD
-            # MAGIC # <a href="https://example.com" target="_blank">some link</a>
-            # MAGIC # <a href="https://google.com" target="_blank">some link</a>
-            # MAGIC # Bla bla bla""".strip())
-        self.assertEqual(2, len(links))
-
-        links = notebook.parse_html_links("""
-            # MAGIC %md --i18n-TBD
-            # MAGIC # <a href="https://example.com" target="_blank">some link</a><a href="https://google.com" target="_blank">some link</a><a href="https://databricks.com" target="_blank">some link</a>
-            # MAGIC # Bla bla bla""".strip())
-        self.assertEqual(3, len(links))
-
     def test_validate_html_link_with_target(self):
         command = """
 # MAGIC %md --i18n-TBD
 # MAGIC # <a href="https://example.com" target="_blank">some link</a>""".strip()
 
-        logger = NotebookLogger()
-        NotebookDef.validate_html_link(logger=logger, i=3, command=command)
+        notebook = self.create_notebook()
+        notebook.validate_html_link(i=3, command=command)
 
-        self.assert_n_errors(0, logger)
-        self.assert_n_warnings(0, logger)
+        self.assert_n_errors(0, notebook)
+        self.assert_n_warnings(0, notebook)
 
     def test_validate_html_link_no_target(self):
         command = """
 # MAGIC %md --i18n-TBD
 # MAGIC # <a href="https://example.com">some link</a>""".strip()
 
-        logger = NotebookLogger()
-        NotebookDef.validate_html_link(logger=logger, i=3, command=command)
+        notebook = self.create_notebook()
+        notebook.validate_html_link(i=3, command=command)
 
-        self.assert_n_errors(0, logger)
-        self.assert_n_warnings(1, logger)
+        self.assert_n_errors(0, notebook)
+        self.assert_n_warnings(1, notebook)
 
-        self.assert_message(logger.warnings, 0, "Cmd #4 | Found HTML link without the required target=\"_blank\": <a href=\"https://example.com\">some link</a>")
+        self.assert_message(notebook.logger.warnings, 0, "Cmd #4 | Found HTML link without the required target=\"_blank\": <a href=\"https://example.com\">some link</a>")
 
     @staticmethod
     def test_replacement():
@@ -246,10 +220,10 @@ class TestNotebookDef(unittest.TestCase):
     """.strip()
 
         notebook = self.create_notebook()
-        actual_command = notebook.build_install_libraries_cell(command=command, i=3)
+        actual_command = notebook.build_install_libraries_cell(i=3, command=command)
 
-        self.assert_n_warnings(0, notebook.logger)
-        self.assert_n_errors(0, notebook.logger)
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(0, notebook)
 
         expected_command = """
 def __validate_libraries():
@@ -317,10 +291,10 @@ pip_command = f"install --quiet --disable-pip-version-check {library_url}"
 """.strip()
 
         notebook = self.create_notebook()
-        actual_command = notebook.build_install_libraries_cell(command=command, i=3)
+        actual_command = notebook.build_install_libraries_cell(i=3, command=command)
 
-        self.assert_n_warnings(0, notebook.logger)
-        self.assert_n_errors(0, notebook.logger)
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(0, notebook)
 
         expected_command = """
 def __validate_libraries():
@@ -382,46 +356,46 @@ __install_libraries()
         command = r"myversion = \"v9.8.7\"".strip()
 
         notebook = self.create_notebook()
-        notebook.build_install_libraries_cell(command=command, i=3)
+        notebook.build_install_libraries_cell(i=1, command=command)
 
-        self.assert_n_warnings(0, notebook.logger)
-        self.assert_n_errors(1, notebook.logger)
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(1, notebook)
         expected = """Expected one and only one line that starts with "version =", found 0."""
-        self.assertEqual(expected, notebook.errors[0].message)
+        self.assertEqual(expected, notebook.logger.errors[0].message)
 
     def test_build_install_libraries_cell_errors_v2(self):
         command = f"version = \"v9.8.7\"\nversion=\"v0.0.0\"".strip()
 
         notebook = self.create_notebook()
-        notebook.build_install_libraries_cell(command=command, i=3)
+        notebook.build_install_libraries_cell(i=3, command=command)
 
-        self.assert_n_warnings(0, notebook.logger)
-        self.assert_n_errors(1, notebook.logger)
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(1, notebook)
         expected = """Expected one and only one line that starts with "version =", found 2."""
-        self.assertEqual(expected, notebook.errors[0].message)
+        self.assertEqual(expected, notebook.logger.errors[0].message)
 
     def test_build_install_libraries_cell_errors_v3(self):
         command = f"version = \"v9.8.7".strip()
 
         notebook = self.create_notebook()
-        notebook.build_install_libraries_cell(command=command, i=3)
+        notebook.build_install_libraries_cell(i=3, command=command)
 
-        self.assert_n_warnings(0, notebook.logger)
-        self.assert_n_errors(1, notebook.logger)
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(1, notebook)
         expected = """Cmd #4 | Unable to parse the dbacademy library version for the INSTALL_LIBRARIES directive: version = "v9.8.7."""
-        actual = notebook.errors[0].message
+        actual = notebook.logger.errors[0].message
         self.assertEqual(expected, actual)
 
     def test_build_install_libraries_cell_errors_v4(self):
         command = f"version = v9.8.7\"".strip()
 
         notebook = self.create_notebook()
-        notebook.build_install_libraries_cell(command=command, i=3)
+        notebook.build_install_libraries_cell(i=3, command=command)
 
-        self.assert_n_warnings(0, notebook.logger)
-        self.assert_n_errors(1, notebook.logger)
+        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(1, notebook)
         expected = """Cmd #4 | Unable to parse the dbacademy library version for the INSTALL_LIBRARIES directive: version = v9.8.7"."""
-        actual = notebook.errors[0].message
+        actual = notebook.logger.errors[0].message
         self.assertEqual(expected, actual)
 
 

@@ -8,18 +8,18 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         super().__init__(method_name)
 
     def assert_n_errors(self, expected, notebook: NotebookDef):
-        message = f"Expected {expected} errors, found {len(notebook.errors)}"
-        for error in notebook.errors:
+        message = f"Expected {expected} errors, found {len(notebook.logger.errors)}"
+        for error in notebook.logger.errors:
             message += f"\n{error.message}"
 
-        self.assertEqual(expected, len(notebook.errors), message)
+        self.assertEqual(expected, len(notebook.logger.errors), message)
 
     def assert_n_warnings(self, expected, notebook: NotebookDef):
-        message = f"Expected {expected} errors, found {len(notebook.warnings)}"
-        for warning in notebook.warnings:
+        message = f"Expected {expected} errors, found {len(notebook.logger.warnings)}"
+        for warning in notebook.logger.warnings:
             message += f"\n{warning.message}"
 
-        self.assertEqual(expected, len(notebook.warnings), message)
+        self.assertEqual(expected, len(notebook.logger.warnings), message)
 
     @staticmethod
     def create_notebook():
@@ -115,7 +115,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
 
-        self.assertEqual("Cmd #4 | Missing the i18n directive: %md", notebook.errors[0].message)
+        self.assertEqual("Cmd #4 | Missing the i18n directive: %md", notebook.logger.errors[0].message)
 
     def test_missing_i18n_single(self):
         from dbacademy.dbbuild.publish.notebook_def_class import StateVariables
@@ -130,7 +130,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
 
-        self.assertEqual("Cmd #4 | Expected MD to have more than 1 line of code with i18n enabled: %md | # Build-Time Substitutions", notebook.errors[0].message)
+        self.assertEqual("Cmd #4 | Expected MD to have more than 1 line of code with i18n enabled: %md | # Build-Time Substitutions", notebook.logger.errors[0].message)
 
     def test_extra_word_i18n(self):
         from dbacademy.dbbuild.publish.notebook_def_class import StateVariables
@@ -148,7 +148,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
 
-        self.assertEqual("Cmd #4 | Expected the first line of MD to have only two words, found 4: %md --i18n-TBD # Title", notebook.errors[0].message)
+        self.assertEqual("Cmd #4 | Expected the first line of MD to have only two words, found 4: %md --i18n-TBD # Title", notebook.logger.errors[0].message)
 
     def test_duplicate_i18n_guid(self):
         from dbacademy.dbbuild.publish.notebook_def_class import StateVariables
@@ -171,7 +171,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
 
-        self.assertEqual("Cmd #5 | Duplicate i18n GUID found: --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a", notebook.errors[0].message)
+        self.assertEqual("Cmd #5 | Duplicate i18n GUID found: --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a", notebook.logger.errors[0].message)
 
     def test_unique_i18n_guid(self):
         from dbacademy.dbbuild.publish.notebook_def_class import StateVariables
@@ -261,7 +261,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
 
-        self.assertEqual("Cmd #5 | Expected MD to have more than 1 line of code with i18n enabled: %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a # Some Title", notebook.errors[0].message)
+        self.assertEqual("Cmd #5 | Expected MD to have more than 1 line of code with i18n enabled: %md --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a # Some Title", notebook.logger.errors[0].message)
 
 
 if __name__ == '__main__':

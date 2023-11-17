@@ -3,7 +3,7 @@ __all__ = ["Translator"]
 from typing import Optional
 from dbacademy.dbbuild.publish.publisher_class import Publisher
 from dbacademy.dbbuild import dbb_constants
-from dbacademy.clients.databricks import DBAcademyRestClient
+from dbacademy.dbbuild.publish import pub_utils
 
 
 class Translator:
@@ -56,11 +56,9 @@ class Translator:
         self.warnings = []
         self.__select_i18n_language(publisher.source_repo)
 
-    @classmethod
-    def update_i18n_guids(cls, client: DBAcademyRestClient, source_dir: str, *, add_guid: bool) -> None:
+    def update_i18n_guids(self, source_dir: str, *, add_guid: bool) -> None:
         """
         Used predominately by Notebook-based scripts, this command adds GUIDs when missing or moves the GUID from the %md line to the title.
-        :param client: an instance of DBAcademyRestClient
         :param source_dir: The source directory to update
         :param add_guid: True if the GUID should be added, False if it should be removed.
         :return: None
@@ -71,7 +69,6 @@ class Translator:
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.common import print_warning
 
-        client = validate.any_value(dbacademy_rest_client=client, parameter_type=DBAcademyRestClient, required=True)
         source_dir = validate.str_value(source_dir=source_dir, required=True)
         add_guid = validate.bool_value(add_guid=add_guid, required=True)
 
@@ -79,7 +76,7 @@ class Translator:
                                            "Most notably, moving GUIDs from %md commands into the title.\n"
                                            "The results can be validated by comparing diffs while committing."))
 
-        source_notebooks = client.workspace().ls(source_dir, True)
+        source_notebooks = self.client.workspace().ls(source_dir, True)
         source_paths = [n.get("path") for n in source_notebooks]
         source_files = [p for p in source_paths if not p.startswith(f"{source_dir}/Includes/")]
 
@@ -88,12 +85,12 @@ class Translator:
             print("=" * 100)
             print(f"Processing {source_notebook_path}")
 
-            source_info = client.workspace().get_status(source_notebook_path)
+            source_info = self.client.workspace().get_status(source_notebook_path)
             language = source_info.get("language")
             cmd_delim = NotebookDef.get_cmd_delim(language)
             cm = NotebookDef.get_comment_marker(language)
 
-            raw_source = client.workspace().export_notebook(source_notebook_path)
+            raw_source = self.client.workspace().export_notebook(source_notebook_path)
             raw_lines = raw_source.split("\n")
 
             assert raw_lines[0] == f"{cm} {dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}", f"""Expected line zero to be "{dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}"."""
@@ -108,14 +105,14 @@ class Translator:
                 lines = command.split("\n")
                 line_zero = lines[0].strip()
 
-                if NotebookDef.is_markdown(cm=cm, command=command):
+                if pub_utils.is_markdown(cm=cm, command=command):
                     del lines[0]  # Remove the title or %md, add it back later
-                    guid = Translator.extract_i18n_guid(i=i, cm=cm, command=command, scan_line=line_zero)
+                    guid = pub_utils.extract_i18n_guid(i=i, cm=cm, command=command, scan_line=line_zero)
 
                     magic_md = f"{cm} MAGIC %md"
                     magic_md_sandbox = f"{cm} MAGIC %md-sandbox"
 
-                    if NotebookDef.is_not_titled(cm=cm, command=command):
+                    if pub_utils.is_not_titled(cm=cm, command=command):
                         next_line = None
                         pos = line_zero.find("--i18n-")
 
@@ -161,9 +158,9 @@ class Translator:
             new_source = f"{cm} {dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}\n"
             new_source += f"\n{cmd_delim}\n".join(new_commands)
 
-            client.workspace().import_notebook(language=language.upper(),
-                                               notebook_path=source_notebook_path,
-                                               content=new_source)
+            self.client.workspace().import_notebook(language=language.upper(),
+                                                    notebook_path=source_notebook_path,
+                                                    content=new_source)
             print()
 
     def __select_i18n_language(self, source_repo: str):
@@ -386,63 +383,6 @@ class Translator:
             self.__changes_in_target_repo = len(results)
             self.assert_no_changes_in_target_repo()
 
-    @classmethod
-    def extract_i18n_guid(cls, *, i: int, cm: str, command: str, scan_line: str) -> Optional[str]:
-        command = command.strip()
-
-        prefix_0 = f"{cm} {dbb_constants.NOTEBOOKS.DBTITLE} 0,"
-        prefix_1 = f"{cm} {dbb_constants.NOTEBOOKS.DBTITLE} 1,"
-        prefix_md = f"{cm} MAGIC %md "
-        prefix_html = "<i18n value=\""
-
-        if scan_line.startswith(prefix_0):
-            # This is the new method, use the same suffix as end-of-line
-            guid = cls.extract_i18n_guid_with_prefix(scan_line=scan_line, prefix=prefix_0, suffix=None, extra="")
-
-            if guid:
-                return guid
-            else:
-                line_one = command.strip().split("\n")[1]
-                return cls.extract_i18n_guid(i=i, cm=cm, command=command, scan_line=line_one)
-
-        elif scan_line.startswith(prefix_1):
-            # This is the new method, use the same suffix as end-of-line
-            guid = cls.extract_i18n_guid_with_prefix(scan_line=scan_line, prefix=prefix_1, suffix=None, extra="")
-
-            if guid:
-                return guid
-            else:
-                line_one = command.strip().split("\n")[1]
-                return cls.extract_i18n_guid(i=i, cm=cm, command=command, scan_line=line_one)
-
-        elif scan_line.startswith(prefix_md):
-            # This is the old "md-source" method, use the same suffix as end-of-line
-            return cls.extract_i18n_guid_with_prefix(scan_line=scan_line, prefix=prefix_md, suffix=None, extra="")
-
-        elif scan_line.startswith(prefix_html):
-            # This is the "html-translated" method, use the xml/html prefix and suffix
-            return cls.extract_i18n_guid_with_prefix(scan_line=scan_line, prefix=prefix_html, suffix="/>", extra="--i18n-")
-        else:
-            return None
-
-    @classmethod
-    def extract_i18n_guid_with_prefix(cls, *, scan_line: str, prefix: str, suffix: Optional[str], extra: str) -> Optional[str]:
-        pos_a = scan_line.find(prefix)
-        if pos_a == -1:
-            return None
-
-        prefix_len = len(prefix)
-        pos_b = len(scan_line) if suffix is None else scan_line.find(suffix)-1
-
-        guid = f"{extra}{scan_line[pos_a+prefix_len:pos_b]}"
-
-        if len(guid.strip()) == 0:
-            return None
-        elif guid.startswith("--i18n-"):
-            return guid
-        else:
-            return None
-
     def assert_validated(self):
         assert self.validated, f"Cannot publish until the validator's configuration passes validation. Ensure that Translator.validate() was called and that all assignments passed"
 
@@ -524,7 +464,7 @@ class Translator:
             for i, command in enumerate(commands):
                 command = command.strip()
                 line_zero = command.strip().split("\n")[0]
-                guid = self.extract_i18n_guid(i=i, cm=cm, command=command, scan_line=line_zero)
+                guid = pub_utils.extract_i18n_guid(i=i, cm=cm, command=command, scan_line=line_zero)
 
                 if guid is None:
                     new_commands.append(command)                            # No GUID, it's %python or other type of command, not MD

@@ -8,18 +8,18 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         super().__init__(method_name)
 
     def assert_n_errors(self, expected, notebook: NotebookDef):
-        message = f"Expected {expected} errors, found {len(notebook.errors)}"
-        for error in notebook.errors:
+        message = f"Expected {expected} errors, found {len(notebook.logger.errors)}"
+        for error in notebook.logger.errors:
             message += f"\n{error.message}"
 
-        self.assertEqual(expected, len(notebook.errors), message)
+        self.assertEqual(expected, len(notebook.logger.errors), message)
 
     def assert_n_warnings(self, expected, notebook: NotebookDef):
-        message = f"Expected {expected} errors, found {len(notebook.warnings)}"
-        for warning in notebook.warnings:
+        message = f"Expected {expected} errors, found {len(notebook.logger.warnings)}"
+        for warning in notebook.logger.warnings:
             message += f"\n{warning.message}"
 
-        self.assertEqual(expected, len(notebook.warnings), message)
+        self.assertEqual(expected, len(notebook.logger.warnings), message)
 
     @staticmethod
     def create_notebook():
@@ -137,7 +137,7 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
 
-        self.assertEqual("Cmd #4 | Missing the i18n directive: %md", notebook.errors[0].message)
+        self.assertEqual("Cmd #4 | Missing the i18n directive: %md", notebook.logger.errors[0].message)
 
     def test_funky_title(self):
         from dbacademy.dbbuild.publish.notebook_def_class import StateVariables
@@ -156,7 +156,7 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
 
-        self.assertEqual("Cmd #4 | Missing the i18n directive, no title.", notebook.errors[0].message)
+        self.assertEqual("Cmd #4 | Missing the i18n directive, no title.", notebook.logger.errors[0].message)
 
     def test_missing_i18n(self):
         from dbacademy.dbbuild.publish.notebook_def_class import StateVariables
@@ -175,7 +175,7 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
 
-        self.assertEqual("Cmd #4 | Missing the i18n directive, no title.", notebook.errors[0].message)
+        self.assertEqual("Cmd #4 | Missing the i18n directive, no title.", notebook.logger.errors[0].message)
 
     # def test_missing_i18n_single(self):
     #     command = "# MAGIC %md | # Build-Time Substitutions".strip()
@@ -205,7 +205,7 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
 
-        self.assertEqual("Cmd #4 | Expected the title to have only one word, found 3: --i18n-TBD some garbage", notebook.errors[0].message)
+        self.assertEqual("Cmd #4 | Expected the title to have only one word, found 3: --i18n-TBD some garbage", notebook.logger.errors[0].message)
 
     def test_duplicate_i18n_guid(self):
         from dbacademy.dbbuild.publish.notebook_def_class import StateVariables
@@ -230,7 +230,7 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assert_n_warnings(0, notebook)
         self.assert_n_errors(1, notebook)
 
-        self.assertEqual("Cmd #5 | Duplicate i18n GUID found: --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a", notebook.errors[0].message)
+        self.assertEqual("Cmd #5 | Duplicate i18n GUID found: --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a", notebook.logger.errors[0].message)
 
     def test_unique_i18n_guid(self):
         from dbacademy.dbbuild.publish.notebook_def_class import StateVariables

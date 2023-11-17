@@ -226,8 +226,8 @@ class Publisher:
                              verbose=verbose, 
                              debugging=debugging,
                              other_notebooks=self.notebooks)
-            errors += len(notebook.errors)
-            warnings += len(notebook.warnings)
+            errors += len(notebook.logger.errors)
+            warnings += len(notebook.logger.warnings)
 
         print("-"*80)
         print(f"All done!")
@@ -238,12 +238,12 @@ class Publisher:
         html = f"""<html><body style="font-size:16px">
                          <div><a href="{dbgems.get_workspace_url()}#workspace{self.target_dir}/{Publisher.VERSION_INFO_NOTEBOOK}" target="_blank">See Published Version</a></div>"""
         for notebook in main_notebooks:
-            errors += len(notebook.errors)
-            warnings += len(notebook.warnings)
+            errors += len(notebook.logger.errors)
+            warnings += len(notebook.logger.warnings)
 
-            if len(notebook.warnings) > 0:
+            if len(notebook.logger.warnings) > 0:
                 html += f"""<div style="font-weight:bold; margin-top:1em">{notebook.path}</div>"""
-                for warning in notebook.warnings:
+                for warning in notebook.logger.warnings:
                     html += f"""<div style="margin-top:1em; white-space: pre-wrap">{warning.message}</div>"""
         html += """</body></html>"""
 
