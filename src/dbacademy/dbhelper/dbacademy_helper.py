@@ -16,17 +16,16 @@ from dbacademy.dbhelper import dbh_constants
 class DBAcademyHelper:
 
     def __init__(self,
-                 course_config: CourseConfig,
-                 lesson_config: LessonConfig,
-                 debug: bool = False):
+                 _course_config: CourseConfig,
+                 _lesson_config: LessonConfig,
+                 _debug: bool = False):
         """
         Creates an instance of DBAcademyHelper from the specified course and lesson config
-        :param course_config: Those configuration parameters that remain consistent from the duration of a course
-        :param lesson_config: Those configuration parameters that may change from lesson to lesson
-        :param debug: Enables debug print messages.
+        :param _course_config: Those configuration parameters that remain consistent from the duration of a course
+        :param _lesson_config: Those configuration parameters that may change from lesson to lesson
+        :param _debug: Enables debug print messages.
         See also DBAcademyHelper.dprint
         """
-        import json
         from dbacademy import dbgems
         from dbacademy.clients import databricks
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
@@ -36,12 +35,12 @@ class DBAcademyHelper:
 
         self.__validate_uws()
 
-        self.__lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        self.__lesson_config = validate.any_value(_lesson_config=_lesson_config, parameter_type=LessonConfig, required=True)
         self.__lesson_config.assert_valid()
 
-        self.__course_config = validate.any_value(course_config=course_config, parameter_type=CourseConfig, required=True)
+        self.__course_config = validate.any_value(_course_config=_course_config, parameter_type=CourseConfig, required=True)
 
-        self.__debug = validate.bool_value(debug=debug, required=True)
+        self.__debug = validate.bool_value(_debug=_debug, required=True)
         self.__start = dbgems.clock_start()
 
         # Initialized in the call to init()
