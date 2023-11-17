@@ -14,6 +14,14 @@ MOCK_VALUES = dict()
 MOCK_CONFIG = dict()
 
 
+def get_source_dir() -> str:
+    import os
+
+    curr_paths = os.getcwd().split("/")[2:-1]
+    curr_path = "/".join(curr_paths)
+    return f"/{curr_path}/Source"
+
+
 def get_spark_config(key: str, default: Optional[str] = None) -> Optional[str]:
     """
     Returns the value in the spark config represented by the specified key.
