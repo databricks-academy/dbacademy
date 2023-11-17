@@ -56,10 +56,9 @@ class Translator:
         self.warnings = []
         self.__select_i18n_language(publisher.source_repo)
 
-    def update_i18n_guids(self, source_dir: str, *, add_guid: bool) -> None:
+    def update_i18n_guids(self, *, add_guid: bool) -> None:
         """
         Used predominately by Notebook-based scripts, this command adds GUIDs when missing or moves the GUID from the %md line to the title.
-        :param source_dir: The source directory to update
         :param add_guid: True if the GUID should be added, False if it should be removed.
         :return: None
         """
@@ -69,16 +68,15 @@ class Translator:
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.common import print_warning
 
-        source_dir = validate.str_value(source_dir=source_dir, required=True)
         add_guid = validate.bool_value(add_guid=add_guid, required=True)
 
         print_warning("USE WITH CAUTION", ("Use this method with caution as it has undergone only minimal testing.\n"
                                            "Most notably, moving GUIDs from %md commands into the title.\n"
                                            "The results can be validated by comparing diffs while committing."))
 
-        source_notebooks = self.client.workspace().ls(source_dir, True)
+        source_notebooks = self.client.workspace().ls(self.source_dir, True)
         source_paths = [n.get("path") for n in source_notebooks]
-        source_files = [p for p in source_paths if not p.startswith(f"{source_dir}/Includes/")]
+        source_files = [p for p in source_paths if not p.startswith(f"{self.source_dir}/Includes/")]
 
         for source_notebook_path in source_files:
 
