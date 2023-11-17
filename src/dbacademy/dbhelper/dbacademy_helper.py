@@ -115,30 +115,29 @@ class DBAcademyHelper:
 
     @classmethod
     def __validate_uws(cls):
-        import json
-        from dbacademy import dbgems
+        import json, os
 
-        try:
-            dbgems.dbutils.fs.ls(dbh_constants.WORKSPACE_HELPER.UWS_CONFIG_PATH)
-        except Exception:
+        uws_config_path = dbh_constants.WORKSPACE_HELPER.UWS_CONFIG_PATH.replace("dbfs:/", "/dbfs/")
+        if not os.path.exists(uws_config_path):
             cls.__print_uws_error_message()
             raise AssertionError(f"Invalid Workspace Configuration")
 
-        config_json = dbgems.dbutils.fs.head(file=dbh_constants.WORKSPACE_HELPER.UWS_CONFIG_PATH, max_bytes=999999)
+        with open(uws_config_path) as f:
+            config_json = f.read()
 
-        uws: Dict[str, Any] = json.loads(config_json)
-        uws_status: str = uws.get("status", "UNKNOWN")
+            uws: Dict[str, Any] = json.loads(config_json)
+            uws_status: str = uws.get("status", "UNKNOWN")
+    
+            if uws_status.upper() != "COMPLETED":
+                cls.__print_uws_error_message()
+                print(f"""The status was not "COMPLETED", found, "{uws_status}".""")
 
-        if uws_status.upper() != "COMPLETED":
-            cls.__print_uws_error_message()
-            print(f"""The status was not "COMPLETED", found, "{uws_status}".""")
+                uws_log: List[str] = uws.get("log", ["0 - EMPTY"])
+                uws_log.sort()
 
-            uws_log: List[str] = uws.get("log", ["0 - EMPTY"])
-            uws_log.sort()
-
-            for entry in uws_log:
-                print(f"| {entry}")
-            raise AssertionError(f"Invalid Workspace Configuration")
+                for entry in uws_log:
+                    print(f"| {entry}")
+                raise AssertionError(f"Invalid Workspace Configuration")
 
     @classmethod
     def __print_uws_error_message(cls):
