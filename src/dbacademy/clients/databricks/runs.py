@@ -35,10 +35,10 @@ class RunsClient(ApiContainer):
         else:
             return self.list_by_job_id(job_id, runs)
 
-    def cancel(self, run_id: Union[str, int]) -> Dict[str, Any]:
+    def cancel_by_id(self, run_id: Union[str, int]) -> Dict[str, Any]:
         return self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/runs/cancel", run_id=run_id)
 
-    def delete(self, run_id: Union[str, int]) -> Dict[str, Any]:
+    def delete_by_id(self, run_id: Union[str, int]) -> Dict[str, Any]:
         return self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/runs/delete", run_id=run_id, _expected=(200, 400))
 
     def wait_for(self, run_id: Union[str, int]) -> Dict[str, Any]:

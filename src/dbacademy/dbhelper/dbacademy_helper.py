@@ -1,6 +1,6 @@
 __all__ = ["DBAcademyHelper"]
 
-from typing import Union, Optional, Dict, List, Any
+from typing import Union, Optional, Dict, List
 from dbacademy.common import validate
 from dbacademy.clients.databricks import DBAcademyRestClient
 from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
@@ -115,7 +115,6 @@ class DBAcademyHelper:
 
     @classmethod
     def __validate_uws(cls):
-        import json, os
         from dbacademy.dbhelper.supporting.universal_worskpace_setup_runner import UniversalWorkspaceSetupRunner
 
         uws = UniversalWorkspaceSetupRunner.read_config()

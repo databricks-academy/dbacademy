@@ -85,6 +85,11 @@ class JobsClient(ApiContainer):
         return all_jobs
 
     def delete_by_id(self, job_id):
+        runs = self.client.runs().list_by_job_id(job_id)
+        for run in runs:
+            run_id = run.get("run_id")
+            self.client.runs.delete_by_id(run_id)
+
         self.client.api("POST", f"{self.client.endpoint}/api/2.0/jobs/delete", job_id=job_id)
 
     def delete_by_name(self, job_names, success_only: bool) -> None:
