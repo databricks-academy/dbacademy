@@ -276,6 +276,8 @@ class Translator:
 
     @classmethod
     def extract_i18n_guid(cls, *, i: int, cm: str, command: str, scan_line: str) -> Optional[str]:
+        command = command.strip()
+
         prefix_0 = f"{cm} {dbb_constants.NOTEBOOKS.DBTITLE} 0,"
         prefix_1 = f"{cm} {dbb_constants.NOTEBOOKS.DBTITLE} 1,"
         prefix_md = f"{cm} MAGIC %md "
