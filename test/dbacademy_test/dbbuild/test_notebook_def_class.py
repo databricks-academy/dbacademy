@@ -1,7 +1,7 @@
 import unittest
 import typing
 
-from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef, NotebookError
+from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef, NotebookError, NotebookLogger
 
 
 class TestNotebookDef(unittest.TestCase):
@@ -9,19 +9,19 @@ class TestNotebookDef(unittest.TestCase):
     def __init__(self, method_name):
         super().__init__(method_name)
 
-    def assert_n_errors(self, expected, notebook: NotebookDef):
-        message = f"Expected {expected} errors, found {len(notebook.errors)}"
-        for error in notebook.errors:
+    def assert_n_errors(self, expected: int, logger: NotebookLogger):
+        message = f"Expected {expected} errors, found {len(logger.errors)}"
+        for error in logger.errors:
             message += f"\n{error.message}"
 
-        self.assertEqual(expected, len(notebook.errors), f"Expected {expected} errors, found {len(notebook.errors)}")
+        self.assertEqual(expected, len(logger.errors), f"Expected {expected} errors, found {len(logger.errors)}")
 
-    def assert_n_warnings(self, expected, notebook: NotebookDef):
-        message = f"Expected {expected} errors, found {len(notebook.warnings)}"
-        for warning in notebook.warnings:
+    def assert_n_warnings(self, expected: int, logger: NotebookLogger):
+        message = f"Expected {expected} errors, found {len(logger.warnings)}"
+        for warning in logger.warnings:
             message += f"\n{warning.message}"
 
-        self.assertEqual(expected, len(notebook.warnings), message)
+        self.assertEqual(expected, len(logger.warnings), message)
 
     def assert_message(self, messages: typing.List[NotebookError], index, message):
         self.assertEqual(message, messages[index].message)
@@ -186,24 +186,24 @@ class TestNotebookDef(unittest.TestCase):
 # MAGIC %md --i18n-TBD
 # MAGIC # <a href="https://example.com" target="_blank">some link</a>""".strip()
 
-        notebook = self.create_notebook()
-        notebook.validate_html_link(3, command)
+        logger = NotebookLogger()
+        NotebookDef.validate_html_link(logger=logger, i=3, command=command)
 
-        self.assert_n_errors(0, notebook)
-        self.assert_n_warnings(0, notebook)
+        self.assert_n_errors(0, logger)
+        self.assert_n_warnings(0, logger)
 
     def test_validate_html_link_no_target(self):
         command = """
 # MAGIC %md --i18n-TBD
 # MAGIC # <a href="https://example.com">some link</a>""".strip()
 
-        notebook = self.create_notebook()
-        notebook.validate_html_link(3, command)
+        logger = NotebookLogger()
+        NotebookDef.validate_html_link(logger=logger, i=3, command=command)
 
-        self.assert_n_errors(0, notebook)
-        self.assert_n_warnings(1, notebook)
+        self.assert_n_errors(0, logger)
+        self.assert_n_warnings(1, logger)
 
-        self.assert_message(notebook.warnings, 0, "Cmd #4 | Found HTML link without the required target=\"_blank\": <a href=\"https://example.com\">some link</a>")
+        self.assert_message(logger.warnings, 0, "Cmd #4 | Found HTML link without the required target=\"_blank\": <a href=\"https://example.com\">some link</a>")
 
     @staticmethod
     def test_replacement():
@@ -248,8 +248,8 @@ class TestNotebookDef(unittest.TestCase):
         notebook = self.create_notebook()
         actual_command = notebook.build_install_libraries_cell(command=command, i=3)
 
-        self.assert_n_warnings(0, notebook)
-        self.assert_n_errors(0, notebook)
+        self.assert_n_warnings(0, notebook.logger)
+        self.assert_n_errors(0, notebook.logger)
 
         expected_command = """
 def __validate_libraries():
@@ -319,8 +319,8 @@ pip_command = f"install --quiet --disable-pip-version-check {library_url}"
         notebook = self.create_notebook()
         actual_command = notebook.build_install_libraries_cell(command=command, i=3)
 
-        self.assert_n_warnings(0, notebook)
-        self.assert_n_errors(0, notebook)
+        self.assert_n_warnings(0, notebook.logger)
+        self.assert_n_errors(0, notebook.logger)
 
         expected_command = """
 def __validate_libraries():
@@ -384,8 +384,8 @@ __install_libraries()
         notebook = self.create_notebook()
         notebook.build_install_libraries_cell(command=command, i=3)
 
-        self.assert_n_warnings(0, notebook)
-        self.assert_n_errors(1, notebook)
+        self.assert_n_warnings(0, notebook.logger)
+        self.assert_n_errors(1, notebook.logger)
         expected = """Expected one and only one line that starts with "version =", found 0."""
         self.assertEqual(expected, notebook.errors[0].message)
 
@@ -395,8 +395,8 @@ __install_libraries()
         notebook = self.create_notebook()
         notebook.build_install_libraries_cell(command=command, i=3)
 
-        self.assert_n_warnings(0, notebook)
-        self.assert_n_errors(1, notebook)
+        self.assert_n_warnings(0, notebook.logger)
+        self.assert_n_errors(1, notebook.logger)
         expected = """Expected one and only one line that starts with "version =", found 2."""
         self.assertEqual(expected, notebook.errors[0].message)
 
@@ -406,8 +406,8 @@ __install_libraries()
         notebook = self.create_notebook()
         notebook.build_install_libraries_cell(command=command, i=3)
 
-        self.assert_n_warnings(0, notebook)
-        self.assert_n_errors(1, notebook)
+        self.assert_n_warnings(0, notebook.logger)
+        self.assert_n_errors(1, notebook.logger)
         expected = """Cmd #4 | Unable to parse the dbacademy library version for the INSTALL_LIBRARIES directive: version = "v9.8.7."""
         actual = notebook.errors[0].message
         self.assertEqual(expected, actual)
@@ -418,8 +418,8 @@ __install_libraries()
         notebook = self.create_notebook()
         notebook.build_install_libraries_cell(command=command, i=3)
 
-        self.assert_n_warnings(0, notebook)
-        self.assert_n_errors(1, notebook)
+        self.assert_n_warnings(0, notebook.logger)
+        self.assert_n_errors(1, notebook.logger)
         expected = """Cmd #4 | Unable to parse the dbacademy library version for the INSTALL_LIBRARIES directive: version = v9.8.7"."""
         actual = notebook.errors[0].message
         self.assertEqual(expected, actual)
