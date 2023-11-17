@@ -113,7 +113,11 @@ class Translator:
                     if NotebookDef.is_not_titled(cm=cm, command=command):
                         pos = line_zero.find("--i18n-")
                         line_zero = line_zero[:pos].strip() if pos >= 0 else line_zero.strip()
-                        assert line_zero == f"{cm} MAGIC %md", f"""Cmd #{i+1} | Line zero contains more than just "%md"."""
+                        if line_zero != f"{cm} MAGIC %md":
+                            message = f"""Cmd #{i + 1} | Line zero contains more than just "%md"."""
+                            print(message)
+                            raise AssertionError(message)
+
                         lines.insert(0, line_zero)
 
                     # Add the title back in
