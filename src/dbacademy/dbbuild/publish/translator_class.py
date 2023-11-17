@@ -77,9 +77,6 @@ class Translator:
 
         for source_notebook_path in source_files:
 
-            if source_notebook_path != f"{source_dir}/EC 01 - Your First Lesson":
-                continue
-
             print(f"Processing {source_notebook_path}")
             print("=" * 80)
 
