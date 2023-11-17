@@ -428,8 +428,13 @@ class Translator:
         pos_b = len(scan_line) if suffix is None else scan_line.find(suffix)-1
 
         guid = f"{extra}{scan_line[pos_a+prefix_len:pos_b]}"
-        guid = None if len(guid.strip()) == 0 else guid
-        return guid
+
+        if len(guid.strip()) == 0:
+            return None
+        elif guid.startswith("--i18n-"):
+            return guid
+        else:
+            return None
 
     def assert_validated(self):
         assert self.validated, f"Cannot publish until the validator's configuration passes validation. Ensure that Translator.validate() was called and that all assignments passed"
