@@ -69,7 +69,7 @@ class WorkspaceCleaner:
 
     def __drop_instance_pool(self):
 
-        for pool_name in dbh_constants.DBACADEMY_HELPER.POOLS:
+        for pool_name in dbh_constants.CLUSTERS_HELPER.POOLS:
             pool = self.__da.client.instance_pools.get_by_name(pool_name)
             if pool is not None:
                 print(f"| Dropping the instance pool \"{pool_name}\".")
@@ -77,7 +77,7 @@ class WorkspaceCleaner:
 
     def __drop_cluster_policies(self):
 
-        for policy_name in dbh_constants.DBACADEMY_HELPER.POLICIES:
+        for policy_name in dbh_constants.CLUSTERS_HELPER.POLICIES:
             policy = self.__da.client.cluster_policies.get_by_name(policy_name)
             if policy is not None:
                 print(f"| Dropping the cluster policy \"{policy_name}\".")
