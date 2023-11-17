@@ -67,6 +67,9 @@ class Translator:
         import uuid
         from dbacademy.dbbuild import dbb_constants
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+        from dbacademy.common import print_warning
+
+        print_warning("USE WITH CAUTION", "Use this method with caution as it has undergone only minimal testing. Most notably, moving GUIDs from %md commands into the title.")
 
         source_notebooks = client.workspace().ls(source_dir, True)
         source_paths = [n.get("path") for n in source_notebooks]
