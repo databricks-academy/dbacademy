@@ -8,7 +8,7 @@ from dbacademy.dbbuild.publish import pub_utils
 
 class Translator:
 
-    def __init__(self, publisher: Publisher, require_i18n_language: bool):
+    def __init__(self, publisher: Publisher, require_i18n_selection: bool):
         from dbacademy.common import validate
         from dbacademy.dbbuild.publish.publisher_class import Publisher
 
@@ -55,7 +55,7 @@ class Translator:
         self.errors = []
         self.warnings = []
 
-        if require_i18n_language:
+        if require_i18n_selection:
             self.__select_i18n_language(publisher.source_repo)
 
     def update_i18n_guids(self, *, add_guid: bool) -> None:
