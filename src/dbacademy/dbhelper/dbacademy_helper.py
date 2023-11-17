@@ -117,7 +117,7 @@ class DBAcademyHelper:
     def __validate_uws(cls):
         from dbacademy.dbhelper.supporting.universal_worskpace_setup_runner import UniversalWorkspaceSetupRunner
 
-        uws = UniversalWorkspaceSetupRunner.read_config()
+        uws = UniversalWorkspaceSetupRunner.uws_read()
         if uws is None:
             cls.__print_uws_error_message()
             raise AssertionError(f"Invalid Workspace Configuration")
