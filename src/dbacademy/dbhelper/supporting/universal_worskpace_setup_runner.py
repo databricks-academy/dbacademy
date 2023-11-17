@@ -5,9 +5,22 @@ from dbacademy.dbhelper.course_config import CourseConfig
 
 class UniversalWorkspaceSetupRunner:
 
-    def __init__(self, *, token: str, endpoint: str, course_config: CourseConfig, workspace_name: str):
+    def __init__(self, *, course_config: CourseConfig, token: str = None, endpoint: str = None, workspace_name: str = None):
+        from dbacademy import dbgems
         from dbacademy.common import Cloud
         from dbacademy.clients import databricks
+        from dbacademy.common import validate
+
+        course_config = validate.any_value(course_config=course_config, parameter_type=CourseConfig, required=True)
+
+        token = token or dbgems.get_notebooks_api_token()
+        token = validate.str_value(token=token, required=True)
+
+        endpoint = endpoint or dbgems.get_notebooks_api_endpoint()
+        endpoint = validate.str_value(endpoint=endpoint, required=True)
+
+        workspace_name = workspace_name or dbgems.sc.getConf().get("spark.databricks.workspaceUrl", defaultValue="Unknown")
+        workspace_name = validate.str_value(workspace_name=workspace_name, required=True)
 
         self.event_id = 0
         self.course_name = course_config.course_name
