@@ -1,5 +1,6 @@
 __all__ = ["UniversalWorkspaceSetupRunner"]
 
+from dbacademy.clients.databricks import DBAcademyRestClient
 from dbacademy.dbhelper.course_config import CourseConfig
 
 
@@ -11,34 +12,53 @@ class UniversalWorkspaceSetupRunner:
         from dbacademy.clients import databricks
         from dbacademy.common import validate
 
-        course_config = validate.any_value(course_config=course_config, parameter_type=CourseConfig, required=True)
+        self.__event_id = 0
+        self.__event_description = f"Workspace {workspace_name}"
+        self.__default_spark_version = course_config.supported_dbrs[0]
 
-        token = token or dbgems.get_notebooks_api_token()
-        token = validate.str_value(token=token, required=True)
+        self.__course_config = validate.any_value(course_config=course_config, parameter_type=CourseConfig, required=True)
 
-        endpoint = endpoint or dbgems.get_notebooks_api_endpoint()
-        endpoint = validate.str_value(endpoint=endpoint, required=True)
+        self.__workspace_name = validate.str_value(required=True, workspace_name=workspace_name or dbgems.sc.getConf().get("spark.databricks.workspaceUrl", defaultValue="Unknown"))
 
-        workspace_name = workspace_name or dbgems.sc.getConf().get("spark.databricks.workspaceUrl", defaultValue="Unknown")
-        workspace_name = validate.str_value(workspace_name=workspace_name, required=True)
-
-        self.event_id = 0
-        self.course_name = course_config.course_name
-        self.data_source_version = course_config.data_source_version
-        self.workspace_name = workspace_name
-        self.client = databricks.from_token(token=token, endpoint=endpoint)
-        self.event_description = f"Workspace {workspace_name}"
-
-        self.default_spark_version = course_config.supported_dbrs[0]
+        self.__client = databricks.from_token(token=validate.str_value(required=True, token=token or dbgems.get_notebooks_api_token()),
+                                              endpoint=validate.str_value(required=True, endpoint=endpoint or dbgems.get_notebooks_api_endpoint()))
 
         if Cloud.current_cloud().is_aws:
-            self.pools_node_type_id = "i3.xlarge"
+            self.__pools_node_type_id = "i3.xlarge"
         elif Cloud.current_cloud().is_msa:
-            self.pools_node_type_id = "Standard_D4ds_v4"
+            self.__pools_node_type_id = "Standard_D4ds_v4"
         elif Cloud.current_cloud().is_gcp:
-            self.pools_node_type_id = "n2-highmem-4"
+            self.__pools_node_type_id = "n2-highmem-4"
         else:
             raise ValueError(f"The cloud {Cloud.current_cloud()} is not supported.")
+
+    @property
+    def course_config(self) -> CourseConfig:
+        return self.__course_config
+
+    @property
+    def event_id(self) -> int:
+        return self.__event_id
+
+    @property
+    def workspace_name(self) -> str:
+        return self.__workspace_name
+
+    @property
+    def client(self) -> DBAcademyRestClient:
+        return self.__client
+
+    @property
+    def event_description(self) -> str:
+        return self.__event_description
+
+    @property
+    def default_spark_version(self) -> str:
+        return self.__default_spark_version
+
+    @property
+    def pools_node_type_id(self) -> str:
+        return self.__pools_node_type_id
 
     def run(self):
         import time
@@ -99,7 +119,7 @@ class UniversalWorkspaceSetupRunner:
         config_text = config_text.replace("aws:aws_attributes", "aws_attributes")
 
         config_text = config_text.replace("{{courses}}", str(None))
-        config_text = config_text.replace("{{datasets}}", f"{self.course_name}:{self.data_source_version}")
+        config_text = config_text.replace("{{datasets}}", f"{self.course_config.course_name}:{self.course_config.data_source_version}")
 
         config = json.loads(config_text)
 
