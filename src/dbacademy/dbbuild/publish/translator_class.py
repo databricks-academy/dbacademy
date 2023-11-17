@@ -173,8 +173,10 @@ class Translator:
         self.language_options = [p for p in self.language_options if not p.startswith("english-") and not p.startswith("_")]
         self.language_options.sort()
 
+        default_langauge = self.language_options[0] if len(self.language_options) > 0 else None
+
         dbgems.dbutils.widgets.dropdown("i18n_language",
-                                        self.language_options[0],
+                                        default_langauge,
                                         self.language_options,
                                         "i18n Language")
 
