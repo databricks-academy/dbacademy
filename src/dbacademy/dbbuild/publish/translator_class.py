@@ -3,6 +3,8 @@ __all__ = ["Translator"]
 from typing import Optional
 from dbacademy.dbbuild.publish.publisher_class import Publisher
 from dbacademy.dbbuild import dbb_constants
+from dbacademy.clients.databricks import DBAcademyRestClient
+
 
 class Translator:
 
@@ -53,6 +55,80 @@ class Translator:
         self.errors = []
         self.warnings = []
         self.__select_i18n_language(publisher.source_repo)
+
+    @classmethod
+    def inject_i18n_guids(cls, client: DBAcademyRestClient, source_dir: str) -> None:
+        """
+        Used predominately by Notebook-based scripts, this command adds GUIDs when missing or moves the GUID from the %md line to the title.
+        :param client: an instance of DBAcademyRestClient
+        :param source_dir: The source directory to update
+        :return: None
+        """
+        import uuid
+        from dbacademy.dbbuild import dbb_constants
+        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+
+        source_notebooks = client.workspace().ls(source_dir, True)
+        source_paths = [n.get("path") for n in source_notebooks]
+        source_files = [p for p in source_paths if not p.startswith(f"{source_dir}/Includes/")]
+
+        for source_notebook_path in source_files:
+
+            if source_notebook_path != f"{source_dir}/EC 01 - Your First Lesson":
+                continue
+
+            print(f"Processing {source_notebook_path}")
+            print("=" * 80)
+
+            source_info = client.workspace().get_status(source_notebook_path)
+            language = source_info.get("language")
+            cmd_delim = NotebookDef.get_cmd_delim(language)
+            cm = NotebookDef.get_comment_marker(language)
+
+            raw_source = client.workspace().export_notebook(source_notebook_path)
+            raw_lines = raw_source.split("\n")
+
+            assert raw_lines[0] == f"{cm} {dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}", f"""Expected line zero to be "{dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}"."""
+            del raw_lines[0]
+
+            source = "\n".join(raw_lines)
+            commands = source.split(cmd_delim)
+            new_commands = list()
+
+            for i, command in enumerate(commands):
+                command = command.strip()
+                lines = command.split("\n")
+                line_zero = lines[0]
+
+                if NotebookDef.is_markdown(cm=cm, command=command):
+                    del lines[0]  # Remove the title or %md, add it back later
+                    guid = Translator.extract_i18n_guid(i=i, cm=cm, command=command, scan_line=line_zero)
+                    print(f"Cmd #{i + 1}: {guid}")
+
+                    if NotebookDef.is_not_titled(cm=cm, command=command):
+                        pos = line_zero.find("--i18n-")
+                        line_zero = line_zero[:pos].strip() if pos >= 0 else line_zero
+                        lines.insert(0, line_zero)
+
+                    # Add the title back in
+                    if guid is None:
+                        guid = uuid.uuid4()
+                        print(f"Cmd #{i+1} | Adding GUID: {guid}")
+                    else:
+                        guid = guid[7:]
+
+                    # Add the title back to the command
+                    lines.insert(0, f"# {dbb_constants.NOTEBOOKS.DBTITLE} 1,--i18n-{guid}")
+
+                new_command = "\n".join(lines)
+                new_commands.append(new_command)
+
+            new_source = f"{cm} {dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}\n"
+            new_source += f"\n{cmd_delim}\n".join(new_commands)
+
+            client.workspace().import_notebook(language=language.upper(),
+                                               notebook_path=source_notebook_path,
+                                               content=new_source)
 
     def __select_i18n_language(self, source_repo: str):
         from dbacademy import dbgems
