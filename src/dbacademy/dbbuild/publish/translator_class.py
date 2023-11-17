@@ -104,23 +104,38 @@ class Translator:
             for i, command in enumerate(commands):
                 command = command.strip()
                 lines = command.split("\n")
-                line_zero = lines[0]
+                line_zero = lines[0].strip()
 
                 if NotebookDef.is_markdown(cm=cm, command=command):
                     del lines[0]  # Remove the title or %md, add it back later
                     guid = Translator.extract_i18n_guid(i=i, cm=cm, command=command, scan_line=line_zero)
 
+                    magic_md = f"{cm} MAGIC %md"
+                    magic_md_sandbox = f"{cm} MAGIC %md-sandbox"
+
                     if NotebookDef.is_not_titled(cm=cm, command=command):
+                        next_line = None
                         pos = line_zero.find("--i18n-")
-                        line_zero = line_zero[:pos].strip() if pos >= 0 else line_zero.strip()
 
-                        if line_zero not in [f"{cm} MAGIC %md", f"{cm} MAGIC %md-sandbox"]:
-                            length = min(30, len(line_zero))
-                            tail = line_zero[:length] + "..."
-                            message = f"""Cmd #{i+1} | Line zero contains more than just "%md" and "%md-sandbox", found "{tail}"."""
-                            print(message+"\n")
-                            raise AssertionError(message)
+                        if pos >= 0:
+                            line_zero = line_zero[:pos].strip()
 
+                        elif line_zero in [magic_md, magic_md_sandbox]:
+                            pass  # We can leave as-is
+
+                        elif line_zero.startswith(magic_md):
+                            next_line = line_zero[len(magic_md):].strip()
+                            line_zero = magic_md
+
+                        elif line_zero.startswith(magic_md_sandbox):
+                            next_line = line_zero[len(magic_md_sandbox):].strip()
+                            line_zero = magic_md_sandbox
+
+                        # Add the "next_line" if it exists.
+                        if next_line is not None:
+                            lines.insert(0, next_line)
+
+                        # Add line_zero
                         lines.insert(0, line_zero)
 
                     # Add the title back in
