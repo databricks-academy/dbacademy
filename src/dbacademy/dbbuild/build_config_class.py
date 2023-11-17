@@ -572,14 +572,14 @@ class BuildConfig:
 
     # Used by notebooks
     # TODO Cannot define return type
-    def to_translator(self):
+    def to_translator(self, require_language: bool = True):
         """
         Creates an instance of Translator from the current build configuration.
         :return:
         """
         publisher = self.to_publisher(publishing_mode=None)
         publisher.validate(silent=True)
-        return publisher.to_translator()
+        return publisher.to_translator(require_language)
 
     # Used by notebooks
     # TODO Cannot define return type
