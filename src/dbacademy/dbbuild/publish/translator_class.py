@@ -69,7 +69,9 @@ class Translator:
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.common import print_warning
 
-        print_warning("USE WITH CAUTION", "Use this method with caution as it has undergone only minimal testing. Most notably, moving GUIDs from %md commands into the title.")
+        print_warning("USE WITH CAUTION", ("Use this method with caution as it has undergone only minimal testing.\n"
+                                           "Most notably, moving GUIDs from %md commands into the title.\n"
+                                           "The results can be validated by comparing diffs while committing."))
 
         source_notebooks = dbacademy_rest_client.workspace().ls(source_dir, True)
         source_paths = [n.get("path") for n in source_notebooks]
@@ -103,7 +105,6 @@ class Translator:
                 if NotebookDef.is_markdown(cm=cm, command=command):
                     del lines[0]  # Remove the title or %md, add it back later
                     guid = Translator.extract_i18n_guid(i=i, cm=cm, command=command, scan_line=line_zero)
-                    print(f"Cmd #{i + 1}: {guid}")
 
                     if NotebookDef.is_not_titled(cm=cm, command=command):
                         pos = line_zero.find("--i18n-")
