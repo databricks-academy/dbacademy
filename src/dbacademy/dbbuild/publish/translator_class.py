@@ -57,7 +57,7 @@ class Translator:
         self.__select_i18n_language(publisher.source_repo)
 
     @classmethod
-    def update_i18n_guids(cls, client: DBAcademyRestClient, source_dir: str, add_guid: bool) -> None:
+    def update_i18n_guids(cls, client: DBAcademyRestClient, source_dir: str, *, add_guid: bool) -> None:
         """
         Used predominately by Notebook-based scripts, this command adds GUIDs when missing or moves the GUID from the %md line to the title.
         :param client: an instance of DBAcademyRestClient
@@ -73,7 +73,7 @@ class Translator:
 
         client = validate.any_value(dbacademy_rest_client=client, parameter_type=DBAcademyRestClient, required=True)
         source_dir = validate.str_value(source_dir=source_dir, required=True)
-        action = validate.bool_value(add_guid=add_guid, required=True)
+        add_guid = validate.bool_value(add_guid=add_guid, required=True)
 
         print_warning("USE WITH CAUTION", ("Use this method with caution as it has undergone only minimal testing.\n"
                                            "Most notably, moving GUIDs from %md commands into the title.\n"
@@ -143,13 +143,15 @@ class Translator:
                     # Add the title back in
                     if guid is None:
                         guid = uuid.uuid4()
-                        if action == add_guid:
+                        if add_guid:
                             print(f"Cmd #{i+1} | Adding GUID: {guid}")
                     else:
+                        if not add_guid:
+                            print(f"Cmd #{i+1} | Removing GUID: {guid}")
                         guid = guid[7:]
 
                     # Add the title back to the command
-                    if action == add_guid:
+                    if add_guid:
                         lines.insert(0, f"# {dbb_constants.NOTEBOOKS.DBTITLE} 1,--i18n-{guid}")
                     else:
                         lines.insert(0, f"# {dbb_constants.NOTEBOOKS.DBTITLE} 0")
