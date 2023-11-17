@@ -104,7 +104,7 @@ class UniversalWorkspaceSetupRunner:
         uws = cls.uws_read() or dict()
         uws["log"] = uws.get("log", list())
         i = len(uws["log"])
-        uws.get("log").append(f"{i+1} - {message}")
+        uws.get("log").append(f"{i+1:02d} - {message}")
 
         cls.uws_write(uws)
 
