@@ -4,6 +4,14 @@ from typing import List, Optional
 from dbacademy.dbbuild import dbb_constants
 
 
+def get_source_dir() -> str:
+    import os
+
+    curr_paths = os.getcwd().split("/")[2:-1]
+    curr_path = "/".join(curr_paths)
+    return f"/{curr_path}/Source"
+
+
 def is_markdown(*, cm: str, command: str) -> bool:
     lines = command.strip().split("\n")
     if is_titled(cm=cm, command=command):
