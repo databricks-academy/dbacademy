@@ -49,22 +49,22 @@ class TestDBAcademyHelper(unittest.TestCase):
         from dbacademy.dbhelper.lesson_config import LessonConfig
         from dbacademy.dbhelper.course_config import CourseConfig
 
-        course_config = CourseConfig(_course_code="test",
-                                     _course_name="Testing 123",
-                                     _data_source_version="v01",
-                                     _install_min_time="1 min",
-                                     _install_max_time="5 min",
-                                     _supported_dbrs=["spark-123"],
-                                     _expected_dbrs="spark-123")
+        course_config = CourseConfig(course_code="test",
+                                     course_name="Testing 123",
+                                     data_source_version="v01",
+                                     install_min_time="1 min",
+                                     install_max_time="5 min",
+                                     supported_dbrs=["spark-123"],
+                                     expected_dbrs="spark-123")
 
-        lesson_config = LessonConfig(_name=None,
-                                     _create_schema=False,
-                                     _create_catalog=False,
-                                     _requires_uc=False,
-                                     _install_datasets=False,
-                                     _enable_streaming_support=False,
-                                     _enable_ml_support=False,
-                                     _mocks={
+        lesson_config = LessonConfig(name=None,
+                                     create_schema=False,
+                                     create_catalog=False,
+                                     requires_uc=False,
+                                     install_datasets=False,
+                                     enable_streaming_support=False,
+                                     enable_ml_support=False,
+                                     mocks={
                                          "__username": "mickey.mouse@disney.com"
                                      })
 
@@ -78,22 +78,22 @@ class TestDBAcademyHelper(unittest.TestCase):
         from dbacademy.dbhelper.lesson_config import LessonConfig
         from dbacademy.dbhelper.course_config import CourseConfig
 
-        course_config = CourseConfig(_course_code="test",
-                                     _course_name="Testing 123",
-                                     _data_source_version="v01",
-                                     _install_min_time="1 min",
-                                     _install_max_time="5 min",
-                                     _supported_dbrs=["spark-123"],
-                                     _expected_dbrs="spark-123")
+        course_config = CourseConfig(course_code="test",
+                                     course_name="Testing 123",
+                                     data_source_version="v01",
+                                     install_min_time="1 min",
+                                     install_max_time="5 min",
+                                     supported_dbrs=["spark-123"],
+                                     expected_dbrs="spark-123")
 
-        lesson_config = LessonConfig(_name="Smoke Test",
-                                     _create_schema=False,
-                                     _create_catalog=False,
-                                     _requires_uc=False,
-                                     _install_datasets=False,
-                                     _enable_streaming_support=False,
-                                     _enable_ml_support=False,
-                                     _mocks={
+        lesson_config = LessonConfig(name="Smoke Test",
+                                     create_schema=False,
+                                     create_catalog=False,
+                                     requires_uc=False,
+                                     install_datasets=False,
+                                     enable_streaming_support=False,
+                                     enable_ml_support=False,
+                                     mocks={
                                          "__username": "mickey.mouse@disney.com"
                                      })
 

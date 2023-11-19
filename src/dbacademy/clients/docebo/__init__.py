@@ -24,7 +24,7 @@ class DoceboRestClient(ApiClient):
                  throttle_seconds: int,
                  error_handler: ClientErrorHandler):
 
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         validate.str_value(endpoint=endpoint, required=True)
         validate.str_value(username=username, required=True)

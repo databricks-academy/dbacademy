@@ -10,21 +10,26 @@ class TestSuite:
     TEST_TYPE_ML = "ml"
     TEST_TYPES = [TEST_TYPE_INTERACTIVE, TEST_TYPE_STOCK, TEST_TYPE_PHOTON, TEST_TYPE_ML]
 
-    def __init__(self, *, build_config: BuildConfig, test_dir: str, test_type: str, keep_success: bool = False):
+    def __init__(self, *,
+                 build_config: BuildConfig,
+                 test_dir: str,
+                 test_type: str,
+                 keep_success: bool = False):
+
         from dbacademy import dbgems
         from dbacademy.dbbuild.test.test_instance_class import TestInstance
 
-        self.test_dir = test_dir
-        self.build_config = build_config
-        self.client = build_config.client
+        self.__test_dir = test_dir
+        self.__build_config = build_config
+        # self.__client = build_config.client
 
-        self.test_rounds = dict()
-        self.test_results = list()
+        self.__test_rounds = dict()
+        self.__test_results = list()
 
-        self.slack_thread_ts = None
-        self.slack_first_message = None
+        self.__slack_thread_ts = None
+        self.__slack_first_message = None
 
-        self.keep_success = keep_success
+        self.__keep_success = keep_success
 
         if dbgems.is_job():
             test_type = dbgems.get_parameter("test_type", None)
@@ -33,24 +38,56 @@ class TestSuite:
 
         assert test_type in TestSuite.TEST_TYPES, f"The test type is expected to be one of {TestSuite.TEST_TYPES}, found \"{test_type}\""
 
-        self.test_type = test_type
+        self.__test_type = test_type
 
         # Define each test_round first to make the next step full-proof
-        for notebook in self.build_config.notebooks.values():
-            self.test_rounds[notebook.test_round] = list()
+        for notebook in self.__build_config.notebooks.values():
+            self.__test_rounds[notebook.test_round] = list()
 
         # Add each notebook to the dictionary or rounds which is a dictionary of tests
-        for notebook in self.build_config.notebooks.values():
+        for notebook in self.__build_config.notebooks.values():
             if notebook.test_round > 0:
                 # [job_name] = (notebook_path, 0, 0, ignored)
-                test_instance = TestInstance(self.build_config, notebook, test_dir, self.test_type)
-                self.test_rounds[notebook.test_round].append(test_instance)
+                test_instance = TestInstance(self.__build_config, notebook, test_dir, self.test_type)
+                self.__test_rounds[notebook.test_round].append(test_instance)
 
-                if self.client.workspace().get_status(test_instance.notebook_path) is None:
+                if self.__client.workspace().get_status(test_instance.notebook_path) is None:
                     raise Exception(f"Notebook not found: {test_instance.notebook_path}")
 
         url = f"{dbgems.get_workspace_url()}#job/list/search/dbacademy.course:{build_config.build_name}"
         print(f"Test Suite: {url}")
+
+    @property
+    def test_dir(self) -> str:
+        return self.__test_dir
+
+    @property
+    def build_config(self) -> BuildConfig:
+        return self.__build_config
+
+    # @property
+    # def client(self) -> DBAcademyRestClient:
+    # return self.__client
+
+    @property
+    def test_rounds(self) -> Dict[str, Any]:
+        return self.__test_rounds
+
+    @property
+    def test_results(self) -> List[TestResults]:
+        return self.__test_results
+
+    @property
+    def slack_thread_ts(self) -> int:
+        return self.__slack_thread_ts
+
+    @property
+    def slack_first_message(self) -> str:
+        return self.__slack_first_message
+
+    @property
+    def keep_success(self) -> bool:
+        return self.__keep_success
 
     def get_all_job_names(self):
         job_names = list()

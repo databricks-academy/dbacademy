@@ -1,7 +1,7 @@
 __all__ = ["SlackChannel", "Announcements", "Translation", "PublishingInfo"]
 
 from typing import Dict, List, Any
-from dbacademy.common import validate
+from dbacademy.common import validator
 
 
 class SlackChannel:

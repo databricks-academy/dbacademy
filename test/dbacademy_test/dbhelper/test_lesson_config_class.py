@@ -20,14 +20,14 @@ class TestLessonConfig(unittest.TestCase):
     def test_is_uc_enabled_workspace_CATALOG_UC_DEFAULT(self):
         from dbacademy.dbhelper.lesson_config import LessonConfig
 
-        config = LessonConfig(_name=None,
-                              _create_schema=False,
-                              _create_catalog=True,
-                              _requires_uc=True,
-                              _install_datasets=False,
-                              _enable_streaming_support=False,
-                              _enable_ml_support=False,
-                              _mocks={"__initial_catalog": dbh_constants.DBACADEMY_HELPER.CATALOG_UC_DEFAULT})
+        config = LessonConfig(name=None,
+                              create_schema=False,
+                              create_catalog=True,
+                              requires_uc=True,
+                              install_datasets=False,
+                              enable_streaming_support=False,
+                              enable_ml_support=False,
+                              mocks={"__initial_catalog": dbh_constants.DBACADEMY_HELPER.CATALOG_UC_DEFAULT})
 
         self.assertIsNone(config.name)
         self.assertIsNone(config.clean_name)
@@ -45,14 +45,14 @@ class TestLessonConfig(unittest.TestCase):
     def test_is_uc_enabled_workspace_STUDENT(self):
         from dbacademy.dbhelper.lesson_config import LessonConfig
 
-        config = LessonConfig(_name=None,
-                              _create_schema=False,
-                              _create_catalog=True,
-                              _requires_uc=True,
-                              _install_datasets=False,
-                              _enable_streaming_support=False,
-                              _enable_ml_support=False,
-                              _mocks={"__initial_catalog": "i_have_no_idea"})
+        config = LessonConfig(name=None,
+                              create_schema=False,
+                              create_catalog=True,
+                              requires_uc=True,
+                              install_datasets=False,
+                              enable_streaming_support=False,
+                              enable_ml_support=False,
+                              mocks={"__initial_catalog": "i_have_no_idea"})
 
         self.assertIsNone(config.name)
         self.assertIsNone(config.clean_name)
@@ -70,14 +70,14 @@ class TestLessonConfig(unittest.TestCase):
     def test_lesson_config_create_catalog_no_uc_support_CATALOG_SPARK_DEFAULT(self):
         from dbacademy.dbhelper.lesson_config import LessonConfig
 
-        config = LessonConfig(_name=None,
-                              _create_schema=False,
-                              _create_catalog=True,
-                              _requires_uc=True,
-                              _install_datasets=False,
-                              _enable_streaming_support=False,
-                              _enable_ml_support=False,
-                              _mocks={"__initial_catalog": dbh_constants.DBACADEMY_HELPER.CATALOG_SPARK_DEFAULT})
+        config = LessonConfig(name=None,
+                              create_schema=False,
+                              create_catalog=True,
+                              requires_uc=True,
+                              install_datasets=False,
+                              enable_streaming_support=False,
+                              enable_ml_support=False,
+                              mocks={"__initial_catalog": dbh_constants.DBACADEMY_HELPER.CATALOG_SPARK_DEFAULT})
         try:
             config.assert_valid()
             raise Exception("Expected AssertionError")
@@ -88,13 +88,13 @@ class TestLessonConfig(unittest.TestCase):
     def test_lesson_config_create_catalog_no_uc_support_CATALOG_NONE(self):
         from dbacademy.dbhelper.lesson_config import LessonConfig
 
-        config = LessonConfig(_name=None,
-                              _create_schema=False,
-                              _create_catalog=True,
-                              _requires_uc=True,
-                              _install_datasets=False,
-                              _enable_streaming_support=False,
-                              _enable_ml_support=False)
+        config = LessonConfig(name=None,
+                              create_schema=False,
+                              create_catalog=True,
+                              requires_uc=True,
+                              install_datasets=False,
+                              enable_streaming_support=False,
+                              enable_ml_support=False)
         try:
             config.assert_valid()
             raise Exception("Expected AssertionError")
@@ -105,14 +105,14 @@ class TestLessonConfig(unittest.TestCase):
     def test_lesson_config_create_with_catalog_and_schema(self):
         from dbacademy.dbhelper.lesson_config import LessonConfig
 
-        config = LessonConfig(_name=None,
-                              _create_schema=True,
-                              _create_catalog=True,
-                              _requires_uc=True,
-                              _install_datasets=False,
-                              _enable_streaming_support=False,
-                              _enable_ml_support=False,
-                              _mocks={"__initial_catalog": dbh_constants.DBACADEMY_HELPER.CATALOG_UC_DEFAULT})
+        config = LessonConfig(name=None,
+                              create_schema=True,
+                              create_catalog=True,
+                              requires_uc=True,
+                              install_datasets=False,
+                              enable_streaming_support=False,
+                              enable_ml_support=False,
+                              mocks={"__initial_catalog": dbh_constants.DBACADEMY_HELPER.CATALOG_UC_DEFAULT})
         try:
             config.assert_valid()
             raise Exception("Expected AssertionError")
@@ -123,14 +123,14 @@ class TestLessonConfig(unittest.TestCase):
     def test_lesson_config_create_schema(self):
         from dbacademy.dbhelper.lesson_config import LessonConfig
 
-        config = LessonConfig(_name="Test 123 - Whatever",
-                              _create_schema=True,
-                              _create_catalog=False,
-                              _requires_uc=True,
-                              _install_datasets=False,
-                              _enable_streaming_support=False,
-                              _enable_ml_support=False,
-                              _mocks={
+        config = LessonConfig(name="Test 123 - Whatever",
+                              create_schema=True,
+                              create_catalog=False,
+                              requires_uc=True,
+                              install_datasets=False,
+                              enable_streaming_support=False,
+                              enable_ml_support=False,
+                              mocks={
                                  "__username": "mickey.mouse@disney.com",
                                  "__initial_schema": dbh_constants.DBACADEMY_HELPER.SCHEMA_DEFAULT,
                                  "__initial_catalog": "whatever_dude"
@@ -153,22 +153,22 @@ class TestLessonConfig(unittest.TestCase):
         from dbacademy.dbhelper.lesson_config import LessonConfig
         from dbacademy.dbhelper.course_config import CourseConfig
 
-        course_config = CourseConfig(_course_code="asdf",
-                                     _course_name="Apples, Spinach, Dates & Figs",
-                                     _data_source_version="v01",
-                                     _install_max_time="100 min",
-                                     _install_min_time="1 min",
-                                     _supported_dbrs=["whatever.x.y.z"],
-                                     _expected_dbrs="whatever.x.y.z")
+        course_config = CourseConfig(course_code="asdf",
+                                     course_name="Apples, Spinach, Dates & Figs",
+                                     data_source_version="v01",
+                                     install_max_time="100 min",
+                                     install_min_time="1 min",
+                                     supported_dbrs=["whatever.x.y.z"],
+                                     expected_dbrs="whatever.x.y.z")
 
-        config = LessonConfig(_name="Test 123 - Whatever",
-                              _create_schema=True,
-                              _create_catalog=False,
-                              _requires_uc=True,
-                              _install_datasets=False,
-                              _enable_streaming_support=False,
-                              _enable_ml_support=False,
-                              _mocks={
+        config = LessonConfig(name="Test 123 - Whatever",
+                              create_schema=True,
+                              create_catalog=False,
+                              requires_uc=True,
+                              install_datasets=False,
+                              enable_streaming_support=False,
+                              enable_ml_support=False,
+                              mocks={
                                  "__username": "mickey.mouse@disney.com",
                                  "__initial_schema": dbh_constants.DBACADEMY_HELPER.SCHEMA_DEFAULT,
                                  "__initial_catalog": "whatever_dude"

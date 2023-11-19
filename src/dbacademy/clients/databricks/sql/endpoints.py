@@ -54,7 +54,7 @@ CLUSTER_SIZES = [CLUSTER_SIZE_2X_SMALL,
 class SqlWarehousesClient(ApiContainer):
 
     def __init__(self, client: ApiClient):
-        from dbacademy.common import validate
+        from dbacademy.common import validator
         from dbacademy.clients.databricks import DBAcademyRestClient
 
         self.client: DBAcademyRestClient = validate.any_value(DBAcademyRestClient, client=client, required=True)

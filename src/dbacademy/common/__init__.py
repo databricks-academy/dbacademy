@@ -4,12 +4,18 @@ This was moved out of dbgems because dbgems has a dependency on pyspark.
 """
 from __future__ import annotations
 
-__all__ = ["deprecation_log_level", "deprecated", "overrides", "print_title", "print_warning", "CachedStaticProperty", "clean_string", "load_databricks_cfg", "Cloud"]
+__all__ = ["deprecation_log_level", "deprecated", "overrides", "print_title", "print_warning", "CachedStaticProperty", "clean_string", "load_databricks_cfg", "Cloud", "validate", "ValidationError"]
 
 from typing import Callable
 from dbacademy.common.cloud_class import Cloud
 
+from dbacademy.common.validator_class import Validator, ValidationError
+
 deprecation_log_level = "error"
+
+
+def validate(**kwargs) -> Validator:
+    return Validator(**kwargs)
 
 
 def print_title(title: str, divider: str = "-", length: int = 100) -> None:

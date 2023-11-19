@@ -8,7 +8,7 @@ from dbacademy.clients.databricks import DBAcademyRestClient
 class ClustersHelper:
 
     def __init__(self, db_academy_rest_client: DBAcademyRestClient):
-        from dbacademy.common import validate
+        from dbacademy.common import validator
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 
         self.__client = validate.any_value(db_academy_rest_client=db_academy_rest_client, parameter_type=DBAcademyRestClient, required=True)

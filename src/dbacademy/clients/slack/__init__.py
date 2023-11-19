@@ -1,7 +1,7 @@
 __all__ = ["SlackThread", "from_args", "GOOD", "WARNING", "DANGER"]
 
 from typing import List, Dict, Any, Optional, Union
-from dbacademy.common import validate
+from dbacademy.common import validator
 
 
 class Level:

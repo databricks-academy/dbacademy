@@ -42,8 +42,8 @@ class TestUtils(unittest.TestCase):
         from dbacademy.common.validate import ValidationError
 
         def dummy(value: int):
-            from dbacademy.common import validate
-            value = validate.int_value(value=value)
+            from dbacademy.common import validator
+            value = validate.int_value(value=value, required=False)
             self.assertEqual(1, value)
 
         dummy(1)

@@ -33,7 +33,7 @@ class InstancePoolsClient(ApiContainer):
                          preloaded_spark_version: str = None,
                          tags: List = None) -> Dict[str, Any]:
 
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         pool = self.get_by_name(instance_pool_name)
         tags = validate.list_value(tags=tags, required=True)

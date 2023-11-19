@@ -3,7 +3,7 @@ __all__ = []
 
 from typing import Callable, List, Dict
 from dbacademy.dbhelper import dbh_constants
-from dbacademy.common import validate
+from dbacademy.common import validator
 from dbacademy.clients.databricks import DBAcademyRestClient
 from dbacademy.dbhelper.lesson_config import LessonConfig
 from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper

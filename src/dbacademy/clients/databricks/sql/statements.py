@@ -31,7 +31,7 @@ class StatementsClient(ApiContainer):
         return self.client.api("POST", f"{self.base_url}/{statement_id}/cancel")
 
     def execute(self, *, warehouse_id: str, catalog: str, schema: str, statement: str, byte_limit: int = -1, disposition: DISPOSITION_TYPE = "INLINE", results_format: FORMAT_TYPE = "JSON_ARRAY", on_wait_timeout: WAIT_TIMEOUT_TYPE = "CANCEL", wait_timeout: WAIT_TIMEOUT_SECONDS = "50s"):
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         validate.str_value(catalog=catalog)
         validate.str_value(schema=schema)

@@ -1,6 +1,6 @@
 __all__ = ["ClustersClient"]
 
-from dbacademy.common import validate
+from dbacademy.common import validator
 from typing import Optional, Dict, Any, List
 from dbacademy.clients.rest.common import ApiContainer, ApiClient
 from dbacademy.clients.databricks.clusters.cluster_config_class import ClusterConfig

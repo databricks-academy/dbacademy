@@ -11,26 +11,26 @@ class UcStorageConfig:
                  meta_store_owner: str,
                  aws_iam_role_arn: Optional[str],
                  msa_access_connector_id: Optional[str]):
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         self.__meta_store_name = None
 
-        validate.str_value(min_length=1, storage_root=storage_root)
+        validator.str_value(min_length=1, storage_root=storage_root)
         self.__storage_root = storage_root
 
-        validate.str_value(min_length=1, storage_root_credential_id=storage_root_credential_id)
+        validator.str_value(min_length=1, storage_root_credential_id=storage_root_credential_id)
         self.__storage_root_credential_id = storage_root_credential_id
 
-        validate.str_value(min_length=1, region=region)
+        validator.str_value(min_length=1, region=region)
         self.__region = region
 
-        validate.str_value(min_length=1, meta_store_owner=meta_store_owner)
+        validator.str_value(min_length=1, meta_store_owner=meta_store_owner)
         self.__meta_store_owner = meta_store_owner
 
-        validate.str_value(aws_iam_role_arn=aws_iam_role_arn)
+        validator.str_value(aws_iam_role_arn=aws_iam_role_arn)
         self.__aws_iam_role_arn = aws_iam_role_arn
 
-        validate.str_value(msa_access_connector_id=msa_access_connector_id)
+        validator.str_value(msa_access_connector_id=msa_access_connector_id)
         self.__msa_access_connector_id = msa_access_connector_id
 
     @property

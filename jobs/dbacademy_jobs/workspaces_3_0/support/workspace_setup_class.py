@@ -76,7 +76,7 @@ class WorkspaceSetup:
     from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
 
     def __init__(self, account_config: AccountConfig, run_workspace_setup: bool):
-        from dbacademy.common import validate
+        from dbacademy.common import validator
         from dbacademy.clients.dougrest import AccountsApi
         from dbacademy.clients import airtable
         from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
@@ -84,7 +84,7 @@ class WorkspaceSetup:
         self.__errors: List[str] = list()
         self.__workspaces: List[WorkspaceTrio] = list()
 
-        validate.any_value(AccountConfig, account_config=account_config, required=True)
+        validator.any_value(AccountConfig, account_config=account_config, required=True)
         self.__account_config = account_config
 
         self.__accounts_api = AccountsApi(account_id=self.account_config.account_id,

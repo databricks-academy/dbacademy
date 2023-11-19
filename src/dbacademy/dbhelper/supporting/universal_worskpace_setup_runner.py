@@ -13,7 +13,7 @@ class UniversalWorkspaceSetupRunner:
         from dbacademy import dbgems
         from dbacademy.common import Cloud
         from dbacademy.clients import databricks
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         self.__event_id = 0
         self.__event_description = f"Workspace {workspace_name}"

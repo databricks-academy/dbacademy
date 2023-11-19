@@ -25,7 +25,7 @@ class CourseConfig:
         :param expected_dbrs: See the property by the same name
         """
 
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         self.__course_code = validate.str_value(course_code=course_code, required=True)
         self.__course_name = validate.str_value(course_name=course_name, required=True)

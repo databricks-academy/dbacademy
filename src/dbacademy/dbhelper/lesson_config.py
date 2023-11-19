@@ -31,7 +31,7 @@ class LessonConfig:
         :param mocks: Used for testing, allows for mocking out the parameters __username, __initial_schema and __initial_catalog
         """
         from dbacademy import dbgems
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         self.__course_config = None
 

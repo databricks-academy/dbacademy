@@ -27,7 +27,7 @@ class BuildConfig:
         :return:
         """
         import json
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         validate.str_value(file=file)
         validate.str_value(version=version)
@@ -43,7 +43,7 @@ class BuildConfig:
         :param version: The current version being published. Expected to be one of BuildConfig.VERSIONS_LIST or an actual version number in the form of "vX.Y.Z"
         :return:
         """
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         validate.dict_value(config=config)
         validate.str_value(version=version)
@@ -627,7 +627,7 @@ class BuildConfig:
         :return: None
         """
         from dbacademy import common
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         cloud = validate.str_value(cloud=cloud).upper()
 

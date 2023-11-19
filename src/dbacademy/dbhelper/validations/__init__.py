@@ -482,7 +482,7 @@ class ValidationSuite(object):
 class ValidationHelper:
 
     def __init__(self, da):
-        from dbacademy.common import validate
+        from dbacademy.common import validator
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
         from dbacademy.clients.databricks import DBAcademyRestClient
 

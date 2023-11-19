@@ -9,7 +9,7 @@ from dbacademy.clients.rest.common import ApiContainer
 class TablesAPI(ApiContainer):
 
     def __init__(self, client: ApiClient, table_id: str, at_utils: AirTableUtils):
-        from dbacademy.common import validate
+        from dbacademy.common import validator
         from dbacademy.clients import airtable
 
         self.__client: airtable.AirTableRestClient = validate.any_value(airtable.AirTableRestClient, client=client, required=True)

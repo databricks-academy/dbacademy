@@ -9,7 +9,7 @@ from dbacademy.dbbuild.publish import pub_utils
 class Translator:
 
     def __init__(self, publisher: Publisher, require_i18n_selection: bool):
-        from dbacademy.common import validate
+        from dbacademy.common import validator
         from dbacademy.dbbuild.publish.publisher_class import Publisher
 
         # By default, we are not validated
@@ -66,7 +66,7 @@ class Translator:
         :return: None
         """
         import uuid
-        from dbacademy.common import validate
+        from dbacademy.common import validator
         from dbacademy.dbbuild import dbb_constants
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.common import print_warning

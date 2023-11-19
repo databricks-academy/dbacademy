@@ -83,7 +83,7 @@ class DBAcademyRestClient(ApiClient):
             client: A parent ApiClient from which to clone settings.
             throttle_seconds: Number of seconds to sleep between requests.
         """
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         if client is not None:
             # We have a valid client, use it to initialize from.

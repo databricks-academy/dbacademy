@@ -1,7 +1,7 @@
 __all__ = ["DBAcademyHelper"]
 
 from typing import Union, Optional, Dict, List
-from dbacademy.common import validate
+from dbacademy.common import validator
 from dbacademy.clients.databricks import DBAcademyRestClient
 from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 from dbacademy.dbhelper.supporting.dev_helper import DevHelper

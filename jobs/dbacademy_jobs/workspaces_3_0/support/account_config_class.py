@@ -32,33 +32,33 @@ class AccountConfig:
         """
         Creates the configuration for account-level settings.
         """
-        from dbacademy.common import validate
+        from dbacademy.common import validator
         from dbacademy_jobs.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
         from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
-        validate.str_value(min_length=1, account_id=account_id)
+        validator.str_value(min_length=1, account_id=account_id)
         self.__account_id = account_id
 
-        validate.str_value(min_length=1, password=password)
+        validator.str_value(min_length=1, password=password)
         self.__password = password
 
-        validate.str_value(min_length=1, username=username)
+        validator.str_value(min_length=1, username=username)
         self.__username = username
 
         print(f"Account ID:    {account_id}")
         print(f"Password:      {password[0]}***{password[-1]}")
         print(f"Username:      {username}")
 
-        validate.str_value(min_length=1, region=region)
+        validator.str_value(min_length=1, region=region)
         self.__region = region
 
-        validate.list_value(ignored_workspaces=ignored_workspaces, required=True)
+        validator.list_value(ignored_workspaces=ignored_workspaces, required=True)
         self.__ignored_workspaces = ignored_workspaces
 
-        validate.any_value(UcStorageConfig, uc_storage_config=uc_storage_config, required=True)
+        validator.any_value(UcStorageConfig, uc_storage_config=uc_storage_config, required=True)
         self.__uc_storage_config = uc_storage_config
 
-        validate.any_value(WorkspaceConfig, workspace_config_template=workspace_config_template, required=True)
+        validator.any_value(WorkspaceConfig, workspace_config_template=workspace_config_template, required=True)
         self.__workspace_config_template = workspace_config_template
 
         self.__workspaces = list()

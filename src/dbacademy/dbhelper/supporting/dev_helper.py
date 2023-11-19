@@ -4,7 +4,7 @@ __all__ = ["DevHelper"]
 class DevHelper:
 
     def __init__(self, db_academy_helper):
-        from dbacademy.common import validate
+        from dbacademy.common import validator
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
         from dbacademy.clients.databricks import DBAcademyRestClient
 

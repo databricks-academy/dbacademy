@@ -1,56 +1,14 @@
-__all__ = ["NotebookDef", "NotebookError", "StateVariables", "NotebookLogger"]
+__all__ = ["NotebookDef", "StateVariables"]
 
-from typing import Callable, Union, List, Dict, Any
+from typing import Union, List, Dict, Any
+from dbacademy.common import validator
 from dbacademy.dbbuild.build_config_class import BuildConfig
 from dbacademy.dbhelper import dbh_constants
 from dbacademy.dbbuild import dbb_constants
 from dbacademy.dbbuild.publish import pub_utils
+from dbacademy.dbbuild.publish.notebook_def_data_class import NotebookDefData
 
 
-class NotebookError:
-    def __init__(self, message):
-        self.message = message
-
-    def __str__(self):
-        return self.message
-
-    def __repr__(self):
-        return self.message
-
-
-class NotebookLogger:
-
-    def __init__(self):
-        self.__errors: List[NotebookError] = list()
-        self.__warnings: List[NotebookError] = list()
-
-    @property
-    def errors(self) -> List[NotebookError]:
-        return self.__errors
-
-    @property
-    def warnings(self) -> List[NotebookError]:
-        return self.__warnings
-
-    def reset(self):
-        self.__errors = list()
-        self.__warnings = list()
-
-    def warn(self, assertion: Callable[[], bool], message: str) -> bool:
-        if assertion is None or not assertion():
-            self.warnings.append(NotebookError(message))
-            return False
-        else:
-            return True
-
-    def test(self, assertion: Callable[[], bool], message: str) -> bool:
-        if assertion is None or not assertion():
-            self.errors.append(NotebookError(message))
-            return False
-        else:
-            return True
-        
-        
 class StateVariables:
     def __init__(self):
         self.i18n_guid_map: Dict[str, str] = dict()
@@ -71,55 +29,6 @@ class StateVariables:
         # Reset footer flags
         self.include_footer = False
         self.found_footer_directive = False
-
-
-class NotebookDefData:
-    def __init__(self,
-                 *,
-                 build_config: BuildConfig,
-                 path: str,
-                 replacements: Dict[str, Any],
-                 include_solution: bool,
-                 test_round: int,
-                 ignored: bool,
-                 order: int,
-                 i18n: bool,
-                 i18n_language: Union[None, str],
-                 ignoring: List[str],
-                 version: str):
-
-        from dbacademy.dbbuild.build_config_class import BuildConfig
-
-        assert type(build_config) == BuildConfig, f"""Expected the parameter "build_config" to be of type "BuildConfig", found "{type(build_config)}" """
-        assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
-        assert type(replacements) == dict, f"""Expected the parameter "replacements" to be of type "dict", found "{type(replacements)}" """
-        assert type(include_solution) == bool, f"""Expected the parameter "include_solution" to be of type "bool", found "{type(include_solution)}" """
-
-        self.__logger: NotebookLogger = NotebookLogger()
-
-        self.build_config = build_config
-        self.client = build_config.client
-        self.path = path
-        self.replacements = replacements or dict()
-
-        self.include_solution = include_solution
-        # self.errors: List[NotebookError] = list()
-        # self.warnings: List[NotebookError] = list()
-
-        self.test_round = test_round
-        self.ignored = ignored
-        self.order = order
-
-        self.i18n: bool = i18n
-        self.i18n_language: Union[None, str] = i18n_language
-        self.i18n_guids: List[str] = list()
-
-        self.ignoring = ignoring
-        self.version = version
-
-    @property
-    def logger(self) -> NotebookLogger:
-        return self.__logger
 
 
 class NotebookDef(NotebookDefData):
@@ -152,7 +61,17 @@ class NotebookDef(NotebookDefData):
                  ignoring: List[str],
                  version: str):
 
-        super().__init__(build_config=build_config, path=path, replacements=replacements, include_solution=include_solution, test_round=test_round, ignored=ignored, order=order, i18n=i18n, i18n_language=i18n_language, ignoring=ignoring, version=version)
+        super().__init__(build_config=build_config,
+                         path=path,
+                         version=version,
+                         replacements=replacements,
+                         include_solution=include_solution,
+                         test_round=test_round,
+                         ignored=ignored,
+                         ignoring=ignoring,
+                         order=order,
+                         i18n=i18n,
+                         i18n_language=i18n_language)
 
     def __str__(self):
         result = self.path
@@ -169,7 +88,9 @@ class NotebookDef(NotebookDefData):
                 print(warning.message)
             print()
 
-    def assert_no_errors(self, print_warnings) -> None:
+    def assert_no_errors(self, print_warnings: bool) -> None:
+        validate.bool_value(print_warnings=print_warnings, required=True)
+
         if len(self.logger.errors) > 0:
             what = "error was" if len(self.logger.errors) == 1 else "errors were"
             print(f"ABORTING: {len(self.logger.errors)} {what} found while publishing")
@@ -187,6 +108,12 @@ class NotebookDef(NotebookDefData):
                              original_target: str,
                              target: str,
                              other_notebooks: List[NotebookDefData]):
+
+        validate.int_value_required(i=i)
+        validate.str_value_required(what=what)
+        validate.str_value_required(original_target=original_target)
+        validate.str_value_required(target=target)
+        validate.list_of_strings_required(other_notebooks=other_notebooks, auto_create=False)
 
         if not target.startswith("../") and not target.startswith("./"):
             self.logger.warn(lambda: False, f"Cmd #{i+1} | Found unexpected, relative, {what} target: \"{original_target}\" resolved as \"{target}\"".strip())
@@ -229,7 +156,10 @@ class NotebookDef(NotebookDefData):
         # self.logger.test(lambda: len(notebooks) != 0, message)
         self.logger.test(lambda: len(notebooks) != 0, message)
 
-    def test_pip_cells(self, language: str, command: str, i: int) -> str:
+    def test_pip_cells(self, *,
+                       i: int,
+                       command: str,
+                       language: str) -> str:
         """
         Validates %pip cells, mostly to ensure that dbacademy-* resources are fixed to a specific version
         :param language: The language of the corresponding notebook
@@ -237,6 +167,9 @@ class NotebookDef(NotebookDefData):
         :param i: The zero-based index to the command within the notebook
         :return: None
         """
+
+        validate.int_value_required(i=i)
+        validate.str_value_required()
 
         # First verify that the specified command is a %pip cell
         cm = self.get_comment_marker(language)
@@ -669,7 +602,7 @@ For more current information, please see <a href="https://files.training.databri
                 debugging: bool,
                 other_notebooks: List[NotebookDefData]) -> None:
 
-        from dbacademy.common import validate
+        from dbacademy.common import validator
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
         validate.str_value(source_dir=source_dir, required=True)
@@ -678,11 +611,10 @@ For more current information, please see <a href="https://files.training.databri
         validate.bool_value(verbose=verbose, required=True)
         validate.bool_value(debugging=debugging, required=True)
 
-        other_notebooks: List[NotebookDefData] = validate.list_of_type(other_notebooks=other_notebooks, element_type=NotebookDefData, auto_create=True)
+        other_notebooks: List[NotebookDefData] = validate.list_of_type_required(other_notebooks=other_notebooks, element_type=NotebookDefData, auto_create=True)
 
-        self.logger.reset()
-        self.i18n_guids: List[str] = list()
-
+        self.logger.reset()      # Remove all errors from previous invocations of publish
+        self.i18n_guids.clear()  # Remove all GUIDs from previous invocations of publish
         print()
         print("=" * 80)
         print(f".../{self.path}")

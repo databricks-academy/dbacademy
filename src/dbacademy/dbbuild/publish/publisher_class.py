@@ -1,7 +1,7 @@
 __all__ = ["Publisher"]
 
 from typing import List, Optional
-from dbacademy.common import validate
+from dbacademy.common import validator
 
 
 class Publisher:

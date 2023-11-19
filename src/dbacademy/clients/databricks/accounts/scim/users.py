@@ -65,7 +65,7 @@ class AccountScimUsersApi(ApiContainer):
         return None
 
     def update_by_id(self, user_id: str, *, first_name: str = None, last_name: str = None, operations: List[Operation] = None) -> Dict[str, Any]:
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         operations = operations or list()
 

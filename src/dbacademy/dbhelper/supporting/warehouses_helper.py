@@ -2,7 +2,7 @@ __all__ = ["WarehousesHelper"]
 
 from typing import Union, List, Optional
 
-from dbacademy.common import validate
+from dbacademy.common import validator
 from dbacademy.dbhelper.lesson_config import LessonConfig
 from dbacademy.clients.databricks import DBAcademyRestClient
 from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
@@ -11,7 +11,7 @@ from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 class WarehousesHelper:
 
     def __init__(self, db_academy_reset_client: DBAcademyRestClient, workspace_helper: WorkspaceHelper):
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         self.__client = validate.any_value(db_academy_reset_client=db_academy_reset_client, parameter_type=DBAcademyRestClient, required=True)
         self.__workspace_helper = validate.any_value(workspace_helper=workspace_helper, parameter_type=WorkspaceHelper, required=True)

@@ -7,7 +7,7 @@ class Paths:
 
     def __init__(self, *, _lesson_config: LessonConfig, _working_dir_root: str, _datasets: str, _archives: str):
 
-        from dbacademy.common import validate
+        from dbacademy.common import validator
 
         _lesson_config = validate.any_value(_lesson_config=_lesson_config, parameter_type=LessonConfig, required=True)
         _working_dir_root = validate.str_value(_working_dir_root=_working_dir_root, required=True)

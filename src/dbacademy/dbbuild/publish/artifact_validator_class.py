@@ -48,7 +48,7 @@ class ArtifactValidator:
                                  common_language=translator.common_language)
 
     def __init__(self, *, build_name: str, version: str, core_version: str, client: DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str, translation: Translation, i18n: bool, common_language: str) -> None:
-        from dbacademy.common import validate
+        from dbacademy.common import validator
         from dbacademy.dbbuild.publish.publishing_info_class import Translation
 
         self.build_name = build_name
