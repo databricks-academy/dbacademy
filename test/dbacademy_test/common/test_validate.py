@@ -54,7 +54,7 @@ class MyTestCase(unittest.TestCase):
             self.assertEqual("""Error-Internal | Expected the Validator's parameter 'min_length' to be of type int, found <class 'str'>.""", e.message)
 
     def test_parameter_min_value_type(self):
-        validate(value=1).int().min_value(0)
+        validate(value=1).int().min_value(1)
         try:
             # noinspection PyTypeChecker
             validate(value=1).int().min_value(None)
@@ -70,7 +70,7 @@ class MyTestCase(unittest.TestCase):
             self.assertEqual("""Error-Internal | Expected the Validator's parameter 'min_value' to be of type numbers.Number, found <class 'str'>.""", e.message)
 
     def test_parameter_max_value_type(self):
-        validate(value=1).int().max_value(0)
+        validate(value=5).int().max_value(5)
         try:
             # noinspection PyTypeChecker
             validate(value=1).int().max_value(None)
@@ -124,11 +124,37 @@ class MyTestCase(unittest.TestCase):
         validate(value=3).int().min_value(2)
         validate(value=2).int().min_value(2)
 
+        validate(value=4).int().max_value(4)
+        validate(value=3).int().max_value(4)
+        validate(value=2).int().max_value(4)
+
+        validate(value=4).int().min_max_value(2, 4)
+        validate(value=3).int().min_max_value(2, 4)
+        validate(value=2).int().min_max_value(2, 4)
+
         try:
             validate(value=1).int().min_value(2)
             self.fail(EXPECTED_ASSERTION_ERROR)
         except ValidationError as e:
             self.assertEqual("""Error-Min-Value | The parameter 'value' must have a minimum value of '2', found '1'.""", e.message)
+
+        try:
+            validate(value=5).int().max_value(4)
+            self.fail(EXPECTED_ASSERTION_ERROR)
+        except ValidationError as e:
+            self.assertEqual("""Error-Max-Value | The parameter 'value' must have a maximum value of '4', found '5'.""", e.message)
+
+        try:
+            validate(value=1).int().min_max_value(2, 4)
+            self.fail(EXPECTED_ASSERTION_ERROR)
+        except ValidationError as e:
+            self.assertEqual("""Error-Min-Value | The parameter 'value' must have a minimum value of '2', found '1'.""", e.message)
+
+        try:
+            validate(value=5).int().min_max_value(2, 4)
+            self.fail(EXPECTED_ASSERTION_ERROR)
+        except ValidationError as e:
+            self.assertEqual("""Error-Max-Value | The parameter 'value' must have a maximum value of '4', found '5'.""", e.message)
 
         try:
             validate(value=None).int_required()

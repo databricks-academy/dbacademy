@@ -8,6 +8,7 @@ E_TYPE = "Error-Type"
 ELEM_TYPE = "Element-Type"
 E_MIN_L = "Error-Min-Len"
 E_MIN_V = "Error-Min-Value"
+E_MAX_V = "Error-Max-Value"
 E_INTERNAL = "Error-Internal"
 
 ReturnType = TypeVar("ReturnType", bound=Union[list, dict, set, int, float, str, Iterable, Any])
@@ -82,7 +83,7 @@ def do_max_value(*, v: ValidatorProxy, max_value: numbers.Number) -> None:
     # We cannot test the max value if the value is not of type numbers.Number
     do_validate(passed=isinstance(v.value, numbers.Number), message=f"""{E_TYPE} | Expected the parameter '{v.parameter_name}' to be of type numbers.Number, found {type(v.value)}.""")
 
-    do_validate(passed=v.value <= max_value, message=f"""{E_MIN_V} | The parameter '{v.parameter_name}' must have a maximum value of '{max_value}', found '{v.value}'.""")
+    do_validate(passed=v.value <= max_value, message=f"""{E_MAX_V} | The parameter '{v.parameter_name}' must have a maximum value of '{max_value}', found '{v.value}'.""")
 
 
 class ValidationError(Exception):
