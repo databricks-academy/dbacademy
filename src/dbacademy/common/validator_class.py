@@ -144,6 +144,10 @@ class IterableValidator(SizedValidator):
     def of_bool(self, *, min_length: int = 0) -> Iterable[bool]:
         return self.of_type(element_type=bool, min_length=min_length)
 
+    @property
+    def iterable(self) -> Iterable:
+        return self.value
+
 
 class ListValidator(SizedValidator):
 
@@ -168,6 +172,10 @@ class ListValidator(SizedValidator):
 
     def of_bool(self, *, min_length: int = 0) -> List[bool]:
         return self.of_type(element_type=bool, min_length=min_length)
+
+    @property
+    def list(self) -> List:
+        return self.value
 
 
 class SetValidator(SizedValidator):
@@ -194,6 +202,10 @@ class SetValidator(SizedValidator):
     def of_bool(self, *, min_length: int = 0) -> Set[bool]:
         return self.of_type(element_type=bool, min_length=min_length)
 
+    @property
+    def set(self) -> Set:
+        return self.value
+
 
 class DictValidator(SizedValidator):
 
@@ -219,6 +231,10 @@ class DictValidator(SizedValidator):
     def keys_of_bool(self, *, min_length: int = 0) -> Dict[bool, Any]:
         return self.keys_of_type(element_type=bool, min_length=min_length)
 
+    @property
+    def dict(self) -> Dict:
+        return self.value
+
 
 class StringValidator(SizedValidator):
 
@@ -227,6 +243,10 @@ class StringValidator(SizedValidator):
 
     def min_length(self, min_length: int) -> str:
         do_min_length(v=self, min_length=min_length)
+        return self.value
+
+    @property
+    def str(self) -> str:
         return self.value
 
 
@@ -329,7 +349,7 @@ class Validator(ValidatorProxy):
 
         return self.value
 
-    def type_required(self, *, parameter_type: Type[ReturnType]) -> ReturnType:
+    def type_required(self, parameter_type: Type[ReturnType]) -> ReturnType:
         self.__required()
         return self.type(parameter_type=parameter_type)
 

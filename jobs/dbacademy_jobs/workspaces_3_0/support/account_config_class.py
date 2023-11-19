@@ -28,38 +28,35 @@ class AccountConfig:
                              ignored_workspaces=ignored_workspaces,
                              workspace_numbers=workspace_numbers)
 
-    def __init__(self, *, region: str, account_id: str, username: str, password: str, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, ignored_workspaces: List[Union[int, str]] = None, workspace_numbers: List[int]) -> None:
+    def __init__(self, *,
+                 region: str,
+                 account_id: str,
+                 username: str,
+                 password: str,
+                 uc_storage_config: UcStorageConfig,
+                 workspace_config_template: WorkspaceConfig,
+                 ignored_workspaces: List[Union[int, str]] = None,
+                 workspace_numbers: List[int]) -> None:
         """
         Creates the configuration for account-level settings.
         """
-        from dbacademy.common import validator
+        from dbacademy.common import validate
         from dbacademy_jobs.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
         from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
-        validator.str_value(min_length=1, account_id=account_id)
-        self.__account_id = account_id
-
-        validator.str_value(min_length=1, password=password)
-        self.__password = password
-
-        validator.str_value(min_length=1, username=username)
-        self.__username = username
+        self.__account_id = validate(account_id=account_id).str().min_length(1)
+        self.__password = validate(password=password).str().min_length(1)
+        self.__username = validate(username=username).str().min_length(1)
 
         print(f"Account ID:    {account_id}")
         print(f"Password:      {password[0]}***{password[-1]}")
         print(f"Username:      {username}")
 
-        validator.str_value(min_length=1, region=region)
-        self.__region = region
+        self.__region = validate(region=region).str().min_length(1)
 
-        validator.list_value(ignored_workspaces=ignored_workspaces, required=True)
-        self.__ignored_workspaces = ignored_workspaces
-
-        validator.any_value(UcStorageConfig, uc_storage_config=uc_storage_config, required=True)
-        self.__uc_storage_config = uc_storage_config
-
-        validator.any_value(WorkspaceConfig, workspace_config_template=workspace_config_template, required=True)
-        self.__workspace_config_template = workspace_config_template
+        self.__ignored_workspaces = validate(ignored_workspaces=ignored_workspaces).list_required().list
+        self.__uc_storage_config = validate(uc_storage_config=uc_storage_config).type_required(UcStorageConfig)
+        self.__workspace_config_template = validate(workspace_config_template=workspace_config_template).type_required(WorkspaceConfig)
 
         self.__workspaces = list()
 
