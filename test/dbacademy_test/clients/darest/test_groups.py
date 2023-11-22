@@ -79,8 +79,7 @@ class TestGroups(unittest.TestCase):
         group = self.client.scim.groups.get_by_name("dummies")
         self.assertIsNotNone(group)
 
-        group = self.client.scim.groups.delete_by_name("dummies")
-        self.assertIsNone(group)
+        self.client.scim.groups.delete_by_name("dummies")
 
         group = self.client.scim.groups.get_by_name("dummies")
         self.assertIsNone(group)

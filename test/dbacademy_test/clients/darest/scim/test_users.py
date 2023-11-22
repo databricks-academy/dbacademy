@@ -85,8 +85,7 @@ class TestUsers(unittest.TestCase):
         # self.assertEqual("allow-instance-pool-create", entitlements[1].get("value"))
 
         # Test delete by id
-        user = self.client.scim.users.delete_by_id(user_id)
-        self.assertIsNone(user)
+        self.client.scim.users.delete_by_id(user_id)
 
         # Test delete by username
         user = self.client.scim.users.create(mickey)

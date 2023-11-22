@@ -6,14 +6,17 @@ from dbacademy.clients.darest.sql.endpoints import SqlWarehousesClient
 from dbacademy.clients.darest.sql.queries import SqlQueriesClient
 from dbacademy.clients.darest.sql.statements import StatementsClient
 from dbacademy.clients.darest.permissions.sql import Sql
+from dbacademy.clients.darest import DBAcademyRestClient
 
 
 class SqlClient(ApiContainer):
     def __init__(self, client: ApiClient):
         from dbacademy.common import validate
-        from dbacademy.clients.darest import DBAcademyRestClient
+        self.__client: DBAcademyRestClient = validate(client=client).required.as_type(DBAcademyRestClient)
 
-        self.client: DBAcademyRestClient = validate(client=client).required.as_type(DBAcademyRestClient)
+    @property
+    def client(self) -> DBAcademyRestClient:
+        return self.__client
 
     @property
     def config(self) -> SqlConfigClient:
