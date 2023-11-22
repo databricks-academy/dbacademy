@@ -31,19 +31,19 @@ class StatementsClient(ApiContainer):
         return self.client.api("POST", f"{self.base_url}/{statement_id}/cancel")
 
     def execute(self, *, warehouse_id: str, catalog: str, schema: str, statement: str, byte_limit: int = -1, disposition: DISPOSITION_TYPE = "INLINE", results_format: FORMAT_TYPE = "JSON_ARRAY", on_wait_timeout: WAIT_TIMEOUT_TYPE = "CANCEL", wait_timeout: WAIT_TIMEOUT_SECONDS = "50s"):
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
-        validate.str_value(catalog=catalog)
-        validate.str_value(schema=schema)
-        validate.str_value(statement=statement)
-        validate.str_value(warehouse_id=warehouse_id)
+        validate(catalog=catalog).str()
+        validate(schema=schema).str()
+        validate(statement=statement).str()
+        validate(warehouse_id=warehouse_id).str()
 
-        validate.int_value(byte_limit=byte_limit)
-        validate.str_value(wait_timeout=wait_timeout)
+        validate(byte_limit=byte_limit).int()
+        validate(wait_timeout=wait_timeout).str()
 
-        validate.str_value(disposition=disposition)
-        validate.str_value(results_format=results_format)
-        validate.str_value(on_wait_timeout=on_wait_timeout)
+        validate(disposition=disposition).str()
+        validate(results_format=results_format).str()
+        validate(on_wait_timeout=on_wait_timeout).str()
 
         assert wait_timeout in get_args(WAIT_TIMEOUT_SECONDS), f"Expected wait_timeout to be 0s or between 5s & 50s inclusive"
         assert disposition in get_args(DISPOSITION_TYPE)

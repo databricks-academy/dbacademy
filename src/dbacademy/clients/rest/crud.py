@@ -27,6 +27,7 @@ class CRUD(ApiContainer, metaclass=ABCMeta):
                  plural: str = None,
                  id_key: str = None,
                  name_key: str = None):
+
         super().__init__()
         self.client = client
         self.path = path

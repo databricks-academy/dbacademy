@@ -5,6 +5,7 @@ __all__ = ["AccountsApi"]
 from typing import Union
 from dbacademy.clients.rest.common import ApiClient
 from dbacademy.common import Cloud
+from dbacademy.common import validate
 
 
 class AccountsApi(ApiClient):
@@ -14,18 +15,22 @@ class AccountsApi(ApiClient):
                  token: str = None,
                  cloud: Union[str, Cloud] = Cloud.AWS) -> None:
 
-        if type(cloud) is str:
-            cloud = Cloud[cloud]
+        cloud = validate(cloud=cloud).required.enum(Cloud, auto_convert=True)
 
         if cloud == Cloud.AWS:
             endpoint = f'https://accounts.cloud.databricks.com/api/2.0/accounts/{account_id}'
+
         elif cloud == Cloud.GCP:
             endpoint = f'https://accounts.gcp.databricks.com/api/2.0/accounts/{account_id}'
+
         elif cloud == Cloud.MSA:
             endpoint = f'https://accounts.azuredatabricks.net/api/2.0/accounts/{account_id}'
+
         else:
             raise ValueError(f"Cloud must be AWS, GCP, or MSA.  Found: {cloud!r}")
+
         super().__init__(endpoint, username=username, password=password, token=token)
+
         self.session.headers["X-Databricks-Account-Console-API-Version"] = "2.0"
 
         self.account_id = account_id

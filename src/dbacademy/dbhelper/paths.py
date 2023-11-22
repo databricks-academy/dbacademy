@@ -7,12 +7,12 @@ class Paths:
 
     def __init__(self, *, _lesson_config: LessonConfig, _working_dir_root: str, _datasets: str, _archives: str):
 
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
-        _lesson_config = validate.any_value(_lesson_config=_lesson_config, parameter_type=LessonConfig, required=True)
-        _working_dir_root = validate.str_value(_working_dir_root=_working_dir_root, required=True)
-        _datasets = validate.str_value(_datasets=_datasets, required=True)
-        _archives = validate.str_value(_archives=_archives, required=True)
+        _lesson_config = validate(_lesson_config=_lesson_config).required.as_type(LessonConfig)
+        _working_dir_root = validate(_working_dir_root=_working_dir_root).required.str()
+        _datasets = validate(_datasets=_datasets).required.str()
+        _archives = validate(_archives=_archives).required.str()
 
         if _lesson_config.name is None:
             self.working_dir = f"{_working_dir_root}/working"

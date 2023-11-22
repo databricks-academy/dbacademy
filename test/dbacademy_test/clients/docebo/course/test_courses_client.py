@@ -9,7 +9,7 @@ class TestCoursesClient(unittest.TestCase):
 
         course = client.courses.get_course_by_id("134")
         self.assertIsNotNone(course)
-        self.assertEquals(134, course.get("id"))
+        self.assertEqual(134, course.get("id"))
 
     def test_get_course_not_found(self):
         client = docebo.from_environment()

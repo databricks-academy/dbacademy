@@ -1,7 +1,7 @@
 __all__ = ["NotebookDef", "StateVariables"]
 
 from typing import Union, List, Dict, Any
-from dbacademy.common import validator
+from dbacademy.common import validate
 from dbacademy.dbbuild.build_config_class import BuildConfig
 from dbacademy.dbhelper import dbh_constants
 from dbacademy.dbbuild import dbb_constants
@@ -89,7 +89,7 @@ class NotebookDef(NotebookDefData):
             print()
 
     def assert_no_errors(self, print_warnings: bool) -> None:
-        validate.bool_value(print_warnings=print_warnings, required=True)
+        validate(print_warnings=print_warnings).required.bool()
 
         if len(self.logger.errors) > 0:
             what = "error was" if len(self.logger.errors) == 1 else "errors were"
@@ -109,11 +109,11 @@ class NotebookDef(NotebookDefData):
                              target: str,
                              other_notebooks: List[NotebookDefData]):
 
-        validate.int_value_required(i=i)
-        validate.str_value_required(what=what)
-        validate.str_value_required(original_target=original_target)
-        validate.str_value_required(target=target)
-        validate.list_of_strings_required(other_notebooks=other_notebooks, auto_create=False)
+        validate(i=i).required.int()
+        validate(what=what).required.str()
+        validate(original_target=original_target).required.str()
+        validate(target=target).required.str()
+        validate(other_notebooks=other_notebooks).required.list(str)
 
         if not target.startswith("../") and not target.startswith("./"):
             self.logger.warn(lambda: False, f"Cmd #{i+1} | Found unexpected, relative, {what} target: \"{original_target}\" resolved as \"{target}\"".strip())
@@ -168,8 +168,9 @@ class NotebookDef(NotebookDefData):
         :return: None
         """
 
-        validate.int_value_required(i=i)
-        validate.str_value_required()
+        validate(i=i).required.int()
+        validate(command=command).required.str()
+        validate(language=language).required.str()
 
         # First verify that the specified command is a %pip cell
         cm = self.get_comment_marker(language)
@@ -602,16 +603,16 @@ For more current information, please see <a href="https://files.training.databri
                 debugging: bool,
                 other_notebooks: List[NotebookDefData]) -> None:
 
-        from dbacademy.common import validator
+        from dbacademy.common import validate
         from dbacademy.dbbuild.build_utils_class import BuildUtils
 
-        validate.str_value(source_dir=source_dir, required=True)
-        validate.str_value(target_dir=target_dir, required=True)
-        validate.str_value(i18n_resources_dir=i18n_resources_dir, required=True)
-        validate.bool_value(verbose=verbose, required=True)
-        validate.bool_value(debugging=debugging, required=True)
+        validate(source_dir=source_dir).required.str()
+        validate(target_dir=target_dir).required.str()
+        validate(i18n_resources_dir=i18n_resources_dir).required.str()
+        validate(verbose=verbose).required.bool()
+        validate(debugging=debugging).required.bool()
 
-        other_notebooks: List[NotebookDefData] = validate.list_of_type_required(other_notebooks=other_notebooks, element_type=NotebookDefData, auto_create=True)
+        other_notebooks: validate(other_notebooks=other_notebooks).list(NotebookDefData, auto_create=True)
 
         self.logger.reset()      # Remove all errors from previous invocations of publish
         self.i18n_guids.clear()  # Remove all GUIDs from previous invocations of publish
@@ -709,7 +710,7 @@ For more current information, please see <a href="https://files.training.databri
         self.test_run_cells(language, command, i, other_notebooks)
 
         # Misc tests specific to %pip cells
-        command = self.test_pip_cells(language, command, i)
+        command = self.test_pip_cells(i=i, command=command, language=language)
 
         # Extract the leading comments and then the directives
         leading_comments = self.get_leading_comments(language, command.strip())

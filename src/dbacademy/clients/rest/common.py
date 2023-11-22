@@ -2,17 +2,14 @@ from __future__ import annotations
 
 __all__ = ["ApiContainer", "ApiClient", "DatabricksApiException",
            "HttpStatusCodes", "HttpMethod", "HttpReturnType", "IfNotExists", "IfExists",
-           "Item", "ItemId", "ItemOrId", "Cloud"]
+           "Item", "ItemId", "ItemOrId"]
 
 import requests
 from pprint import pformat
+from dbacademy.common import validate
+from requests.adapters import HTTPAdapter
 from dbacademy.clients import ClientErrorHandler
-from typing import Any, Container, Dict, Type, TypeVar, Union, Optional
-
-try:
-    from typing import Literal
-except ImportError:
-    from typing_extensions import Literal
+from typing import Any, Container, Dict, Type, TypeVar, Union, Literal
 
 HttpStatusCodes = Union[int, Container[int]]
 HttpMethod = Literal["GET", "PUT", "POST", "DELETE", "PATCH", "HEAD", "OPTIONS"]
@@ -24,8 +21,6 @@ IfExists = Literal["create", "error", "ignore", "overwrite", "update"]
 Item = Dict
 ItemId = Union[int, str]
 ItemOrId = Union[int, str, Dict]
-
-Cloud = Literal["AWS", "MSA", "GCP"]
 
 
 class ApiContainer(object):
@@ -48,11 +43,6 @@ class ApiContainer(object):
             if isinstance(member, ApiContainer):
                 print(f"{member_name}")
 
-            # if isinstance(member, deprecated):
-            #     pass
-            # elif callable(member):
-            #    print(f"{member_name}()")
-
             if callable(member):
                 print(f"{member_name}()")
 
@@ -73,7 +63,7 @@ class ApiClient(ApiContainer):
                  client: ApiClient = None,
                  throttle_seconds: int = 0,
                  verbose: bool = False,
-                 error_handler: Optional[ClientErrorHandler] = ClientErrorHandler()):
+                 error_handler: ClientErrorHandler = ClientErrorHandler()):
         """
         Create a Databricks REST API client.
 
@@ -88,60 +78,41 @@ class ApiClient(ApiContainer):
             throttle_seconds: Number of seconds to sleep between requests.
         """
         super().__init__()
-        import requests
-        # from urllib3.util.retry import Retry
-        from requests.adapters import HTTPAdapter
+        import requests, base64
 
-        # Precluding python warning.
-        # TODO add type parameters
-        self.session = None
-        self.credentials = None
-        self.networks = None
-        self.storage = None
-        self.private_access = None
+        self.__verbose = validate(verbose=verbose).required.bool()
 
-        if verbose:
-            print("ApiClient.__init__, endpoint: " + endpoint)
-            print("ApiClient.__init__, client: " + str(client))
+        # We always have to have an endpoint.
+        self.__endpoint = validate(endpoint=endpoint).required.str().rstrip("/")
+        if client is not None and "://" not in endpoint:
+            # We have a client, and we don't have an absolute endpoint, combine them.
+            self.__endpoint = client.endpoint.lstrip("/") + "/" + self.__endpoint
 
-        if client and "://" not in endpoint:
-            endpoint = client.endpoint.lstrip("/") + "/" + endpoint.rstrip("/")
+        # The remaining parameters are all conditional depending on what was first provided.
+        self.__token = validate(token=token).str()
+        self.__username = validate(username=username).str()
+        self.__password = validate(password=password).str()
 
-        if authorization_header:
-            pass
+        if authorization_header is not None:
+            self.__authorization_header = validate(authorization_header=authorization_header).str()
         elif token is not None:
-            authorization_header = 'Bearer ' + token
+            self.__authorization_header = f"Bearer {token}"
         elif username is not None and password is not None:
-            import base64
             encoded_auth = (username + ":" + password).encode()
-            authorization_header = "Basic " + base64.standard_b64encode(encoded_auth).decode()
+            self.__authorization_header = f"Basic {base64.standard_b64encode(encoded_auth).decode()}"
         elif client is not None:
-            authorization_header = client.session.headers["Authorization"]
+            self.__authorization_header = client.session.headers.get("Authorization")
         else:
             pass  # This is an unauthenticated clients
+            self.__authorization_header = None
 
-        if endpoint.endswith("/"):
-            endpoint = endpoint.rstrip("/")
+        self.__throttle_seconds = validate(throttle_seconds=throttle_seconds).required.int()
+        self.__error_handler = validate(error_handler=error_handler).required.as_type(ClientErrorHandler)
 
-        # TODO @jacob: We are having production issues where Databricks is rate limiting us. As a result,
-        #   we need to apply a throttle, but we don't want to be advertising that to students.
-        # if throttle_seconds > 0:
-        #     s = "" if throttle_seconds == 1 else "s"
-        #     print_warning("WARNING", f"Requests are being throttled by {throttle_seconds} second{s} per request.")
-
-        self.token = token
-        self.__endpoint = endpoint
-        self.__username = username
-        self.__password = password
-        self.__throttle_seconds = throttle_seconds
-        self.__error_handler = error_handler
-
-        self.read_timeout = 300   # seconds
-        self.connect_timeout = 5  # seconds
-        self._last_request_timestamp = 0
-        self.verbose = verbose
-        self.authorization_header = authorization_header
-        self.max_retries = 25
+        self.__read_timeout = 300   # seconds
+        self.__connect_timeout = 5  # seconds
+        self.__max_retries = 25
+        self.__last_request_timestamp = 0  # No property for this one.
 
         # Reference information for this backoff/retry issues
         # https://stackoverflow.com/questions/47675138/how-to-override-backoff-max-while-working-with-requests-retry
@@ -164,10 +135,10 @@ class ApiClient(ApiContainer):
         # retry = Retry(connect=connection_retries,
         #               backoff_factor=backoff_factor)
 
-        self.session = requests.Session()
+        self.__session = requests.Session()
         self.session.headers = {'Authorization': self.authorization_header, 'Content-Type': 'text/json'}
         
-        self.http_adapter = HTTPAdapter()
+        self.__http_adapter = HTTPAdapter()
         # self.http_adapter = HTTPAdapter(max_retries=retry)
 
         # noinspection HttpUrlsUsage
@@ -179,34 +150,60 @@ class ApiClient(ApiContainer):
             print(what)
 
     @property
+    def read_timeout(self) -> int:
+        return self.__read_timeout
+
+    @property
+    def connect_timeout(self) -> int:
+        return self.__connect_timeout
+
+    @property
+    def max_retries(self) -> int:
+        return self.__max_retries
+
+    @property
+    def http_adapter(self) -> HTTPAdapter:
+        return self.__http_adapter
+
+    @property
+    def verbose(self) -> bool:
+        return self.__verbose
+
+    @property
+    def endpoint(self) -> str:
+        return self.__endpoint
+
+    @property
+    def token(self) -> str:
+        return self.__token
+
+    @property
+    def username(self) -> str:
+        return self.__username
+
+    @property
+    def password(self) -> str:
+        return self.__password
+
+    @property
+    def authorization_header(self) -> str:
+        return self.__authorization_header
+
+    @property
+    def client(self) -> ApiClient:
+        return self.client
+
+    @property
+    def session(self) -> requests.sessions.Session:
+        return self.__session
+
+    @property
     def throttle_seconds(self) -> int:
         return self.__throttle_seconds
 
     @property
     def error_handler(self) -> ClientErrorHandler:
         return self.__error_handler
-
-    @property
-    def endpoint(self):
-        return self.__endpoint
-
-    # @property
-    # def url(self):
-    #     """Alias for endpoint"""
-    #     return self.__endpoint
-
-    @property
-    def username(self):
-        return self.__username
-
-    # @property
-    # def user(self):
-    #     """Alias for username"""
-    #     return self.__username
-
-    @property
-    def password(self):
-        return self.__password
 
     def api(self,
             _http_method: HttpMethod,
@@ -245,13 +242,12 @@ class ApiClient(ApiContainer):
         import json, time, math
         from urllib.parse import urljoin
 
-        if _data is None:
-            _data = {}
-
+        _data = validate(_data=_data).dict(str, auto_create=True)
         if data:
             _data = _data.copy()
             _data.update(data)
 
+        _base_url = validate(_base_url=_base_url).str()
         _base_url: str = urljoin(self.endpoint, _base_url)
 
         if self.dns_verify:
@@ -259,6 +255,7 @@ class ApiClient(ApiContainer):
 
         self._throttle_calls()
 
+        validate(_endpoint_path=_endpoint_path).str()
         if _endpoint_path.startswith(_base_url):
             _endpoint_path = _endpoint_path[len(_base_url):]
 
@@ -273,6 +270,7 @@ class ApiClient(ApiContainer):
         response = None  # Precluding warning
         attempts = 0     # Counter for debugging
 
+        validate(_http_method=_http_method).required.as_one_of(str, HttpMethod)
         for attempt in range(self.max_retries):
             try:
                 if _http_method in ('GET', 'HEAD', 'OPTIONS'):
@@ -346,6 +344,8 @@ class ApiClient(ApiContainer):
         from socket import gethostbyname, gaierror
         from requests.exceptions import ConnectionError
 
+        test_url = validate(test_url=test_url).required.str()
+
         if not cls.dns_retry:
             test_url = urlparse(test_url)
             try:
@@ -370,11 +370,11 @@ class ApiClient(ApiContainer):
             return
         import time
         now = time.time()
-        elapsed = now - self._last_request_timestamp
+        elapsed = now - self.__last_request_timestamp
         sleep_seconds = self.throttle_seconds - elapsed
         if sleep_seconds > 0:
             time.sleep(sleep_seconds)
-        self._last_request_timestamp = time.time()
+        self.__last_request_timestamp = time.time()
 
     @staticmethod
     def _raise_for_status(response: requests.Response, expected: Union[int, Container[int]] = None) -> None:

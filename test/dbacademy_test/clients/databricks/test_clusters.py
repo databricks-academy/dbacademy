@@ -54,7 +54,7 @@ class TestClusters(unittest.TestCase):
         self.client.clusters.terminate_by_id(cluster_id_3)
 
         clusters = self.client.clusters.list()
-        self.assertEquals(3, len(clusters))
+        self.assertEqual(3, len(clusters))
         self.assertTrue(clusters[0].get("cluster_name") in ["Life Cycle #1", "Life Cycle #2", "Life Cycle #3"])
         self.assertTrue(clusters[1].get("cluster_name") in ["Life Cycle #1", "Life Cycle #2", "Life Cycle #3"])
         self.assertTrue(clusters[2].get("cluster_name") in ["Life Cycle #1", "Life Cycle #2", "Life Cycle #3"])
@@ -275,7 +275,7 @@ class TestClusters(unittest.TestCase):
             num_workers=0,
             autotermination_minutes=10))
         cluster = self.client.clusters.get_by_id(cluster_id)
-        self.assertEquals(10, cluster.get("autotermination_minutes"))
+        self.assertEqual(10, cluster.get("autotermination_minutes"))
         self.client.clusters.destroy_by_id(cluster_id)
 
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
@@ -286,7 +286,7 @@ class TestClusters(unittest.TestCase):
             num_workers=0,
             autotermination_minutes=23))
         cluster = self.client.clusters.get_by_id(cluster_id)
-        self.assertEquals(23, cluster.get("autotermination_minutes"))
+        self.assertEqual(23, cluster.get("autotermination_minutes"))
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_create_multi_node(self):
@@ -299,8 +299,8 @@ class TestClusters(unittest.TestCase):
             num_workers=0,
             autotermination_minutes=10))
         cluster = self.client.clusters.get_by_id(cluster_id)
-        self.assertEquals(0, cluster.get("num_workers"))
-        self.assertEquals("local[*]", cluster.get("spark_conf").get("spark.master"))
+        self.assertEqual(0, cluster.get("num_workers"))
+        self.assertEqual("local[*]", cluster.get("spark_conf").get("spark.master"))
         self.client.clusters.destroy_by_id(cluster_id)
 
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
@@ -311,8 +311,8 @@ class TestClusters(unittest.TestCase):
             num_workers=3,
             autotermination_minutes=10))
         cluster = self.client.clusters.get_by_id(cluster_id)
-        self.assertEquals(3, cluster.get("num_workers"))
-        self.assertEquals(None, cluster.get("spark_conf", {}).get("spark.master"))
+        self.assertEqual(3, cluster.get("num_workers"))
+        self.assertEqual(None, cluster.get("spark_conf", {}).get("spark.master"))
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_create_single_user(self):
@@ -341,31 +341,31 @@ class TestClusters(unittest.TestCase):
             single_user_name=UNIT_TEST_SERVICE_PRINCIPLE))
         cluster = self.client.clusters.get_by_id(cluster_id)
 
-        self.assertEquals(UNIT_TEST_SERVICE_PRINCIPLE, cluster.get("single_user_name"))
-        self.assertEquals("SINGLE_USER", cluster.get("data_security_mode"))
+        self.assertEqual(UNIT_TEST_SERVICE_PRINCIPLE, cluster.get("single_user_name"))
+        self.assertEqual("SINGLE_USER", cluster.get("data_security_mode"))
 
-        self.assertEquals(0, cluster.get("num_workers"))
-        self.assertEquals("Single User B", cluster.get("cluster_name"))
-        self.assertEquals("11.3.x-scala2.12", cluster.get("spark_version"))
+        self.assertEqual(0, cluster.get("num_workers"))
+        self.assertEqual("Single User B", cluster.get("cluster_name"))
+        self.assertEqual("11.3.x-scala2.12", cluster.get("spark_version"))
 
-        self.assertEquals(2, len(cluster.get("spark_conf")))
-        self.assertEquals("local[*]", cluster.get("spark_conf").get("spark.master"))
-        self.assertEquals("singleNode", cluster.get("spark_conf").get("spark.databricks.cluster.profile"))
+        self.assertEqual(2, len(cluster.get("spark_conf")))
+        self.assertEqual("local[*]", cluster.get("spark_conf").get("spark.master"))
+        self.assertEqual("singleNode", cluster.get("spark_conf").get("spark.databricks.cluster.profile"))
 
         self.assertTrue(len(cluster.get("aws_attributes")) > 0)
 
-        self.assertEquals("i3.xlarge", cluster.get("node_type_id"))
-        self.assertEquals("i3.xlarge", cluster.get("driver_node_type_id"))
+        self.assertEqual("i3.xlarge", cluster.get("node_type_id"))
+        self.assertEqual("i3.xlarge", cluster.get("driver_node_type_id"))
 
-        self.assertEquals(10, cluster.get("autotermination_minutes"))
-        self.assertEquals(False, cluster.get("enable_elastic_disk"))
-        self.assertEquals("API", cluster.get("cluster_source"))
-        self.assertEquals(cluster_id, cluster.get("cluster_id"))
+        self.assertEqual(10, cluster.get("autotermination_minutes"))
+        self.assertEqual(False, cluster.get("enable_elastic_disk"))
+        self.assertEqual("API", cluster.get("cluster_source"))
+        self.assertEqual(cluster_id, cluster.get("cluster_id"))
 
-        self.assertEquals(None, cluster.get("ssh_public_keys"))
-        self.assertEquals({"ResourceClass": "SingleNode"}, cluster.get("custom_tags"))
-        self.assertEquals(None, cluster.get("spark_env_vars"))
-        self.assertEquals(None, cluster.get("init_scripts"))
+        self.assertEqual(None, cluster.get("ssh_public_keys"))
+        self.assertEqual({"ResourceClass": "SingleNode"}, cluster.get("custom_tags"))
+        self.assertEqual(None, cluster.get("spark_env_vars"))
+        self.assertEqual(None, cluster.get("init_scripts"))
 
         self.client.clusters.destroy_by_id(cluster_id)
 
@@ -380,8 +380,8 @@ class TestClusters(unittest.TestCase):
             num_workers=0,
             autotermination_minutes=10))
         cluster = self.client.clusters.get_by_id(cluster_id)
-        self.assertEquals("i3.xlarge", cluster.get("node_type_id"))
-        self.assertEquals("i3.xlarge", cluster.get("driver_node_type_id"))
+        self.assertEqual("i3.xlarge", cluster.get("node_type_id"))
+        self.assertEqual("i3.xlarge", cluster.get("driver_node_type_id"))
         self.client.clusters.destroy_by_id(cluster_id)
 
         cluster_id = self.client.clusters.create_from_config(ClusterConfig(
@@ -393,8 +393,8 @@ class TestClusters(unittest.TestCase):
             num_workers=0,
             autotermination_minutes=10))
         cluster = self.client.clusters.get_by_id(cluster_id)
-        self.assertEquals("i3.xlarge", cluster.get("node_type_id"))
-        self.assertEquals("i3.2xlarge", cluster.get("driver_node_type_id"))
+        self.assertEqual("i3.xlarge", cluster.get("node_type_id"))
+        self.assertEqual("i3.2xlarge", cluster.get("driver_node_type_id"))
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_create_with_spark_conf(self):
@@ -410,7 +410,7 @@ class TestClusters(unittest.TestCase):
                 "dbacademy.whatever": "enabled"
             }))
         cluster = self.client.clusters.get_by_id(cluster_id)
-        self.assertEquals("enabled", cluster.get("spark_conf").get("dbacademy.whatever"))
+        self.assertEqual("enabled", cluster.get("spark_conf").get("dbacademy.whatever"))
 
     def test_create_with_aws_attributes_availability(self):
 
@@ -427,7 +427,7 @@ class TestClusters(unittest.TestCase):
                               }
                           })
         except AssertionError as e:
-            self.assertEquals(f"The parameter \"aws_attributes.availability\" should not be specified directly, use \"availability\" instead.", str(e))
+            self.assertEqual(f"The parameter \"aws_attributes.availability\" should not be specified directly, use \"availability\" instead.", str(e))
 
     def test_create_with_availability_on_demand_and_instance_profile(self):
 
@@ -441,7 +441,7 @@ class TestClusters(unittest.TestCase):
                           availability=Availability.SPOT,
                           instance_pool_id="0123456789")
         except AssertionError as e:
-            self.assertEquals(f"The parameter \"availability\" cannot be specified when \"instance_pool_id\" is specified.", str(e))
+            self.assertEqual(f"The parameter \"availability\" cannot be specified when \"instance_pool_id\" is specified.", str(e))
 
     def test_create_with_availability_default(self):
 
@@ -453,7 +453,7 @@ class TestClusters(unittest.TestCase):
                                autotermination_minutes=10)
         cluster_id = self.client.clusters.create_from_config(config)
         cluster = self.client.clusters.get_by_id(cluster_id)
-        self.assertEquals(Availability.ON_DEMAND.value, cluster.get("aws_attributes").get("availability"))
+        self.assertEqual(Availability.ON_DEMAND.value, cluster.get("aws_attributes").get("availability"))
 
     def test_create_with_availability_ON_DEMAND(self):
 
@@ -465,7 +465,7 @@ class TestClusters(unittest.TestCase):
                                autotermination_minutes=10,
                                availability=Availability.ON_DEMAND)
 
-        self.assertEquals(Availability.ON_DEMAND.value, config.params.get("aws_attributes").get("availability"))
+        self.assertEqual(Availability.ON_DEMAND.value, config.params.get("aws_attributes").get("availability"))
         self.assertIsNone(config.params.get("azure_attributes"))
         self.assertIsNone(config.params.get("gcp_attributes"))
 
@@ -478,7 +478,7 @@ class TestClusters(unittest.TestCase):
                                availability=Availability.ON_DEMAND)
 
         self.assertIsNone(config.params.get("aws_attributes"))
-        self.assertEquals("ON_DEMAND_AZURE", config.params.get("azure_attributes").get("availability"))
+        self.assertEqual("ON_DEMAND_AZURE", config.params.get("azure_attributes").get("availability"))
         self.assertIsNone(config.params.get("gcp_attributes"))
 
         config = ClusterConfig(cloud=Cloud.GCP,
@@ -491,7 +491,7 @@ class TestClusters(unittest.TestCase):
 
         self.assertIsNone(config.params.get("aws_attributes"))
         self.assertIsNone(config.params.get("azure_attributes"))
-        self.assertEquals("ON_DEMAND_GCP", config.params.get("gcp_attributes").get("availability"))
+        self.assertEqual("ON_DEMAND_GCP", config.params.get("gcp_attributes").get("availability"))
 
     def test_create_with_availability_SPOT(self):
 
@@ -503,7 +503,7 @@ class TestClusters(unittest.TestCase):
                                autotermination_minutes=10,
                                availability=Availability.SPOT)
 
-        self.assertEquals(Availability.SPOT.value, config.params.get("aws_attributes").get("availability"))
+        self.assertEqual(Availability.SPOT.value, config.params.get("aws_attributes").get("availability"))
         self.assertIsNone(config.params.get("azure_attributes"))
         self.assertIsNone(config.params.get("gcp_attributes"))
 
@@ -516,7 +516,7 @@ class TestClusters(unittest.TestCase):
                                availability=Availability.SPOT)
 
         self.assertIsNone(config.params.get("aws_attributes"))
-        self.assertEquals("SPOT_WITH_FALLBACK_AZURE", config.params.get("azure_attributes").get("availability"))
+        self.assertEqual("SPOT_WITH_FALLBACK_AZURE", config.params.get("azure_attributes").get("availability"))
         self.assertIsNone(config.params.get("gcp_attributes"))
 
         config = ClusterConfig(cloud=Cloud.GCP,
@@ -529,7 +529,7 @@ class TestClusters(unittest.TestCase):
 
         self.assertIsNone(config.params.get("aws_attributes"))
         self.assertIsNone(config.params.get("azure_attributes"))
-        self.assertEquals("PREEMPTIBLE_WITH_FALLBACK_GCP", config.params.get("gcp_attributes").get("availability"))
+        self.assertEqual("PREEMPTIBLE_WITH_FALLBACK_GCP", config.params.get("gcp_attributes").get("availability"))
 
     def test_create_with_availability_SPOT_WITH_FALLBACK(self):
 
@@ -541,7 +541,7 @@ class TestClusters(unittest.TestCase):
                                autotermination_minutes=10,
                                availability=Availability.SPOT_WITH_FALLBACK)
 
-        self.assertEquals(Availability.SPOT_WITH_FALLBACK.value, config.params.get("aws_attributes").get("availability"))
+        self.assertEqual(Availability.SPOT_WITH_FALLBACK.value, config.params.get("aws_attributes").get("availability"))
         self.assertIsNone(config.params.get("azure_attributes"))
         self.assertIsNone(config.params.get("gcp_attributes"))
 
@@ -554,7 +554,7 @@ class TestClusters(unittest.TestCase):
                                availability=Availability.SPOT_WITH_FALLBACK)
 
         self.assertIsNone(config.params.get("aws_attributes"))
-        self.assertEquals("SPOT_WITH_FALLBACK_AZURE", config.params.get("azure_attributes").get("availability"))
+        self.assertEqual("SPOT_WITH_FALLBACK_AZURE", config.params.get("azure_attributes").get("availability"))
         self.assertIsNone(config.params.get("gcp_attributes"))
 
         config = ClusterConfig(cloud=Cloud.GCP,
@@ -567,7 +567,7 @@ class TestClusters(unittest.TestCase):
 
         self.assertIsNone(config.params.get("aws_attributes"))
         self.assertIsNone(config.params.get("azure_attributes"))
-        self.assertEquals("PREEMPTIBLE_WITH_FALLBACK_GCP", config.params.get("gcp_attributes").get("availability"))
+        self.assertEqual("PREEMPTIBLE_WITH_FALLBACK_GCP", config.params.get("gcp_attributes").get("availability"))
 
     def test_create_with_extra_params(self):
 
@@ -580,7 +580,7 @@ class TestClusters(unittest.TestCase):
             autotermination_minutes=10,
             custom_tags={"dbacademy.smoke_tests": "true"}))
         cluster = self.client.clusters.get_by_id(cluster_id)
-        self.assertEquals("true", cluster.get("custom_tags").get("dbacademy.smoke_tests"))
+        self.assertEqual("true", cluster.get("custom_tags").get("dbacademy.smoke_tests"))
 
     def test_no_cluster(self):
         from dbacademy.clients.rest.common import DatabricksApiException
@@ -595,13 +595,13 @@ class TestClusters(unittest.TestCase):
             self.assertIsNone(self.client.clusters.terminate_by_id("0000000000"))
             raise Exception("Expected DatabricksApiException")
         except DatabricksApiException as e:
-            self.assertEquals(400, e.http_code)
+            self.assertEqual(400, e.http_code)
 
         try:
             self.assertIsNone(self.client.clusters.terminate_by_name("John Doe"))
             raise Exception("Expected DatabricksApiException")
         except DatabricksApiException as e:
-            self.assertEquals(400, e.http_code)
+            self.assertEqual(400, e.http_code)
 
     def test_terminate_by_name(self):
 
@@ -616,7 +616,7 @@ class TestClusters(unittest.TestCase):
 
         cluster = self.client.clusters.get_by_name(cluster_name)
         self.assertIsNotNone(cluster)
-        self.assertEquals("PENDING", cluster.get("state"))
+        self.assertEqual("PENDING", cluster.get("state"))
 
         self.client.clusters.terminate_by_name(cluster_name)
 
@@ -671,7 +671,7 @@ class TestClusters(unittest.TestCase):
             print("-"*80)
             print(json.dumps(cluster_b, indent=4))
             print("-"*80)
-            self.assertEquals(cluster_a, cluster_b)
+            self.assertEqual(cluster_a, cluster_b)
 
     # def test_get_deprecated(self):
     #
@@ -686,7 +686,7 @@ class TestClusters(unittest.TestCase):
     #         self.client.clusters.get_by_id(cluster_id)
     #         raise Exception("Expected DeprecationWarning")
     #     except DeprecationWarning as e:
-    #         self.assertEquals("dbacademy.clients.databricks.clusters.cluster_client_class.get(self, cluster_id): Use ClustersClient.get_by_id() or ClustersClient.get_by_name() instead", str(e))
+    #         self.assertEqual("dbacademy.clients.databricks.clusters.cluster_client_class.get(self, cluster_id): Use ClustersClient.get_by_id() or ClustersClient.get_by_name() instead", str(e))
 
     def test_list_node_types(self):
         types = self.client.clusters.list_node_types()

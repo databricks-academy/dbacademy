@@ -22,7 +22,11 @@ class TestAccountsApi(unittest.TestCase):
 
     def testWorkspaceAsDatabricksApi(self):
         account = dougrest_factory.test_account()
-        ws = account.workspaces.list()[0]
+        workspaces = dict()
+        for workspace in account.workspaces.list():
+            workspace_name = workspace.get("workspace_name")
+            workspaces[workspace_name] = workspace
+        ws = workspaces["Unit Tests"]
         result = ws.workspace.list("/")
         self.assertIsInstance(result, list)
 

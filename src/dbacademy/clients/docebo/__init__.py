@@ -24,23 +24,20 @@ class DoceboRestClient(ApiClient):
                  throttle_seconds: int,
                  error_handler: ClientErrorHandler):
 
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
-        validate.str_value(endpoint=endpoint, required=True)
-        validate.str_value(username=username, required=True)
-        validate.str_value(consumer_key=consumer_key, required=True)
-        validate.str_value(consumer_secret=consumer_secret, required=True)
+        validate(endpoint=endpoint).required.str()
 
         access_token = DoceboRestClient.authenticate(endpoint=endpoint,
-                                                     consumer_key=consumer_key,
-                                                     consumer_secret=consumer_secret,
-                                                     username=username,
-                                                     password=password)
+                                                     consumer_key=validate(consumer_key=consumer_key).required.str(),
+                                                     consumer_secret=validate(consumer_secret=consumer_secret).required.str(),
+                                                     username=validate(username=username).required.str(),
+                                                     password=validate(username=password).required.str())
         super().__init__(endpoint=endpoint,
                          authorization_header=f"Bearer {access_token}",
-                         verbose=verbose,
-                         throttle_seconds=throttle_seconds,
-                         error_handler=error_handler)
+                         verbose=validate(verbose=verbose).required.bool(),
+                         throttle_seconds=validate(throttle_seconds=throttle_seconds).required.int(),
+                         error_handler=validate(error_handler=error_handler).required.as_type(ClientErrorHandler))
 
     @property
     def manage(self) -> ManageAPI:

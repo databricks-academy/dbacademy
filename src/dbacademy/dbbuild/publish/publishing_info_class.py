@@ -1,16 +1,13 @@
 __all__ = ["SlackChannel", "Announcements", "Translation", "PublishingInfo"]
 
 from typing import Dict, List, Any
-from dbacademy.common import validator
+from dbacademy.common import validate
 
 
 class SlackChannel:
     def __init__(self, name: str, url: str):
-        validate.str_value(url=url)
-        self.__url = url
-
-        validate.str_value(name=name)
-        self.__name = name
+        self.__url = validate(url=url).str()
+        self.__name = validate(name=name).str()
 
     @property
     def name(self):
@@ -23,8 +20,8 @@ class SlackChannel:
 
 class Announcements:
     def __init__(self, email_addresses: List[str], slack_channels: List[SlackChannel]):
-        self.__email_addresses = validate.list_of_strings(email_addresses=email_addresses, auto_create=True)
-        self.__slack_channels = validate.list_of_type(slack_channels=slack_channels, element_type=SlackChannel, auto_create=True)
+        self.__email_addresses = validate(email_addresses=email_addresses).list(str, auto_create=True)
+        self.__slack_channels = validate(slack_channels=slack_channels).list(element_type=SlackChannel, auto_create=True)
 
     @property
     def email_addresses(self) -> List[str]:
@@ -38,9 +35,9 @@ class Announcements:
 class Translation:
     def __init__(self, language, data: Dict[str, Any]):
         self.__language = language
-        self.__release_repo = validate.str_value(release_repo=data.get("release_repo"))
-        self.__published_docs_folder = validate.str_value(published_docs_folder=data.get("published_docs_folder"))
-        self.__document_links = validate.list_of_strings(document_links=data.get("document_links"), auto_create=True)
+        self.__release_repo = validate(release_repo=data.get("release_repo")).str()
+        self.__published_docs_folder = validate(published_docs_folder=data.get("published_docs_folder")).str()
+        self.__document_links = validate(document_links=data.get("document_links")).list(str, auto_create=True)
 
     @property
     def language(self):

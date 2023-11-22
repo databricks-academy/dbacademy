@@ -47,7 +47,7 @@ class StatementTests(unittest.TestCase):
                                                      schema="default",
                                                      statement="SHOW DATABASES")
         self.assertIsNotNone(results)
-        self.assertEquals("SUCCEEDED", results.get("status", dict()).get("state"))
+        self.assertEqual("SUCCEEDED", results.get("status", dict()).get("state"))
 
     def test_get_statement(self):
         self.skipTest("Not yet implemented")

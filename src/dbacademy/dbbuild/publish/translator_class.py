@@ -9,7 +9,7 @@ from dbacademy.dbbuild.publish import pub_utils
 class Translator:
 
     def __init__(self, publisher: Publisher, require_i18n_selection: bool):
-        from dbacademy.common import validator
+        from dbacademy.common import validate
         from dbacademy.dbbuild.publish.publisher_class import Publisher
 
         # By default, we are not validated
@@ -21,7 +21,7 @@ class Translator:
         self.__created_docs = False
         self.__validated_artifacts = False
 
-        self.publisher = validate.any_value(Publisher, publisher=publisher)
+        self.publisher = validate(publisher=publisher).as_type(Publisher)
 
         # Copied from build_config
         self.username = publisher.username
@@ -66,12 +66,12 @@ class Translator:
         :return: None
         """
         import uuid
-        from dbacademy.common import validator
+        from dbacademy.common import validate
         from dbacademy.dbbuild import dbb_constants
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.common import print_warning
 
-        add_guid = validate.bool_value(add_guid=add_guid, required=True)
+        add_guid = validate(add_guid=add_guid).required.bool()
 
         print_warning("USE WITH CAUTION", ("Use this method with caution as it has undergone only minimal testing.\n"
                                            "Most notably, moving GUIDs from %md commands into the title.\n"

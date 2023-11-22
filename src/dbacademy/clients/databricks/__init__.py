@@ -83,7 +83,7 @@ class DBAcademyRestClient(ApiClient):
             client: A parent ApiClient from which to clone settings.
             throttle_seconds: Number of seconds to sleep between requests.
         """
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
         if client is not None:
             # We have a valid client, use it to initialize from.
@@ -97,24 +97,9 @@ class DBAcademyRestClient(ApiClient):
                 if username is None and password is None:
                     token = token or client.token
 
-        # endpoint = endpoint or self.__get_notebook_endpoint()
-        #
-        # if not any([authorization_header, user, password]):
-        #     token = token or self.__get_notebook_token()
-
-        validate.str_value(endpoint=endpoint, required=True)
+        validate(endpoint=endpoint).required.str()
         endpoint = endpoint.rstrip("/")
         endpoint = endpoint.rstrip("/api")
-
-        # Cleanup the API URL
-        # if endpoint is None:
-        #     endpoint = None
-        # elif endpoint.endswith("/api/"):
-        #     endpoint = endpoint
-        # elif endpoint.endswith("/api"):
-        #     endpoint = endpoint + "/"
-        # else:
-        #     endpoint = endpoint.rstrip("/") + "/api/"
 
         super().__init__(endpoint,
                          token=token,

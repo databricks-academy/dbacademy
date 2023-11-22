@@ -2,7 +2,8 @@ __all__ = ["TestNotebookDef"]
 
 import unittest
 import typing
-from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef, NotebookError
+from dbacademy.dbbuild.publish.notebook_logger import NotebookError
+from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
 
 
 class TestNotebookDef(unittest.TestCase):

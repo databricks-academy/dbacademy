@@ -8,10 +8,10 @@ from dbacademy.clients.databricks import DBAcademyRestClient
 class ClustersHelper:
 
     def __init__(self, db_academy_rest_client: DBAcademyRestClient):
-        from dbacademy.common import validator
+        from dbacademy.common import validate
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 
-        self.__client = validate.any_value(db_academy_rest_client=db_academy_rest_client, parameter_type=DBAcademyRestClient, required=True)
+        self.__client = validate(db_academy_rest_client=db_academy_rest_client).required.as_type(DBAcademyRestClient)
         self.__workspace = WorkspaceHelper(self.__client)
 
     def create_instance_pool(self, *,

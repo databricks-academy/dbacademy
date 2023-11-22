@@ -1,5 +1,8 @@
 __all__ = ["TestSuite"]
 
+from typing import Any, Dict, List, Literal
+from dbacademy.clients.databricks import DBAcademyRestClient
+
 
 class TestSuite:
     from dbacademy.dbbuild.build_config_class import BuildConfig
@@ -10,20 +13,23 @@ class TestSuite:
     TEST_TYPE_ML = "ml"
     TEST_TYPES = [TEST_TYPE_INTERACTIVE, TEST_TYPE_STOCK, TEST_TYPE_PHOTON, TEST_TYPE_ML]
 
+    # noinspection PyTypeHints
+    TestType = Literal[TEST_TYPE_INTERACTIVE, TEST_TYPE_STOCK, TEST_TYPE_PHOTON, TEST_TYPE_ML]
+
     def __init__(self, *,
                  build_config: BuildConfig,
                  test_dir: str,
-                 test_type: str,
+                 test_type: TestType,
                  keep_success: bool = False):
 
+        import re
         from dbacademy import dbgems
         from dbacademy.dbbuild.test.test_instance_class import TestInstance
 
         self.__test_dir = test_dir
         self.__build_config = build_config
-        # self.__client = build_config.client
+        self.__client = build_config.client
 
-        self.__test_rounds = dict()
         self.__test_results = list()
 
         self.__slack_thread_ts = None
@@ -32,24 +38,25 @@ class TestSuite:
         self.__keep_success = keep_success
 
         if dbgems.is_job():
-            test_type = dbgems.get_parameter("test_type", None)
+            self.__test_type = dbgems.get_parameter("test_type", None)
         elif test_type is None:
-            test_type = TestSuite.TEST_TYPE_INTERACTIVE
-
-        assert test_type in TestSuite.TEST_TYPES, f"The test type is expected to be one of {TestSuite.TEST_TYPES}, found \"{test_type}\""
-
-        self.__test_type = test_type
+            self.__test_type = TestSuite.TEST_TYPE_INTERACTIVE
+        self.__test_type = re.sub(r"[^a-zA-Z\d]", "-", self.test_type.lower())
+        while "--" in self.test_type:
+            self.__test_type = self.test_type.replace("--", "-")
+        assert self.test_type in TestSuite.TEST_TYPES, f"The test type is expected to be one of {TestSuite.TEST_TYPES}, found \"{test_type}\""
 
         # Define each test_round first to make the next step full-proof
+        self.__test_rounds: Dict[int, Any] = dict()
         for notebook in self.__build_config.notebooks.values():
-            self.__test_rounds[notebook.test_round] = list()
+            self.test_rounds[notebook.test_round] = list()
 
         # Add each notebook to the dictionary or rounds which is a dictionary of tests
         for notebook in self.__build_config.notebooks.values():
             if notebook.test_round > 0:
                 # [job_name] = (notebook_path, 0, 0, ignored)
                 test_instance = TestInstance(self.__build_config, notebook, test_dir, self.test_type)
-                self.__test_rounds[notebook.test_round].append(test_instance)
+                self.test_rounds.get(notebook.test_round).append(test_instance)
 
                 if self.__client.workspace().get_status(test_instance.notebook_path) is None:
                     raise Exception(f"Notebook not found: {test_instance.notebook_path}")
@@ -65,16 +72,20 @@ class TestSuite:
     def build_config(self) -> BuildConfig:
         return self.__build_config
 
-    # @property
-    # def client(self) -> DBAcademyRestClient:
-    # return self.__client
+    @property
+    def client(self) -> DBAcademyRestClient:
+        return self.__client
 
     @property
-    def test_rounds(self) -> Dict[str, Any]:
+    def test_type(self) -> TestType:
+        return self.__test_type
+
+    @property
+    def test_rounds(self) -> Dict[int, Any]:
         return self.__test_rounds
 
     @property
-    def test_results(self) -> List[TestResults]:
+    def test_results(self) -> List[Dict[str, Any]]:
         return self.__test_results
 
     @property
@@ -109,16 +120,11 @@ class TestSuite:
             self.client.jobs.delete_by_name(job_names=self.get_all_job_names(), success_only=True)
 
     def create_test_job(self, *, job_name: str, notebook_path: str, policy_id: str = None):
-        import re
         from dbacademy.clients.databricks.jobs.job_config_classes import JobConfig
         from dbacademy.clients.databricks.clusters.cluster_config_class import JobClusterConfig
         from dbacademy.common import Cloud
 
         self.build_config.spark_conf["dbacademy.smoke-test"] = "true"
-
-        self.test_type = re.sub(r"[^a-zA-Z\d]", "-", self.test_type.lower())
-        while "--" in self.test_type:
-            self.test_type = self.test_type.replace("--", "-")
 
         job_config = JobConfig(job_name=job_name, timeout_seconds=120*60, tags={
                 "dbacademy.course": self.build_config.build_name,
@@ -324,7 +330,7 @@ class TestSuite:
         from dbacademy import common
 
         if self.slack_first_message is None:
-            self.slack_first_message = message
+            self.__slack_first_message = message
 
         payload = {
             "channel": "curr-smoke-tests",
@@ -337,6 +343,6 @@ class TestSuite:
         try:
             response = requests.post("https://rqbr3jqop0.execute-api.us-west-2.amazonaws.com/prod/slack/client", data=json.dumps(payload))
             assert response.status_code == 200, f"({response.status_code}): {response.text}"
-            self.slack_thread_ts = response.json().get("data", {}).get("thread_ts")
+            self.__slack_thread_ts = response.json().get("data", {}).get("thread_ts")
         except Exception as e:
             common.print_warning(title="Slack Notification Failure", message=str(e), length=100)

@@ -10,11 +10,11 @@ class MyTestCase(unittest.TestCase):
         self.assertIsNone(value)
 
         value = dbgems.get_spark_config("some.random.value", "whatever")
-        self.assertEquals("whatever", value)
+        self.assertEqual("whatever", value)
 
         dbgems.MOCK_CONFIG["some.random.value"] = "apples"
         value = dbgems.get_spark_config("some.random.value")
-        self.assertEquals("apples", value)
+        self.assertEqual("apples", value)
 
 
 if __name__ == '__main__':

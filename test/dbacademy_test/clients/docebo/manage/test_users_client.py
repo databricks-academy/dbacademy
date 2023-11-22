@@ -13,8 +13,8 @@ class TestUsers(unittest.TestCase):
             client.manage.user_login(username="mickey.mouse@disney.com",
                                      password="asdf")
         except DatabricksApiException as e:
-            self.assertEquals(400, e.http_code)
-            self.assertEquals("Wrong credentials provided", e.message[0])
+            self.assertEqual(400, e.http_code)
+            self.assertEqual("Wrong credentials provided", e.message[0])
 
     def test_login_success(self):
         import os
@@ -30,8 +30,8 @@ class TestUsers(unittest.TestCase):
         response = client.manage.user_login(username=username, password=password)
 
         self.assertIsNotNone(response)
-        self.assertEquals("7200", response.get("expires_in"))
-        self.assertEquals("bearer", response.get("token_type"))
+        self.assertEqual("7200", response.get("expires_in"))
+        self.assertEqual("bearer", response.get("token_type"))
 
     def test_find_users(self):
         from dbacademy.clients import docebo
@@ -42,10 +42,10 @@ class TestUsers(unittest.TestCase):
         self.assertTrue(len(users) > 0)
 
         user_0 = users[0]
-        self.assertEquals("jacob.parr@databricks.com", user_0.get("username"))
-        self.assertEquals("Jacob", user_0.get("first_name"))
-        self.assertEquals("Parr", user_0.get("last_name"))
-        self.assertEquals("13903", user_0.get("user_id"))
+        self.assertEqual("jacob.parr@databricks.com", user_0.get("username"))
+        self.assertEqual("Jacob", user_0.get("first_name"))
+        self.assertEqual("Parr", user_0.get("last_name"))
+        self.assertEqual("13903", user_0.get("user_id"))
 
 
 if __name__ == '__main__':

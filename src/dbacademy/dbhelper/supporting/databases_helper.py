@@ -3,7 +3,7 @@ __all__ = []
 
 from typing import Callable, List, Dict
 from dbacademy.dbhelper import dbh_constants
-from dbacademy.common import validator
+from dbacademy.common import validate
 from dbacademy.clients.databricks import DBAcademyRestClient
 from dbacademy.dbhelper.lesson_config import LessonConfig
 from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
@@ -12,12 +12,12 @@ from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 class DatabasesHelper:
 
     def __init__(self, db_academy_rest_client: DBAcademyRestClient, workspace_helper: WorkspaceHelper):
-        self.__client = validate.any_value(db_academy_rest_client=db_academy_rest_client, parameter_type=DBAcademyRestClient, required=True)
-        self.__workspace_helper = validate.any_value(workspace_helper=workspace_helper, parameter_type=WorkspaceHelper, required=True)
+        self.__client = validate(db_academy_rest_client=db_academy_rest_client).required.as_type(DBAcademyRestClient)
+        self.__workspace_helper = validate(workspace_helper=workspace_helper).required.as_type(WorkspaceHelper)
 
     def drop_databases(self, lesson_config: LessonConfig) -> None:
 
-        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
 
         usernames = self.__workspace_helper.get_usernames(lesson_config=lesson_config)
         groups = self.__to_group_of(usernames=usernames, max_group_size=50)
@@ -61,7 +61,7 @@ class DatabasesHelper:
 
     def drop_catalogs(self, lesson_config: LessonConfig) -> None:
 
-        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
 
         self.__workspace_helper.do_for_all_users(self.__workspace_helper.get_usernames(lesson_config=lesson_config),
                                                  lambda username: self.__drop_catalogs_for(username=username,
@@ -74,8 +74,8 @@ class DatabasesHelper:
 
     def __drop_catalogs_for(self, username: str, lesson_config: LessonConfig) -> None:
 
-        username = validate.str_value(username=username, required=True)
-        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        username = validate(username=username).required.str()
+        lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
 
         from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
@@ -117,9 +117,9 @@ class DatabasesHelper:
                          lesson_config: LessonConfig,
                          post_create: Callable[[str, str], None] = None) -> None:
 
-        drop_existing = validate.bool_value(drop_existing=drop_existing, required=True)
-        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
-        post_create = validate.any_value(post_create=post_create, parameter_type=Callable, required=False)
+        drop_existing = validate(drop_existing=drop_existing).required.bool()
+        lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
+        post_create = validate(post_create=post_create).as_type(Callable)
 
         print(f"| Creating user-specific databases.")
 
@@ -150,10 +150,10 @@ class DatabasesHelper:
         from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
-        username = validate.str_value(username=username, required=True)
-        drop_existing = validate.bool_value(drop_existing=drop_existing, required=True)
-        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
-        post_create = validate.any_value(post_create=post_create, parameter_type=Callable, required=False)
+        username = validate(username=username).required.str()
+        drop_existing = validate(drop_existing=drop_existing).required.bool()
+        lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
+        post_create = validate(post_create=post_create).as_type(Callable)
 
         db_name = DBAcademyHelper.to_schema_name_prefix(username=username,
                                                         course_code=lesson_config.course_config.course_code)
@@ -185,9 +185,9 @@ class DatabasesHelper:
                        lesson_config: LessonConfig,
                        post_create: Callable[[str, str], None] = None) -> None:
 
-        drop_existing = validate.bool_value(drop_existing=drop_existing, required=True)
-        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
-        post_create = validate.any_value(post_create=post_create, parameter_type=Callable, required=False)
+        drop_existing = validate(drop_existing=drop_existing).required.bool()
+        lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
+        post_create = validate(post_create=post_create).as_type(Callable)
         
         usernames = self.__workspace_helper.get_usernames(lesson_config=lesson_config)
         
@@ -209,10 +209,10 @@ class DatabasesHelper:
         from dbacademy import dbgems
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
-        username = validate.str_value(username=username, required=True)
-        drop_existing = validate.bool_value(drop_existing=drop_existing, required=True)
-        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
-        post_create = validate.any_value(post_create=post_create, parameter_type=Callable, required=False)
+        username = validate(username=username).required.str()
+        drop_existing = validate(drop_existing=drop_existing).required.bool()
+        lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
+        post_create = validate(post_create=post_create).as_type(Callable)
 
         cat_name = DBAcademyHelper.to_schema_name_prefix(username=username,
                                                          course_code=lesson_config.course_config.course_code)

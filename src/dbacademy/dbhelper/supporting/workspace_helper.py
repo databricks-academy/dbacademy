@@ -11,9 +11,9 @@ T = TypeVar("T")
 class WorkspaceHelper:
 
     def __init__(self, db_academy_rest_client: DBAcademyRestClient):
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
-        self.__client = validate.any_value(db_academy_rest_client=db_academy_rest_client, parameter_type=DBAcademyRestClient, required=True)
+        self.__client = validate(db_academy_rest_client=db_academy_rest_client).required.as_type(DBAcademyRestClient)
 
         self._usernames = None
         self.__existing_databases = None
@@ -300,10 +300,10 @@ class WorkspaceHelper:
             return dbgems.get_notebooks_api_endpoint()
 
     def get_usernames(self, lesson_config: LessonConfig):
-        from dbacademy.common import validator
+        from dbacademy.common import validate
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
-        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
 
         if self._usernames is None:
             users = self.__client.scim().users().list()

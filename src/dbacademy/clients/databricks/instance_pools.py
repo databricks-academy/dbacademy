@@ -1,7 +1,7 @@
 __all__ = ["InstancePoolsClient"]
 
 from typing import List, Dict, Any, Optional, Tuple
-
+from dbacademy.common import validate
 from dbacademy.clients.rest.common import ApiClient, ApiContainer
 
 
@@ -31,12 +31,10 @@ class InstancePoolsClient(ApiContainer):
                          max_capacity: int = None,
                          node_type_id: str = None,
                          preloaded_spark_version: str = None,
-                         tags: List = None) -> Dict[str, Any]:
-
-        from dbacademy.common import validator
+                         tags: List[Tuple[str, Any]] = None) -> Dict[str, Any]:
 
         pool = self.get_by_name(instance_pool_name)
-        tags = validate.list_value(tags=tags, required=True)
+        tags: List[Tuple[str, Any]] = validate(tags=tags).required.list(Tuple)
 
         # Convert empty string to None
         preloaded_spark_version = None if preloaded_spark_version is not None and preloaded_spark_version.strip() == "" else preloaded_spark_version
@@ -72,16 +70,21 @@ class InstancePoolsClient(ApiContainer):
     def create(self,
                name: str,
                definition: Dict[str, Any],
-               tags: List[Tuple[str, Any]] = None) -> Dict[str, Any]:
+               tags: Optional[List[Tuple[str, Any]]] = None) -> Dict[str, Any]:
 
         from dbacademy.common import Cloud
+
         assert type(name) == str, f"Expected name to be of type str, found {type(name)}"
         assert type(definition) == dict, f"Expected definition to be of type dict, found {type(definition)}"
+
+        name = validate(name=name).str()
+        definition = validate(definition=definition).required.dict(str)
+        tags: List[Tuple[str, Any]] = validate(tags=tags).list(Tuple, auto_create=True)
 
         definition["instance_pool_name"] = name
 
         custom_tags = list()
-        for tag in list() if tags is None else tags:
+        for tag in tags:
             key_value = {
                 "key": tag[0],
                 "value": tag[1]

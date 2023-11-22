@@ -25,34 +25,34 @@ class TestAirClientTable(unittest.TestCase):
 
         self.assertIsNotNone(records)
         self.assertTrue(len(records) > 3, f"Expected at least 3, found {len(records)}")
-        self.assertEquals(1, records[0].get("fields").get("id"))
-        self.assertEquals(2, records[1].get("fields").get("id"))
-        self.assertEquals(3, records[2].get("fields").get("id"))
+        self.assertEqual(1, records[0].get("fields").get("id"))
+        self.assertEqual(2, records[1].get("fields").get("id"))
+        self.assertEqual(3, records[2].get("fields").get("id"))
 
     def test_read_filtered(self):
         records = self.tables_api.query(filter_by_formula="id = 2")
 
         self.assertIsNotNone(records)
-        self.assertEquals(1, len(records))
-        self.assertEquals(2, records[0].get("fields").get("id"))
+        self.assertEqual(1, len(records))
+        self.assertEqual(2, records[0].get("fields").get("id"))
 
         url = "https://training-classroom-767-knzbh.cloud.databricks.com"
         records = self.tables_api.query(filter_by_formula=f"{{AWS Workspace URL}} = '{url}'")
         self.assertIsNotNone(records)
-        self.assertEquals(1, len(records))
-        self.assertEquals(url, records[0].get("fields").get("AWS Workspace URL"))
+        self.assertEqual(1, len(records))
+        self.assertEqual(url, records[0].get("fields").get("AWS Workspace URL"))
 
     def test_read_sorted_filtered(self):
         records = self.tables_api.query(filter_by_formula="Assignee = 'Jacob Parr'", sort_by="id")
 
         self.assertIsNotNone(records)
-        self.assertEquals(2, len(records))
+        self.assertEqual(2, len(records))
 
-        self.assertEquals(1, records[0].get("fields").get("id"))
-        self.assertEquals("Jacob Parr", records[0].get("fields").get("Assignee").get("name"))
+        self.assertEqual(1, records[0].get("fields").get("id"))
+        self.assertEqual("Jacob Parr", records[0].get("fields").get("Assignee").get("name"))
 
-        self.assertEquals(1, records[0].get("fields").get("id"))
-        self.assertEquals("Jacob Parr", records[1].get("fields").get("Assignee").get("name"))
+        self.assertEqual(1, records[0].get("fields").get("id"))
+        self.assertEqual("Jacob Parr", records[1].get("fields").get("Assignee").get("name"))
 
     def test_update(self):
         from datetime import datetime
@@ -60,8 +60,8 @@ class TestAirClientTable(unittest.TestCase):
         records = self.tables_api.query(filter_by_formula="id = 1")
 
         self.assertIsNotNone(records)
-        self.assertEquals(1, len(records))
-        self.assertEquals(1, records[0].get("fields").get("id"))
+        self.assertEqual(1, len(records))
+        self.assertEqual(1, records[0].get("fields").get("id"))
 
         record_id = records[0].get("id")
         when_a = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")+".000Z"
@@ -72,7 +72,7 @@ class TestAirClientTable(unittest.TestCase):
 
         records = self.tables_api.query(filter_by_formula="id = 1")
         when_b = records[0].get("fields").get("When")
-        self.assertEquals(when_a, when_b)
+        self.assertEqual(when_a, when_b)
 
     def test_insert_delete(self):
         from datetime import datetime

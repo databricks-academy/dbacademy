@@ -22,7 +22,7 @@ class NotebookDefData:
                  ignoring: List[str],
                  version: str):
 
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
         assert type(build_config) == BuildConfig, f"""Expected the parameter "build_config" to be of type "BuildConfig", found "{type(build_config)}" """
         assert type(path) == str, f"""Expected the parameter "path" to be of type "str", found "{type(path)}" """
@@ -31,21 +31,21 @@ class NotebookDefData:
 
         self.__logger: NotebookLogger = NotebookLogger()
 
-        self.__build_config = validate.any_value_required(build_config=build_config, parameter_type=BuildConfig)
+        self.__build_config = validate(build_config=build_config).required.as_type(BuildConfig)
         self.__client = self.build_config.client
 
-        self.__replacements = validate.dict_of_key_str_required(replacements=replacements, auto_create=True)
-        self.__ignoring = validate.list_of_strings_required(ignoring=ignoring, auto_create=True)
+        self.__replacements = validate(replacements=replacements).dict(str, auto_create=True)
+        self.__ignoring = validate(ignoring=ignoring).list(str, auto_create=True)
 
-        self.__version = validate.str_value_required(version=version)
-        self.__path = validate.str_value_required(path=path)
-        self.__include_solution = validate.bool_value_required(include_solution=include_solution)
-        self.__test_round = validate.int_value_required(test_round=test_round)
-        self.__ignored = validate.bool_value_required(ignored=ignored)
-        self.__order = validate.int_value_required(order=order)
+        self.__version = validate(version=version).required.str()
+        self.__path = validate(path=path).required.str()
+        self.__include_solution = validate(include_solution=include_solution).required.bool()
+        self.__test_round = validate(test_round=test_round).required.int()
+        self.__ignored = validate(ignored=ignored).required.bool()
+        self.__order = validate(order=order).required.int()
 
-        self.__i18n: bool = validate.bool_value_required(i18n=i18n)
-        self.__i18n_language: Union[None, str] = validate.str_value(i18n_language=i18n_language, required=False)
+        self.__i18n: bool = validate(i18n=i18n).required.bool()
+        self.__i18n_language: Union[None, str] = validate(i18n_language=i18n_language).str()
         self.__i18n_guids: List[str] = list()  # Defaults to an empty list
 
     @property

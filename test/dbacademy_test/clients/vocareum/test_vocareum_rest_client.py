@@ -8,7 +8,7 @@ class TestVocareumRestClient(unittest.TestCase):
         client = vocareum.from_environment()
         self.assertIsNotNone(client)
 
-        self.assertEquals("https://api.vocareum.com/api/v2", client.endpoint)
+        self.assertEqual("https://api.vocareum.com/api/v2", client.endpoint)
 
 
 if __name__ == '__main__':

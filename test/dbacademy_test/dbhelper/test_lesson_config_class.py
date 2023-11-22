@@ -40,7 +40,7 @@ class TestLessonConfig(unittest.TestCase):
         self.assertTrue(config.is_uc_enabled_workspace)
         self.assertIsNone(config.username)
         self.assertIsNone(config.initial_schema)
-        self.assertEquals(dbh_constants.DBACADEMY_HELPER.CATALOG_UC_DEFAULT, config.initial_catalog)
+        self.assertEqual(dbh_constants.DBACADEMY_HELPER.CATALOG_UC_DEFAULT, config.initial_catalog)
 
     def test_is_uc_enabled_workspace_STUDENT(self):
         from dbacademy.dbhelper.lesson_config import LessonConfig
@@ -65,7 +65,7 @@ class TestLessonConfig(unittest.TestCase):
         self.assertTrue(config.is_uc_enabled_workspace)
         self.assertIsNone(config.username)
         self.assertIsNone(config.initial_schema)
-        self.assertEquals("i_have_no_idea", config.initial_catalog)
+        self.assertEqual("i_have_no_idea", config.initial_catalog)
 
     def test_lesson_config_create_catalog_no_uc_support_CATALOG_SPARK_DEFAULT(self):
         from dbacademy.dbhelper.lesson_config import LessonConfig
@@ -83,7 +83,7 @@ class TestLessonConfig(unittest.TestCase):
             raise Exception("Expected AssertionError")
         except AssertionError as e:
             msg = str(e)
-            self.assertEquals(f"Cannot create a catalog, UC is not enabled for this workspace/cluster.", msg)
+            self.assertEqual(f"Cannot create a catalog, UC is not enabled for this workspace/cluster.", msg)
 
     def test_lesson_config_create_catalog_no_uc_support_CATALOG_NONE(self):
         from dbacademy.dbhelper.lesson_config import LessonConfig
@@ -100,7 +100,7 @@ class TestLessonConfig(unittest.TestCase):
             raise Exception("Expected AssertionError")
         except AssertionError as e:
             msg = str(e)
-            self.assertEquals(f"Cannot create a catalog, UC is not enabled for this workspace/cluster.", msg)
+            self.assertEqual(f"Cannot create a catalog, UC is not enabled for this workspace/cluster.", msg)
 
     def test_lesson_config_create_with_catalog_and_schema(self):
         from dbacademy.dbhelper.lesson_config import LessonConfig
@@ -118,7 +118,7 @@ class TestLessonConfig(unittest.TestCase):
             raise Exception("Expected AssertionError")
         except AssertionError as e:
             msg = str(e)
-            self.assertEquals(f"Cannot create a user-specific schema when creating UC catalogs", msg)
+            self.assertEqual(f"Cannot create a user-specific schema when creating UC catalogs", msg)
 
     def test_lesson_config_create_schema(self):
         from dbacademy.dbhelper.lesson_config import LessonConfig
@@ -136,8 +136,8 @@ class TestLessonConfig(unittest.TestCase):
                                  "__initial_catalog": "whatever_dude"
                               })
 
-        self.assertEquals("Test 123 - Whatever", config.name)
-        self.assertEquals("Test_123_Whatever", config.clean_name)
+        self.assertEqual("Test 123 - Whatever", config.name)
+        self.assertEqual("Test_123_Whatever", config.clean_name)
         self.assertTrue(config.create_schema)
         self.assertFalse(config.create_catalog)
         self.assertTrue(config.requires_uc)
@@ -145,9 +145,9 @@ class TestLessonConfig(unittest.TestCase):
         self.assertFalse(config.enable_streaming_support)
 
         self.assertTrue(config.is_uc_enabled_workspace)
-        self.assertEquals("mickey.mouse@disney.com", config.username)
-        self.assertEquals(dbh_constants.DBACADEMY_HELPER.SCHEMA_DEFAULT, config.initial_schema)
-        self.assertEquals("whatever_dude", config.initial_catalog)
+        self.assertEqual("mickey.mouse@disney.com", config.username)
+        self.assertEqual(dbh_constants.DBACADEMY_HELPER.SCHEMA_DEFAULT, config.initial_schema)
+        self.assertEqual("whatever_dude", config.initial_catalog)
 
     def test_immutable(self):
         from dbacademy.dbhelper.lesson_config import LessonConfig
@@ -180,32 +180,32 @@ class TestLessonConfig(unittest.TestCase):
         try:
             config.name = "Something Else"
         except AssertionError as e:
-            self.assertEquals(error_message, str(e))
+            self.assertEqual(error_message, str(e))
 
         try:
             config.installing_datasets = True
         except AssertionError as e:
-            self.assertEquals(error_message, str(e))
+            self.assertEqual(error_message, str(e))
 
         try:
             config.enable_streaming_support = True
         except AssertionError as e:
-            self.assertEquals(error_message, str(e))
+            self.assertEqual(error_message, str(e))
 
         try:
             config.requires_uc = False
         except AssertionError as e:
-            self.assertEquals(error_message, str(e))
+            self.assertEqual(error_message, str(e))
 
         try:
             config.create_schema = False
         except AssertionError as e:
-            self.assertEquals(error_message, str(e))
+            self.assertEqual(error_message, str(e))
 
         try:
             config.create_catalog = True
         except AssertionError as e:
-            self.assertEquals(error_message, str(e))
+            self.assertEqual(error_message, str(e))
 
 
 if __name__ == '__main__':

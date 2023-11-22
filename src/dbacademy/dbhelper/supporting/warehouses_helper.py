@@ -2,7 +2,7 @@ __all__ = ["WarehousesHelper"]
 
 from typing import Union, List, Optional
 
-from dbacademy.common import validator
+from dbacademy.common import validate
 from dbacademy.dbhelper.lesson_config import LessonConfig
 from dbacademy.clients.databricks import DBAcademyRestClient
 from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
@@ -11,10 +11,10 @@ from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 class WarehousesHelper:
 
     def __init__(self, db_academy_reset_client: DBAcademyRestClient, workspace_helper: WorkspaceHelper):
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
-        self.__client = validate.any_value(db_academy_reset_client=db_academy_reset_client, parameter_type=DBAcademyRestClient, required=True)
-        self.__workspace_helper = validate.any_value(workspace_helper=workspace_helper, parameter_type=WorkspaceHelper, required=True)
+        self.__client = validate(db_academy_reset_client=db_academy_reset_client).required.as_type(DBAcademyRestClient)
+        self.__workspace_helper = validate(workspace_helper=workspace_helper).required.as_type(WorkspaceHelper)
 
     @property
     def autoscale_min(self):
@@ -29,7 +29,7 @@ class WarehousesHelper:
     def delete_sql_warehouses_for(self, lesson_config: LessonConfig) -> None:
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
-        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
 
         name = DBAcademyHelper.to_unique_name(lesson_config=lesson_config, sep="-")
 
@@ -38,7 +38,7 @@ class WarehousesHelper:
     def delete_sql_warehouses(self, lesson_config: LessonConfig) -> None:
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 
-        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
 
         usernames = self.__workspace_helper.get_usernames(lesson_config=lesson_config)
 
@@ -66,7 +66,7 @@ class WarehousesHelper:
 
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 
-        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
 
         usernames = self.__workspace_helper.get_usernames(lesson_config=lesson_config)
 
@@ -85,10 +85,10 @@ class WarehousesHelper:
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
 
-        username = validate.str_value(username=username, required=True)
-        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
-        auto_stop_mins = validate.int_value(auto_stop_mins=auto_stop_mins, required=False)
-        enable_serverless_compute = validate.bool_value(enable_serverless_compute=enable_serverless_compute, required=True)
+        username = validate(username=username).required.str()
+        lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
+        auto_stop_mins = validate(auto_stop_mins=auto_stop_mins).int()
+        enable_serverless_compute = validate(enable_serverless_compute=enable_serverless_compute).required.bool()
 
         name = DBAcademyHelper.to_unique_name(lesson_config=lesson_config, sep="-")
 

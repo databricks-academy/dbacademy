@@ -30,7 +30,7 @@ class WorkspaceConfig:
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
         from dbacademy.common import validate
 
-        self.__max_participants = validate(max_participants=max_participants).int().min_value(0)
+        self.__max_participants = validate(max_participants=max_participants).int(min_value=0)
 
         assert workspace_number is None or type(workspace_number) == int, f"""The parameter "workspace_number" must be None or an integral value, found {type(workspace_number)}."""
         assert workspace_number is None or workspace_number >= 0, f"""The parameter "workspace_number" must be None or greater than zero, found "{workspace_number}"."""
@@ -56,7 +56,7 @@ class WorkspaceConfig:
 
         # assert type(entitlements) == dict, f"""The parameter "entitlements" must be a dictionary value, found {type(entitlements)}."""
         # assert len(entitlements) > 3, f"""The parameter "entitlements" must have a length > 0, found "{username_pattern}"."""
-        self.__entitlements: Dict[str, bool] = validate(entitlements=entitlements).dict_required().dict
+        self.__entitlements: Dict[str, bool] = validate(entitlements=entitlements).required.dict(str)
 
         assert type(username_pattern) == str, f"""The parameter "username_pattern" must be a string value, found {type(username_pattern)}."""
         assert len(username_pattern) > 3, f"""The parameter "username_pattern" must have a length > 0, found "{username_pattern}"."""
@@ -110,7 +110,7 @@ class WorkspaceConfig:
 
         # Create the group analyst and instructors
         self.__workspace_group = dict()
-        workspace_group: Dict[str, List] = validate(workspace_group=workspace_group).dict(create=True).keys_of_str()
+        workspace_group: Dict[str, List] = validate(workspace_group=workspace_group).dict(str, auto_create=True)
 
         # Start by initializing groups as an empty list
         for group_name in workspace_group:

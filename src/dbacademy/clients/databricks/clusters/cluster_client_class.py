@@ -1,6 +1,6 @@
 __all__ = ["ClustersClient"]
 
-from dbacademy.common import validator
+from dbacademy.common import validate
 from typing import Optional, Dict, Any, List
 from dbacademy.clients.rest.common import ApiContainer, ApiClient
 from dbacademy.clients.databricks.clusters.cluster_config_class import ClusterConfig
@@ -31,12 +31,13 @@ class ClustersClient(ApiContainer):
         response = self.client.api("GET", f"{self.base_uri}/list-node-types")
         return response.get("node_types", list())
 
-    # I'm not 100% sure this isn't called outside of this library -JDP
     def get_by_id(self, cluster_id) -> Optional[Dict[str, Any]]:
-        cluster_id = validate.str_value(cluster_id=cluster_id)
+        cluster_id: str = validate(cluster_id=cluster_id).required.str()
         return self.client.api("GET", f"{self.base_uri}/get?cluster_id={cluster_id}", _expected=[200, 400])
 
-    def get_by_name(self, cluster_name) -> Optional[Dict[str, Any]]:
+    def get_by_name(self, cluster_name: str) -> Optional[Dict[str, Any]]:
+        cluster_name: str = validate(cluster_name=cluster_name).required.str()
+
         for cluster in self.list():
             if cluster_name == cluster.get("cluster_name"):
                 return self.get_by_id(cluster.get("cluster_id"))
@@ -44,14 +45,15 @@ class ClustersClient(ApiContainer):
         return None
 
     def terminate_by_id(self, cluster_id) -> None:
-        cluster_id = validate.str_value(cluster_id=cluster_id)
+        cluster_id: str = validate(cluster_id=cluster_id).required.str()
         return self.client.api("POST", f"{self.base_uri}/delete", cluster_id=cluster_id)
 
     def terminate_by_name(self, cluster_name) -> None:
         from dbacademy.clients.rest.common import DatabricksApiException
 
-        cluster_name = validate.str_value(cluster_name=cluster_name)
+        cluster_name: str = validate(cluster_name=cluster_name).required.str()
         cluster = self.get_by_name(cluster_name)
+
         if cluster is not None:
             cluster_id = cluster.get("cluster_id")
             return self.terminate_by_id(cluster_id)
@@ -60,13 +62,14 @@ class ClustersClient(ApiContainer):
         raise DatabricksApiException(f"The cluster {cluster_name} was not found", http_code=400)
 
     def destroy_by_id(self, cluster_id) -> None:
-        cluster_id = validate.str_value(cluster_id=cluster_id)
+        cluster_id: str = validate(cluster_id=cluster_id).required.str()
         self.client.api("POST", f"{self.base_uri}/permanent-delete", cluster_id=cluster_id, _expected=[200, 400])
         return None
 
     def destroy_by_name(self, cluster_name) -> None:
-        cluster_name = validate.str_value(cluster_name=cluster_name)
+        cluster_name: str = validate(cluster_name=cluster_name).required.str()
         cluster = self.get_by_name(cluster_name)
+
         if cluster is not None:
             cluster_id = cluster.get("cluster_id")
             self.destroy_by_id(cluster_id)

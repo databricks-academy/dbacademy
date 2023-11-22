@@ -8,10 +8,10 @@ from dbacademy.clients.databricks.jobs.job_config_classes import JobConfig
 class JobsClient(ApiContainer):
 
     def __init__(self, client: ApiClient):
-        from dbacademy.common import validator
+        from dbacademy.common import validate
         from dbacademy.clients.databricks import DBAcademyRestClient
 
-        self.client: DBAcademyRestClient = validate.any_value(DBAcademyRestClient, client=client, required=True)
+        self.client: DBAcademyRestClient = validate(client=client).required.as_type(DBAcademyRestClient)
         self.base_uri = f"{self.client.endpoint}/api/2.1/jobs"
 
     def create_from_config(self, config: JobConfig) -> str:

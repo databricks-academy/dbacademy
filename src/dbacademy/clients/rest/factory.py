@@ -1,6 +1,7 @@
 __all__ = ["dbrest_factory", "dougrest_factory"]
 
 from functools import cache
+from dbacademy.common import validate
 from typing import Dict, Generic, Type, TypeVar, Union, Optional
 from dbacademy.clients.dougrest import AccountsApi, DatabricksApi
 from dbacademy.clients.databricks import DBAcademyRestClient
@@ -31,7 +32,8 @@ class ApiClientFactory(Generic[ApiType]):
     SECTION_TOKEN = "token"
 
     def __init__(self, api_type: Type[ApiType]):
-        self.api_type = api_type
+        # noinspection PyTypeChecker
+        self.api_type = validate(api_type=api_type).required.as_type(Type)
 
     @cache
     def test_client(self) -> ApiType:

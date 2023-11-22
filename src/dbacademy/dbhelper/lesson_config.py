@@ -31,7 +31,7 @@ class LessonConfig:
         :param mocks: Used for testing, allows for mocking out the parameters __username, __initial_schema and __initial_catalog
         """
         from dbacademy import dbgems
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
         self.__course_config = None
 
@@ -40,25 +40,25 @@ class LessonConfig:
 
         self.__name = None
         self.__clean_name = None  # Use "setter" to initialize
-        self.name = validate.str_value(name=name, required=False)
+        self.name = validate(name=name).str()
 
         self.__installing_datasets = None  # the terms are slightly different for readability
-        self.installing_datasets = validate.bool_value(install_datasets=install_datasets, required=True)
+        self.installing_datasets = validate(install_datasets=install_datasets).required.bool()
 
         self.__requires_uc = None  # Use "setter" to initialize
-        self.requires_uc = validate.bool_value(requires_uc=requires_uc, required=True)
+        self.requires_uc = validate(requires_uc=requires_uc).required.bool()
 
         self.__enable_streaming_support = None  # Use "setter" to initialize
-        self.enable_streaming_support = validate.bool_value(enable_streaming_support=enable_streaming_support, required=True)
+        self.enable_streaming_support = validate(enable_streaming_support=enable_streaming_support).required.bool()
 
         self.__enable_ml_support = None  # Use "setter" to initialize
-        self.enable_ml_support = validate.bool_value(enable_ml_support=enable_ml_support, required=True)
+        self.enable_ml_support = validate(enable_ml_support=enable_ml_support).required.bool()
 
         self.__create_schema = None  # Use "setter" to initialize
-        self.create_schema = validate.bool_value(create_schema=create_schema, required=True)
+        self.create_schema = validate(create_schema=create_schema).required.bool()
 
         self.__create_catalog = None  # Use "setter" to initialize
-        self.create_catalog = validate.bool_value(create_catalog=create_catalog, required=True)
+        self.create_catalog = validate(create_catalog=create_catalog).required.bool()
 
         try:
             # Load all three values with a single query
@@ -73,7 +73,7 @@ class LessonConfig:
             self.__initial_catalog = None
 
         # Mock out the following attributes if specified.
-        mocks = validate.dict_value(mocks=mocks or dict(), required=True)
+        mocks = validate(mocks=mocks).dict(str, auto_create=True)
 
         self.__username = mocks.get("__username", self.__username)
         self.__initial_schema = mocks.get("__initial_schema", self.__initial_schema)

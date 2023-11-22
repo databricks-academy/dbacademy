@@ -78,23 +78,23 @@ class TestJobsClient(unittest.TestCase):
         job = self.__create_job()
         job_id = job.get("job_id")
 
-        self.assertEquals(job_id, job.get("job_id"))
-        self.assertEquals(UNIT_TEST_SERVICE_PRINCIPLE, job.get("creator_user_name"))
-        self.assertEquals(UNIT_TEST_SERVICE_PRINCIPLE, job.get("run_as_user_name"))
-        self.assertEquals(True, job.get("run_as_owner"))
+        self.assertEqual(job_id, job.get("job_id"))
+        self.assertEqual(UNIT_TEST_SERVICE_PRINCIPLE, job.get("creator_user_name"))
+        self.assertEqual(UNIT_TEST_SERVICE_PRINCIPLE, job.get("run_as_user_name"))
+        self.assertEqual(True, job.get("run_as_owner"))
 
         settings = job.get("settings")
-        self.assertEquals("Job from Git", settings.get("name"))
-        self.assertEquals(2, settings.get("max_concurrent_runs"))
-        self.assertEquals("SINGLE_TASK", settings.get("format"))
+        self.assertEqual("Job from Git", settings.get("name"))
+        self.assertEqual(2, settings.get("max_concurrent_runs"))
+        self.assertEqual("SINGLE_TASK", settings.get("format"))
 
-        self.assertEquals({}, settings.get("email_notifications"))
-        self.assertEquals({}, settings.get("webhook_notifications"))
+        self.assertEqual({}, settings.get("email_notifications"))
+        self.assertEqual({}, settings.get("webhook_notifications"))
 
         notebook_task = settings.get("notebook_task")
         self.assertIsNotNone(notebook_task)
-        self.assertEquals("Workspace-Setup", notebook_task.get("notebook_path"))
-        self.assertEquals("GIT", notebook_task.get("source"))
+        self.assertEqual("Workspace-Setup", notebook_task.get("notebook_path"))
+        self.assertEqual("GIT", notebook_task.get("source"))
 
         base_parameters = {
             "event_id": "Testing 123",
@@ -102,14 +102,14 @@ class TestJobsClient(unittest.TestCase):
             "pools_node_type_id": "i3.xlarge",
             "default_spark_version": "11.3.x-scala2.12"
         }
-        self.assertEquals(base_parameters, notebook_task.get("base_parameters"))
+        self.assertEqual(base_parameters, notebook_task.get("base_parameters"))
 
         git_source = settings.get("git_source")
-        self.assertEquals("https://github.com/databricks-academy/workspace-setup.git", git_source.get("git_url"))
-        self.assertEquals("gitHub", git_source.get("git_provider"))
-        self.assertEquals("published", git_source.get("git_branch"))
+        self.assertEqual("https://github.com/databricks-academy/workspace-setup.git", git_source.get("git_url"))
+        self.assertEqual("gitHub", git_source.get("git_provider"))
+        self.assertEqual("published", git_source.get("git_branch"))
 
-        self.assertEquals({"dbacademy.unit-test": "true"}, settings.get("tags"))
+        self.assertEqual({"dbacademy.unit-test": "true"}, settings.get("tags"))
 
         actual_cluster = settings.get("new_cluster")
         self.assertIsNotNone(actual_cluster)
@@ -137,7 +137,7 @@ class TestJobsClient(unittest.TestCase):
             print(json.dumps(expected_cluster, indent=4))
             print("-"*100)
             print(json.dumps(actual_cluster, indent=4))
-            self.assertEquals(expected_cluster, actual_cluster)
+            self.assertEqual(expected_cluster, actual_cluster)
 
 
 if __name__ == "__main__":

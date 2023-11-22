@@ -9,6 +9,8 @@ class Operation:
     ADD = "add"
     REMOVE = "remove"
     REPLACE = "replace"
+
+    # noinspection PyTypeHints
     Command = Literal[(ADD, REMOVE, REPLACE)]
 
     def __init__(self, command: Command, path: str, value: Any):
@@ -65,24 +67,33 @@ class AccountScimUsersApi(ApiContainer):
         return None
 
     def update_by_id(self, user_id: str, *, first_name: str = None, last_name: str = None, operations: List[Operation] = None) -> Dict[str, Any]:
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
         operations = operations or list()
 
-        if first_name is not None or last_name is not None:
-            validate.str_value(first_name=first_name, required=True)
-            validate.str_value(last_name=first_name, required=True)
+        if first_name is not None and last_name is not None:
+            validate(first_name=first_name).str()
+            validate(last_name=last_name).str()
 
             operations.append(Operation(Operation.REPLACE, "name.givenName", first_name))
             operations.append(Operation(Operation.REPLACE, "name.familyName", last_name))
             operations.append(Operation(Operation.REPLACE, "displayName", f"{first_name} {last_name}"))
 
-        validate.list_of_type(operations=operations, element_type=Operation)
-        assert len(operations) > 0, f"No changes where specified; please provide at least one parameter."
+        elif first_name is not None:
+            validate(first_name=first_name).str()
+
+            operations.append(Operation(Operation.REPLACE, "name.givenName", first_name))
+            operations.append(Operation(Operation.REPLACE, "displayName", f"{first_name}"))
+
+        elif last_name is not None:
+            validate(last_name=last_name).str()
+
+            operations.append(Operation(Operation.REPLACE, "name.familyName", last_name))
+            operations.append(Operation(Operation.REPLACE, "displayName", f"{last_name}"))
 
         operations_list: List[Dict[str, Any]] = list()
 
-        for operation in operations:
+        for operation in validate(operations=operations).required.list(Operation, min_length=1):
             operations_list.append(operation.to_dict())
 
         payload = {

@@ -13,18 +13,18 @@ class UniversalWorkspaceSetupRunner:
         from dbacademy import dbgems
         from dbacademy.common import Cloud
         from dbacademy.clients import databricks
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
         self.__event_id = 0
         self.__event_description = f"Workspace {workspace_name}"
         self.__default_spark_version = course_config.supported_dbrs[0]
 
-        self.__course_config = validate.any_value(course_config=course_config, parameter_type=CourseConfig, required=True)
+        self.__course_config = validate(course_config=course_config).required.as_type(CourseConfig)
 
-        self.__workspace_name = validate.str_value(required=True, workspace_name=workspace_name or dbgems.sc.getConf().get("spark.databricks.workspaceUrl", defaultValue="Unknown"))
+        self.__workspace_name = validate(workspace_name=workspace_name or dbgems.sc.getConf().get("spark.databricks.workspaceUrl", defaultValue="Unknown")).required.str()
 
-        self.__client = databricks.from_token(token=validate.str_value(required=True, token=token or dbgems.get_notebooks_api_token()),
-                                              endpoint=validate.str_value(required=True, endpoint=endpoint or dbgems.get_notebooks_api_endpoint()))
+        self.__client = databricks.from_token(token=validate(token=token or dbgems.get_notebooks_api_token()).required.str(),
+                                              endpoint=validate(endpoint=endpoint or dbgems.get_notebooks_api_endpoint()).required.str())
 
         if Cloud.current_cloud().is_aws:
             self.__pools_node_type_id = "i3.xlarge"

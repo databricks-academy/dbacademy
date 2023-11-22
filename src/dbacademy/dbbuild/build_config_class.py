@@ -27,10 +27,10 @@ class BuildConfig:
         :return:
         """
         import json
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
-        validate.str_value(file=file)
-        validate.str_value(version=version)
+        validate(file=file).str()
+        validate(version=version).str()
 
         with open(file) as f:
             return BuildConfig.load_config(config=json.load(f), version=version, **kwargs)
@@ -43,10 +43,10 @@ class BuildConfig:
         :param version: The current version being published. Expected to be one of BuildConfig.VERSIONS_LIST or an actual version number in the form of "vX.Y.Z"
         :return:
         """
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
-        validate.dict_value(config=config)
-        validate.str_value(version=version)
+        validate(config=config).required.dict(str)
+        validate(version=version).str()
 
         if kwargs is not None:
             for k, v in kwargs.items():
@@ -627,11 +627,11 @@ class BuildConfig:
         :return: None
         """
         from dbacademy import common
-        from dbacademy.common import validator
-
-        cloud = validate.str_value(cloud=cloud).upper()
+        from dbacademy.common import validate
 
         assert self.validated, f"Cannot validate smoke-tests until the build configuration passes validation. See BuildConfig.validate()"
 
+        cloud = validate(cloud=cloud).required.str().upper()
         self.__passing_tests[cloud] = True
+
         common.print_warning("NOT IMPLEMENTED", f"This function has not yet been implemented for {cloud}.")

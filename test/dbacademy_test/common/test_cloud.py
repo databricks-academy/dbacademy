@@ -20,7 +20,7 @@ class TestCloud(unittest.TestCase):
         self.assertTrue(Cloud.GCP.is_gcp)
 
     def test_current(self):
-        self.assertEquals(Cloud.UNKNOWN, Cloud.current_cloud())
+        self.assertEqual(Cloud.UNKNOWN, Cloud.current_cloud())
 
 
 if __name__ == '__main__':

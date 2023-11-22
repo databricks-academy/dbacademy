@@ -1,7 +1,7 @@
 __all__ = ["Publisher"]
 
 from typing import List, Optional
-from dbacademy.common import validator
+from dbacademy.common import validate
 
 
 class Publisher:
@@ -30,7 +30,7 @@ class Publisher:
         self.__validated_artifacts = False
         self.__publishing_mode = None
 
-        self.build_config = validate.any_value(BuildConfig, build_config=build_config)
+        self.build_config = validate(build_config=build_config).as_type(BuildConfig)
 
         self.client = build_config.client
         self.version = build_config.version
@@ -319,8 +319,8 @@ class Publisher:
             common.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
         target_repo_url = target_repo_url or new_target_repo_url
 
-        self.target_dir = validate.str_value(target_dir=target_dir)
-        self.target_repo_url = validate.str_value(target_repo_url=target_repo_url)
+        self.target_dir = validate(target_dir=target_dir).str()
+        self.target_repo_url = validate(target_repo_url=target_repo_url).str()
 
         BuildUtils.reset_git_repo(client=self.client,
                                   directory=self.target_dir,

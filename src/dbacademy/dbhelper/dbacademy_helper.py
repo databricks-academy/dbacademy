@@ -1,7 +1,7 @@
 __all__ = ["DBAcademyHelper"]
 
 from typing import Union, Optional, Dict, List
-from dbacademy.common import validator
+from dbacademy.common import validate
 from dbacademy.clients.databricks import DBAcademyRestClient
 from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 from dbacademy.dbhelper.supporting.dev_helper import DevHelper
@@ -35,12 +35,12 @@ class DBAcademyHelper:
 
         self.__validate_uws()
 
-        self.__lesson_config = validate.any_value(_lesson_config=_lesson_config, parameter_type=LessonConfig, required=True)
+        self.__lesson_config = validate(_lesson_config=_lesson_config).required.as_type(LessonConfig)
         self.__lesson_config.assert_valid()
 
-        self.__course_config = validate.any_value(_course_config=_course_config, parameter_type=CourseConfig, required=True)
+        self.__course_config = validate(_course_config=_course_config).required.as_type(CourseConfig)
 
-        self.__debug = validate.bool_value(_debug=_debug, required=True)
+        self.__debug = validate(_debug=_debug).required.bool()
         self.__start = dbgems.clock_start()
 
         # Initialized in the call to init()
@@ -279,8 +279,8 @@ class DBAcademyHelper:
         from dbacademy import dbgems
         from dbacademy import common
 
-        sep = validate.str_value(sep=sep, required=True)
-        lesson_config = validate.any_value(lesson_config=lesson_config, parameter_type=LessonConfig, required=True)
+        sep = validate(sep=sep).required.str()
+        lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
 
         local_part = lesson_config.username.split("@")[0]
         hash_basis = f"{lesson_config.username}{dbgems.get_workspace_id()}"

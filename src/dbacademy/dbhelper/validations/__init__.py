@@ -482,16 +482,12 @@ class ValidationSuite(object):
 class ValidationHelper:
 
     def __init__(self, da):
-        from dbacademy.common import validator
+        from dbacademy.common import validate
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
         from dbacademy.clients.databricks import DBAcademyRestClient
 
-        self.__da = validate.any_value(da=da, parameter_type=DBAcademyHelper, required=True)
-        self.__client = validate.any_value(client=da.client, parameter_type=DBAcademyRestClient, required=True)
-
-    # @property
-    # def da(self) -> DBAcademyHelper:
-    #     return self.__da
+        self.__da = validate(da=da).required.as_type(DBAcademyHelper)
+        self.__client = validate(client=da.client).required.as_type(DBAcademyRestClient)
 
     @property
     def client(self) -> DBAcademyRestClient:

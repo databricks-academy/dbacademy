@@ -1,10 +1,10 @@
 __all__ = ["ResultsEvaluator"]
 
-import typing
+from typing import List, Dict, Any
 
 
 class ResultsEvaluator:
-    def __init__(self, results: typing.List[dict], keep_success):
+    def __init__(self, results: List[Dict[str, Any]], keep_success: bool):
 
         self.keep_success = keep_success
 

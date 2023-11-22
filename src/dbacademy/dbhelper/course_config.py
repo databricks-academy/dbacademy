@@ -25,22 +25,21 @@ class CourseConfig:
         :param expected_dbrs: See the property by the same name
         """
 
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
-        self.__course_code = validate.str_value(course_code=course_code, required=True)
-        self.__course_name = validate.str_value(course_name=course_name, required=True)
+        self.__course_code = validate(course_code=course_code).required.str()
+        self.__course_name = validate(course_name=course_name).required.str()
         self.__build_name = CourseConfig.to_build_name(self.course_name)
 
-        self.__data_source_version = validate.str_value(data_source_version=data_source_version, required=True)
+        self.__data_source_version = validate(data_source_version=data_source_version).required.str()
 
-        self.__install_min_time = validate.str_value(install_min_time=install_min_time, required=True)
-        self.__install_max_time = validate.str_value(install_max_time=install_max_time, required=True)
+        self.__install_min_time = validate(install_min_time=install_min_time).required.str()
+        self.__install_max_time = validate(install_max_time=install_max_time).required.str()
 
         supported_dbrs = [supported_dbrs] if isinstance(supported_dbrs, str) else supported_dbrs
-        validate.list_of_strings(supported_dbrs=supported_dbrs, required=True)
-        self.__supported_dbrs = validate.list_value(supported_dbrs=supported_dbrs, min_length=1)
+        self.__supported_dbrs = validate(supported_dbrs=supported_dbrs).required.list(str, min_length=1)
 
-        self.__expected_dbrs = validate.str_value(expected_dbrs=expected_dbrs, required=True)
+        self.__expected_dbrs = validate(expected_dbrs=expected_dbrs).required.str()
 
         # Verify that the expected and supported list of DBRs match.
         if self.expected_dbrs != "{{supported_dbrs}}":

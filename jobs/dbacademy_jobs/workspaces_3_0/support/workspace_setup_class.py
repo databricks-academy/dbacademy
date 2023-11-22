@@ -84,7 +84,7 @@ class WorkspaceSetup:
         self.__errors: List[str] = list()
         self.__workspaces: List[WorkspaceTrio] = list()
 
-        self.__account_config = validate(account_config=account_config).type_required(AccountConfig)
+        self.__account_config = validate(account_config=account_config).required.as_type(AccountConfig)
 
         self.__accounts_api = AccountsApi(account_id=self.account_config.account_id,
                                           username=self.account_config.username,

@@ -53,11 +53,11 @@ class TaskConfig:
                 return task_config
 
             def new(self, cluster_config: JobClusterConfig) -> TaskConfig:
-                from dbacademy.common import validator
+                from dbacademy.common import validate
                 from dbacademy.clients.databricks.clusters.cluster_config_class import JobClusterConfig
 
                 assert self.name not in task_config.defined, "The cluster has already been defined."
-                validate.any_value(JobClusterConfig, cluster_config=cluster_config)
+                validate(cluster_config=cluster_config).as_type(JobClusterConfig)
 
                 task_config.defined.append(self.name)
                 task_config.params["new_cluster"] = cluster_config.params

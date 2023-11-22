@@ -1,7 +1,7 @@
 __all__ = ["SlackThread", "from_args", "GOOD", "WARNING", "DANGER"]
 
 from typing import List, Dict, Any, Optional, Union
-from dbacademy.common import validator
+from dbacademy.common import validate
 
 
 class Level:
@@ -191,14 +191,11 @@ class SlackThread(object):
         return text
 
     def _update_payload(self, level: Level, message: str, attachments: List[Dict[str, Any]]) -> Dict[str, Any]:
-        validate.any_value(Level, level=level, required=True)
-        validate.str_value(message=message, required=True)
-        validate.list_of_type(attachments=attachments, element_type=Dict, required=True)
 
-        assert len(attachments) > 0, f"""Expected at least one attachment."""
+        validate(attachments=attachments).required.list(dict, min_length=1)
 
-        attachments[0]["color"] = level.color
-        attachments[0]["text"] = message
+        attachments[0]["color"] = validate(level=level).required.as_type(Level).color
+        attachments[0]["text"] = validate(message=message).required.str()
 
         ret_val = {
             "channel": self.channel,

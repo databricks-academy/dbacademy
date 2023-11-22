@@ -4,12 +4,12 @@ __all__ = ["DevHelper"]
 class DevHelper:
 
     def __init__(self, db_academy_helper):
-        from dbacademy.common import validator
+        from dbacademy.common import validate
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
         from dbacademy.clients.databricks import DBAcademyRestClient
 
-        self.__da = validate.any_value(db_academy_helper=db_academy_helper, parameter_type=DBAcademyHelper, required=True)
-        self.__client = validate.any_value(client=db_academy_helper.client, parameter_type=DBAcademyRestClient, required=True)
+        self.__da = validate(db_academy_helper=db_academy_helper).required.as_type(DBAcademyHelper)
+        self.__client = validate(client=db_academy_helper.client).required.as_type(DBAcademyRestClient)
 
     def enumerate_remote_datasets(self):
         """

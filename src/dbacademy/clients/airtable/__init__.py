@@ -1,4 +1,4 @@
-__all__ = ["from_args", "from_environment", "from_workspace", "TableConfig"]
+__all__ = ["from_args", "from_environment", "from_workspace", "AirTableRestClient", "TableConfig"]
 
 from typing import Optional
 from dbacademy.clients.rest.common import ApiClient
@@ -36,11 +36,13 @@ class AirTableRestClient(ApiClient):
                  error_handler: ClientErrorHandler):
 
         from dbacademy.clients.airtable.at_utils import AirTableUtils
-        from dbacademy.common import validator
+        from dbacademy.common import validate
 
-        validate.str_value(access_token=access_token, required=True)
-        validate.str_value(base_id=base_id, required=True)
-        validate.any_value(ClientErrorHandler, error_handler=error_handler, required=True)
+        validate(base_id=base_id).required.str()
+        validate(access_token=access_token).required.str()
+        validate(verbose=verbose).required.bool()
+        validate(throttle_seconds=throttle_seconds).required.int()
+        validate(error_handler=error_handler).required.as_type(ClientErrorHandler)
 
         super().__init__(endpoint=f"https://api.airtable.com/v0/{base_id}",
                          authorization_header=f"Bearer {access_token}",

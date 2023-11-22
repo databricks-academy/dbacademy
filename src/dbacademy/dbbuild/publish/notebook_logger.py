@@ -1,12 +1,12 @@
 __all__ = ["NotebookError", "NotebookLogger"]
 
 from typing import Callable, List
-from dbacademy.common import validator
+from dbacademy.common import validate
 
 
 class NotebookError:
     def __init__(self, message: str):
-        self.__message = validate.str_value(message=message, required=True)
+        self.__message = validate(message=message).required.str()
 
     @property
     def message(self) -> str:
