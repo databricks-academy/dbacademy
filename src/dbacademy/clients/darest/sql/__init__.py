@@ -1,6 +1,11 @@
 __all__ = ["SqlClient"]
 
 from dbacademy.clients.rest.common import ApiClient, ApiContainer
+from dbacademy.clients.darest.sql.config import SqlConfigClient
+from dbacademy.clients.darest.sql.endpoints import SqlWarehousesClient
+from dbacademy.clients.darest.sql.queries import SqlQueriesClient
+from dbacademy.clients.darest.sql.statements import StatementsClient
+from dbacademy.clients.darest.permissions.sql import Sql
 
 
 class SqlClient(ApiContainer):
@@ -10,17 +15,22 @@ class SqlClient(ApiContainer):
 
         self.client: DBAcademyRestClient = validate(client=client).required.as_type(DBAcademyRestClient)
 
-        from dbacademy.clients.darest.sql.config import SqlConfigClient
-        self.config = SqlConfigClient(self.client)
+    @property
+    def config(self) -> SqlConfigClient:
+        return SqlConfigClient(self.client)
 
-        from dbacademy.clients.darest.sql.endpoints import SqlWarehousesClient
-        self.warehouses = SqlWarehousesClient(self.client)
-        self.endpoints = SqlWarehousesClient(self.client)  # Backwards Compatibility
+    @property
+    def warehouses(self) -> SqlWarehousesClient:
+        return SqlWarehousesClient(self.client)
 
-        from dbacademy.clients.darest.sql.queries import SqlQueriesClient
-        self.queries = SqlQueriesClient(self.client)
+    @property
+    def queries(self) -> SqlQueriesClient:
+        return SqlQueriesClient(self.client)
 
-        from dbacademy.clients.darest.sql.statements import StatementsClient
-        self.statements = StatementsClient(self.client)
+    @property
+    def statements(self) -> StatementsClient:
+        return StatementsClient(self.client)
 
-        self.permissions = self.client.permissions.sql
+    @property
+    def permissions(self) -> Sql:
+        return self.client.permissions.sql

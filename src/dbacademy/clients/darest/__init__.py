@@ -23,13 +23,15 @@ from dbacademy.clients.darest.workspace import WorkspaceClient
 from dbacademy.clients.darest.workspace_config import WorkspaceConfigClient
 from dbacademy.clients.darest.serving_endpoints import ServingEndpointsApi
 
-DEFAULT_SCOPE = "DBACADEMY"
-
 
 # noinspection PyPep8Naming
 class Constants:
     def __init__(self):
         pass
+
+    @property
+    def DEFAULT_SCOPE(self):
+        return "DBACADEMY"
 
     @property
     def AUTH_HEADER(self):
@@ -228,7 +230,7 @@ def from_username(*,
                   username: str = None,
                   password: str = None,
                   # Common parameters
-                  scope: str = DEFAULT_SCOPE,
+                  scope: str = constants.DEFAULT_SCOPE,
                   verbose: bool = False,
                   throttle_seconds: int = 0,
                   error_handler: ClientErrorHandler = ClientErrorHandler()) -> DBAcademyRestClient:
@@ -244,7 +246,7 @@ def from_username(*,
 def from_token(token: str = None,
                endpoint: str = None,
                # Common parameters
-               scope: str = DEFAULT_SCOPE,
+               scope: str = constants.DEFAULT_SCOPE,
                verbose: bool = False,
                throttle_seconds: int = 0,
                error_handler: ClientErrorHandler = ClientErrorHandler()) -> DBAcademyRestClient:
@@ -260,7 +262,7 @@ def from_auth_header(*,
                      endpoint: str = None,
                      authorization_header: str = None,
                      # Common parameters
-                     scope: str = DEFAULT_SCOPE,
+                     scope: str = constants.DEFAULT_SCOPE,
                      verbose: bool = False,
                      throttle_seconds: int = 0,
                      error_handler: ClientErrorHandler = ClientErrorHandler()) -> DBAcademyRestClient:
