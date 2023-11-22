@@ -1,5 +1,5 @@
 import os
-from dbacademy.clients.databricks import accounts
+from dbacademy.clients.darest import accounts
 
 
 accounts = accounts.from_args_aws(account_id=os.environ.get("WORKSPACE_SETUP_CURR_ACCOUNT_ID"),

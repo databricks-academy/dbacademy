@@ -3,7 +3,7 @@ __all__ = ["WorkspaceHelper"]
 from typing import Callable, List, TypeVar, Optional, Union, Dict, Any
 from dbacademy.dbhelper import dbh_constants
 from dbacademy.dbhelper.lesson_config import LessonConfig
-from dbacademy.clients.databricks import DBAcademyRestClient
+from dbacademy.clients.darest import DBAcademyRestClient
 
 T = TypeVar("T")
 

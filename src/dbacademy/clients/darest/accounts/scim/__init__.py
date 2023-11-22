@@ -1,7 +1,7 @@
 __all__ = ["AccountScimApi"]
 
 from dbacademy.clients.rest.common import ApiContainer
-from dbacademy.clients.databricks.accounts.scim.users import AccountScimUsersApi
+from dbacademy.clients.darest.accounts.scim.users import AccountScimUsersApi
 
 
 class AccountScimApi(ApiContainer):
@@ -11,10 +11,10 @@ class AccountScimApi(ApiContainer):
         self.client = client      # Client API exposing other operations to this class
         self.account_id = account_id
 
-        # from dbacademy.clients.databricks.accounts.scim.service_principals import ScimServicePrincipalsClient
+        # from dbacademy.clients.darest.accounts.scim.service_principals import ScimServicePrincipalsClient
         # self.service_principals = ScimServicePrincipalsClient(self.client)
         #
-        # from dbacademy.clients.databricks.accounts.scim.groups import ScimGroupsClient
+        # from dbacademy.clients.darest.accounts.scim.groups import ScimGroupsClient
         # self.groups = ScimGroupsClient(self.client)
 
     @property

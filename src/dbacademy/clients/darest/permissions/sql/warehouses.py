@@ -1,7 +1,7 @@
 __all__ = ["SqlWarehouses"]
 
 from dbacademy.clients.rest.common import ApiClient
-from dbacademy.clients.databricks.permissions.crud import PermissionsCrud
+from dbacademy.clients.darest.permissions.crud import PermissionsCrud
 
 
 class SqlWarehouses(PermissionsCrud):

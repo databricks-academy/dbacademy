@@ -1,5 +1,5 @@
 from dbacademy import common
-from dbacademy.clients import databricks
+from dbacademy.clients import darest
 
 config_file = r"c:\users\JacobParr\.databrickscfg"
 
@@ -10,7 +10,7 @@ for environment in environments:
     token = configs.get(environment).get("token")
     endpoint = configs.get(environment).get("host")
 
-    client = databricks.from_token(token=token, endpoint=endpoint)
+    client = darest.from_token(token=token, endpoint=endpoint)
 
     admins = client.scim.groups.get_by_name("admins")
     admins_id = admins.get("id")

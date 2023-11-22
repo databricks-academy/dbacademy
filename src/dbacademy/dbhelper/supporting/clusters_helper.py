@@ -2,7 +2,7 @@ __all__ = ["ClustersHelper"]
 
 from typing import Union, Dict, Any
 from dbacademy.dbhelper import dbh_constants
-from dbacademy.clients.databricks import DBAcademyRestClient
+from dbacademy.clients.darest import DBAcademyRestClient
 
 
 class ClustersHelper:

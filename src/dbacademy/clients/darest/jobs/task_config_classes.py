@@ -35,7 +35,7 @@ class TaskConfig:
             self.params["timeout_seconds"] = timeout_seconds
 
         class Cluster:
-            from dbacademy.clients.databricks.clusters.cluster_config_class import JobClusterConfig
+            from dbacademy.clients.darest.clusters.cluster_config_class import JobClusterConfig
 
             def __init__(self):
                 self.name = "cluster"
@@ -54,7 +54,7 @@ class TaskConfig:
 
             def new(self, cluster_config: JobClusterConfig) -> TaskConfig:
                 from dbacademy.common import validate
-                from dbacademy.clients.databricks.clusters.cluster_config_class import JobClusterConfig
+                from dbacademy.clients.darest.clusters.cluster_config_class import JobClusterConfig
 
                 assert self.name not in task_config.defined, "The cluster has already been defined."
                 validate(cluster_config=cluster_config).as_type(JobClusterConfig)
@@ -66,10 +66,10 @@ class TaskConfig:
         self.cluster = Cluster()
 
         class Task:
-            from dbacademy.clients.databricks.clusters.cluster_config_class import LibraryFactory
+            from dbacademy.clients.darest.clusters.cluster_config_class import LibraryFactory
 
             def __init__(self):
-                from dbacademy.clients.databricks.clusters.cluster_config_class import LibraryFactory
+                from dbacademy.clients.darest.clusters.cluster_config_class import LibraryFactory
 
                 self.name = "task"
                 self.__libraries = LibraryFactory(None)

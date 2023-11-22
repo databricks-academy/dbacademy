@@ -2,8 +2,8 @@ __all__ = ["WorkspaceConfigTests"]
 
 import unittest
 from typing import Dict, Any
-from dbacademy.clients import databricks
-from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS
+from dbacademy.clients import darest
+from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
 
 enable_web_terminal = "enableWebTerminal"
 enable_export_notebook = "enableExportNotebook"
@@ -17,7 +17,7 @@ enable_tokens_config = "enableTokensConfig"
 class WorkspaceConfigTests(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.__client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS)
+        self.__client = darest.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.tearDown()
 
     @property

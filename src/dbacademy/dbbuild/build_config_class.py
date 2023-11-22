@@ -1,7 +1,7 @@
 __all__ = ["BuildConfig"]
 
 from typing import Type, List, Dict, Union, Any, Optional, Callable
-from dbacademy.clients.databricks import DBAcademyRestClient
+from dbacademy.clients.darest import DBAcademyRestClient
 from dbacademy.dbhelper import dbh_constants
 
 

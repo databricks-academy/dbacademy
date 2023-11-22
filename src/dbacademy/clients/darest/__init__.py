@@ -4,24 +4,24 @@ from typing import Optional
 from dbacademy.clients.rest.common import ApiClient
 from dbacademy.clients import ClientErrorHandler
 
-from dbacademy.clients.databricks.secrets import SecretsClient
-from dbacademy.clients.databricks.clusters.cluster_client_class import ClustersClient
-from dbacademy.clients.databricks.cluster_policies import ClustersPolicyClient
-from dbacademy.clients.databricks.instance_pools import InstancePoolsClient
-from dbacademy.clients.databricks.jobs.jobs_client_class import JobsClient
-from dbacademy.clients.databricks.ml import MlClient
-from dbacademy.clients.databricks.permissions import Permissions
-from dbacademy.clients.databricks.pipelines import PipelinesClient
-from dbacademy.clients.databricks.repos import ReposClient
-from dbacademy.clients.databricks.runs import RunsClient
-from dbacademy.clients.databricks.scim import ScimClient
-from dbacademy.clients.databricks.sql import SqlClient
-from dbacademy.clients.databricks.tokens import TokensClient
-from dbacademy.clients.databricks.token_management import TokenManagementClient
-from dbacademy.clients.databricks.uc import UcApi
-from dbacademy.clients.databricks.workspace import WorkspaceClient
-from dbacademy.clients.databricks.workspace_config import WorkspaceConfigClient
-from dbacademy.clients.databricks.serving_endpoints import ServingEndpointsApi
+from dbacademy.clients.darest.secrets import SecretsClient
+from dbacademy.clients.darest.clusters.cluster_client_class import ClustersClient
+from dbacademy.clients.darest.cluster_policies import ClustersPolicyClient
+from dbacademy.clients.darest.instance_pools import InstancePoolsClient
+from dbacademy.clients.darest.jobs.jobs_client_class import JobsClient
+from dbacademy.clients.darest.ml import MlClient
+from dbacademy.clients.darest.permissions import Permissions
+from dbacademy.clients.darest.pipelines import PipelinesClient
+from dbacademy.clients.darest.repos import ReposClient
+from dbacademy.clients.darest.runs import RunsClient
+from dbacademy.clients.darest.scim import ScimClient
+from dbacademy.clients.darest.sql import SqlClient
+from dbacademy.clients.darest.tokens import TokensClient
+from dbacademy.clients.darest.token_management import TokenManagementClient
+from dbacademy.clients.darest.uc import UcApi
+from dbacademy.clients.darest.workspace import WorkspaceClient
+from dbacademy.clients.darest.workspace_config import WorkspaceConfigClient
+from dbacademy.clients.darest.serving_endpoints import ServingEndpointsApi
 
 DEFAULT_SCOPE = "DBACADEMY"
 

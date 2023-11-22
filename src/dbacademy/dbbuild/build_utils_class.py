@@ -1,7 +1,7 @@
 __all__ = ["BuildUtils"]
 
 from typing import Union, List, Dict
-from dbacademy.clients.databricks import DBAcademyRestClient
+from dbacademy.clients.darest import DBAcademyRestClient
 
 
 class BuildUtils:

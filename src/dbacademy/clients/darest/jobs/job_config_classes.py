@@ -4,7 +4,7 @@ from typing import Dict, List
 
 
 class JobConfig:
-    from dbacademy.clients.databricks.jobs.task_config_classes import TaskConfig
+    from dbacademy.clients.darest.jobs.task_config_classes import TaskConfig
 
     def __init__(self, *,
                  job_name: str,
@@ -43,7 +43,7 @@ class JobConfig:
         }
 
     def add_task(self, *, task_key: str, description: str = None, max_retries: int = 0, min_retry_interval_millis: int = 0, retry_on_timeout: bool = False, timeout_seconds: int = None, depends_on: List[str] = None) -> TaskConfig:
-        from dbacademy.clients.databricks.jobs.task_config_classes import TaskConfig
+        from dbacademy.clients.darest.jobs.task_config_classes import TaskConfig
 
         depends_on = depends_on or list()
 

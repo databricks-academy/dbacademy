@@ -1,6 +1,6 @@
 from typing import Dict, Any
 
-from dbacademy.clients.databricks.cluster_policies import ClustersPolicyClient
+from dbacademy.clients.darest.cluster_policies import ClustersPolicyClient
 from dbacademy.clients.rest.common import ApiContainer, IfExists, DatabricksApiException
 
 

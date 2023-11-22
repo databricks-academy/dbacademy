@@ -2,7 +2,7 @@ __all__ = ["DBAcademyHelper"]
 
 from typing import Union, Optional, Dict, List
 from dbacademy.common import validate
-from dbacademy.clients.databricks import DBAcademyRestClient
+from dbacademy.clients.darest import DBAcademyRestClient
 from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 from dbacademy.dbhelper.supporting.dev_helper import DevHelper
 from dbacademy.dbhelper.lesson_config import LessonConfig
@@ -27,7 +27,7 @@ class DBAcademyHelper:
         See also DBAcademyHelper.dprint
         """
         from dbacademy import dbgems
-        from dbacademy.clients import databricks
+        from dbacademy.clients import darest
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
         from dbacademy.dbhelper.supporting.dev_helper import DevHelper
         from dbacademy.dbhelper.validations import ValidationHelper
@@ -51,7 +51,7 @@ class DBAcademyHelper:
         self.naming_params = {"course": self.course_config.course_code}
 
         # The following objects provide advanced support for modifying the learning environment.
-        self.__client = databricks.from_workspace()
+        self.__client = darest.from_workspace()
         self.__workspace = WorkspaceHelper(self.__client)
         self.__dev = DevHelper(self)
         self.__tests = ValidationHelper(self)

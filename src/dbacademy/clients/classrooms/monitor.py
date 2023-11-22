@@ -110,13 +110,13 @@ class Commands(object):
 
     @staticmethod
     def warehouses_create_shared(ws: Workspace):
-        from dbacademy.clients import databricks
+        from dbacademy.clients import darest
         from dbacademy.dbhelper import dbh_constants
         from dbacademy.dbhelper.supporting.warehouses_helper import WarehousesHelper
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
 
         endpoints = ws.sql.warehouses.list()
-        client = databricks.from_auth_header(endpoint=ws.endpoint[:-len("/api/")], authorization_header=ws.authorization_header)
+        client = darest.from_auth_header(endpoint=ws.endpoint[:-len("/api/")], authorization_header=ws.authorization_header)
         if not endpoints:
             ware_houses_helper = WarehousesHelper(client, workspace_helper=WorkspaceHelper(client))
             ware_houses_helper.create_sql_warehouse(

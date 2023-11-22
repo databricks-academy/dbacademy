@@ -1,6 +1,6 @@
 from typing import Dict
 from dbacademy_jobs.cloudlabs.lab_specs.lab_specs import load_lab_specs, LabSpec
-from dbacademy.clients import databricks
+from dbacademy.clients import darest
 
 lab_specs: Dict[str, LabSpec] = load_lab_specs("C:/Users/JacobParr/.cloudlabs/lt_user_acceptance.json")
 
@@ -12,7 +12,7 @@ for name, lab_spec in lab_specs.items():
         print(f"** SKIPPING {name}")
         continue
 
-    client = databricks.from_args(
+    client = darest.from_args(
         token=lab_spec.token,
         endpoint=lab_spec.url,
         username=lab_spec.username,

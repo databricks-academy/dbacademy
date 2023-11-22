@@ -1,7 +1,7 @@
 __all__ = ["lazy_property", "TEST_RESULTS_STYLE", "ValidationSuite", "ValidationHelper"]
 
 from typing import List, Callable, Iterable, Any, Sized
-from dbacademy.clients.databricks import DBAcademyRestClient
+from dbacademy.clients.darest import DBAcademyRestClient
 from dbacademy.dbhelper.validations.validation_class import Validation
 from dbacademy.dbhelper.validations.validation_result_class import ValidationResult
 
@@ -484,7 +484,7 @@ class ValidationHelper:
     def __init__(self, da):
         from dbacademy.common import validate
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
-        from dbacademy.clients.databricks import DBAcademyRestClient
+        from dbacademy.clients.darest import DBAcademyRestClient
 
         self.__da = validate(da=da).required.as_type(DBAcademyHelper)
         self.__client = validate(client=da.client).required.as_type(DBAcademyRestClient)

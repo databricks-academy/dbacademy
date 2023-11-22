@@ -1,8 +1,8 @@
 __all__ = ["Jobs"]
 
 from dbacademy.clients.rest.common import ApiClient
-from dbacademy.clients.databricks.permissions.crud import PermissionsCrud
-from dbacademy.clients.databricks.permissions.crud import What
+from dbacademy.clients.darest.permissions.crud import PermissionsCrud
+from dbacademy.clients.darest.permissions.crud import What
 
 
 class Jobs(PermissionsCrud):

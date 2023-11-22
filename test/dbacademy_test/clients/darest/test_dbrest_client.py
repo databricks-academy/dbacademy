@@ -1,8 +1,8 @@
 import unittest
 
 from dbacademy.clients.rest.factory import dbrest_factory
-from dbacademy.clients import databricks
-from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS
+from dbacademy.clients import darest
+from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
 
 
 class TestDBAcademyRestClient(unittest.TestCase):
@@ -11,50 +11,50 @@ class TestDBAcademyRestClient(unittest.TestCase):
     """
 
     def test_create(self):
-        from dbacademy.clients import databricks
+        from dbacademy.clients import darest
 
-        client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS)
+        client = darest.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.assertIsNotNone(client)
         self.assertEqual("https://curriculum-unit-tests.cloud.databricks.com", client.endpoint)
 
-        client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS, endpoint="https://curriculum-unit-tests.cloud.databricks.com")
+        client = darest.from_token(scope=DBACADEMY_UNIT_TESTS, endpoint="https://curriculum-unit-tests.cloud.databricks.com")
         self.assertIsNotNone(client)
         self.assertEqual("https://curriculum-unit-tests.cloud.databricks.com", client.endpoint)
 
-        client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS, endpoint="https://curriculum-unit-tests.cloud.databricks.com/")
+        client = darest.from_token(scope=DBACADEMY_UNIT_TESTS, endpoint="https://curriculum-unit-tests.cloud.databricks.com/")
         self.assertIsNotNone(client)
         self.assertEqual("https://curriculum-unit-tests.cloud.databricks.com", client.endpoint)
 
-        client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS, endpoint="https://curriculum-unit-tests.cloud.databricks.com/api")
+        client = darest.from_token(scope=DBACADEMY_UNIT_TESTS, endpoint="https://curriculum-unit-tests.cloud.databricks.com/api")
         self.assertIsNotNone(client)
         self.assertEqual("https://curriculum-unit-tests.cloud.databricks.com", client.endpoint)
 
-        client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS, endpoint="https://curriculum-unit-tests.cloud.databricks.com/api/")
+        client = darest.from_token(scope=DBACADEMY_UNIT_TESTS, endpoint="https://curriculum-unit-tests.cloud.databricks.com/api/")
         self.assertIsNotNone(client)
         self.assertEqual("https://curriculum-unit-tests.cloud.databricks.com", client.endpoint)
 
     def testParentheses(self):
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         result = ws().workspace().ls("/")
         self.assertIsInstance(result, list)
 
     def testWorkspace(self):
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         result = ws.workspace.ls("/")
         self.assertIsInstance(result, list)
 
     def testClusters(self):
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         result = ws.clusters.list()
         self.assertIsNotNone(result)
 
     def testJobs(self):
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         result = ws.jobs.list()
         self.assertIsInstance(result, list)
 
     def testPermissions(self):
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         jobs = ws.jobs.list()
         if not jobs:
             return
@@ -63,42 +63,42 @@ class TestDBAcademyRestClient(unittest.TestCase):
         self.assertIsNotNone(result)
 
     def testPipelines(self):
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         result = ws.pipelines.list()
         self.assertIsInstance(result, list)
 
     def testRepos(self):
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         result = ws.repos.list()
         self.assertIsNotNone(result)
 
     def testRuns(self):
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         result = ws.runs.list()
         self.assertIsInstance(result, list)
 
     def testUsers(self):
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         result = ws.scim.users.list()
         self.assertIsInstance(result, list)
 
     def testGroups(self):
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         result = ws.scim.groups.list()
         self.assertIsInstance(result, list)
 
     def testSqlWarehouses(self):
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         result = ws.sql.warehouses.list()
         self.assertIsInstance(result, list)
 
     def testTokens(self):
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         result = ws.tokens.list()
         self.assertIsInstance(result, list)
 
     def testLegacyExecuteGet(self):
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         result = ws.workspace.get_status("/")
         self.assertIsNotNone(result)
         self.assertEqual(result.get("object_type"), "DIRECTORY")
@@ -108,7 +108,7 @@ class TestDBAcademyRestClient(unittest.TestCase):
     def testExportNotebook(self):
         # TODO: Upload a test notebook to a known test path.
         export_path = "/Users/doug.bateman@databricks.com/_Projects/API/Monitor-Classrooms"
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         notebook = ws.workspace.export_notebook(export_path)
         self.assertIsInstance(notebook, str)
         lines = notebook.split("\n")
@@ -121,7 +121,7 @@ class TestDBAcademyRestClient(unittest.TestCase):
         notebook_name = "Monitor-Classrooms"
         notebook_type = "python"
         notebook_path = f"{notebook_name}.{notebook_type}"
-        ws: databricks.DBAcademyRestClient = dbrest_factory.test_client()
+        ws: darest.DBAcademyRestClient = dbrest_factory.test_client()
         buffer = ws.workspace.export_dbc(export_path)
         self.assertIsInstance(buffer, bytes)
         from zipfile import ZipFile

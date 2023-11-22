@@ -55,7 +55,7 @@ class SqlWarehousesClient(ApiContainer):
 
     def __init__(self, client: ApiClient):
         from dbacademy.common import validate
-        from dbacademy.clients.databricks import DBAcademyRestClient
+        from dbacademy.clients.darest import DBAcademyRestClient
 
         self.client: DBAcademyRestClient = validate(client=client).required.as_type(DBAcademyRestClient)
         self.base_uri = f"{self.client.endpoint}/api/2.0/sql/warehouses"

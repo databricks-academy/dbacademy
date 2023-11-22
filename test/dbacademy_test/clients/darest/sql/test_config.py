@@ -2,18 +2,18 @@ __all__ = ["SqlConfigTests"]
 
 import unittest
 from typing import Dict, Any
-from dbacademy.clients import databricks
-from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS
+from dbacademy.clients import darest
+from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
 
 
 class SqlConfigTests(unittest.TestCase):
 
     warehouse_id: str = None
-    client: databricks.DBAcademyRestClient = None
+    client: darest.DBAcademyRestClient = None
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS)
+        cls.client = darest.from_token(scope=DBACADEMY_UNIT_TESTS)
 
     def test_get(self):
         config = self.client.sql.config.get()

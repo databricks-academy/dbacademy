@@ -6,10 +6,10 @@ import unittest
 class TestJobsClient(unittest.TestCase):
 
     def setUp(self) -> None:
-        from dbacademy.clients import databricks
-        from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS
+        from dbacademy.clients import darest
+        from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
 
-        self.__client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS)
+        self.__client = darest.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.tearDown()
 
     def tearDown(self) -> None:
@@ -42,8 +42,8 @@ class TestJobsClient(unittest.TestCase):
         self.assertEqual(orig_job_id, job.get("job_id"))
 
     def __create_job(self):
-        from dbacademy.clients.databricks.jobs.job_config_classes import JobConfig
-        from dbacademy.clients.databricks.clusters.cluster_config_class import JobClusterConfig
+        from dbacademy.clients.darest.jobs.job_config_classes import JobConfig
+        from dbacademy.clients.darest.clusters.cluster_config_class import JobClusterConfig
         from dbacademy.common import Cloud
         from dbacademy.dbhelper import dbh_constants
 
@@ -73,7 +73,7 @@ class TestJobsClient(unittest.TestCase):
 
     def test_create_git_job(self):
         import json
-        from dbacademy_test.clients.databricks import UNIT_TEST_SERVICE_PRINCIPLE
+        from dbacademy_test.clients.darest import UNIT_TEST_SERVICE_PRINCIPLE
 
         job = self.__create_job()
         job_id = job.get("job_id")

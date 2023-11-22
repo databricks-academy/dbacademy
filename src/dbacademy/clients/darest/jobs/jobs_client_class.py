@@ -2,14 +2,14 @@ __all__ = ["JobsClient"]
 
 from typing import Dict, Any, Optional
 from dbacademy.clients.rest.common import ApiClient, ApiContainer
-from dbacademy.clients.databricks.jobs.job_config_classes import JobConfig
+from dbacademy.clients.darest.jobs.job_config_classes import JobConfig
 
 
 class JobsClient(ApiContainer):
 
     def __init__(self, client: ApiClient):
         from dbacademy.common import validate
-        from dbacademy.clients.databricks import DBAcademyRestClient
+        from dbacademy.clients.darest import DBAcademyRestClient
 
         self.client: DBAcademyRestClient = validate(client=client).required.as_type(DBAcademyRestClient)
         self.base_uri = f"{self.client.endpoint}/api/2.1/jobs"

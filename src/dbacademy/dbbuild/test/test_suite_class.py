@@ -1,7 +1,7 @@
 __all__ = ["TestSuite"]
 
 from typing import Any, Dict, List, Literal
-from dbacademy.clients.databricks import DBAcademyRestClient
+from dbacademy.clients.darest import DBAcademyRestClient
 
 
 class TestSuite:
@@ -120,8 +120,8 @@ class TestSuite:
             self.client.jobs.delete_by_name(job_names=self.get_all_job_names(), success_only=True)
 
     def create_test_job(self, *, job_name: str, notebook_path: str, policy_id: str = None):
-        from dbacademy.clients.databricks.jobs.job_config_classes import JobConfig
-        from dbacademy.clients.databricks.clusters.cluster_config_class import JobClusterConfig
+        from dbacademy.clients.darest.jobs.job_config_classes import JobConfig
+        from dbacademy.clients.darest.clusters.cluster_config_class import JobClusterConfig
         from dbacademy.common import Cloud
 
         self.build_config.spark_conf["dbacademy.smoke-test"] = "true"

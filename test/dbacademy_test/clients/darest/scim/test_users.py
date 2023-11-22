@@ -1,14 +1,14 @@
 __all__ = ["TestUsers"]
 
 import unittest
-from dbacademy.clients import databricks
-from dbacademy_test.clients.databricks import DBACADEMY_UNIT_TESTS
+from dbacademy.clients import darest
+from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
 
 
 class TestUsers(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.__client = databricks.from_token(scope=DBACADEMY_UNIT_TESTS)
+        self.__client = darest.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.tearDown()
 
     def tearDown(self) -> None:
@@ -137,6 +137,12 @@ class TestUsers(unittest.TestCase):
 
         self.assertTrue(found_class)
         self.assertTrue(found_jacob)
+
+    def test_me(self):
+        user = self.client.scim.me()
+        self.assertIsNotNone(user)
+        self.assertEqual("d8835420-9797-45f5-897b-6d81d7f80023", user.get("userName"))
+        self.assertEqual("Unit Tests", user.get("displayName"))
 
 
 if __name__ == "__main__":

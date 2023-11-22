@@ -1,6 +1,6 @@
 import os
 
-from dbacademy.clients.databricks import accounts
+from dbacademy.clients.darest import accounts
 
 account_id = os.environ.get("WORKSPACE_SETUP_CURR_ACCOUNT_ID")
 username = os.environ.get("WORKSPACE_SETUP_CURR_USERNAME")
