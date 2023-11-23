@@ -137,7 +137,7 @@ class BuildConfig:
             self.__username = "mickey.mouse@disney.com"  # When unit testing
         validate(username=self.__username).required.str()
 
-        self.__supported_dbrs = validate(supported_dbrs=supported_dbrs).required.list(str, auto_create=True)
+        self.__supported_dbrs = validate(supported_dbrs=supported_dbrs).list(str, auto_create=True)
 
         self.__language_options = None
         self.__ignoring = validate(ignoring=ignoring).list(str, auto_create=True)
