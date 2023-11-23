@@ -72,7 +72,7 @@ class BuildConfig:
         :return: BuildConfig
         """
 
-        _print_build_config_deprecation_warning()
+        _print_build_config_deprecation_warning(_print_warning=True)
 
         return load_build_config(build_config_file_path=build_config_file_path,
                                  name=name,
@@ -711,23 +711,26 @@ class BuildConfig:
         common.print_warning("NOT IMPLEMENTED", f"This function has not yet been implemented for {cloud}.")
 
 
-def _print_build_config_deprecation_warning() -> None:
+def _print_build_config_deprecation_warning(*, _print_warning: bool) -> None:
     from dbacademy import common
 
-    common.print_title("Deprecated")
-    print("The method BuildConfig.load(...) has been deprecated for the type-safe method load_build_config(..) which in-turn enables auto-completion hints from notebooks.")
-    print("Please update this script, replacing the old method with the New Method #1 or even better, New Method #2 which provides better documentation and readability than a JSON config file.")
-    common.print_title("Old Method")
-    print("""| from dbacademy.dbbuild import BuildConfig""")
-    print("""| build_config = BuildConfig.load("_build-config.json", version="Test")""")
-    common.print_title("New Method #1")
-    print("""| from dbacademy.dbbuild import load_build_config""")
-    print("""| build_config = load_build_config("_build-config.json", version="Test")""")
-    common.print_title("New Method #1")
-    print("""| from dbacademy.dbbuild.build_config import BuildConfig""")
-    print("""| build_config = BuildConfig(name="Some Course", version="Test", ...)""")
-    print("""| build_config.include_solutions = False""")
-    print("""| build_config.i18n = True""")
+    if _print_warning:
+        common.print_title("Deprecated")
+        print("The method BuildConfig.load(...) has been deprecated for the type-safe method load_build_config(..)"
+              "which in-turn enables auto-completion hints from notebooks. Please update this script, replacing the"
+              "old method with the New Method #1 or even better, New Method #2 which provides better documentation"
+              "and readability than a JSON config file.")
+        common.print_title("Old Method")
+        print("""| from dbacademy.dbbuild import BuildConfig""")
+        print("""| build_config = BuildConfig.load("_build-config.json", version="Test")""")
+        common.print_title("New Method #1")
+        print("""| from dbacademy.dbbuild import load_build_config""")
+        print("""| build_config = load_build_config("_build-config.json", version="Test")""")
+        common.print_title("New Method #1")
+        print("""| from dbacademy.dbbuild.build_config import BuildConfig""")
+        print("""| build_config = BuildConfig(name="Some Course", version="Test", ...)""")
+        print("""| build_config.include_solutions = False""")
+        print("""| build_config.i18n = True""")
 
 
 def __load_from_dict(*, config: Dict[str, Any], path: str, name: str, value: ParameterType, expected_type: Type[ParameterType]) -> ParameterType:
@@ -765,7 +768,7 @@ def load_build_config(build_config_file_path: str, *, version: str,
                       white_list: Optional[List[str]] = None,
                       black_list: Optional[List[str]] = None,
                       notebook_configs: Dict[str, Any] = None,
-                      ) -> BuildConfig:
+                      _print_warning: bool = False) -> BuildConfig:
     """
     Creates an instance of BuildConfig by initializing values from the specified json file, build_config_file_path.
     WARNING: This method is deprecated as it relies on JSON config files which are hard to document and validate; Please use the BuildConfig(..) constructor instead.
@@ -793,11 +796,12 @@ def load_build_config(build_config_file_path: str, *, version: str,
     :param white_list: see the BuildConfig's constructor parameter by the same name.
     :param black_list: see the BuildConfig's constructor parameter by the same name.
     :param notebook_configs: see the BuildConfig's initialize_notebooks() parameter by the same name.
+    :param _print_warning: Used to disable printing of the deprecation warning.
     :return: BuildConfig
     """
     import json
 
-    _print_build_config_deprecation_warning()
+    _print_build_config_deprecation_warning(_print_warning=_print_warning)
 
     validate(build_config_file_path=build_config_file_path).required.str()
     validate(version=version).required.str()
