@@ -721,17 +721,19 @@ def _print_build_config_deprecation_warning(*, _print_warning: bool) -> None:
               "which in-turn enables auto-completion hints from notebooks. Please update this script, replacing the"
               "old method with the New Method #1 or even better, New Method #2 which provides better documentation"
               "and readability than a JSON config file.")
+        print()
         common.print_title("Old Method")
-        print("""| from dbacademy.dbbuild import BuildConfig""")
-        print("""| build_config = BuildConfig.load("_build-config.json", version="Test")""")
+        print("""from dbacademy.dbbuild import BuildConfig""")
+        print("""build_config = BuildConfig.load("_build-config.json", version="Test")""")
         common.print_title("New Method #1")
-        print("""| from dbacademy.dbbuild import load_build_config""")
-        print("""| build_config = load_build_config("_build-config.json", version="Test")""")
-        common.print_title("New Method #1")
-        print("""| from dbacademy.dbbuild.build_config import BuildConfig""")
-        print("""| build_config = BuildConfig(name="Some Course", version="Test", ...)""")
-        print("""| build_config.include_solutions = False""")
-        print("""| build_config.i18n = True""")
+        print("""from dbacademy.dbbuild import load_build_config""")
+        print("""build_config = load_build_config("_build-config.json", version="Test")""")
+        print()
+        common.print_title("New Method #2")
+        print("""from dbacademy.dbbuild.build_config import BuildConfig""")
+        print("""build_config = BuildConfig(name="Some Course", version="Test", ...)""")
+        print("""build_config.include_solutions = False""")
+        print("""build_config.i18n = True""")
 
 
 def __load_from_dict(*, config: Dict[str, Any], path: str, name: str, value: ParameterType, expected_type: Type[ParameterType]) -> ParameterType:

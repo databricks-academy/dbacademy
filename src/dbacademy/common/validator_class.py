@@ -246,9 +246,8 @@ class Validator(AbstractValidator):
         self.__validate(passed=data_type is not None, message=message)
 
         # noinspection PyUnresolvedReferences,PyProtectedMember
-        passed = isinstance(data_type, (type, typing._SpecialGenericAlias, typing._SpecialForm))
         message = f"""{E_INTERNAL} | Expected {self.__class__.__name__}.{inspect.stack()[0].function}(..)'s parameter '{name}' to be a python "type", found {type(data_type)}."""
-        self.__validate(passed=passed, message=message)
+        self.__validate(passed=isinstance(data_type, type) or str(data_type).startswith("typing."), message=message)
 
     def __validate_min_value(self, *, min_value: Optional[numbers.Number]) -> None:
 
