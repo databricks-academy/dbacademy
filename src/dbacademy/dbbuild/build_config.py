@@ -824,6 +824,10 @@ def load_build_config(build_config_file_path: str, *, version: str,
         publish_only: Dict[str, List[str]] = config.get("publish_only")
         del config["publish_only"]  # Delete the entry for later validation.
 
+    print("="*100)
+    print(f"Name: {name}")
+    print("="*100)
+
     bc = BuildConfig(version=version,
                      client=client,
                      name=__load_from_dict(config=config,               name="name",                value=name, expected_type=str),
