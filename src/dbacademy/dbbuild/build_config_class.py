@@ -1,8 +1,11 @@
 __all__ = ["BuildConfig"]
 
-from typing import Type, List, Dict, Union, Any, Optional, Callable
+from typing import Type, List, Dict, Any, Optional, Callable
+from dbacademy.common import validate
 from dbacademy.clients.darest import DBAcademyRestClient
+from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
 from dbacademy.dbhelper import dbh_constants
+from dbacademy.dbbuild.change_log_class import ChangeLog
 
 
 class BuildConfig:
@@ -27,32 +30,29 @@ class BuildConfig:
         :return:
         """
         import json
-        from dbacademy.common import validate
 
-        validate(file=file).str()
-        validate(version=version).str()
+        validate(file=file).required.str()
+        validate(version=version).required.str()
 
         with open(file) as f:
             return BuildConfig.load_config(config=json.load(f), version=version, **kwargs)
 
-    @staticmethod
-    def load_config(config: Dict[str, Any], version: str, **kwargs) -> Any:
+    @classmethod
+    def load_config(cls, config: Dict[str, Any], version: str, **kwargs) -> Any:
         """
         Called by BuildConfig.load(), this method loads a build configuration from a dictionary
         :param config: The dictionary of configuration parameters
         :param version: The current version being published. Expected to be one of BuildConfig.VERSIONS_LIST or an actual version number in the form of "vX.Y.Z"
         :return:
         """
-        from dbacademy.common import validate
-
         validate(config=config).required.dict(str)
-        validate(version=version).str()
+        validate(version=version).required.str()
 
         if kwargs is not None:
             for k, v in kwargs.items():
                 config[k] = v
 
-        configurations = config.get("notebook_config", dict())
+        notebook_configs: Dict[str, Any] = config.get("notebook_config", dict())
         if "notebook_config" in config:
             del config["notebook_config"]
 
@@ -63,45 +63,29 @@ class BuildConfig:
         build_config = BuildConfig(version=version, **config)
         build_config.__initialize_notebooks()
 
-        def validate_code_type(key: str, expected_type: Type, actual_value: Any) -> Any:
-            if expected_type == List[str]:
-                assert type(actual_value) == list, f"Expected the value for \"{key}\" to be of type \"List[str]\", found \"{type(actual_value)}\"."
-                for item in actual_value:
-                    assert type(item) == str, f"Expected the elements of \"{key}\" to be of type \"str\", found \"{type(item)}\"."
-            else:
-                assert type(actual_value) == expected_type, f"Expected the value for \"{key}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
-
-            return actual_value
-
-        for name in configurations:
+        for name, notebook_config in notebook_configs.items():
             assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
             notebook = build_config.notebooks.get(name)
-            notebook_config = configurations.get(name)
 
             param = "include_solution"
             if param in notebook_config:
-                value = validate_code_type(param, bool, notebook_config.get(param))
-                notebook.include_solution = value
+                notebook.include_solution = cls.load_from_config(param, bool, notebook_config.get(param))
 
             param = "test_round"
             if param in notebook_config:
-                value = validate_code_type(param, int, notebook_config.get(param))
-                notebook.test_round = value
+                notebook.test_round = cls.load_from_config(param, int, notebook_config.get(param))
 
             param = "ignored"
             if param in notebook_config:
-                value = validate_code_type(param, bool, notebook_config.get(param))
-                notebook.ignored = value
+                notebook.ignored = cls.load_from_config(param, bool, notebook_config.get(param))
 
             param = "order"
             if param in notebook_config:
-                value = validate_code_type(param, int, notebook_config.get(param))
-                notebook.order = value
+                notebook.order = cls.load_from_config(param, int, notebook_config.get(param))
 
             param = "ignored_errors"
             if param in notebook_config:
-                value = validate_code_type(param, List[str], notebook_config.get(param))
-                notebook.ignoring = value
+                notebook.ignoring = cls.load_from_config(param, List[str], notebook_config.get(param))
 
         if publish_only is not None:
             build_config.white_list = publish_only.get("white_list", None)
@@ -113,19 +97,18 @@ class BuildConfig:
         return build_config
 
     def __init__(self,
-                 # TODO Fix all these types: List, Dict, Optional, etc
                  *,
                  name: str,
-                 version: str = 0,
+                 version: str = None,
                  supported_dbrs: List[str] = None,
                  spark_version: str = None,
                  cloud: str = None,
                  instance_pool_id: str = None,
                  single_user_name: str = None,
-                 workers: int = None,
+                 workers: int = 0,
                  libraries: List[Dict[str, Any]] = None,
                  client: DBAcademyRestClient = None,
-                 source_dir: str = None,
+                 source_dir_name: str = None,
                  source_repo: str = None,
                  readme_file_name: str = None,
                  spark_conf: Dict[str, Any] = None,
@@ -138,7 +121,7 @@ class BuildConfig:
 
         import uuid
         import time
-        from dbacademy.common import Cloud
+        from dbacademy.common import Cloud, validate
         from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
         from dbacademy.dbhelper.course_config import CourseConfig
         from dbacademy import dbgems
@@ -149,79 +132,199 @@ class BuildConfig:
         self.__passing_tests: Dict[str, bool] = dict()
 
         try:
-            self.username = dbgems.sql("SELECT current_user()").first()[0]
+            self.__username = dbgems.sql("SELECT current_user()").first()[0]
         except:
-            self.username = "mickey.mouse@disney.com"  # When unit testing
+            self.__username = "mickey.mouse@disney.com"  # When unit testing
+        validate(username=self.__username).required.str()
 
-        self.supported_dbrs = supported_dbrs or []
+        self.__supported_dbrs = validate(supported_dbrs=supported_dbrs).required.list(str, auto_create=True)
 
-        self.language_options = None
-        self.ignoring = list() if ignoring is None else ignoring
+        self.__language_options = None
+        self.__ignoring = validate(ignoring=ignoring).list(str, auto_create=True)
 
-        self.i18n = i18n
-        self.i18n_language = i18n_language
+        self.__i18n = validate(i18n=i18n).required.bool()
+        self.__i18n_language = validate(i18n_language=i18n_language).str()
 
-        self.test_type = None
-        self.notebooks: Union[None, Dict[str, NotebookDef]] = None
+        self.__test_type = None
+        self.__notebooks: Optional[Dict[str, NotebookDef]] = None
+
         self.__client = client or dbrest_factory.current_workspace()
 
         # The instance of this test run
-        self.suite_id = str(time.time()) + "-" + str(uuid.uuid1())
+        self.__suite_id = f"{time.time()}-{uuid.uuid1()}"
 
         # The name of the cloud on which these tests were run
-        self.cloud = Cloud.current_cloud().value if cloud is None else cloud
+        self.__cloud = cloud or Cloud.current_cloud().value
 
         # Course Name
-        self.name = name
-        assert self.name is not None, "The course's name must be specified."
-        self.build_name = CourseConfig.to_build_name(name)
+        self.__name = validate(name=name).required.str()
+        self.__build_name = CourseConfig.to_build_name(name)
 
         # The Distribution's version
-        assert version is not None, "The course's version must be specified."
-        self.version = version
-        self.core_version = version
+        self.__version = validate(version=version).required.str()
+        self.__core_version = self.version
 
         # The runtime you wish to test against - lazily evaluated via property
         self.__spark_version = spark_version
 
         # We can use local-mode clusters here
-        self.workers = 0 if workers is None else workers
+        self.__workers = validate(workers=workers).required.int()
 
         self.__current_cluster = None
         self.__instance_pool_id = instance_pool_id      # The cluster's instance pool from which to obtain VMs - lazily evaluated via property
         self.__single_user_name = single_user_name      # The cluster's single-user name - lazily evaluated via property
 
         # Spark configuration parameters
-        self.spark_conf = dict() if spark_conf is None else spark_conf
-        if self.workers == 0:
-            self.spark_conf["spark.master"] = "local[*]"
+        self.__spark_conf = validate(spark_conf=spark_conf).dict(str, auto_create=True)
+        if self.__workers == 0:
+            self.__spark_conf["spark.master"] = "local[*]"
 
         # Test-Job's arguments
-        self.job_arguments = dict() if job_arguments is None else job_arguments
+        self.__job_arguments = validate(job_arguments=job_arguments).dict(str, auto_create=True)
 
         # The libraries to be attached to the cluster
-        self.__libraries = libraries or list()
+        self.__libraries = validate(libraries=libraries).list(dict, auto_create=True)
 
-        self.source_repo = self.default_source_repo(source_repo)
-        self.source_dir = self.default_source_dir(source_repo, source_dir)
-        self.source_dir = source_dir or f"{self.source_repo}/Source"
+        self.__source_repo = self.default_source_repo(source_repo)
+        self.__source_dir = self.default_source_dir(source_repo, source_dir_name)
 
-        self.__readme_file_name = readme_file_name or "README.md"
+        self.__readme_file_name = validate(readme_file_name=readme_file_name or "README.md").str()
+        self.__include_solutions = validate(include_solutions=include_solutions).required.bool()
 
-        self.include_solutions = include_solutions
-
+        # TODO convert these to params
         self.white_list = None
         self.black_list = None
 
-        self.change_log = None
-        self.publishing_info = publishing_info or {}
+        self.__change_log: Optional[ChangeLog] = None
+        self.__publishing_info = validate(publishing_info=publishing_info).dict(str, auto_create=True)
+
+    @property
+    def username(self) -> str:
+        return self.__username
+
+    @property
+    def supported_dbrs(self) -> List[str]:
+        return self.__supported_dbrs
+
+    @property
+    def language_options(self) -> List[str]:
+        return self.__language_options
+
+    @property
+    def ignoring(self) -> List[str]:
+        return self.__ignoring
+
+    @property
+    def i18n(self) -> bool:
+        return self.__i18n
+
+    @property
+    def i18n_language(self) -> Optional[str]:
+        return self.__i18n_language
+
+    @property
+    def test_type(self) -> str:
+        return self.__test_type
+
+    @property
+    def notebooks(self) -> Optional[Dict[str, NotebookDef]]:
+        return self.__notebooks
+
+    @notebooks.setter
+    def notebooks(self, notebooks: Dict[str, NotebookDef]) -> None:
+        self.__notebooks = validate(notebooks=notebooks).dict(str, NotebookDef, auto_create=True)
+
+    @property
+    def suite_id(self) -> str:
+        return self.__suite_id
+
+    @property
+    # TODO Update this to type Cloud
+    def cloud(self) -> str:
+        return self.__cloud
+
+    @property
+    def version(self) -> str:
+        return self.__version
+
+    @property
+    def core_version(self) -> str:
+        return self.__core_version
+
+    @property
+    def workers(self) -> int:
+        return self.__workers
+
+    @property
+    def job_arguments(self) -> Dict[str, Any]:
+        return self.__job_arguments
+
+    @property
+    def source_repo(self) -> str:
+        return self.__source_repo
+
+    @property
+    def source_dir(self) -> str:
+        return self.__source_dir
+
+    @property
+    def publishing_info(self) -> Dict[str, Any]:
+        return self.__publishing_info
+
+    @property
+    def change_log(self) -> Optional[ChangeLog]:
+        return self.__change_log
+
+    @property
+    def include_solutions(self) -> bool:
+        return self.__include_solutions
+
+    @property
+    def name(self) -> str:
+        return self.__name
+
+    @property
+    def spark_conf(self) -> Dict[str, Any]:
+        return self.__spark_conf
+
+    @property
+    def build_name(self) -> str:
+        return self.__build_name
+
+    # @property
+    # def xxx(self) -> xxx:
+    #     return XXX
+
+    # @property
+    # def xxx(self) -> xxx:
+    #     return XXX
+
+    # @property
+    # def xxx(self) -> xxx:
+    #     return XXX
+
+    # @property
+    # def xxx(self) -> xxx:
+    #     return XXX
+
+    @classmethod
+    def load_from_config(cls, key: str, expected_type: Type, actual_value: Any) -> Any:
+
+        if expected_type == List[str]:
+            assert type(actual_value) == list, f"Expected the value for \"{key}\" to be of type \"List[str]\", found \"{type(actual_value)}\"."
+            for item in actual_value:
+                assert type(item) == str, f"Expected the elements of \"{key}\" to be of type \"str\", found \"{type(item)}\"."
+        else:
+            assert type(actual_value) == expected_type, f"Expected the value for \"{key}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
+
+        return actual_value
 
     @property
     def libraries(self) -> List[Dict[str, Any]]:
         return self.__libraries
 
-    @staticmethod
-    def default_source_repo(source_repo: str = None) -> str:
+    @classmethod
+    def default_source_repo(cls, source_repo: str = None) -> str:
         """
         Computes the default value for the source_repo.
 
@@ -230,10 +333,12 @@ class BuildConfig:
         :return: the path to the source repository
         """
         from dbacademy import dbgems
+
+        validate(source_repo=source_repo).str()
         return dbgems.get_notebook_dir(offset=-2) if source_repo is None else source_repo
 
-    @staticmethod
-    def default_source_dir(source_repo: str, source_dir: str = None) -> str:
+    @classmethod
+    def default_source_dir(cls, source_repo: str, source_dir: str = None) -> str:
         """
         Computes the default value for the source_dir given the current source_repo.
 
@@ -242,6 +347,9 @@ class BuildConfig:
         :param source_dir: Usually None, otherwise the directory name (not the full path) of the "Source" directory.
         :return: the path to the source directory
         """
+        validate(source_dir=source_dir).str()
+        validate(source_repo=source_repo).required.str()
+
         source_dir = source_dir or "Source"
         return f"{source_repo}/{source_dir}"
 
@@ -256,7 +364,7 @@ class BuildConfig:
 
         assert self.source_dir is not None, "BuildConfig.source_dir must be specified"
 
-        self.notebooks = dict()
+        self.__notebooks = dict()
         entities = self.client.workspace().ls(self.source_dir, recursive=True)
 
         if entities is None:
@@ -472,16 +580,15 @@ class BuildConfig:
         return self.__validated
 
     def __validate_readme(self) -> None:
-        from dbacademy.dbbuild.change_log_class import ChangeLog
 
         if self.version in BuildConfig.VERSIONS_LIST:
             return  # Implies we have an actual version of the form N.N.N
         elif self.i18n_language is not None:
             return  # We are building a translation, presumably days to weeks later, this is not expected to match
 
-        self.change_log = ChangeLog(source_repo=self.source_repo,
-                                    readme_file_name=self.readme_file_name,
-                                    target_version=None)
+        self.__change_log = ChangeLog(source_repo=self.source_repo,
+                                      readme_file_name=self.readme_file_name,
+                                      target_version=None)
 
         self.change_log.validate(expected_version=self.core_version, date=None)
 
@@ -627,7 +734,6 @@ class BuildConfig:
         :return: None
         """
         from dbacademy import common
-        from dbacademy.common import validate
 
         assert self.validated, f"Cannot validate smoke-tests until the build configuration passes validation. See BuildConfig.validate()"
 

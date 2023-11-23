@@ -479,7 +479,22 @@ class ValidateTests(unittest.TestCase):
             validate(some_dict={1: "moo", 2.0: None, 3: True}).dict(int)
             self.fail(EXPECTED_ASSERTION_ERROR)
         except ValidationError as e:
-            self.assertEqual("""Element-Type | Expected key 1 of 'some_dict' to be of type <class 'int'>, found "2.0" of type <class 'float'>.""", e.message)
+            self.assertEqual("""Element-Type | Expected the key "2.0" of 'some_dict' to be of type <class 'int'>, found the type <class 'float'>.""", e.message)
+
+        expected = {"1": "one", "2": "two", "3": "three"}
+        values = validate(some_dict=expected).dict(str)
+        self.assertEqual(expected, values)
+
+        expected = {"1": "one", "2": "two", "3": "three"}
+        values = validate(some_dict=expected).dict(str, str)
+        self.assertEqual(expected, values)
+
+        try:
+            expected = {"1": "one", "2": 2, "3": "three"}
+            values = validate(some_dict=expected).dict(str, str)
+            self.assertEqual(expected, values)
+        except ValidationError as e:
+            self.assertEqual("""Element-Type | Expected the entry for key "2" of 'some_dict' to be of type <class 'str'>, found the type <class 'int'>.""", e.message)
 
 
 if __name__ == '__main__':

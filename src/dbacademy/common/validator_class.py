@@ -96,7 +96,7 @@ class AbstractValidator(ABC):
         pass
 
     @abstractmethod
-    def dict(self, key_type: Type[KeyType], *, min_length: int = 0, auto_create: bool = False) -> Dict[KeyType, Any]:
+    def dict(self, key_type: Type[KeyType], element_type: Type[ParameterType] = Any, *, min_length: int = 0, auto_create: bool = False) -> Dict[KeyType, ParameterType]:
         pass
 
 
@@ -193,31 +193,31 @@ class Validator(AbstractValidator):
         return self.parameter_value
 
     def str(self, *, min_length: int = 0) -> str:
-        return self.__validate_collection(parameter_type=str, element_type=str, min_length=min_length)
+        return self.__validate_collection(parameter_type=str, key_type=Any, element_type=str, min_length=min_length)
 
     def iterable(self, element_type: Type[ElementType]) -> Iterable[ElementType]:
-        return self.__validate_collection(parameter_type=Iterable, element_type=element_type, min_length=0)
+        return self.__validate_collection(parameter_type=Iterable, key_type=Any, element_type=element_type, min_length=0)
 
     def list(self, element_type: Type[ElementType], *, min_length: int = 0, auto_create: bool = False) -> List[ElementType]:
         message = f"""{E_INTERNAL} | Expected {self.__class__.__name__}.{inspect.stack()[0].function}(..)'s parameter 'auto_create' to be of type bool, found {type(auto_create)}."""
         self.__validate(passed=isinstance(auto_create, bool), message=message)
 
         self.parameter_value = self.parameter_value or list() if auto_create else self.parameter_value
-        return self.__validate_collection(parameter_type=list, element_type=element_type, min_length=min_length)
+        return self.__validate_collection(parameter_type=list, key_type=Any, element_type=element_type, min_length=min_length)
 
     def set(self, element_type: Type[ElementType], *, min_length: int = 0, auto_create: bool = False) -> Set[ElementType]:
         message = f"""{E_INTERNAL} | Expected {self.__class__.__name__}.{inspect.stack()[0].function}(..)'s parameter 'auto_create' to be of type bool, found {type(auto_create)}."""
         self.__validate(passed=isinstance(auto_create, bool), message=message)
 
         self.parameter_value = self.parameter_value or set() if auto_create else self.parameter_value
-        return self.__validate_collection(parameter_type=set, element_type=element_type, min_length=min_length)
+        return self.__validate_collection(parameter_type=set, key_type=Any, element_type=element_type, min_length=min_length)
 
-    def dict(self, key_type: Type[KeyType], *, min_length: int = 0, auto_create: bool = False) -> Dict[KeyType, Any]:
+    def dict(self, key_type: Type[KeyType], element_type: Type[ParameterType] = Any, *, min_length: int = 0, auto_create: bool = False) -> Dict[KeyType, ParameterType]:
         message = f"""{E_INTERNAL} | Expected {self.__class__.__name__}.{inspect.stack()[0].function}(..)'s parameter 'auto_create' to be of type bool, found {type(auto_create)}."""
         self.__validate(passed=isinstance(auto_create, bool), message=message)
 
         self.parameter_value = self.parameter_value or dict() if auto_create else self.parameter_value
-        return self.__validate_collection(parameter_type=dict, element_type=key_type, min_length=min_length)
+        return self.__validate_collection(parameter_type=dict, key_type=key_type, element_type=element_type, min_length=min_length)
 
     def __validate_data_type(self, name: str, data_type: Type) -> None:
         import typing
@@ -226,7 +226,7 @@ class Validator(AbstractValidator):
         self.__validate(passed=data_type is not None, message=message)
 
         # noinspection PyUnresolvedReferences,PyProtectedMember
-        passed = isinstance(data_type, (type, typing._SpecialGenericAlias))
+        passed = isinstance(data_type, (type, typing._SpecialGenericAlias, typing._SpecialForm))
         message = f"""{E_INTERNAL} | Expected {self.__class__.__name__}.{inspect.stack()[0].function}(..)'s parameter '{name}' to be a python "type", found {type(data_type)}."""
         self.__validate(passed=passed, message=message)
 
@@ -282,20 +282,22 @@ class Validator(AbstractValidator):
                 message = f"""{E_TYPE} | Expected the parameter '{self.parameter_name}' to be of type {expected_types}, found {type(self.parameter_value)}."""
                 self.__validate(passed=passed, message=message)
 
-    def __validate_collection(self, *, parameter_type: Type[CollectionType], element_type: Type[ElementType], min_length: int = 0) -> CollectionType:
+    def __validate_collection(self, *, parameter_type: Type[CollectionType], key_type: Type[KeyType], element_type: Type[ElementType], min_length: int = 0) -> CollectionType:
         self.__validate_data_type("parameter_type", parameter_type)
+        self.__validate_data_type("key_type", key_type)
         self.__validate_data_type("element_type", element_type)
 
         self.__validate_value_type(parameter_type)
 
         self.__validate_collection_of_type(parameter_type=parameter_type,
+                                           key_type=key_type,
                                            element_type=element_type)
 
         self.__validate_min_length(min_length=min_length)
 
         return self.parameter_value
 
-    def __validate_collection_of_type(self, *, parameter_type: Type[CollectionType], element_type: Type[ElementType]) -> None:
+    def __validate_collection_of_type(self, *, parameter_type: Type[CollectionType], key_type: Type[KeyType], element_type: Type[ElementType]) -> None:
         self.__validate_data_type("parameter_type", parameter_type)
         self.__validate_data_type("element_type", element_type)
 
@@ -305,9 +307,13 @@ class Validator(AbstractValidator):
                 self.__validate(passed=isinstance(actual_value, element_type), message=message)
 
         elif isinstance(self.parameter_value, Dict):
-            for i, key in enumerate(self.parameter_value.keys()):
-                message = f"""{ELEM_TYPE} | Expected key {i} of '{self.parameter_name}' to be of type {element_type}, found "{key}" of type {type(key)}."""
-                self.__validate(passed=isinstance(key, element_type), message=message)
+            for key, value in self.parameter_value.items():
+                message = f"""{ELEM_TYPE} | Expected the key "{key}" of '{self.parameter_name}' to be of type {key_type}, found the type {type(key)}."""
+                self.__validate(passed=isinstance(key, key_type), message=message)
+
+                if element_type is not Any:
+                    message = f"""{ELEM_TYPE} | Expected the entry for key "{key}" of '{self.parameter_name}' to be of type {element_type}, found the type {type(value)}."""
+                    self.__validate(passed=isinstance(value, element_type), message=message)
 
         elif isinstance(self.parameter_value, str):
             pass  # We don't need to test these.

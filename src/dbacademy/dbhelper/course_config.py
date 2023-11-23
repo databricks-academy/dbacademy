@@ -71,20 +71,22 @@ class CourseConfig:
         return self.__build_name
 
     @staticmethod
-    def to_build_name(course_name) -> Optional[str]:
+    def to_build_name(course_name: Optional[str]) -> Optional[str]:
         """
         Utility method to create a "build name" from a course name
         :param course_name: The name of the course
         :return: the build name where all non-alpha and non-digits are replaced with hyphens
         """
         import re
+        from dbacademy.common import validate
 
-        if course_name is None:
+        if validate(course_name=course_name).str() is None:
             return None
 
         build_name = re.sub(r"[^a-zA-Z\d]", "-", course_name).lower()
         while "--" in build_name:
             build_name = build_name.replace("--", "-")
+
         return build_name
 
     @property
