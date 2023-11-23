@@ -4,7 +4,7 @@ import unittest
 class MyTestCase(unittest.TestCase):
 
     def test_step_2_load_config(self):
-        from dbacademy.dbbuild.build_config_class import create_build_config
+        from dbacademy.dbbuild import create_build_config
 
         config = {
             "name": "Some Random Unit Test",

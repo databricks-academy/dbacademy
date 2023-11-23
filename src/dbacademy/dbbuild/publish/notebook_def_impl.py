@@ -584,7 +584,7 @@ For more current information, please see <a href="https://files.training.databri
                 other_notebooks: List[NotebookDef]) -> None:
 
         from dbacademy.common import validate
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils import BuildUtils
 
         validate(source_dir=source_dir).required.str()
         validate(target_dir=target_dir).required.str()

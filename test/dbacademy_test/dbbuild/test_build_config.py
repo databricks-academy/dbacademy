@@ -17,7 +17,7 @@ class TestBuildConfig(unittest.TestCase):
     #     self.assertIsNotNone(self)
 
     def test_initialize_notebooks(self):
-        from dbacademy.dbbuild.build_config_class import BuildConfig
+        from dbacademy.dbbuild.build_config import BuildConfig
         build_config = BuildConfig(name="Test Suite")
 
         try:
@@ -27,7 +27,7 @@ class TestBuildConfig(unittest.TestCase):
             self.assertEqual(expected, str(e))
 
     def test_get_lesson_number(self):
-        from dbacademy.dbbuild.build_config_class import BuildConfig
+        from dbacademy.dbbuild.build_config import BuildConfig
 
         self.assertEqual(-1, BuildConfig.get_lesson_number("Includes/Whatever"))
         self.assertEqual(-1, BuildConfig.get_lesson_number("AB - 03 - Lesson Three"))
@@ -45,7 +45,7 @@ class TestBuildConfig(unittest.TestCase):
         self.assertEqual(3, BuildConfig.get_lesson_number("P03 - Lesson Three"))
 
     def test_ignore_failures(self):
-        from dbacademy.dbbuild.build_config_class import create_build_config
+        from dbacademy.dbbuild import create_build_config
         from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
 
         build_config = create_build_config({"name": "Data Engineering with Databricks"}, "vTEST")
@@ -76,7 +76,7 @@ class TestBuildConfig(unittest.TestCase):
         self.assertFalse(build_config.notebooks["A02 - ETL with Spark/DE 2.0 - Module Introduction"].ignored)
 
     def set_test_round(self):
-        from dbacademy.dbbuild.build_config_class import create_build_config
+        from dbacademy.dbbuild import create_build_config
         from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
 
         build_config = create_build_config({"name": "Data Engineering with Databricks"}, "vTEST")
@@ -109,7 +109,7 @@ class TestBuildConfig(unittest.TestCase):
         self.assertEqual(2, build_config.notebooks["A02 - ETL with Spark/DE 2.0 - Module Introduction"].ignored)
 
     def test_exclude_notebook(self):
-        from dbacademy.dbbuild.build_config_class import create_build_config
+        from dbacademy.dbbuild import create_build_config
         from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
 
         build_config = create_build_config({"name": "Data Engineering with Databricks"}, "vTEST")
@@ -135,7 +135,7 @@ class TestBuildConfig(unittest.TestCase):
 
         build_config.exclude_notebook(lambda p, n: n == 1)
 
-        self.assertEqual(3, len(build_config.notebooks))
+        self.assertEqual(2, len(build_config.notebooks))
         self.assertTrue("A00 - Intro to PySpark/DE 0.00 - Module Introduction" in build_config.notebooks)
         self.assertFalse("A01 - Databricks Workspace/DE 1.0 - Module Introduction" in build_config.notebooks)
         self.assertTrue("A02 - ETL with Spark/DE 2.0 - Module Introduction" in build_config.notebooks)

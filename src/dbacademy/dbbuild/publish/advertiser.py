@@ -1,6 +1,6 @@
 __all__ = ["Advertiser"]
 
-from dbacademy.dbbuild.change_log_class import ChangeLog
+from dbacademy.dbbuild.change_log import ChangeLog
 from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
 
 

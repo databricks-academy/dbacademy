@@ -203,7 +203,7 @@ class Translator:
         self.common_language = self.i18n_language.split("-")[0]
 
     def __reset_published_repo(self):
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils import BuildUtils
 
         BuildUtils.reset_git_repo(client=self.client,
                                   directory=self.source_dir,
@@ -212,7 +212,7 @@ class Translator:
                                   which="published")
 
     def __reset_target_repo(self):
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils import BuildUtils
 
         BuildUtils.reset_git_repo(client=self.client,
                                   directory=self.target_dir,
@@ -222,7 +222,7 @@ class Translator:
 
     def create_published_message(self) -> str:
         from dbacademy.dbbuild.publish.advertiser import Advertiser
-        from dbacademy.dbbuild.change_log_class import ChangeLog
+        from dbacademy.dbbuild.change_log import ChangeLog
         from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
 
         self.assert_validated_artifacts()
@@ -343,7 +343,7 @@ class Translator:
 
     def validate_no_changes_in_source_repo(self, skip_validation=False) -> None:
         from dbacademy import common
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils import BuildUtils
 
         self.assert_validated()
 
@@ -368,7 +368,7 @@ class Translator:
 
     def validate_no_changes_in_target_repo(self, skip_validation=False):
         from dbacademy import common
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils import BuildUtils
 
         if skip_validation:
             common.print_warning(f"SKIPPING VALIDATION", "The target directory is not being evaluated for pending changes")
@@ -397,7 +397,7 @@ class Translator:
 
     def generate_notebooks(self, skip_generation: bool = False) -> Optional[str]:
         from datetime import datetime
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils import BuildUtils
         from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
         from dbacademy.dbbuild.publish.publisher_class import Publisher
         from dbacademy import dbgems, common
@@ -543,7 +543,7 @@ class Translator:
 
     def create_dbcs(self):
         from dbacademy import dbgems
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils import BuildUtils
 
         if self.target_repo_url is None:
             # If there is no repo, we need to make sure the notebooks were generated.

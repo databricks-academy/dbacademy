@@ -1,7 +1,7 @@
 __all__ = ["ResourceDiff", "Change", "SegmentDiff", "Segment"]
 
 from typing import Union
-from dbacademy.dbbuild.build_config_class import BuildConfig
+from dbacademy.dbbuild.build_config import BuildConfig
 
 
 class ResourceDiff:

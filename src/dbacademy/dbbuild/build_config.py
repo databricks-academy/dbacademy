@@ -1,13 +1,10 @@
-__all__ = ["BuildConfig", "load_build_config", "create_build_config"]
+__all__ = ["BuildConfig"]
 
-from typing import List, Dict, Any, Optional, Callable, TypeVar
+from typing import List, Dict, Any, Optional, Callable
 from dbacademy.common import validate
 from dbacademy.clients.darest import DBAcademyRestClient
-from dbacademy.dbbuild.change_log_class import ChangeLog
+from dbacademy.dbbuild.change_log import ChangeLog
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
-
-
-ParameterType = TypeVar("ParameterType")
 
 
 class BuildConfig:
@@ -642,83 +639,3 @@ class BuildConfig:
         self.__passing_tests[cloud] = True
 
         common.print_warning("NOT IMPLEMENTED", f"This function has not yet been implemented for {cloud}.")
-
-
-def load_from_config(param: str, expected_type: ParameterType, notebook_config: Dict[str, Any]) -> ParameterType:
-
-    if param not in notebook_config:
-        return None
-
-    actual_value = notebook_config.get(param)
-
-    if expected_type == List[str]:
-        assert type(actual_value) == list, f"Expected the value for \"{param}\" to be of type \"List[str]\", found \"{type(actual_value)}\"."
-        for item in actual_value:
-            assert type(item) == str, f"Expected the elements of \"{param}\" to be of type \"str\", found \"{type(item)}\"."
-    else:
-        assert type(actual_value) == expected_type, f"Expected the value for \"{param}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
-
-    return actual_value
-
-
-def create_build_config(config: Dict[str, Any], version: str, **kwargs) -> BuildConfig:
-    """
-    :param config: The dictionary of configuration parameters
-    :param version: The current version being published. Expected to be one of BuildConfig.VERSIONS_LIST or an actual version number in the form of "vX.Y.Z"
-    :return:
-    """
-    validate(config=config).required.dict(str)
-    validate(version=version).required.str()
-
-    if kwargs is not None:
-        for k, v in kwargs.items():
-            config[k] = v
-
-    notebook_configs: Dict[str, Any] = config.get("notebook_config", dict())
-    if "notebook_config" in config:
-        del config["notebook_config"]
-
-    if "publish_only" in config:
-        publish_only: Dict[str, List[str]] = config.get("publish_only")
-        del config["publish_only"]
-
-        white_list = publish_only.get("white_list", None)
-        config["white_list"] = validate(white_list=white_list).required.list(str)
-
-        black_list = publish_only.get("black_list", None)
-        config["black_list"] = validate(black_list=black_list).required.list(str)
-
-    build_config = BuildConfig(version=version, **config)
-    build_config.initialize_notebooks()
-
-    for name, notebook_config in notebook_configs.items():
-        assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
-        notebook = build_config.notebooks.get(name)
-
-        notebook.include_solution = load_from_config("include_solution", bool, notebook_config)
-        notebook.test_round = load_from_config("test_round", int, notebook_config)
-        notebook.ignored = load_from_config("ignored", bool, notebook_config)
-        notebook.order = load_from_config("order", int, notebook_config)
-        notebook.ignoring = load_from_config("ignored_errors", List[str], notebook_config)
-
-    return build_config
-
-
-def load_build_config(file: str, *, version: str, **kwargs) -> BuildConfig:
-    """
-    Loads the configuration for this course from the specified JSON file.
-    See also BuildConfig.VERSION_TEST
-    See also BuildConfig.VERSION_BUILD
-    See also BuildConfig.VERSION_TRANSLATION
-    See also BuildConfig.VERSIONS_LIST
-    :param file: The path to the JSON config file
-    :param version: The current version being published. Expected to be one of BuildConfig.VERSIONS_LIST or an actual version number in the form of "vX.Y.Z"
-    :return:
-    """
-    import json
-
-    validate(file=file).required.str()
-    validate(version=version).required.str()
-
-    with open(file) as f:
-        return create_build_config(config=json.load(f), version=version, **kwargs)

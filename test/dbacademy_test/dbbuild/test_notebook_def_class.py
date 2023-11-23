@@ -30,7 +30,7 @@ class TestNotebookDef(unittest.TestCase):
 
     @staticmethod
     def create_notebook():
-        from dbacademy.dbbuild.build_config_class import BuildConfig
+        from dbacademy.dbbuild.build_config import BuildConfig
 
         version = "1.2.3"
         build_config = BuildConfig(name="Unit Test",

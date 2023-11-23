@@ -5,7 +5,7 @@ from dbacademy.common import validate
 
 
 class Publisher:
-    from dbacademy.dbbuild.build_config_class import BuildConfig
+    from dbacademy.dbbuild.build_config import BuildConfig
     from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
     VERSION_INFO_NOTEBOOK = "Version Info"
@@ -17,7 +17,7 @@ class Publisher:
     KEEPERS = [".gitignore", "docs", "README.txt", "README.md", "README", "LICENSE.txt", "LICENSE.md", "LICENSE", "NOTICE.md", "NOTICE.txt", "NOTICE"]
 
     def __init__(self, build_config: BuildConfig, publishing_mode: Optional[str]):
-        from dbacademy.dbbuild.build_config_class import BuildConfig
+        from dbacademy.dbbuild.build_config import BuildConfig
 
         # Various validation steps
         self.__validated = False
@@ -88,7 +88,7 @@ class Publisher:
 
     @publishing_mode.setter
     def publishing_mode(self, publishing_mode: Optional[str]) -> None:
-        from dbacademy.dbbuild.build_config_class import BuildConfig
+        from dbacademy.dbbuild.build_config import BuildConfig
 
         if self.version in BuildConfig.VERSIONS_LIST:
             # Building, Testing or Translating
@@ -168,8 +168,8 @@ class Publisher:
         """
         from dbacademy import common, dbgems
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
-        from dbacademy.dbbuild.build_config_class import BuildConfig
+        from dbacademy.dbbuild.build_utils import BuildUtils
+        from dbacademy.dbbuild.build_config import BuildConfig
 
         if self.version in BuildConfig.VERSIONS_LIST:
             self.assert_validated_config()
@@ -310,7 +310,7 @@ class Publisher:
         :return: None
         """
         from dbacademy import common
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils import BuildUtils
 
         # Assume for now that we have failed. This overrides the default
         # of True meaning we have to succeed here to continue
@@ -460,7 +460,7 @@ class Publisher:
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
         import json, shutil, datetime
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils import BuildUtils
 
         if self.target_repo_url is None:
             # If there is no repo, we need to make sure the notebooks were generated.
@@ -583,7 +583,7 @@ class Publisher:
         :return: None
         """
         from dbacademy import common
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils import BuildUtils
 
         if skip_validation:
             common.print_warning(f"SKIPPING VALIDATION", "The source directory is not being evaluated for pending changes")
@@ -615,7 +615,7 @@ class Publisher:
         :return: None
         """
         from dbacademy import common
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils import BuildUtils
 
         if skip_validation:
             common.print_warning(f"SKIPPING VALIDATION", "The target directory is not being evaluated for pending changes")

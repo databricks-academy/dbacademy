@@ -5,7 +5,7 @@ from dbacademy.clients.darest import DBAcademyRestClient
 
 
 class TestSuite:
-    from dbacademy.dbbuild.build_config_class import BuildConfig
+    from dbacademy.dbbuild.build_config import BuildConfig
 
     TEST_TYPE_INTERACTIVE = "interactive"
     TEST_TYPE_STOCK = "stock"
@@ -272,7 +272,7 @@ class TestSuite:
     def log_run(self, test, response):
         import time, uuid, requests, json
         from dbacademy import common
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils import BuildUtils
 
         job_id = response.get("job_id", 0)
         run_id = response.get("run_id", 0)

@@ -142,7 +142,7 @@ class ArtifactValidator:
 
     def __validate_git_branch(self, *, branch: str, version: Optional[str]) -> bool:
         from dbacademy import common
-        from dbacademy.dbbuild.build_utils_class import BuildUtils
+        from dbacademy.dbbuild.build_utils import BuildUtils
 
         print()
         print(f"Validating the \"{branch}\" branch in the public, student-facing repo:")
