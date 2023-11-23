@@ -1,7 +1,7 @@
 __all__ = ["NotebookDefData"]
 
 from typing import Union, List, Dict, Any, Optional
-
+from dbacademy.common import validate
 from dbacademy.clients.darest import DBAcademyRestClient
 from dbacademy.dbbuild.publish.notebook_logger import NotebookLogger
 
@@ -26,7 +26,6 @@ class NotebookDefData:
 
         self.__client = validate(client=client).required.as_type(DBAcademyRestClient)
 
-        assert type(replacements) == dict, f"""Expected the parameter "replacements" to be of type "dict", found "{type(replacements)}" """
         self.__replacements = validate(replacements=replacements).dict(str, auto_create=True)
 
         self.__ignoring = validate(ignoring=ignoring).list(str, auto_create=True)
@@ -63,13 +62,17 @@ class NotebookDefData:
     def replacements(self) -> Dict[str, Any]:
         return self.__replacements
 
+    @replacements.setter
+    def replacements(self, replacements: Dict[str, Any]) -> None:
+        self.__replacements = validate(replacements=replacements).required.dict(str)
+
     @property
     def include_solution(self) -> bool:
         return self.__include_solution
 
     @include_solution.setter
     def include_solution(self, include_solution: bool) -> None:
-        self.__include_solution = include_solution
+        self.__include_solution = validate(include_solution=include_solution).required.bool()
 
     @property
     def test_round(self) -> int:
@@ -77,7 +80,7 @@ class NotebookDefData:
 
     @test_round.setter
     def test_round(self, test_round: int) -> None:
-        self.__test_round = test_round
+        self.__test_round = validate(test_round=test_round).required.int()
 
     @property
     def ignored(self) -> bool:
@@ -85,7 +88,7 @@ class NotebookDefData:
 
     @ignored.setter
     def ignored(self, ignored: bool) -> None:
-        self.__ignored = ignored
+        self.__ignored = validate(ignored=ignored).required.bool()
 
     @property
     def order(self) -> int:
@@ -93,7 +96,7 @@ class NotebookDefData:
 
     @order.setter
     def order(self, order: int) -> None:
-        self.__order = order
+        self.__order = validate(order=order).required.int()
 
     @property
     def i18n(self) -> bool:
@@ -101,7 +104,7 @@ class NotebookDefData:
 
     @i18n.setter
     def i18n(self, i18n: bool) -> None:
-        self.__i18n: bool = i18n
+        self.__i18n: bool = validate(i18n=i18n).required.bool()
 
     @property
     def i18n_language(self) -> Optional[str]:
@@ -109,7 +112,7 @@ class NotebookDefData:
 
     @i18n_language.setter
     def i18n_language(self, i18n_language: Optional[str]) -> None:
-        self.__i18n_language = i18n_language
+        self.__i18n_language = validate(i18n_language=i18n_language).str()
 
     @property
     def i18n_guids(self) -> List[str]:
