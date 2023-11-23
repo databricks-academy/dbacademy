@@ -716,7 +716,7 @@ def _print_build_config_deprecation_warning(*, _print_warning: bool) -> None:
     from dbacademy import common
 
     if _print_warning:
-        common.print_title("Deprecated")
+        common.print_title("DEPRECATION WARNING")
         print("The method BuildConfig.load(...) has been deprecated for the type-safe method load_build_config(..)"
               "which in-turn enables auto-completion hints from notebooks. Please update this script, replacing the"
               "old method with the New Method #1 or even better, New Method #2 which provides better documentation"
@@ -725,6 +725,7 @@ def _print_build_config_deprecation_warning(*, _print_warning: bool) -> None:
         common.print_title("Old Method")
         print("""from dbacademy.dbbuild import BuildConfig""")
         print("""build_config = BuildConfig.load("_build-config.json", version="Test")""")
+        print()
         common.print_title("New Method #1")
         print("""from dbacademy.dbbuild import load_build_config""")
         print("""build_config = load_build_config("_build-config.json", version="Test")""")
