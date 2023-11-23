@@ -1,10 +1,13 @@
-__all__ = ["BuildConfig"]
+__all__ = ["BuildConfig", "load_build_config", "create_build_config"]
 
-from typing import Type, List, Dict, Any, Optional, Callable
+from typing import List, Dict, Any, Optional, Callable, TypeVar
 from dbacademy.common import validate
 from dbacademy.clients.darest import DBAcademyRestClient
 from dbacademy.dbbuild.change_log_class import ChangeLog
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
+
+
+ParameterType = TypeVar("ParameterType")
 
 
 class BuildConfig:
@@ -15,84 +18,6 @@ class BuildConfig:
     VERSION_BUILD = "Build"
     VERSION_TRANSLATION = "Translation"
     VERSIONS_LIST = [VERSION_BUILD, VERSION_TEST, VERSION_TRANSLATION]
-
-    @staticmethod
-    def load(file: str, *, version: str, **kwargs) -> Any:
-        """
-        Loads the configuration for this course from the specified JSON file.
-        See also BuildConfig.VERSION_TEST
-        See also BuildConfig.VERSION_BUILD
-        See also BuildConfig.VERSION_TRANSLATION
-        See also BuildConfig.VERSIONS_LIST
-        :param file: The path to the JSON config file
-        :param version: The current version being published. Expected to be one of BuildConfig.VERSIONS_LIST or an actual version number in the form of "vX.Y.Z"
-        :return:
-        """
-        import json
-
-        validate(file=file).required.str()
-        validate(version=version).required.str()
-
-        with open(file) as f:
-            return BuildConfig.load_config(config=json.load(f), version=version, **kwargs)
-
-    @classmethod
-    def load_config(cls, config: Dict[str, Any], version: str, **kwargs) -> Any:
-        """
-        Called by BuildConfig.load(), this method loads a build configuration from a dictionary
-        :param config: The dictionary of configuration parameters
-        :param version: The current version being published. Expected to be one of BuildConfig.VERSIONS_LIST or an actual version number in the form of "vX.Y.Z"
-        :return:
-        """
-        validate(config=config).required.dict(str)
-        validate(version=version).required.str()
-
-        if kwargs is not None:
-            for k, v in kwargs.items():
-                config[k] = v
-
-        notebook_configs: Dict[str, Any] = config.get("notebook_config", dict())
-        if "notebook_config" in config:
-            del config["notebook_config"]
-
-        if "publish_only" in config:
-            publish_only: Dict[str, List[str]] = config.get("publish_only")
-            del config["publish_only"]
-
-            white_list = publish_only.get("white_list", None)
-            config["white_list"] = validate(white_list=white_list).required.list(str)
-
-            black_list = publish_only.get("black_list", None)
-            config["black_list"] = validate(black_list=black_list).required.list(str)
-
-        build_config = BuildConfig(version=version, **config)
-        build_config.__initialize_notebooks()
-
-        for name, notebook_config in notebook_configs.items():
-            assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
-            notebook = build_config.notebooks.get(name)
-
-            param = "include_solution"
-            if param in notebook_config:
-                notebook.include_solution = cls.load_from_config(param, bool, notebook_config.get(param))
-
-            param = "test_round"
-            if param in notebook_config:
-                notebook.test_round = cls.load_from_config(param, int, notebook_config.get(param))
-
-            param = "ignored"
-            if param in notebook_config:
-                notebook.ignored = cls.load_from_config(param, bool, notebook_config.get(param))
-
-            param = "order"
-            if param in notebook_config:
-                notebook.order = cls.load_from_config(param, int, notebook_config.get(param))
-
-            param = "ignored_errors"
-            if param in notebook_config:
-                notebook.ignoring = cls.load_from_config(param, List[str], notebook_config.get(param))
-
-        return build_config
 
     def __init__(self,
                  *,
@@ -186,7 +111,7 @@ class BuildConfig:
         self.__libraries = validate(libraries=libraries).list(dict, auto_create=True)
 
         self.__source_repo = self.default_source_repo(source_repo)
-        self.__source_dir = self.default_source_dir(source_repo, source_dir_name)
+        self.__source_dir = self.default_source_dir(self.__source_repo, source_dir_name)
 
         self.__readme_file_name = validate(readme_file_name=readme_file_name or "README.md").str()
         self.__include_solutions = validate(include_solutions=include_solutions).required.bool()
@@ -228,10 +153,6 @@ class BuildConfig:
     @property
     def notebooks(self) -> Optional[Dict[str, NotebookDef]]:
         return self.__notebooks
-
-    @notebooks.setter
-    def notebooks(self, notebooks: Dict[str, NotebookDef]) -> None:
-        self.__notebooks = validate(notebooks=notebooks).dict(str, NotebookDef, auto_create=True)
 
     @property
     def suite_id(self) -> str:
@@ -298,26 +219,6 @@ class BuildConfig:
     def black_list(self) -> List[str]:
         return self.__black_list
 
-    # @property
-    # def xxx(self) -> xxx:
-    #     return XXX
-
-    # @property
-    # def xxx(self) -> xxx:
-    #     return XXX
-
-    @classmethod
-    def load_from_config(cls, key: str, expected_type: Type, actual_value: Any) -> Any:
-
-        if expected_type == List[str]:
-            assert type(actual_value) == list, f"Expected the value for \"{key}\" to be of type \"List[str]\", found \"{type(actual_value)}\"."
-            for item in actual_value:
-                assert type(item) == str, f"Expected the elements of \"{key}\" to be of type \"str\", found \"{type(item)}\"."
-        else:
-            assert type(actual_value) == expected_type, f"Expected the value for \"{key}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
-
-        return actual_value
-
     @property
     def libraries(self) -> List[Dict[str, Any]]:
         return self.__libraries
@@ -337,26 +238,26 @@ class BuildConfig:
         return dbgems.get_notebook_dir(offset=-2) if source_repo is None else source_repo
 
     @classmethod
-    def default_source_dir(cls, source_repo: str, source_dir: str = None) -> str:
+    def default_source_dir(cls, source_repo: str, source_dir_name: str = None) -> str:
         """
         Computes the default value for the source_dir given the current source_repo.
 
         Refactored as a static method so that it can be called from notebooks during the initialization of the BuildConfig.
         :param source_repo: The path to repo; see also default_source_repo()
-        :param source_dir: Usually None, otherwise the directory name (not the full path) of the "Source" directory.
+        :param source_dir_name: Usually None, otherwise the directory name (not the full path) of the "Source" directory.
         :return: the path to the source directory
         """
-        validate(source_dir=source_dir).str()
+        validate(source_dir=source_dir_name).str()
         validate(source_repo=source_repo).required.str()
 
-        source_dir = source_dir or "Source"
+        source_dir = source_dir_name or "Source"
         return f"{source_repo}/{source_dir}"
 
     @property
     def client(self) -> DBAcademyRestClient:
         return self.__client
 
-    def __initialize_notebooks(self):
+    def initialize_notebooks(self):
         from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
         from dbacademy.dbhelper import dbh_constants
 
@@ -741,3 +642,83 @@ class BuildConfig:
         self.__passing_tests[cloud] = True
 
         common.print_warning("NOT IMPLEMENTED", f"This function has not yet been implemented for {cloud}.")
+
+
+def load_from_config(param: str, expected_type: ParameterType, notebook_config: Dict[str, Any]) -> ParameterType:
+
+    if param not in notebook_config:
+        return None
+
+    actual_value = notebook_config.get(param)
+
+    if expected_type == List[str]:
+        assert type(actual_value) == list, f"Expected the value for \"{param}\" to be of type \"List[str]\", found \"{type(actual_value)}\"."
+        for item in actual_value:
+            assert type(item) == str, f"Expected the elements of \"{param}\" to be of type \"str\", found \"{type(item)}\"."
+    else:
+        assert type(actual_value) == expected_type, f"Expected the value for \"{param}\" to be of type \"{expected_type}\", found \"{type(actual_value)}\"."
+
+    return actual_value
+
+
+def create_build_config(config: Dict[str, Any], version: str, **kwargs) -> BuildConfig:
+    """
+    :param config: The dictionary of configuration parameters
+    :param version: The current version being published. Expected to be one of BuildConfig.VERSIONS_LIST or an actual version number in the form of "vX.Y.Z"
+    :return:
+    """
+    validate(config=config).required.dict(str)
+    validate(version=version).required.str()
+
+    if kwargs is not None:
+        for k, v in kwargs.items():
+            config[k] = v
+
+    notebook_configs: Dict[str, Any] = config.get("notebook_config", dict())
+    if "notebook_config" in config:
+        del config["notebook_config"]
+
+    if "publish_only" in config:
+        publish_only: Dict[str, List[str]] = config.get("publish_only")
+        del config["publish_only"]
+
+        white_list = publish_only.get("white_list", None)
+        config["white_list"] = validate(white_list=white_list).required.list(str)
+
+        black_list = publish_only.get("black_list", None)
+        config["black_list"] = validate(black_list=black_list).required.list(str)
+
+    build_config = BuildConfig(version=version, **config)
+    build_config.initialize_notebooks()
+
+    for name, notebook_config in notebook_configs.items():
+        assert name in build_config.notebooks, f"The notebook \"{name}\" doesn't exist."
+        notebook = build_config.notebooks.get(name)
+
+        notebook.include_solution = load_from_config("include_solution", bool, notebook_config)
+        notebook.test_round = load_from_config("test_round", int, notebook_config)
+        notebook.ignored = load_from_config("ignored", bool, notebook_config)
+        notebook.order = load_from_config("order", int, notebook_config)
+        notebook.ignoring = load_from_config("ignored_errors", List[str], notebook_config)
+
+    return build_config
+
+
+def load_build_config(file: str, *, version: str, **kwargs) -> BuildConfig:
+    """
+    Loads the configuration for this course from the specified JSON file.
+    See also BuildConfig.VERSION_TEST
+    See also BuildConfig.VERSION_BUILD
+    See also BuildConfig.VERSION_TRANSLATION
+    See also BuildConfig.VERSIONS_LIST
+    :param file: The path to the JSON config file
+    :param version: The current version being published. Expected to be one of BuildConfig.VERSIONS_LIST or an actual version number in the form of "vX.Y.Z"
+    :return:
+    """
+    import json
+
+    validate(file=file).required.str()
+    validate(version=version).required.str()
+
+    with open(file) as f:
+        return create_build_config(config=json.load(f), version=version, **kwargs)

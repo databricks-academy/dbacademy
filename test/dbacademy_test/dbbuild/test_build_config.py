@@ -45,15 +45,12 @@ class TestBuildConfig(unittest.TestCase):
         self.assertEqual(3, BuildConfig.get_lesson_number("P03 - Lesson Three"))
 
     def test_ignore_failures(self):
-        from dbacademy.dbbuild.build_config_class import BuildConfig
+        from dbacademy.dbbuild.build_config_class import create_build_config
         from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
 
-        version = "vTEST"
+        build_config = create_build_config({"name": "Data Engineering with Databricks"}, "vTEST")
+        build_config.notebooks.clear()
 
-        build_config = BuildConfig(name="Test Suite")
-        build_config.load_config({"name": "Data Engineering with Databricks"}, version)
-
-        build_config.notebooks = {}
         paths = [
             "A00 - Intro to PySpark/DE 0.00 - Module Introduction",
             "A01 - Databricks Workspace/DE 1.0 - Module Introduction",
@@ -70,7 +67,7 @@ class TestBuildConfig(unittest.TestCase):
                                                            i18n=False,
                                                            i18n_language=None,
                                                            ignoring=[],
-                                                           version=version)
+                                                           version=build_config.version)
 
         build_config.ignore_failures(lambda p, n: n == 0)
 
@@ -79,15 +76,12 @@ class TestBuildConfig(unittest.TestCase):
         self.assertFalse(build_config.notebooks["A02 - ETL with Spark/DE 2.0 - Module Introduction"].ignored)
 
     def set_test_round(self):
-        from dbacademy.dbbuild.build_config_class import BuildConfig
+        from dbacademy.dbbuild.build_config_class import create_build_config
         from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
 
-        version = "vTEST"
+        build_config = create_build_config({"name": "Data Engineering with Databricks"}, "vTEST")
+        build_config.notebooks.clear()
 
-        build_config = BuildConfig(name="Test Suite")
-        build_config.load_config({"name": "Data Engineering with Databricks"}, version)
-
-        build_config.notebooks = {}
         paths = [
             "Includes/Whatever",
             "A00 - Intro to PySpark/DE 0.00 - Module Introduction",
@@ -105,7 +99,7 @@ class TestBuildConfig(unittest.TestCase):
                                                            i18n=False,
                                                            i18n_language=None,
                                                            ignoring=[],
-                                                           version=version)
+                                                           version=build_config.version)
 
         build_config.set_test_round(9, lambda p, n: n == 3)
 
@@ -115,15 +109,12 @@ class TestBuildConfig(unittest.TestCase):
         self.assertEqual(2, build_config.notebooks["A02 - ETL with Spark/DE 2.0 - Module Introduction"].ignored)
 
     def test_exclude_notebook(self):
-        from dbacademy.dbbuild.build_config_class import BuildConfig
+        from dbacademy.dbbuild.build_config_class import create_build_config
         from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
 
-        version = "vTEST"
+        build_config = create_build_config({"name": "Data Engineering with Databricks"}, "vTEST")
+        build_config.notebooks.clear()
 
-        build_config = BuildConfig(name="Test Suite")
-        build_config.load_config({"name": "Data Engineering with Databricks"}, version)
-
-        build_config.notebooks = {}
         paths = [
             "A00 - Intro to PySpark/DE 0.00 - Module Introduction",
             "A01 - Databricks Workspace/DE 1.0 - Module Introduction",
@@ -140,10 +131,11 @@ class TestBuildConfig(unittest.TestCase):
                                                            i18n=False,
                                                            i18n_language=None,
                                                            ignoring=[],
-                                                           version=version)
+                                                           version=build_config.version)
 
         build_config.exclude_notebook(lambda p, n: n == 1)
 
+        self.assertEqual(3, len(build_config.notebooks))
         self.assertTrue("A00 - Intro to PySpark/DE 0.00 - Module Introduction" in build_config.notebooks)
         self.assertFalse("A01 - Databricks Workspace/DE 1.0 - Module Introduction" in build_config.notebooks)
         self.assertTrue("A02 - ETL with Spark/DE 2.0 - Module Introduction" in build_config.notebooks)
