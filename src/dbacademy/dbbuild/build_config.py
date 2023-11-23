@@ -1,10 +1,12 @@
-__all__ = ["BuildConfig"]
+__all__ = ["BuildConfig", "load_build_config"]
 
-from typing import List, Dict, Any, Optional, Callable
-from dbacademy.common import validate
+from typing import List, Dict, Any, Optional, Callable, TypeVar, Type, Union
+from dbacademy.common import validate, Cloud
 from dbacademy.clients.darest import DBAcademyRestClient
 from dbacademy.dbbuild.change_log import ChangeLog
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
+
+ParameterType = TypeVar("ParameterType")
 
 
 class BuildConfig:
@@ -15,6 +17,87 @@ class BuildConfig:
     VERSION_BUILD = "Build"
     VERSION_TRANSLATION = "Translation"
     VERSIONS_LIST = [VERSION_BUILD, VERSION_TEST, VERSION_TRANSLATION]
+
+    @classmethod
+    def load(cls, build_config_file_path: str, *, version: str,
+             name: str = None,
+             supported_dbrs: List[str] = None,
+             spark_version: str = None,
+             cloud: str = None,
+             instance_pool_id: str = None,
+             single_user_name: str = None,
+             workers: int = 0,
+             libraries: List[Dict[str, Any]] = None,
+             client: DBAcademyRestClient = None,
+             source_dir_name: str = None,
+             source_repo: str = None,
+             readme_file_name: str = None,
+             spark_conf: Dict[str, Any] = None,
+             job_arguments: Dict[str, Any] = None,
+             include_solutions: bool = True,
+             i18n: bool = False,
+             i18n_language: str = None,
+             ignoring: List[str] = None,
+             publishing_info: Dict[str, Any] = None,
+             white_list: List[str] = None,
+             black_list: List[str] = None,
+             notebook_configs: Dict[str, Any] = None):
+        """
+        This factory method, dbacademy.dbbuild.BuildConfig.load(), has been deprecated. Please use the new factory method
+        dbacademy.dbbuild.BuildConfig.load_build_config() or even better, the BuildConfig constructor.
+        :param build_config_file_path: The path to the JSON file defining the build's configuration.
+        :param version: see the BuildConfig's constructor parameter by the same name.
+        :param name: see the BuildConfig's constructor parameter by the same name.
+        :param supported_dbrs: see the BuildConfig's constructor parameter by the same name.
+        :param spark_version: see the BuildConfig's constructor parameter by the same name.
+        :param cloud: see the BuildConfig's constructor parameter by the same name.
+        :param instance_pool_id: see the BuildConfig's constructor parameter by the same name.
+        :param single_user_name: see the BuildConfig's constructor parameter by the same name.
+        :param workers: see the BuildConfig's constructor parameter by the same name.
+        :param libraries: see the BuildConfig's constructor parameter by the same name.
+        :param client: see the BuildConfig's constructor parameter by the same name.
+        :param source_dir_name: see the BuildConfig's constructor parameter by the same name.
+        :param source_repo: see the BuildConfig's constructor parameter by the same name.
+        :param readme_file_name: see the BuildConfig's constructor parameter by the same name.
+        :param spark_conf: see the BuildConfig's constructor parameter by the same name.
+        :param job_arguments: see the BuildConfig's constructor parameter by the same name.
+        :param include_solutions: see the BuildConfig's constructor parameter by the same name.
+        :param i18n: see the BuildConfig's constructor parameter by the same name.
+        :param i18n_language: see the BuildConfig's constructor parameter by the same name.
+        :param ignoring: see the BuildConfig's constructor parameter by the same name.
+        :param publishing_info: see the BuildConfig's constructor parameter by the same name.
+        :param white_list: see the BuildConfig's constructor parameter by the same name.
+        :param black_list: see the BuildConfig's constructor parameter by the same name.
+        :param notebook_configs: see the BuildConfig's initialize_notebooks() parameter by the same name.
+        :return: BuildConfig
+        """
+
+        _print_build_config_deprecation_warning()
+
+        return load_build_config(build_config_file_path=build_config_file_path,
+                                 name=name,
+                                 version=version,
+                                 supported_dbrs=supported_dbrs,
+                                 spark_version=spark_version,
+                                 cloud=cloud,
+                                 instance_pool_id=instance_pool_id,
+                                 single_user_name=single_user_name,
+                                 workers=workers,
+                                 libraries=libraries,
+                                 client=client,
+                                 source_dir_name=source_dir_name,
+                                 source_repo=source_repo,
+                                 readme_file_name=readme_file_name,
+                                 spark_conf=spark_conf,
+                                 job_arguments=job_arguments,
+                                 include_solutions=include_solutions,
+                                 i18n=i18n,
+                                 i18n_language=i18n_language,
+                                 ignoring=ignoring,
+                                 publishing_info=publishing_info,
+                                 white_list=white_list,
+                                 black_list=black_list,
+                                 notebook_configs=notebook_configs)
 
     def __init__(self,
                  *,
@@ -43,10 +126,10 @@ class BuildConfig:
 
         import uuid
         import time
+        from dbacademy import dbgems
         from dbacademy.common import Cloud, validate
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
         from dbacademy.dbhelper.course_config import CourseConfig
-        from dbacademy import dbgems
         from dbacademy.clients.rest.factory import dbrest_factory
 
         self.__validated = False
@@ -68,7 +151,7 @@ class BuildConfig:
         self.__i18n_language = validate(i18n_language=i18n_language).str()
 
         self.__test_type = None
-        self.__notebooks: Optional[Dict[str, NotebookDef]] = None
+        self.__notebooks: Dict[str, NotebookDef] = dict()
 
         self.__client = client or dbrest_factory.current_workspace()
 
@@ -107,8 +190,11 @@ class BuildConfig:
         # The libraries to be attached to the cluster
         self.__libraries = validate(libraries=libraries).list(dict, auto_create=True)
 
-        self.__source_repo = self.default_source_repo(source_repo)
-        self.__source_dir = self.default_source_dir(self.__source_repo, source_dir_name)
+        # The offset here assumes we are in the .../Course/Build-Scripts folder
+        self.__source_repo = validate(source_repo=source_repo).str() or dbgems.get_notebook_dir(offset=-2)
+
+        source_dir_name: str = validate(source_dir=source_dir_name or "Source").required.str()
+        self.__source_dir = f"{self.__source_repo}/{source_dir_name}"
 
         self.__readme_file_name = validate(readme_file_name=readme_file_name or "README.md").str()
         self.__include_solutions = validate(include_solutions=include_solutions).required.bool()
@@ -148,7 +234,7 @@ class BuildConfig:
         return self.__test_type
 
     @property
-    def notebooks(self) -> Optional[Dict[str, NotebookDef]]:
+    def notebooks(self) -> Dict[str, NotebookDef]:
         return self.__notebooks
 
     @property
@@ -220,49 +306,20 @@ class BuildConfig:
     def libraries(self) -> List[Dict[str, Any]]:
         return self.__libraries
 
-    @classmethod
-    def default_source_repo(cls, source_repo: str = None) -> str:
-        """
-        Computes the default value for the source_repo.
-
-        Refactored as a static method so that it can be called from notebooks ultimately overriding the default source_dir during the initialization of the BuildConfig.
-        :param source_repo: Usually None, otherwise the path to the repo of the calling Notebook.
-        :return: the path to the source repository
-        """
-        from dbacademy import dbgems
-
-        validate(source_repo=source_repo).str()
-        return dbgems.get_notebook_dir(offset=-2) if source_repo is None else source_repo
-
-    @classmethod
-    def default_source_dir(cls, source_repo: str, source_dir_name: str = None) -> str:
-        """
-        Computes the default value for the source_dir given the current source_repo.
-
-        Refactored as a static method so that it can be called from notebooks during the initialization of the BuildConfig.
-        :param source_repo: The path to repo; see also default_source_repo()
-        :param source_dir_name: Usually None, otherwise the directory name (not the full path) of the "Source" directory.
-        :return: the path to the source directory
-        """
-        validate(source_dir=source_dir_name).str()
-        validate(source_repo=source_repo).required.str()
-
-        source_dir = source_dir_name or "Source"
-        return f"{source_repo}/{source_dir}"
-
     @property
     def client(self) -> DBAcademyRestClient:
         return self.__client
 
-    def initialize_notebooks(self):
+    def initialize_notebooks(self, notebook_configs: Optional[Dict[str, Any]]) -> None:
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
         from dbacademy.dbhelper import dbh_constants
 
-        self.__created_notebooks = True
+        # We don't default to None, require the user to do that, but we support it with an empty list.
+        notebook_configs = validate(notebook_configs=notebook_configs).dict(str, auto_create=True)
 
-        assert self.source_dir is not None, "BuildConfig.source_dir must be specified"
+        # Remove the existing notebooks so that we can recreate them.
+        self.notebooks.clear()
 
-        self.__notebooks = dict()
         entities = self.client.workspace().ls(self.source_dir, recursive=True)
 
         if entities is None:
@@ -315,8 +372,21 @@ class BuildConfig:
         if has_wip:
             print()
 
-    @staticmethod
-    def get_lesson_number(notebook_path: str):
+        for name, notebook_config in notebook_configs.items():
+            assert name in self.notebooks, f"The notebook \"{name}\" specified in the notebook configs doesn't exist."
+            notebook = self.notebooks.get(name)
+
+            notebook.order =            notebook_config.get("order") if "order" in notebook_config else notebook.order
+            notebook.test_round =       notebook_config.get("test_round") if "test_round" in notebook_config else notebook.test_round
+            notebook.ignored =          notebook_config.get("ignored") if "ignored" in notebook_config else notebook.ignored
+            notebook.include_solution = notebook_config.get("include_solution") if "include_solution" in notebook_config else notebook.include_solution
+            notebook.ignoring =         notebook_config.get("ignored_errors") if "ignored_errors" in notebook_config else list()
+
+        # Now that we are all done, we can mark the notebooks as "created"
+        self.__created_notebooks = True
+
+    @classmethod
+    def get_lesson_number(cls, notebook_path: str):
         """
         Utility function to return the notebook's 2-character numerical prefix.
         :param notebook_path: the path to the notebook.
@@ -625,7 +695,7 @@ class BuildConfig:
             assert cloud in self.__passing_tests, f"The tests for the cloud {cloud} and version {self.version} were not found. Please run the corresponding smoke tests before proceeding."
             assert self.__passing_tests.get(cloud), f"The tests for the cloud {cloud} and version {self.version} did not pass. Please address the test failures and run the corresponding smoke tests before proceeding."
 
-    def validate_all_tests_passed(self, cloud: str):
+    def validate_all_tests_passed(self, cloud: Union[str, Cloud]):
         """
         Verifies that tests the for this course, cloud and version have passed and will prohibit progression if the tests have not passed
         :param cloud: One of the three values "AWS", "MSA" or "GCP"
@@ -635,7 +705,144 @@ class BuildConfig:
 
         assert self.validated, f"Cannot validate smoke-tests until the build configuration passes validation. See BuildConfig.validate()"
 
-        cloud = validate(cloud=cloud).required.str().upper()
-        self.__passing_tests[cloud] = True
+        cloud = validate(cloud=cloud).required.enum(Cloud, auto_convert=True)
+        self.__passing_tests[cloud.value] = True
 
         common.print_warning("NOT IMPLEMENTED", f"This function has not yet been implemented for {cloud}.")
+
+
+def _print_build_config_deprecation_warning() -> None:
+    from dbacademy import common
+
+    common.print_title("Deprecated")
+    print("The method BuildConfig.load(...) has been deprecated for the type-safe method load_build_config(..) which in-turn enables auto-completion hints from notebooks.")
+    print("Please update this script, replacing the old method with the New Method #1 or even better, New Method #2 which provides better documentation and readability than a JSON config file.")
+    common.print_title("Old Method")
+    print("""| from dbacademy.dbbuild import BuildConfig""")
+    print("""| build_config = BuildConfig.load("_build-config.json", version="Test")""")
+    common.print_title("New Method #1")
+    print("""| from dbacademy.dbbuild import load_build_config""")
+    print("""| build_config = load_build_config("_build-config.json", version="Test")""")
+    common.print_title("New Method #1")
+    print("""| from dbacademy.dbbuild.build_config import BuildConfig""")
+    print("""| build_config = BuildConfig(name="Some Course", version="Test", ...)""")
+    print("""| build_config.include_solutions = False""")
+    print("""| build_config.i18n = True""")
+
+
+def __load_from_dict(*, config: Dict[str, Any], path: str, name: str, value: ParameterType, expected_type: Type[ParameterType]) -> ParameterType:
+    if value is not None and name in config:
+        raise ValueError(f"""The BuildConfig parameter "{name}" was specified at runtime and in the build-config file {path}; one of the two references must be removed.""")
+
+    if name not in config:
+        return value
+    else:
+        value = config[name]
+        del config[name]  # Delete the entry for later validation.
+        return validate(parameter_name_override=name, value=value).as_type(expected_type)
+
+
+def load_build_config(build_config_file_path: str, *, version: str,
+                      name: str = None,
+                      supported_dbrs: List[str] = None,
+                      spark_version: str = None,
+                      cloud: str = None,
+                      instance_pool_id: str = None,
+                      single_user_name: str = None,
+                      workers: int = 0,
+                      libraries: List[Dict[str, Any]] = None,
+                      client: DBAcademyRestClient = None,
+                      source_dir_name: str = None,
+                      source_repo: str = None,
+                      readme_file_name: str = None,
+                      spark_conf: Dict[str, Any] = None,
+                      job_arguments: Dict[str, Any] = None,
+                      include_solutions: bool = True,
+                      i18n: bool = False,
+                      i18n_language: str = None,
+                      ignoring: List[str] = None,
+                      publishing_info: Dict[str, Any] = None,
+                      white_list: Optional[List[str]] = None,
+                      black_list: Optional[List[str]] = None,
+                      notebook_configs: Dict[str, Any] = None,
+                      ) -> BuildConfig:
+    """
+    Creates an instance of BuildConfig by initializing values from the specified json file, build_config_file_path.
+    WARNING: This method is deprecated as it relies on JSON config files which are hard to document and validate; Please use the BuildConfig(..) constructor instead.
+    :param build_config_file_path: The path to the JSON file defining the build's configuration.
+    :param version: see the BuildConfig's constructor parameter by the same name.
+    :param name: see the BuildConfig's constructor parameter by the same name.
+    :param supported_dbrs: see the BuildConfig's constructor parameter by the same name.
+    :param spark_version: see the BuildConfig's constructor parameter by the same name.
+    :param cloud: see the BuildConfig's constructor parameter by the same name.
+    :param instance_pool_id: see the BuildConfig's constructor parameter by the same name.
+    :param single_user_name: see the BuildConfig's constructor parameter by the same name.
+    :param workers: see the BuildConfig's constructor parameter by the same name.
+    :param libraries: see the BuildConfig's constructor parameter by the same name.
+    :param client: see the BuildConfig's constructor parameter by the same name.
+    :param source_dir_name: see the BuildConfig's constructor parameter by the same name.
+    :param source_repo: see the BuildConfig's constructor parameter by the same name.
+    :param readme_file_name: see the BuildConfig's constructor parameter by the same name.
+    :param spark_conf: see the BuildConfig's constructor parameter by the same name.
+    :param job_arguments: see the BuildConfig's constructor parameter by the same name.
+    :param include_solutions: see the BuildConfig's constructor parameter by the same name.
+    :param i18n: see the BuildConfig's constructor parameter by the same name.
+    :param i18n_language: see the BuildConfig's constructor parameter by the same name.
+    :param ignoring: see the BuildConfig's constructor parameter by the same name.
+    :param publishing_info: see the BuildConfig's constructor parameter by the same name.
+    :param white_list: see the BuildConfig's constructor parameter by the same name.
+    :param black_list: see the BuildConfig's constructor parameter by the same name.
+    :param notebook_configs: see the BuildConfig's initialize_notebooks() parameter by the same name.
+    :return: BuildConfig
+    """
+    import json
+
+    _print_build_config_deprecation_warning()
+
+    validate(build_config_file_path=build_config_file_path).required.str()
+    validate(version=version).required.str()
+
+    with open(build_config_file_path) as f:
+        config: Dict[str, Any] = json.load(f)
+
+    if "publish_only" not in config:
+        publish_only = dict()
+    else:
+        publish_only: Dict[str, List[str]] = config.get("publish_only")
+        del config["publish_only"]  # Delete the entry for later validation.
+
+    bc = BuildConfig(version=version,
+                     client=client,
+                     name=__load_from_dict(config=config, path=build_config_file_path, name="name",               value=name, expected_type=str),
+                     supported_dbrs=__load_from_dict(config=config, path=build_config_file_path, name="supported_dbrs",     value=supported_dbrs, expected_type=List[str]),
+                     spark_version=__load_from_dict(config=config, path=build_config_file_path, name="spark_version",      value=spark_version, expected_type=int),
+                     cloud=__load_from_dict(config=config, path=build_config_file_path, name="cloud",              value=cloud, expected_type=str),
+                     instance_pool_id=__load_from_dict(config=config, path=build_config_file_path, name="instance_pool_id",   value=instance_pool_id, expected_type=str),
+                     single_user_name=__load_from_dict(config=config, path=build_config_file_path, name="single_user_name",   value=single_user_name, expected_type=str),
+                     workers=__load_from_dict(config=config, path=build_config_file_path, name="workers",            value=workers, expected_type=int),
+                     libraries=__load_from_dict(config=config, path=build_config_file_path, name="libraries",          value=libraries, expected_type=List[Dict[str, Any]]),
+                     source_dir_name=__load_from_dict(config=config, path=build_config_file_path, name="source_dir_name",    value=source_dir_name, expected_type=str),
+                     source_repo=__load_from_dict(config=config, path=build_config_file_path, name="source_repo",        value=source_repo, expected_type=str),
+                     readme_file_name=__load_from_dict(config=config, path=build_config_file_path, name="readme_file_name",   value=readme_file_name, expected_type=str),
+                     spark_conf=__load_from_dict(config=config, path=build_config_file_path, name="spark_conf",         value=spark_conf, expected_type=Dict[str, Any]),
+                     job_arguments=__load_from_dict(config=config, path=build_config_file_path, name="job_arguments",      value=job_arguments, expected_type=Dict[str, Any]),
+                     include_solutions=__load_from_dict(config=config, path=build_config_file_path, name="include_solutions",  value=include_solutions, expected_type=bool),
+                     i18n=__load_from_dict(config=config, path=build_config_file_path, name="i18n",               value=i18n, expected_type=bool),
+                     i18n_language=__load_from_dict(config=config, path=build_config_file_path, name="i18n_language",      value=i18n_language, expected_type=str),
+                     ignoring=__load_from_dict(config=config, path=build_config_file_path, name="ignoring",           value=ignoring, expected_type=List[str]),
+                     publishing_info=__load_from_dict(config=config, path=build_config_file_path, name="publishing_info",    value=publishing_info, expected_type=Dict[str, Any]),
+                     # The following two are not stored in config's root, but rather nested under config.publish_only
+                     white_list=__load_from_dict(config=publish_only, path=build_config_file_path, name="white_list", value=white_list, expected_type=List[str]),
+                     black_list=__load_from_dict(config=publish_only, path=build_config_file_path, name="black_list", value=black_list, expected_type=List[str]))
+
+    # Once the object is created, we need to initialize, or rather create, all the notebooks instances.
+    notebook_configs: Dict[str, Any] =  __load_from_dict(config=config, path=build_config_file_path, name="notebook_config",    value=notebook_configs, expected_type=Dict[str, Any])
+    bc.initialize_notebooks(notebook_configs)
+
+    for key in config:  # The config dictionary should be empty at this point; any remaining entries are indicative of a bug.
+        raise ValueError(f"""Invalid key "{key}" found in the build config file {build_config_file_path}.""")
+
+    for key in publish_only:  # The config dictionary should be empty at this point; any remaining entries are indicative of a bug.
+        raise ValueError(f"""Invalid key "publish_only.{key}" found in the build config file {build_config_file_path}.""")
+
+    return bc

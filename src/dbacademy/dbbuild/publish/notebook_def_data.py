@@ -122,6 +122,11 @@ class NotebookDefData:
     def ignoring(self) -> List[str]:
         return self.__ignoring
 
+    @ignoring.setter
+    def ignoring(self, ignored_errors: List[str]) -> None:
+        self.__ignoring.clear()  # Remove any ignored errors because we are adding new ones now.
+        self.__ignoring.extend(validate(ignored_errors=ignored_errors).required.list(str))
+
     @property
     def version(self) -> str:
         return self.__version

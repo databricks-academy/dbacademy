@@ -14,8 +14,8 @@ from dbacademy.common.validator_class import Validator, ValidationError
 deprecation_log_level = "error"
 
 
-def validate(**kwargs) -> Validator:
-    return Validator(**kwargs)
+def validate(parameter_name_override: str = None, **kwargs) -> Validator:
+    return Validator(parameter_name_override=parameter_name_override, **kwargs)
 
 
 def print_title(title: str, divider: str = "-", length: int = 100) -> None:

@@ -35,8 +35,8 @@ class ValidationError(Exception):
 
 class AbstractValidator(ABC):
 
-    def __init__(self, **kwargs):
-        self.__parameter_name = list(kwargs)[0]
+    def __init__(self, parameter_name_override: str = None, **kwargs):
+        self.__parameter_name: str = parameter_name_override or list(kwargs)[0]
         self.__parameter_value: Any = kwargs.get(self.__parameter_name)
 
     @property
@@ -102,11 +102,31 @@ class AbstractValidator(ABC):
 
 class Validator(AbstractValidator):
 
-    def __init__(self, **kwargs):
+    def __init__(self, parameter_name_override: str = None, **kwargs):
+        """
+        Creates an instance of a validator relying on kwargs to specify both the parameter_name, and it's value.
+        In cases where the parameter name needs to be specified dynamically (e.g. when loaded from a dictionary), the parameter name can be specified directly via parameter_name_override.
+        Usage:
+
+        def some_function(some_argument: int) -> None
+            from dbacademy.common import validate
+            validate(some_argument=some_argument).<snip-some-validation-method>
+
+        Once an instance of the Validator is created, any number of the class's validation methods can be used.
+
+        This pattern uses the **kwargs to dynamically declare the name of the parameter, and it's corresponding value. Because the parameter name is effectively a loose string (key of **kwargs),
+        it cannot be validated in any real way with the current implementation. Future versions may interrogate the function's parameters to provide additional guarantees, but even then, they
+        may only be runtime validations. Because the parameter name is only used in generation of the error method, the risk to type safety is minimal while providing one of the cleanest implementations.
+
+        :param parameter_name_override: The name of the parameter to be used when the dynamically generated parameter name is not
+        correct such as is the case when validating parameters loaded from a dictionary and thus not an actual function parameter.
+        :param kwargs: The one and only one parameter to be validated by this class expressed as a dictionary.
+        """
+
         message = f"{E_INTERNAL} | {self.__class__.__name__}.{inspect.stack()[0].function}(..) expects one and only one parameter, found {len(kwargs)}."
         self.__validate(passed=len(kwargs) == 1, message=message)
 
-        super().__init__(**kwargs)
+        super().__init__(parameter_name_override=parameter_name_override, **kwargs)
 
     @property
     def required(self) -> AbstractValidator:

@@ -45,12 +45,11 @@ class TestBuildConfig(unittest.TestCase):
         self.assertEqual(3, BuildConfig.get_lesson_number("P03 - Lesson Three"))
 
     def test_ignore_failures(self):
-        from dbacademy.dbbuild import create_build_config
+        from dbacademy.dbbuild.build_config import BuildConfig
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
-        build_config = create_build_config({"name": "Data Engineering with Databricks"}, "vTEST")
+        build_config = BuildConfig(name="Data Engineering with Databricks", version="vTEST")
         build_config.notebooks.clear()
-
         paths = [
             "A00 - Intro to PySpark/DE 0.00 - Module Introduction",
             "A01 - Databricks Workspace/DE 1.0 - Module Introduction",
@@ -76,10 +75,10 @@ class TestBuildConfig(unittest.TestCase):
         self.assertFalse(build_config.notebooks["A02 - ETL with Spark/DE 2.0 - Module Introduction"].ignored)
 
     def set_test_round(self):
-        from dbacademy.dbbuild import create_build_config
+        from dbacademy.dbbuild.build_config import BuildConfig
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
-        build_config = create_build_config({"name": "Data Engineering with Databricks"}, "vTEST")
+        build_config = BuildConfig(name="Data Engineering with Databricks", version="vTEST")
         build_config.notebooks.clear()
 
         paths = [
@@ -109,10 +108,10 @@ class TestBuildConfig(unittest.TestCase):
         self.assertEqual(2, build_config.notebooks["A02 - ETL with Spark/DE 2.0 - Module Introduction"].ignored)
 
     def test_exclude_notebook(self):
-        from dbacademy.dbbuild import create_build_config
+        from dbacademy.dbbuild.build_config import BuildConfig
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
-        build_config = create_build_config({"name": "Data Engineering with Databricks"}, "vTEST")
+        build_config = BuildConfig(name="Data Engineering with Databricks", version="vTEST")
         build_config.notebooks.clear()
 
         paths = [
