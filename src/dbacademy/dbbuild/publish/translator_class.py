@@ -68,7 +68,7 @@ class Translator:
         import uuid
         from dbacademy.common import validate
         from dbacademy.dbbuild import dbb_constants
-        from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
+        from dbacademy.dbbuild.publish.notebook_def import NotebookDef
         from dbacademy.common import print_warning
 
         add_guid = validate(add_guid=add_guid).required.bool()
@@ -86,8 +86,8 @@ class Translator:
 
             source_info = self.client.workspace().get_status(source_notebook_path)
             language = source_info.get("language")
-            cmd_delim = NotebookDefImpl.get_cmd_delim(language)
-            cm = NotebookDefImpl.get_comment_marker(language)
+            cmd_delim = NotebookDef.get_cmd_delim(language)
+            cm = NotebookDef.get_comment_marker(language)
 
             raw_source = self.client.workspace().export_notebook(source_notebook_path)
             raw_lines = raw_source.split("\n")
@@ -311,7 +311,7 @@ class Translator:
     # noinspection PyMethodMayBeStatic
     def _load_i18n_guid_map(self, path: str, i18n_source: str):
         import re
-        from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
+        from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
         if i18n_source is None:
             return dict()
@@ -327,7 +327,7 @@ class Translator:
             assert name == path, f"Expected the notebook \"{path}\", found \"{name}\""
 
         for part in parts[1:]:
-            guid, value = NotebookDefImpl.parse_guid_and_value(part)
+            guid, value = NotebookDef.parse_guid_and_value(part)
             i18n_guid_map[guid] = value
 
         return i18n_guid_map
@@ -398,7 +398,7 @@ class Translator:
     def generate_notebooks(self, skip_generation: bool = False) -> Optional[str]:
         from datetime import datetime
         from dbacademy.dbbuild.build_utils import BuildUtils
-        from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
+        from dbacademy.dbbuild.publish.notebook_def import NotebookDef
         from dbacademy.dbbuild.publish.publisher_class import Publisher
         from dbacademy import dbgems, common
 
@@ -448,8 +448,8 @@ class Translator:
 
             source_info = self.client.workspace().get_status(source_notebook_path)
             language = source_info["language"].lower()
-            cmd_delim = NotebookDefImpl.get_cmd_delim(language)
-            cm = NotebookDefImpl.get_comment_marker(language)
+            cmd_delim = NotebookDef.get_cmd_delim(language)
+            cm = NotebookDef.get_comment_marker(language)
 
             raw_source = self.client.workspace().export_notebook(source_notebook_path)
             raw_lines = raw_source.split("\n")

@@ -1,5 +1,5 @@
 import unittest
-from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
+from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
 
 class TestNotebookDefI18NTitle(unittest.TestCase):
@@ -7,14 +7,14 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
     def __init__(self, method_name):
         super().__init__(method_name)
 
-    def assert_n_errors(self, expected, notebook: NotebookDefImpl):
+    def assert_n_errors(self, expected, notebook: NotebookDef):
         message = f"Expected {expected} errors, found {len(notebook.logger.errors)}"
         for error in notebook.logger.errors:
             message += f"\n{error.message}"
 
         self.assertEqual(expected, len(notebook.logger.errors), message)
 
-    def assert_n_warnings(self, expected, notebook: NotebookDefImpl):
+    def assert_n_warnings(self, expected, notebook: NotebookDef):
         message = f"Expected {expected} errors, found {len(notebook.logger.warnings)}"
         for warning in notebook.logger.warnings:
             message += f"\n{warning.message}"
@@ -29,17 +29,17 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         build_config = BuildConfig(name="Unit Test",
                                    version=version)
 
-        return NotebookDefImpl(client=build_config.client,
-                               path="Agenda",
-                               replacements={},
-                               include_solution=False,
-                               test_round=2,
-                               ignored=False,
-                               order=0,
-                               i18n=True,
-                               i18n_language="English",
-                               ignoring=[],
-                               version=version)
+        return NotebookDef(client=build_config.client,
+                           path="Agenda",
+                           replacements={},
+                           include_solution=False,
+                           test_round=2,
+                           ignored=False,
+                           order=0,
+                           i18n=True,
+                           i18n_language="English",
+                           ignoring=[],
+                           version=version)
 
     def test_good_no_space_i18n(self):
         from dbacademy.dbbuild.publish.notebook_def import StateVariables

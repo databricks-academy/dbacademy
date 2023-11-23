@@ -255,7 +255,7 @@ class BuildConfig:
         return self.__client
 
     def initialize_notebooks(self):
-        from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
+        from dbacademy.dbbuild.publish.notebook_def import NotebookDef
         from dbacademy.dbhelper import dbh_constants
 
         self.__created_notebooks = True
@@ -301,17 +301,17 @@ class BuildConfig:
                 replacements = {"supported_dbrs": ", ".join(self.supported_dbrs)}
 
                 # Add our notebook to the set of notebooks to be tested.
-                self.notebooks[path] = NotebookDefImpl(client=self.client,
-                                                       test_round=test_round,
-                                                       path=path,
-                                                       ignored=False,
-                                                       include_solution=include_solution,
-                                                       replacements=replacements,
-                                                       order=order,
-                                                       i18n=self.i18n,
-                                                       i18n_language=self.i18n_language,
-                                                       ignoring=self.ignoring,
-                                                       version=self.version)
+                self.notebooks[path] = NotebookDef(client=self.client,
+                                                   test_round=test_round,
+                                                   path=path,
+                                                   ignored=False,
+                                                   include_solution=include_solution,
+                                                   replacements=replacements,
+                                                   order=order,
+                                                   i18n=self.i18n,
+                                                   i18n_language=self.i18n_language,
+                                                   ignoring=self.ignoring,
+                                                   version=self.version)
         if has_wip:
             print()
 
