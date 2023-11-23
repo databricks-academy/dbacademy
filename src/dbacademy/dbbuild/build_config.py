@@ -738,16 +738,19 @@ def _print_build_config_deprecation_warning(*, _print_warning: bool) -> None:
         print()
         print("-"*100)
 
+
 def __load_from_dict(*, config: Dict[str, Any], name: str, value: ParameterType, expected_type: Type[ParameterType]) -> ParameterType:
     if value is not None and name in config:
         other = config.get(name)
         raise ValueError(f"""The BuildConfig parameter "{name}" was specified at runtime ({value}) and in the build-config file ({other}); one of the two references must be removed.""")
 
     if name not in config:
+        print(f"""Using default value: {name} = {value}""")
         return value
     else:
         value = config[name]
         del config[name]  # Delete the entry for later validation.
+        print(f"""Using value from config: {name} = {value}""")
         return validate(parameter_name_override=name, value=value).as_type(expected_type)
 
 
