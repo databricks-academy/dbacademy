@@ -115,7 +115,7 @@ class NotebookDef(NotebookDefData):
         validate(what=what).required.str()
         validate(original_target=original_target).required.str()
         validate(target=target).required.str()
-        validate(other_notebooks=other_notebooks).required.list(str)
+        validate(other_notebooks=other_notebooks).required.list(NotebookDefData)
 
         if not target.startswith("../") and not target.startswith("./"):
             self.logger.warn(lambda: False, f"Cmd #{i+1} | Found unexpected, relative, {what} target: \"{original_target}\" resolved as \"{target}\"".strip())
