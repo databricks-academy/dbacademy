@@ -94,7 +94,9 @@ def create_build_config(config: Dict[str, Any], version: str, **kwargs) -> Build
         notebook.test_round = load_from_config("test_round", int, notebook_config)
         notebook.ignored = load_from_config("ignored", bool, notebook_config)
         notebook.order = load_from_config("order", int, notebook_config)
-        notebook.ignoring = load_from_config("ignored_errors", List[str], notebook_config)
+
+        notebook.ignoring.clear()
+        notebook.ignoring.extend(load_from_config("ignored_errors", List[str], notebook_config))
 
     return bc
 
