@@ -19,7 +19,7 @@ class BuildConfig:
     def __init__(self,
                  *,
                  name: str,
-                 version: str = None,
+                 version: str,
                  supported_dbrs: List[str] = None,
                  spark_version: str = None,
                  cloud: str = None,

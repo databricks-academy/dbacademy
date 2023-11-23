@@ -27,9 +27,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
         from dbacademy.dbbuild.build_config import BuildConfig
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
-        version = "1.2.3"
-        build_config = BuildConfig(name="Unit Test",
-                                   version=version)
+        build_config = BuildConfig(name="Unit Test", version="1.2.3")
 
         return NotebookDef(client=build_config.client,
                            path="Agenda",
@@ -41,7 +39,7 @@ class TestNotebookDefI18NBody(unittest.TestCase):
                            i18n=True,
                            i18n_language="English",
                            ignoring=[],
-                           version=version)
+                           version=build_config.version)
 
     def test_good_single_space_i18n(self):
 

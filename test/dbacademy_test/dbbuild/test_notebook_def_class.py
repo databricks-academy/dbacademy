@@ -32,9 +32,7 @@ class TestNotebookDef(unittest.TestCase):
     def create_notebook():
         from dbacademy.dbbuild.build_config import BuildConfig
 
-        version = "1.2.3"
-        build_config = BuildConfig(name="Unit Test",
-                                   version=version)
+        build_config = BuildConfig(name="Unit Test", version="1.2.3")
 
         return NotebookDef(client=build_config.client,
                            path="Agenda",
@@ -46,7 +44,7 @@ class TestNotebookDef(unittest.TestCase):
                            i18n=True,
                            i18n_language="English",
                            ignoring=[],
-                           version=version)
+                           version=build_config.version)
 
     # def test_parse_version_no_version(self):
     #     command = r"""

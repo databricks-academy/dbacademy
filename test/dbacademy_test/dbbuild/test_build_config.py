@@ -18,9 +18,9 @@ class TestBuildConfig(unittest.TestCase):
 
     def test_initialize_notebooks(self):
         from dbacademy.dbbuild.build_config import BuildConfig
-        build_config = BuildConfig(name="Test Suite")
 
         try:
+            build_config = BuildConfig(name="Test Suite", version="1.2.3")
             build_config.validate()
         except AssertionError as e:
             expected = "The notebooks have not yet been initialized; Please call BuildConfig.initialize_notebooks() before proceeding."
