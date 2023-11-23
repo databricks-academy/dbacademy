@@ -46,7 +46,7 @@ class TestBuildConfig(unittest.TestCase):
 
     def test_ignore_failures(self):
         from dbacademy.dbbuild.build_config_class import BuildConfig
-        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+        from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
 
         version = "vTEST"
 
@@ -60,18 +60,17 @@ class TestBuildConfig(unittest.TestCase):
             "A02 - ETL with Spark/DE 2.0 - Module Introduction",
         ]
         for path in paths:
-            build_config.notebooks[path] = NotebookDef(
-                build_config=build_config,
-                path=path,
-                replacements={},
-                include_solution=True,
-                test_round=-1,
-                ignored=False,
-                order=0,
-                i18n=False,
-                i18n_language=None,
-                ignoring=[],
-                version=version)
+            build_config.notebooks[path] = NotebookDefImpl(client=build_config.client,
+                                                           path=path,
+                                                           replacements={},
+                                                           include_solution=True,
+                                                           test_round=-1,
+                                                           ignored=False,
+                                                           order=0,
+                                                           i18n=False,
+                                                           i18n_language=None,
+                                                           ignoring=[],
+                                                           version=version)
 
         build_config.ignore_failures(lambda p, n: n == 0)
 
@@ -81,7 +80,7 @@ class TestBuildConfig(unittest.TestCase):
 
     def set_test_round(self):
         from dbacademy.dbbuild.build_config_class import BuildConfig
-        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+        from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
 
         version = "vTEST"
 
@@ -96,18 +95,17 @@ class TestBuildConfig(unittest.TestCase):
             "A02 - ETL with Spark/DE 2.0 - Module Introduction",
         ]
         for path in paths:
-            build_config.notebooks[path] = NotebookDef(
-                build_config=build_config,
-                path=path,
-                replacements={},
-                include_solution=True,
-                test_round=-1,
-                ignored=False,
-                order=0,
-                i18n=False,
-                i18n_language=None,
-                ignoring=[],
-                version=version)
+            build_config.notebooks[path] = NotebookDefImpl(client=build_config.client,
+                                                           path=path,
+                                                           replacements={},
+                                                           include_solution=True,
+                                                           test_round=-1,
+                                                           ignored=False,
+                                                           order=0,
+                                                           i18n=False,
+                                                           i18n_language=None,
+                                                           ignoring=[],
+                                                           version=version)
 
         build_config.set_test_round(9, lambda p, n: n == 3)
 
@@ -118,7 +116,7 @@ class TestBuildConfig(unittest.TestCase):
 
     def test_exclude_notebook(self):
         from dbacademy.dbbuild.build_config_class import BuildConfig
-        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+        from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
 
         version = "vTEST"
 
@@ -132,18 +130,17 @@ class TestBuildConfig(unittest.TestCase):
             "A02 - ETL with Spark/DE 2.0 - Module Introduction",
         ]
         for path in paths:
-            build_config.notebooks[path] = NotebookDef(
-                build_config=build_config,
-                path=path,
-                replacements={},
-                include_solution=True,
-                test_round=-1,
-                ignored=False,
-                order=0,
-                i18n=False,
-                i18n_language=None,
-                ignoring=[],
-                version=version)
+            build_config.notebooks[path] = NotebookDefImpl(client=build_config.client,
+                                                           path=path,
+                                                           replacements={},
+                                                           include_solution=True,
+                                                           test_round=-1,
+                                                           ignored=False,
+                                                           order=0,
+                                                           i18n=False,
+                                                           i18n_language=None,
+                                                           ignoring=[],
+                                                           version=version)
 
         build_config.exclude_notebook(lambda p, n: n == 1)
 

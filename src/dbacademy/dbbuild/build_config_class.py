@@ -3,9 +3,8 @@ __all__ = ["BuildConfig"]
 from typing import Type, List, Dict, Any, Optional, Callable
 from dbacademy.common import validate
 from dbacademy.clients.darest import DBAcademyRestClient
-from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
-from dbacademy.dbhelper import dbh_constants
 from dbacademy.dbbuild.change_log_class import ChangeLog
+from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
 
 class BuildConfig:
@@ -56,9 +55,15 @@ class BuildConfig:
         if "notebook_config" in config:
             del config["notebook_config"]
 
-        publish_only: Dict[str, List[str]] = config.get("publish_only", None)
         if "publish_only" in config:
+            publish_only: Dict[str, List[str]] = config.get("publish_only")
             del config["publish_only"]
+
+            white_list = publish_only.get("white_list", None)
+            config["white_list"] = validate(white_list=white_list).required.list(str)
+
+            black_list = publish_only.get("black_list", None)
+            config["black_list"] = validate(black_list=black_list).required.list(str)
 
         build_config = BuildConfig(version=version, **config)
         build_config.__initialize_notebooks()
@@ -87,13 +92,6 @@ class BuildConfig:
             if param in notebook_config:
                 notebook.ignoring = cls.load_from_config(param, List[str], notebook_config.get(param))
 
-        if publish_only is not None:
-            build_config.white_list = publish_only.get("white_list", None)
-            assert build_config.white_list is not None, "The white_list must be specified when specifying publish_only"
-
-            build_config.black_list = publish_only.get("black_list", None)
-            assert build_config.black_list is not None, "The black_list must be specified when specifying publish_only"
-
         return build_config
 
     def __init__(self,
@@ -117,12 +115,14 @@ class BuildConfig:
                  i18n: bool = False,
                  i18n_language: str = None,
                  ignoring: List[str] = None,
-                 publishing_info: Dict[str, Any] = None):
+                 publishing_info: Dict[str, Any] = None,
+                 white_list: List[str] = None,
+                 black_list: List[str] = None):
 
         import uuid
         import time
         from dbacademy.common import Cloud, validate
-        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+        from dbacademy.dbbuild.publish.notebook_def import NotebookDef
         from dbacademy.dbhelper.course_config import CourseConfig
         from dbacademy import dbgems
         from dbacademy.clients.rest.factory import dbrest_factory
@@ -191,9 +191,8 @@ class BuildConfig:
         self.__readme_file_name = validate(readme_file_name=readme_file_name or "README.md").str()
         self.__include_solutions = validate(include_solutions=include_solutions).required.bool()
 
-        # TODO convert these to params
-        self.white_list = None
-        self.black_list = None
+        self.__white_list = validate(white_list=white_list).list(str)
+        self.__black_list = validate(black_list=black_list).list(str)
 
         self.__change_log: Optional[ChangeLog] = None
         self.__publishing_info = validate(publishing_info=publishing_info).dict(str, auto_create=True)
@@ -291,13 +290,13 @@ class BuildConfig:
     def build_name(self) -> str:
         return self.__build_name
 
-    # @property
-    # def xxx(self) -> xxx:
-    #     return XXX
+    @property
+    def white_list(self) -> List[str]:
+        return self.__white_list
 
-    # @property
-    # def xxx(self) -> xxx:
-    #     return XXX
+    @property
+    def black_list(self) -> List[str]:
+        return self.__black_list
 
     # @property
     # def xxx(self) -> xxx:
@@ -358,7 +357,8 @@ class BuildConfig:
         return self.__client
 
     def __initialize_notebooks(self):
-        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+        from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
+        from dbacademy.dbhelper import dbh_constants
 
         self.__created_notebooks = True
 
@@ -403,17 +403,17 @@ class BuildConfig:
                 replacements = {"supported_dbrs": ", ".join(self.supported_dbrs)}
 
                 # Add our notebook to the set of notebooks to be tested.
-                self.notebooks[path] = NotebookDef(build_config=self,
-                                                   test_round=test_round,
-                                                   path=path,
-                                                   ignored=False,
-                                                   include_solution=include_solution,
-                                                   replacements=replacements,
-                                                   order=order,
-                                                   i18n=self.i18n,
-                                                   i18n_language=self.i18n_language,
-                                                   ignoring=self.ignoring,
-                                                   version=self.version)
+                self.notebooks[path] = NotebookDefImpl(client=self.client,
+                                                       test_round=test_round,
+                                                       path=path,
+                                                       ignored=False,
+                                                       include_solution=include_solution,
+                                                       replacements=replacements,
+                                                       order=order,
+                                                       i18n=self.i18n,
+                                                       i18n_language=self.i18n_language,
+                                                       ignoring=self.ignoring,
+                                                       version=self.version)
         if has_wip:
             print()
 

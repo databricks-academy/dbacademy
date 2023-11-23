@@ -1,37 +1,16 @@
-__all__ = ["NotebookDef", "StateVariables"]
+__all__ = ["NotebookDefImpl"]
 
 from typing import Union, List, Dict, Any
+
+from dbacademy.clients.darest import DBAcademyRestClient
 from dbacademy.common import validate
-from dbacademy.dbbuild.build_config_class import BuildConfig
 from dbacademy.dbhelper import dbh_constants
 from dbacademy.dbbuild import dbb_constants
 from dbacademy.dbbuild.publish import pub_utils
-from dbacademy.dbbuild.publish.notebook_def_data_class import NotebookDefData
+from dbacademy.dbbuild.publish.notebook_def import NotebookDef, StateVariables
 
 
-class StateVariables:
-    def __init__(self):
-        self.i18n_guid_map: Dict[str, str] = dict()
-
-        # Stateful values that get reset during publishing.
-        self.students_commands = list()
-        self.solutions_commands = list()
-
-        # Reset counters
-        self.todo_count = 0
-        self.answer_count = 0
-        self.skipped = 0
-
-        # Reset header flags
-        self.include_header = False
-        self.found_header_directive = False
-
-        # Reset footer flags
-        self.include_footer = False
-        self.found_footer_directive = False
-
-
-class NotebookDef(NotebookDefData):
+class NotebookDefImpl(NotebookDef):
 
     D_TODO = "TODO"
     D_ANSWER = "ANSWER"
@@ -49,7 +28,8 @@ class NotebookDef(NotebookDefData):
                             D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
 
     def __init__(self, *,
-                 build_config: BuildConfig,
+                 # build_config: BuildConfig,
+                 client: DBAcademyRestClient,
                  path: str,
                  replacements: Dict[str, Any],
                  include_solution: bool,
@@ -61,7 +41,7 @@ class NotebookDef(NotebookDefData):
                  ignoring: List[str],
                  version: str):
 
-        super().__init__(build_config=build_config,
+        super().__init__(client=client,  # build_config=build_config,
                          path=path,
                          version=version,
                          replacements=replacements,
@@ -107,7 +87,7 @@ class NotebookDef(NotebookDefData):
                              what: str,
                              original_target: str,
                              target: str,
-                             other_notebooks: List[NotebookDefData]):
+                             other_notebooks: List[NotebookDef]):
 
         validate(i=i).required.int()
         validate(what=what).required.str()
@@ -189,7 +169,7 @@ class NotebookDef(NotebookDefData):
 
         return command
 
-    def test_run_cells(self, language: str, command: str, i: int, other_notebooks: List[NotebookDefData]) -> None:
+    def test_run_cells(self, language: str, command: str, i: int, other_notebooks: List[NotebookDef]) -> None:
         """
         Validates %run cells meet specific requirements
         :param language: The language of the corresponding notebook
@@ -239,7 +219,7 @@ class NotebookDef(NotebookDefData):
     def validate_md_link(self, *,
                          i: int,
                          command: str,
-                         other_notebooks: List[NotebookDefData]):
+                         other_notebooks: List[NotebookDef]):
 
         """Test for MD links to be replaced with html links"""
 
@@ -394,7 +374,7 @@ class NotebookDef(NotebookDefData):
                         cm: str,
                         command: str,
                         i: int,
-                        other_notebooks: List[NotebookDefData],
+                        other_notebooks: List[NotebookDef],
                         cell_title: str) -> str:
 
         # First verify that the specified command is a mark-down cell
@@ -590,7 +570,7 @@ For more current information, please see <a href="https://files.training.databri
                 if self.logger.test(lambda: pos_b >= 0, f"Cmd #{i+1} | Unable to parse the dbacademy library version for the INSTALL_LIBRARIES directive: {version_line}."):
                     version = version_line[pos_a+1:pos_b]
                     template = dbh_constants.DBACADEMY_HELPER.TROUBLESHOOT_ERROR_TEMPLATE.replace("\"", "\\\"")
-                    source = NotebookDef.SOURCE_INSTALL_LIBRARIES.format(template=template, version=version)
+                    source = NotebookDefImpl.SOURCE_INSTALL_LIBRARIES.format(template=template, version=version)
                     return source
 
         return command
@@ -601,7 +581,7 @@ For more current information, please see <a href="https://files.training.databri
                 i18n_resources_dir: str,
                 verbose: bool,
                 debugging: bool,
-                other_notebooks: List[NotebookDefData]) -> None:
+                other_notebooks: List[NotebookDef]) -> None:
 
         from dbacademy.common import validate
         from dbacademy.dbbuild.build_utils_class import BuildUtils
@@ -612,7 +592,7 @@ For more current information, please see <a href="https://files.training.databri
         validate(verbose=verbose).required.bool()
         validate(debugging=debugging).required.bool()
 
-        other_notebooks: validate(other_notebooks=other_notebooks).list(NotebookDefData, auto_create=True)
+        other_notebooks: validate(other_notebooks=other_notebooks).list(NotebookDef, auto_create=True)
 
         self.logger.reset()      # Remove all errors from previous invocations of publish
         self.i18n_guids.clear()  # Remove all GUIDs from previous invocations of publish
@@ -645,9 +625,9 @@ For more current information, please see <a href="https://files.training.databri
                                 other_notebooks=other_notebooks,
                                 debugging=debugging)
 
-        self.logger.test(lambda: state.found_header_directive, f"One of the two header directives ({NotebookDef.D_INCLUDE_HEADER_TRUE} or {NotebookDef.D_INCLUDE_HEADER_FALSE}) were not found.")
-        self.logger.test(lambda: state.found_footer_directive, f"One of the two footer directives ({NotebookDef.D_INCLUDE_FOOTER_TRUE} or {NotebookDef.D_INCLUDE_FOOTER_FALSE}) were not found.")
-        self.logger.test(lambda: state.answer_count >= state.todo_count, f"Found more {NotebookDef.D_TODO} commands ({state.todo_count}) than {NotebookDef.D_ANSWER} commands ({state.answer_count})")
+        self.logger.test(lambda: state.found_header_directive, f"One of the two header directives ({NotebookDefImpl.D_INCLUDE_HEADER_TRUE} or {NotebookDefImpl.D_INCLUDE_HEADER_FALSE}) were not found.")
+        self.logger.test(lambda: state.found_footer_directive, f"One of the two footer directives ({NotebookDefImpl.D_INCLUDE_FOOTER_TRUE} or {NotebookDefImpl.D_INCLUDE_FOOTER_FALSE}) were not found.")
+        self.logger.test(lambda: state.answer_count >= state.todo_count, f"Found more {NotebookDefImpl.D_TODO} commands ({state.todo_count}) than {NotebookDefImpl.D_ANSWER} commands ({state.answer_count})")
 
         if state.include_header is True:
             state.students_commands.insert(0, self.get_header_cell(language))
@@ -679,7 +659,7 @@ For more current information, please see <a href="https://files.training.databri
                        language: str,
                        command: str,
                        i: int,
-                       other_notebooks: List[NotebookDefData],
+                       other_notebooks: List[NotebookDef],
                        debugging: bool) -> str:
 
         cell_title = None
@@ -732,54 +712,54 @@ For more current information, please see <a href="https://files.training.databri
                 print("   |-NO DIRECTIVES --" + ("-" * 59))
 
         # Update flags to indicate if we found the required header and footer directives
-        state.include_header = True if NotebookDef.D_INCLUDE_HEADER_TRUE in directives else state.include_header
-        state.found_header_directive = True if NotebookDef.D_INCLUDE_HEADER_TRUE in directives or NotebookDef.D_INCLUDE_HEADER_FALSE in directives else state.found_header_directive
+        state.include_header = True if NotebookDefImpl.D_INCLUDE_HEADER_TRUE in directives else state.include_header
+        state.found_header_directive = True if NotebookDefImpl.D_INCLUDE_HEADER_TRUE in directives or NotebookDefImpl.D_INCLUDE_HEADER_FALSE in directives else state.found_header_directive
 
-        state.include_footer = True if NotebookDef.D_INCLUDE_FOOTER_TRUE in directives else state.include_footer
-        state.found_footer_directive = True if NotebookDef.D_INCLUDE_FOOTER_TRUE in directives or NotebookDef.D_INCLUDE_FOOTER_FALSE in directives else state.found_footer_directive
+        state.include_footer = True if NotebookDefImpl.D_INCLUDE_FOOTER_TRUE in directives else state.include_footer
+        state.found_footer_directive = True if NotebookDefImpl.D_INCLUDE_FOOTER_TRUE in directives or NotebookDefImpl.D_INCLUDE_FOOTER_FALSE in directives else state.found_footer_directive
 
         # Make sure we have one and only one directive in this command (ignoring the header directives)
         directive_count = 0
         for directive in directives:
-            if directive not in [NotebookDef.D_INCLUDE_HEADER_TRUE, NotebookDef.D_INCLUDE_HEADER_FALSE, NotebookDef.D_INCLUDE_FOOTER_TRUE, NotebookDef.D_INCLUDE_FOOTER_FALSE]:
+            if directive not in [NotebookDefImpl.D_INCLUDE_HEADER_TRUE, NotebookDefImpl.D_INCLUDE_HEADER_FALSE, NotebookDefImpl.D_INCLUDE_FOOTER_TRUE, NotebookDefImpl.D_INCLUDE_FOOTER_FALSE]:
                 directive_count += 1
         self.logger.test(lambda: directive_count <= 1, f"Cmd #{i + 1} | Found multiple directives ({directive_count}): {directives}")
 
         # Process the various directives
         if command.strip() == "":
             state.skipped += self.skipping(i, "Empty Cell")
-        elif NotebookDef.D_SOURCE_ONLY in directives:
+        elif NotebookDefImpl.D_SOURCE_ONLY in directives:
             state.skipped += self.skipping(i, None)
-        elif NotebookDef.D_INCLUDE_HEADER_TRUE in directives:
+        elif NotebookDefImpl.D_INCLUDE_HEADER_TRUE in directives:
             state.skipped += self.skipping(i, None)
-        elif NotebookDef.D_INCLUDE_HEADER_FALSE in directives:
+        elif NotebookDefImpl.D_INCLUDE_HEADER_FALSE in directives:
             state.skipped += self.skipping(i, None)
-        elif NotebookDef.D_INCLUDE_FOOTER_TRUE in directives:
+        elif NotebookDefImpl.D_INCLUDE_FOOTER_TRUE in directives:
             state.skipped += self.skipping(i, None)
-        elif NotebookDef.D_INCLUDE_FOOTER_FALSE in directives:
+        elif NotebookDefImpl.D_INCLUDE_FOOTER_FALSE in directives:
             state.skipped += self.skipping(i, None)
 
-        elif NotebookDef.D_TODO in directives:
+        elif NotebookDefImpl.D_TODO in directives:
             # This is a TO-DO cell, exclude from solution notebooks
             state.todo_count += 1
             command = self.clean_todo_cell(language, command, i)
             state.students_commands.append(command)
 
-        elif NotebookDef.D_ANSWER in directives:
+        elif NotebookDefImpl.D_ANSWER in directives:
             # This is an ANSWER cell, exclude from lab notebooks
             state.answer_count += 1
             state.solutions_commands.append(command)
 
-        elif NotebookDef.D_DUMMY in directives:
+        elif NotebookDefImpl.D_DUMMY in directives:
             state.students_commands.append(command)
             state.solutions_commands.append(command.replace("DUMMY", "DUMMY: Ya, that wasn't too smart. Then again, this is just a dummy-directive"))
 
-        elif NotebookDef.D_INSTALL_LIBRARIES in directives:
+        elif NotebookDefImpl.D_INSTALL_LIBRARIES in directives:
             new_command = self.build_install_libraries_cell(i=i, command=command)
             state.students_commands.append(new_command)
             state.solutions_commands.append(new_command)
 
-        elif NotebookDef.D_TROUBLESHOOTING_CONTENT in directives:
+        elif NotebookDefImpl.D_TROUBLESHOOTING_CONTENT in directives:
             self.build_troubleshooting_cells(state.students_commands, state.solutions_commands)
 
         else:
@@ -904,13 +884,13 @@ For more current information, please see <a href="https://files.training.databri
                 # This is the first line, but the first is a magic command
                 new_command += line
 
-            elif (index == first) and line.strip() not in [f"{prefix} {NotebookDef.D_TODO}"]:
-                self.logger.test(lambda: False, f"""Cmd #{i + 1} | Expected line #{index + 1} to be the "{NotebookDef.D_TODO}" directive: "{line}" """)
+            elif (index == first) and line.strip() not in [f"{prefix} {NotebookDefImpl.D_TODO}"]:
+                self.logger.test(lambda: False, f"""Cmd #{i + 1} | Expected line #{index + 1} to be the "{NotebookDefImpl.D_TODO}" directive: "{line}" """)
 
             elif not line.startswith(prefix) and line.strip() != "" and line.strip() != f"{source_m} MAGIC":
                 self.logger.test(lambda: False, f"""Cmd #{i + 1} | Expected line #{index + 1} to be commented out: "{line}" with prefix "{prefix}" """)
 
-            elif line.strip().startswith(f"{prefix} {NotebookDef.D_TODO}"):
+            elif line.strip().startswith(f"{prefix} {NotebookDefImpl.D_TODO}"):
                 # Add as-is
                 new_command += line
 
@@ -979,7 +959,7 @@ For more current information, please see <a href="https://files.training.databri
 
     @staticmethod
     def get_cmd_delim(language):
-        marker = NotebookDef.get_comment_marker(language)
+        marker = NotebookDefImpl.get_comment_marker(language)
         return f"\n{marker} COMMAND ----------\n"
 
     def get_leading_comments(self, language, command) -> list:
@@ -1056,20 +1036,20 @@ For more current information, please see <a href="https://files.training.databri
                 if directive in ["SELECT", "FROM", "AS", "AND"]:
                     pass  # not a real directive, but flagged as one because of its SQL syntax
 
-                elif directive in [NotebookDef.D_TODO,
-                                   NotebookDef.D_ANSWER,
-                                   NotebookDef.D_SOURCE_ONLY,
-                                   NotebookDef.D_INCLUDE_HEADER_TRUE,
-                                   NotebookDef.D_INCLUDE_HEADER_FALSE,
-                                   NotebookDef.D_INCLUDE_FOOTER_TRUE,
-                                   NotebookDef.D_INCLUDE_FOOTER_FALSE]:
+                elif directive in [NotebookDefImpl.D_TODO,
+                                   NotebookDefImpl.D_ANSWER,
+                                   NotebookDefImpl.D_SOURCE_ONLY,
+                                   NotebookDefImpl.D_INCLUDE_HEADER_TRUE,
+                                   NotebookDefImpl.D_INCLUDE_HEADER_FALSE,
+                                   NotebookDefImpl.D_INCLUDE_FOOTER_TRUE,
+                                   NotebookDefImpl.D_INCLUDE_FOOTER_FALSE]:
                     directives.append(line)
 
                 elif "FILL-IN" in directive or "FILL_IN" in directive:
                     pass  # Not a directive, just a random chance
 
                 elif directive != mod_directive:
-                    if mod_directive in [f"__{NotebookDef.D_TODO}", f"___{NotebookDef.D_TODO}"]:
+                    if mod_directive in [f"__{NotebookDefImpl.D_TODO}", f"___{NotebookDefImpl.D_TODO}"]:
                         self.logger.test(lambda: False, f"Cmd #{i+1} | Found double-comment of TODO directive")
 
                     # print(f"Skipping directive: {directive} vs {mod_directive}")
@@ -1078,7 +1058,7 @@ For more current information, please see <a href="https://files.training.databri
                 else:
                     result_a = self.logger.warn(lambda: " " not in directive, f"""Cmd #{i+1} | Whitespace found in directive "{directive}": {line}""")
                     result_b = self.logger.warn(lambda: "-" not in directive, f"""Cmd #{i+1} | Hyphen found in directive "{directive}": {line}""")
-                    result_c = self.logger.warn(lambda: directive in NotebookDef.SUPPORTED_DIRECTIVES, f"""Cmd #{i+1} | Unsupported directive "{directive}", see dbacademy.dbpublish.help_html() for more information.""")
+                    result_c = self.logger.warn(lambda: directive in NotebookDefImpl.SUPPORTED_DIRECTIVES, f"""Cmd #{i+1} | Unsupported directive "{directive}", see dbacademy.dbpublish.help_html() for more information.""")
                     if result_a and result_b and result_c:
                         directives.append(line)
 

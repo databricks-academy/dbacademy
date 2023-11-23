@@ -3,7 +3,7 @@ __all__ = ["TestNotebookDef"]
 import unittest
 import typing
 from dbacademy.dbbuild.publish.notebook_logger import NotebookError
-from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+from dbacademy.dbbuild.publish.notebook_def_impl import NotebookDefImpl
 
 
 class TestNotebookDef(unittest.TestCase):
@@ -11,14 +11,14 @@ class TestNotebookDef(unittest.TestCase):
     def __init__(self, method_name):
         super().__init__(method_name)
 
-    def assert_n_errors(self, expected: int, notebook: NotebookDef):
+    def assert_n_errors(self, expected: int, notebook: NotebookDefImpl):
         message = f"Expected {expected} errors, found {len(notebook.logger.errors)}"
         for error in notebook.logger.errors:
             message += f"\n{error.message}"
 
         self.assertEqual(expected, len(notebook.logger.errors), f"Expected {expected} errors, found {len(notebook.logger.errors)}")
 
-    def assert_n_warnings(self, expected: int, notebook: NotebookDef):
+    def assert_n_warnings(self, expected: int, notebook: NotebookDefImpl):
         message = f"Expected {expected} errors, found {len(notebook.logger.warnings)}"
         for warning in notebook.logger.warnings:
             message += f"\n{warning.message}"
@@ -36,17 +36,17 @@ class TestNotebookDef(unittest.TestCase):
         build_config = BuildConfig(name="Unit Test",
                                    version=version)
 
-        return NotebookDef(build_config=build_config,
-                           path="Agenda",
-                           replacements={},
-                           include_solution=False,
-                           test_round=2,
-                           ignored=False,
-                           order=0,
-                           i18n=True,
-                           i18n_language="English",
-                           ignoring=[],
-                           version=version)
+        return NotebookDefImpl(client=build_config.client,
+                               path="Agenda",
+                               replacements={},
+                               include_solution=False,
+                               test_round=2,
+                               ignored=False,
+                               order=0,
+                               i18n=True,
+                               i18n_language="English",
+                               ignoring=[],
+                               version=version)
 
     # def test_parse_version_no_version(self):
     #     command = r"""

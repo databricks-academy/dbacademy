@@ -6,7 +6,7 @@ from dbacademy.common import validate
 
 class Publisher:
     from dbacademy.dbbuild.build_config_class import BuildConfig
-    from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+    from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
     VERSION_INFO_NOTEBOOK = "Version Info"
 
@@ -60,12 +60,20 @@ class Publisher:
             # This hack just happens to work for japanese and korean
             self.common_language = build_config.i18n_language.split("-")[0]
 
-        self.notebooks = []
+        self.notebooks = list()
         self.__init_notebooks(build_config.notebooks.values())
 
-        self.white_list = build_config.white_list
-        self.black_list = build_config.black_list
+        self.__white_list: List[str] = build_config.white_list
+        self.__black_list: List[str] = build_config.black_list
         self.__validate_white_black_list()
+
+    @property
+    def white_list(self) -> List[str]:
+        return self.__white_list
+
+    @property
+    def black_list(self) -> List[str]:
+        return self.__black_list
 
     @property
     def publishing_mode(self) -> Optional[str]:
@@ -92,7 +100,7 @@ class Publisher:
 
     def __init_notebooks(self, notebooks) -> None:
         from datetime import datetime
-        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+        from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
         for notebook in notebooks:
             assert type(notebook) == NotebookDef, f"Expected the parameter \"notebook\" to be of type \"NotebookDef\", found \"{type(notebook)}\"."
@@ -159,7 +167,7 @@ class Publisher:
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
         from dbacademy import common, dbgems
-        from dbacademy.dbbuild.publish.notebook_def_class import NotebookDef
+        from dbacademy.dbbuild.publish.notebook_def import NotebookDef
         from dbacademy.dbbuild.build_utils_class import BuildUtils
         from dbacademy.dbbuild.build_config_class import BuildConfig
 

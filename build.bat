@@ -13,4 +13,3 @@ COPY .\docs_src\index.html .\docs\index.html
 CD docs
 SET PYTHONPATH=..\src
 python -m pydoc -w ..\src\
-
