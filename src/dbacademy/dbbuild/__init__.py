@@ -4,7 +4,7 @@ This module contains utilities for building and publishing courseware classicall
 __all__ = ["help_html", "load_build_config", "create_build_config"]
 
 
-from typing import Dict, Any, List, TypeVar
+from typing import Dict, Any, List, TypeVar, Type
 from dbacademy.dbbuild.build_config import BuildConfig
 from dbacademy.common import validate
 ParameterType = TypeVar("ParameterType")
@@ -39,10 +39,10 @@ def help_html():
     return html
 
 
-def load_from_config(param: str, expected_type: ParameterType, notebook_config: Dict[str, Any]) -> ParameterType:
+def load_from_config(param: str, expected_type: Type[ParameterType], notebook_config: Dict[str, Any], default_value: ParameterType) -> ParameterType:
 
     if param not in notebook_config:
-        return None
+        return default_value
 
     actual_value = notebook_config.get(param)
 
@@ -90,13 +90,13 @@ def create_build_config(config: Dict[str, Any], version: str, **kwargs) -> Build
         assert name in bc.notebooks, f"The notebook \"{name}\" doesn't exist."
         notebook = bc.notebooks.get(name)
 
-        notebook.include_solution = load_from_config("include_solution", bool, notebook_config)
-        notebook.test_round = load_from_config("test_round", int, notebook_config)
-        notebook.ignored = load_from_config("ignored", bool, notebook_config)
-        notebook.order = load_from_config("order", int, notebook_config)
+        notebook.include_solution = load_from_config("include_solution", bool, notebook_config, notebook.include_solution)
+        notebook.test_round = load_from_config("test_round", int, notebook_config, notebook.test_round)
+        notebook.ignored = load_from_config("ignored", bool, notebook_config, notebook.ignored)
+        notebook.order = load_from_config("order", int, notebook_config, notebook.order)
 
         notebook.ignoring.clear()
-        notebook.ignoring.extend(load_from_config("ignored_errors", List[str], notebook_config))
+        notebook.ignoring.extend(load_from_config("ignored_errors", List[str], notebook_config, notebook.ignoring))
 
     return bc
 
