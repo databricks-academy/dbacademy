@@ -735,7 +735,8 @@ def _print_build_config_deprecation_warning(*, _print_warning: bool) -> None:
         print("""build_config = BuildConfig(name="Some Course", version="Test", ...)""")
         print("""build_config.include_solutions = False""")
         print("""build_config.i18n = True""")
-
+        print()
+        print("-"*100)
 
 def __load_from_dict(*, config: Dict[str, Any], name: str, value: ParameterType, expected_type: Type[ParameterType]) -> ParameterType:
     if value is not None and name in config:
