@@ -97,7 +97,8 @@ class BuildConfig:
                                  publishing_info=publishing_info,
                                  white_list=white_list,
                                  black_list=black_list,
-                                 notebook_configs=notebook_configs)
+                                 notebook_configs=notebook_configs,
+                                 _print_warning=False)
 
     def __init__(self,
                  *,
