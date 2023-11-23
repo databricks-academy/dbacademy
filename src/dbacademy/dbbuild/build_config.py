@@ -148,7 +148,7 @@ class BuildConfig:
         self.__language_options = None
         self.__ignoring = validate(ignoring=ignoring).list(str, auto_create=True)
 
-        self.__i18n = validate(i18n=i18n).required.bool()
+        self.__i18n = validate(i18n=i18n or False).required.bool()
         self.__i18n_language = validate(i18n_language=i18n_language).str()
 
         self.__test_type = None
@@ -198,7 +198,7 @@ class BuildConfig:
         self.__source_dir = f"{self.__source_repo}/{source_dir_name}"
 
         self.__readme_file_name = validate(readme_file_name=readme_file_name or "README.md").str()
-        self.__include_solutions = validate(include_solutions=include_solutions).required.bool()
+        self.__include_solutions = validate(include_solutions=include_solutions or False).required.bool()
 
         self.__white_list = validate(white_list=white_list).list(str)
         self.__black_list = validate(black_list=black_list).list(str)
