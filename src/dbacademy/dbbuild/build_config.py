@@ -737,9 +737,10 @@ def _print_build_config_deprecation_warning(*, _print_warning: bool) -> None:
         print("""build_config.i18n = True""")
 
 
-def __load_from_dict(*, config: Dict[str, Any], path: str, name: str, value: ParameterType, expected_type: Type[ParameterType]) -> ParameterType:
+def __load_from_dict(*, config: Dict[str, Any], name: str, value: ParameterType, expected_type: Type[ParameterType]) -> ParameterType:
     if value is not None and name in config:
-        raise ValueError(f"""The BuildConfig parameter "{name}" was specified at runtime and in the build-config file {path}; one of the two references must be removed.""")
+        other = config.get(name)
+        raise ValueError(f"""The BuildConfig parameter "{name}" was specified at runtime ({value}) and in the build-config file ({other}); one of the two references must be removed.""")
 
     if name not in config:
         return value
@@ -821,30 +822,30 @@ def load_build_config(build_config_file_path: str, *, version: str,
 
     bc = BuildConfig(version=version,
                      client=client,
-                     name=__load_from_dict(config=config, path=build_config_file_path, name="name",               value=name, expected_type=str),
-                     supported_dbrs=__load_from_dict(config=config, path=build_config_file_path, name="supported_dbrs",     value=supported_dbrs, expected_type=List[str]),
-                     spark_version=__load_from_dict(config=config, path=build_config_file_path, name="spark_version",      value=spark_version, expected_type=int),
-                     cloud=__load_from_dict(config=config, path=build_config_file_path, name="cloud",              value=cloud, expected_type=str),
-                     instance_pool_id=__load_from_dict(config=config, path=build_config_file_path, name="instance_pool_id",   value=instance_pool_id, expected_type=str),
-                     single_user_name=__load_from_dict(config=config, path=build_config_file_path, name="single_user_name",   value=single_user_name, expected_type=str),
-                     workers=__load_from_dict(config=config, path=build_config_file_path, name="workers",            value=workers, expected_type=int),
-                     libraries=__load_from_dict(config=config, path=build_config_file_path, name="libraries",          value=libraries, expected_type=List[Dict[str, Any]]),
-                     source_dir_name=__load_from_dict(config=config, path=build_config_file_path, name="source_dir_name",    value=source_dir_name, expected_type=str),
-                     source_repo=__load_from_dict(config=config, path=build_config_file_path, name="source_repo",        value=source_repo, expected_type=str),
-                     readme_file_name=__load_from_dict(config=config, path=build_config_file_path, name="readme_file_name",   value=readme_file_name, expected_type=str),
-                     spark_conf=__load_from_dict(config=config, path=build_config_file_path, name="spark_conf",         value=spark_conf, expected_type=Dict[str, Any]),
-                     job_arguments=__load_from_dict(config=config, path=build_config_file_path, name="job_arguments",      value=job_arguments, expected_type=Dict[str, Any]),
-                     include_solutions=__load_from_dict(config=config, path=build_config_file_path, name="include_solutions",  value=include_solutions, expected_type=bool),
-                     i18n=__load_from_dict(config=config, path=build_config_file_path, name="i18n",               value=i18n, expected_type=bool),
-                     i18n_language=__load_from_dict(config=config, path=build_config_file_path, name="i18n_language",      value=i18n_language, expected_type=str),
-                     ignoring=__load_from_dict(config=config, path=build_config_file_path, name="ignoring",           value=ignoring, expected_type=List[str]),
-                     publishing_info=__load_from_dict(config=config, path=build_config_file_path, name="publishing_info",    value=publishing_info, expected_type=Dict[str, Any]),
+                     name=__load_from_dict(config=config,               name="name",                value=name, expected_type=str),
+                     supported_dbrs=__load_from_dict(config=config,     name="supported_dbrs",      value=supported_dbrs, expected_type=List[str]),
+                     spark_version=__load_from_dict(config=config,      name="spark_version",       value=spark_version, expected_type=int),
+                     cloud=__load_from_dict(config=config,              name="cloud",               value=cloud, expected_type=str),
+                     instance_pool_id=__load_from_dict(config=config,   name="instance_pool_id",    value=instance_pool_id, expected_type=str),
+                     single_user_name=__load_from_dict(config=config,   name="single_user_name",    value=single_user_name, expected_type=str),
+                     workers=__load_from_dict(config=config,            name="workers",             value=workers, expected_type=int),
+                     libraries=__load_from_dict(config=config,          name="libraries",           value=libraries, expected_type=List[Dict[str, Any]]),
+                     source_dir_name=__load_from_dict(config=config,    name="source_dir_name",     value=source_dir_name, expected_type=str),
+                     source_repo=__load_from_dict(config=config,        name="source_repo",         value=source_repo, expected_type=str),
+                     readme_file_name=__load_from_dict(config=config,   name="readme_file_name",    value=readme_file_name, expected_type=str),
+                     spark_conf=__load_from_dict(config=config,         name="spark_conf",          value=spark_conf, expected_type=Dict[str, Any]),
+                     job_arguments=__load_from_dict(config=config,      name="job_arguments",       value=job_arguments, expected_type=Dict[str, Any]),
+                     include_solutions=__load_from_dict(config=config,  name="include_solutions",   value=include_solutions, expected_type=bool),
+                     i18n=__load_from_dict(config=config,               name="i18n",                value=i18n, expected_type=bool),
+                     i18n_language=__load_from_dict(config=config,      name="i18n_language",       value=i18n_language, expected_type=str),
+                     ignoring=__load_from_dict(config=config,           name="ignoring",            value=ignoring, expected_type=List[str]),
+                     publishing_info=__load_from_dict(config=config,    name="publishing_info",     value=publishing_info, expected_type=Dict[str, Any]),
                      # The following two are not stored in config's root, but rather nested under config.publish_only
-                     white_list=__load_from_dict(config=publish_only, path=build_config_file_path, name="white_list", value=white_list, expected_type=List[str]),
-                     black_list=__load_from_dict(config=publish_only, path=build_config_file_path, name="black_list", value=black_list, expected_type=List[str]))
+                     white_list=__load_from_dict(config=publish_only,   name="white_list", value=white_list, expected_type=List[str]),
+                     black_list=__load_from_dict(config=publish_only,   name="black_list", value=black_list, expected_type=List[str]))
 
     # Once the object is created, we need to initialize, or rather create, all the notebooks instances.
-    notebook_configs: Dict[str, Any] =  __load_from_dict(config=config, path=build_config_file_path, name="notebook_config",    value=notebook_configs, expected_type=Dict[str, Any])
+    notebook_configs: Dict[str, Any] =  __load_from_dict(config=config, name="notebook_config",    value=notebook_configs, expected_type=Dict[str, Any])
     bc.initialize_notebooks(notebook_configs)
 
     for key in config:  # The config dictionary should be empty at this point; any remaining entries are indicative of a bug.
