@@ -42,8 +42,8 @@ class TestJobsClient(unittest.TestCase):
         self.assertEqual(orig_job_id, job.get("job_id"))
 
     def __create_job(self):
-        from dbacademy.clients.darest.jobs.job_config_classes import JobConfig
-        from dbacademy.clients.darest.clusters.cluster_config_class import JobClusterConfig
+        from dbacademy.clients.darest.jobs_api.job_config import JobConfig
+        from dbacademy.clients.darest.clusters_api.cluster_config import JobClusterConfig
         from dbacademy.common import Cloud
         from dbacademy.dbhelper import dbh_constants
 

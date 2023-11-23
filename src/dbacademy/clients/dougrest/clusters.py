@@ -1,13 +1,13 @@
 from typing import Dict, Any
 
-from dbacademy.clients.darest.cluster_policies import ClustersPolicyClient
+# from dbacademy.clients.darest.cluster_policies import ClustersPolicyApi
 from dbacademy.clients.rest.common import ApiContainer, IfExists, DatabricksApiException
 
 
 class Clusters(ApiContainer):
     def __init__(self, databricks):
         self.databricks = databricks
-        self.policies = ClustersPolicyClient(databricks)
+        # self.policies = ClustersPolicyApi(databricks)
 
     # TODO Rename parameter to "cluster_id"
     # noinspection PyShadowingBuiltins

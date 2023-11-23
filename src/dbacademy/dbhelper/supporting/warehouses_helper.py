@@ -153,7 +153,7 @@ class WarehousesHelper:
         from dbacademy.clients.rest.common import DatabricksApiException
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
         from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
-        from dbacademy.clients.darest.sql.endpoints import RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT, CLUSTER_SIZE_2X_SMALL
+        from dbacademy.clients.darest.sql_api.warehouses_api import RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT, CLUSTER_SIZE_2X_SMALL
 
         lab_id = lab_id or WorkspaceHelper.get_lab_id()
         workspace_description = workspace_description or WorkspaceHelper.get_workspace_description()

@@ -1,12 +1,13 @@
 import os
 from typing import Dict, Any
-from dbacademy import common
+from dbacademy.common import Cloud, load_databricks_cfg
 from dbacademy.clients import darest
-from dbacademy.clients.darest import accounts
+from dbacademy.clients.darest import accounts_client
 
-accounts = accounts.from_args_aws(account_id=os.environ.get("WORKSPACE_SETUP_CURR_ACCOUNT_ID"),
-                                  username=os.environ.get("WORKSPACE_SETUP_CURR_USERNAME"),
-                                  password=os.environ.get("WORKSPACE_SETUP_CURR_PASSWORD"))
+accounts = accounts_client.from_args(cloud=Cloud.AWS,
+                                     account_id=os.environ.get("WORKSPACE_SETUP_CURR_ACCOUNT_ID"),
+                                     username=os.environ.get("WORKSPACE_SETUP_CURR_USERNAME"),
+                                     password=os.environ.get("WORKSPACE_SETUP_CURR_PASSWORD"))
 
 config_file = r"c:\users\JacobParr\.databrickscfg"
 
@@ -34,7 +35,7 @@ def add_to_participants(_user: Dict[str, Any]):
 
 
 environment = "dev-aws"
-configs = common.load_databricks_cfg(config_file)
+configs = load_databricks_cfg(config_file)
 token = configs.get(environment).get("token")
 endpoint = configs.get(environment).get("host")
 

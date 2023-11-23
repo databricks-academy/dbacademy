@@ -3,54 +3,54 @@ __all__ = ["DBAcademyRestClient", "from_args", "from_workspace", "from_auth_head
 from typing import Optional
 from dbacademy.clients.rest.common import ApiClient
 from dbacademy.clients import ClientErrorHandler
-
-from dbacademy.clients.darest.secrets import SecretsClient
-from dbacademy.clients.darest.clusters.cluster_client_class import ClustersClient
-from dbacademy.clients.darest.cluster_policies import ClustersPolicyClient
-from dbacademy.clients.darest.instance_pools import InstancePoolsClient
-from dbacademy.clients.darest.jobs.jobs_client_class import JobsClient
-from dbacademy.clients.darest.ml import MlClient
-from dbacademy.clients.darest.permissions import Permissions
-from dbacademy.clients.darest.pipelines import PipelinesClient
-from dbacademy.clients.darest.repos import ReposClient
-from dbacademy.clients.darest.runs import RunsClient
-from dbacademy.clients.darest.scim import ScimClient
-from dbacademy.clients.darest.sql import SqlClient
-from dbacademy.clients.darest.tokens import TokensClient
-from dbacademy.clients.darest.token_management import TokenManagementClient
-from dbacademy.clients.darest.uc import UcApi
-from dbacademy.clients.darest.workspace import WorkspaceClient
-from dbacademy.clients.darest.workspace_config import WorkspaceConfigClient
-from dbacademy.clients.darest.serving_endpoints import ServingEndpointsApi
+from dbacademy.clients.darest.secrets_api import SecretsApi
+from dbacademy.clients.darest.clusters_api import ClustersApi
+from dbacademy.clients.darest.cluster_policies_api import ClustersPolicyApi
+from dbacademy.clients.darest.instance_pools_api import InstancePoolsApi
+from dbacademy.clients.darest.jobs_api import JobsApi
+from dbacademy.clients.darest.ml_api import MlApi
+from dbacademy.clients.darest.permissions_api import PermissionsApi
+from dbacademy.clients.darest.pipelines_api import PipelinesApi
+from dbacademy.clients.darest.repos_api import ReposApi
+from dbacademy.clients.darest.runs_api import RunsApi
+from dbacademy.clients.darest.scim_api import ScimApi
+from dbacademy.clients.darest.sql_api import SqlApi
+from dbacademy.clients.darest.tokens_api import TokensApi
+from dbacademy.clients.darest.token_management_api import TokenManagementApi
+from dbacademy.clients.darest.uc_api import UcApi
+from dbacademy.clients.darest.workspace_api import WorkspaceApi
+from dbacademy.clients.darest.workspace_config_api import WorkspaceConfigApi
+from dbacademy.clients.darest.serving_endpoints_api import ServingEndpointsApi
 
 
 # noinspection PyPep8Naming
 class Constants:
+
     def __init__(self):
         pass
 
     @property
-    def DEFAULT_SCOPE(self):
+    def DEFAULT_SCOPE(self) -> str:
         return "DBACADEMY"
 
     @property
-    def AUTH_HEADER(self):
+    def AUTH_HEADER(self) -> str:
         return "AUTH_HEADER"
 
     @property
-    def TOKEN(self):
+    def TOKEN(self) -> str:
         return "TOKEN"
 
     @property
-    def ENDPOINT(self):
+    def ENDPOINT(self) -> str:
         return "ENDPOINT"
 
     @property
-    def USERNAME(self):
+    def USERNAME(self) -> str:
         return "USERNAME"
 
     @property
-    def PASSWORD(self):
+    def PASSWORD(self) -> str:
         return "PASSWORD"
 
 
@@ -114,76 +114,76 @@ class DBAcademyRestClient(ApiClient):
                          error_handler=error_handler)
 
     @property
-    def clusters(self) -> ClustersClient:
-        return ClustersClient(self)
+    def clusters(self) -> ClustersApi:
+        return ClustersApi(self)
 
     @property
-    def cluster_policies(self) -> ClustersPolicyClient:
-        return ClustersPolicyClient(self)
+    def cluster_policies(self) -> ClustersPolicyApi:
+        return ClustersPolicyApi(self)
 
     @property
-    def instance_pools(self) -> InstancePoolsClient:
-        return InstancePoolsClient(self)
+    def instance_pools(self) -> InstancePoolsApi:
+        return InstancePoolsApi(self)
 
     @property
-    def jobs(self) -> JobsClient:
-        return JobsClient(self)
+    def jobs(self) -> JobsApi:
+        return JobsApi(self)
 
     @property
-    def ml(self) -> MlClient:
-        return MlClient(self)
+    def ml(self) -> MlApi:
+        return MlApi(self)
 
     @property
-    def permissions(self) -> Permissions:
-        return Permissions(self)
+    def permissions(self) -> PermissionsApi:
+        return PermissionsApi(self)
 
     @property
-    def pipelines(self) -> PipelinesClient:
-        return PipelinesClient(self)
+    def pipelines(self) -> PipelinesApi:
+        return PipelinesApi(self)
 
     @property
-    def repos(self) -> ReposClient:
-        return ReposClient(self)
+    def repos(self) -> ReposApi:
+        return ReposApi(self)
 
     @property
-    def runs(self) -> RunsClient:
-        return RunsClient(self)
+    def runs(self) -> RunsApi:
+        return RunsApi(self)
 
     @property
-    def scim(self) -> ScimClient:
-        return ScimClient(self)
+    def scim(self) -> ScimApi:
+        return ScimApi(self)
 
     @property
-    def sql(self) -> SqlClient:
-        return SqlClient(self)
+    def sql(self) -> SqlApi:
+        return SqlApi(self)
 
     @property
-    def tokens(self) -> TokensClient:
-        return TokensClient(self)
+    def tokens(self) -> TokensApi:
+        return TokensApi(self)
 
     @property
-    def token_management(self) -> TokenManagementClient:
-        return TokenManagementClient(self)
+    def token_management(self) -> TokenManagementApi:
+        return TokenManagementApi(self)
 
     @property
     def uc(self) -> UcApi:
         return UcApi(self)
 
     @property
-    def workspace(self) -> WorkspaceClient:
-        return WorkspaceClient(self)
+    def workspace(self) -> WorkspaceApi:
+        return WorkspaceApi(self)
 
     @property
-    def workspace_config(self) -> WorkspaceConfigClient:
-        return WorkspaceConfigClient(self)
+    def workspace_config(self) -> WorkspaceConfigApi:
+        return WorkspaceConfigApi(self)
 
     @property
     def serving_endpoints(self) -> ServingEndpointsApi:
         return ServingEndpointsApi(self)
 
     @property
-    def secrets(self) -> SecretsClient:
-        return SecretsClient(self)
+    def secrets(self) -> SecretsApi:
+        return SecretsApi(self)
 
 
 # def none_reference() -> Optional[DBAcademyRestClient]:
@@ -275,8 +275,9 @@ def from_auth_header(*,
 
 
 def from_client(client: ApiClient) -> DBAcademyRestClient:
+    from dbacademy.common import validate
 
-    return from_args(client=client,
+    return from_args(client=validate(client=client).required.as_type(ApiClient),
                      # Common parameters
                      verbose=client.verbose,
                      throttle_seconds=client.throttle_seconds,

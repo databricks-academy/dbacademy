@@ -120,8 +120,8 @@ class TestSuite:
             self.client.jobs.delete_by_name(job_names=self.get_all_job_names(), success_only=True)
 
     def create_test_job(self, *, job_name: str, notebook_path: str, policy_id: str = None):
-        from dbacademy.clients.darest.jobs.job_config_classes import JobConfig
-        from dbacademy.clients.darest.clusters.cluster_config_class import JobClusterConfig
+        from dbacademy.clients.darest.jobs_api.job_config import JobConfig
+        from dbacademy.clients.darest.clusters_api.cluster_config import JobClusterConfig
         from dbacademy.common import Cloud
 
         self.build_config.spark_conf["dbacademy.smoke-test"] = "true"

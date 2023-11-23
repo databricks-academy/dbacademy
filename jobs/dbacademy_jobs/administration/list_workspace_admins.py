@@ -1,14 +1,15 @@
 import os
-from dbacademy import common
+from dbacademy.common import load_databricks_cfg, Cloud
 from dbacademy.clients import darest
-from dbacademy.clients.darest import accounts
+from dbacademy.clients.darest import accounts_client
 
-accounts = accounts.from_args_aws(account_id=os.environ.get("WORKSPACE_SETUP_CURR_ACCOUNT_ID"),
-                                  username=os.environ.get("WORKSPACE_SETUP_CURR_USERNAME"),
-                                  password=os.environ.get("WORKSPACE_SETUP_CURR_PASSWORD"))
+accounts = accounts_client.from_args(cloud=Cloud.AWS,
+                                     account_id=os.environ.get("WORKSPACE_SETUP_CURR_ACCOUNT_ID"),
+                                     username=os.environ.get("WORKSPACE_SETUP_CURR_USERNAME"),
+                                     password=os.environ.get("WORKSPACE_SETUP_CURR_PASSWORD"))
 
 environment = "dev-aws"
-configs = common.load_databricks_cfg(r"c:\users\JacobParr\.databrickscfg")
+configs = load_databricks_cfg(r"c:\users\JacobParr\.databrickscfg")
 token = configs.get(environment).get("token")
 endpoint = configs.get(environment).get("host")
 client = darest.from_token(token=token, endpoint=endpoint)

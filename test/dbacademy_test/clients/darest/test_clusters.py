@@ -2,15 +2,15 @@ __al__ = ["TestClusters"]
 
 import time, json, unittest
 from dbacademy.common import Cloud
-from dbacademy.clients import darest
-from dbacademy.clients.darest.clusters.cluster_config_class import ClusterConfig, Availability
+from dbacademy.clients.darest import from_token
+from dbacademy.clients.darest.clusters_api.cluster_config import ClusterConfig, Availability
 from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS, UNIT_TEST_SERVICE_PRINCIPLE
 
 
 class TestClusters(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.__client = darest.from_token(scope=DBACADEMY_UNIT_TESTS)
+        self.__client = from_token(scope=DBACADEMY_UNIT_TESTS)
         self.tearDown()
 
     def tearDown(self) -> None:

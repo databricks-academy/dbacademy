@@ -1,14 +1,16 @@
 import os
 
-from dbacademy.clients.darest import accounts
+from dbacademy.common import Cloud
+from dbacademy.clients.darest import accounts_client
 
 account_id = os.environ.get("WORKSPACE_SETUP_CURR_ACCOUNT_ID")
 username = os.environ.get("WORKSPACE_SETUP_CURR_USERNAME")
 password = os.environ.get("WORKSPACE_SETUP_CURR_PASSWORD")
 
-accounts = accounts.from_args_aws(account_id=account_id,
-                                  username=username,
-                                  password=password)
+accounts = accounts_client.from_args(cloud=Cloud.AWS,
+                                     account_id=account_id,
+                                     username=username,
+                                     password=password)
 
 for i in range(0, 250+1):
     username = f"class+{i:03d}@databricks.com"

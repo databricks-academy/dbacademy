@@ -76,8 +76,8 @@ class DatabricksApi(dict, ApiClient):
         from dbacademy.clients.dougrest.workspace import Workspace
         self.workspace = Workspace(self)
 
-        from dbacademy.clients.darest.permissions import Permissions
+        from dbacademy.clients.darest.permissions_api import PermissionsApi
         from dbacademy.clients import darest
 
         dbrest_client = darest.from_client(client=self)
-        self.permissions = Permissions(client=dbrest_client)
+        self.permissions = PermissionsApi(client=dbrest_client)

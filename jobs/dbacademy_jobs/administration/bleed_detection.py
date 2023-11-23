@@ -51,7 +51,8 @@ class Result:
 
 class Watchdog:
     def __init__(self):
-        from dbacademy.clients.darest import accounts
+        from dbacademy.common import Cloud
+        from dbacademy.clients.darest import accounts_client
 
         self.__results: List[Result] = list()
 
@@ -61,9 +62,10 @@ class Watchdog:
         self.__username = os.environ.get("WORKSPACE_SETUP_PROSVC_USERNAME")
         self.__password = os.environ.get("WORKSPACE_SETUP_PROSVC_PASSWORD")
 
-        self.accounts_client = accounts.from_args_aws(account_id=os.environ.get("WORKSPACE_SETUP_PROSVC_ACCOUNT_ID"),
-                                                      username=self.username,
-                                                      password=self.password)
+        self.accounts_client = accounts_client.from_args(cloud=Cloud.AWS,
+                                                         account_id=os.environ.get("WORKSPACE_SETUP_PROSVC_ACCOUNT_ID"),
+                                                         username=self.username,
+                                                         password=self.password)
 
     @property
     def username(self) -> str:
