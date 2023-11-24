@@ -88,6 +88,10 @@ class AbstractValidator(ABC):
         pass
 
     @abstractmethod
+    def tuple(self, element_type: Type[ElementType], *and_types: Type[ElementType]) -> tuple:
+        pass
+
+    @abstractmethod
     def iterable(self, element_type: Type[ElementType]) -> Iterable[ElementType]:
         pass
 
@@ -169,7 +173,9 @@ class Validator(AbstractValidator):
         return self
 
     def as_one_of(self, parameter_type: Type[ParameterType], value: Any, *or_values: Any) -> ParameterType:
-        self.__validate_value_type(parameter_type)
+        self.__validate_value_type(parameter_name=self.parameter_name,
+                                   parameter_value=self.parameter_value,
+                                   parameter_types=[parameter_type])
 
         expected_values = list()
 
@@ -194,7 +200,14 @@ class Validator(AbstractValidator):
         return self.parameter_value
 
     def as_type(self, parameter_type: Type[ParameterType], *or_type: Type) -> ParameterType:
-        self.__validate_value_type(parameter_type, *or_type)
+        parameter_types = list()
+        parameter_types.append(parameter_type)
+        parameter_types.extend(or_type)
+
+        self.__validate_value_type(parameter_name=self.parameter_name,
+                                   parameter_value=self.parameter_value,
+                                   parameter_types=parameter_types)
+
         return self.parameter_value
 
     def enum(self, enum_type: Type[ParameterType], auto_convert: bool = False) -> ParameterType:
@@ -217,17 +230,26 @@ class Validator(AbstractValidator):
             message = f"""{E_TYPE} | Cannot convert the value "{self.parameter_value}" of type {type(self.parameter_value)} to {enum_type}."""
             self.__validate(passed=isinstance(self.parameter_value, enum_type), message=message)
 
-        self.__validate_value_type(enum_type)
+        self.__validate_value_type(parameter_name=self.parameter_name,
+                                   parameter_value=self.parameter_value,
+                                   parameter_types=[enum_type])
+
         return self.parameter_value
 
     def number(self, min_value: Optional[numbers.Number] = None, max_value: Optional[numbers.Number] = None) -> numbers.Number:
-        self.__validate_value_type(numbers.Number)
+        self.__validate_value_type(parameter_name=self.parameter_name,
+                                   parameter_value=self.parameter_value,
+                                   parameter_types=[numbers.Number])
+
         self.__validate_min_value(min_value=min_value)
         self.__validate_max_value(max_value=max_value)
         return self.parameter_value
 
     def int(self, min_value: Optional[int] = None, max_value: Optional[int] = None) -> int:
-        self.__validate_value_type(int)
+        self.__validate_value_type(parameter_name=self.parameter_name,
+                                   parameter_value=self.parameter_value,
+                                   parameter_types=[int])
+
         self.__validate_min_value(min_value=min_value)
         self.__validate_max_value(max_value=max_value)
         return self.parameter_value
@@ -237,17 +259,54 @@ class Validator(AbstractValidator):
         if isinstance(self.parameter_value, int):
             self.parameter_value = float(self.parameter_value)
 
-        self.__validate_value_type(float)
+        self.__validate_value_type(parameter_name=self.parameter_name,
+                                   parameter_value=self.parameter_value,
+                                   parameter_types=[float])
+
         self.__validate_min_value(min_value=min_value)
         self.__validate_max_value(max_value=max_value)
         return self.parameter_value
 
     def bool(self) -> bool:
-        self.__validate_value_type(bool)
+        self.__validate_value_type(parameter_name=self.parameter_name,
+                                   parameter_value=self.parameter_value,
+                                   parameter_types=[bool])
         return self.parameter_value
 
     def str(self, *, min_length: int = 0) -> str:
         return self.__validate_collection(parameter_type=str, key_type=Any, element_type=str, min_length=min_length)
+
+    def tuple(self, element_types: Union[Type, List[Type]], *and_types: Type) -> tuple:
+        self.__validate_value_type(parameter_name=self.parameter_name,
+                                   parameter_value=self.parameter_value,
+                                   parameter_types=[tuple])
+
+        # Start with an empty list.
+        all_element_types = list()
+        if isinstance(element_types, list):
+            # If we were handed a list, extend the all_elements.
+            all_element_types.extend(element_types)
+        else:
+            # Otherwise, assume it's a single type and append it.
+            all_element_types.append(element_types)
+        # Lastly, add all the other types from the variable length and_types.
+        all_element_types.extend(and_types)
+
+        for i, element_type in enumerate(all_element_types):
+            # Make sure each instances is actually a valid type.
+            self.__validate_data_type(name=f"""element_types[{i}]""", data_type=element_type)
+
+        actual_length = len(self.parameter_value)
+        expected_length = len(all_element_types)
+        message = f"""{E_ONE_OF} | The parameter '{self.parameter_name}' must have {expected_length} elements, found {actual_length}."""
+        self.__validate(passed=actual_length == expected_length, message=message)
+
+        for i, element_type in enumerate(all_element_types):
+            self.__validate_value_type(parameter_name=f"{self.parameter_name}[{i}]",
+                                       parameter_value=self.parameter_value[i],
+                                       parameter_types=[element_type])
+
+        return self.parameter_value
 
     def iterable(self, element_type: Type[ElementType]) -> Iterable[ElementType]:
         return self.__validate_collection(parameter_type=Iterable, key_type=Any, element_type=element_type, min_length=0)
@@ -309,28 +368,39 @@ class Validator(AbstractValidator):
             message = f"""{E_MAX_V} | The parameter '{self.parameter_name}' must have a maximum value of '{max_value}', found '{self.parameter_value}'."""
             self.__validate(passed=self.parameter_value <= max_value, message=message)
 
-    def __validate_value_type(self, _parameter_type: Type, *or_type: Type):
-        self.__validate_data_type("parameter_type", _parameter_type)
-        for i, t in enumerate(or_type):
-            self.__validate_data_type(f"or_types[{i}]", or_type[i])
+    def __validate_value_type(self, *, parameter_name: str = None, parameter_value: Any = None, parameter_types: List[Type]):
 
-        all_types = [_parameter_type]
-        all_types.extend(list(or_type))
+        for i, parameter_type in enumerate(parameter_types):
+            name = f"parameter_type" if len(parameter_types) == 1 else f"parameter_type[{i}]"
+            self.__validate_data_type(name, parameter_type)
 
-        if self.parameter_value is not None:
+        if parameter_value is not None:
             passed = False
-            for t in all_types:
-                is_of_type = isinstance(self.parameter_value, t)
+            for t in parameter_types:
+                ts = str(t)
+                if ts.startswith("typing.") and ts.endswith("]"):
+                    if ts.startswith(f"{List}[") and ts.endswith("]"):
+                        t = List  # This is a generic list, as in, List[str]; convert to List
+                    elif ts.startswith(f"{Set}[") and ts.endswith("]"):
+                        t = Set  # This is a generic set, as in, Set[str]; convert to Set
+                    elif ts.startswith(f"{Dict}[") and ts.endswith("]"):
+                        t = Dict  # This is a generic dictionary, as in, Dict[str, Any]; convert to Dict
+                    elif ts.startswith(f"{Tuple}[") and ts.endswith("]"):
+                        t = Tuple  # This is a generic dictionary, as in, Dict[str, Any]; convert to Dict
+                    else:
+                        raise NotImplementedError(f"""Conversion from generic type "{ts}" to a supported type is not implemented.""")
+
+                is_of_type = isinstance(parameter_value, t)
                 passed = passed or is_of_type
 
             if not passed:
-                last_type = all_types.pop()
-                expected_types = ", ".join([str(t) for t in all_types])
+                last_type = parameter_types.pop()
+                expected_types = ", ".join([str(t) for t in parameter_types])
                 if len(expected_types) > 0:
                     expected_types += " or "
                 expected_types += str(last_type)
 
-                message = f"""{E_TYPE} | Expected the parameter '{self.parameter_name}' to be of type {expected_types}, found {type(self.parameter_value)}."""
+                message = f"""{E_TYPE} | Expected the parameter '{parameter_name}' to be of type {expected_types}, found {type(parameter_value)}."""
                 self.__validate(passed=passed, message=message)
 
     def __validate_collection(self, *, parameter_type: Type[CollectionType], key_type: Type[KeyType], element_type: Type[ElementType], min_length: int = 0) -> CollectionType:
@@ -338,7 +408,7 @@ class Validator(AbstractValidator):
         self.__validate_data_type("key_type", key_type)
         self.__validate_data_type("element_type", element_type)
 
-        self.__validate_value_type(parameter_type)
+        self.__validate_value_type(parameter_name=self.parameter_name, parameter_value=self.parameter_value, parameter_types=[parameter_type])
 
         self.__validate_collection_of_type(parameter_type=parameter_type,
                                            key_type=key_type,

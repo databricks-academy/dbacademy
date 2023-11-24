@@ -2,7 +2,7 @@ __all__ = ["ValidateTests"]
 
 import numbers
 import unittest
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Any, Tuple
 from dbacademy.common import validate, ValidationError
 
 EXPECTED_ASSERTION_ERROR = "Expected AssertionError"
@@ -158,6 +158,38 @@ class ValidateTests(unittest.TestCase):
             self.fail(EXPECTED_ASSERTION_ERROR)
         except ValidationError as e:
             self.assertEqual("""Error-Min-Len | The parameter 'value' must have a minimum length of 5, found 4.""", e.message)
+
+    def test_tuple_value(self):
+        value: Tuple = validate(value=("asdf",)).tuple(str)
+        self.assertEqual(("asdf",), value)
+
+        value: Tuple = validate(value=("asdf", 1, 2.0, False)).tuple(str, int, float, bool)
+        self.assertEqual(("asdf", 1, 2.0, False), value)
+
+        try:
+            validate(value=["asdf", 1, 2.0, False]).tuple(str, int, float, bool)
+            self.fail(EXPECTED_ASSERTION_ERROR)
+        except ValidationError as e:
+            self.assertEqual("""Error-Type | Expected the parameter 'value' to be of type <class 'tuple'>, found <class 'list'>.""", e.message)
+
+        try:
+            validate(value=("asdf", 1, 2.0, False)).tuple("str", int, float, bool)
+            self.fail(EXPECTED_ASSERTION_ERROR)
+        except ValidationError as e:
+            self.assertEqual("""Error-Internal | Expected Validator.__validate_data_type(..)'s parameter 'element_types[0]' to be a python "type", found <class 'str'>.""", e.message)
+
+        try:
+            validate(value=("asdf", 1, 2.0, False)).tuple(str, int, False, bool)
+            self.fail(EXPECTED_ASSERTION_ERROR)
+        except ValidationError as e:
+            self.assertEqual("""Error-Internal | Expected Validator.__validate_data_type(..)'s parameter 'element_types[2]' to be a python "type", found <class 'bool'>.""", e.message)
+
+        try:
+            validate(value=("asdf", 1, 2.0, False)).tuple(str, str, float, bool)
+            self.fail(EXPECTED_ASSERTION_ERROR)
+        except ValidationError as e:
+            # self.assertEqual("""Element-Type | Expected element 2 of 'value' to be of type <class 'str'>, found "1" of type <class 'int'>.""", e.message)
+            self.assertEqual("""Error-Type | Expected the parameter 'value[1]' to be of type <class 'str'>, found <class 'int'>.""", e.message)
 
     def test_int_value(self):
         value = validate(value=None).int()
@@ -451,6 +483,12 @@ class ValidateTests(unittest.TestCase):
         except ValidationError as e:
             self.assertEqual("""Error-Min-Len | The parameter 'value' must have a minimum length of 5, found 4.""", e.message)
 
+        try:
+            validate(value=["a", "b", 1, "d"]).list(str)
+            self.fail(EXPECTED_ASSERTION_ERROR)
+        except ValidationError as e:
+            self.assertEqual("""Element-Type | Expected element 2 of 'value' to be of type <class 'str'>, found "1" of type <class 'int'>.""", e.message)
+
     def test_dict_value(self):
         values: Dict[str, int] = validate(value={"a": 1, "b": 2, "c": 3, "d": 4}).dict(str, min_length=0)
         self.assertEqual(dict, type(values))
@@ -620,6 +658,36 @@ class ValidateTests(unittest.TestCase):
             self.assertEqual(expected, values)
         except ValidationError as e:
             self.assertEqual("""Element-Type | Expected the entry for key "2" of 'some_dict' to be of type <class 'str'>, found the type <class 'int'>.""", e.message)
+
+    def test_generic_types(self):
+
+        values: List[str] = validate(value=["a", "b", "c", "d"]).list(str)
+        self.assertEqual(["a", "b", "c", "d"], values)
+
+        values: List[str] = validate(value=["a", "b", "c", "d"]).as_type(list)
+        self.assertEqual(["a", "b", "c", "d"], values)
+
+        values: List[str] = validate(value=["a", "b", "c", "d"]).as_type(List)
+        self.assertEqual(["a", "b", "c", "d"], values)
+
+        values: List[str] = validate(value=["a", "b", "c", "d"]).as_type(List[str])
+        self.assertEqual(["a", "b", "c", "d"], values)
+
+        values: Set[str] = validate(value={"a", "b", "a", "b"}).as_type(Set[str])
+        self.assertEqual({"a", "b"}, values)
+
+        # noinspection PyDictDuplicateKeys
+        values: Dict[str] = validate(value={"1": "one", "2": "two", "3": "three", "3": "four"}).as_type(Dict[str, Any])
+        self.assertEqual({"1": "one", "2": "two", "3": "four"}, values)
+
+        values: Tuple[int, str, bool] = validate(value=(1, "one", True)).as_type(Tuple[int, str, bool])
+        self.assertEqual((1, "one", True), values)
+
+        try:
+            values: List[str] = validate(value=["a", "b", "c", "d"]).as_type(List[str])
+            self.assertEqual(4, len(values))
+        except TypeError as e:
+            self.assertEqual("Subscripted generics cannot be used with class and instance checks", e.args[0])
 
 
 if __name__ == '__main__':
