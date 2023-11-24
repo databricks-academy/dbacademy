@@ -35,8 +35,8 @@ class ValidationError(Exception):
 
 class AbstractValidator(ABC):
 
-    def __init__(self, parameter_name_override: str = None, **kwargs):
-        self.__parameter_name: str = parameter_name_override or list(kwargs)[0]
+    def __init__(self, **kwargs):
+        self.__parameter_name: str = list(kwargs)[0]
         self.__parameter_value: Any = kwargs.get(self.__parameter_name)
 
     @property
@@ -44,12 +44,16 @@ class AbstractValidator(ABC):
         return self.__parameter_value
 
     @parameter_value.setter
-    def parameter_value(self, value):
+    def parameter_value(self, value) -> None:
         self.__parameter_value = value
 
     @property
     def parameter_name(self) -> str:
         return self.__parameter_name
+
+    @parameter_name.setter
+    def parameter_name(self, parameter_name: str) -> None:
+        self.__parameter_name = parameter_name
 
     @abstractmethod
     def as_one_of(self, parameter_type: Type[ParameterType], value: Any, *or_values: Any) -> ParameterType:
@@ -102,7 +106,7 @@ class AbstractValidator(ABC):
 
 class Validator(AbstractValidator):
 
-    def __init__(self, parameter_name_override: str = None, **kwargs):
+    def __init__(self, **kwargs):
         """
         Creates an instance of a validator relying on kwargs to specify both the parameter_name, and it's value.
         In cases where the parameter name needs to be specified dynamically (e.g. when loaded from a dictionary), the parameter name can be specified directly via parameter_name_override.
@@ -126,12 +130,42 @@ class Validator(AbstractValidator):
         message = f"{E_INTERNAL} | {self.__class__.__name__}.{inspect.stack()[0].function}(..) expects one and only one parameter, found {len(kwargs)}."
         self.__validate(passed=len(kwargs) == 1, message=message)
 
-        super().__init__(parameter_name_override=parameter_name_override, **kwargs)
+        super().__init__(**kwargs)
 
     @property
     def required(self) -> AbstractValidator:
-        message = f"""{E_NOT_NONE} | The parameter '{self.parameter_name}' must be specified."""
-        self.__validate(passed=self.parameter_value is not None, message=message)
+        """
+        Tests to make sure that the value provided to the validator is required, or more specifically, is non-None.
+        :return: AbstractValidator
+        """
+        return self.args(required=True)
+
+    @property
+    def optional(self) -> AbstractValidator:
+        """
+        This operation performs no action and is provided for symmetry with the class's required property and for general readability.
+        :return: AbstractValidator
+        """
+        return self
+
+    def args(self, *, parameter_name: Optional[str] = None, required: Optional[bool] = None) -> AbstractValidator:
+        """
+        Provides access to uncommon operations like overriding the name of the parameter that was dynamically determine when the Validator was created.
+        :param parameter_name: An alternative property name to be used in the generation of error messages.
+        :param required: see the required property of this class.
+        :return: AbstractValidator
+        """
+
+        if parameter_name is not None:
+            message = f"""{E_INTERNAL} | Expected {self.__class__.__name__}.{inspect.stack()[0].function}(..)'s parameter 'parameter_name' to be of type str, found {type(parameter_name)}."""
+            self.__validate(passed=isinstance(parameter_name, str), message=message)
+
+            self.parameter_name = parameter_name
+
+        if required is True:
+            message = f"""{E_NOT_NONE} | The parameter '{self.parameter_name}' must be specified."""
+            self.__validate(passed=self.parameter_value is not None, message=message)
+
         return self
 
     def as_one_of(self, parameter_type: Type[ParameterType], value: Any, *or_values: Any) -> ParameterType:
