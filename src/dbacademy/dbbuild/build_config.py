@@ -750,10 +750,7 @@ def __load_from_dict(*, config: Dict[str, Any], name: str, value: ParameterType,
     else:
         value = config[name]
         del config[name]  # Delete the entry for later validation.
-        print(f"""Using value from config: {name} = {value}""")
-        return_value = validate(value=value).args(parameter_name=name).as_type(expected_type)
-        print(f"""   {return_value}""")
-        return return_value
+        return validate(value=value).args(parameter_name=name).as_type(expected_type)
 
 
 def load_build_config(build_config_file_path: str, *, version: str,
