@@ -173,12 +173,14 @@ class ValidateTests(unittest.TestCase):
             self.assertEqual("""Error-Type | Expected the parameter 'value' to be of type <class 'tuple'>, found <class 'list'>.""", e.message)
 
         try:
+            # noinspection PyTypeChecker
             validate(value=("asdf", 1, 2.0, False)).tuple("str", int, float, bool)
             self.fail(EXPECTED_ASSERTION_ERROR)
         except ValidationError as e:
             self.assertEqual("""Error-Internal | Expected Validator.__validate_data_type(..)'s parameter 'element_types[0]' to be a python "type", found <class 'str'>.""", e.message)
 
         try:
+            # noinspection PyTypeChecker
             validate(value=("asdf", 1, 2.0, False)).tuple(str, int, False, bool)
             self.fail(EXPECTED_ASSERTION_ERROR)
         except ValidationError as e:
