@@ -745,7 +745,6 @@ def __load_from_dict(*, config: Dict[str, Any], name: str, value: ParameterType,
         raise ValueError(f"""The BuildConfig parameter "{name}" was specified at runtime ({value}) and in the build-config file ({other}); one of the two references must be removed.""")
 
     if name not in config:
-        print(f"""Using default value: {name} = {value}""")
         return value
     else:
         value = config[name]
@@ -776,7 +775,7 @@ def load_build_config(build_config_file_path: str, *, version: str,
                       white_list: Optional[List[str]] = None,
                       black_list: Optional[List[str]] = None,
                       notebook_configs: Dict[str, Any] = None,
-                      _print_warning: bool = False) -> BuildConfig:
+                      _print_warning: bool = True) -> BuildConfig:
     """
     Creates an instance of BuildConfig by initializing values from the specified json file, build_config_file_path.
     WARNING: This method is deprecated as it relies on JSON config files which are hard to document and validate; Please use the BuildConfig(..) constructor instead.
