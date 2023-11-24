@@ -274,8 +274,6 @@ class Validator(AbstractValidator):
         return self.__validate_collection(parameter_type=dict, key_type=key_type, element_type=element_type, min_length=min_length)
 
     def __validate_data_type(self, name: str, data_type: Type) -> None:
-        import typing
-
         message = f"""{E_INTERNAL} | Expected {self.__class__.__name__}.{inspect.stack()[0].function}(..)'s parameter '{name}' to be specified."""
         self.__validate(passed=data_type is not None, message=message)
 

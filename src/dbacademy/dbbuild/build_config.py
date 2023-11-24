@@ -125,10 +125,6 @@ class BuildConfig:
                  white_list: List[str] = None,
                  black_list: List[str] = None):
 
-        print("=" * 100)
-        print(f"Name 2: {name}")
-        print("=" * 100)
-
         import uuid
         import time
         from dbacademy import dbgems
@@ -829,10 +825,6 @@ def load_build_config(build_config_file_path: str, *, version: str,
     else:
         publish_only: Dict[str, List[str]] = config.get("publish_only")
         del config["publish_only"]  # Delete the entry for later validation.
-
-    print("="*100)
-    print(f"Name 1: {name}")
-    print("="*100)
 
     bc = BuildConfig(version=version,
                      client=client,
