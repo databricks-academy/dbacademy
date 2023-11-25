@@ -9,7 +9,19 @@ from dbacademy.clients.dbrest import DBAcademyRestClient
 
 class ArtifactValidator:
 
-    def __init__(self, *, build_name: str, version: str, core_version: str, client: DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str, translation: Translation, i18n: bool, common_language: str) -> None:
+    def __init__(self, *,
+                 build_name: str,
+                 version: str,
+                 core_version: str,
+                 client: DBAcademyRestClient,
+                 target_repo_url: str,
+                 temp_repo_dir: str,
+                 temp_work_dir: str,
+                 username: str,
+                 translation: Translation,
+                 i18n: bool,
+                 common_language: str) -> None:
+
         from dbacademy.common import validate
         from dbacademy.dbbuild.publish.publishing_info import Translation
 
@@ -44,7 +56,7 @@ class ArtifactValidator:
         suite.display_results()
         assert suite.passed, f"One or more problems were found."
 
-    def __validate_distribution_dbc(self) -> True:
+    def __validate_distribution_dbc(self) -> bool:
         from dbacademy import dbgems
 
         file_name = f"v{self.version}-PENDING/{self.build_name}.dbc"
@@ -61,7 +73,7 @@ class ArtifactValidator:
 
         return True
 
-    def __validate_git_releases_dbc(self, version=None) -> bool:
+    def __validate_git_releases_dbc(self, version: Optional[str] = None) -> bool:
         print()
         print("Validating the DBC in GitHub's Releases page:")
 
@@ -72,7 +84,7 @@ class ArtifactValidator:
 
         return self.__validate_dbc(version=version, dbc_url=dbc_url)
 
-    def __validate_dbc(self, version=None, dbc_url=None) -> bool:
+    def __validate_dbc(self, version: Optional[str] = None, dbc_url: Optional[str] = None) -> bool:
         from dbacademy import dbgems
 
         version = version or self.version
@@ -91,7 +103,7 @@ class ArtifactValidator:
 
         return self.__validate_version_info(version=version, dbc_dir=dbc_target_dir)
 
-    def __validate_version_info(self, *, version: str, dbc_dir: str) -> bool:
+    def __validate_version_info(self, *, version: Optional[str], dbc_dir: str) -> bool:
         version = version or self.version
 
         version_info_path = f"{dbc_dir}/Version Info"

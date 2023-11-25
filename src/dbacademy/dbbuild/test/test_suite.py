@@ -1,21 +1,15 @@
 __all__ = ["TestSuite"]
 
-from typing import Any, Dict, List, Literal
+from typing import Any, Dict, List
+from dbacademy.dbbuild.test import TESTS_TYPES
 from dbacademy.clients.dbrest import DBAcademyRestClient
 from dbacademy.dbbuild.build_config import BuildConfig
 from dbacademy.dbbuild.test.test_instance import TestInstance
 
+from dbacademy.dbbuild.test import TestType
+
 
 class TestSuite:
-
-    TEST_TYPE_INTERACTIVE = "interactive"
-    TEST_TYPE_STOCK = "stock"
-    TEST_TYPE_PHOTON = "photon"
-    TEST_TYPE_ML = "ml"
-    TEST_TYPES = [TEST_TYPE_INTERACTIVE, TEST_TYPE_STOCK, TEST_TYPE_PHOTON, TEST_TYPE_ML]
-
-    # noinspection PyTypeHints
-    TestType = Literal[TEST_TYPE_INTERACTIVE, TEST_TYPE_STOCK, TEST_TYPE_PHOTON, TEST_TYPE_ML]
 
     def __init__(self, *,
                  build_config: BuildConfig,
@@ -41,11 +35,11 @@ class TestSuite:
         if dbgems.is_job():
             self.__test_type = dbgems.get_parameter("test_type", None)
         elif test_type is None:
-            self.__test_type = self.TEST_TYPE_INTERACTIVE
+            self.__test_type = TESTS_TYPES.INTERACTIVE
         self.__test_type = re.sub(r"[^a-zA-Z\d]", "-", self.test_type.lower())
         while "--" in self.test_type:
             self.__test_type = self.test_type.replace("--", "-")
-        assert self.test_type in self.TEST_TYPES, f"The test type is expected to be one of {self.TEST_TYPES}, found \"{test_type}\""
+        assert self.test_type in TESTS_TYPES.TYPES, f"The test type is expected to be one of {TESTS_TYPES.TYPES}, found \"{test_type}\""
 
         # Define each test_round first to make the next step full-proof
         self.__test_rounds: Dict[int, List[TestInstance]] = dict()
