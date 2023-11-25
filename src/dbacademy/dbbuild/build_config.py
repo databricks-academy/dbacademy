@@ -186,7 +186,7 @@ class BuildConfig:
                  *,
                  name: str,
                  version: str,
-                 supported_dbrs: Union[str, List[str]] = None,
+                 supported_dbrs: Union[str, List[str]],
                  spark_version: str = None,
                  cloud: str = None,
                  instance_pool_id: str = None,
@@ -225,8 +225,9 @@ class BuildConfig:
             self.__username = "mickey.mouse@disney.com"  # When unit testing
         validate(username=self.__username).required.str()
 
-        supported_dbrs = supported_dbrs if isinstance(supported_dbrs, list) else [supported_dbrs]
-        self.__supported_dbrs = validate(supported_dbrs=supported_dbrs).required.list(str)
+        supported_dbrs = validate(supported_dbrs=supported_dbrs).required.as_type(List, str)       # Make sure one of the two values was specified.
+        supported_dbrs = supported_dbrs if isinstance(supported_dbrs, list) else [supported_dbrs]  # Convert single values to a list.
+        self.__supported_dbrs = validate(supported_dbrs=supported_dbrs).required.list(str)         # Validate the entire set of supported DBRs.
 
         self.__language_options = None
         self.__ignoring = validate(ignoring=ignoring).list(str, auto_create=True)
@@ -454,7 +455,6 @@ class BuildConfig:
         if has_wip:
             print()
 
-        #     def initialize_notebooks(self, notebook_configs: Optional[Union[NotebookConfig, Dict[str, Any]]], *and_configs: NotebookConfig) -> None:
         if notebook_configs is None:
             notebook_configs = list()
 
