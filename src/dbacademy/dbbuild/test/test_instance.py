@@ -32,9 +32,17 @@ class TestInstance:
     def job_id(self) -> str:
         return self.__job_id
 
+    @job_id.setter
+    def job_id(self, job_id: str) -> None:
+        self.__job_id = job_id
+
     @property
     def run_id(self) -> str:
         return self.__run_id
+
+    @run_id.setter
+    def run_id(self, run_id: str) -> None:
+        self.__run_id = run_id
 
     @property
     def test_type(self) -> str:

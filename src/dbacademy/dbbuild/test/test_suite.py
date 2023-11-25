@@ -3,6 +3,7 @@ __all__ = ["TestSuite"]
 from typing import Any, Dict, List, Literal
 from dbacademy.clients.dbrest import DBAcademyRestClient
 from dbacademy.dbbuild.build_config import BuildConfig
+from dbacademy.dbbuild.test.test_instance import TestInstance
 
 
 class TestSuite:
@@ -47,7 +48,8 @@ class TestSuite:
         assert self.test_type in self.TEST_TYPES, f"The test type is expected to be one of {self.TEST_TYPES}, found \"{test_type}\""
 
         # Define each test_round first to make the next step full-proof
-        self.__test_rounds: Dict[int, Any] = dict()
+        self.__test_rounds: Dict[int, List[TestInstance]] = dict()
+
         for notebook in self.__build_config.notebooks.values():
             self.test_rounds[notebook.test_round] = list()
 
@@ -81,7 +83,7 @@ class TestSuite:
         return self.__test_type
 
     @property
-    def test_rounds(self) -> Dict[int, Any]:
+    def test_rounds(self) -> Dict[int, List[TestInstance]]:
         return self.__test_rounds
 
     @property
@@ -211,8 +213,9 @@ class TestSuite:
     def test_all_asynchronously(self, test_round: int, service_principal: str = None, policy_id: str = None) -> bool:
         from dbacademy import dbgems
 
-        tests = self.test_rounds[test_round]
+        assert test_round in self.test_rounds, f"""The test round {test_round} does not existing, found {self.test_rounds.keys()}."""
 
+        tests = self.test_rounds.get(test_round)
         self.send_first_message()
 
         what = "notebook" if len(tests) == 1 else "notebooks"
