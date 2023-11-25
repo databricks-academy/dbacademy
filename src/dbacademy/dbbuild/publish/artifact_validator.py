@@ -84,7 +84,7 @@ class ArtifactValidator:
 
         return self.__validate_dbc(version=version, dbc_url=dbc_url)
 
-    def __validate_dbc(self, version: Optional[str] = None, dbc_url: Optional[str] = None) -> bool:
+    def __validate_dbc(self, version: Optional[str] = None, dbc_url: str = None) -> bool:
         from dbacademy import dbgems
 
         version = version or self.version

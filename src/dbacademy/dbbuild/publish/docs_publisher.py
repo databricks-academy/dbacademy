@@ -1,7 +1,7 @@
 __all__ = ["DocsPublisher"]
 
 import io
-from typing import Dict
+from typing import Dict, Optional, Tuple
 from dbacademy.dbbuild.publish.publishing_info import Translation
 
 
@@ -14,10 +14,6 @@ class DocsPublisher:
         self.__version = version
         self.__pdfs = dict()
         self.__google_client = google.from_workspace()
-
-    # @property
-    # def google_client(self) -> GoogleClient:
-    #     return self.__google_client
 
     @property
     def translation(self) -> Translation:
@@ -35,7 +31,7 @@ class DocsPublisher:
         file_name = self.__google_client.drive.to_file_name(file)
         return f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{version}-PENDING/{file_name}"
 
-    def __download_google_doc(self, *, index: int, total: int, gdoc_id: str = None, gdoc_url: str = None) -> (str, str):
+    def __download_google_doc(self, *, index: int, total: int, gdoc_id: Optional[str] = None, gdoc_url: Optional[str] = None) -> Tuple[str, str]:
         from dbacademy import dbgems
 
         gdoc_id = self.__google_client.drive.to_gdoc_id(gdoc_id=gdoc_id, gdoc_url=gdoc_url)
@@ -57,7 +53,7 @@ class DocsPublisher:
         return file_name, f"{workspace_url}/files/tmp/{file_name}"
 
     @staticmethod
-    def __save_pdfs(file_bytes: io.BytesIO, path: str):
+    def __save_pdfs(file_bytes: io.BytesIO, path: str) -> None:
         import os
         import shutil
 

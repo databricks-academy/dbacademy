@@ -1,33 +1,10 @@
-__all__ = ["NotebookDef", "StateVariables"]
+__all__ = ["NotebookDef"]
 
 from typing import Union, List, Dict, Any
 from dbacademy.common import validate
-from dbacademy.dbhelper import dbh_constants
-from dbacademy.dbbuild import dbb_constants
 from dbacademy.clients.dbrest import DBAcademyRestClient
 from dbacademy.dbbuild.publish.notebook_def_data import NotebookDefData
-
-
-class StateVariables:
-    def __init__(self):
-        self.i18n_guid_map: Dict[str, str] = dict()
-
-        # Stateful values that get reset during publishing.
-        self.students_commands = list()
-        self.solutions_commands = list()
-
-        # Reset counters
-        self.todo_count = 0
-        self.answer_count = 0
-        self.skipped = 0
-
-        # Reset header flags
-        self.include_header = False
-        self.found_header_directive = False
-
-        # Reset footer flags
-        self.include_footer = False
-        self.found_footer_directive = False
+from dbacademy.dbbuild.publish.state_variables import StateVariables
 
 
 class NotebookDef(NotebookDefData):
@@ -311,7 +288,8 @@ class NotebookDef(NotebookDefData):
         return command
 
     def replace_guid_body(self, state: StateVariables, cm: str, command: str, i: int):
-        
+        from dbacademy.dbbuild import dbb_constants
+
         lines = command.strip().split("\n")
         line_0 = lines[0][7+len(cm):]
 
@@ -361,7 +339,8 @@ class NotebookDef(NotebookDefData):
                            command: str, 
                            i: int, 
                            cell_title: str):
-        
+        from dbacademy.dbbuild import dbb_constants
+
         parts = cell_title.split(",")
         if len(parts) == 1:
             self.logger.test(lambda: False, f"Cmd #{i + 1} | Missing the i18n directive, no title.")
@@ -531,6 +510,7 @@ class NotebookDef(NotebookDefData):
 
     def build_troubleshooting_cells(self, students_commands: List[str], solutions_commands: List[str]):
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
+        from dbacademy.dbhelper import dbh_constants
 
         self.append_both(students_commands, solutions_commands, """
 %md ## Trouble Shooting
@@ -583,6 +563,7 @@ This course will require you to create a catalog (typically in conjunction with 
 For more current information, please see <a href="https://files.training.databricks.com/static/troubleshooting.html#cannot-create-catalog" target="_blank">Troubleshooting Creating Catalogs</a>""".strip())
 
     def build_install_libraries_cell(self, *, i: int, command: str):
+        from dbacademy.dbhelper import dbh_constants
 
         lines = [line for line in command.split("\n") if line.strip().startswith("version =") or line.strip().startswith("version=")]
 
@@ -688,6 +669,7 @@ For more current information, please see <a href="https://files.training.databri
                        debugging: bool) -> str:
 
         from dbacademy.dbbuild.publish import pub_utils
+        from dbacademy.dbbuild import dbb_constants
 
         cell_title = None
         cm = self.get_comment_marker(language)
@@ -865,6 +847,8 @@ For more current information, please see <a href="https://files.training.databri
                          commands: List[str],
                          target_path: str,
                          print_warnings: bool) -> None:
+
+        from dbacademy.dbbuild import dbb_constants
 
         m = self.get_comment_marker(language)
         final_source = f"{m} {dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}\n"
