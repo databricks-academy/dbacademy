@@ -2,10 +2,10 @@ __all__ = ["TestSuite"]
 
 from typing import Any, Dict, List, Literal
 from dbacademy.clients.darest import DBAcademyRestClient
+from dbacademy.dbbuild.build_config import BuildConfig
 
 
 class TestSuite:
-    from dbacademy.dbbuild.build_config import BuildConfig
 
     TEST_TYPE_INTERACTIVE = "interactive"
     TEST_TYPE_STOCK = "stock"
@@ -40,11 +40,11 @@ class TestSuite:
         if dbgems.is_job():
             self.__test_type = dbgems.get_parameter("test_type", None)
         elif test_type is None:
-            self.__test_type = TestSuite.TEST_TYPE_INTERACTIVE
+            self.__test_type = self.TEST_TYPE_INTERACTIVE
         self.__test_type = re.sub(r"[^a-zA-Z\d]", "-", self.test_type.lower())
         while "--" in self.test_type:
             self.__test_type = self.test_type.replace("--", "-")
-        assert self.test_type in TestSuite.TEST_TYPES, f"The test type is expected to be one of {TestSuite.TEST_TYPES}, found \"{test_type}\""
+        assert self.test_type in self.TEST_TYPES, f"The test type is expected to be one of {self.TEST_TYPES}, found \"{test_type}\""
 
         # Define each test_round first to make the next step full-proof
         self.__test_rounds: Dict[int, Any] = dict()

@@ -1,21 +1,49 @@
 __all__ = ["TestInstance"]
 
+from dbacademy.dbbuild.build_config import BuildConfig
+from dbacademy.dbbuild.publish.notebook_def import NotebookDef
+from dbacademy.dbbuild.test.test_suite_class import TestSuite
+
 
 class TestInstance:
 
-    def __init__(self, build_config, notebook, test_dir, test_type):
+    def __init__(self, build_config: BuildConfig, notebook: NotebookDef, test_dir: str, test_type: TestSuite.TestType):
         import hashlib
 
-        self.notebook = notebook
-        self.job_id = 0
-        self.run_id = 0
-        self.test_type = test_type
+        self.__notebook = notebook
+        self.__job_id = None
+        self.__run_id = None
+        self.__test_type = test_type
 
         if notebook.include_solution:
-            self.notebook_path = f"{test_dir}/Solutions/{notebook.path}"
+            self.__notebook_path = f"{test_dir}/Solutions/{notebook.path}"
         else:
-            self.notebook_path = f"{test_dir}/{notebook.path}"
+            self.__notebook_path = f"{test_dir}/{notebook.path}"
 
         hash_code = str(hashlib.sha256(self.notebook_path.encode()).hexdigest())[-6:]
         test_name = build_config.name.lower().replace(" ", "-")
-        self.job_name = f"[TEST] {test_name} | {test_type} | {hash_code}"
+        self.__job_name = f"[TEST] {test_name} | {test_type} | {hash_code}"
+
+    @property
+    def notebook(self) -> NotebookDef:
+        return self.__notebook
+
+    @property
+    def job_id(self) -> str:
+        return self.__job_id
+
+    @property
+    def run_id(self) -> str:
+        return self.__run_id
+
+    @property
+    def test_type(self) -> str:
+        return self.__test_type
+
+    @property
+    def notebook_path(self) -> str:
+        return self.__notebook_path
+
+    @property
+    def job_name(self) -> str:
+        return self.__job_name
