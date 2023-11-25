@@ -3,6 +3,7 @@ This module contains utilities for building and publishing courseware classicall
 """
 __all__ = ["help_html"]
 
+# TODO remove after courseware builds have been updated; kept for backwards compatability.
 from dbacademy.dbbuild.build_config import BuildConfig
 
 
