@@ -59,7 +59,6 @@ class NotebookConfig:
             notebook_def.ignoring = self.ignored_errors
 
         if self.replacements is not None:
-            notebook_def.replacements.clear()
             notebook_def.replacements.update(self.replacements)
 
     @property
