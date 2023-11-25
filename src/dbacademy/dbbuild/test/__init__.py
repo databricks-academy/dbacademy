@@ -1,4 +1,4 @@
-__all__ = ["TestType", "TESTS_TYPES"]
+__all__ = ["TestType", "TEST_TYPE"]
 
 from typing import Literal, List
 
@@ -27,7 +27,7 @@ class TestConstants:
         return [self.INTERACTIVE, self.STOCK, self.PHOTON, self.ML]
 
 
-TESTS_TYPES: TestConstants = TestConstants()
+TEST_TYPE: TestConstants = TestConstants()
 
 # noinspection PyTypeHints
-TestType = Literal[TESTS_TYPES.INTERACTIVE, TESTS_TYPES.STOCK, TESTS_TYPES.PHOTON, TESTS_TYPES.ML]
+TestType = Literal[TEST_TYPE.INTERACTIVE, TEST_TYPE.STOCK, TEST_TYPE.PHOTON, TEST_TYPE.ML]

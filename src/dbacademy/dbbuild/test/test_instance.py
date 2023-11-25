@@ -1,15 +1,16 @@
 __all__ = ["TestInstance"]
 
-from dbacademy.dbbuild.build_config import BuildConfig
+from dbacademy.dbbuild.build_config_data import BuildConfigData
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 from dbacademy.dbbuild.test import TestType
 
 
 class TestInstance:
 
-    def __init__(self, build_config: BuildConfig, notebook: NotebookDef, test_dir: str, test_type: TestType):
+    def __init__(self, build_config: BuildConfigData, notebook: NotebookDef, test_dir: str, test_type: TestType):
         import hashlib
 
+        self.__build_config = build_config
         self.__notebook = notebook
         self.__job_id = None
         self.__run_id = None

@@ -1,6 +1,8 @@
 __all__ = ["ArtifactValidator"]
 
 from typing import Optional
+
+from dbacademy.dbbuild.build_config_data import BuildConfigData
 from dbacademy.dbbuild.publish.publisher import Publisher
 from dbacademy.dbbuild.publish.translator import Translator
 from dbacademy.dbbuild.publish.publishing_info import Translation
@@ -10,35 +12,71 @@ from dbacademy.clients.dbrest import DBAcademyRestClient
 class ArtifactValidator:
 
     def __init__(self, *,
-                 build_name: str,
-                 version: str,
-                 core_version: str,
-                 client: DBAcademyRestClient,
+                 build_config: BuildConfigData,
                  target_repo_url: str,
                  temp_repo_dir: str,
                  temp_work_dir: str,
-                 username: str,
                  translation: Translation,
-                 i18n: bool,
                  common_language: str) -> None:
 
         from dbacademy.common import validate
         from dbacademy.dbbuild.publish.publishing_info import Translation
 
-        self.build_name = build_name
-        self.version = version
-        self.core_version = core_version
-        self.client = client
+        self.__build_config = build_config
+        self.__translation: Translation = validate(translation=translation).as_type(Translation)
 
-        self.target_repo_url = target_repo_url
-        self.temp_repo_dir = temp_repo_dir
-        self.temp_work_dir = temp_work_dir
-        self.username = username
+        self.__target_repo_url = target_repo_url
+        self.__temp_repo_dir = temp_repo_dir
+        self.__temp_work_dir = temp_work_dir
+        self.__common_language = common_language
 
-        self.i18n = i18n
-        self.common_language = common_language
+    @property
+    def translation(self) -> Translation:
+        return self.__translation
 
-        self.translation: Translation = validate(translation=translation).as_type(Translation)
+    @property
+    def build_name(self) -> str:
+        return self.__build_config.build_name
+
+    @property
+    def version(self) -> str:
+        return self.__build_config.version
+
+    @property
+    def core_version(self) -> str:
+        return self.__build_config.core_version
+
+    @property
+    def client(self) -> DBAcademyRestClient:
+        return self.__build_config.client
+
+    @property
+    def target_repo_url(self) -> str:
+        return self.__target_repo_url
+
+    @property
+    def temp_repo_dir(self) -> str:
+        return self.__temp_repo_dir
+
+    @property
+    def temp_work_dir(self) -> str:
+        return self.__temp_work_dir
+
+    @property
+    def username(self) -> str:
+        return self.__build_config.username
+
+    @property
+    def i18n(self) -> bool:
+        return self.__build_config.i18n
+
+    @property
+    def common_language(self) -> str:
+        return self.__common_language
+
+    @property
+    def build_config(self) -> BuildConfigData:
+        return self.__build_config
 
     def validate_publishing_processes(self) -> None:
         from dbacademy.dbhelper.validations import ValidationSuite
@@ -173,20 +211,15 @@ class ArtifactValidator:
 def from_publisher(publisher: Publisher) -> ArtifactValidator:
     from dbacademy.dbbuild.publish.publishing_info import PublishingInfo, Translation
 
-    info = PublishingInfo(publisher.build_config.publishing_info)
+    info = PublishingInfo(publisher.publishing_info)
     translation: Translation = info.translations.get("english")
 
-    return ArtifactValidator(build_name=publisher.build_name,
-                             version=publisher.version,
-                             core_version=publisher.core_version,
-                             client=publisher.client,
+    return ArtifactValidator(build_config=publisher.build_config,
                              target_repo_url=publisher.target_repo_url,
                              temp_repo_dir=publisher.temp_repo_dir,
                              temp_work_dir=publisher.temp_work_dir,
-                             username=publisher.username,
                              translation=translation,
-                             i18n=publisher.i18n,
-                             common_language=publisher.common_language,)
+                             common_language=publisher.common_language)
 
 
 def from_translator(translator: Translator) -> ArtifactValidator:
@@ -195,14 +228,9 @@ def from_translator(translator: Translator) -> ArtifactValidator:
     info = PublishingInfo(translator.build_config.publishing_info)
     translation: Translation = info.translations.get(translator.common_language)
 
-    return ArtifactValidator(build_name=translator.build_name,
-                             version=translator.version,
-                             core_version=translator.core_version,
-                             client=translator.client,
+    return ArtifactValidator(build_config=translator.build_config,
                              target_repo_url=translator.target_repo_url,
                              temp_repo_dir=translator.temp_repo_dir,
                              temp_work_dir=translator.temp_work_dir,
-                             username=translator.username,
                              translation=translation,
-                             i18n=translator.i18n,
                              common_language=translator.common_language)

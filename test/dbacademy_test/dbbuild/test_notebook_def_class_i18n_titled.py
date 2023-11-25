@@ -1,5 +1,8 @@
+__all__ = ["TestNotebookDefI18NTitle"]
+
 import unittest
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
+from dbacademy.dbbuild.publish.state_variables import StateVariables
 
 
 class TestNotebookDefI18NTitle(unittest.TestCase):
@@ -40,7 +43,6 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
                            version=build_config.version)
 
     def test_good_no_space_i18n(self):
-        from dbacademy.dbbuild.publish.notebook_def import StateVariables
 
         command = """
 # DBTITLE 1,--i18n-TBD
@@ -60,8 +62,6 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assertEqual("--i18n-TBD", notebook.i18n_guids[0])
 
     def test_good_single_space_i18n(self):
-        from dbacademy.dbbuild.publish.notebook_def import StateVariables
-
         command = """
 # DBTITLE 1, --i18n-TBD
 # MAGIC %md
@@ -80,8 +80,6 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assertEqual("--i18n-TBD", notebook.i18n_guids[0])
 
     def test_good_double_spaced_i18n(self):
-        from dbacademy.dbbuild.publish.notebook_def import StateVariables
-
         command = """
 # DBTITLE 1,  --i18n-TBD
 # MAGIC %md
@@ -100,8 +98,6 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assertEqual("--i18n-TBD", notebook.i18n_guids[0])
 
     def test_good_md_sandbox_i18n(self):
-        from dbacademy.dbbuild.publish.notebook_def import StateVariables
-
         command = """
 # DBTITLE 1,--i18n-TBD
 # MAGIC %md-sandbox
@@ -120,8 +116,6 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assertEqual("--i18n-TBD", notebook.i18n_guids[0])
 
     def test_missing_title(self):
-        from dbacademy.dbbuild.publish.notebook_def import StateVariables
-
         command = """
 # MAGIC %md
 # MAGIC 
@@ -138,8 +132,6 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assertEqual("Cmd #4 | Missing the i18n directive: %md", notebook.logger.errors[0].message)
 
     def test_funky_title(self):
-        from dbacademy.dbbuild.publish.notebook_def import StateVariables
-
         command = """
 # DBTITLE 1
 # MAGIC %md
@@ -157,8 +149,6 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assertEqual("Cmd #4 | Missing the i18n directive, no title.", notebook.logger.errors[0].message)
 
     def test_missing_i18n(self):
-        from dbacademy.dbbuild.publish.notebook_def import StateVariables
-
         command = """
 # DBTITLE 1,
 # MAGIC %md
@@ -187,8 +177,6 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
     #     self.assertEqual("Cmd #4 | Expected MD to have more than 1 line of code with i18n enabled: %md | # Build-Time Substitutions", notebook.errors[0].message)
 
     def test_extra_word_i18n(self):
-        from dbacademy.dbbuild.publish.notebook_def import StateVariables
-
         command = """
 # DBTITLE 1,--i18n-TBD some garbage
 # MAGIC %md # Title
@@ -206,8 +194,6 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assertEqual("Cmd #4 | Expected the title to have only one word, found 3: --i18n-TBD some garbage", notebook.logger.errors[0].message)
 
     def test_duplicate_i18n_guid(self):
-        from dbacademy.dbbuild.publish.notebook_def import StateVariables
-
         command_a = """
 # DBTITLE 1,--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a
 # MAGIC %md
@@ -231,8 +217,6 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assertEqual("Cmd #5 | Duplicate i18n GUID found: --i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a", notebook.logger.errors[0].message)
 
     def test_unique_i18n_guid(self):
-        from dbacademy.dbbuild.publish.notebook_def import StateVariables
-
         guid_a = "--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a"
         command_a = f"""
 # DBTITLE 1,{guid_a}
@@ -258,8 +242,6 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assert_n_errors(0, notebook)
 
     def test_md_i18n_guid_replacement(self):
-        from dbacademy.dbbuild.publish.notebook_def import StateVariables
-
         guid = "--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a"
         command = f"""
 # DBTITLE 1,{guid}
@@ -278,8 +260,6 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assertEqual(f"# DBTITLE 0,{guid}\nSome other language", actual)
 
     def test_md_sandbox_i18n_guid_replacement(self):
-        from dbacademy.dbbuild.publish.notebook_def import StateVariables
-
         guid = "--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a"
         command = f"""
 # DBTITLE 1,{guid}
@@ -297,8 +277,6 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
         self.assertEqual(f"# DBTITLE 0,{guid}\nSome other language", actual)
 
     def test_i18n_sql(self):
-        from dbacademy.dbbuild.publish.notebook_def import StateVariables
-
         command = """
 -- DBTITLE 1,--i18n-a6e39b59-1715-4750-bd5d-5d638cf57c3a
 -- MAGIC %md-sandbox

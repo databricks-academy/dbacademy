@@ -1,9 +1,10 @@
 __all__ = ["TestSuite"]
 
-from typing import Any, Dict, List
-from dbacademy.dbbuild.test import TESTS_TYPES
+from typing import Any, Dict, List, Optional
+from dbacademy.dbbuild.build_config_data import BuildConfigData
+from dbacademy.dbbuild.publish.notebook_def import NotebookDef
+from dbacademy.dbbuild.test import TEST_TYPE
 from dbacademy.clients.dbrest import DBAcademyRestClient
-from dbacademy.dbbuild.build_config import BuildConfig
 from dbacademy.dbbuild.test.test_instance import TestInstance
 
 from dbacademy.dbbuild.test import TestType
@@ -12,65 +13,71 @@ from dbacademy.dbbuild.test import TestType
 class TestSuite:
 
     def __init__(self, *,
-                 build_config: BuildConfig,
-                 test_dir: str,
-                 test_type: TestType,
+                 build_config: BuildConfigData,
+                 test_type: Optional[TestType],
                  keep_success: bool = False):
 
         import re
         from dbacademy import dbgems
         from dbacademy.dbbuild.test.test_instance import TestInstance
 
-        self.__test_dir = test_dir
         self.__build_config = build_config
-        self.__client = build_config.client
-
         self.__test_results = list()
-
         self.__slack_thread_ts = None
         self.__slack_first_message = None
-
         self.__keep_success = keep_success
 
         if dbgems.is_job():
             self.__test_type = dbgems.get_parameter("test_type", None)
         elif test_type is None:
-            self.__test_type = TESTS_TYPES.INTERACTIVE
+            self.__test_type = TEST_TYPE.INTERACTIVE
         self.__test_type = re.sub(r"[^a-zA-Z\d]", "-", self.test_type.lower())
         while "--" in self.test_type:
             self.__test_type = self.test_type.replace("--", "-")
-        assert self.test_type in TESTS_TYPES.TYPES, f"The test type is expected to be one of {TESTS_TYPES.TYPES}, found \"{test_type}\""
+        assert self.test_type in TEST_TYPE.TYPES, f"The test type is expected to be one of {TEST_TYPE.TYPES}, found \"{test_type}\""
 
         # Define each test_round first to make the next step full-proof
         self.__test_rounds: Dict[int, List[TestInstance]] = dict()
 
-        for notebook in self.__build_config.notebooks.values():
+        for notebook in self.notebooks:
             self.test_rounds[notebook.test_round] = list()
 
         # Add each notebook to the dictionary or rounds which is a dictionary of tests
-        for notebook in self.__build_config.notebooks.values():
+        for notebook in self.notebooks:
             if notebook.test_round > 0:
                 # [job_name] = (notebook_path, 0, 0, ignored)
-                test_instance = TestInstance(self.__build_config, notebook, test_dir, self.test_type)
+                test_instance = TestInstance(self.build_config, notebook, self.build_config.source_dir, self.test_type)
                 self.test_rounds.get(notebook.test_round).append(test_instance)
 
-                if self.__client.workspace().get_status(test_instance.notebook_path) is None:
+                if self.client.workspace().get_status(test_instance.notebook_path) is None:
                     raise Exception(f"Notebook not found: {test_instance.notebook_path}")
 
-        url = f"{dbgems.get_workspace_url()}#job/list/search/dbacademy.course:{build_config.build_name}"
+        url = f"{dbgems.get_workspace_url()}#job/list/search/dbacademy.course:{self.build_name}"
         print(f"Test Suite: {url}")
 
     @property
-    def test_dir(self) -> str:
-        return self.__test_dir
-
-    @property
-    def build_config(self) -> BuildConfig:
+    def build_config(self) -> BuildConfigData:
         return self.__build_config
 
     @property
     def client(self) -> DBAcademyRestClient:
-        return self.__client
+        return self.__build_config.client
+
+    @property
+    def name(self) -> str:
+        return self.__build_config.name
+
+    @property
+    def build_name(self) -> str:
+        return self.__build_config.build_name
+
+    @property
+    def notebooks(self) -> List[NotebookDef]:
+        return list(self.__build_config.notebooks.values())
+
+    # @property
+    # def test_dir(self) -> str:
+    #     return self.__build_config.source_dir
 
     @property
     def test_type(self) -> TestType:
@@ -123,7 +130,7 @@ class TestSuite:
         self.build_config.spark_conf["dbacademy.smoke-test"] = "true"
 
         job_config = JobConfig(job_name=job_name, timeout_seconds=120*60, tags={
-                "dbacademy.course": self.build_config.build_name,
+                "dbacademy.course": self.build_name,
                 "dbacademy.source": "dbacademy-smoke-test",
                 "dbacademy.test-type": self.test_type
             })

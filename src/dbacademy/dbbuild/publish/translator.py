@@ -1,6 +1,9 @@
 __all__ = ["Translator"]
 
 from typing import Optional
+
+from dbacademy.clients.dbrest import DBAcademyRestClient
+from dbacademy.dbbuild.build_config_data import BuildConfigData
 from dbacademy.dbbuild.publish.publisher import Publisher
 
 
@@ -10,6 +13,9 @@ class Translator:
         from dbacademy.common import validate
         from dbacademy.dbbuild.publish.publisher import Publisher
 
+        self.__publisher = validate(publisher=publisher).as_type(Publisher)
+        self.__build_config = publisher.build_config
+
         # By default, we are not validated
         self.__validated = False
         self.__changes_in_source_repo = None
@@ -18,18 +24,6 @@ class Translator:
         self.__created_dbcs = False
         self.__created_docs = False
         self.__validated_artifacts = False
-
-        self.publisher = validate(publisher=publisher).as_type(Publisher)
-
-        # Copied from build_config
-        self.username = publisher.username
-        self.client = publisher.client
-        self.notebooks = publisher.notebooks
-        self.build_name = publisher.build_name
-
-        self.i18n = publisher.i18n
-        self.source_repo = publisher.source_repo
-        self.build_config = publisher.build_config
 
         # Defined in select_language
         self.lang_code = None
@@ -48,13 +42,25 @@ class Translator:
         self.target_repo_url = None
 
         self.temp_repo_dir = f"/Repos/Temp"
-        self.temp_work_dir = f"/Workspace/Users/{self.username}/Temp"
+        self.temp_work_dir = f"/Workspace/Users/{self.build_config.username}/Temp"
 
         self.errors = []
         self.warnings = []
 
         if require_i18n_selection:
-            self.__select_i18n_language(publisher.source_repo)
+            self.__select_i18n_language(publisher.build_config.source_repo)
+
+    @property
+    def build_config(self) -> BuildConfigData:
+        return self.__build_config
+
+    @property
+    def client(self) -> DBAcademyRestClient:
+        return self.build_config.client
+
+    @property
+    def publisher(self) -> Publisher:
+        return self.__publisher
 
     def update_i18n_guids(self, *, source_dir: str, add_guid: bool) -> None:
         """
@@ -187,7 +193,7 @@ class Translator:
         assert self.i18n_language is not None, f"The i18n language must be specified."
         assert self.i18n_language in language_options, f"The selected version must be one of {language_options}, found \"{self.i18n_language}\"."
 
-        for notebook in self.notebooks:
+        for notebook in self.build_config.notebooks.values():
             notebook.i18n_language = self.i18n_language
 
         # Include the i18n code in the version.
@@ -226,11 +232,11 @@ class Translator:
 
         self.assert_validated_artifacts()
 
-        change_log = self.build_config.change_log or ChangeLog(source_repo=self.source_repo,
+        change_log = self.build_config.change_log or ChangeLog(source_repo=self.build_config.source_repo,
                                                                readme_file_name=self.build_config.readme_file_name,
                                                                target_version=self.core_version)
 
-        advertiser = Advertiser(source_repo=self.source_repo,
+        advertiser = Advertiser(source_repo=self.build_config.source_repo,
                                 name=self.build_config.name,
                                 version=self.version,
                                 change_log=change_log,
@@ -259,15 +265,15 @@ class Translator:
                  target_branch: str = None):
         from dbacademy import common
 
-        username = common.clean_string(self.username, replacement="_")
+        username = common.clean_string(self.build_config.username, replacement="_")
         self.source_branch = source_branch or f"published-v{self.core_version}"
-        self.source_dir = source_dir or f"/Repos/Temp/{username}-{self.build_name}-english-{self.source_branch}"
-        self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_name}-english.git"
+        self.source_dir = source_dir or f"/Repos/Temp/{username}-{self.build_config.build_name}-english-{self.source_branch}"
+        self.source_repo_url = source_repo_url or f"https://github.com/databricks-academy/{self.build_config.build_name}-english.git"
 
-        username = common.clean_string(self.username, replacement="_")
+        username = common.clean_string(self.build_config.username, replacement="_")
         self.target_branch = target_branch or "published"
-        self.target_dir = target_dir or f"/Repos/Temp/{username}-{self.build_name}-{self.common_language}"
-        self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_name}-{self.common_language}.git"
+        self.target_dir = target_dir or f"/Repos/Temp/{username}-{self.build_config.build_name}-{self.common_language}"
+        self.target_repo_url = target_repo_url or f"https://github.com/databricks-academy/{self.build_config.build_name}-{self.common_language}.git"
 
         print("Translation Details:")
         print(f"| Version:          {self.version}")
@@ -353,9 +359,9 @@ class Translator:
         else:
             repo_name = f"{self.publisher.build_name}-source.git"
             results = BuildUtils.validate_no_changes_in_repo(client=self.client,
-                                                             build_name=self.build_name,
+                                                             build_name=self.build_config.build_name,
                                                              repo_url=f"https://github.com/databricks-academy/{repo_name}",
-                                                             directory=self.publisher.source_repo)
+                                                             directory=self.build_config.source_repo)
             print()
             self.__changes_in_source_repo = len(results)
             self.assert_no_changes_in_source_repo()
@@ -382,7 +388,7 @@ class Translator:
 
         else:
             results = BuildUtils.validate_no_changes_in_repo(client=self.client,
-                                                             build_name=self.build_name,
+                                                             build_name=self.build_config.build_name,
                                                              repo_url=self.target_repo_url,
                                                              directory=self.target_dir)
             self.__changes_in_target_repo = len(results)
@@ -559,14 +565,14 @@ class Translator:
         BuildUtils.write_file(data=data,
                               overwrite=False,
                               target_name="Distributions System (versioned)",
-                              target_file=f"dbfs:/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.version}-PENDING/{self.build_name}-v{self.version}-notebooks.dbc")
+                              target_file=f"dbfs:/mnt/resources.training.databricks.com/distributions/{self.build_config.build_name}/v{self.version}-PENDING/{self.build_config.build_name}-v{self.version}-notebooks.dbc")
 
         BuildUtils.write_file(data=data,
                               overwrite=True,
                               target_name="Workspace-Local FileStore",
-                              target_file=f"dbfs:/FileStore/tmp/{self.build_name}-v{self.version}-PENDING/{self.build_name}-v{self.version}-notebooks.dbc")
+                              target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.version}-PENDING/{self.build_config.build_name}-v{self.version}-notebooks.dbc")
 
-        url = f"/files/tmp/{self.build_name}-v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
+        url = f"/files/tmp/{self.build_config.build_name}-v{self.version}/{self.build_config.build_name}-v{self.version}-notebooks.dbc"
         dbgems.display_html(f"""<html><body style="font-size:16px"><div><a href="{url}" target="_blank">Download DBC</a></div></body></html>""")
 
         self.__created_dbcs = True

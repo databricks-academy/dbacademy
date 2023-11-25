@@ -1,5 +1,5 @@
 import unittest
-from dbacademy.dbbuild.publish.notebook_def import StateVariables
+from dbacademy.dbbuild.publish.state_variables import StateVariables
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
 
