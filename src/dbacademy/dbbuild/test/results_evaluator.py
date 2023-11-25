@@ -55,8 +55,8 @@ class ResultsEvaluator:
         html += "</body>"
         return html
 
-    @staticmethod
-    def add_row(*, style: str, cloud: Union[str, Cloud], job: str, duration: str) -> str:
+    @classmethod
+    def add_row(cls, *, style: str, cloud: Union[str, Cloud], job: str, duration: str) -> str:
         return f"""
       <tr>
           <td style="{style}">{cloud}</td>
@@ -65,8 +65,8 @@ class ResultsEvaluator:
       </tr>
       """
 
-    @staticmethod
-    def format_duration(duration: int) -> str:
+    @classmethod
+    def format_duration(cls, duration: int) -> str:
         from math import floor
         seconds = floor(duration / 1000) % 60
         minutes = floor(duration / (1000 * 60)) % 60
@@ -79,8 +79,8 @@ class ResultsEvaluator:
         else:
             return f"{seconds}s"
 
-    @staticmethod
-    def to_job_link(*, job_id: str, run_id: str, label: str) -> str:
+    @classmethod
+    def to_job_link(cls, *, job_id: str, run_id: str, label: str) -> str:
         from dbacademy.dbbuild.build_utils import BuildUtils
 
         url = BuildUtils.to_job_url(job_id=job_id, run_id=run_id)
