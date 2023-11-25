@@ -104,7 +104,7 @@ class BuildConfig:
                  *,
                  name: str,
                  version: str,
-                 supported_dbrs: List[str] = None,
+                 supported_dbrs: Union[str, List[str]] = None,
                  spark_version: str = None,
                  cloud: str = None,
                  instance_pool_id: str = None,
@@ -143,7 +143,8 @@ class BuildConfig:
             self.__username = "mickey.mouse@disney.com"  # When unit testing
         validate(username=self.__username).required.str()
 
-        self.__supported_dbrs = validate(supported_dbrs=supported_dbrs).list(str, auto_create=True)
+        supported_dbrs = supported_dbrs if isinstance(supported_dbrs, list) else [supported_dbrs]
+        self.__supported_dbrs = validate(supported_dbrs=supported_dbrs).required.list(str)
 
         self.__language_options = None
         self.__ignoring = validate(ignoring=ignoring).list(str, auto_create=True)
