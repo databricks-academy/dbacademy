@@ -39,6 +39,9 @@ class BuildConfigData:
         from dbacademy.clients.rest.factory import dbrest_factory
         from dbacademy.dbhelper.course_config import CourseConfig
 
+        self.__validated = False
+        self.__created_notebooks = False
+
         self.__client = client or dbrest_factory.current_workspace()
 
         # Course Name
@@ -111,6 +114,23 @@ class BuildConfigData:
 
         self.__change_log: Optional[ChangeLog] = None
         self.__publishing_info = validate(publishing_info=publishing_info).dict(str, auto_create=True)
+
+    @property
+    def passing_tests(self) -> Dict[str, bool]:
+        return self.__passing_tests
+
+    @passing_tests.setter
+    def passing_tests(self, passing_tests: Dict[str, bool]) -> None:
+        self.__passing_tests.clear()
+        self.__passing_tests.update(passing_tests)
+
+    @property
+    def created_notebooks(self) -> bool:
+        return self.__created_notebooks
+
+    @created_notebooks.setter
+    def created_notebooks(self, created_notebooks: bool) -> None:
+        self.__created_notebooks = created_notebooks
 
     @property
     def name(self) -> str:
@@ -188,6 +208,10 @@ class BuildConfigData:
     @property
     def change_log(self) -> Optional[ChangeLog]:
         return self.__change_log
+
+    @change_log.setter
+    def change_log(self, change_log: ChangeLog) -> None:
+        self.__change_log = change_log
 
     @property
     def include_solutions(self) -> bool:
@@ -274,3 +298,7 @@ class BuildConfigData:
         :return:
         """
         return self.__validated
+
+    @validated.setter
+    def validated(self, validated: bool) -> None:
+        self.__validated = validated
