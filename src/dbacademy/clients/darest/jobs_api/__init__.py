@@ -96,7 +96,9 @@ class JobsApi(ApiContainer):
 
     def delete_by_name(self, job_names, success_only: bool) -> None:
         from dbacademy.clients.darest import from_client
-        da_client = from_client(self.__client)
+        from dbacademy.clients.darest import DBAcademyRestClient
+
+        da_client: DBAcademyRestClient = from_client(self.__client)
 
         if type(job_names) == dict:
             job_names = list(job_names.keys())
@@ -145,7 +147,7 @@ class JobsApi(ApiContainer):
                         for run in runs:
                             run_id = run.get("run_id")
                             self.__client.vprint(f"""   - Deleting run #{run_id}""")
-                            da_client.runs().delete(run_id)
+                            da_client.runs().delete_by_id(run_id)
 
                         self.delete_by_id(job_id)
                         deleted += 1

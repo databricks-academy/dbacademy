@@ -75,7 +75,7 @@ class BuildUtils:
 
         if status is not None:
             target_repo_id = status["object_id"]
-            client.repos().delete(target_repo_id)
+            client.repos().delete_by_id(target_repo_id)
 
         # Re-create the repo to progress in testing
         response = client.repos.create(path=directory, url=repo_url)

@@ -26,5 +26,5 @@ class ReposApi(ApiContainer):
             "path": path
         })
 
-    def delete(self, repo_id):
+    def delete_by_id(self, repo_id):
         return self.__client.api("DELETE", f"{self.__client.endpoint}/api/2.0/repos/{repo_id}", _expected=(200, 404))

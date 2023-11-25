@@ -164,12 +164,14 @@ class Clusters(ApiContainer):
         response = self.databricks.api("POST", "/api/2.0/clusters/delete", data)
         return response
 
-    # TODO rename to parameter to cluster_id
-    # noinspection PyShadowingBuiltins
-    def delete(self, id):
-        data = {"cluster_id": id}
+    def delete_by_id(self, cluster_id: str) -> None:
+        data = {"cluster_id": cluster_id}
         response = self.databricks.api("POST", "/api/2.0/clusters/permanent-delete", data)
         return response
+
+    # TODO delete this version
+    def delete(self, cluster_id: str) -> None:
+        return self.delete_by_id(cluster_id)
 
     def create_or_start(self, name, machine_type=None, driver_machine_type=None,
                         timeout_minutes=120, num_workers=2, num_cores="*", instance_pool_id=None,

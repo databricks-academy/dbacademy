@@ -335,7 +335,7 @@ class WorkspaceCleaner:
                         print(f" waiting for v{v}", end="...")
                         time.sleep(5)
 
-            self.__da.client.ml.mlflow_models.delete(name)
+            self.__da.client.ml.mlflow_models.delete_by_name(name)
             print(dbgems.clock_stopped(start))
 
         return True

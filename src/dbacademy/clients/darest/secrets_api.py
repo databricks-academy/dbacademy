@@ -85,10 +85,10 @@ class SecretsApi(ApiContainer):
             raise Exception("bytes_values is currently not supported")
 
         if self.get_by_name(scope, key) is not None:
-            self.delete(scope, key)
+            self.delete_by_name(scope, key)
 
         self.__client.api("POST", f"{self.base_url}/put", scope=scope, key=key, string_value=string_value)
         return self.get_by_name(scope, key)
 
-    def delete(self, scope: str, key: str) -> None:
+    def delete_by_name(self, scope: str, key: str) -> None:
         return self.__client.api("POST", f"{self.base_url}/delete", scope=scope, key=key)

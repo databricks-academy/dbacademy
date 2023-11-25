@@ -91,7 +91,6 @@ def from_environment(*,
                      throttle_seconds: int = 0,
                      error_handler: ClientErrorHandler = ClientErrorHandler()) -> AirTableRestClient:
     import os
-
     return from_args(access_token=access_token or os.environ.get(f"{scope}_TOKEN") or os.environ.get("TOKEN"),
                      base_id=base_id,
                      verbose=verbose,

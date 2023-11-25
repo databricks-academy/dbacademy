@@ -27,7 +27,7 @@ class MLflowModelsApi(ApiContainer):
 
         return results
 
-    def delete(self, name: str):
+    def delete_by_name(self, name: str):
         url = f"{self.base_uri}/delete"
         payload = {
             "name": name
