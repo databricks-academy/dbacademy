@@ -208,8 +208,6 @@ class BuildConfig(BuildConfigData):
                  white_list: List[str] = None,
                  black_list: List[str] = None):
 
-        self.__created_notebooks = False
-
         super().__init__(name=name,
                          supported_dbrs=supported_dbrs,
                          ignoring=ignoring,
@@ -318,7 +316,7 @@ class BuildConfig(BuildConfigData):
             notebook_config.apply(notebook)
 
         # Now that we are all done, we can mark the notebooks as "created"
-        self.__created_notebooks = True
+        self.created_notebooks = True
 
     @classmethod
     def get_lesson_number(cls, notebook_path: str):
@@ -392,7 +390,7 @@ class BuildConfig(BuildConfigData):
         :return:
         """
         import json
-        assert self.__created_notebooks, f"The notebooks have not yet been initialized; Please call BuildConfig.initialize_notebooks() before proceeding."
+        assert self.created_notebooks, f"The notebooks have not yet been initialized; Please call BuildConfig.initialize_notebooks() before proceeding."
 
         if validate_version:
             self.__validate_version()
@@ -422,7 +420,7 @@ class BuildConfig(BuildConfigData):
             print(f"| notebooks:         {len(self.notebooks)}")
             self.__index_notebooks()
 
-        self.__validated = True
+        self.validated = True
 
     def __validate_readme(self) -> None:
 
@@ -431,9 +429,9 @@ class BuildConfig(BuildConfigData):
         elif self.i18n_language is not None:
             return  # We are building a translation, presumably days to weeks later, this is not expected to match
 
-        self.__change_log = ChangeLog(source_repo=self.source_repo,
-                                      readme_file_name=self.readme_file_name,
-                                      target_version=None)
+        self.change_log = ChangeLog(source_repo=self.source_repo,
+                                    readme_file_name=self.readme_file_name,
+                                    target_version=None)
 
         self.change_log.validate(expected_version=self.core_version, date=None)
 
@@ -569,8 +567,8 @@ class BuildConfig(BuildConfigData):
         clouds = [c.upper() for c in clouds]
 
         for cloud in clouds:
-            assert cloud in self.__passing_tests, f"The tests for the cloud {cloud} and version {self.version} were not found. Please run the corresponding smoke tests before proceeding."
-            assert self.__passing_tests.get(cloud), f"The tests for the cloud {cloud} and version {self.version} did not pass. Please address the test failures and run the corresponding smoke tests before proceeding."
+            assert cloud in self.passing_tests, f"The tests for the cloud {cloud} and version {self.version} were not found. Please run the corresponding smoke tests before proceeding."
+            assert self.passing_tests.get(cloud), f"The tests for the cloud {cloud} and version {self.version} did not pass. Please address the test failures and run the corresponding smoke tests before proceeding."
 
     def validate_all_tests_passed(self, cloud: Union[str, Cloud]):
         """
@@ -583,7 +581,7 @@ class BuildConfig(BuildConfigData):
         assert self.validated, f"Cannot validate smoke-tests until the build configuration passes validation. See BuildConfig.validate()"
 
         cloud = validate(cloud=cloud).required.enum(Cloud, auto_convert=True)
-        self.__passing_tests[cloud.value] = True
+        self.passing_tests[cloud.value] = True
 
         common.print_warning("NOT IMPLEMENTED", f"This function has not yet been implemented for {cloud}.")
 
