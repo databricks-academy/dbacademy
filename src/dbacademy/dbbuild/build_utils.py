@@ -10,12 +10,12 @@ class BuildUtils:
         pass
 
     @staticmethod
-    def to_job_url(*, job_id: str, run_id: str):
+    def to_job_url(*, job_id: str, run_id: str) -> str:
         from dbacademy import dbgems
         return f"{dbgems.get_workspace_url()}#job/{job_id}/run/{run_id}"
 
     @staticmethod
-    def print_if(condition, text):
+    def print_if(condition, text) -> None:
         if condition:
             print(text)
 
@@ -35,7 +35,7 @@ class BuildUtils:
 
     # noinspection PyUnusedLocal
     @staticmethod
-    def write_file(*, data: bytes, target_file: str, overwrite: bool, target_name):
+    def write_file(*, data: bytes, target_file: str, overwrite: bool, target_name) -> None:
         import os
         if target_file.endswith("_meta.json"):
             print(f"\nWriting Meta File to {target_name}:\n   {target_file}")
@@ -62,7 +62,7 @@ class BuildUtils:
             f.write(data)
 
     @staticmethod
-    def reset_git_repo(*, client: DBAcademyRestClient, directory: str, repo_url: str, branch: str, which: Union[str, None], prefix=""):
+    def reset_git_repo(*, client: DBAcademyRestClient, directory: str, repo_url: str, branch: str, which: Union[str, None], prefix="") -> None:
 
         which = "" if which is None else f" ({which})"
 
@@ -121,14 +121,14 @@ class BuildUtils:
         return results
 
     @staticmethod
-    def __ends_with(test_path: str, values: List[str]):
+    def __ends_with(test_path: str, values: List[str]) -> bool:
         for ext in values:
             if test_path.endswith(ext):
                 return True
         return False
 
     @staticmethod
-    def __starts_with(test_path: str, values: List[str]):
+    def __starts_with(test_path: str, values: List[str]) -> bool:
         for ext in values:
             if test_path.startswith(ext):
                 return True
