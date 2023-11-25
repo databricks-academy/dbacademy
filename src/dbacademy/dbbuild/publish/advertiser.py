@@ -6,7 +6,14 @@ from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
 
 class Advertiser:
 
-    def __init__(self, *, name: str, version: str, change_log: ChangeLog, publishing_info: PublishingInfo, source_repo: str, common_language):
+    def __init__(self, *,
+                 name: str,
+                 version: str,
+                 change_log: ChangeLog,
+                 publishing_info: PublishingInfo,
+                 source_repo: str,
+                 common_language: str):
+
         self.__name = name
         self.__version = version
         self.__change_log = change_log
@@ -21,17 +28,17 @@ class Advertiser:
         self.__create_html()
 
     @property
-    def html(self):
+    def html(self) -> str:
         return self.__html
 
-    def __create_message(self):
+    def __create_message(self) -> None:
         self.__message = f"""{self.__change_log}
         
 Release notes, course-specific requirements, issue-tracking, and test results for this course can be found in the course's GitHub repository at https://github.com/databricks-academy/{self.__source_repo.split("/")[-1]}
 
 Please contact me (via Slack), or anyone on the curriculum team should you have any questions."""
 
-    def __create_html(self):
+    def __create_html(self) -> None:
         import urllib.parse
 
         email_subject = urllib.parse.quote(self.__subject, safe="")
