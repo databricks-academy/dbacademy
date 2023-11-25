@@ -282,7 +282,7 @@ def proof_of_life(expected_get_username,
     # noinspection PyUnresolvedReferences
     import dbruntime
     import pyspark
-    from dbacademy.common.cloud_class import Cloud
+    from dbacademy.common.cloud import Cloud
     from py4j.java_collections import JavaMap
 
     assert isinstance(dbutils, dbruntime.dbutils.DBUtils), f"Expected {dbruntime.dbutils.DBUtils}, found {type(dbutils)}"

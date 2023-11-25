@@ -25,7 +25,7 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
     def create_notebook():
         from dbacademy.dbbuild.build_config import BuildConfig
 
-        build_config = BuildConfig(name="Unit Test", version="1.2.3")
+        build_config = BuildConfig(name="Unit Test", version="1.2.3", supported_dbrs="13.3.x-cpu-ml-scala2.12")
 
         return NotebookDef(client=build_config.client,
                            path="Agenda",

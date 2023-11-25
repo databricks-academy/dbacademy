@@ -10,7 +10,8 @@ class MyTestCase(unittest.TestCase):
 
         build_config = BuildConfig(name="Some Random Unit Test",
                                    version="0.0.0",
-                                   source_repo="/Repos/Examples/example-course-source")
+                                   source_repo="/Repos/Examples/example-course-source",
+                                   supported_dbrs="13.3.x-cpu-ml-scala2.12")
 
         try:
             build_config.validate_all_tests_passed(Cloud.AWS)

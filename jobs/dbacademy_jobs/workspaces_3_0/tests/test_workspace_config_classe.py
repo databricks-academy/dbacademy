@@ -170,13 +170,13 @@ class TestWorkspaceConfig(unittest.TestCase):
 
     def test_create_workspace_config_max_participants(self):
         from dbacademy_jobs.workspaces_3_0.tests import test_assertion_error
-        from dbacademy.common import validator_class
+        from dbacademy.common import validator
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, validator_class.E_TYPE, lambda: WorkspaceConfig(max_participants="0", course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, validator.E_TYPE, lambda: WorkspaceConfig(max_participants="0", course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
         # noinspection PyTypeChecker
-        test_assertion_error(self, validator_class.E_NOT_NONE, lambda: WorkspaceConfig(max_participants=None, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
-        test_assertion_error(self, validator_class.E_MIN_V, lambda: WorkspaceConfig(max_participants=0, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, validator.E_NOT_NONE, lambda: WorkspaceConfig(max_participants=None, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, validator.E_MIN_V, lambda: WorkspaceConfig(max_participants=0, course_definitions=self.course_definitions, cds_api_token="asdf123", datasets=self.datasets, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_default_dbr(self):
         from dbacademy_jobs.workspaces_3_0.tests import test_assertion_error

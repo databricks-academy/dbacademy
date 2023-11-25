@@ -7,9 +7,8 @@ from __future__ import annotations
 __all__ = ["deprecation_log_level", "deprecated", "overrides", "print_title", "print_warning", "CachedStaticProperty", "clean_string", "load_databricks_cfg", "Cloud", "validate", "ValidationError"]
 
 from typing import Callable
-from dbacademy.common.cloud_class import Cloud
-
-from dbacademy.common.validator_class import Validator, ValidationError
+from dbacademy.common.cloud import Cloud
+from dbacademy.common.validator import Validator, ValidationError
 
 deprecation_log_level = "error"
 

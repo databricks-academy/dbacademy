@@ -460,7 +460,7 @@ class BuildConfig:
 
         elif isinstance(notebook_configs, NotebookConfig):
             # Convert the single instance of NotebookConfig into a list of NotebookConfigs
-            notebook_configs = list[notebook_configs]
+            notebook_configs = [notebook_configs]
 
         elif isinstance(notebook_configs, dict):
             # Convert the deprecated dictionary of notebook configurations to NotebookConfig objects.
@@ -470,7 +470,8 @@ class BuildConfig:
             # Replace the parameter with the list of NotebookConfig objects
             notebook_configs = dict_notebook_configs
 
-        notebook_configs.extend(list(and_configs))
+        notebook_configs.extend(and_configs)
+
         notebook_configs = validate(notebook_configs=notebook_configs).required.list(NotebookConfig)
 
         for notebook_config in notebook_configs:
