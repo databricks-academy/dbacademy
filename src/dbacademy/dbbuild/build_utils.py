@@ -9,18 +9,18 @@ class BuildUtils:
     def __init__(self):
         pass
 
-    @staticmethod
-    def to_job_url(*, job_id: str, run_id: str) -> str:
+    @classmethod
+    def to_job_url(cls, *, job_id: str, run_id: str) -> str:
         from dbacademy import dbgems
         return f"{dbgems.get_workspace_url()}#job/{job_id}/run/{run_id}"
 
-    @staticmethod
-    def print_if(condition, text) -> None:
+    @classmethod
+    def print_if(cls, condition, text) -> None:
         if condition:
             print(text)
 
-    @staticmethod
-    def clean_target_dir(client: DBAcademyRestClient, target_dir: str, verbose: bool) -> None:
+    @classmethod
+    def clean_target_dir(cls, client: DBAcademyRestClient, target_dir: str, verbose: bool) -> None:
         from dbacademy.dbbuild.publish.publisher import Publisher
 
         if verbose:
@@ -34,8 +34,8 @@ class BuildUtils:
             client.workspace().delete_path(path)
 
     # noinspection PyUnusedLocal
-    @staticmethod
-    def write_file(*, data: bytes, target_file: str, overwrite: bool, target_name) -> None:
+    @classmethod
+    def write_file(cls, *, data: bytes, target_file: str, overwrite: bool, target_name) -> None:
         import os
         if target_file.endswith("_meta.json"):
             print(f"\nWriting Meta File to {target_name}:\n   {target_file}")
@@ -61,8 +61,8 @@ class BuildUtils:
             # print(f"Writing data: {target_file}")
             f.write(data)
 
-    @staticmethod
-    def reset_git_repo(*, client: DBAcademyRestClient, directory: str, repo_url: str, branch: str, which: Union[str, None], prefix="") -> None:
+    @classmethod
+    def reset_git_repo(cls, *, client: DBAcademyRestClient, directory: str, repo_url: str, branch: str, which: Union[str, None], prefix="") -> None:
 
         which = "" if which is None else f" ({which})"
 
@@ -92,24 +92,24 @@ class BuildUtils:
 
         assert branch == current_branch, f"Expected the new branch to be {branch}, found {current_branch}"
 
-    @staticmethod
-    def validate_no_changes_in_repo(*, client: DBAcademyRestClient, build_name: str, repo_url: str, directory: str) -> List[str]:
+    @classmethod
+    def validate_no_changes_in_repo(cls, *, client: DBAcademyRestClient, build_name: str, repo_url: str, directory: str) -> List[str]:
         repo_dir = f"/Repos/Temp/{build_name}-diff"
 
-        BuildUtils.reset_git_repo(client=client,
-                                  directory=repo_dir,
-                                  repo_url=repo_url,
-                                  branch="published",
-                                  which="diff")
+        cls.reset_git_repo(client=client,
+                           directory=repo_dir,
+                           repo_url=repo_url,
+                           branch="published",
+                           which="diff")
         print()
-        index_a: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=repo_dir)
-        index_b: Dict[str, Dict[str, str]] = BuildUtils.index_repo_dir(client=client, repo_dir=directory)
+        index_a: Dict[str, Dict[str, str]] = cls.index_repo_dir(client=client, repo_dir=repo_dir)
+        index_b: Dict[str, Dict[str, str]] = cls.index_repo_dir(client=client, repo_dir=directory)
         print()
 
         print(f"Comparing {directory}")
         print(f"to        {repo_dir}")
 
-        results = BuildUtils.compare_results(index_a, index_b)
+        results = cls.compare_results(index_a, index_b)
 
         if len(results) != 0:
             print()
@@ -120,22 +120,22 @@ class BuildUtils:
 
         return results
 
-    @staticmethod
-    def __ends_with(test_path: str, values: List[str]) -> bool:
+    @classmethod
+    def __ends_with(cls, test_path: str, values: List[str]) -> bool:
         for ext in values:
             if test_path.endswith(ext):
                 return True
         return False
 
-    @staticmethod
-    def __starts_with(test_path: str, values: List[str]) -> bool:
+    @classmethod
+    def __starts_with(cls, test_path: str, values: List[str]) -> bool:
         for ext in values:
             if test_path.startswith(ext):
                 return True
         return False
 
-    @staticmethod
-    def index_repo_dir(*, client: DBAcademyRestClient, repo_dir: str) -> Dict[str, Dict[str, str]]:
+    @classmethod
+    def index_repo_dir(cls, *, client: DBAcademyRestClient, repo_dir: str) -> Dict[str, Dict[str, str]]:
         import os
         from dbacademy import dbgems
 
@@ -153,26 +153,26 @@ class BuildUtils:
             for file in files:
                 full_path = f"{path}/{file}"
                 relative_path = full_path[len(base_path):]
-                if not BuildUtils.__starts_with(relative_path, ignored):
+                if not cls.__starts_with(relative_path, ignored):
                     results[relative_path] = {
                         "full_path": full_path,
                         "contents": None
                     }
 
-        sources = BuildUtils.load_sources(client=client, results=results)
+        sources = cls.load_sources(client=client, results=results)
         print(dbgems.clock_stopped(start, f", {len(sources)} files"))
 
         return sources
 
-    @staticmethod
-    def load_sources(*, client: DBAcademyRestClient, results: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, str]]:
+    @classmethod
+    def load_sources(cls, *, client: DBAcademyRestClient, results: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, str]]:
         for path in results:
             full_path = results.get(path).get("full_path")
 
-            if BuildUtils.__ends_with(full_path, [".ico"]):
+            if cls.__ends_with(full_path, [".ico"]):
                 # These are binary files
                 contents = ""
-            elif BuildUtils.__ends_with(full_path, [".json", ".txt", ".html", ".md", ".gitignore", "LICENSE"]):
+            elif cls.__ends_with(full_path, [".json", ".txt", ".html", ".md", ".gitignore", "LICENSE"]):
                 # These are text files that we can just read in
                 with open(full_path) as f:
                     contents = f.read()
@@ -194,8 +194,8 @@ class BuildUtils:
 
         return results
 
-    @staticmethod
-    def compare_results(index_a: Dict[str, Dict[str, str]],
+    @classmethod
+    def compare_results(cls, index_a: Dict[str, Dict[str, str]],
                         index_b: Dict[str, Dict[str, str]]) -> List[str]:
         results: List[str] = []
 
