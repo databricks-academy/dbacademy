@@ -51,7 +51,7 @@ class DBAcademyHelper:
         self.naming_params = {"course": self.course_config.course_code}
 
         # The following objects provide advanced support for modifying the learning environment.
-        self.__client = dbrest.from_workspace()
+        self.__client = dbrest.from_notebook()
         self.__workspace = WorkspaceHelper(self.__client)
         self.__dev = DevHelper(self)
         self.__tests = ValidationHelper(self)
