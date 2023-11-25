@@ -242,11 +242,11 @@ class Translator:
         assert self.__validated_artifacts, "The artifacts have not yet been validated. See Translator.validate_artifacts()"
 
     def validate_artifacts(self):
-        from dbacademy.dbbuild.publish.artifact_validator_class import ArtifactValidator
+        from dbacademy.dbbuild.publish import artifact_validator
 
         self.assert_created_docs()
 
-        ArtifactValidator.from_translator(self).validate_publishing_processes()
+        artifact_validator.from_translator(self).validate_publishing_processes()
 
         self.__validated_artifacts = True
 

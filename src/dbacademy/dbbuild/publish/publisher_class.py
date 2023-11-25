@@ -405,7 +405,7 @@ class Publisher:
         :param keep_success: See TestSuite.keep_success
         :return: TestSuite
         """
-        from dbacademy.dbbuild.test.test_suite_class import TestSuite
+        from dbacademy.dbbuild.test.test_suite import TestSuite
 
         return TestSuite(build_config=self.build_config,
                          test_dir=self.target_dir,
@@ -558,11 +558,11 @@ class Publisher:
         to import each DBC, locate the Version Info notebook, and then to validate that it contains the correct version number - used to control program flow.
         :return: None
         """
-        from dbacademy.dbbuild.publish.artifact_validator_class import ArtifactValidator
+        from dbacademy.dbbuild.publish import artifact_validator
 
         self.assert_created_docs()
 
-        ArtifactValidator.from_publisher(self).validate_publishing_processes()
+        artifact_validator.from_publisher(self).validate_publishing_processes()
 
         self.__validated_artifacts = True
 

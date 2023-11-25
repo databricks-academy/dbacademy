@@ -24,7 +24,7 @@ class TestSuite:
 
         import re
         from dbacademy import dbgems
-        from dbacademy.dbbuild.test.test_instance_class import TestInstance
+        from dbacademy.dbbuild.test.test_instance import TestInstance
 
         self.__test_dir = test_dir
         self.__build_config = build_config

@@ -2,7 +2,7 @@ __all__ = ["TestInstance"]
 
 from dbacademy.dbbuild.build_config import BuildConfig
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
-from dbacademy.dbbuild.test.test_suite_class import TestSuite
+from dbacademy.dbbuild.test.test_suite import TestSuite
 
 
 class TestInstance:

@@ -765,7 +765,7 @@ class BuildConfig:
         :param keep_success: See TestSuite.keep_success
         :return:
         """
-        from dbacademy.dbbuild.test.test_suite_class import TestSuite
+        from dbacademy.dbbuild.test.test_suite import TestSuite
 
         assert self.validated, f"Cannot test until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
