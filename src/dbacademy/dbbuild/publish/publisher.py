@@ -31,7 +31,7 @@ class Publisher:
         self.__created_dbcs = False
         self.__validated_artifacts = False
 
-        if publishing_mode is None:
+        if publishing_mode is not None:
             self.__publishing_mode = validate(publishing_mode=publishing_mode).as_one_of(parameter_type=str, value=PublishingMode)
 
         # self.__client = build_config.client
