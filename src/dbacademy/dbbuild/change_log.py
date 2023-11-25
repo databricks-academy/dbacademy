@@ -62,7 +62,7 @@ class ChangeLog:
 
         for i, line in enumerate(lines):
             line = line.strip()
-            if line == ChangeLog.CHANGE_LOG_TAG:
+            if line == self.CHANGE_LOG_TAG:
                 change_log_index = i
 
             elif change_log_index and i > change_log_index and line == "":
@@ -72,7 +72,7 @@ class ChangeLog:
                 if line.strip().startswith("* "):
                     continue
 
-                assert line.startswith(ChangeLog.CHANGE_LOG_VERSION), f"The next change log entry ({ChangeLog.CHANGE_LOG_VERSION}...) was not found at {readme_path}:{i + 1}\n{line}"
+                assert line.startswith(self.CHANGE_LOG_VERSION), f"The next change log entry ({self.CHANGE_LOG_VERSION}...) was not found at {readme_path}:{i + 1}\n{line}"
 
                 parts = line.split(" ")  # "### Version 1.0.2 (01-21-2022)"
                 assert len(parts) == 4, f"Expected the change log entry to contain 4 parts and of the form \"### Version vN.N.N (M-D-YYYY)\", found \"{line}\"."

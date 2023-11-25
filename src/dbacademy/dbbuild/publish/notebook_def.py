@@ -1,12 +1,10 @@
 __all__ = ["NotebookDef", "StateVariables"]
 
 from typing import Union, List, Dict, Any
-
-from dbacademy.clients.darest import DBAcademyRestClient
 from dbacademy.common import validate
 from dbacademy.dbhelper import dbh_constants
 from dbacademy.dbbuild import dbb_constants
-from dbacademy.dbbuild.publish import pub_utils
+from dbacademy.clients.darest import DBAcademyRestClient
 from dbacademy.dbbuild.publish.notebook_def_data import NotebookDefData
 
 
@@ -268,6 +266,7 @@ class NotebookDef(NotebookDefData):
 
     def validate_html_link(self, *, i: int, command: str) -> None:
         """Test all HTML links to ensure they have a target set to _blank"""
+        from dbacademy.dbbuild.publish import pub_utils
 
         for link in pub_utils.parse_html_links(command):
             if "target=\"_blank\"" not in link:
@@ -399,6 +398,8 @@ class NotebookDef(NotebookDefData):
                         other_notebooks: List[NotebookDefData],
                         cell_title: str) -> str:
 
+        from dbacademy.dbbuild.publish import pub_utils
+
         # First verify that the specified command is a mark-down cell
         if not pub_utils.is_markdown(cm=cm, command=command):
             return command
@@ -433,6 +434,8 @@ class NotebookDef(NotebookDefData):
                                            cell_title=cell_title)
 
     def create_resource_bundle(self, natural_language: str, source_dir: str, target_dir: str) -> None:
+        from dbacademy.dbbuild.publish import pub_utils
+
         natural_language = None if natural_language is None else natural_language.lower()
 
         assert type(natural_language) == str, f"""Expected the parameter "natural_language" to be of type "str", found "{type(natural_language)}" """
@@ -683,6 +686,8 @@ For more current information, please see <a href="https://files.training.databri
                        i: int,
                        other_notebooks: List[NotebookDefData],
                        debugging: bool) -> str:
+
+        from dbacademy.dbbuild.publish import pub_utils
 
         cell_title = None
         cm = self.get_comment_marker(language)

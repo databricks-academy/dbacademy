@@ -2,8 +2,6 @@ __all__ = ["Translator"]
 
 from typing import Optional
 from dbacademy.dbbuild.publish.publisher_class import Publisher
-from dbacademy.dbbuild import dbb_constants
-from dbacademy.dbbuild.publish import pub_utils
 
 
 class Translator:
@@ -70,6 +68,7 @@ class Translator:
         from dbacademy.dbbuild import dbb_constants
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
         from dbacademy.common import print_warning
+        from dbacademy.dbbuild.publish import pub_utils
 
         add_guid = validate(add_guid=add_guid).required.bool()
 
@@ -401,6 +400,8 @@ class Translator:
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
         from dbacademy.dbbuild.publish.publisher_class import Publisher
         from dbacademy import dbgems, common
+        from dbacademy.dbbuild.publish import pub_utils
+        from dbacademy.dbbuild import dbb_constants
 
         self.assert_no_changes_in_source_repo()
 
