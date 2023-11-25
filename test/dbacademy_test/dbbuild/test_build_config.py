@@ -17,10 +17,24 @@ class TestBuildConfig(unittest.TestCase):
     #     self.assertIsNotNone(self)
 
     def test_initialize_notebooks(self):
-        from dbacademy.dbbuild.build_config import BuildConfig
+        from dbacademy import common
+        from dbacademy.dbbuild.build_config import BuildConfig, NotebookConfig
+
+        build_config = BuildConfig(name="Test Suite", version="1.2.3", supported_dbrs="13.3.x-cpu-ml-scala2.12")
+        build_config.initialize_notebooks(
+            NotebookConfig(name="EC 01 - Your First Lesson",
+                           order=3,
+                           test_round=5,
+                           ignored=True,
+                           include_solution=False,
+                           ignored_errors=["asdf-123"],
+                           replacements={
+                               "cloud": common.Cloud.AWS
+                           })
+        )
 
         try:
-            build_config = BuildConfig(name="Test Suite", version="1.2.3")
+            build_config = BuildConfig(name="Test Suite", version="1.2.3", supported_dbrs="13.3.x-cpu-ml-scala2.12")
             build_config.validate()
         except AssertionError as e:
             expected = "The notebooks have not yet been initialized; Please call BuildConfig.initialize_notebooks() before proceeding."
@@ -48,8 +62,7 @@ class TestBuildConfig(unittest.TestCase):
         from dbacademy.dbbuild.build_config import BuildConfig
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
-        build_config = BuildConfig(name="Data Engineering with Databricks", version="vTEST")
-        build_config.notebooks.clear()
+        build_config = BuildConfig(name="Data Engineering with Databricks", version="vTEST", supported_dbrs="13.3.x-cpu-ml-scala2.12")
         paths = [
             "A00 - Intro to PySpark/DE 0.00 - Module Introduction",
             "A01 - Databricks Workspace/DE 1.0 - Module Introduction",
@@ -78,7 +91,7 @@ class TestBuildConfig(unittest.TestCase):
         from dbacademy.dbbuild.build_config import BuildConfig
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
-        build_config = BuildConfig(name="Data Engineering with Databricks", version="vTEST")
+        build_config = BuildConfig(name="Data Engineering with Databricks", version="vTEST", supported_dbrs="13.3.x-cpu-ml-scala2.12")
         build_config.notebooks.clear()
 
         paths = [
@@ -111,7 +124,7 @@ class TestBuildConfig(unittest.TestCase):
         from dbacademy.dbbuild.build_config import BuildConfig
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
-        build_config = BuildConfig(name="Data Engineering with Databricks", version="vTEST")
+        build_config = BuildConfig(name="Data Engineering with Databricks", version="vTEST", supported_dbrs="13.3.x-cpu-ml-scala2.12")
         build_config.notebooks.clear()
 
         paths = [
