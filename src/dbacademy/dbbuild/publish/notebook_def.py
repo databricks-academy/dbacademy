@@ -25,7 +25,6 @@ class NotebookDef(NotebookDefData):
                             D_INCLUDE_HEADER_TRUE, D_INCLUDE_HEADER_FALSE, D_INCLUDE_FOOTER_TRUE, D_INCLUDE_FOOTER_FALSE, ]
 
     def __init__(self, *,
-                 # build_config: BuildConfig,
                  client: DBAcademyRestClient,
                  path: str,
                  replacements: Dict[str, Any],

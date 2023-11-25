@@ -51,6 +51,10 @@ class Translator:
             self.__select_i18n_language(publisher.build_config.source_repo)
 
     @property
+    def validated(self):
+        return self.__validated
+
+    @property
     def build_config(self) -> BuildConfigData:
         return self.__build_config
 
@@ -336,10 +340,6 @@ class Translator:
             i18n_guid_map[guid] = value
 
         return i18n_guid_map
-
-    @property
-    def validated(self):
-        return self.__validated
 
     def assert_no_changes_in_source_repo(self):
         method = "Translator.validate_no_changes_in_source_repo()"
