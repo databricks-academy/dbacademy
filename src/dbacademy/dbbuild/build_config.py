@@ -727,7 +727,7 @@ class BuildConfig:
         Creates an instance of ResourceDiff from the current build configuration
         :return: An instance of ResourceDiff
         """
-        from dbacademy.dbbuild.publish.resource_diff_class import ResourceDiff
+        from dbacademy.dbbuild.publish.resource_diff import ResourceDiff
         assert self.validated, f"Cannot diff until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed."
 
         return ResourceDiff(self)
@@ -740,7 +740,7 @@ class BuildConfig:
         :param publishing_mode: See Publisher.publishing_mode
         :return: the current publishing mode
         """
-        from dbacademy.dbbuild.publish.publisher_class import Publisher
+        from dbacademy.dbbuild.publish.publisher import Publisher
         assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
         return Publisher(self, publishing_mode)

@@ -1,14 +1,14 @@
 __all__ = ["Translator"]
 
 from typing import Optional
-from dbacademy.dbbuild.publish.publisher_class import Publisher
+from dbacademy.dbbuild.publish.publisher import Publisher
 
 
 class Translator:
 
     def __init__(self, publisher: Publisher, require_i18n_selection: bool):
         from dbacademy.common import validate
-        from dbacademy.dbbuild.publish.publisher_class import Publisher
+        from dbacademy.dbbuild.publish.publisher import Publisher
 
         # By default, we are not validated
         self.__validated = False
@@ -222,7 +222,7 @@ class Translator:
     def create_published_message(self) -> str:
         from dbacademy.dbbuild.publish.advertiser import Advertiser
         from dbacademy.dbbuild.change_log import ChangeLog
-        from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
+        from dbacademy.dbbuild.publish.publishing_info import PublishingInfo
 
         self.assert_validated_artifacts()
 
@@ -398,7 +398,7 @@ class Translator:
         from datetime import datetime
         from dbacademy.dbbuild.build_utils import BuildUtils
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
-        from dbacademy.dbbuild.publish.publisher_class import Publisher
+        from dbacademy.dbbuild.publish.publisher import Publisher
         from dbacademy import dbgems, common
         from dbacademy.dbbuild.publish import pub_utils
         from dbacademy.dbbuild import dbb_constants
@@ -518,7 +518,7 @@ class Translator:
 
     def create_docs(self) -> str:
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
-        from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
+        from dbacademy.dbbuild.publish.publishing_info import PublishingInfo
 
         self.assert_created_dbcs()
 

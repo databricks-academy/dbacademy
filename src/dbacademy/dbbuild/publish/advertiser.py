@@ -2,7 +2,7 @@ __all__ = ["Advertiser"]
 
 from typing import Optional
 from dbacademy.dbbuild.change_log import ChangeLog
-from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
+from dbacademy.dbbuild.publish.publishing_info import PublishingInfo
 
 
 class Advertiser:

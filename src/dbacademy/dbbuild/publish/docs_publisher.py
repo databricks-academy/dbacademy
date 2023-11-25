@@ -2,7 +2,7 @@ __all__ = ["DocsPublisher"]
 
 import io
 from typing import Dict
-from dbacademy.dbbuild.publish.publishing_info_class import Translation
+from dbacademy.dbbuild.publish.publishing_info import Translation
 
 
 class DocsPublisher:

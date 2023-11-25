@@ -264,7 +264,7 @@ class Publisher:
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
         from dbacademy.dbbuild.publish.advertiser import Advertiser
-        from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
+        from dbacademy.dbbuild.publish.publishing_info import PublishingInfo
 
         self.assert_validate_artifacts()
 
@@ -391,7 +391,7 @@ class Publisher:
         Creates an instance of the Translator class from this class
         :return: Translator
         """
-        from dbacademy.dbbuild.publish.translator_class import Translator
+        from dbacademy.dbbuild.publish.translator import Translator
         self.assert_validated_config()
 
         return Translator(self, require_i18n_selection)
@@ -524,7 +524,7 @@ class Publisher:
         :return:
         """
         from dbacademy.dbbuild.publish.docs_publisher import DocsPublisher
-        from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
+        from dbacademy.dbbuild.publish.publishing_info import PublishingInfo
 
         self.assert_created_dbcs()
 

@@ -1,5 +1,5 @@
 import unittest
-from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
+from dbacademy.dbbuild.publish.publishing_info import PublishingInfo
 
 
 class MyTestCase(unittest.TestCase):

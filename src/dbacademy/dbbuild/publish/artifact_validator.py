@@ -1,9 +1,9 @@
 __all__ = ["ArtifactValidator"]
 
 from typing import Optional
-from dbacademy.dbbuild.publish.publisher_class import Publisher
-from dbacademy.dbbuild.publish.translator_class import Translator
-from dbacademy.dbbuild.publish.publishing_info_class import Translation
+from dbacademy.dbbuild.publish.publisher import Publisher
+from dbacademy.dbbuild.publish.translator import Translator
+from dbacademy.dbbuild.publish.publishing_info import Translation
 from dbacademy.clients.dbrest import DBAcademyRestClient
 
 
@@ -11,7 +11,7 @@ class ArtifactValidator:
 
     def __init__(self, *, build_name: str, version: str, core_version: str, client: DBAcademyRestClient, target_repo_url: str, temp_repo_dir: str, temp_work_dir: str, username: str, translation: Translation, i18n: bool, common_language: str) -> None:
         from dbacademy.common import validate
-        from dbacademy.dbbuild.publish.publishing_info_class import Translation
+        from dbacademy.dbbuild.publish.publishing_info import Translation
 
         self.build_name = build_name
         self.version = version
@@ -159,7 +159,7 @@ class ArtifactValidator:
 
 
 def from_publisher(publisher: Publisher) -> ArtifactValidator:
-    from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo, Translation
+    from dbacademy.dbbuild.publish.publishing_info import PublishingInfo, Translation
 
     info = PublishingInfo(publisher.build_config.publishing_info)
     translation: Translation = info.translations.get("english")
@@ -178,7 +178,7 @@ def from_publisher(publisher: Publisher) -> ArtifactValidator:
 
 
 def from_translator(translator: Translator) -> ArtifactValidator:
-    from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo, Translation
+    from dbacademy.dbbuild.publish.publishing_info import PublishingInfo, Translation
 
     info = PublishingInfo(translator.build_config.publishing_info)
     translation: Translation = info.translations.get(translator.common_language)

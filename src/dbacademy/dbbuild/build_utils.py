@@ -21,7 +21,7 @@ class BuildUtils:
 
     @staticmethod
     def clean_target_dir(client: DBAcademyRestClient, target_dir: str, verbose: bool) -> None:
-        from dbacademy.dbbuild.publish.publisher_class import Publisher
+        from dbacademy.dbbuild.publish.publisher import Publisher
 
         if verbose:
             print(f"Cleaning {target_dir}...")
