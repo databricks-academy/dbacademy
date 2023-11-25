@@ -105,7 +105,7 @@ class ChangeLog:
     def target_version(self) -> str:
         return self.__target_version
 
-    def __str__(self):
+    def __str__(self) -> str:
         string = f"Change Log: v{self.version} ({self.date})"
         for entry in self.entries:
             string += f"\n  {entry}"
