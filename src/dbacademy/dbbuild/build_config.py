@@ -394,7 +394,8 @@ class BuildConfig:
     def client(self) -> DBAcademyRestClient:
         return self.__client
 
-    def initialize_notebooks(self, notebook_configs: Optional[Union[NotebookConfig, Dict[str, Any]]]) -> None:
+    def initialize_notebooks(self, notebook_configs: Optional[Union[NotebookConfig, List[NotebookConfig], Dict[str, Any]]], *and_configs: NotebookConfig) -> None:
+
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
         from dbacademy.dbhelper import dbh_constants
 
@@ -453,7 +454,15 @@ class BuildConfig:
         if has_wip:
             print()
 
-        if isinstance(notebook_configs, dict):
+        #     def initialize_notebooks(self, notebook_configs: Optional[Union[NotebookConfig, Dict[str, Any]]], *and_configs: NotebookConfig) -> None:
+        if notebook_configs is None:
+            notebook_configs = list()
+
+        elif isinstance(notebook_configs, NotebookConfig):
+            # Convert the single instance of NotebookConfig into a list of NotebookConfigs
+            notebook_configs = list[notebook_configs]
+
+        elif isinstance(notebook_configs, dict):
             # Convert the deprecated dictionary of notebook configurations to NotebookConfig objects.
             dict_notebook_configs = list()
             for name, arguments in notebook_configs.items():
@@ -461,7 +470,8 @@ class BuildConfig:
             # Replace the parameter with the list of NotebookConfig objects
             notebook_configs = dict_notebook_configs
 
-        notebook_configs = validate(notebook_configs=notebook_configs).list(NotebookConfig, auto_create=True)
+        notebook_configs.extend(and_configs)
+        notebook_configs = validate(notebook_configs=notebook_configs).required.list(NotebookConfig)
 
         for notebook_config in notebook_configs:
             assert notebook_config.name in self.notebooks, f"""The notebook "{notebook_config.name}" was not found; double check the name in your set of notebook configurations passed to BuildConfig."""
