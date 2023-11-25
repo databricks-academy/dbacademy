@@ -9,6 +9,88 @@ from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 ParameterType = TypeVar("ParameterType")
 
 
+class NotebookConfig:
+    def __init__(self, name: str, *,
+                 order: Optional[int] = None,
+                 test_round: Optional[int] = None,
+                 ignored: Optional[bool] = None,
+                 include_solution: Optional[bool] = None,
+                 ignored_errors: Optional[List[str]] = None,
+                 replacements: Optional[Dict[str, Any]] = None):
+        """
+        Defines a notebook-specific configuration which is indexed by the specified name.
+        :param name: See NotebookDef's parameter by the same name.
+        :param order: See NotebookDef's parameter by the same name.
+        :param test_round: See NotebookDef's parameter by the same name.
+        :param ignored: See NotebookDef's parameter by the same name.
+        :param include_solution: See NotebookDef's parameter by the same name.
+        :param ignored_errors: See NotebookDef's parameter by the same name.
+        :param replacements: See NotebookDef's parameter by the same name.
+        """
+
+        self.__name = validate(name=name).required.str()
+        self.__order: int = validate(order=order).optional.int()
+        self.__test_round: int = validate(test_round=test_round).optional.int()
+        self.__ignored: bool = validate(ignored=ignored).optional.bool()
+        self.__include_solution: bool = validate(include_solution=include_solution).optional.bool()
+        self.__ignored_errors: List[str] = validate(ignored_errors=ignored_errors).optional.list(str, auto_create=True)
+        self.__replacements: Dict[str, Any] = validate(replacements=replacements).optional.dict(str, auto_create=True)
+
+    def apply(self, notebook_def: NotebookDef) -> None:
+        """
+        Applies the non-None configuration to the specified NotebookDef
+        :param notebook_def: the notebook to be updated
+        :return: None
+        """
+
+        if self.order is not None:
+            notebook_def.order = self.order
+
+        if self.test_round is not None:
+            notebook_def.test_round = self.test_round
+
+        if self.ignored is not None:
+            notebook_def.ignored = self.ignored
+
+        if self.include_solution is not None:
+            notebook_def.include_solution = self.include_solution
+
+        if self.ignored_errors is not None:
+            notebook_def.ignoring = self.ignored_errors
+
+        if self.replacements is not None:
+            notebook_def.replacements.clear()
+            notebook_def.replacements.update(self.replacements)
+
+    @property
+    def name(self) -> str:
+        return self.__name
+
+    @property
+    def order(self) -> Optional[int]:
+        return self.__order
+
+    @property
+    def test_round(self) -> Optional[int]:
+        return self.__test_round
+
+    @property
+    def ignored(self) -> Optional[bool]:
+        return self.__ignored
+
+    @property
+    def include_solution(self) -> Optional[bool]:
+        return self.__include_solution
+
+    @property
+    def ignored_errors(self) -> Optional[List[str]]:
+        return self.__ignored_errors
+
+    @property
+    def replacements(self) -> Optional[Dict[str, Any]]:
+        return self.__replacements
+
+
 class BuildConfig:
 
     LANGUAGE_OPTIONS_DEFAULT = "Default"
@@ -312,12 +394,9 @@ class BuildConfig:
     def client(self) -> DBAcademyRestClient:
         return self.__client
 
-    def initialize_notebooks(self, notebook_configs: Optional[Dict[str, Any]]) -> None:
+    def initialize_notebooks(self, notebook_configs: Optional[Union[NotebookConfig, Dict[str, Any]]]) -> None:
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
         from dbacademy.dbhelper import dbh_constants
-
-        # We don't default to None, require the user to do that, but we support it with an empty list.
-        notebook_configs = validate(notebook_configs=notebook_configs).dict(str, auto_create=True)
 
         # Remove the existing notebooks so that we can recreate them.
         self.notebooks.clear()
@@ -374,15 +453,20 @@ class BuildConfig:
         if has_wip:
             print()
 
-        for name, notebook_config in notebook_configs.items():
-            assert name in self.notebooks, f"The notebook \"{name}\" specified in the notebook configs doesn't exist."
-            notebook = self.notebooks.get(name)
+        if isinstance(notebook_configs, dict):
+            # Convert the deprecated dictionary of notebook configurations to NotebookConfig objects.
+            dict_notebook_configs = list()
+            for name, arguments in notebook_configs.items():
+                dict_notebook_configs.append(NotebookConfig(name=name, **arguments))
+            # Replace the parameter with the list of NotebookConfig objects
+            notebook_configs = dict_notebook_configs
 
-            notebook.order =            notebook_config.get("order") if "order" in notebook_config else notebook.order
-            notebook.test_round =       notebook_config.get("test_round") if "test_round" in notebook_config else notebook.test_round
-            notebook.ignored =          notebook_config.get("ignored") if "ignored" in notebook_config else notebook.ignored
-            notebook.include_solution = notebook_config.get("include_solution") if "include_solution" in notebook_config else notebook.include_solution
-            notebook.ignoring =         notebook_config.get("ignored_errors") if "ignored_errors" in notebook_config else list()
+        notebook_configs = validate(notebook_configs=notebook_configs).list(NotebookConfig, auto_create=True)
+
+        for notebook_config in notebook_configs:
+            assert notebook_config.name in self.notebooks, f"""The notebook "{notebook_config.name}" was not found; double check the name in your set of notebook configurations passed to BuildConfig."""
+            notebook = self.notebooks.get(notebook_config.name)
+            notebook_config.apply(notebook)
 
         # Now that we are all done, we can mark the notebooks as "created"
         self.__created_notebooks = True
