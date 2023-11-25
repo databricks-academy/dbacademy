@@ -1,4 +1,4 @@
-__all__ = ["BuildConfig", "load_build_config"]
+__all__ = ["BuildConfig", "NotebookConfig", "load_build_config"]
 
 from typing import List, Dict, Any, Optional, Callable, TypeVar, Type, Union
 from dbacademy.common import validate, Cloud
@@ -470,7 +470,7 @@ class BuildConfig:
             # Replace the parameter with the list of NotebookConfig objects
             notebook_configs = dict_notebook_configs
 
-        notebook_configs.extend(and_configs)
+        notebook_configs.extend(list(and_configs))
         notebook_configs = validate(notebook_configs=notebook_configs).required.list(NotebookConfig)
 
         for notebook_config in notebook_configs:
