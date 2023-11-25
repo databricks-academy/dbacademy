@@ -208,6 +208,8 @@ class BuildConfig(BuildConfigData):
                  white_list: List[str] = None,
                  black_list: List[str] = None):
 
+        self.__created_notebooks = False
+
         super().__init__(name=name,
                          supported_dbrs=supported_dbrs,
                          ignoring=ignoring,

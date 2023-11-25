@@ -46,7 +46,6 @@ class BuildConfigData:
         self.__build_name = CourseConfig.to_build_name(name)
 
         self.__validated = False
-        self.__created_notebooks = False
         self.__passing_tests: Dict[str, bool] = dict()
 
         try:
