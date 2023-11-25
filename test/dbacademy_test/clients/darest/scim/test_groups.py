@@ -1,14 +1,14 @@
 __all__ = ["TestGroups"]
 
 import unittest
-from dbacademy.clients import darest
+from dbacademy.clients import dbrest
 from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
 
 
 class TestGroups(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.__client = darest.from_token(scope=DBACADEMY_UNIT_TESTS)
+        self.__client = dbrest.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.tearDown()
 
     def tearDown(self) -> None:

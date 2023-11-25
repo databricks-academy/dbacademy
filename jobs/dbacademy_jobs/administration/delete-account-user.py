@@ -1,6 +1,6 @@
 import os
 from dbacademy.common import Cloud
-from dbacademy.clients.darest import accounts_client
+from dbacademy.clients.dbrest import accounts_client
 
 
 accounts = accounts_client.from_args(cloud=Cloud.AWS,

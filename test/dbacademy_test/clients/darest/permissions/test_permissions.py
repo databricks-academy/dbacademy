@@ -1,6 +1,6 @@
 import unittest
 
-from dbacademy.clients.darest import DBAcademyRestClient
+from dbacademy.clients.dbrest import DBAcademyRestClient
 from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
 
 
@@ -10,9 +10,9 @@ class TestPermissionsApi(unittest.TestCase):
     """
 
     def setUp(self) -> None:
-        from dbacademy.clients import darest
+        from dbacademy.clients import dbrest
 
-        self.__client = darest.from_token(scope=DBACADEMY_UNIT_TESTS)
+        self.__client = dbrest.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.tearDown()
 
     @property

@@ -1,7 +1,7 @@
 from typing import List, Optional, Callable, Dict, Any
 
 from dbacademy.dbhelper import dbh_constants
-from dbacademy.clients import darest
+from dbacademy.clients import dbrest
 from dbacademy.clients.rest.common import DatabricksApiException
 from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
@@ -27,7 +27,7 @@ class WorkspaceTrio:
         else:
             endpoint = self.workspace_api.endpoint
 
-        self.client = darest.from_auth_header(authorization_header=self.workspace_api.authorization_header, endpoint=endpoint)
+        self.client = dbrest.from_auth_header(authorization_header=self.workspace_api.authorization_header, endpoint=endpoint)
         self.client.dns_retry = True
 
     def __str__(self) -> str:

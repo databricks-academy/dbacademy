@@ -2,7 +2,7 @@ __all__ = ["NotebookDefData"]
 
 from typing import Union, List, Dict, Any, Optional
 from dbacademy.common import validate
-from dbacademy.clients.darest import DBAcademyRestClient
+from dbacademy.clients.dbrest import DBAcademyRestClient
 from dbacademy.dbbuild.publish.notebook_logger import NotebookLogger
 
 

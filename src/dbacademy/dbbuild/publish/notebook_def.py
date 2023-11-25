@@ -4,7 +4,7 @@ from typing import Union, List, Dict, Any
 from dbacademy.common import validate
 from dbacademy.dbhelper import dbh_constants
 from dbacademy.dbbuild import dbb_constants
-from dbacademy.clients.darest import DBAcademyRestClient
+from dbacademy.clients.dbrest import DBAcademyRestClient
 from dbacademy.dbbuild.publish.notebook_def_data import NotebookDefData
 
 

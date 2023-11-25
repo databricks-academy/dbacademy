@@ -1,5 +1,6 @@
 __all__ = ["Advertiser"]
 
+from typing import Optional
 from dbacademy.dbbuild.change_log import ChangeLog
 from dbacademy.dbbuild.publish.publishing_info_class import PublishingInfo
 
@@ -12,7 +13,7 @@ class Advertiser:
                  change_log: ChangeLog,
                  publishing_info: PublishingInfo,
                  source_repo: str,
-                 common_language: str):
+                 common_language: Optional[str]):
 
         self.__name = name
         self.__version = version
@@ -26,6 +27,30 @@ class Advertiser:
         self.__subject = f"Published {self.__name}, v{self.__version}"
 
         self.__create_html()
+
+    @property
+    def name(self) -> str:
+        return self.__name
+
+    @property
+    def version(self) -> str:
+        return self.__version
+
+    @property
+    def change_log(self) -> ChangeLog:
+        return self.__change_log
+
+    @property
+    def publishing_info(self) -> PublishingInfo:
+        return self.__publishing_info
+
+    @property
+    def source_repo(self) -> str:
+        return self.__source_repo
+
+    @property
+    def common_language(self) -> Optional[str]:
+        return self.__common_language
 
     @property
     def html(self) -> str:

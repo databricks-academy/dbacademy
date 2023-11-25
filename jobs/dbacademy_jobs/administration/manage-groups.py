@@ -1,8 +1,8 @@
 import os
 from typing import Dict, Any
 from dbacademy.common import Cloud, load_databricks_cfg
-from dbacademy.clients import darest
-from dbacademy.clients.darest import accounts_client
+from dbacademy.clients import dbrest
+from dbacademy.clients.dbrest import accounts_client
 
 accounts = accounts_client.from_args(cloud=Cloud.AWS,
                                      account_id=os.environ.get("WORKSPACE_SETUP_CURR_ACCOUNT_ID"),
@@ -39,7 +39,7 @@ configs = load_databricks_cfg(config_file)
 token = configs.get(environment).get("token")
 endpoint = configs.get(environment).get("host")
 
-client = darest.from_token(token=token, endpoint=endpoint)
+client = dbrest.from_token(token=token, endpoint=endpoint)
 
 # add_to_admins("Curriculum Team")
 # add_to_admins("Engineering/Support")

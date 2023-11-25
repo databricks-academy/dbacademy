@@ -6,10 +6,10 @@ import unittest
 class TestJobsClient(unittest.TestCase):
 
     def setUp(self) -> None:
-        from dbacademy.clients import darest
+        from dbacademy.clients import dbrest
         from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
 
-        self.__client = darest.from_token(scope=DBACADEMY_UNIT_TESTS)
+        self.__client = dbrest.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.tearDown()
 
     def tearDown(self) -> None:
@@ -42,8 +42,8 @@ class TestJobsClient(unittest.TestCase):
         self.assertEqual(orig_job_id, job.get("job_id"))
 
     def __create_job(self):
-        from dbacademy.clients.darest.jobs_api.job_config import JobConfig
-        from dbacademy.clients.darest.clusters_api.cluster_config import JobClusterConfig
+        from dbacademy.clients.dbrest.jobs_api.job_config import JobConfig
+        from dbacademy.clients.dbrest.clusters_api.cluster_config import JobClusterConfig
         from dbacademy.common import Cloud
         from dbacademy.dbhelper import dbh_constants
 

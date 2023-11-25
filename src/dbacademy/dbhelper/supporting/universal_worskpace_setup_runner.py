@@ -1,7 +1,7 @@
 __all__ = ["UniversalWorkspaceSetupRunner"]
 
 from typing import Dict, Any, Optional
-from dbacademy.clients.darest import DBAcademyRestClient
+from dbacademy.clients.dbrest import DBAcademyRestClient
 from dbacademy.dbhelper.course_config import CourseConfig
 
 UWS_CONFIG_PATH = "dbfs:/mnt/dbacademy/uws.json"
@@ -12,7 +12,7 @@ class UniversalWorkspaceSetupRunner:
     def __init__(self, *, course_config: CourseConfig, token: str = None, endpoint: str = None, workspace_name: str = None):
         from dbacademy import dbgems
         from dbacademy.common import Cloud
-        from dbacademy.clients import darest
+        from dbacademy.clients import dbrest
         from dbacademy.common import validate
 
         self.__event_id = 0
@@ -23,7 +23,7 @@ class UniversalWorkspaceSetupRunner:
 
         self.__workspace_name = validate(workspace_name=workspace_name or dbgems.sc.getConf().get("spark.databricks.workspaceUrl", defaultValue="Unknown")).required.str()
 
-        self.__client = darest.from_token(token=validate(token=token or dbgems.get_notebooks_api_token()).required.str(),
+        self.__client = dbrest.from_token(token=validate(token=token or dbgems.get_notebooks_api_token()).required.str(),
                                           endpoint=validate(endpoint=endpoint or dbgems.get_notebooks_api_endpoint()).required.str())
 
         if Cloud.current_cloud().is_aws:

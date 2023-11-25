@@ -6,7 +6,7 @@ class DevHelper:
     def __init__(self, db_academy_helper):
         from dbacademy.common import validate
         from dbacademy.dbhelper.dbacademy_helper import DBAcademyHelper
-        from dbacademy.clients.darest import DBAcademyRestClient
+        from dbacademy.clients.dbrest import DBAcademyRestClient
 
         self.__da = validate(db_academy_helper=db_academy_helper).required.as_type(DBAcademyHelper)
         self.__client = validate(client=db_academy_helper.client).required.as_type(DBAcademyRestClient)

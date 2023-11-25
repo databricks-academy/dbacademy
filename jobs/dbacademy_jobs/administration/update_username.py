@@ -1,7 +1,7 @@
 import os
 
 from dbacademy.common import Cloud
-from dbacademy.clients.darest import accounts_client
+from dbacademy.clients.dbrest import accounts_client
 
 account_id = os.environ.get("WORKSPACE_SETUP_CURR_ACCOUNT_ID")
 username = os.environ.get("WORKSPACE_SETUP_CURR_USERNAME")

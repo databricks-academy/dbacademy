@@ -2,7 +2,7 @@ __all__ = ["Result", "Watchdog"]
 
 import os
 from typing import List, Dict, Any, Optional, Literal, Union
-from dbacademy.clients.darest import DBAcademyRestClient
+from dbacademy.clients.dbrest import DBAcademyRestClient
 
 # noinspection PyPep8Naming
 DISABLED = False
@@ -52,7 +52,7 @@ class Result:
 class Watchdog:
     def __init__(self):
         from dbacademy.common import Cloud
-        from dbacademy.clients.darest import accounts_client
+        from dbacademy.clients.dbrest import accounts_client
 
         self.__results: List[Result] = list()
 
@@ -284,9 +284,9 @@ class Watchdog:
                             _analyse_clusters: bool,
                             _terminate_clusters: bool):
 
-        from dbacademy.clients import darest
+        from dbacademy.clients import dbrest
         self.__workspace = _workspace
-        self.__workspace_client = darest.from_args(endpoint=self.workspace_endpoint, username=self.__username, password=self.__password)
+        self.__workspace_client = dbrest.from_args(endpoint=self.workspace_endpoint, username=self.__username, password=self.__password)
 
         workspace_name = _workspace.get("workspace_name")
         print(f"* Processing workspace {workspace_name}")

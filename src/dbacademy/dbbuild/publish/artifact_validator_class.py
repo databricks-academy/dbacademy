@@ -4,7 +4,7 @@ from typing import Optional
 from dbacademy.dbbuild.publish.publisher_class import Publisher
 from dbacademy.dbbuild.publish.translator_class import Translator
 from dbacademy.dbbuild.publish.publishing_info_class import Translation
-from dbacademy.clients.darest import DBAcademyRestClient
+from dbacademy.clients.dbrest import DBAcademyRestClient
 
 
 class ArtifactValidator:

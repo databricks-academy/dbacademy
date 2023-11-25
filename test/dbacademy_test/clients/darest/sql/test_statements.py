@@ -4,19 +4,19 @@ import unittest
 
 
 class StatementTests(unittest.TestCase):
-    from dbacademy.clients import darest
+    from dbacademy.clients import dbrest
 
     warehouse_id: str = None
-    client: darest.DBAcademyRestClient = None
+    client: dbrest.DBAcademyRestClient = None
 
     @classmethod
     def setUpClass(cls) -> None:
-        from dbacademy.clients import darest
+        from dbacademy.clients import dbrest
         from dbacademy.dbhelper import dbh_constants
-        from dbacademy.clients.darest.sql_api.warehouses_api import CLUSTER_SIZE_2X_SMALL, RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT
+        from dbacademy.clients.dbrest.sql_api.warehouses_api import CLUSTER_SIZE_2X_SMALL, RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT
         from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
 
-        cls.client = darest.from_token(scope=DBACADEMY_UNIT_TESTS)
+        cls.client = dbrest.from_token(scope=DBACADEMY_UNIT_TESTS)
 
         warehouse = cls.client.sql.warehouses.create_or_update(
             name="Unit-Tests Warehouse",

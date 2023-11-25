@@ -1,5 +1,5 @@
 import unittest
-from dbacademy.clients.darest.accounts_client import from_args
+from dbacademy.clients.dbrest.accounts_client import from_args
 from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
 
 

@@ -2,7 +2,7 @@ __all__ = ["BuildConfig", "NotebookConfig", "load_build_config"]
 
 from typing import List, Dict, Any, Optional, Callable, TypeVar, Type, Union
 from dbacademy.common import validate, Cloud
-from dbacademy.clients.darest import DBAcademyRestClient
+from dbacademy.clients.dbrest import DBAcademyRestClient
 from dbacademy.dbbuild.change_log import ChangeLog
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
