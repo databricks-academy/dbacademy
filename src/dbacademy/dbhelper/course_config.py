@@ -36,8 +36,9 @@ class CourseConfig:
         self.__install_min_time = validate(install_min_time=install_min_time).required.str()
         self.__install_max_time = validate(install_max_time=install_max_time).required.str()
 
-        supported_dbrs = [supported_dbrs] if isinstance(supported_dbrs, str) else supported_dbrs
-        self.__supported_dbrs = validate(supported_dbrs=supported_dbrs).required.list(str, min_length=1)
+        supported_dbrs = validate(supported_dbrs=supported_dbrs).required.as_type(str, list)              # Make sure it's either a list or a single string
+        supported_dbrs = supported_dbrs if isinstance(supported_dbrs, list) else [supported_dbrs]         # Convert single string to a list of strings
+        self.__supported_dbrs = validate(supported_dbrs=supported_dbrs).required.list(str, min_length=1)  # Make sure the all elements of the list are a string.
 
         self.__expected_dbrs = validate(expected_dbrs=expected_dbrs).required.str()
 

@@ -103,7 +103,7 @@ class BuildConfig:
     @classmethod
     def load(cls, build_config_file_path: str, *, version: str,
              name: str = None,
-             supported_dbrs: List[str] = None,
+             supported_dbrs: Union[str, List[str]] = None,
              spark_version: str = None,
              cloud: str = None,
              instance_pool_id: str = None,
