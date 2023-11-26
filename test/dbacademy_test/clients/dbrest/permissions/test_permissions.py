@@ -1,7 +1,7 @@
 import unittest
 
 from dbacademy.clients.dbrest import DBAcademyRestClient
-from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
+from dbacademy_test.clients.dbrest import DBACADEMY_UNIT_TESTS
 
 
 class TestPermissionsApi(unittest.TestCase):

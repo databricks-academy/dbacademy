@@ -3,7 +3,7 @@ __all__ = ["WorkspaceConfigTests"]
 import unittest
 from typing import Dict, Any
 from dbacademy.clients import dbrest
-from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
+from dbacademy_test.clients.dbrest import DBACADEMY_UNIT_TESTS
 
 enable_web_terminal = "enableWebTerminal"
 enable_export_notebook = "enableExportNotebook"

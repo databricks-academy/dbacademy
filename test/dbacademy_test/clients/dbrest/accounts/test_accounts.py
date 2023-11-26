@@ -1,6 +1,6 @@
 import unittest
 from dbacademy.clients.dbrest.accounts_client import from_args
-from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
+from dbacademy_test.clients.dbrest import DBACADEMY_UNIT_TESTS
 
 
 class TestAccountsApi(unittest.TestCase):

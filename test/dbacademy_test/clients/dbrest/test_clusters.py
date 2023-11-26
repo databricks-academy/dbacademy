@@ -4,7 +4,7 @@ import time, json, unittest
 from dbacademy.common import Cloud
 from dbacademy.clients.dbrest import from_token
 from dbacademy.clients.dbrest.clusters_api.cluster_config import ClusterConfig, Availability
-from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS, UNIT_TEST_SERVICE_PRINCIPLE
+from dbacademy_test.clients.dbrest import DBACADEMY_UNIT_TESTS, UNIT_TEST_SERVICE_PRINCIPLE
 
 
 class TestClusters(unittest.TestCase):

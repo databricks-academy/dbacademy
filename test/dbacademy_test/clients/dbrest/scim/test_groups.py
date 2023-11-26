@@ -2,7 +2,7 @@ __all__ = ["TestGroups"]
 
 import unittest
 from dbacademy.clients import dbrest
-from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
+from dbacademy_test.clients.dbrest import DBACADEMY_UNIT_TESTS
 
 
 class TestGroups(unittest.TestCase):

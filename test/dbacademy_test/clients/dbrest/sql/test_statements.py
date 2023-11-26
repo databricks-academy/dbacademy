@@ -14,7 +14,7 @@ class StatementTests(unittest.TestCase):
         from dbacademy.clients import dbrest
         from dbacademy.dbhelper import dbh_constants
         from dbacademy.clients.dbrest.sql_api.warehouses_api import CLUSTER_SIZE_2X_SMALL, RELIABILITY_OPTIMIZED, CHANNEL_NAME_CURRENT
-        from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
+        from dbacademy_test.clients.dbrest import DBACADEMY_UNIT_TESTS
 
         cls.client = dbrest.from_token(scope=DBACADEMY_UNIT_TESTS)
 

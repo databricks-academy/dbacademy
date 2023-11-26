@@ -7,7 +7,7 @@ class TestJobsClient(unittest.TestCase):
 
     def setUp(self) -> None:
         from dbacademy.clients import dbrest
-        from dbacademy_test.clients.darest import DBACADEMY_UNIT_TESTS
+        from dbacademy_test.clients.dbrest import DBACADEMY_UNIT_TESTS
 
         self.__client = dbrest.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.tearDown()
@@ -73,7 +73,7 @@ class TestJobsClient(unittest.TestCase):
 
     def test_create_git_job(self):
         import json
-        from dbacademy_test.clients.darest import UNIT_TEST_SERVICE_PRINCIPLE
+        from dbacademy_test.clients.dbrest import UNIT_TEST_SERVICE_PRINCIPLE
 
         job = self.__create_job()
         job_id = job.get("job_id")
