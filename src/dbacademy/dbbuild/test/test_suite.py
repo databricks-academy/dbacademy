@@ -6,7 +6,7 @@ from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 from dbacademy.dbbuild.test import TEST_TYPE
 from dbacademy.clients.dbrest import DBAcademyRestClient
 from dbacademy.dbbuild.test.test_instance import TestInstance
-
+from dbacademy.dbbuild.test.results_evaluator import ResultsEvaluator
 from dbacademy.dbbuild.test import TestType
 
 
@@ -269,8 +269,7 @@ class TestSuite:
 
         return result_state != 'FAILED'
 
-    def to_results_evaluator(self):
-        from dbacademy.dbbuild.test.results_evaluator import ResultsEvaluator
+    def to_results_evaluator(self) -> ResultsEvaluator:
         return ResultsEvaluator(self.test_results, self.keep_success)
 
     def log_run(self, test, response):

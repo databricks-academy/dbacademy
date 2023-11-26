@@ -7,7 +7,11 @@ from dbacademy.dbbuild.build_config_data import BuildConfigData
 from dbacademy.dbbuild.change_log import ChangeLog
 from dbacademy.dbbuild.publish.publisher import PublishingMode
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
+from dbacademy.dbbuild.publish.translator import Translator
 from dbacademy.dbbuild.test import TestType
+from dbacademy.dbbuild.publish.resource_diff import ResourceDiff
+from dbacademy.dbbuild.test.test_suite import TestSuite
+from dbacademy.dbbuild.publish.publisher import Publisher
 
 ParameterType = TypeVar("ParameterType")
 
@@ -499,34 +503,24 @@ class BuildConfig(BuildConfigData):
                             print(f": {value}")
                         print("     }")
 
-    # Used by notebooks
-    # TODO Cannot define return type
-    def to_resource_diff(self):
+    def to_resource_diff(self) -> ResourceDiff:
         """
         Creates an instance of ResourceDiff from the current build configuration
         :return: An instance of ResourceDiff
         """
-        from dbacademy.dbbuild.publish.resource_diff import ResourceDiff
         assert self.validated, f"Cannot diff until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed."
-
         return ResourceDiff(self)
 
-    # Used by notebooks
-    # TODO Cannot define return type
-    def to_publisher(self, publishing_mode: Union[str, PublishingMode] = PublishingMode.non_op):
+    def to_publisher(self, publishing_mode: Union[str, PublishingMode] = PublishingMode.non_op) -> Publisher:
         """
         Creates an instance of Publisher from the current build configuration
         :param publishing_mode: See Publisher.publishing_mode
         :return: the current publishing mode
         """
-        from dbacademy.dbbuild.publish.publisher import Publisher
         assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
-
         return Publisher(build_config=self, publishing_mode=validate(publishing_mode=publishing_mode).required.enum(PublishingMode, auto_convert=True))
 
-    # Used by notebooks
-    # TODO Cannot define return type
-    def to_translator(self, require_i18n_selection: bool = True):
+    def to_translator(self, require_i18n_selection: bool = True) -> Translator:
         """
         Creates an instance of Translator from the current build configuration.
         :return:
@@ -535,22 +529,15 @@ class BuildConfig(BuildConfigData):
         publisher.validate(silent=True)
         return publisher.to_translator(require_i18n_selection)
 
-    # Used by notebooks
-    # TODO Cannot define return type
-    def to_test_suite(self, test_type: Optional[TestType] = None, keep_success: bool = False):
+    def to_test_suite(self, test_type: Optional[TestType] = None, keep_success: bool = False) -> TestSuite:
         """
         Creates an instance of TestSuite from the current build configuration
         :param test_type: See TestSuite.test_type
         :param keep_success: See TestSuite.keep_success
         :return:
         """
-        from dbacademy.dbbuild.test.test_suite import TestSuite
-
         assert self.validated, f"Cannot test until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
-
-        return TestSuite(build_config=self,
-                         test_type=test_type,
-                         keep_success=keep_success)
+        return TestSuite(build_config=self, test_type=test_type, keep_success=keep_success)
 
     def assert_all_tests_passed(self, clouds: List[str] = None) -> None:
         """

@@ -5,6 +5,8 @@ from enum import Enum
 from dbacademy.common import validate
 from dbacademy.dbbuild.build_config_data import BuildConfigData
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
+from dbacademy.dbbuild.publish.translator import Translator
+from dbacademy.dbbuild.test.test_suite import TestSuite
 
 
 class PublishingMode(Enum):
@@ -412,29 +414,22 @@ class Publisher:
         for file in os.listdir(target_docs_path):
             print(f"{target_docs_path}/{file}")
 
-    # Used by notebooks
-    # TODO Cannot define return type without circular dependencies
-    def to_translator(self, require_i18n_selection: bool = True):
+    def to_translator(self, require_i18n_selection: bool = True) -> Translator:
         """
         Creates an instance of the Translator class from this class
         :return: Translator
         """
-        from dbacademy.dbbuild.publish.translator import Translator
         self.assert_validated_config()
 
         return Translator(self, require_i18n_selection)
 
-    # Used by notebooks
-    # TODO Cannot define return type without circular dependencies
-    def to_test_suite(self, test_type: str = None, keep_success: bool = False):
+    def to_test_suite(self, test_type: str = None, keep_success: bool = False) -> TestSuite:
         """
         Creates an instance of the TestSuite class from this class. Typically, the parameters are not specified
         :param test_type: See TestSuite.test_type
         :param keep_success: See TestSuite.keep_success
         :return: TestSuite
         """
-        from dbacademy.dbbuild.test.test_suite import TestSuite
-
         return TestSuite(build_config=self.build_config,
                          test_type=test_type,
                          keep_success=keep_success)
