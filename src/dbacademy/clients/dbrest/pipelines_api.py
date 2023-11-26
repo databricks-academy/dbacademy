@@ -55,8 +55,9 @@ class PipelinesApi(ApiContainer):
 
     def delete_by_name(self, pipeline_name: str) -> None:
         pipeline = self.get_by_name(pipeline_name)
-        pipeline_id = pipeline.get("pipeline_id")
-        return self.delete_by_id(pipeline_id)
+        if pipeline is not None:
+            pipeline_id = pipeline.get("pipeline_id")
+            self.delete_by_id(pipeline_id)
 
     @staticmethod
     def existing_to_create(pipeline: Dict[str, Any]) -> Dict[str, Any]:
