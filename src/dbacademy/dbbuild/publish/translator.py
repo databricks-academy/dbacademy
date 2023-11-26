@@ -2,7 +2,6 @@ __all__ = ["Translator"]
 
 from typing import Optional
 from dbacademy.common import validate
-from dbacademy.clients.dbrest import DBAcademyRestClient
 from dbacademy.dbbuild.build_config_data import BuildConfigData
 
 
@@ -53,10 +52,6 @@ class Translator:
     def build_config(self) -> BuildConfigData:
         return self.__build_config
 
-    @property
-    def client(self) -> DBAcademyRestClient:
-        return self.build_config.client
-
     def update_i18n_guids(self, *, source_dir: str, add_guid: bool) -> None:
         """
         Used predominately by Notebook-based scripts, this command adds GUIDs when missing or moves the GUID from the %md line to the title.
@@ -77,19 +72,19 @@ class Translator:
                                            "Most notably, moving GUIDs from %md commands into the title.\n"
                                            "The results can be validated by comparing diffs while committing."))
 
-        source_files = [n.get("path") for n in self.client.workspace().ls(source_dir, True)]
+        source_files = [n.get("path") for n in self.build_config.client.workspace().ls(source_dir, True)]
 
         for source_notebook_path in source_files:
 
             print("=" * 100)
             print(f"Processing {source_notebook_path}")
 
-            source_info = self.client.workspace().get_status(source_notebook_path)
+            source_info = self.build_config.client.workspace().get_status(source_notebook_path)
             language = source_info.get("language")
             cmd_delim = NotebookDef.get_cmd_delim(language)
             cm = NotebookDef.get_comment_marker(language)
 
-            raw_source = self.client.workspace().export_notebook(source_notebook_path)
+            raw_source = self.build_config.client.workspace().export_notebook(source_notebook_path)
             raw_lines = raw_source.split("\n")
 
             assert raw_lines[0] == f"{cm} {dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}", f"""Expected line zero to be "{dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}"."""
@@ -157,9 +152,9 @@ class Translator:
             new_source = f"{cm} {dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}\n"
             new_source += f"\n{cmd_delim}\n".join(new_commands)
 
-            self.client.workspace().import_notebook(language=language.upper(),
-                                                    notebook_path=source_notebook_path,
-                                                    content=new_source)
+            self.build_config.client.workspace().import_notebook(language=language.upper(),
+                                                                 notebook_path=source_notebook_path,
+                                                                 content=new_source)
             print()
 
     def __select_i18n_language(self, source_repo: str):
@@ -167,7 +162,7 @@ class Translator:
 
         self.resources_folder = f"{source_repo}/Resources"
 
-        resources = self.client.workspace().ls(self.resources_folder) or list()
+        resources = self.build_config.client.workspace().ls(self.resources_folder) or list()
         language_options = [r.get("path").split("/")[-1] for r in resources]
         language_options = [p for p in language_options if not p.startswith("english-") and not p.startswith("_")]
         language_options.sort()
@@ -205,7 +200,7 @@ class Translator:
     def __reset_published_repo(self):
         from dbacademy.dbbuild.build_utils import BuildUtils
 
-        BuildUtils.reset_git_repo(client=self.client,
+        BuildUtils.reset_git_repo(client=self.build_config.client,
                                   directory=self.source_dir,
                                   repo_url=self.source_repo_url,
                                   branch=self.source_branch,
@@ -214,7 +209,7 @@ class Translator:
     def __reset_target_repo(self):
         from dbacademy.dbbuild.build_utils import BuildUtils
 
-        BuildUtils.reset_git_repo(client=self.client,
+        BuildUtils.reset_git_repo(client=self.build_config.client,
                                   directory=self.target_dir,
                                   repo_url=self.target_repo_url,
                                   branch=self.target_branch,
@@ -349,7 +344,7 @@ class Translator:
 
         else:
             repo_name = f"{self.build_config.build_name}-source.git"
-            results = BuildUtils.validate_no_changes_in_repo(client=self.client,
+            results = BuildUtils.validate_no_changes_in_repo(client=self.build_config.client,
                                                              build_name=self.build_config.build_name,
                                                              repo_url=f"https://github.com/databricks-academy/{repo_name}",
                                                              directory=self.build_config.source_repo)
@@ -378,7 +373,7 @@ class Translator:
             raise Exception(msg)
 
         else:
-            results = BuildUtils.validate_no_changes_in_repo(client=self.client,
+            results = BuildUtils.validate_no_changes_in_repo(client=self.build_config.client,
                                                              build_name=self.build_config.build_name,
                                                              repo_url=self.target_repo_url,
                                                              directory=self.target_dir)
@@ -411,13 +406,13 @@ class Translator:
 
         start = dbgems.clock_start()
         print(f"| Removing files from target directories", end="...")
-        BuildUtils.clean_target_dir(self.client, self.target_dir, verbose=False)
+        BuildUtils.clean_target_dir(self.build_config.client, self.target_dir, verbose=False)
         print(dbgems.clock_stopped(start))
 
         start = dbgems.clock_start()
         print(f"| Enumerating files", end="...")
         prefix = len(self.source_dir) + 1
-        source_files = [f.get("path")[prefix:] for f in self.client.workspace.ls(self.source_dir, recursive=True)]
+        source_files = [f.get("path")[prefix:] for f in self.build_config.client.workspace.ls(self.source_dir, recursive=True)]
         print(dbgems.clock_stopped(start))
 
         # We have to first create the directory before writing to it.
@@ -430,7 +425,7 @@ class Translator:
             if target_notebook_path not in processed_directory:
                 processed_directory.append(target_notebook_path)
                 target_notebook_dir = "/".join(target_notebook_path.split("/")[:-1])
-                self.client.workspace.mkdirs(target_notebook_dir)
+                self.build_config.client.workspace.mkdirs(target_notebook_dir)
         print(dbgems.clock_stopped(start))
 
         print(f"\nProcessing {len(source_files)} notebooks:")
@@ -444,22 +439,22 @@ class Translator:
             source_notebook_path = f"{self.source_dir}/{file}"
             target_notebook_path = f"{self.target_dir}/{file}"
 
-            source_info = self.client.workspace().get_status(source_notebook_path)
+            source_info = self.build_config.client.workspace().get_status(source_notebook_path)
             language = source_info["language"].lower()
             cmd_delim = NotebookDef.get_cmd_delim(language)
             cm = NotebookDef.get_comment_marker(language)
 
-            raw_source = self.client.workspace().export_notebook(source_notebook_path)
+            raw_source = self.build_config.client.workspace().export_notebook(source_notebook_path)
             raw_lines = raw_source.split("\n")
             header = raw_lines.pop(0)
             source = "\n".join(raw_lines)
 
             if file.startswith("Includes/"):
                 # Write the original notebook to the target directory
-                self.client.workspace.import_notebook(language=language.upper(),
-                                                      notebook_path=target_notebook_path,
-                                                      content=raw_source,
-                                                      overwrite=True)
+                self.build_config.client.workspace.import_notebook(language=language.upper(),
+                                                                   notebook_path=target_notebook_path,
+                                                                   content=raw_source,
+                                                                   overwrite=True)
                 continue
 
             commands = source.split(cmd_delim)
@@ -499,11 +494,10 @@ class Translator:
             new_source = new_source.replace("{{built_on}}", datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC"))
 
             # Write the new notebook to the target directory
-            self.client.workspace.import_notebook(language=language.upper(),
-                                                  notebook_path=target_notebook_path,
-                                                  content=new_source,
-                                                  overwrite=True)
-
+            self.build_config.client.workspace.import_notebook(language=language.upper(),
+                                                               notebook_path=target_notebook_path,
+                                                               content=new_source,
+                                                               overwrite=True)
         self.__generated_notebooks = True
 
         return f"""<html><body style="font-size:16px">
@@ -551,7 +545,7 @@ class Translator:
             self.assert_no_changes_in_target_repo()
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
-        data = self.client.workspace.export_dbc(self.target_dir)
+        data = self.build_config.client.workspace.export_dbc(self.target_dir)
 
         BuildUtils.write_file(data=data,
                               overwrite=False,

@@ -67,23 +67,23 @@ class Publisher:
 
     @property
     def target_repo_url(self) -> str:
-        return self.target_repo_url
+        return self.__target_repo_url
 
     @target_repo_url.setter
     def target_repo_url(self, target_repo_url: str) -> None:
-        self.target_repo_url = validate(target_repo_url=target_repo_url).required.str()
+        self.__target_repo_url = validate(target_repo_url=target_repo_url).required.str()
 
     @property
     def temp_repo_dir(self) -> str:
-        return self.temp_repo_dir
+        return self.__temp_repo_dir
 
     @property
     def temp_work_dir(self) -> str:
-        return self.temp_work_dir
+        return self.__temp_work_dir
 
     @property
     def i18n_resources_dir(self) -> str:
-        return self.i18n_resources_dir
+        return self.__i18n_resources_dir
 
     @property
     def common_language(self) -> str:
@@ -97,13 +97,13 @@ class Publisher:
     def notebooks(self) -> List[NotebookDef]:
         return list(self.build_config.notebooks.values())
 
-    @property
-    def white_list(self) -> List[str]:
-        return self.build_config.white_list
-
-    @property
-    def black_list(self) -> List[str]:
-        return self.build_config.black_list
+    # @property
+    # def white_list(self) -> List[str]:
+    #     return self.build_config.white_list
+    #
+    # @property
+    # def black_list(self) -> List[str]:
+    #     return self.build_config.black_list
 
     @property
     def publishing_mode(self) -> PublishingMode:
@@ -139,23 +139,23 @@ class Publisher:
             self.notebooks.append(notebook)
 
     def __validate_white_black_list(self) -> None:
-        if self.white_list or self.black_list:
-            assert self.white_list is not None, "The white_list must be specified when specifying a black_list"
-            assert self.black_list is not None, "The black_list must be specified when specifying a white_list"
+        if self.build_config.white_list or self.build_config.black_list:
+            assert self.build_config.white_list is not None, "The white_list must be specified when specifying a black_list"
+            assert self.build_config.black_list is not None, "The black_list must be specified when specifying a white_list"
 
             notebook_paths = [n.path for n in self.notebooks]
 
             # Validate white and black lists
-            for path in self.white_list:
-                assert path not in self.black_list, f"The white-list path \"{path}\" was also found in the black-list."
+            for path in self.build_config.white_list:
+                assert path not in self.build_config.black_list, f"The white-list path \"{path}\" was also found in the black-list."
                 assert path in notebook_paths, f"The white-list path \"{path}\" does not exist in the complete set of notebooks.\n{notebook_paths}"
 
-            for path in self.black_list:
-                assert path not in self.white_list, f"The black-list path \"{path}\" was also found in the white-list."
+            for path in self.build_config.black_list:
+                assert path not in self.build_config.white_list, f"The black-list path \"{path}\" was also found in the white-list."
                 assert path in notebook_paths, f"The black-list path \"{path}\" does not exist in the complete set of notebooks.\n{notebook_paths}"
 
             for path in notebook_paths:
-                assert path in self.white_list or path in self.black_list, f"The notebook \"{path}\" was not found in either the white-list or black-list."
+                assert path in self.build_config.white_list or path in self.build_config.black_list, f"The notebook \"{path}\" was not found in either the white-list or black-list."
 
     def create_resource_bundle(self, folder_name: str = None, target_dir: str = None) -> str:
         """
@@ -215,7 +215,7 @@ class Publisher:
         main_notebooks: List[NotebookDef] = []
 
         for notebook in self.notebooks:
-            if self.black_list is None or notebook.path not in self.black_list:
+            if self.build_config.black_list is None or notebook.path not in self.build_config.black_list:
                 found_version_info = True if notebook.path == self.VERSION_INFO_NOTEBOOK else found_version_info
                 main_notebooks.append(notebook)
 
@@ -228,20 +228,20 @@ class Publisher:
         print(f"  verbose =   {verbose}")
         print(f"  debugging = {debugging}")
 
-        if self.black_list is None:
+        if self.build_config.black_list is None:
             print(f"  exclude:    none")
         else:
-            self.black_list.sort()
-            print(f"\n  exclude:    {self.black_list[0]}")
-            for path in self.black_list[1:]:
+            self.build_config.black_list.sort()
+            print(f"\n  exclude:    {self.build_config.black_list[0]}")
+            for path in self.build_config.black_list[1:]:
                 print(f"              {path}")
 
-        if self.white_list is None:
+        if self.build_config.white_list is None:
             print(f"  include:    none")
         else:
-            self.white_list.sort()
-            print(f"\n  include:    {self.white_list[0]}")
-            for path in self.white_list[1:]:
+            self.build_config.white_list.sort()
+            print(f"\n  include:    {self.build_config.white_list[0]}")
+            for path in self.build_config.white_list[1:]:
                 print(f"              {path}")
 
         # Now that we backed up the version-info, we can delete everything.
