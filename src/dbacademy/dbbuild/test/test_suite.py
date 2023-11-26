@@ -14,6 +14,7 @@ class TestSuite:
 
     def __init__(self, *,
                  build_config: BuildConfigData,
+                 test_dir: str,
                  test_type: Optional[TestType],
                  keep_success: bool = False):
 
@@ -46,7 +47,11 @@ class TestSuite:
         for notebook in self.notebooks:
             if notebook.test_round > 0:
                 # [job_name] = (notebook_path, 0, 0, ignored)
-                test_instance = TestInstance(self.build_config, notebook, self.build_config.source_dir, self.test_type)
+                test_instance = TestInstance(build_config=self.build_config,
+                                             notebook=notebook,
+                                             test_dir=test_dir,
+                                             test_type=self.test_type)
+
                 self.test_rounds.get(notebook.test_round).append(test_instance)
 
                 if self.client.workspace().get_status(test_instance.notebook_path) is None:

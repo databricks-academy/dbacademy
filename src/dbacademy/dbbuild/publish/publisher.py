@@ -428,7 +428,8 @@ class Publisher:
         """
         return TestSuite(build_config=self.build_config,
                          test_type=test_type,
-                         keep_success=keep_success)
+                         keep_success=keep_success,
+                         test_dir=self.target_dir)
 
     def __generate_html(self, notebook: NotebookDef) -> None:
         import time
