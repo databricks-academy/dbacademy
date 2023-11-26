@@ -60,6 +60,10 @@ class TestSuite:
         url = f"{dbgems.get_workspace_url()}#job/list/search/dbacademy.course:{self.build_name}"
         print(f"Test Suite: {url}")
 
+        # Delete all jobs, even those that were successful
+        self.client.jobs.delete_by_name(job_names=self.get_all_job_names(), success_only=False)
+        print()
+
     @property
     def build_config(self) -> BuildConfigData:
         return self.__build_config
@@ -114,11 +118,6 @@ class TestSuite:
             job_names.extend([j.job_name for j in self.test_rounds[test_round]])
 
         return job_names
-
-    def reset(self):
-        # Delete all jobs, even those that were successful
-        self.client.jobs.delete_by_name(job_names=self.get_all_job_names(), success_only=False)
-        print()
 
     def cleanup(self):
         if self.keep_success:

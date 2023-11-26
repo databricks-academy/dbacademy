@@ -8,9 +8,7 @@ from dbacademy.dbbuild.change_log import ChangeLog
 from dbacademy.dbbuild.publish.publisher import PublishingMode
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 from dbacademy.dbbuild.publish.translator import Translator
-from dbacademy.dbbuild.test import TestType
 from dbacademy.dbbuild.publish.resource_diff import ResourceDiff
-from dbacademy.dbbuild.test.test_suite import TestSuite
 from dbacademy.dbbuild.publish.publisher import Publisher
 
 ParameterType = TypeVar("ParameterType")
@@ -530,17 +528,17 @@ class BuildConfig(BuildConfigData):
         publisher.validate(silent=True)
         return publisher.to_translator(require_i18n_selection)
 
-    def to_test_suite(self, test_type: Optional[TestType] = None, keep_success: bool = False) -> TestSuite:
-        """
-        Creates an instance of TestSuite from the current build configuration
-        :param test_type: See TestSuite.test_type
-        :param keep_success: See TestSuite.keep_success
-        :return:
-        """
-        assert self.validated, f"Cannot test until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
-        return TestSuite(build_config=self,
-                         test_type=test_type,
-                         keep_success=keep_success)
+    # def to_test_suite(self, test_type: Optional[TestType] = None, keep_success: bool = False) -> TestSuite:
+    #     """
+    #     Creates an instance of TestSuite from the current build configuration
+    #     :param test_type: See TestSuite.test_type
+    #     :param keep_success: See TestSuite.keep_success
+    #     :return:
+    #     """
+    #     assert self.validated, f"Cannot test until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
+    #     return TestSuite(build_config=self,
+    #                      test_type=test_type,
+    #                      keep_success=keep_success)
 
     def assert_all_tests_passed(self, clouds: List[str] = None) -> None:
         """
