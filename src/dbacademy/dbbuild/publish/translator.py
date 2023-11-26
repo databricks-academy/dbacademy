@@ -1,7 +1,7 @@
 __all__ = ["Translator"]
 
 from typing import Optional
-
+from dbacademy.common import validate
 from dbacademy.clients.dbrest import DBAcademyRestClient
 from dbacademy.dbbuild.build_config_data import BuildConfigData
 from dbacademy.dbbuild.publish.publisher import Publisher
@@ -10,11 +10,8 @@ from dbacademy.dbbuild.publish.publisher import Publisher
 class Translator:
 
     def __init__(self, publisher: Publisher, require_i18n_selection: bool):
-        from dbacademy.common import validate
-        from dbacademy.dbbuild.publish.publisher import Publisher
-
         self.__publisher = validate(publisher=publisher).as_type(Publisher)
-        self.__build_config = publisher.build_config
+        self.__build_config = validate(build_config=publisher.build_config).args(parameter_name="publisher.build_config", required=True).as_type(BuildConfigData)
 
         # By default, we are not validated
         self.__validated = False
@@ -47,7 +44,7 @@ class Translator:
         self.errors = []
         self.warnings = []
 
-        if require_i18n_selection:
+        if validate(require_i18n_selection=require_i18n_selection).required.bool():
             self.__select_i18n_language(publisher.build_config.source_repo)
 
     @property
@@ -357,7 +354,7 @@ class Translator:
             self.__changes_in_source_repo = 0
 
         else:
-            repo_name = f"{self.publisher.build_name}-source.git"
+            repo_name = f"{self.publisher.build_config.build_name}-source.git"
             results = BuildUtils.validate_no_changes_in_repo(client=self.client,
                                                              build_name=self.build_config.build_name,
                                                              repo_url=f"https://github.com/databricks-academy/{repo_name}",

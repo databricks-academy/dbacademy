@@ -1,11 +1,9 @@
 __all__ = ["Publisher"]
 
-from typing import List, Optional, Iterable, Dict, Any
+from typing import List, Optional, Iterable
 
-from dbacademy.clients.dbrest import DBAcademyRestClient
 from dbacademy.common import validate
 from dbacademy.dbbuild.build_config_data import BuildConfigData
-from dbacademy.dbbuild.change_log import ChangeLog
 from dbacademy.dbbuild.publish import PublishingMode
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
@@ -33,7 +31,7 @@ class Publisher:
 
         self.__publishing_mode = None if publishing_mode is None else validate(publishing_mode=publishing_mode).as_one_of(parameter_type=str, value=PublishingMode)
 
-        self.__target_dir = f"{self.build_config.source_repo}/Published/{self.name} - v{self.version}"
+        self.__target_dir = f"{self.build_config.source_repo}/Published/{self.build_config.name} - v{self.build_config.version}"
         self.__target_repo_url = None
 
         self.__temp_repo_dir = f"/Repos/Temp"
@@ -87,37 +85,37 @@ class Publisher:
     def build_config(self) -> BuildConfigData:
         return self.__build_config
 
-    @property
-    def client(self) -> DBAcademyRestClient:
-        return self.__build_config.client
+    # @property
+    # def client(self) -> DBAcademyRestClient:
+    #     return self.__build_config.client
 
     @property
     def notebooks(self) -> List[NotebookDef]:
         return list(self.build_config.notebooks.values())
 
-    @property
-    def build_name(self) -> str:
-        return self.__build_config.build_name
+    # @property
+    # def build_name(self) -> str:
+    #     return self.__build_config.build_name
 
-    @property
-    def name(self) -> str:
-        return self.__build_config.name
+    # @property
+    # def name(self) -> str:
+    #     return self.__build_config.name
 
-    @property
-    def version(self) -> str:
-        return self.__build_config.version
+    # @property
+    # def version(self) -> str:
+    #     return self.__build_config.version
 
-    @property
-    def core_version(self) -> str:
-        return self.__build_config.core_version
+    # @property
+    # def core_version(self) -> str:
+    #     return self.__build_config.core_version
 
-    @property
-    def publishing_info(self) -> Dict[str, Any]:
-        return self.__build_config.publishing_info
+    # @property
+    # def publishing_info(self) -> Dict[str, Any]:
+    #     return self.__build_config.publishing_info
 
-    @property
-    def change_log(self) -> Optional[ChangeLog]:
-        return self.__build_config.change_log
+    # @property
+    # def change_log(self) -> Optional[ChangeLog]:
+    #     return self.__build_config.change_log
 
     @property
     def white_list(self) -> List[str]:
@@ -144,9 +142,9 @@ class Publisher:
 
         validate(publishing_mode=publishing_mode).optional.str()
 
-        if self.version in BuildConfig.VERSIONS_LIST:
+        if self.build_config.version in BuildConfig.VERSIONS_LIST:
             # Building, Testing or Translating
-            assert publishing_mode is None, f"Expected the parameter \"publishing_mode\" to be None when the version is one of {BuildConfig.VERSIONS_LIST}, found \"{self.version}\""
+            assert publishing_mode is None, f"Expected the parameter \"publishing_mode\" to be None when the version is one of {BuildConfig.VERSIONS_LIST}, found \"{self.build_config.version}\""
             self.__publishing_mode = None
         else:
             self.__publishing_mode = validate(publishing_mode=publishing_mode).required.as_one_of(parameter_type=str, value=PublishingMode)
@@ -156,8 +154,8 @@ class Publisher:
 
         for notebook in validate(notebooks=notebooks).required.list(NotebookDef):
             # Update the built_on and version_number - typically only found in the Version Info notebook.
-            notebook.replacements["course_name"] = self.name
-            notebook.replacements["version_number"] = self.version
+            notebook.replacements["course_name"] = self.build_config.name
+            notebook.replacements["version_number"] = self.build_config.version
             notebook.replacements["built_on"] = datetime.now().strftime("%b %-d, %Y at %H:%M:%S UTC")
 
             self.notebooks.append(notebook)
@@ -191,7 +189,7 @@ class Publisher:
 
         assert self.build_config.i18n_language is None, f"Resource bundles are created for the English translations only, found {self.build_config.i18n_language}"
 
-        folder_name = folder_name or f"english-v{self.version}"
+        folder_name = folder_name or f"english-v{self.build_config.version}"
         target_dir = target_dir or f"{self.build_config.source_repo}/Resources"
 
         for notebook in self.notebooks:
@@ -222,7 +220,7 @@ class Publisher:
         from dbacademy.dbbuild.build_config import BuildConfig
         from dbacademy.dbbuild.publish import PUBLISH_TYPE
 
-        if self.version in BuildConfig.VERSIONS_LIST:
+        if self.build_config.version in BuildConfig.VERSIONS_LIST:
             self.assert_validated_config()
         else:
             self.assert_no_changes_in_source_repo()
@@ -270,10 +268,10 @@ class Publisher:
                 print(f"              {path}")
 
         # Now that we backed up the version-info, we can delete everything.
-        target_status = self.client.workspace().get_status(self.target_dir)
+        target_status = self.build_config.client.workspace().get_status(self.target_dir)
         if target_status is not None:
             BuildUtils.print_if(verbose, "-" * 80)
-            BuildUtils.clean_target_dir(self.client, self.target_dir, verbose)
+            BuildUtils.clean_target_dir(self.build_config.client, self.target_dir, verbose)
 
         errors = 0
         warnings = 0
@@ -320,10 +318,10 @@ class Publisher:
         self.assert_validate_artifacts()
 
         advertiser = Advertiser(source_repo=self.build_config.source_repo,
-                                name=self.name,
-                                version=self.version,
-                                change_log=self.change_log,
-                                publishing_info=PublishingInfo(self.publishing_info),
+                                name=self.build_config.name,
+                                version=self.build_config.version,
+                                change_log=self.build_config.change_log,
+                                publishing_info=PublishingInfo(self.build_config.publishing_info),
                                 common_language=None)
         return advertiser.html
 
@@ -338,8 +336,8 @@ class Publisher:
             print(f"Target: {self.target_dir}")
             print()
 
-            if self.change_log is not None:
-                self.change_log.print()
+            if self.build_config.change_log is not None:
+                self.build_config.change_log.print()
                 print()
 
         self.__validated = True
@@ -367,13 +365,13 @@ class Publisher:
         # of True meaning we have to succeed here to continue
         self.__validated_repo_reset = False
 
-        new_target_dir = f"/Repos/Temp/{self.build_name}" if not self.build_config.i18n else f"/Repos/Temp/{self.build_name}-{self.common_language}"
+        new_target_dir = f"/Repos/Temp/{self.build_config.build_name}" if not self.build_config.i18n else f"/Repos/Temp/{self.build_config.build_name}-{self.common_language}"
         if target_dir == new_target_dir:
             common.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_dir\" is the same as the default value.\nConsider removing the parameter.")
         target_dir = target_dir or new_target_dir
 
         prefix = "https://github.com/databricks-academy"
-        new_target_repo_url = f"{prefix}/{self.build_name}.git" if not self.build_config.i18n else f"{prefix}/{self.build_name}-{self.common_language}.git"
+        new_target_repo_url = f"{prefix}/{self.build_config.build_name}.git" if not self.build_config.i18n else f"{prefix}/{self.build_config.build_name}-{self.common_language}.git"
         if target_repo_url == new_target_repo_url:
             common.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
         target_repo_url = target_repo_url or new_target_repo_url
@@ -381,7 +379,7 @@ class Publisher:
         self.target_dir = validate(target_dir=target_dir).str()
         self.target_repo_url = validate(target_repo_url=target_repo_url).str()
 
-        BuildUtils.reset_git_repo(client=self.client,
+        BuildUtils.reset_git_repo(client=self.build_config.client,
                                   directory=self.target_dir,
                                   repo_url=self.target_repo_url,
                                   branch=branch,
@@ -403,15 +401,15 @@ class Publisher:
                          <div>Contents written to...</div>\n"""
 
         if dest_cds:
-            target_docs_path = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}/v{self.version}-PENDING/site"
+            target_docs_path = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_config.build_name}/v{self.build_config.version}-PENDING/site"
             self.__copy_doc_files(source_docs_path, target_docs_path)
-            url = f"https://labs.training.databricks.com/courses/{self.build_name}/v{self.version}-PENDING/site/index.html"
+            url = f"https://labs.training.databricks.com/courses/{self.build_config.build_name}/v{self.build_config.version}-PENDING/site/index.html"
             html += f"""<div>See <a href="{url}" target="_blank">{url}</a></div>"""
 
         if dest_repo:
-            target_docs_path = f"/Workspace{self.target_dir}/docs/v{self.version}"
+            target_docs_path = f"/Workspace{self.target_dir}/docs/v{self.build_config.version}"
             self.__copy_doc_files(source_docs_path, target_docs_path)
-            html += f"""<div>See <a href="{dbgems.get_workspace_url()}#workspace{self.target_dir}/docs/v{self.version}/index.html" target="_blank">/docs/{self.version}/index.html</a></div>"""
+            html += f"""<div>See <a href="{dbgems.get_workspace_url()}#workspace{self.target_dir}/docs/v{self.build_config.version}/index.html" target="_blank">/docs/{self.build_config.version}/index.html</a></div>"""
 
         html += "</body></html>"
         return html
@@ -473,7 +471,7 @@ class Publisher:
 
         path = f"{self.build_config.source_dir}/{notebook.path}"
         dbgems.dbutils.notebook.run(path, timeout_seconds=60 * 5, arguments={
-            "version": self.version,
+            "version": self.build_config.version,
             dbgems.GENERATING_DOCS: "true"
         })
 
@@ -520,11 +518,11 @@ class Publisher:
             self.assert_no_changes_in_target_repo()
 
         print(f"Exporting DBC from \"{self.target_dir}\"")
-        data = self.client.workspace.export_dbc(self.target_dir)
+        data = self.build_config.client.workspace.export_dbc(self.target_dir)
 
         # The root directory for all versions of this course
-        base_dir = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_name}"
-        version_dir = f"{base_dir}/v{self.version}-PENDING"
+        base_dir = f"/dbfs/mnt/resources.training.databricks.com/distributions/{self.build_config.build_name}"
+        version_dir = f"{base_dir}/v{self.build_config.version}-PENDING"
 
         # In all cases, we want to delete the target directory.
         # This is Ok because the course is still in its PENDING state.
@@ -533,7 +531,7 @@ class Publisher:
         meta = {
             "created_at": str(datetime.datetime.now(datetime.timezone.utc)),
             "created_by": self.build_config.username,
-            "version": self.version,
+            "version": self.build_config.version,
         }
         meta_bytes = bytearray()
         meta_bytes.extend(map(ord, json.dumps(meta, indent=4)))
@@ -546,15 +544,15 @@ class Publisher:
         BuildUtils.write_file(data=data,
                               overwrite=False,
                               target_name="Distributions System (versioned)",
-                              target_file=f"{version_dir}/{self.build_name}.dbc")
+                              target_file=f"{version_dir}/{self.build_config.build_name}.dbc")
 
         # Provided simply for convenient download
         BuildUtils.write_file(data=data,
                               overwrite=True,
                               target_name="Workspace-Local FileStore",
-                              target_file=f"dbfs:/FileStore/tmp/{self.build_name}-v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc")
+                              target_file=f"dbfs:/FileStore/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc")
 
-        url = f"/files/tmp/{self.build_name}-v{self.version}/{self.build_name}-v{self.version}-notebooks.dbc"
+        url = f"/files/tmp/{self.build_config.build_name}-v{self.build_config.version}/{self.build_config.build_name}-v{self.build_config.version}-notebooks.dbc"
 
         self.__created_dbcs = True
 
@@ -578,14 +576,14 @@ class Publisher:
 
         self.assert_created_dbcs()
 
-        info = PublishingInfo(self.publishing_info)
+        info = PublishingInfo(self.build_config.publishing_info)
         translation = info.translations.get(self.common_language)
         if translation is None:
             self.__created_docs = True
             return f"""<html><body style="font-size:16px">No documents to produce.</body></html>"""
         else:
-            docs_publisher = DocsPublisher(build_name=self.build_name,
-                                           version=self.version,
+            docs_publisher = DocsPublisher(build_name=self.build_config.build_name,
+                                           version=self.build_config.version,
                                            translation=translation)
             docs_publisher.process_pdfs()
             print()
@@ -641,8 +639,8 @@ class Publisher:
 
         else:
             repo_name = self.build_config.source_repo.split("/")[-1]
-            results = BuildUtils.validate_no_changes_in_repo(client=self.client,
-                                                             build_name=self.build_name,
+            results = BuildUtils.validate_no_changes_in_repo(client=self.build_config.client,
+                                                             build_name=self.build_config.build_name,
                                                              repo_url=f"https://github.com/databricks-academy/{repo_name}",
                                                              directory=self.build_config.source_repo)
             self.__changes_in_source_repo = len(results)
@@ -679,8 +677,8 @@ class Publisher:
             raise Exception(msg)
 
         else:
-            results = BuildUtils.validate_no_changes_in_repo(client=self.client,
-                                                             build_name=self.build_name,
+            results = BuildUtils.validate_no_changes_in_repo(client=self.build_config.client,
+                                                             build_name=self.build_config.build_name,
                                                              repo_url=self.target_repo_url,
                                                              directory=self.target_dir)
             self.__changes_in_target_repo = len(results)
