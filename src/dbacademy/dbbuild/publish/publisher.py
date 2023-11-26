@@ -17,9 +17,9 @@ class Publisher:
     KEEPERS = [".gitignore", "docs", "README.txt", "README.md", "README", "LICENSE.txt", "LICENSE.md", "LICENSE", "NOTICE.md", "NOTICE.txt", "NOTICE"]
 
     def __init__(self, *, build_config: BuildConfigData, publishing_mode: Optional[PublishingMode]):
-        from dbacademy.dbbuild.build_config import BuildConfig
 
-        self.__build_config = validate(build_config=build_config).as_type(BuildConfig)
+        # 99% of all data is carried in the build config.
+        self.__build_config = validate(build_config=build_config).required.as_type(BuildConfigData)
 
         # Various validation steps
         self.__validated = False
@@ -33,39 +33,55 @@ class Publisher:
 
         self.__publishing_mode = None if publishing_mode is None else validate(publishing_mode=publishing_mode).as_one_of(parameter_type=str, value=PublishingMode)
 
-        # self.__client = build_config.client
-        # self.__core_version = build_config.core_version
-        # self.__build_name = build_config.build_name
-        # self.__change_log = build_config.change_log
-        # self.__publishing_info = build_config.publishing_info
-        #
-        # self.source_dir = build_config.source_dir
-        # self.source_repo = build_config.source_repo
+        self.__target_dir = f"{self.build_config.source_repo}/Published/{self.name} - v{self.version}"
+        self.__target_repo_url = None
 
-        self.target_dir = f"{self.build_config.source_repo}/Published/{self.name} - v{self.version}"
-        self.target_repo_url = None
+        self.__temp_repo_dir = f"/Repos/Temp"
+        self.__temp_work_dir = f"/Workspace/Users/{build_config.username}/Temp"
 
-        self.temp_repo_dir = f"/Repos/Temp"
-        self.temp_work_dir = f"/Workspace/Users/{build_config.username}/Temp"
-        # self.username = build_config.username
+        self.__i18n_resources_dir = f"{self.build_config.source_repo}/Resources/{build_config.i18n_language}"
 
-        # self.i18n = build_config.i18n
-        self.i18n_resources_dir = f"{self.build_config.source_repo}/Resources/{build_config.i18n_language}"
-        self.i18n_language = build_config.i18n_language
-
-        if build_config.i18n_language is None:
-            self.common_language = "english"
+        if self.build_config.i18n_language is None:
+            self.__common_language = "english"
         else:
             # Include the i18n code in the version.
             # This hack just happens to work for japanese and korean
-            self.common_language = build_config.i18n_language.split("-")[0]
+            self.__common_language = build_config.i18n_language.split("-")[0]
 
-        self.__notebooks = list()
         self.__init_notebooks(build_config.notebooks.values())
-
-        self.__white_list: List[str] = build_config.white_list
-        self.__black_list: List[str] = build_config.black_list
         self.__validate_white_black_list()
+
+    @property
+    def target_dir(self) -> str:
+        return self.__target_dir
+
+    @target_dir.setter
+    def target_dir(self, target_dir: str) -> None:
+        self.__target_dir = validate(target_dir=target_dir).required.str()
+
+    @property
+    def target_repo_url(self) -> str:
+        return self.target_repo_url
+
+    @target_repo_url.setter
+    def target_repo_url(self, target_repo_url: str) -> None:
+        self.target_repo_url = validate(target_repo_url=target_repo_url).required.str()
+
+    @property
+    def temp_repo_dir(self) -> str:
+        return self.temp_repo_dir
+
+    @property
+    def temp_work_dir(self) -> str:
+        return self.temp_work_dir
+
+    @property
+    def i18n_resources_dir(self) -> str:
+        return self.i18n_resources_dir
+
+    @property
+    def common_language(self) -> str:
+        return self.__common_language
 
     @property
     def build_config(self) -> BuildConfigData:
@@ -77,7 +93,7 @@ class Publisher:
 
     @property
     def notebooks(self) -> List[NotebookDef]:
-        return self.__notebooks
+        return list(self.build_config.notebooks.values())
 
     @property
     def build_name(self) -> str:
@@ -105,11 +121,11 @@ class Publisher:
 
     @property
     def white_list(self) -> List[str]:
-        return self.__white_list
+        return self.build_config.white_list
 
     @property
     def black_list(self) -> List[str]:
-        return self.__black_list
+        return self.build_config.black_list
 
     @property
     def publishing_mode(self) -> Optional[PublishingMode]:
@@ -125,23 +141,20 @@ class Publisher:
     @publishing_mode.setter
     def publishing_mode(self, publishing_mode: Optional[PublishingMode]) -> None:
         from dbacademy.dbbuild.build_config import BuildConfig
-        from dbacademy.dbbuild.publish import PUBLISH_TYPE
+
+        validate(publishing_mode=publishing_mode).optional.str()
 
         if self.version in BuildConfig.VERSIONS_LIST:
             # Building, Testing or Translating
             assert publishing_mode is None, f"Expected the parameter \"publishing_mode\" to be None when the version is one of {BuildConfig.VERSIONS_LIST}, found \"{self.version}\""
+            self.__publishing_mode = None
         else:
-            assert publishing_mode in PUBLISH_TYPE.MODES, f"Expected the parameter \"publishing_mode\" to be one of {PUBLISH_TYPE.MODES}, found \"{publishing_mode}\""
-
-        self.__publishing_mode = publishing_mode
+            self.__publishing_mode = validate(publishing_mode=publishing_mode).required.as_one_of(parameter_type=str, value=PublishingMode)
 
     def __init_notebooks(self, notebooks: Iterable[NotebookDef]) -> None:
         from datetime import datetime
-        from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 
-        for notebook in notebooks:
-            assert type(notebook) == NotebookDef, f"Expected the parameter \"notebook\" to be of type \"NotebookDef\", found \"{type(notebook)}\"."
-
+        for notebook in validate(notebooks=notebooks).required.list(NotebookDef):
             # Update the built_on and version_number - typically only found in the Version Info notebook.
             notebook.replacements["course_name"] = self.name
             notebook.replacements["version_number"] = self.version
@@ -176,7 +189,7 @@ class Publisher:
         :return: The HTML results that should be rendered with displayHTML() from the calling notebook
         """
 
-        assert self.i18n_language is None, f"Resource bundles are created for the English translations only, found {self.i18n_language}"
+        assert self.build_config.i18n_language is None, f"Resource bundles are created for the English translations only, found {self.build_config.i18n_language}"
 
         folder_name = folder_name or f"english-v{self.version}"
         target_dir = target_dir or f"{self.build_config.source_repo}/Resources"
