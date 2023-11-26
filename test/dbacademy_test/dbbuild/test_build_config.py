@@ -78,7 +78,7 @@ class TestBuildConfig(unittest.TestCase):
                                                        order=0,
                                                        i18n=False,
                                                        i18n_language=None,
-                                                       ignoring=[],
+                                                       ignored_errors=[],
                                                        version=build_config.version)
 
         build_config.ignore_failures(lambda p, n: n == 0)
@@ -110,7 +110,7 @@ class TestBuildConfig(unittest.TestCase):
                                                        order=0,
                                                        i18n=False,
                                                        i18n_language=None,
-                                                       ignoring=[],
+                                                       ignored_errors=[],
                                                        version=build_config.version)
 
         build_config.set_test_round(9, lambda p, n: n == 3)
@@ -142,7 +142,7 @@ class TestBuildConfig(unittest.TestCase):
                                                        order=0,
                                                        i18n=False,
                                                        i18n_language=None,
-                                                       ignoring=[],
+                                                       ignored_errors=[],
                                                        version=build_config.version)
 
         build_config.exclude_notebook(lambda p, n: n == 1)

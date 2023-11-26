@@ -12,7 +12,7 @@ class BuildConfigData:
     def __init__(self, *,
                  name: str,
                  supported_dbrs: List[str],
-                 ignoring: List[str],
+                 ignored_errors: List[str],
                  i18n: bool,
                  i18n_language: Optional[str],
                  cloud: str,
@@ -62,7 +62,7 @@ class BuildConfigData:
         self.__supported_dbrs = validate(supported_dbrs=supported_dbrs).required.list(str)         # Validate the entire set of supported DBRs.
 
         self.__language_options = None
-        self.__ignoring = validate(ignoring=ignoring).list(str, auto_create=True)
+        self.__ignored_errors = validate(ignored_errors=ignored_errors).list(str, auto_create=True)
 
         self.__i18n = validate(i18n=i18n or False).required.bool()
         self.__i18n_language = validate(i18n_language=i18n_language).str()
@@ -149,8 +149,8 @@ class BuildConfigData:
         return self.__language_options
 
     @property
-    def ignoring(self) -> List[str]:
-        return self.__ignoring
+    def ignored_errors(self) -> List[str]:
+        return self.__ignored_errors
 
     @property
     def i18n(self) -> bool:

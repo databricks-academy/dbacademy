@@ -125,7 +125,7 @@ class BuildConfig(BuildConfigData):
              include_solutions: Optional[bool] = None,
              i18n: Optional[bool] = None,
              i18n_language: str = None,
-             ignoring: List[str] = None,
+             ignored_errors: List[str] = None,
              publishing_info: Dict[str, Any] = None,
              white_list: List[str] = None,
              black_list: List[str] = None,
@@ -152,7 +152,7 @@ class BuildConfig(BuildConfigData):
         :param include_solutions: see the BuildConfig's constructor parameter by the same name.
         :param i18n: see the BuildConfig's constructor parameter by the same name.
         :param i18n_language: see the BuildConfig's constructor parameter by the same name.
-        :param ignoring: see the BuildConfig's constructor parameter by the same name.
+        :param ignored_errors: see the BuildConfig's constructor parameter by the same name.
         :param publishing_info: see the BuildConfig's constructor parameter by the same name.
         :param white_list: see the BuildConfig's constructor parameter by the same name.
         :param black_list: see the BuildConfig's constructor parameter by the same name.
@@ -181,7 +181,7 @@ class BuildConfig(BuildConfigData):
                                  include_solutions=include_solutions,
                                  i18n=i18n,
                                  i18n_language=i18n_language,
-                                 ignoring=ignoring,
+                                 ignored_errors=ignored_errors,
                                  publishing_info=publishing_info,
                                  white_list=white_list,
                                  black_list=black_list,
@@ -207,14 +207,14 @@ class BuildConfig(BuildConfigData):
                  include_solutions: Optional[bool] = True,
                  i18n: Optional[bool] = False,
                  i18n_language: str = None,
-                 ignoring: List[str] = None,
+                 ignored_errors: List[str] = None,
                  publishing_info: Dict[str, Any] = None,
                  white_list: List[str] = None,
                  black_list: List[str] = None):
 
         super().__init__(name=name,
                          supported_dbrs=supported_dbrs,
-                         ignoring=ignoring,
+                         ignored_errors=ignored_errors,
                          i18n=i18n,
                          i18n_language=i18n_language,
                          cloud=cloud,
@@ -290,7 +290,7 @@ class BuildConfig(BuildConfigData):
                                                    order=order,
                                                    i18n=self.i18n,
                                                    i18n_language=self.i18n_language,
-                                                   ignoring=self.ignoring,
+                                                   ignored_errors=self.ignored_errors,
                                                    version=self.version)
         if has_wip:
             print()
@@ -633,7 +633,7 @@ def load_build_config(build_config_file_path: str, *, version: str,
                       include_solutions: bool = None,
                       i18n: bool = None,
                       i18n_language: str = None,
-                      ignoring: List[str] = None,
+                      ignored_errors: List[str] = None,
                       publishing_info: Dict[str, Any] = None,
                       white_list: Optional[List[str]] = None,
                       black_list: Optional[List[str]] = None,
@@ -661,7 +661,7 @@ def load_build_config(build_config_file_path: str, *, version: str,
     :param include_solutions: see the BuildConfig's constructor parameter by the same name.
     :param i18n: see the BuildConfig's constructor parameter by the same name.
     :param i18n_language: see the BuildConfig's constructor parameter by the same name.
-    :param ignoring: see the BuildConfig's constructor parameter by the same name.
+    :param ignored_errors: see the BuildConfig's constructor parameter by the same name.
     :param publishing_info: see the BuildConfig's constructor parameter by the same name.
     :param white_list: see the BuildConfig's constructor parameter by the same name.
     :param black_list: see the BuildConfig's constructor parameter by the same name.
@@ -703,7 +703,7 @@ def load_build_config(build_config_file_path: str, *, version: str,
                      include_solutions=__load_from_dict(config=config,  name="include_solutions",   value=include_solutions, expected_type=bool),
                      i18n=__load_from_dict(config=config,               name="i18n",                value=i18n, expected_type=bool),
                      i18n_language=__load_from_dict(config=config,      name="i18n_language",       value=i18n_language, expected_type=str),
-                     ignoring=__load_from_dict(config=config,           name="ignoring",            value=ignoring, expected_type=List[str]),
+                     ignored_errors=__load_from_dict(config=config,     name="ignored_errors",      value=ignored_errors, expected_type=List[str]),
                      publishing_info=__load_from_dict(config=config,    name="publishing_info",     value=publishing_info, expected_type=Dict[str, Any]),
                      # The following two are not stored in config's root, but rather nested under config.publish_only
                      white_list=__load_from_dict(config=publish_only,   name="white_list", value=white_list, expected_type=List[str]),

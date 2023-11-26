@@ -43,7 +43,7 @@ class TestNotebookDef(unittest.TestCase):
                            order=0,
                            i18n=True,
                            i18n_language="English",
-                           ignoring=[],
+                           ignored_errors=[],
                            version=build_config.version)
 
     # def test_parse_version_no_version(self):

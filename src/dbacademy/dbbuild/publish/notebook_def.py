@@ -34,7 +34,7 @@ class NotebookDef(NotebookDefData):
                  order: int,
                  i18n: bool,
                  i18n_language: Union[None, str],
-                 ignoring: List[str],
+                 ignored_errors: List[str],
                  version: str):
 
         super().__init__(client=client,  # build_config=build_config,
@@ -44,7 +44,7 @@ class NotebookDef(NotebookDefData):
                          include_solution=include_solution,
                          test_round=test_round,
                          ignored=ignored,
-                         ignoring=ignoring,
+                         ignored_errors=ignored_errors,
                          order=order,
                          i18n=i18n,
                          i18n_language=i18n_language)
@@ -786,17 +786,17 @@ For more current information, please see <a href="https://files.training.databri
 
         if not pub_utils.is_markdown(cm=cm, command=command):
             if language.lower() == "python":
-                if "lang-python" not in self.ignoring:
+                if "lang-python" not in self.ignored_errors:
                     self.logger.warn(lambda: "%python" not in command, f"""Cmd #{i + 1} | Found "%python" in a Python notebook""")
             elif language.lower() == "sql":
-                if "lang-sql" not in self.ignoring:
+                if "lang-sql" not in self.ignored_errors:
                     self.logger.warn(lambda: "%sql" not in command, f"""Cmd #{i + 1} | Found "%sql" in a SQL notebook""")
             elif language.lower() == "scala":
-                if "lang-scala" not in self.ignoring:
+                if "lang-scala" not in self.ignored_errors:
                     self.logger.warn(lambda: "%scala" not in command, f"""Cmd #{i + 1} | Found "%scala" in a Scala notebook""")
             elif language.lower() == "r":
                 # We have to check both cases so as not to catch %run by accident
-                if "lang-r" not in self.ignoring:
+                if "lang-r" not in self.ignored_errors:
                     self.logger.warn(lambda: "%r " not in command, f"""Cmd #{i + 1} | Found "%r" in an R notebook""")
                     self.logger.warn(lambda: "%r\n" not in command, f"""Cmd #{i + 1} | Found "%r" in an R notebook""")
             else:

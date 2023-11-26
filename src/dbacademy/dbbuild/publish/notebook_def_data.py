@@ -17,7 +17,7 @@ class NotebookDefData:
                  order: int,
                  i18n: bool,
                  i18n_language: Union[None, str],
-                 ignoring: List[str],
+                 ignored_errors: List[str],
                  version: str):
 
         from dbacademy.common import validate
@@ -28,7 +28,7 @@ class NotebookDefData:
 
         self.__replacements = validate(replacements=replacements).dict(str, auto_create=True)
 
-        self.__ignoring = validate(ignoring=ignoring).list(str, auto_create=True)
+        self.__ignored_errors = validate(ignored_errors=ignored_errors).list(str, auto_create=True)
 
         self.__version = validate(version=version).required.str()
 
@@ -119,13 +119,13 @@ class NotebookDefData:
         return self.__i18n_guids
 
     @property
-    def ignoring(self) -> List[str]:
-        return self.__ignoring
+    def ignored_errors(self) -> List[str]:
+        return self.__ignored_errors
 
-    @ignoring.setter
-    def ignoring(self, ignored_errors: List[str]) -> None:
-        self.__ignoring.clear()  # Remove any ignored errors because we are adding new ones now.
-        self.__ignoring.extend(validate(ignored_errors=ignored_errors).required.list(str))
+    @ignored_errors.setter
+    def ignored_errors(self, ignored_errors: List[str]) -> None:
+        self.__ignored_errors.clear()  # Remove any ignored errors because we are adding new ones now.
+        self.__ignored_errors.extend(validate(ignored_errors=ignored_errors).required.list(str))
 
     @property
     def version(self) -> str:

@@ -39,7 +39,7 @@ class TestNotebookDefI18NTitle(unittest.TestCase):
                            order=0,
                            i18n=True,
                            i18n_language="English",
-                           ignoring=[],
+                           ignored_errors=[],
                            version=build_config.version)
 
     def test_good_no_space_i18n(self):
