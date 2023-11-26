@@ -5,7 +5,7 @@ from dbacademy.common import validate, Cloud
 from dbacademy.clients.dbrest import DBAcademyRestClient
 from dbacademy.dbbuild.build_config_data import BuildConfigData
 from dbacademy.dbbuild.change_log import ChangeLog
-from dbacademy.dbbuild.publish import PublishingMode
+from dbacademy.dbbuild.publish.publisher import PublishingMode
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
 from dbacademy.dbbuild.test import TestType
 
@@ -513,7 +513,7 @@ class BuildConfig(BuildConfigData):
 
     # Used by notebooks
     # TODO Cannot define return type
-    def to_publisher(self, publishing_mode: Optional[PublishingMode] = None):
+    def to_publisher(self, publishing_mode: Union[str, PublishingMode] = PublishingMode.non_op):
         """
         Creates an instance of Publisher from the current build configuration
         :param publishing_mode: See Publisher.publishing_mode
@@ -522,8 +522,7 @@ class BuildConfig(BuildConfigData):
         from dbacademy.dbbuild.publish.publisher import Publisher
         assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
 
-        return Publisher(build_config=self,
-                         publishing_mode=publishing_mode)
+        return Publisher(build_config=self, publishing_mode=validate(publishing_mode=publishing_mode).required.enum(PublishingMode, auto_convert=True))
 
     # Used by notebooks
     # TODO Cannot define return type
@@ -532,7 +531,7 @@ class BuildConfig(BuildConfigData):
         Creates an instance of Translator from the current build configuration.
         :return:
         """
-        publisher = self.to_publisher(publishing_mode=None)
+        publisher = self.to_publisher(publishing_mode=PublishingMode.non_op)
         publisher.validate(silent=True)
         return publisher.to_translator(require_i18n_selection)
 

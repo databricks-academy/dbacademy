@@ -1,11 +1,17 @@
-__all__ = ["Publisher"]
+__all__ = ["Publisher", "PublishingMode"]
 
-from typing import List, Optional, Iterable
-
+from typing import List, Optional, Iterable, Union
+from enum import Enum
 from dbacademy.common import validate
 from dbacademy.dbbuild.build_config_data import BuildConfigData
-from dbacademy.dbbuild.publish import PublishingMode
 from dbacademy.dbbuild.publish.notebook_def import NotebookDef
+
+
+class PublishingMode(Enum):
+
+    non_op = "non_op"
+    manual = "manual"
+    automatic = "automatic"
 
 
 class Publisher:
@@ -14,7 +20,7 @@ class Publisher:
 
     KEEPERS = [".gitignore", "docs", "README.txt", "README.md", "README", "LICENSE.txt", "LICENSE.md", "LICENSE", "NOTICE.md", "NOTICE.txt", "NOTICE"]
 
-    def __init__(self, *, build_config: BuildConfigData, publishing_mode: Optional[PublishingMode]):
+    def __init__(self, *, build_config: BuildConfigData, publishing_mode: Union[str, PublishingMode]):
 
         # 99% of all data is carried in the build config.
         self.__build_config = validate(build_config=build_config).required.as_type(BuildConfigData)
@@ -29,7 +35,7 @@ class Publisher:
         self.__created_dbcs = False
         self.__validated_artifacts = False
 
-        self.__publishing_mode = None if publishing_mode is None else validate(publishing_mode=publishing_mode).as_one_of(parameter_type=str, value=PublishingMode)
+        self.__publishing_mode = validate(publishing_mode=publishing_mode).required.enum(PublishingMode, auto_convert=True)
 
         self.__target_dir = f"{self.build_config.source_repo}/Published/{self.build_config.name} - v{self.build_config.version}"
         self.__target_repo_url = None
@@ -93,30 +99,6 @@ class Publisher:
     def notebooks(self) -> List[NotebookDef]:
         return list(self.build_config.notebooks.values())
 
-    # @property
-    # def build_name(self) -> str:
-    #     return self.__build_config.build_name
-
-    # @property
-    # def name(self) -> str:
-    #     return self.__build_config.name
-
-    # @property
-    # def version(self) -> str:
-    #     return self.__build_config.version
-
-    # @property
-    # def core_version(self) -> str:
-    #     return self.__build_config.core_version
-
-    # @property
-    # def publishing_info(self) -> Dict[str, Any]:
-    #     return self.__build_config.publishing_info
-
-    # @property
-    # def change_log(self) -> Optional[ChangeLog]:
-    #     return self.__build_config.change_log
-
     @property
     def white_list(self) -> List[str]:
         return self.build_config.white_list
@@ -126,28 +108,26 @@ class Publisher:
         return self.build_config.black_list
 
     @property
-    def publishing_mode(self) -> Optional[PublishingMode]:
+    def publishing_mode(self) -> PublishingMode:
         """
-        Indicates which mode the publisher is operating under. Expected values include None or one of Publisher.PUBLISHING_MODES. When testing
-        the mode is expected to be None. When actually publishing a specific version of a course "manual" (Publisher.PUBLISHING_MODE_MANUAL) indicates
-        that the DBC will be exported and published manually where "automatic" (Publisher.PUBLISHING_MODE_AUTOMATIC) indicates that the DBC,
-        slides, etc. will be published to the distribution system via the build scripts.
-        :return: the current publishing mode
+        Indicates which mode the publisher is operating under. When testing the mode is expected to be PublishingMode.non_op. When actually
+        publishing a specific version of a course PublishingMode.manual indicates that the DBC will be exported and published manually where
+        PublishingMode.automatic indicates that the DBC, slides, etc. will be published to the distribution system via the build scripts.
+        :return: PublishingMode
         """
         return self.__publishing_mode
 
     @publishing_mode.setter
-    def publishing_mode(self, publishing_mode: Optional[PublishingMode]) -> None:
+    def publishing_mode(self, publishing_mode: Union[str, PublishingMode]) -> None:
         from dbacademy.dbbuild.build_config import BuildConfig
 
-        validate(publishing_mode=publishing_mode).optional.str()
+        self.__publishing_mode = validate(publishing_mode=publishing_mode).required.enum(PublishingMode, auto_convert=True)
 
         if self.build_config.version in BuildConfig.VERSIONS_LIST:
             # Building, Testing or Translating
-            assert publishing_mode is None, f"Expected the parameter \"publishing_mode\" to be None when the version is one of {BuildConfig.VERSIONS_LIST}, found \"{self.build_config.version}\""
-            self.__publishing_mode = None
+            assert publishing_mode == PublishingMode.non_op, f"""Expected the parameter "publishing_mode" to be "{PublishingMode.non_op}" when the version is one of {BuildConfig.VERSIONS_LIST}, found "{self.build_config.version}" and "{publishing_mode}"."""
         else:
-            self.__publishing_mode = validate(publishing_mode=publishing_mode).required.as_one_of(parameter_type=str, value=PublishingMode)
+            assert publishing_mode != PublishingMode.non_op, f"""Expected the parameter "publishing_mode" to be OTHER THAN "{PublishingMode.non_op}" when the version is NOT one of {BuildConfig.VERSIONS_LIST}, found "{self.build_config.version}" and "{publishing_mode}"."""
 
     def __init_notebooks(self, notebooks: Iterable[NotebookDef]) -> None:
         from datetime import datetime
@@ -218,14 +198,13 @@ class Publisher:
         from dbacademy.dbbuild.publish.notebook_def import NotebookDef
         from dbacademy.dbbuild.build_utils import BuildUtils
         from dbacademy.dbbuild.build_config import BuildConfig
-        from dbacademy.dbbuild.publish import PUBLISH_TYPE
 
         if self.build_config.version in BuildConfig.VERSIONS_LIST:
             self.assert_validated_config()
         else:
             self.assert_no_changes_in_source_repo()
 
-        if self.publishing_mode == PUBLISH_TYPE.MANUAL:
+        if self.publishing_mode == PublishingMode.manual:
             # This is a manual publish so target repo will be empty
             self.__changes_in_target_repo = 0
 
