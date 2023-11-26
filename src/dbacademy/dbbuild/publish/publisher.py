@@ -54,7 +54,7 @@ class Publisher:
             # This hack just happens to work for japanese and korean
             self.__common_language = build_config.i18n_language.split("-")[0]
 
-        self.__init_notebooks(build_config.notebooks.values())
+        self.__init_notebooks(self.notebooks)
         self.__validate_white_black_list()
 
     @property
@@ -92,10 +92,6 @@ class Publisher:
     @property
     def build_config(self) -> BuildConfigData:
         return self.__build_config
-
-    # @property
-    # def client(self) -> DBAcademyRestClient:
-    #     return self.__build_config.client
 
     @property
     def notebooks(self) -> List[NotebookDef]:
