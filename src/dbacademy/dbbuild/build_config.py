@@ -518,7 +518,8 @@ class BuildConfig(BuildConfigData):
         :return: the current publishing mode
         """
         assert self.validated, f"Cannot publish until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
-        return Publisher(build_config=self, publishing_mode=validate(publishing_mode=publishing_mode).required.enum(PublishingMode, auto_convert=True))
+        return Publisher(build_config=self,
+                         publishing_mode=validate(publishing_mode=publishing_mode).required.enum(PublishingMode, auto_convert=True))
 
     def to_translator(self, require_i18n_selection: bool = True) -> Translator:
         """
@@ -537,7 +538,9 @@ class BuildConfig(BuildConfigData):
         :return:
         """
         assert self.validated, f"Cannot test until the build configuration passes validation. Ensure that BuildConfig.validate() was called and that all assignments passed"
-        return TestSuite(build_config=self, test_type=test_type, keep_success=keep_success)
+        return TestSuite(build_config=self,
+                         test_type=test_type,
+                         keep_success=keep_success)
 
     def assert_all_tests_passed(self, clouds: List[str] = None) -> None:
         """

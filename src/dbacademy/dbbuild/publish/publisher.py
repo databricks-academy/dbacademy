@@ -420,8 +420,8 @@ class Publisher:
         :return: Translator
         """
         self.assert_validated_config()
-
-        return Translator(self, require_i18n_selection)
+        return Translator(build_config=self.build_config,
+                          require_i18n_selection=require_i18n_selection)
 
     def to_test_suite(self, test_type: str = None, keep_success: bool = False) -> TestSuite:
         """
