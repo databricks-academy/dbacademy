@@ -125,5 +125,5 @@ class TaskConfig:
 
     def cluster_new(self, cluster_config: JobClusterConfig) -> None:
         self.__cluster_reset()
-        cluster_config = validate(cluster_config=cluster_config).as_type(JobClusterConfig)
+        cluster_config = validate(cluster_config=cluster_config).optional.as_type(JobClusterConfig)
         self.params["new_cluster"] = cluster_config.params

@@ -35,17 +35,17 @@ class StatementsApi(ApiContainer):
     def execute(self, *, warehouse_id: str, catalog: str, schema: str, statement: str, byte_limit: int = -1, disposition: DISPOSITION_TYPE = "INLINE", results_format: FORMAT_TYPE = "JSON_ARRAY", on_wait_timeout: WAIT_TIMEOUT_TYPE = "CANCEL", wait_timeout: WAIT_TIMEOUT_SECONDS = "50s"):
         from dbacademy.common import validate
 
-        validate(catalog=catalog).str()
-        validate(schema=schema).str()
-        validate(statement=statement).str()
-        validate(warehouse_id=warehouse_id).str()
+        validate(catalog=catalog).optional.str()
+        validate(schema=schema).optional.str()
+        validate(statement=statement).optional.str()
+        validate(warehouse_id=warehouse_id).optional.str()
 
-        validate(byte_limit=byte_limit).int()
-        validate(wait_timeout=wait_timeout).str()
+        validate(byte_limit=byte_limit).optional.int()
+        validate(wait_timeout=wait_timeout).optional.str()
 
-        validate(disposition=disposition).str()
-        validate(results_format=results_format).str()
-        validate(on_wait_timeout=on_wait_timeout).str()
+        validate(disposition=disposition).optional.str()
+        validate(results_format=results_format).optional.str()
+        validate(on_wait_timeout=on_wait_timeout).optional.str()
 
         assert wait_timeout in get_args(WAIT_TIMEOUT_SECONDS), f"Expected wait_timeout to be 0s or between 5s & 50s inclusive"
         assert disposition in get_args(DISPOSITION_TYPE)

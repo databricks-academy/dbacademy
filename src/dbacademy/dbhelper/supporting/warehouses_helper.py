@@ -87,7 +87,7 @@ class WarehousesHelper:
 
         username = validate(username=username).required.str()
         lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
-        auto_stop_mins = validate(auto_stop_mins=auto_stop_mins).int()
+        auto_stop_mins = validate(auto_stop_mins=auto_stop_mins).optional.int()
         enable_serverless_compute = validate(enable_serverless_compute=enable_serverless_compute).required.bool()
 
         name = DBAcademyHelper.to_unique_name(lesson_config=lesson_config, sep="-")

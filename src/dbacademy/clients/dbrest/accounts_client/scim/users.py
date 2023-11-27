@@ -79,21 +79,21 @@ class AccountScimUsersApi(ApiContainer):
         operations = operations or list()
 
         if first_name is not None and last_name is not None:
-            validate(first_name=first_name).str()
-            validate(last_name=last_name).str()
+            validate(first_name=first_name).optional.str()
+            validate(last_name=last_name).optional.str()
 
             operations.append(Operation(Operation.REPLACE, "name.givenName", first_name))
             operations.append(Operation(Operation.REPLACE, "name.familyName", last_name))
             operations.append(Operation(Operation.REPLACE, "displayName", f"{first_name} {last_name}"))
 
         elif first_name is not None:
-            validate(first_name=first_name).str()
+            validate(first_name=first_name).optional.str()
 
             operations.append(Operation(Operation.REPLACE, "name.givenName", first_name))
             operations.append(Operation(Operation.REPLACE, "displayName", f"{first_name}"))
 
         elif last_name is not None:
-            validate(last_name=last_name).str()
+            validate(last_name=last_name).optional.str()
 
             operations.append(Operation(Operation.REPLACE, "name.familyName", last_name))
             operations.append(Operation(Operation.REPLACE, "displayName", f"{last_name}"))

@@ -119,7 +119,7 @@ class DatabasesHelper:
 
         drop_existing = validate(drop_existing=drop_existing).required.bool()
         lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
-        post_create = validate(post_create=post_create).as_type(Callable)
+        post_create = validate(post_create=post_create).optional.as_type(Callable)
 
         print(f"| Creating user-specific databases.")
 
@@ -153,7 +153,7 @@ class DatabasesHelper:
         username = validate(username=username).required.str()
         drop_existing = validate(drop_existing=drop_existing).required.bool()
         lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
-        post_create = validate(post_create=post_create).as_type(Callable)
+        post_create = validate(post_create=post_create).optional.as_type(Callable)
 
         db_name = DBAcademyHelper.to_schema_name_prefix(username=username,
                                                         course_code=lesson_config.course_config.course_code)
@@ -187,7 +187,7 @@ class DatabasesHelper:
 
         drop_existing = validate(drop_existing=drop_existing).required.bool()
         lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
-        post_create = validate(post_create=post_create).as_type(Callable)
+        post_create = validate(post_create=post_create).optional.as_type(Callable)
         
         usernames = self.__workspace_helper.get_usernames(lesson_config=lesson_config)
         
@@ -212,7 +212,7 @@ class DatabasesHelper:
         username = validate(username=username).required.str()
         drop_existing = validate(drop_existing=drop_existing).required.bool()
         lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
-        post_create = validate(post_create=post_create).as_type(Callable)
+        post_create = validate(post_create=post_create).optional.as_type(Callable)
 
         cat_name = DBAcademyHelper.to_schema_name_prefix(username=username,
                                                          course_code=lesson_config.course_config.course_code)

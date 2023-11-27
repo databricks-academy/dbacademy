@@ -43,7 +43,7 @@ class TestUtils(unittest.TestCase):
 
         def dummy(value: int):
             from dbacademy.common import validate
-            value = validate(value=value).int()
+            value = validate(value=value).optional.int()
             self.assertEqual(1, value)
 
         dummy(1)

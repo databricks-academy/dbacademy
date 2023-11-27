@@ -26,9 +26,9 @@ class NotebookDefData:
 
         self.__client = validate(client=client).required.as_type(DBAcademyRestClient)
 
-        self.__replacements = validate(replacements=replacements).dict(str, auto_create=True)
+        self.__replacements = validate(replacements=replacements).optional.dict(str, auto_create=True)
 
-        self.__ignored_errors = validate(ignored_errors=ignored_errors).list(str, auto_create=True)
+        self.__ignored_errors = validate(ignored_errors=ignored_errors).optional.list(str, auto_create=True)
 
         self.__version = validate(version=version).required.str()
 
@@ -43,7 +43,7 @@ class NotebookDefData:
         self.__order = validate(order=order).required.int()
 
         self.__i18n: bool = validate(i18n=i18n).required.bool()
-        self.__i18n_language: Union[None, str] = validate(i18n_language=i18n_language).str()
+        self.__i18n_language: Union[None, str] = validate(i18n_language=i18n_language).optional.str()
         self.__i18n_guids: List[str] = list()  # Defaults to an empty list
 
     @property
@@ -112,7 +112,7 @@ class NotebookDefData:
 
     @i18n_language.setter
     def i18n_language(self, i18n_language: Optional[str]) -> None:
-        self.__i18n_language = validate(i18n_language=i18n_language).str()
+        self.__i18n_language = validate(i18n_language=i18n_language).optional.str()
 
     @property
     def i18n_guids(self) -> List[str]:

@@ -81,7 +81,7 @@ class CourseConfig:
         import re
         from dbacademy.common import validate
 
-        if validate(course_name=course_name).str() is None:
+        if validate(course_name=course_name).optional.str() is None:
             return None
 
         build_name = re.sub(r"[^a-zA-Z\d]", "-", course_name).lower()

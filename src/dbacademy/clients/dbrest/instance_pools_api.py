@@ -80,9 +80,9 @@ class InstancePoolsApi(ApiContainer):
         assert type(name) == str, f"Expected name to be of type str, found {type(name)}"
         assert type(definition) == dict, f"Expected definition to be of type dict, found {type(definition)}"
 
-        name = validate(name=name).str()
+        name = validate(name=name).optional.str()
         definition = validate(definition=definition).required.dict(str)
-        tags: List[Tuple[str, Any]] = validate(tags=tags).list(Tuple, auto_create=True)
+        tags: List[Tuple[str, Any]] = validate(tags=tags).optional.list(Tuple, auto_create=True)
 
         definition["instance_pool_name"] = name
 

@@ -40,7 +40,7 @@ class LessonConfig:
 
         self.__name = None
         self.__clean_name = None  # Use "setter" to initialize
-        self.name = validate(name=name).str()
+        self.name = validate(name=name).optional.str()
 
         self.__installing_datasets = None  # the terms are slightly different for readability
         self.installing_datasets = validate(install_datasets=install_datasets).required.bool()
@@ -73,7 +73,7 @@ class LessonConfig:
             self.__initial_catalog = None
 
         # Mock out the following attributes if specified.
-        mocks = validate(mocks=mocks).dict(str, auto_create=True)
+        mocks = validate(mocks=mocks).optional.dict(str, auto_create=True)
 
         self.__username = mocks.get("__username", self.__username)
         self.__initial_schema = mocks.get("__initial_schema", self.__initial_schema)

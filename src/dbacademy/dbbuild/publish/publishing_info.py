@@ -6,8 +6,8 @@ from dbacademy.common import validate
 
 class SlackChannel:
     def __init__(self, name: str, url: str):
-        self.__url = validate(url=url).str()
-        self.__name = validate(name=name).str()
+        self.__url = validate(url=url).optional.str()
+        self.__name = validate(name=name).optional.str()
 
     @property
     def name(self):
@@ -20,8 +20,8 @@ class SlackChannel:
 
 class Announcements:
     def __init__(self, email_addresses: List[str], slack_channels: List[SlackChannel]):
-        self.__email_addresses = validate(email_addresses=email_addresses).list(str, auto_create=True)
-        self.__slack_channels = validate(slack_channels=slack_channels).list(element_type=SlackChannel, auto_create=True)
+        self.__email_addresses = validate(email_addresses=email_addresses).optional.list(str, auto_create=True)
+        self.__slack_channels = validate(slack_channels=slack_channels).optional.list(element_type=SlackChannel, auto_create=True)
 
     @property
     def email_addresses(self) -> List[str]:
@@ -35,9 +35,9 @@ class Announcements:
 class Translation:
     def __init__(self, language, data: Dict[str, Any]):
         self.__language = language
-        self.__release_repo = validate(release_repo=data.get("release_repo")).str()
-        self.__published_docs_folder = validate(published_docs_folder=data.get("published_docs_folder")).str()
-        self.__document_links = validate(document_links=data.get("document_links")).list(str, auto_create=True)
+        self.__release_repo = validate(release_repo=data.get("release_repo")).optional.str()
+        self.__published_docs_folder = validate(published_docs_folder=data.get("published_docs_folder")).optional.str()
+        self.__document_links = validate(document_links=data.get("document_links")).optional.list(str, auto_create=True)
 
     @property
     def language(self):

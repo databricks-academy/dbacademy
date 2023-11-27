@@ -62,10 +62,10 @@ class BuildConfigData:
         self.__supported_dbrs = validate(supported_dbrs=supported_dbrs).required.list(str)         # Validate the entire set of supported DBRs.
 
         self.__language_options = None
-        self.__ignored_errors = validate(ignored_errors=ignored_errors).list(str, auto_create=True)
+        self.__ignored_errors = validate(ignored_errors=ignored_errors).optional.list(str, auto_create=True)
 
         self.__i18n = validate(i18n=i18n or False).required.bool()
-        self.__i18n_language = validate(i18n_language=i18n_language).str()
+        self.__i18n_language = validate(i18n_language=i18n_language).optional.str()
 
         self.__test_type = None
         self.__notebooks: Dict[str, NotebookDef] = dict()
@@ -90,30 +90,30 @@ class BuildConfigData:
         self.__single_user_name = single_user_name      # The cluster's single-user name - lazily evaluated via property
 
         # Spark configuration parameters
-        self.__spark_conf = validate(spark_conf=spark_conf).dict(str, auto_create=True)
+        self.__spark_conf = validate(spark_conf=spark_conf).optional.dict(str, auto_create=True)
         if self.__workers == 0:
             self.__spark_conf["spark.master"] = "local[*]"
 
         # Test-Job's arguments
-        self.__job_arguments = validate(job_arguments=job_arguments).dict(str, auto_create=True)
+        self.__job_arguments = validate(job_arguments=job_arguments).optional.dict(str, auto_create=True)
 
         # The libraries to be attached to the cluster
-        self.__libraries = validate(libraries=libraries).list(dict, auto_create=True)
+        self.__libraries = validate(libraries=libraries).optional.list(dict, auto_create=True)
 
         # The offset here assumes we are in the .../Course/Build-Scripts folder
-        self.__source_repo = validate(source_repo=source_repo).str() or dbgems.get_notebook_dir(offset=-2)
+        self.__source_repo = validate(source_repo=source_repo).optional.str() or dbgems.get_notebook_dir(offset=-2)
 
         source_dir_name: str = validate(source_dir_name=source_dir_name or "Source").required.str()
         self.__source_dir = f"{self.__source_repo}/{source_dir_name}"
 
-        self.__readme_file_name = validate(readme_file_name=readme_file_name or "README.md").str()
+        self.__readme_file_name = validate(readme_file_name=readme_file_name or "README.md").optional.str()
         self.__include_solutions = validate(include_solutions=include_solutions or False).required.bool()
 
-        self.__white_list = validate(white_list=white_list).list(str)
-        self.__black_list = validate(black_list=black_list).list(str)
+        self.__white_list = validate(white_list=white_list).optional.list(str)
+        self.__black_list = validate(black_list=black_list).optional.list(str)
 
         self.__change_log: Optional[ChangeLog] = None
-        self.__publishing_info = validate(publishing_info=publishing_info).dict(str, auto_create=True)
+        self.__publishing_info = validate(publishing_info=publishing_info).optional.dict(str, auto_create=True)
 
     @property
     def passing_tests(self) -> Dict[str, bool]:

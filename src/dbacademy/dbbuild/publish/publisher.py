@@ -353,8 +353,8 @@ class Publisher:
             common.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
         target_repo_url = target_repo_url or new_target_repo_url
 
-        self.target_dir = validate(target_dir=target_dir).str()
-        self.target_repo_url = validate(target_repo_url=target_repo_url).str()
+        self.target_dir = validate(target_dir=target_dir).optional.str()
+        self.target_repo_url = validate(target_repo_url=target_repo_url).optional.str()
 
         BuildUtils.reset_git_repo(client=self.build_config.client,
                                   directory=self.target_dir,

@@ -89,12 +89,12 @@ class ApiClient(ApiContainer):
             self.__endpoint = client.endpoint.lstrip("/") + "/" + self.__endpoint
 
         # The remaining parameters are all conditional depending on what was first provided.
-        self.__token = validate(token=token).str()
-        self.__username = validate(username=username).str()
-        self.__password = validate(password=password).str()
+        self.__token = validate(token=token).optional.str()
+        self.__username = validate(username=username).optional.str()
+        self.__password = validate(password=password).optional.str()
 
         if authorization_header is not None:
-            self.__authorization_header = validate(authorization_header=authorization_header).str()
+            self.__authorization_header = validate(authorization_header=authorization_header).optional.str()
         elif token is not None:
             self.__authorization_header = f"Bearer {token}"
         elif username is not None and password is not None:
@@ -242,12 +242,12 @@ class ApiClient(ApiContainer):
         import json, time, math
         from urllib.parse import urljoin
 
-        _data = validate(_data=_data).dict(str, auto_create=True)
+        _data = validate(_data=_data).optional.dict(str, auto_create=True)
         if data:
             _data = _data.copy()
             _data.update(data)
 
-        _base_url = validate(_base_url=_base_url).str()
+        _base_url = validate(_base_url=_base_url).optional.str()
         _base_url: str = urljoin(self.endpoint, _base_url)
 
         if self.dns_verify:
@@ -255,7 +255,7 @@ class ApiClient(ApiContainer):
 
         self._throttle_calls()
 
-        validate(_endpoint_path=_endpoint_path).str()
+        validate(_endpoint_path=_endpoint_path).optional.str()
         if _endpoint_path.startswith(_base_url):
             _endpoint_path = _endpoint_path[len(_base_url):]
 

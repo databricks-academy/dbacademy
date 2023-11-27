@@ -597,7 +597,7 @@ For more current information, please see <a href="https://files.training.databri
         validate(verbose=verbose).required.bool()
         validate(debugging=debugging).required.bool()
 
-        other_notebooks: validate(other_notebooks=other_notebooks).list(NotebookDef, auto_create=True)
+        other_notebooks: validate(other_notebooks=other_notebooks).optional.list(NotebookDef, auto_create=True)
 
         self.logger.reset()      # Remove all errors from previous invocations of publish
         self.i18n_guids.clear()  # Remove all GUIDs from previous invocations of publish

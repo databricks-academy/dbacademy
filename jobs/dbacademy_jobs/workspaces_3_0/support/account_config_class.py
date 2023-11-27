@@ -46,15 +46,15 @@ class AccountConfig:
         from dbacademy_jobs.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
         from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
 
-        self.__account_id = validate(account_id=account_id).str(min_length=1)
-        self.__password = validate(password=password).str(min_length=1)
-        self.__username = validate(username=username).str(min_length=1)
+        self.__account_id = validate(account_id=account_id).optional.str(min_length=1)
+        self.__password = validate(password=password).optional.str(min_length=1)
+        self.__username = validate(username=username).optional.str(min_length=1)
 
         print(f"Account ID:    {account_id}")
         print(f"Password:      {password[0]}***{password[-1]}")
         print(f"Username:      {username}")
 
-        self.__region = validate(region=region).str(min_length=1)
+        self.__region = validate(region=region).optional.str(min_length=1)
 
         self.__ignored_workspaces = validate(ignored_workspaces=ignored_workspaces).required.list(Any)
         self.__uc_storage_config = validate(uc_storage_config=uc_storage_config).required.as_type(UcStorageConfig)

@@ -1,6 +1,7 @@
 __all__ = ["JobsApi"]
 
 from typing import Dict, Any, Optional
+from dbacademy.common import validate
 from dbacademy.clients.rest.common import ApiClient, ApiContainer
 from dbacademy.clients.dbrest.jobs_api.job_config import JobConfig
 
@@ -8,15 +9,17 @@ from dbacademy.clients.dbrest.jobs_api.job_config import JobConfig
 class JobsApi(ApiContainer):
 
     def __init__(self, client: ApiClient):
-        from dbacademy.common import validate
-
         self.__client = validate(client=client).required.as_type(ApiClient)
         self.base_uri = f"{self.__client.endpoint}/api/2.1/jobs"
 
     def create_from_config(self, config: JobConfig) -> str:
+        config = validate(config=config).required.as_type(JobConfig)
+
         return self.create_from_dict(config.params)
 
     def create_from_dict(self, params: Dict[str, Any]) -> str:
+        params = validate(params=params).required.dict(str)
+
         response = self.__client.api("POST", f"{self.base_uri}/create", params)
         return response.get("job_id")
 

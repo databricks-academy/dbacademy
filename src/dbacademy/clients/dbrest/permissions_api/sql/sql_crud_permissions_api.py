@@ -17,11 +17,11 @@ class SqlCrudPermissions(PermissionsCrudApi):
 
         self.__client = validate(client=client).required.as_type(ApiClient)
         singular = validate(singular=singular).required.str()
-        plural = validate(plural=plural).str()
+        plural = validate(plural=plural).optional.str()
 
         if plural is None:
             plural = singular + "s"
 
-        validate(plural=plural).as_one_of(str, SqlCrudPermissions.valid_objects)
+        validate(plural=plural).optional.as_one_of(str, SqlCrudPermissions.valid_objects)
 
         super().__init__(client, f"/api/2.0/sql/permissions/{plural}", noun=singular, singular=singular, plural=plural)

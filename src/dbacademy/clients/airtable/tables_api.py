@@ -13,7 +13,7 @@ class TablesAPI(ApiContainer):
         from dbacademy.clients.airtable import AirTableRestClient
 
         self.__client: AirTableRestClient = validate(client=client).required.as_type(AirTableRestClient)
-        self.__table_id = validate(table_id=table_id).str()
+        self.__table_id = validate(table_id=table_id).optional.str()
         self.__at_utils: AirTableUtils = validate(at_utils=at_utils).required.as_type(AirTableUtils)
         self.__table_url = f"{client.endpoint}/{table_id}"
 
