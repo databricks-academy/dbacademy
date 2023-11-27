@@ -162,13 +162,13 @@ class CommonConfig:
                     extra_params.get(cloud_attributes)["availability"] = "PREEMPTIBLE_WITH_FALLBACK_GCP"
 
         if len(custom_tags) > 0:
-            self.__params["custom_tags"] = custom_tags
+            extra_params["custom_tags"] = custom_tags
 
         if len(spark_conf) > 0:
-            self.__params["spark_conf"] = spark_conf
+            extra_params["spark_conf"] = spark_conf
 
         if len(spark_env_vars) > 0:
-            self.__params["spark_env_vars"] = spark_env_vars
+            extra_params["spark_env_vars"] = spark_env_vars
 
         # libraries are validated in the constructor.
         self.__libraries = LibraryFactory(libraries)
