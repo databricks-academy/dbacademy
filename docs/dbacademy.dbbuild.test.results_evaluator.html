@@ -12,14 +12,6 @@
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
-<tr bgcolor="#aa55cc">
-<td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
-    
-<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="typing.html">typing</a><br>
-</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
-<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
 <td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
@@ -40,28 +32,40 @@
 <font color="#000000" face="helvetica, arial"><a name="ResultsEvaluator">class <strong>ResultsEvaluator</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#ResultsEvaluator">ResultsEvaluator</a>(results:&nbsp;List[dict],&nbsp;keep_success)<br>
+<td colspan=2><tt><a href="#ResultsEvaluator">ResultsEvaluator</a>(results:&nbsp;List[Dict[str,&nbsp;Any]],&nbsp;keep_success:&nbsp;bool)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="ResultsEvaluator-__init__"><strong>__init__</strong></a>(self, results: List[dict], keep_success)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="ResultsEvaluator-__init__"><strong>__init__</strong></a>(self, results: List[Dict[str, Any]], keep_success: bool)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
-<dl><dt><a name="ResultsEvaluator-add_section"><strong>add_section</strong></a>(self, title, rows, print_links=True)</dt></dl>
+<dl><dt><a name="ResultsEvaluator-add_section"><strong>add_section</strong></a>(self, title: str, rows: List[Dict[str, Any]], print_links: bool = True) -&gt; str</dt></dl>
 
-<dl><dt><a name="ResultsEvaluator-to_html"><strong>to_html</strong></a>(self, **kwargs) -&gt; str</dt></dl>
+<dl><dt><a name="ResultsEvaluator-to_html"><strong>to_html</strong></a>(self) -&gt; str</dt></dl>
 
 <hr>
-Static methods defined here:<br>
-<dl><dt><a name="ResultsEvaluator-add_row"><strong>add_row</strong></a>(*, style, cloud, job, duration)</dt></dl>
+Class methods defined here:<br>
+<dl><dt><a name="ResultsEvaluator-add_row"><strong>add_row</strong></a>(*, style: str, cloud: Union[str, dbacademy.common.cloud.Cloud], job: str, duration: str) -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt></dl>
 
-<dl><dt><a name="ResultsEvaluator-format_duration"><strong>format_duration</strong></a>(duration)</dt></dl>
+<dl><dt><a name="ResultsEvaluator-format_duration"><strong>format_duration</strong></a>(duration: int) -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt></dl>
 
-<dl><dt><a name="ResultsEvaluator-to_job_link"><strong>to_job_link</strong></a>(*, job_id, run_id, label)</dt></dl>
+<dl><dt><a name="ResultsEvaluator-to_job_link"><strong>to_job_link</strong></a>(*, job_id: str, run_id: str, label: str) -&gt; str<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt></dl>
 
 <hr>
 Readonly properties defined here:<br>
+<dl><dt><strong>cell_style</strong></dt>
+</dl>
+<dl><dt><strong>failed_set</strong></dt>
+</dl>
+<dl><dt><strong>header_style</strong></dt>
+</dl>
+<dl><dt><strong>ignored_set</strong></dt>
+</dl>
+<dl><dt><strong>keep_success</strong></dt>
+</dl>
 <dl><dt><strong>passed</strong></dt>
+</dl>
+<dl><dt><strong>success_set</strong></dt>
 </dl>
 <hr>
 Data descriptors defined here:<br>

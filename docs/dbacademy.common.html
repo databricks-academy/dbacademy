@@ -18,8 +18,8 @@ This&nbsp;was&nbsp;moved&nbsp;out&nbsp;of&nbsp;dbgems&nbsp;because&nbsp;dbgems&n
 <font color="#ffffff" face="helvetica, arial"><big><strong>Package Contents</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="dbacademy.common.cloud_class.html">cloud_class</a><br>
-</td><td width="25%" valign=top><a href="dbacademy.common.validate.html">validate</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="dbacademy.common.cloud.html">cloud</a><br>
+</td><td width="25%" valign=top><a href="dbacademy.common.validator.html">validator</a><br>
 </td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ee77aa">
@@ -28,6 +28,12 @@ This&nbsp;was&nbsp;moved&nbsp;out&nbsp;of&nbsp;dbgems&nbsp;because&nbsp;dbgems&n
     
 <tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#Exception">builtins.Exception</a>(<a href="builtins.html#BaseException">builtins.BaseException</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.common.validator.html#ValidationError">dbacademy.common.validator.ValidationError</a>
+</font></dt></dl>
+</dd>
 <dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
 </font></dt><dd>
 <dl>
@@ -37,7 +43,7 @@ This&nbsp;was&nbsp;moved&nbsp;out&nbsp;of&nbsp;dbgems&nbsp;because&nbsp;dbgems&n
 <dt><font face="helvetica, arial"><a href="enum.html#Enum">enum.Enum</a>(<a href="builtins.html#object">builtins.object</a>)
 </font></dt><dd>
 <dl>
-<dt><font face="helvetica, arial"><a href="dbacademy.common.cloud_class.html#Cloud">dbacademy.common.cloud_class.Cloud</a>
+<dt><font face="helvetica, arial"><a href="dbacademy.common.cloud.html#Cloud">dbacademy.common.cloud.Cloud</a>
 </font></dt></dl>
 </dd>
 </dl>
@@ -77,7 +83,7 @@ Data descriptors defined here:<br>
 An&nbsp;enumeration.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
-<dd><a href="dbacademy.common.cloud_class.html#Cloud">Cloud</a></dd>
+<dd><a href="dbacademy.common.cloud.html#Cloud">Cloud</a></dd>
 <dd><a href="enum.html#Enum">enum.Enum</a></dd>
 <dd><a href="builtins.html#object">builtins.object</a></dd>
 </dl>
@@ -107,6 +113,75 @@ Readonly properties inherited from <a href="enum.html#EnumMeta">enum.EnumMeta</a
 This&nbsp;mapping&nbsp;lists&nbsp;all&nbsp;enum&nbsp;members,&nbsp;including&nbsp;aliases.&nbsp;Note&nbsp;that&nbsp;this<br>
 is&nbsp;a&nbsp;read-only&nbsp;view&nbsp;of&nbsp;the&nbsp;internal&nbsp;mapping.</tt></dd>
 </dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ValidationError">class <strong>ValidationError</strong></a>(<a href="builtins.html#Exception">builtins.Exception</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#ValidationError">ValidationError</a>(message:&nbsp;str)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="dbacademy.common.validator.html#ValidationError">ValidationError</a></dd>
+<dd><a href="builtins.html#Exception">builtins.Exception</a></dd>
+<dd><a href="builtins.html#BaseException">builtins.BaseException</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ValidationError-__init__"><strong>__init__</strong></a>(self, message: str)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Static methods inherited from <a href="builtins.html#Exception">builtins.Exception</a>:<br>
+<dl><dt><a name="ValidationError-__new__"><strong>__new__</strong></a>(*args, **kwargs)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Create&nbsp;and&nbsp;return&nbsp;a&nbsp;new&nbsp;<a href="builtins.html#object">object</a>.&nbsp;&nbsp;See&nbsp;help(type)&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="builtins.html#BaseException">builtins.BaseException</a>:<br>
+<dl><dt><a name="ValidationError-__delattr__"><strong>__delattr__</strong></a>(self, name, /)</dt><dd><tt>Implement&nbsp;delattr(self,&nbsp;name).</tt></dd></dl>
+
+<dl><dt><a name="ValidationError-__getattribute__"><strong>__getattribute__</strong></a>(self, name, /)</dt><dd><tt>Return&nbsp;getattr(self,&nbsp;name).</tt></dd></dl>
+
+<dl><dt><a name="ValidationError-__reduce__"><strong>__reduce__</strong></a>(...)</dt><dd><tt>Helper&nbsp;for&nbsp;pickle.</tt></dd></dl>
+
+<dl><dt><a name="ValidationError-__repr__"><strong>__repr__</strong></a>(self, /)</dt><dd><tt>Return&nbsp;repr(self).</tt></dd></dl>
+
+<dl><dt><a name="ValidationError-__setattr__"><strong>__setattr__</strong></a>(self, name, value, /)</dt><dd><tt>Implement&nbsp;setattr(self,&nbsp;name,&nbsp;value).</tt></dd></dl>
+
+<dl><dt><a name="ValidationError-__setstate__"><strong>__setstate__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ValidationError-__str__"><strong>__str__</strong></a>(self, /)</dt><dd><tt>Return&nbsp;str(self).</tt></dd></dl>
+
+<dl><dt><a name="ValidationError-with_traceback"><strong>with_traceback</strong></a>(...)</dt><dd><tt><a href="builtins.html#Exception">Exception</a>.<a href="#ValidationError-with_traceback">with_traceback</a>(tb)&nbsp;--<br>
+set&nbsp;self.<strong>__traceback__</strong>&nbsp;to&nbsp;tb&nbsp;and&nbsp;return&nbsp;self.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="builtins.html#BaseException">builtins.BaseException</a>:<br>
+<dl><dt><strong>__cause__</strong></dt>
+<dd><tt>exception&nbsp;cause</tt></dd>
+</dl>
+<dl><dt><strong>__context__</strong></dt>
+<dd><tt>exception&nbsp;context</tt></dd>
+</dl>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>__suppress_context__</strong></dt>
+</dl>
+<dl><dt><strong>__traceback__</strong></dt>
+</dl>
+<dl><dt><strong>args</strong></dt>
+</dl>
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
@@ -115,11 +190,13 @@ is&nbsp;a&nbsp;read-only&nbsp;view&nbsp;of&nbsp;the&nbsp;internal&nbsp;mapping.<
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl><dt><a name="-clean_string"><strong>clean_string</strong></a>(value, replacement: 'str' = '_') -&gt; 'str'</dt></dl>
+ <dl><dt><a name="-combine_var_args"><strong>combine_var_args</strong></a>(first: 'Any', others: 'Tuple') -&gt; 'List[Any]'</dt></dl>
  <dl><dt><a name="-deprecated"><strong>deprecated</strong></a>(reason=None, action='warn') -&gt; 'Callable'</dt><dd><tt>Decorator&nbsp;to&nbsp;indicate&nbsp;that&nbsp;a&nbsp;function&nbsp;should&nbsp;no&nbsp;longer&nbsp;be&nbsp;used.</tt></dd></dl>
  <dl><dt><a name="-load_databricks_cfg"><strong>load_databricks_cfg</strong></a>(path: 'str')</dt></dl>
  <dl><dt><a name="-overrides"><strong>overrides</strong></a>(func: 'Callable' = None, check_signature: 'bool' = True) -&gt; 'Callable'</dt><dd><tt>Decorator&nbsp;to&nbsp;indicate&nbsp;that&nbsp;a&nbsp;function&nbsp;overrides&nbsp;a&nbsp;base-class&nbsp;function.</tt></dd></dl>
  <dl><dt><a name="-print_title"><strong>print_title</strong></a>(title: 'str', divider: 'str' = '-', length: 'int' = 100) -&gt; 'None'</dt></dl>
  <dl><dt><a name="-print_warning"><strong>print_warning</strong></a>(title: 'str', message: 'str', length: 'int' = 100) -&gt; 'None'</dt></dl>
+ <dl><dt><a name="-validate"><strong>validate</strong></a>(**kwargs) -&gt; 'Validator'</dt></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
@@ -127,6 +204,6 @@ is&nbsp;a&nbsp;read-only&nbsp;view&nbsp;of&nbsp;the&nbsp;internal&nbsp;mapping.<
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>__all__</strong> = ['deprecation_log_level', 'deprecated', 'overrides', 'print_title', 'print_warning', 'CachedStaticProperty', 'clean_string', 'load_databricks_cfg', 'Cloud']<br>
+<td width="100%"><strong>__all__</strong> = ['deprecation_log_level', 'deprecated', 'overrides', 'print_title', 'print_warning', 'CachedStaticProperty', 'clean_string', 'load_databricks_cfg', 'Cloud', 'validate', 'ValidationError', 'combine_var_args']<br>
 <strong>deprecation_log_level</strong> = 'error'</td></tr></table>
 </body></html>

@@ -32,24 +32,24 @@
 <font color="#000000" face="helvetica, arial"><a name="CourseConfig">class <strong>CourseConfig</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#CourseConfig">CourseConfig</a>(*,&nbsp;_course_code:&nbsp;str,&nbsp;_course_name:&nbsp;str,&nbsp;_data_source_version:&nbsp;str,&nbsp;_install_min_time:&nbsp;str,&nbsp;_install_max_time:&nbsp;str,&nbsp;_supported_dbrs:&nbsp;Union[str,&nbsp;List[str]],&nbsp;_expected_dbrs:&nbsp;str)<br>
+<td colspan=2><tt><a href="#CourseConfig">CourseConfig</a>(*,&nbsp;course_code:&nbsp;str,&nbsp;course_name:&nbsp;str,&nbsp;data_source_version:&nbsp;str,&nbsp;install_min_time:&nbsp;str,&nbsp;install_max_time:&nbsp;str,&nbsp;supported_dbrs:&nbsp;Union[str,&nbsp;List[str]],&nbsp;expected_dbrs:&nbsp;str)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="CourseConfig-__init__"><strong>__init__</strong></a>(self, *, _course_code: str, _course_name: str, _data_source_version: str, _install_min_time: str, _install_max_time: str, _supported_dbrs: Union[str, List[str]], _expected_dbrs: str)</dt><dd><tt>The&nbsp;<a href="#CourseConfig">CourseConfig</a>&nbsp;encapsulates&nbsp;those&nbsp;parameters&nbsp;that&nbsp;should&nbsp;never&nbsp;change&nbsp;for&nbsp;the&nbsp;entire&nbsp;duration&nbsp;of&nbsp;a&nbsp;course<br>
+<dl><dt><a name="CourseConfig-__init__"><strong>__init__</strong></a>(self, *, course_code: str, course_name: str, data_source_version: str, install_min_time: str, install_max_time: str, supported_dbrs: Union[str, List[str]], expected_dbrs: str)</dt><dd><tt>The&nbsp;<a href="#CourseConfig">CourseConfig</a>&nbsp;encapsulates&nbsp;those&nbsp;parameters&nbsp;that&nbsp;should&nbsp;never&nbsp;change&nbsp;for&nbsp;the&nbsp;entire&nbsp;duration&nbsp;of&nbsp;a&nbsp;course<br>
 compared&nbsp;to&nbsp;the&nbsp;LessonConfig&nbsp;which&nbsp;encapsulates&nbsp;parameters&nbsp;that&nbsp;may&nbsp;change&nbsp;from&nbsp;lesson&nbsp;to&nbsp;lesson<br>
-:param&nbsp;_course_code:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
-:param&nbsp;_course_name:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
-:param&nbsp;_data_source_version:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
-:param&nbsp;_install_min_time:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
-:param&nbsp;_install_max_time:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
-:param&nbsp;_supported_dbrs:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
-:param&nbsp;_expected_dbrs:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name</tt></dd></dl>
+:param&nbsp;course_code:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;course_name:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;data_source_version:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;install_min_time:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;install_max_time:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;supported_dbrs:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;expected_dbrs:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name</tt></dd></dl>
 
 <hr>
 Static methods defined here:<br>
-<dl><dt><a name="CourseConfig-to_build_name"><strong>to_build_name</strong></a>(course_name) -&gt; Optional[str]</dt><dd><tt>Utility&nbsp;method&nbsp;to&nbsp;create&nbsp;a&nbsp;"build&nbsp;name"&nbsp;from&nbsp;a&nbsp;course&nbsp;name<br>
+<dl><dt><a name="CourseConfig-to_build_name"><strong>to_build_name</strong></a>(course_name: Optional[str]) -&gt; Optional[str]</dt><dd><tt>Utility&nbsp;method&nbsp;to&nbsp;create&nbsp;a&nbsp;"build&nbsp;name"&nbsp;from&nbsp;a&nbsp;course&nbsp;name<br>
 :param&nbsp;course_name:&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;course<br>
 :return:&nbsp;the&nbsp;build&nbsp;name&nbsp;where&nbsp;all&nbsp;non-alpha&nbsp;and&nbsp;non-digits&nbsp;are&nbsp;replaced&nbsp;with&nbsp;hyphens</tt></dd></dl>
 

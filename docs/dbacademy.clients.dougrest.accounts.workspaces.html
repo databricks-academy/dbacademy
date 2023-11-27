@@ -24,7 +24,7 @@
 <dt><font face="helvetica, arial"><a href="dbacademy.clients.dougrest.accounts.workspaces.html#Workspaces">Workspaces</a>
 </font></dt></dl>
 </dd>
-<dt><font face="helvetica, arial"><a href="dbacademy.clients.dougrest.client.html#DatabricksApi">dbacademy.clients.dougrest.client.DatabricksApi</a>(<a href="builtins.html#dict">builtins.dict</a>, <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>)
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.dougrest.client.html#DatabricksApiClient">dbacademy.clients.dougrest.client.DatabricksApiClient</a>(<a href="builtins.html#dict">builtins.dict</a>, <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>)
 </font></dt><dd>
 <dl>
 <dt><font face="helvetica, arial"><a href="dbacademy.clients.dougrest.accounts.workspaces.html#Workspace">Workspace</a>
@@ -35,7 +35,7 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
 <td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="Workspace">class <strong>Workspace</strong></a>(<a href="dbacademy.clients.dougrest.client.html#DatabricksApi">dbacademy.clients.dougrest.client.DatabricksApi</a>)</font></td></tr>
+<font color="#000000" face="helvetica, arial"><a name="Workspace">class <strong>Workspace</strong></a>(<a href="dbacademy.clients.dougrest.client.html#DatabricksApiClient">dbacademy.clients.dougrest.client.DatabricksApiClient</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt><a href="#Workspace">Workspace</a>(data_dict,&nbsp;accounts_api:&nbsp;dbacademy.clients.dougrest.accounts.AccountsApi)<br>
@@ -44,7 +44,7 @@
 <tr><td>&nbsp;</td>
 <td width="100%"><dl><dt>Method resolution order:</dt>
 <dd><a href="dbacademy.clients.dougrest.accounts.workspaces.html#Workspace">Workspace</a></dd>
-<dd><a href="dbacademy.clients.dougrest.client.html#DatabricksApi">dbacademy.clients.dougrest.client.DatabricksApi</a></dd>
+<dd><a href="dbacademy.clients.dougrest.client.html#DatabricksApiClient">dbacademy.clients.dougrest.client.DatabricksApiClient</a></dd>
 <dd><a href="builtins.html#dict">builtins.dict</a></dd>
 <dd><a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a></dd>
 <dd><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a></dd>
@@ -85,7 +85,41 @@ Raises:<br>
 <dl><dt><a name="Workspace-wait_until_ready"><strong>wait_until_ready</strong></a>(self, timeout_seconds=1800)</dt></dl>
 
 <hr>
-Data descriptors inherited from <a href="dbacademy.clients.dougrest.client.html#DatabricksApi">dbacademy.clients.dougrest.client.DatabricksApi</a>:<br>
+Readonly properties inherited from <a href="dbacademy.clients.dougrest.client.html#DatabricksApiClient">dbacademy.clients.dougrest.client.DatabricksApiClient</a>:<br>
+<dl><dt><strong>cloud</strong></dt>
+</dl>
+<dl><dt><strong>clusters</strong></dt>
+</dl>
+<dl><dt><strong>default_machine_type</strong></dt>
+</dl>
+<dl><dt><strong>default_preloaded_versions</strong></dt>
+</dl>
+<dl><dt><strong>default_spark_version</strong></dt>
+</dl>
+<dl><dt><strong>groups</strong></dt>
+</dl>
+<dl><dt><strong>jobs</strong></dt>
+</dl>
+<dl><dt><strong>mlflow</strong></dt>
+</dl>
+<dl><dt><strong>permissions</strong></dt>
+</dl>
+<dl><dt><strong>pools</strong></dt>
+</dl>
+<dl><dt><strong>repos</strong></dt>
+</dl>
+<dl><dt><strong>scim</strong></dt>
+</dl>
+<dl><dt><strong>sql</strong></dt>
+</dl>
+<dl><dt><strong>url</strong></dt>
+</dl>
+<dl><dt><strong>users</strong></dt>
+</dl>
+<dl><dt><strong>workspace</strong></dt>
+</dl>
+<hr>
+Data descriptors inherited from <a href="dbacademy.clients.dougrest.client.html#DatabricksApiClient">dbacademy.clients.dougrest.client.DatabricksApiClient</a>:<br>
 <dl><dt><strong>__dict__</strong></dt>
 <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
@@ -93,7 +127,7 @@ Data descriptors inherited from <a href="dbacademy.clients.dougrest.client.html#
 <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
 </dl>
 <hr>
-Data and other attributes inherited from <a href="dbacademy.clients.dougrest.client.html#DatabricksApi">dbacademy.clients.dougrest.client.DatabricksApi</a>:<br>
+Data and other attributes inherited from <a href="dbacademy.clients.dougrest.client.html#DatabricksApiClient">dbacademy.clients.dougrest.client.DatabricksApiClient</a>:<br>
 <dl><dt><strong>default_machine_types</strong> = {'AWS': 'i4.xlarge', 'Azure': 'Standard_DS4_v5', 'GCP': 'n1-standard-4'}</dl>
 
 <hr>
@@ -186,15 +220,33 @@ Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">db
 
 <hr>
 Readonly properties inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>
+<dl><dt><strong>authorization_header</strong></dt>
+</dl>
+<dl><dt><strong>client</strong></dt>
+</dl>
+<dl><dt><strong>connect_timeout</strong></dt>
+</dl>
 <dl><dt><strong>endpoint</strong></dt>
 </dl>
 <dl><dt><strong>error_handler</strong></dt>
 </dl>
+<dl><dt><strong>http_adapter</strong></dt>
+</dl>
+<dl><dt><strong>max_retries</strong></dt>
+</dl>
 <dl><dt><strong>password</strong></dt>
+</dl>
+<dl><dt><strong>read_timeout</strong></dt>
+</dl>
+<dl><dt><strong>session</strong></dt>
 </dl>
 <dl><dt><strong>throttle_seconds</strong></dt>
 </dl>
+<dl><dt><strong>token</strong></dt>
+</dl>
 <dl><dt><strong>username</strong></dt>
+</dl>
+<dl><dt><strong>verbose</strong></dt>
 </dl>
 <hr>
 Data and other attributes inherited from <a href="dbacademy.clients.rest.common.html#ApiClient">dbacademy.clients.rest.common.ApiClient</a>:<br>

@@ -51,7 +51,7 @@
 <font color="#000000" face="helvetica, arial"><a name="ApiClient">class <strong>ApiClient</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiContainer">ApiContainer</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#ApiClient">ApiClient</a>(endpoint:&nbsp;'str',&nbsp;*,&nbsp;token:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;username:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;password:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;client:&nbsp;'<a href="#ApiClient">ApiClient</a>'&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;'int'&nbsp;=&nbsp;0,&nbsp;verbose:&nbsp;'bool'&nbsp;=&nbsp;False,&nbsp;error_handler:&nbsp;'Optional[ClientErrorHandler]'&nbsp;=&nbsp;&amp;lt;dbacademy.clients.ClientErrorHandler&nbsp;<a href="builtins.html#object">object</a>&nbsp;at&nbsp;0x0000028379D69D30&amp;gt;)<br>
+<td colspan=2><tt><a href="#ApiClient">ApiClient</a>(endpoint:&nbsp;'str',&nbsp;*,&nbsp;token:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;username:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;password:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;authorization_header:&nbsp;'str'&nbsp;=&nbsp;None,&nbsp;client:&nbsp;'<a href="#ApiClient">ApiClient</a>'&nbsp;=&nbsp;None,&nbsp;throttle_seconds:&nbsp;'int'&nbsp;=&nbsp;0,&nbsp;verbose:&nbsp;'bool'&nbsp;=&nbsp;False,&nbsp;error_handler:&nbsp;'ClientErrorHandler'&nbsp;=&nbsp;&amp;lt;dbacademy.clients.ClientErrorHandler&nbsp;<a href="builtins.html#object">object</a>&nbsp;at&nbsp;0x000001C27C5ED7C0&amp;gt;)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
@@ -62,7 +62,7 @@
 </dl>
 <hr>
 Methods defined here:<br>
-<dl><dt><a name="ApiClient-__init__"><strong>__init__</strong></a>(self, endpoint: 'str', *, token: 'str' = None, username: 'str' = None, password: 'str' = None, authorization_header: 'str' = None, client: 'ApiClient' = None, throttle_seconds: 'int' = 0, verbose: 'bool' = False, error_handler: 'Optional[ClientErrorHandler]' = &lt;dbacademy.clients.ClientErrorHandler object at 0x0000028379D69D30&gt;)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
+<dl><dt><a name="ApiClient-__init__"><strong>__init__</strong></a>(self, endpoint: 'str', *, token: 'str' = None, username: 'str' = None, password: 'str' = None, authorization_header: 'str' = None, client: 'ApiClient' = None, throttle_seconds: 'int' = 0, verbose: 'bool' = False, error_handler: 'ClientErrorHandler' = &lt;dbacademy.clients.ClientErrorHandler object at 0x000001C27C5ED7C0&gt;)</dt><dd><tt>Create&nbsp;a&nbsp;Databricks&nbsp;REST&nbsp;API&nbsp;client.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;&nbsp;&nbsp;endpoint:&nbsp;The&nbsp;common&nbsp;base&nbsp;URL&nbsp;to&nbsp;the&nbsp;API&nbsp;endpoints.&nbsp;&nbsp;e.g.&nbsp;<a href="https://workspace.cloud.databricks.com/API/">https://workspace.cloud.databricks.com/API/</a><br>
@@ -102,15 +102,33 @@ Raises:<br>
 
 <hr>
 Readonly properties defined here:<br>
+<dl><dt><strong>authorization_header</strong></dt>
+</dl>
+<dl><dt><strong>client</strong></dt>
+</dl>
+<dl><dt><strong>connect_timeout</strong></dt>
+</dl>
 <dl><dt><strong>endpoint</strong></dt>
 </dl>
 <dl><dt><strong>error_handler</strong></dt>
 </dl>
+<dl><dt><strong>http_adapter</strong></dt>
+</dl>
+<dl><dt><strong>max_retries</strong></dt>
+</dl>
 <dl><dt><strong>password</strong></dt>
+</dl>
+<dl><dt><strong>read_timeout</strong></dt>
+</dl>
+<dl><dt><strong>session</strong></dt>
 </dl>
 <dl><dt><strong>throttle_seconds</strong></dt>
 </dl>
+<dl><dt><strong>token</strong></dt>
+</dl>
 <dl><dt><strong>username</strong></dt>
+</dl>
+<dl><dt><strong>verbose</strong></dt>
 </dl>
 <hr>
 Data and other attributes defined here:<br>
@@ -236,8 +254,7 @@ Data descriptors inherited from <a href="builtins.html#BaseException">builtins.B
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>Cloud</strong> = typing.Literal['AWS', 'MSA', 'GCP']<br>
-<strong>HttpMethod</strong> = typing.Literal['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']<br>
+<td width="100%"><strong>HttpMethod</strong> = typing.Literal['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS']<br>
 <strong>HttpReturnType</strong> = ~HttpReturnType<br>
 <strong>HttpStatusCodes</strong> = typing.Union[int, typing.Container[int]]<br>
 <strong>IfExists</strong> = typing.Literal['create', 'error', 'ignore', 'overwrite', 'update']<br>
@@ -245,5 +262,5 @@ Data descriptors inherited from <a href="builtins.html#BaseException">builtins.B
 <strong>Item</strong> = typing.Dict<br>
 <strong>ItemId</strong> = typing.Union[int, str]<br>
 <strong>ItemOrId</strong> = typing.Union[int, str, typing.Dict]<br>
-<strong>__all__</strong> = ['ApiContainer', 'ApiClient', 'DatabricksApiException', 'HttpStatusCodes', 'HttpMethod', 'HttpReturnType', 'IfNotExists', 'IfExists', 'Item', 'ItemId', 'ItemOrId', 'Cloud']</td></tr></table>
+<strong>__all__</strong> = ['ApiContainer', 'ApiClient', 'DatabricksApiException', 'HttpStatusCodes', 'HttpMethod', 'HttpReturnType', 'IfNotExists', 'IfExists', 'Item', 'ItemId', 'ItemOrId']</td></tr></table>
 </body></html>

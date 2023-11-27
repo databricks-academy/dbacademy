@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dbbuild.build_config</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbbuild.html"><font color="#ffffff">dbbuild</font></a>.build_config</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbbuild%5Cbuild_config.py">c:\dvlp\dbacademy\src\dbacademy\dbbuild\build_config.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbbuild.build_config.html#NotebookConfig">NotebookConfig</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbbuild.build_config_data.html#BuildConfigData">dbacademy.dbbuild.build_config_data.BuildConfigData</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbbuild.build_config.html#BuildConfig">BuildConfig</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="BuildConfig">class <strong>BuildConfig</strong></a>(<a href="dbacademy.dbbuild.build_config_data.html#BuildConfigData">dbacademy.dbbuild.build_config_data.BuildConfigData</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#BuildConfig">BuildConfig</a>(*,&nbsp;name:&nbsp;str,&nbsp;version:&nbsp;str,&nbsp;supported_dbrs:&nbsp;Union[str,&nbsp;List[str]],&nbsp;spark_version:&nbsp;str&nbsp;=&nbsp;None,&nbsp;cloud:&nbsp;str&nbsp;=&nbsp;None,&nbsp;instance_pool_id:&nbsp;str&nbsp;=&nbsp;None,&nbsp;single_user_name:&nbsp;str&nbsp;=&nbsp;None,&nbsp;workers:&nbsp;int&nbsp;=&nbsp;0,&nbsp;libraries:&nbsp;List[Dict[str,&nbsp;Any]]&nbsp;=&nbsp;None,&nbsp;client:&nbsp;dbacademy.clients.dbrest.DBAcademyRestClient&nbsp;=&nbsp;None,&nbsp;source_dir_name:&nbsp;str&nbsp;=&nbsp;None,&nbsp;source_repo:&nbsp;str&nbsp;=&nbsp;None,&nbsp;readme_file_name:&nbsp;str&nbsp;=&nbsp;None,&nbsp;spark_conf:&nbsp;Dict[str,&nbsp;Any]&nbsp;=&nbsp;None,&nbsp;job_arguments:&nbsp;Dict[str,&nbsp;Any]&nbsp;=&nbsp;None,&nbsp;include_solutions:&nbsp;Optional[bool]&nbsp;=&nbsp;True,&nbsp;i18n:&nbsp;Optional[bool]&nbsp;=&nbsp;False,&nbsp;i18n_language:&nbsp;str&nbsp;=&nbsp;None,&nbsp;ignored_errors:&nbsp;List[str]&nbsp;=&nbsp;None,&nbsp;publishing_info:&nbsp;Dict[str,&nbsp;Any]&nbsp;=&nbsp;None,&nbsp;white_list:&nbsp;List[str]&nbsp;=&nbsp;None,&nbsp;black_list:&nbsp;List[str]&nbsp;=&nbsp;None)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="dbacademy.dbbuild.build_config.html#BuildConfig">BuildConfig</a></dd>
+<dd><a href="dbacademy.dbbuild.build_config_data.html#BuildConfigData">dbacademy.dbbuild.build_config_data.BuildConfigData</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="BuildConfig-__init__"><strong>__init__</strong></a>(self, *, name: str, version: str, supported_dbrs: Union[str, List[str]], spark_version: str = None, cloud: str = None, instance_pool_id: str = None, single_user_name: str = None, workers: int = 0, libraries: List[Dict[str, Any]] = None, client: dbacademy.clients.dbrest.DBAcademyRestClient = None, source_dir_name: str = None, source_repo: str = None, readme_file_name: str = None, spark_conf: Dict[str, Any] = None, job_arguments: Dict[str, Any] = None, include_solutions: Optional[bool] = True, i18n: Optional[bool] = False, i18n_language: str = None, ignored_errors: List[str] = None, publishing_info: Dict[str, Any] = None, white_list: List[str] = None, black_list: List[str] = None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="BuildConfig-assert_all_tests_passed"><strong>assert_all_tests_passed</strong></a>(self, clouds: List[str] = None) -&gt; None</dt><dd><tt>Asserts&nbsp;that&nbsp;tests&nbsp;for&nbsp;the&nbsp;specified&nbsp;clouds&nbsp;have&nbsp;passed<br>
+:param&nbsp;clouds:&nbsp;The&nbsp;list&nbsp;of&nbsp;clouds&nbsp;consisting&nbsp;of&nbsp;the&nbsp;values&nbsp;"AWS",&nbsp;"MSA",&nbsp;"GCP"&nbsp;and&nbsp;if&nbsp;None,&nbsp;will&nbsp;default&nbsp;to&nbsp;a&nbsp;list&nbsp;containing&nbsp;all&nbsp;three<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="BuildConfig-exclude_notebook"><strong>exclude_notebook</strong></a>(self, test_function: Callable[[str, int], bool]) -&gt; None</dt><dd><tt>Removes&nbsp;an&nbsp;existing&nbsp;notebook&nbsp;from&nbsp;the&nbsp;collection&nbsp;of&nbsp;notebooks&nbsp;for&nbsp;this&nbsp;build.<br>
+:param&nbsp;test_function:&nbsp;The&nbsp;callable&nbsp;that&nbsp;will&nbsp;return&nbsp;true&nbsp;if&nbsp;the&nbsp;notebooks&nbsp;should&nbsp;be&nbsp;excluded.&nbsp;Params&nbsp;are&nbsp;path:str&nbsp;and&nbsp;lesson_number:int<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="BuildConfig-ignore_failures"><strong>ignore_failures</strong></a>(self, test_function: Callable[[str, int], bool]) -&gt; None</dt><dd><tt>Updates&nbsp;the&nbsp;notebook's&nbsp;configuration&nbsp;parameter&nbsp;"ignored"&nbsp;based&nbsp;on&nbsp;the&nbsp;result&nbsp;of&nbsp;the&nbsp;provided&nbsp;callable.<br>
+The&nbsp;callable&nbsp;takes&nbsp;two&nbsp;parameters,&nbsp;the&nbsp;first&nbsp;is&nbsp;a&nbsp;string&nbsp;representing&nbsp;the&nbsp;notebook's&nbsp;path,&nbsp;and&nbsp;the&nbsp;second&nbsp;is&nbsp;the&nbsp;notebook's&nbsp;numerical&nbsp;prefix&nbsp;or&nbsp;-1.<br>
+:param&nbsp;test_function:&nbsp;The&nbsp;callable&nbsp;that&nbsp;will&nbsp;return&nbsp;true&nbsp;for&nbsp;which&nbsp;failures&nbsp;will&nbsp;be&nbsp;ignored.&nbsp;Params&nbsp;are&nbsp;path:str&nbsp;and&nbsp;lesson_number:int<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="BuildConfig-initialize_notebooks"><strong>initialize_notebooks</strong></a>(self, notebook_configs: Union[dbacademy.dbbuild.build_config.NotebookConfig, List[dbacademy.dbbuild.build_config.NotebookConfig], Dict[str, Any], NoneType], *and_configs: dbacademy.dbbuild.build_config.NotebookConfig) -&gt; None</dt></dl>
+
+<dl><dt><a name="BuildConfig-set_test_round"><strong>set_test_round</strong></a>(self, test_round: int, test_function: Callable[[str, int], bool]) -&gt; None</dt><dd><tt>Updates&nbsp;the&nbsp;notebook's&nbsp;configuration&nbsp;parameter&nbsp;"test_round"&nbsp;based&nbsp;on&nbsp;the&nbsp;result&nbsp;of&nbsp;the&nbsp;provided&nbsp;callable.<br>
+:param&nbsp;test_round:&nbsp;The&nbsp;test&nbsp;round&nbsp;to&nbsp;which&nbsp;this&nbsp;notebooks&nbsp;should&nbsp;be&nbsp;assigned.<br>
+:param&nbsp;test_function:&nbsp;The&nbsp;callable&nbsp;that&nbsp;will&nbsp;return&nbsp;true&nbsp;if&nbsp;the&nbsp;notebooks&nbsp;should&nbsp;be&nbsp;excluded.&nbsp;Params&nbsp;are&nbsp;path:str&nbsp;and&nbsp;lesson_number:int<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="BuildConfig-to_publisher"><strong>to_publisher</strong></a>(self, publishing_mode: Union[str, dbacademy.dbbuild.publish.publisher.PublishingMode] = &lt;PublishingMode.non_op: 'non_op'&gt;) -&gt; dbacademy.dbbuild.publish.publisher.Publisher</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;Publisher&nbsp;from&nbsp;the&nbsp;current&nbsp;build&nbsp;configuration<br>
+:param&nbsp;publishing_mode:&nbsp;See&nbsp;Publisher.publishing_mode<br>
+:return:&nbsp;the&nbsp;current&nbsp;publishing&nbsp;mode</tt></dd></dl>
+
+<dl><dt><a name="BuildConfig-to_resource_diff"><strong>to_resource_diff</strong></a>(self) -&gt; dbacademy.dbbuild.publish.resource_diff.ResourceDiff</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;ResourceDiff&nbsp;from&nbsp;the&nbsp;current&nbsp;build&nbsp;configuration<br>
+:return:&nbsp;An&nbsp;instance&nbsp;of&nbsp;ResourceDiff</tt></dd></dl>
+
+<dl><dt><a name="BuildConfig-to_translator"><strong>to_translator</strong></a>(self, require_i18n_selection: bool = True) -&gt; dbacademy.dbbuild.publish.translator.Translator</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;Translator&nbsp;from&nbsp;the&nbsp;current&nbsp;build&nbsp;configuration.<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="BuildConfig-validate"><strong>validate</strong></a>(self, validate_version: bool = True, validate_readme: bool = True)</dt><dd><tt>Asserts&nbsp;that&nbsp;the&nbsp;build&nbsp;configuration&nbsp;is&nbsp;valid.&nbsp;Upon&nbsp;validating,&nbsp;prints&nbsp;the&nbsp;build&nbsp;parameters<br>
+:param&nbsp;validate_version:&nbsp;Flag&nbsp;to&nbsp;disable&nbsp;validation&nbsp;of&nbsp;the&nbsp;version&nbsp;number<br>
+:param&nbsp;validate_readme:&nbsp;Flag&nbsp;to&nbsp;disable&nbsp;validation&nbsp;of&nbsp;the&nbsp;README&nbsp;file<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="BuildConfig-validate_all_tests_passed"><strong>validate_all_tests_passed</strong></a>(self, cloud: Union[str, dbacademy.common.cloud.Cloud])</dt><dd><tt>Verifies&nbsp;that&nbsp;tests&nbsp;the&nbsp;for&nbsp;this&nbsp;course,&nbsp;cloud&nbsp;and&nbsp;version&nbsp;have&nbsp;passed&nbsp;and&nbsp;will&nbsp;prohibit&nbsp;progression&nbsp;if&nbsp;the&nbsp;tests&nbsp;have&nbsp;not&nbsp;passed<br>
+:param&nbsp;cloud:&nbsp;One&nbsp;of&nbsp;the&nbsp;three&nbsp;values&nbsp;"AWS",&nbsp;"MSA"&nbsp;or&nbsp;"GCP"<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<hr>
+Class methods defined here:<br>
+<dl><dt><a name="BuildConfig-get_lesson_number"><strong>get_lesson_number</strong></a>(notebook_path: str)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Utility&nbsp;function&nbsp;to&nbsp;return&nbsp;the&nbsp;notebook's&nbsp;2-character&nbsp;numerical&nbsp;prefix.<br>
+:param&nbsp;notebook_path:&nbsp;the&nbsp;path&nbsp;to&nbsp;the&nbsp;notebook.<br>
+:return:&nbsp;the&nbsp;notebook's&nbsp;numerical&nbsp;prefix&nbsp;if&nbsp;the&nbsp;2-character&nbsp;prefix&nbsp;is&nbsp;numerical,&nbsp;else&nbsp;-1.</tt></dd></dl>
+
+<dl><dt><a name="BuildConfig-load"><strong>load</strong></a>(build_config_file_path: str, *, version: str, name: str = None, supported_dbrs: Union[str, List[str]] = None, spark_version: str = None, cloud: str = None, instance_pool_id: str = None, single_user_name: str = None, workers: int = 0, libraries: List[Dict[str, Any]] = None, client: dbacademy.clients.dbrest.DBAcademyRestClient = None, source_dir_name: str = None, source_repo: str = None, readme_file_name: str = None, spark_conf: Dict[str, Any] = None, job_arguments: Dict[str, Any] = None, include_solutions: Optional[bool] = None, i18n: Optional[bool] = None, i18n_language: str = None, ignored_errors: List[str] = None, publishing_info: Dict[str, Any] = None, white_list: List[str] = None, black_list: List[str] = None, notebook_configs: Dict[str, Any] = None)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>This&nbsp;factory&nbsp;method,&nbsp;dbacademy.dbbuild.<a href="#BuildConfig">BuildConfig</a>.<a href="#BuildConfig-load">load</a>(),&nbsp;has&nbsp;been&nbsp;deprecated.&nbsp;Please&nbsp;use&nbsp;the&nbsp;new&nbsp;factory&nbsp;method<br>
+dbacademy.dbbuild.<a href="#BuildConfig">BuildConfig</a>.<a href="#-load_build_config">load_build_config</a>()&nbsp;or&nbsp;even&nbsp;better,&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>&nbsp;constructor.<br>
+:param&nbsp;build_config_file_path:&nbsp;The&nbsp;path&nbsp;to&nbsp;the&nbsp;JSON&nbsp;file&nbsp;defining&nbsp;the&nbsp;build's&nbsp;configuration.<br>
+:param&nbsp;version:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;name:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;supported_dbrs:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;spark_version:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;cloud:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;instance_pool_id:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;single_user_name:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;workers:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;libraries:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;client:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;source_dir_name:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;source_repo:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;readme_file_name:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;spark_conf:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;job_arguments:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;include_solutions:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;i18n:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;i18n_language:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;ignored_errors:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;publishing_info:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;white_list:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;black_list:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;notebook_configs:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;<a href="#BuildConfig-initialize_notebooks">initialize_notebooks</a>()&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:return:&nbsp;<a href="#BuildConfig">BuildConfig</a></tt></dd></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>LANGUAGE_OPTIONS_DEFAULT</strong> = 'Default'</dl>
+
+<dl><dt><strong>VERSIONS_LIST</strong> = ['Build', 'Test', 'Translation']</dl>
+
+<dl><dt><strong>VERSION_BUILD</strong> = 'Build'</dl>
+
+<dl><dt><strong>VERSION_TEST</strong> = 'Test'</dl>
+
+<dl><dt><strong>VERSION_TRANSLATION</strong> = 'Translation'</dl>
+
+<hr>
+Readonly properties inherited from <a href="dbacademy.dbbuild.build_config_data.html#BuildConfigData">dbacademy.dbbuild.build_config_data.BuildConfigData</a>:<br>
+<dl><dt><strong>black_list</strong></dt>
+</dl>
+<dl><dt><strong>build_name</strong></dt>
+</dl>
+<dl><dt><strong>client</strong></dt>
+</dl>
+<dl><dt><strong>cloud</strong></dt>
+</dl>
+<dl><dt><strong>core_version</strong></dt>
+</dl>
+<dl><dt><strong>current_cluster</strong></dt>
+<dd><tt>Utility&nbsp;method&nbsp;that&nbsp;loads&nbsp;various&nbsp;cluster&nbsp;properties&nbsp;in&nbsp;one&nbsp;REST&nbsp;request&nbsp;to&nbsp;the&nbsp;current&nbsp;cluster&nbsp;vs&nbsp;one&nbsp;per&nbsp;property&nbsp;initialization<br>
+:return:&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;the&nbsp;cluster's&nbsp;properties</tt></dd>
+</dl>
+<dl><dt><strong>i18n</strong></dt>
+</dl>
+<dl><dt><strong>i18n_language</strong></dt>
+</dl>
+<dl><dt><strong>ignored_errors</strong></dt>
+</dl>
+<dl><dt><strong>include_solutions</strong></dt>
+</dl>
+<dl><dt><strong>instance_pool_id</strong></dt>
+<dd><tt>The&nbsp;instance&nbsp;pool&nbsp;to&nbsp;use&nbsp;for&nbsp;testing.<br>
+:return:&nbsp;the&nbsp;cluster's&nbsp;instance_pool_id</tt></dd>
+</dl>
+<dl><dt><strong>job_arguments</strong></dt>
+</dl>
+<dl><dt><strong>language_options</strong></dt>
+</dl>
+<dl><dt><strong>libraries</strong></dt>
+</dl>
+<dl><dt><strong>name</strong></dt>
+</dl>
+<dl><dt><strong>notebooks</strong></dt>
+</dl>
+<dl><dt><strong>publishing_info</strong></dt>
+</dl>
+<dl><dt><strong>readme_file_name</strong></dt>
+</dl>
+<dl><dt><strong>single_user_name</strong></dt>
+<dd><tt>The&nbsp;single-user&nbsp;name.<br>
+:return:&nbsp;The&nbsp;cluster's&nbsp;single_user_name</tt></dd>
+</dl>
+<dl><dt><strong>source_dir</strong></dt>
+</dl>
+<dl><dt><strong>source_repo</strong></dt>
+</dl>
+<dl><dt><strong>spark_conf</strong></dt>
+</dl>
+<dl><dt><strong>spark_version</strong></dt>
+<dd><tt>The&nbsp;spark&nbsp;version&nbsp;to&nbsp;use&nbsp;for&nbsp;testing;&nbsp;defaults&nbsp;to&nbsp;the&nbsp;current&nbsp;cluster's&nbsp;spark-version<br>
+:return:&nbsp;The&nbsp;cluster's&nbsp;spark_version</tt></dd>
+</dl>
+<dl><dt><strong>suite_id</strong></dt>
+</dl>
+<dl><dt><strong>supported_dbrs</strong></dt>
+</dl>
+<dl><dt><strong>test_type</strong></dt>
+</dl>
+<dl><dt><strong>username</strong></dt>
+</dl>
+<dl><dt><strong>version</strong></dt>
+</dl>
+<dl><dt><strong>white_list</strong></dt>
+</dl>
+<dl><dt><strong>workers</strong></dt>
+</dl>
+<hr>
+Data descriptors inherited from <a href="dbacademy.dbbuild.build_config_data.html#BuildConfigData">dbacademy.dbbuild.build_config_data.BuildConfigData</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>change_log</strong></dt>
+</dl>
+<dl><dt><strong>created_notebooks</strong></dt>
+</dl>
+<dl><dt><strong>passing_tests</strong></dt>
+</dl>
+<dl><dt><strong>validated</strong></dt>
+<dd><tt>Flag&nbsp;to&nbsp;indicate&nbsp;that&nbsp;the&nbsp;build&nbsp;configuration&nbsp;has&nbsp;been&nbsp;validated.<br>
+:return:</tt></dd>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="NotebookConfig">class <strong>NotebookConfig</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#NotebookConfig">NotebookConfig</a>(name:&nbsp;str,&nbsp;*,&nbsp;order:&nbsp;Optional[int]&nbsp;=&nbsp;None,&nbsp;test_round:&nbsp;Optional[int]&nbsp;=&nbsp;None,&nbsp;ignored:&nbsp;Optional[bool]&nbsp;=&nbsp;None,&nbsp;include_solution:&nbsp;Optional[bool]&nbsp;=&nbsp;None,&nbsp;ignored_errors:&nbsp;Optional[List[str]]&nbsp;=&nbsp;None,&nbsp;replacements:&nbsp;Optional[Dict[str,&nbsp;Any]]&nbsp;=&nbsp;None)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="NotebookConfig-__init__"><strong>__init__</strong></a>(self, name: str, *, order: Optional[int] = None, test_round: Optional[int] = None, ignored: Optional[bool] = None, include_solution: Optional[bool] = None, ignored_errors: Optional[List[str]] = None, replacements: Optional[Dict[str, Any]] = None)</dt><dd><tt>Defines&nbsp;a&nbsp;notebook-specific&nbsp;configuration&nbsp;which&nbsp;is&nbsp;indexed&nbsp;by&nbsp;the&nbsp;specified&nbsp;name.<br>
+:param&nbsp;name:&nbsp;See&nbsp;NotebookDef's&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;order:&nbsp;See&nbsp;NotebookDef's&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;test_round:&nbsp;See&nbsp;NotebookDef's&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;ignored:&nbsp;See&nbsp;NotebookDef's&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;include_solution:&nbsp;See&nbsp;NotebookDef's&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;ignored_errors:&nbsp;See&nbsp;NotebookDef's&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;replacements:&nbsp;See&nbsp;NotebookDef's&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.</tt></dd></dl>
+
+<dl><dt><a name="NotebookConfig-apply"><strong>apply</strong></a>(self, notebook_def: dbacademy.dbbuild.publish.notebook_def.NotebookDef) -&gt; None</dt><dd><tt>Applies&nbsp;the&nbsp;non-None&nbsp;configuration&nbsp;to&nbsp;the&nbsp;specified&nbsp;NotebookDef<br>
+:param&nbsp;notebook_def:&nbsp;the&nbsp;notebook&nbsp;to&nbsp;be&nbsp;updated<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>ignored</strong></dt>
+</dl>
+<dl><dt><strong>ignored_errors</strong></dt>
+</dl>
+<dl><dt><strong>include_solution</strong></dt>
+</dl>
+<dl><dt><strong>name</strong></dt>
+</dl>
+<dl><dt><strong>order</strong></dt>
+</dl>
+<dl><dt><strong>replacements</strong></dt>
+</dl>
+<dl><dt><strong>test_round</strong></dt>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-load_build_config"><strong>load_build_config</strong></a>(build_config_file_path: str, *, version: str, name: str = None, supported_dbrs: List[str] = None, spark_version: str = None, cloud: str = None, instance_pool_id: str = None, single_user_name: str = None, workers: int = 0, libraries: List[Dict[str, Any]] = None, client: dbacademy.clients.dbrest.DBAcademyRestClient = None, source_dir_name: str = None, source_repo: str = None, readme_file_name: str = None, spark_conf: Dict[str, Any] = None, job_arguments: Dict[str, Any] = None, include_solutions: bool = None, i18n: bool = None, i18n_language: str = None, ignored_errors: List[str] = None, publishing_info: Dict[str, Any] = None, white_list: Optional[List[str]] = None, black_list: Optional[List[str]] = None, notebook_configs: Dict[str, Any] = None, _print_warning: bool = True) -&gt; dbacademy.dbbuild.build_config.BuildConfig</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;<a href="#BuildConfig">BuildConfig</a>&nbsp;by&nbsp;initializing&nbsp;values&nbsp;from&nbsp;the&nbsp;specified&nbsp;json&nbsp;file,&nbsp;build_config_file_path.<br>
+WARNING:&nbsp;This&nbsp;method&nbsp;is&nbsp;deprecated&nbsp;as&nbsp;it&nbsp;relies&nbsp;on&nbsp;JSON&nbsp;config&nbsp;files&nbsp;which&nbsp;are&nbsp;hard&nbsp;to&nbsp;document&nbsp;and&nbsp;validate;&nbsp;Please&nbsp;use&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>(..)&nbsp;constructor&nbsp;instead.<br>
+:param&nbsp;build_config_file_path:&nbsp;The&nbsp;path&nbsp;to&nbsp;the&nbsp;JSON&nbsp;file&nbsp;defining&nbsp;the&nbsp;build's&nbsp;configuration.<br>
+:param&nbsp;version:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;name:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;supported_dbrs:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;spark_version:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;cloud:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;instance_pool_id:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;single_user_name:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;workers:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;libraries:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;client:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;source_dir_name:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;source_repo:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;readme_file_name:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;spark_conf:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;job_arguments:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;include_solutions:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;i18n:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;i18n_language:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;ignored_errors:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;publishing_info:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;white_list:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;black_list:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;constructor&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;notebook_configs:&nbsp;see&nbsp;the&nbsp;<a href="#BuildConfig">BuildConfig</a>'s&nbsp;initialize_notebooks()&nbsp;parameter&nbsp;by&nbsp;the&nbsp;same&nbsp;name.<br>
+:param&nbsp;_print_warning:&nbsp;Used&nbsp;to&nbsp;disable&nbsp;printing&nbsp;of&nbsp;the&nbsp;deprecation&nbsp;warning.<br>
+:return:&nbsp;<a href="#BuildConfig">BuildConfig</a></tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['BuildConfig', 'NotebookConfig', 'load_build_config']</td></tr></table>
+</body></html>

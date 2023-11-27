@@ -40,24 +40,24 @@
 <font color="#000000" face="helvetica, arial"><a name="LessonConfig">class <strong>LessonConfig</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#LessonConfig">LessonConfig</a>(*,&nbsp;_name:&nbsp;Optional[str],&nbsp;_create_schema:&nbsp;bool,&nbsp;_create_catalog:&nbsp;bool,&nbsp;_requires_uc:&nbsp;bool,&nbsp;_install_datasets:&nbsp;bool,&nbsp;_enable_streaming_support:&nbsp;bool,&nbsp;_enable_ml_support:&nbsp;bool,&nbsp;_mocks:&nbsp;Optional[Dict[str,&nbsp;Any]]&nbsp;=&nbsp;None)<br>
+<td colspan=2><tt><a href="#LessonConfig">LessonConfig</a>(*,&nbsp;name:&nbsp;Optional[str],&nbsp;create_schema:&nbsp;bool,&nbsp;create_catalog:&nbsp;bool,&nbsp;requires_uc:&nbsp;bool,&nbsp;install_datasets:&nbsp;bool,&nbsp;enable_streaming_support:&nbsp;bool,&nbsp;enable_ml_support:&nbsp;bool,&nbsp;mocks:&nbsp;Optional[Dict[str,&nbsp;Any]]&nbsp;=&nbsp;None)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="LessonConfig-__init__"><strong>__init__</strong></a>(self, *, _name: Optional[str], _create_schema: bool, _create_catalog: bool, _requires_uc: bool, _install_datasets: bool, _enable_streaming_support: bool, _enable_ml_support: bool, _mocks: Optional[Dict[str, Any]] = None)</dt><dd><tt>The&nbsp;<a href="#LessonConfig">LessonConfig</a>&nbsp;encapsulates&nbsp;those&nbsp;parameters&nbsp;that&nbsp;may&nbsp;change&nbsp;from&nbsp;one&nbsp;lesson&nbsp;to&nbsp;another&nbsp;compared&nbsp;to&nbsp;the&nbsp;CourseConfig&nbsp;which<br>
+<dl><dt><a name="LessonConfig-__init__"><strong>__init__</strong></a>(self, *, name: Optional[str], create_schema: bool, create_catalog: bool, requires_uc: bool, install_datasets: bool, enable_streaming_support: bool, enable_ml_support: bool, mocks: Optional[Dict[str, Any]] = None)</dt><dd><tt>The&nbsp;<a href="#LessonConfig">LessonConfig</a>&nbsp;encapsulates&nbsp;those&nbsp;parameters&nbsp;that&nbsp;may&nbsp;change&nbsp;from&nbsp;one&nbsp;lesson&nbsp;to&nbsp;another&nbsp;compared&nbsp;to&nbsp;the&nbsp;CourseConfig&nbsp;which<br>
 encapsulates&nbsp;parameters&nbsp;that&nbsp;should&nbsp;never&nbsp;change&nbsp;for&nbsp;the&nbsp;entire&nbsp;duration&nbsp;of&nbsp;a&nbsp;course.<br>
 &nbsp;<br>
 This&nbsp;<a href="builtins.html#object">object</a>&nbsp;is&nbsp;mutable&nbsp;until&nbsp;DBAcademyHelper.init()&nbsp;is&nbsp;called&nbsp;at&nbsp;which&nbsp;time&nbsp;mutations&nbsp;are&nbsp;prohibited.&nbsp;This&nbsp;behavior&nbsp;aims&nbsp;to<br>
 avoid&nbsp;situations&nbsp;where&nbsp;parameters&nbsp;are&nbsp;changed&nbsp;but&nbsp;not&nbsp;reflected&nbsp;in&nbsp;the&nbsp;DBAcademyHelper&nbsp;instance<br>
-:param&nbsp;_name:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
-:param&nbsp;_create_schema:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
-:param&nbsp;_create_catalog:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
-:param&nbsp;_requires_uc:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
-:param&nbsp;_install_datasets:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
-:param&nbsp;_enable_streaming_support:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
-:param&nbsp;_enable_ml_support:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
-:param&nbsp;_mocks:&nbsp;Used&nbsp;for&nbsp;testing,&nbsp;allows&nbsp;for&nbsp;mocking&nbsp;out&nbsp;the&nbsp;parameters&nbsp;__username,&nbsp;__initial_schema&nbsp;and&nbsp;__initial_catalog</tt></dd></dl>
+:param&nbsp;name:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;create_schema:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;create_catalog:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;requires_uc:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;install_datasets:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;enable_streaming_support:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;enable_ml_support:&nbsp;See&nbsp;the&nbsp;property&nbsp;by&nbsp;the&nbsp;same&nbsp;name<br>
+:param&nbsp;mocks:&nbsp;Used&nbsp;for&nbsp;testing,&nbsp;allows&nbsp;for&nbsp;mocking&nbsp;out&nbsp;the&nbsp;parameters&nbsp;__username,&nbsp;__initial_schema&nbsp;and&nbsp;__initial_catalog</tt></dd></dl>
 
 <dl><dt><a name="LessonConfig-assert_valid"><strong>assert_valid</strong></a>(self) -&gt; None</dt></dl>
 

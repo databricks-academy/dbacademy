@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: package dbacademy.clients.dbrest.jobs_api</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.clients.html"><font color="#ffffff">clients</font></a>.<a href="dbacademy.clients.dbrest.html"><font color="#ffffff">dbrest</font></a>.jobs_api</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cclients%5Cdbrest%5Cjobs_api%5C__init__.py">c:\dvlp\dbacademy\src\dbacademy\clients\dbrest\jobs_api\__init__.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Package Contents</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="dbacademy.clients.dbrest.jobs_api.job_config.html">job_config</a><br>
+</td><td width="25%" valign=top><a href="dbacademy.clients.dbrest.jobs_api.task_config.html">task_config</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.dbrest.jobs_api.html#JobsApi">JobsApi</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="JobsApi">class <strong>JobsApi</strong></a>(<a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#JobsApi">JobsApi</a>(client:&nbsp;dbacademy.clients.rest.common.ApiClient)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="dbacademy.clients.dbrest.jobs_api.html#JobsApi">JobsApi</a></dd>
+<dd><a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="JobsApi-__init__"><strong>__init__</strong></a>(self, client: dbacademy.clients.rest.common.ApiClient)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;<a href="#JobsApi-help">help</a>(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="JobsApi-create_from_config"><strong>create_from_config</strong></a>(self, config: dbacademy.clients.dbrest.jobs_api.job_config.JobConfig) -&gt; str</dt></dl>
+
+<dl><dt><a name="JobsApi-create_from_dict"><strong>create_from_dict</strong></a>(self, params: Dict[str, Any]) -&gt; str</dt></dl>
+
+<dl><dt><a name="JobsApi-delete_by_id"><strong>delete_by_id</strong></a>(self, job_id: Union[str, int], *, skip_if_not_successful: bool = False, delete_by_name: bool = False) -&gt; None</dt></dl>
+
+<dl><dt><a name="JobsApi-delete_by_name"><strong>delete_by_name</strong></a>(self, job_names: Union[list, dict, str], *, skip_if_not_successful: bool) -&gt; None</dt></dl>
+
+<dl><dt><a name="JobsApi-get_by_id"><strong>get_by_id</strong></a>(self, job_id: Union[int, str])</dt></dl>
+
+<dl><dt><a name="JobsApi-get_by_name"><strong>get_by_name</strong></a>(self, job_name: str) -&gt; Optional[Dict[str, Any]]</dt></dl>
+
+<dl><dt><a name="JobsApi-list"><strong>list</strong></a>(self, *, limit: int = 100, expand_tasks: bool = False, job_name: Optional[str] = None) -&gt; List[Dict[str, Any]]</dt></dl>
+
+<dl><dt><a name="JobsApi-run_now"><strong>run_now</strong></a>(self, job_id: Union[int, str], notebook_params: Optional[Dict[str, Any]] = None)</dt></dl>
+
+<dl><dt><a name="JobsApi-update_continuous"><strong>update_continuous</strong></a>(self, *, job_id: Union[int, str], paused: Optional[bool]) -&gt; Dict[str, Any]</dt></dl>
+
+<dl><dt><a name="JobsApi-update_schedule"><strong>update_schedule</strong></a>(self, *, job_id: Union[int, str], paused: Optional[bool], quartz_cron_expression: Optional[str], timezone_id: Optional[str]) -&gt; Dict[str, Any]</dt></dl>
+
+<dl><dt><a name="JobsApi-update_trigger"><strong>update_trigger</strong></a>(self, *, job_id: Union[int, str], paused: Optional[bool], url: Optional[str], min_time_between_triggers_seconds: Optional[int], wait_after_last_change_seconds: Optional[int]) -&gt; Dict[str, Any]</dt></dl>
+
+<hr>
+Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
+<dl><dt><a name="JobsApi-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>
+
+<dl><dt><a name="JobsApi-help"><strong>help</strong></a>(self)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
+<dl><dt><strong>T</strong> = ~T</dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['JobsApi']</td></tr></table>
+</body></html>

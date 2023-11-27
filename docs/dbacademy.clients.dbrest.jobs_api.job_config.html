@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.clients.dbrest.jobs_api.job_config</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.clients.html"><font color="#ffffff">clients</font></a>.<a href="dbacademy.clients.dbrest.html"><font color="#ffffff">dbrest</font></a>.<a href="dbacademy.clients.dbrest.jobs_api.html"><font color="#ffffff">jobs_api</font></a>.job_config</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cclients%5Cdbrest%5Cjobs_api%5Cjob_config.py">c:\dvlp\dbacademy\src\dbacademy\clients\dbrest\jobs_api\job_config.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.clients.dbrest.jobs_api.job_config.html#JobConfig">JobConfig</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="JobConfig">class <strong>JobConfig</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#JobConfig">JobConfig</a>(*,&nbsp;job_name:&nbsp;str,&nbsp;timeout_seconds:&nbsp;int&nbsp;=&nbsp;300,&nbsp;max_concurrent_runs:&nbsp;int&nbsp;=&nbsp;1,&nbsp;tags:&nbsp;Optional[Dict[str,&nbsp;str]]&nbsp;=&nbsp;None)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="JobConfig-__init__"><strong>__init__</strong></a>(self, *, job_name: str, timeout_seconds: int = 300, max_concurrent_runs: int = 1, tags: Optional[Dict[str, str]] = None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="JobConfig-add_email_notifications"><strong>add_email_notifications</strong></a>(self, *, on_start: Optional[List[str]], on_success: Optional[List[str]], on_failure: Optional[List[str]], on_duration_warning_threshold_exceeded: Optional[List[str]], no_alert_for_skipped_runs: bool = False) -&gt; None</dt></dl>
+
+<dl><dt><a name="JobConfig-add_task"><strong>add_task</strong></a>(self, *, task_key: str, description: Optional[str] = None, max_retries: int = 0, min_retry_interval_millis: int = 0, retry_on_timeout: bool = False, timeout_seconds: Optional[int] = None, depends_on: Optional[List[str]] = None) -&gt; dbacademy.clients.dbrest.jobs_api.task_config.TaskConfig</dt></dl>
+
+<dl><dt><a name="JobConfig-add_webhook_notifications"><strong>add_webhook_notifications</strong></a>(self, *, on_start: Optional[List[str]], on_success: Optional[List[str]], on_failure: Optional[List[str]], on_duration_warning_threshold_exceeded: Optional[List[str]]) -&gt; None</dt></dl>
+
+<dl><dt><a name="JobConfig-git_branch"><strong>git_branch</strong></a>(self, *, provider: str, url: str, branch: str)</dt></dl>
+
+<dl><dt><a name="JobConfig-git_commit"><strong>git_commit</strong></a>(self, *, provider: str, url: str, commit: str)</dt></dl>
+
+<dl><dt><a name="JobConfig-git_tag"><strong>git_tag</strong></a>(self, *, provider: str, url: str, tag: str)</dt></dl>
+
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['JobConfig']</td></tr></table>
+</body></html>

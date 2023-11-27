@@ -32,19 +32,49 @@
 <font color="#000000" face="helvetica, arial"><a name="UniversalWorkspaceSetupRunner">class <strong>UniversalWorkspaceSetupRunner</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
     
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt><a href="#UniversalWorkspaceSetupRunner">UniversalWorkspaceSetupRunner</a>(*,&nbsp;token:&nbsp;str,&nbsp;endpoint:&nbsp;str,&nbsp;course_config:&nbsp;dbacademy.dbhelper.course_config.CourseConfig,&nbsp;workspace_name:&nbsp;str)<br>
+<td colspan=2><tt><a href="#UniversalWorkspaceSetupRunner">UniversalWorkspaceSetupRunner</a>(*,&nbsp;course_config:&nbsp;dbacademy.dbhelper.course_config.CourseConfig,&nbsp;token:&nbsp;str&nbsp;=&nbsp;None,&nbsp;endpoint:&nbsp;str&nbsp;=&nbsp;None,&nbsp;workspace_name:&nbsp;str&nbsp;=&nbsp;None)<br>
 &nbsp;<br>
 <br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
 <td width="100%">Methods defined here:<br>
-<dl><dt><a name="UniversalWorkspaceSetupRunner-__init__"><strong>__init__</strong></a>(self, *, token: str, endpoint: str, course_config: dbacademy.dbhelper.course_config.CourseConfig, workspace_name: str)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+<dl><dt><a name="UniversalWorkspaceSetupRunner-__init__"><strong>__init__</strong></a>(self, *, course_config: dbacademy.dbhelper.course_config.CourseConfig, token: str = None, endpoint: str = None, workspace_name: str = None)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
 
 <dl><dt><a name="UniversalWorkspaceSetupRunner-create_job"><strong>create_job</strong></a>(self) -&gt; str</dt></dl>
+
+<dl><dt><a name="UniversalWorkspaceSetupRunner-delete_job"><strong>delete_job</strong></a>(self) -&gt; None</dt></dl>
 
 <dl><dt><a name="UniversalWorkspaceSetupRunner-run"><strong>run</strong></a>(self)</dt></dl>
 
 <dl><dt><a name="UniversalWorkspaceSetupRunner-wait_for_job_run"><strong>wait_for_job_run</strong></a>(self, job_id: str, run_id: str)</dt></dl>
 
+<hr>
+Class methods defined here:<br>
+<dl><dt><a name="UniversalWorkspaceSetupRunner-uws_append_message"><strong>uws_append_message</strong></a>(message: str) -&gt; None<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt></dl>
+
+<dl><dt><a name="UniversalWorkspaceSetupRunner-uws_read"><strong>uws_read</strong></a>() -&gt; Optional[Dict[str, Any]]<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt></dl>
+
+<dl><dt><a name="UniversalWorkspaceSetupRunner-uws_reset"><strong>uws_reset</strong></a>() -&gt; None<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt></dl>
+
+<dl><dt><a name="UniversalWorkspaceSetupRunner-uws_status"><strong>uws_status</strong></a>(status: str) -&gt; None<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt></dl>
+
+<dl><dt><a name="UniversalWorkspaceSetupRunner-uws_write"><strong>uws_write</strong></a>(uws: Dict[str, Any]) -&gt; None<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>client</strong></dt>
+</dl>
+<dl><dt><strong>course_config</strong></dt>
+</dl>
+<dl><dt><strong>default_spark_version</strong></dt>
+</dl>
+<dl><dt><strong>event_description</strong></dt>
+</dl>
+<dl><dt><strong>event_id</strong></dt>
+</dl>
+<dl><dt><strong>pools_node_type_id</strong></dt>
+</dl>
+<dl><dt><strong>workspace_name</strong></dt>
+</dl>
 <hr>
 Data descriptors defined here:<br>
 <dl><dt><strong>__dict__</strong></dt>

@@ -51,8 +51,9 @@ Methods defined here:<br>
 
 <dl><dt><a name="Clusters-create_or_start"><strong>create_or_start</strong></a>(self, name, machine_type=None, driver_machine_type=None, timeout_minutes=120, num_workers=2, num_cores='*', instance_pool_id=None, existing_clusters=None, cluster_spec=None)</dt></dl>
 
-<dl><dt><a name="Clusters-delete"><strong>delete</strong></a>(self, id)</dt><dd><tt>#&nbsp;TODO&nbsp;rename&nbsp;to&nbsp;parameter&nbsp;to&nbsp;cluster_id<br>
-#&nbsp;noinspection&nbsp;PyShadowingBuiltins</tt></dd></dl>
+<dl><dt><a name="Clusters-delete"><strong>delete</strong></a>(self, cluster_id: str) -&gt; None</dt><dd><tt>#&nbsp;TODO&nbsp;delete&nbsp;this&nbsp;version</tt></dd></dl>
+
+<dl><dt><a name="Clusters-delete_by_id"><strong>delete_by_id</strong></a>(self, cluster_id: str) -&gt; None</dt></dl>
 
 <dl><dt><a name="Clusters-edit"><strong>edit</strong></a>(self, cluster_id, cluster_name=None, *, machine_type=None, driver_machine_type=None, timeout_minutes=120, num_workers=0, num_cores='*', instance_pool_id=None, spark_version=None, **cluster_spec)</dt></dl>
 
@@ -76,6 +77,10 @@ Methods defined here:<br>
 
 <dl><dt><a name="Clusters-update"><strong>update</strong></a>(self, cluster)</dt></dl>
 
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>policies</strong></dt>
+</dl>
 <hr>
 Methods inherited from <a href="dbacademy.clients.rest.common.html#ApiContainer">dbacademy.clients.rest.common.ApiContainer</a>:<br>
 <dl><dt><a name="Clusters-__call__"><strong>__call__</strong></a>(self: 'T') -&gt; 'T'</dt><dd><tt>Returns&nbsp;itself.&nbsp;&nbsp;Provided&nbsp;for&nbsp;backwards&nbsp;compatibility.</tt></dd></dl>

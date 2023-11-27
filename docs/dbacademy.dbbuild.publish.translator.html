@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dbbuild.publish.translator</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbbuild.html"><font color="#ffffff">dbbuild</font></a>.<a href="dbacademy.dbbuild.publish.html"><font color="#ffffff">publish</font></a>.translator</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbbuild%5Cpublish%5Ctranslator.py">c:\dvlp\dbacademy\src\dbacademy\dbbuild\publish\translator.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbbuild.publish.translator.html#Translator">Translator</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Translator">class <strong>Translator</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Translator">Translator</a>(*,&nbsp;build_config:&nbsp;dbacademy.dbbuild.build_config_data.BuildConfigData,&nbsp;require_i18n_selection:&nbsp;bool)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Translator-__init__"><strong>__init__</strong></a>(self, *, build_config: dbacademy.dbbuild.build_config_data.BuildConfigData, require_i18n_selection: bool)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Translator-assert_created_dbcs"><strong>assert_created_dbcs</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Translator-assert_created_docs"><strong>assert_created_docs</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Translator-assert_no_changes_in_source_repo"><strong>assert_no_changes_in_source_repo</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Translator-assert_no_changes_in_target_repo"><strong>assert_no_changes_in_target_repo</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Translator-assert_notebooks_generated"><strong>assert_notebooks_generated</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Translator-assert_validated"><strong>assert_validated</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Translator-assert_validated_artifacts"><strong>assert_validated_artifacts</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Translator-create_dbcs"><strong>create_dbcs</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Translator-create_docs"><strong>create_docs</strong></a>(self) -&gt; str</dt></dl>
+
+<dl><dt><a name="Translator-create_published_message"><strong>create_published_message</strong></a>(self) -&gt; str</dt></dl>
+
+<dl><dt><a name="Translator-generate_notebooks"><strong>generate_notebooks</strong></a>(self, skip_generation: bool = False) -&gt; Optional[str]</dt></dl>
+
+<dl><dt><a name="Translator-update_i18n_guids"><strong>update_i18n_guids</strong></a>(self, *, source_dir: str, add_guid: bool) -&gt; None</dt><dd><tt>Used&nbsp;predominately&nbsp;by&nbsp;Notebook-based&nbsp;scripts,&nbsp;this&nbsp;command&nbsp;adds&nbsp;GUIDs&nbsp;when&nbsp;missing&nbsp;or&nbsp;moves&nbsp;the&nbsp;GUID&nbsp;from&nbsp;the&nbsp;%md&nbsp;line&nbsp;to&nbsp;the&nbsp;title.<br>
+:param&nbsp;source_dir:&nbsp;The&nbsp;directory&nbsp;of&nbsp;the&nbsp;notebooks&nbsp;to&nbsp;be&nbsp;updated.<br>
+:param&nbsp;add_guid:&nbsp;True&nbsp;if&nbsp;the&nbsp;GUID&nbsp;should&nbsp;be&nbsp;added,&nbsp;False&nbsp;if&nbsp;it&nbsp;should&nbsp;be&nbsp;removed.<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Translator-validate"><strong>validate</strong></a>(self, source_dir: str = None, source_repo_url: str = None, source_branch: str = None, target_dir: str = None, target_repo_url: str = None, target_branch: str = None)</dt></dl>
+
+<dl><dt><a name="Translator-validate_artifacts"><strong>validate_artifacts</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Translator-validate_no_changes_in_source_repo"><strong>validate_no_changes_in_source_repo</strong></a>(self, skip_validation=False) -&gt; None</dt></dl>
+
+<dl><dt><a name="Translator-validate_no_changes_in_target_repo"><strong>validate_no_changes_in_target_repo</strong></a>(self, skip_validation=False)</dt></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>build_config</strong></dt>
+</dl>
+<dl><dt><strong>validated</strong></dt>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['Translator']</td></tr></table>
+</body></html>

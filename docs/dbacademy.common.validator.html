@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.common.validator</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.common.html"><font color="#ffffff">common</font></a>.validator</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Ccommon%5Cvalidator.py">c:\dvlp\dbacademy\src\dbacademy\common\validator.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="inspect.html">inspect</a><br>
+</td><td width="25%" valign=top><a href="numbers.html">numbers</a><br>
+</td><td width="25%" valign=top><a href="typing.html">typing</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#Exception">builtins.Exception</a>(<a href="builtins.html#BaseException">builtins.BaseException</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.common.validator.html#ValidationError">ValidationError</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.common.validator.html#Validator">Validator</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="ValidationError">class <strong>ValidationError</strong></a>(<a href="builtins.html#Exception">builtins.Exception</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#ValidationError">ValidationError</a>(message:&nbsp;str)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="dbacademy.common.validator.html#ValidationError">ValidationError</a></dd>
+<dd><a href="builtins.html#Exception">builtins.Exception</a></dd>
+<dd><a href="builtins.html#BaseException">builtins.BaseException</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="ValidationError-__init__"><strong>__init__</strong></a>(self, message: str)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>message</strong></dt>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Static methods inherited from <a href="builtins.html#Exception">builtins.Exception</a>:<br>
+<dl><dt><a name="ValidationError-__new__"><strong>__new__</strong></a>(*args, **kwargs)<font color="#909090"><font face="helvetica, arial"> from <a href="builtins.html#type">builtins.type</a></font></font></dt><dd><tt>Create&nbsp;and&nbsp;return&nbsp;a&nbsp;new&nbsp;<a href="builtins.html#object">object</a>.&nbsp;&nbsp;See&nbsp;help(type)&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="builtins.html#BaseException">builtins.BaseException</a>:<br>
+<dl><dt><a name="ValidationError-__delattr__"><strong>__delattr__</strong></a>(self, name, /)</dt><dd><tt>Implement&nbsp;delattr(self,&nbsp;name).</tt></dd></dl>
+
+<dl><dt><a name="ValidationError-__getattribute__"><strong>__getattribute__</strong></a>(self, name, /)</dt><dd><tt>Return&nbsp;getattr(self,&nbsp;name).</tt></dd></dl>
+
+<dl><dt><a name="ValidationError-__reduce__"><strong>__reduce__</strong></a>(...)</dt><dd><tt>Helper&nbsp;for&nbsp;pickle.</tt></dd></dl>
+
+<dl><dt><a name="ValidationError-__repr__"><strong>__repr__</strong></a>(self, /)</dt><dd><tt>Return&nbsp;repr(self).</tt></dd></dl>
+
+<dl><dt><a name="ValidationError-__setattr__"><strong>__setattr__</strong></a>(self, name, value, /)</dt><dd><tt>Implement&nbsp;setattr(self,&nbsp;name,&nbsp;value).</tt></dd></dl>
+
+<dl><dt><a name="ValidationError-__setstate__"><strong>__setstate__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="ValidationError-__str__"><strong>__str__</strong></a>(self, /)</dt><dd><tt>Return&nbsp;str(self).</tt></dd></dl>
+
+<dl><dt><a name="ValidationError-with_traceback"><strong>with_traceback</strong></a>(...)</dt><dd><tt><a href="builtins.html#Exception">Exception</a>.<a href="#ValidationError-with_traceback">with_traceback</a>(tb)&nbsp;--<br>
+set&nbsp;self.<strong>__traceback__</strong>&nbsp;to&nbsp;tb&nbsp;and&nbsp;return&nbsp;self.</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="builtins.html#BaseException">builtins.BaseException</a>:<br>
+<dl><dt><strong>__cause__</strong></dt>
+<dd><tt>exception&nbsp;cause</tt></dd>
+</dl>
+<dl><dt><strong>__context__</strong></dt>
+<dd><tt>exception&nbsp;context</tt></dd>
+</dl>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>__suppress_context__</strong></dt>
+</dl>
+<dl><dt><strong>__traceback__</strong></dt>
+</dl>
+<dl><dt><strong>args</strong></dt>
+</dl>
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Validator">class <strong>Validator</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Validator">Validator</a>(**kwargs)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Validator-__init__"><strong>__init__</strong></a>(self, **kwargs)</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;a&nbsp;validator&nbsp;relying&nbsp;on&nbsp;kwargs&nbsp;to&nbsp;specify&nbsp;both&nbsp;the&nbsp;parameter_name,&nbsp;and&nbsp;it's&nbsp;value.<br>
+In&nbsp;cases&nbsp;where&nbsp;the&nbsp;parameter&nbsp;name&nbsp;needs&nbsp;to&nbsp;be&nbsp;specified&nbsp;dynamically&nbsp;(e.g.&nbsp;when&nbsp;loaded&nbsp;from&nbsp;a&nbsp;dictionary),&nbsp;the&nbsp;parameter&nbsp;name&nbsp;can&nbsp;be&nbsp;specified&nbsp;directly&nbsp;via&nbsp;parameter_name_override.<br>
+Usage:<br>
+&nbsp;<br>
+def&nbsp;some_function(some_argument:&nbsp;int)&nbsp;-&gt;&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;from&nbsp;dbacademy.common&nbsp;import&nbsp;validate<br>
+&nbsp;&nbsp;&nbsp;&nbsp;validate(some_argument=some_argument).&lt;snip-some-validation-method&gt;<br>
+&nbsp;<br>
+Once&nbsp;an&nbsp;instance&nbsp;of&nbsp;the&nbsp;<a href="#Validator">Validator</a>&nbsp;is&nbsp;created,&nbsp;any&nbsp;number&nbsp;of&nbsp;the&nbsp;class's&nbsp;validation&nbsp;methods&nbsp;can&nbsp;be&nbsp;used.<br>
+&nbsp;<br>
+This&nbsp;pattern&nbsp;uses&nbsp;the&nbsp;**kwargs&nbsp;to&nbsp;dynamically&nbsp;declare&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;parameter,&nbsp;and&nbsp;it's&nbsp;corresponding&nbsp;value.&nbsp;Because&nbsp;the&nbsp;parameter&nbsp;name&nbsp;is&nbsp;effectively&nbsp;a&nbsp;loose&nbsp;string&nbsp;(key&nbsp;of&nbsp;**kwargs),<br>
+it&nbsp;cannot&nbsp;be&nbsp;validated&nbsp;in&nbsp;any&nbsp;real&nbsp;way&nbsp;with&nbsp;the&nbsp;current&nbsp;implementation.&nbsp;Future&nbsp;versions&nbsp;may&nbsp;interrogate&nbsp;the&nbsp;function's&nbsp;parameters&nbsp;to&nbsp;provide&nbsp;additional&nbsp;guarantees,&nbsp;but&nbsp;even&nbsp;then,&nbsp;they<br>
+may&nbsp;only&nbsp;be&nbsp;runtime&nbsp;validations.&nbsp;Because&nbsp;the&nbsp;parameter&nbsp;name&nbsp;is&nbsp;only&nbsp;used&nbsp;in&nbsp;generation&nbsp;of&nbsp;the&nbsp;error&nbsp;method,&nbsp;the&nbsp;risk&nbsp;to&nbsp;type&nbsp;safety&nbsp;is&nbsp;minimal&nbsp;while&nbsp;providing&nbsp;one&nbsp;of&nbsp;the&nbsp;cleanest&nbsp;implementations.<br>
+&nbsp;<br>
+:param&nbsp;parameter_name_override:&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;parameter&nbsp;to&nbsp;be&nbsp;used&nbsp;when&nbsp;the&nbsp;dynamically&nbsp;generated&nbsp;parameter&nbsp;name&nbsp;is&nbsp;not<br>
+correct&nbsp;such&nbsp;as&nbsp;is&nbsp;the&nbsp;case&nbsp;when&nbsp;validating&nbsp;parameters&nbsp;loaded&nbsp;from&nbsp;a&nbsp;dictionary&nbsp;and&nbsp;thus&nbsp;not&nbsp;an&nbsp;actual&nbsp;function&nbsp;parameter.<br>
+:param&nbsp;kwargs:&nbsp;The&nbsp;one&nbsp;and&nbsp;only&nbsp;one&nbsp;parameter&nbsp;to&nbsp;be&nbsp;validated&nbsp;by&nbsp;this&nbsp;class&nbsp;expressed&nbsp;as&nbsp;a&nbsp;dictionary.</tt></dd></dl>
+
+<dl><dt><a name="Validator-args"><strong>args</strong></a>(self, *, parameter_name: Optional[str] = None, required: Optional[bool] = None) -&gt; dbacademy.common.validator.TypedValidator</dt><dd><tt>Provides&nbsp;access&nbsp;to&nbsp;uncommon&nbsp;operations&nbsp;like&nbsp;overriding&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;parameter&nbsp;that&nbsp;was&nbsp;dynamically&nbsp;determine&nbsp;when&nbsp;the&nbsp;<a href="#Validator">Validator</a>&nbsp;was&nbsp;created.<br>
+:param&nbsp;parameter_name:&nbsp;An&nbsp;alternative&nbsp;property&nbsp;name&nbsp;to&nbsp;be&nbsp;used&nbsp;in&nbsp;the&nbsp;generation&nbsp;of&nbsp;error&nbsp;messages.<br>
+:param&nbsp;required:&nbsp;see&nbsp;the&nbsp;required&nbsp;property&nbsp;of&nbsp;this&nbsp;class.<br>
+:return:&nbsp;AbstractValidator</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>optional</strong></dt>
+<dd><tt>This&nbsp;operation&nbsp;performs&nbsp;no&nbsp;action&nbsp;and&nbsp;is&nbsp;provided&nbsp;for&nbsp;symmetry&nbsp;with&nbsp;the&nbsp;class's&nbsp;required&nbsp;property&nbsp;and&nbsp;for&nbsp;general&nbsp;readability.<br>
+:return:&nbsp;AbstractValidator</tt></dd>
+</dl>
+<dl><dt><strong>parameter_name</strong></dt>
+</dl>
+<dl><dt><strong>parameter_value</strong></dt>
+</dl>
+<dl><dt><strong>required</strong></dt>
+<dd><tt>Tests&nbsp;to&nbsp;make&nbsp;sure&nbsp;that&nbsp;the&nbsp;value&nbsp;provided&nbsp;to&nbsp;the&nbsp;validator&nbsp;is&nbsp;required,&nbsp;or&nbsp;more&nbsp;specifically,&nbsp;is&nbsp;non-None.<br>
+:return:&nbsp;AbstractValidator</tt></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['Validator', 'ValidationError']</td></tr></table>
+</body></html>

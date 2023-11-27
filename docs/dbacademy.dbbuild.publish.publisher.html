@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dbbuild.publish.publisher</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbbuild.html"><font color="#ffffff">dbbuild</font></a>.<a href="dbacademy.dbbuild.publish.html"><font color="#ffffff">publish</font></a>.publisher</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbbuild%5Cpublish%5Cpublisher.py">c:\dvlp\dbacademy\src\dbacademy\dbbuild\publish\publisher.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbbuild.publish.publisher.html#Publisher">Publisher</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="enum.html#Enum">enum.Enum</a>(<a href="builtins.html#object">builtins.object</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbbuild.publish.publisher.html#PublishingMode">PublishingMode</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Publisher">class <strong>Publisher</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#Publisher">Publisher</a>(*,&nbsp;build_config:&nbsp;dbacademy.dbbuild.build_config_data.BuildConfigData,&nbsp;publishing_mode:&nbsp;Union[str,&nbsp;dbacademy.dbbuild.publish.publisher.<a href="#PublishingMode">PublishingMode</a>])<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Publisher-__init__"><strong>__init__</strong></a>(self, *, build_config: dbacademy.dbbuild.build_config_data.BuildConfigData, publishing_mode: Union[str, dbacademy.dbbuild.publish.publisher.PublishingMode])</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="Publisher-assert_created_dbcs"><strong>assert_created_dbcs</strong></a>(self) -&gt; None</dt><dd><tt>Asserts&nbsp;that&nbsp;the&nbsp;various&nbsp;DBC&nbsp;files&nbsp;have&nbsp;been&nbsp;created&nbsp;-&nbsp;used&nbsp;to&nbsp;control&nbsp;program&nbsp;flow.<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Publisher-assert_created_docs"><strong>assert_created_docs</strong></a>(self) -&gt; None</dt><dd><tt>Asserts&nbsp;that&nbsp;the&nbsp;published&nbsp;form&nbsp;of&nbsp;the&nbsp;Google-Docs&nbsp;(e.g.&nbsp;Slides&nbsp;Decks)&nbsp;were&nbsp;created&nbsp;-&nbsp;used&nbsp;to&nbsp;control&nbsp;program&nbsp;flow.<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Publisher-assert_no_changes_in_source_repo"><strong>assert_no_changes_in_source_repo</strong></a>(self) -&gt; None</dt><dd><tt>Asserts&nbsp;that&nbsp;there&nbsp;are&nbsp;no&nbsp;uncommitted&nbsp;changes&nbsp;in&nbsp;the&nbsp;source&nbsp;repository&nbsp;-&nbsp;used&nbsp;to&nbsp;control&nbsp;program&nbsp;flow.<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Publisher-assert_no_changes_in_target_repo"><strong>assert_no_changes_in_target_repo</strong></a>(self) -&gt; None</dt><dd><tt>Asserts&nbsp;that&nbsp;there&nbsp;are&nbsp;no&nbsp;uncommitted&nbsp;changes&nbsp;in&nbsp;the&nbsp;target&nbsp;repository&nbsp;-&nbsp;used&nbsp;to&nbsp;control&nbsp;program&nbsp;flow.<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Publisher-assert_notebooks_generated"><strong>assert_notebooks_generated</strong></a>(self) -&gt; None</dt><dd><tt>Asserts&nbsp;that&nbsp;the&nbsp;notebooks&nbsp;have&nbsp;been&nbsp;generated&nbsp;-&nbsp;used&nbsp;to&nbsp;control&nbsp;program&nbsp;flow.<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Publisher-assert_validate_artifacts"><strong>assert_validate_artifacts</strong></a>(self) -&gt; None</dt><dd><tt>Asserts&nbsp;<a href="#Publisher">Publisher</a>.<a href="#Publisher-validate_artifacts">validate_artifacts</a>()&nbsp;was&nbsp;called&nbsp;&nbsp;-&nbsp;used&nbsp;to&nbsp;control&nbsp;program&nbsp;flow.<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Publisher-assert_validated_config"><strong>assert_validated_config</strong></a>(self) -&gt; None</dt><dd><tt>Asserts&nbsp;that&nbsp;the&nbsp;publishing&nbsp;configuration&nbsp;was&nbsp;validated&nbsp;-&nbsp;used&nbsp;to&nbsp;control&nbsp;program&nbsp;flow.<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Publisher-configure_target_repo"><strong>configure_target_repo</strong></a>(self, target_dir: str = None, target_repo_url: str = None, branch: str = 'published') -&gt; None</dt><dd><tt>Configures&nbsp;the&nbsp;build&nbsp;to&nbsp;publish&nbsp;to&nbsp;a&nbsp;public&nbsp;GitHub&nbsp;repository.&nbsp;In&nbsp;most&nbsp;cases,&nbsp;the&nbsp;default&nbsp;values&nbsp;should&nbsp;be&nbsp;used<br>
+:param&nbsp;target_dir:&nbsp;The&nbsp;directory&nbsp;under&nbsp;/Repos&nbsp;that&nbsp;the&nbsp;GitHub&nbsp;will&nbsp;be&nbsp;cloned&nbsp;to<br>
+:param&nbsp;target_repo_url:&nbsp;The&nbsp;locations&nbsp;of&nbsp;the&nbsp;GitHub&nbsp;public&nbsp;GitHub&nbsp;repo<br>
+:param&nbsp;branch:&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;branch&nbsp;to&nbsp;publish&nbsp;to<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Publisher-copy_repository_docs"><strong>copy_repository_docs</strong></a>(self, dest_cds: bool = False, dest_repo: bool = False) -&gt; str</dt><dd><tt>Generates&nbsp;the&nbsp;HTML&nbsp;docs&nbsp;and&nbsp;writes&nbsp;them&nbsp;to&nbsp;the&nbsp;GitHub&nbsp;repo&nbsp;under&nbsp;/docs<br>
+:param&nbsp;dest_cds:&nbsp;True&nbsp;if&nbsp;docs&nbsp;should&nbsp;be&nbsp;copied&nbsp;to&nbsp;the&nbsp;cds<br>
+:param&nbsp;dest_repo:&nbsp;True&nbsp;if&nbsp;docs&nbsp;should&nbsp;be&nbsp;copied&nbsp;to&nbsp;the&nbsp;repo<br>
+:return:&nbsp;The&nbsp;HTML&nbsp;results&nbsp;that&nbsp;should&nbsp;be&nbsp;rendered&nbsp;with&nbsp;displayHTML()&nbsp;from&nbsp;the&nbsp;calling&nbsp;notebook</tt></dd></dl>
+
+<dl><dt><a name="Publisher-create_dbcs"><strong>create_dbcs</strong></a>(self) -&gt; str</dt><dd><tt>Exports&nbsp;the&nbsp;DBC&nbsp;files&nbsp;from&nbsp;the&nbsp;published&nbsp;directory&nbsp;and&nbsp;then&nbsp;saves&nbsp;the&nbsp;corresponding&nbsp;DBC&nbsp;file.<br>
+Depending&nbsp;on&nbsp;the&nbsp;configuration,&nbsp;one&nbsp;copy&nbsp;can&nbsp;be&nbsp;written&nbsp;to&nbsp;a&nbsp;version-specific&nbsp;folder&nbsp;of&nbsp;the&nbsp;distribution&nbsp;system,<br>
+one&nbsp;copy&nbsp;can&nbsp;be&nbsp;written&nbsp;to&nbsp;the&nbsp;"latest"&nbsp;folder&nbsp;of&nbsp;the&nbsp;distribution&nbsp;system,&nbsp;one&nbsp;copy&nbsp;will&nbsp;be&nbsp;written&nbsp;to&nbsp;dbfs:/FileStore<br>
+for&nbsp;direct&nbsp;download&nbsp;from&nbsp;the&nbsp;calling&nbsp;notebook<br>
+:return:&nbsp;The&nbsp;HTML&nbsp;results&nbsp;that&nbsp;should&nbsp;be&nbsp;rendered&nbsp;with&nbsp;displayHTML()&nbsp;from&nbsp;the&nbsp;calling&nbsp;notebook</tt></dd></dl>
+
+<dl><dt><a name="Publisher-create_docs"><strong>create_docs</strong></a>(self) -&gt; str</dt><dd><tt>Published&nbsp;the&nbsp;Google-Docs&nbsp;specified&nbsp;by&nbsp;the&nbsp;build&nbsp;config&nbsp;by&nbsp;exporting&nbsp;them&nbsp;as&nbsp;PDFs&nbsp;and&nbsp;then&nbsp;saving&nbsp;them&nbsp;to&nbsp;the&nbsp;distribution&nbsp;system&nbsp;and&nbsp;then<br>
+by&nbsp;copying&nbsp;those&nbsp;raw&nbsp;Google-Docs&nbsp;to&nbsp;the&nbsp;Published&nbsp;folder&nbsp;found&nbsp;in&nbsp;Databricks&nbsp;to&nbsp;facilitate&nbsp;instructor&nbsp;usage&nbsp;during&nbsp;class.<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="Publisher-create_published_message"><strong>create_published_message</strong></a>(self) -&gt; str</dt><dd><tt>Convenience&nbsp;method&nbsp;to&nbsp;aid&nbsp;in&nbsp;creating&nbsp;the&nbsp;publishing&nbsp;email&nbsp;and&nbsp;Slack&nbsp;message.<br>
+:return:&nbsp;The&nbsp;HTML&nbsp;results&nbsp;that&nbsp;should&nbsp;be&nbsp;rendered&nbsp;with&nbsp;displayHTML()&nbsp;from&nbsp;the&nbsp;calling&nbsp;notebook</tt></dd></dl>
+
+<dl><dt><a name="Publisher-create_resource_bundle"><strong>create_resource_bundle</strong></a>(self, folder_name: str = None, target_dir: str = None) -&gt; str</dt><dd><tt>Only&nbsp;applicable&nbsp;to&nbsp;translated&nbsp;courses,&nbsp;this&nbsp;method&nbsp;creates&nbsp;a&nbsp;"resource&nbsp;bundle"&nbsp;consisting&nbsp;of&nbsp;MD&nbsp;files&nbsp;of&nbsp;the&nbsp;notebook's&nbsp;various&nbsp;MD&nbsp;cells<br>
+:param&nbsp;folder_name:&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;folder&nbsp;for&nbsp;the&nbsp;resource&nbsp;bundle&nbsp;as&nbsp;a&nbsp;sub-folder&nbsp;of&nbsp;target_dir<br>
+:param&nbsp;target_dir:&nbsp;The&nbsp;directory&nbsp;under&nbsp;which&nbsp;resource&nbsp;bundles&nbsp;are&nbsp;located.<br>
+:return:&nbsp;The&nbsp;HTML&nbsp;results&nbsp;that&nbsp;should&nbsp;be&nbsp;rendered&nbsp;with&nbsp;displayHTML()&nbsp;from&nbsp;the&nbsp;calling&nbsp;notebook</tt></dd></dl>
+
+<dl><dt><a name="Publisher-generate_notebooks"><strong>generate_notebooks</strong></a>(self, *, skip_generation: bool = False, verbose=False, debugging=False) -&gt; Optional[str]</dt><dd><tt>Generates&nbsp;the&nbsp;publishable&nbsp;notebooks&nbsp;from&nbsp;the&nbsp;source&nbsp;notebooks<br>
+:param&nbsp;skip_generation:&nbsp;Overrides&nbsp;the&nbsp;default&nbsp;behavior&nbsp;and&nbsp;skips&nbsp;generation&nbsp;of&nbsp;the&nbsp;notebook<br>
+:param&nbsp;verbose:&nbsp;True&nbsp;of&nbsp;verbose&nbsp;logging<br>
+:param&nbsp;debugging:&nbsp;True&nbsp;for&nbsp;debug&nbsp;logging<br>
+:return:&nbsp;The&nbsp;HTML&nbsp;results&nbsp;that&nbsp;should&nbsp;be&nbsp;rendered&nbsp;with&nbsp;displayHTML()&nbsp;from&nbsp;the&nbsp;calling&nbsp;notebook</tt></dd></dl>
+
+<dl><dt><a name="Publisher-generate_source_docs"><strong>generate_source_docs</strong></a>(self, asynchronous: bool = True) -&gt; None</dt><dd><tt>For&nbsp;courses&nbsp;like&nbsp;DAWD&nbsp;that&nbsp;produce&nbsp;HTML&nbsp;output,&nbsp;run&nbsp;each&nbsp;notebook&nbsp;to&nbsp;generate&nbsp;those&nbsp;assets&nbsp;and&nbsp;write&nbsp;them&nbsp;to&nbsp;the&nbsp;/docs&nbsp;sub-folder&nbsp;in&nbsp;the&nbsp;source&nbsp;repository.<br>
+:param&nbsp;asynchronous:&nbsp;True&nbsp;to&nbsp;generate&nbsp;docs&nbsp;asynchronously,&nbsp;False&nbsp;to&nbsp;process&nbsp;them&nbsp;serially<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="Publisher-to_test_suite"><strong>to_test_suite</strong></a>(self, test_type: str = None, keep_success: bool = False) -&gt; dbacademy.dbbuild.test.test_suite.TestSuite</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;the&nbsp;TestSuite&nbsp;class&nbsp;from&nbsp;this&nbsp;class.&nbsp;Typically,&nbsp;the&nbsp;parameters&nbsp;are&nbsp;not&nbsp;specified<br>
+:param&nbsp;test_type:&nbsp;See&nbsp;TestSuite.test_type<br>
+:param&nbsp;keep_success:&nbsp;See&nbsp;TestSuite.keep_success<br>
+:return:&nbsp;TestSuite</tt></dd></dl>
+
+<dl><dt><a name="Publisher-to_translator"><strong>to_translator</strong></a>(self, require_i18n_selection: bool = True) -&gt; dbacademy.dbbuild.publish.translator.Translator</dt><dd><tt>Creates&nbsp;an&nbsp;instance&nbsp;of&nbsp;the&nbsp;Translator&nbsp;class&nbsp;from&nbsp;this&nbsp;class<br>
+:return:&nbsp;Translator</tt></dd></dl>
+
+<dl><dt><a name="Publisher-validate"><strong>validate</strong></a>(self, silent: bool = False) -&gt; None</dt><dd><tt>Validates&nbsp;that&nbsp;the&nbsp;publisher's&nbsp;configuration&nbsp;is&nbsp;valid<br>
+:param&nbsp;silent:&nbsp;Suppresses&nbsp;output&nbsp;of&nbsp;the&nbsp;validation&nbsp;operation<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Publisher-validate_artifacts"><strong>validate_artifacts</strong></a>(self) -&gt; None</dt><dd><tt>Asserts&nbsp;that&nbsp;all&nbsp;assets&nbsp;were&nbsp;valid.&nbsp;For&nbsp;Google-Docs&nbsp;this&nbsp;means&nbsp;to&nbsp;verify&nbsp;that&nbsp;they&nbsp;are&nbsp;in&nbsp;the&nbsp;distribution&nbsp;system.&nbsp;For&nbsp;DBCs,&nbsp;this&nbsp;means<br>
+to&nbsp;import&nbsp;each&nbsp;DBC,&nbsp;locate&nbsp;the&nbsp;Version&nbsp;Info&nbsp;notebook,&nbsp;and&nbsp;then&nbsp;to&nbsp;validate&nbsp;that&nbsp;it&nbsp;contains&nbsp;the&nbsp;correct&nbsp;version&nbsp;number&nbsp;-&nbsp;used&nbsp;to&nbsp;control&nbsp;program&nbsp;flow.<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Publisher-validate_no_changes_in_source_repo"><strong>validate_no_changes_in_source_repo</strong></a>(self, skip_validation=False) -&gt; None</dt><dd><tt>Exports&nbsp;the&nbsp;source&nbsp;repository&nbsp;to&nbsp;a&nbsp;temp&nbsp;directory,&nbsp;enumerates&nbsp;all&nbsp;the&nbsp;files&nbsp;in&nbsp;that&nbsp;temp&nbsp;directory&nbsp;and&nbsp;then&nbsp;compares&nbsp;it<br>
+to&nbsp;an&nbsp;enumeration&nbsp;of&nbsp;all&nbsp;files&nbsp;in&nbsp;the&nbsp;source&nbsp;directory.&nbsp;Reports&nbsp;on&nbsp;any&nbsp;uncommitted&nbsp;files<br>
+:param&nbsp;skip_validation:&nbsp;True&nbsp;to&nbsp;override&nbsp;validation<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<dl><dt><a name="Publisher-validate_no_changes_in_target_repo"><strong>validate_no_changes_in_target_repo</strong></a>(self, skip_validation=False) -&gt; None</dt><dd><tt>Exports&nbsp;the&nbsp;target&nbsp;repository&nbsp;to&nbsp;a&nbsp;temp&nbsp;directory,&nbsp;enumerates&nbsp;all&nbsp;the&nbsp;files&nbsp;in&nbsp;that&nbsp;temp&nbsp;directory,&nbsp;then&nbsp;compares&nbsp;it<br>
+to&nbsp;an&nbsp;enumeration&nbsp;of&nbsp;all&nbsp;files&nbsp;in&nbsp;the&nbsp;actual&nbsp;target&nbsp;directory&nbsp;and&nbsp;finally&nbsp;reports&nbsp;on&nbsp;any&nbsp;uncommitted&nbsp;files<br>
+:param&nbsp;skip_validation:&nbsp;True&nbsp;to&nbsp;override&nbsp;validation<br>
+:return:&nbsp;None</tt></dd></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>build_config</strong></dt>
+</dl>
+<dl><dt><strong>common_language</strong></dt>
+</dl>
+<dl><dt><strong>i18n_resources_dir</strong></dt>
+</dl>
+<dl><dt><strong>notebooks</strong></dt>
+</dl>
+<dl><dt><strong>temp_repo_dir</strong></dt>
+</dl>
+<dl><dt><strong>temp_work_dir</strong></dt>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>publishing_mode</strong></dt>
+<dd><tt>Indicates&nbsp;which&nbsp;mode&nbsp;the&nbsp;publisher&nbsp;is&nbsp;operating&nbsp;under.&nbsp;When&nbsp;testing&nbsp;the&nbsp;mode&nbsp;is&nbsp;expected&nbsp;to&nbsp;be&nbsp;PublishingMode.non_op.&nbsp;When&nbsp;actually<br>
+publishing&nbsp;a&nbsp;specific&nbsp;version&nbsp;of&nbsp;a&nbsp;course&nbsp;PublishingMode.manual&nbsp;indicates&nbsp;that&nbsp;the&nbsp;DBC&nbsp;will&nbsp;be&nbsp;exported&nbsp;and&nbsp;published&nbsp;manually&nbsp;where<br>
+PublishingMode.automatic&nbsp;indicates&nbsp;that&nbsp;the&nbsp;DBC,&nbsp;slides,&nbsp;etc.&nbsp;will&nbsp;be&nbsp;published&nbsp;to&nbsp;the&nbsp;distribution&nbsp;system&nbsp;via&nbsp;the&nbsp;build&nbsp;scripts.<br>
+:return:&nbsp;PublishingMode</tt></dd>
+</dl>
+<dl><dt><strong>target_dir</strong></dt>
+</dl>
+<dl><dt><strong>target_repo_url</strong></dt>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>KEEPERS</strong> = ['.gitignore', 'docs', 'README.txt', 'README.md', 'README', 'LICENSE.txt', 'LICENSE.md', 'LICENSE', 'NOTICE.md', 'NOTICE.txt', 'NOTICE']</dl>
+
+<dl><dt><strong>VERSION_INFO_NOTEBOOK</strong> = 'Version Info'</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="PublishingMode">class <strong>PublishingMode</strong></a>(<a href="enum.html#Enum">enum.Enum</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#PublishingMode">PublishingMode</a>(value,&nbsp;names=None,&nbsp;*,&nbsp;module=None,&nbsp;qualname=None,&nbsp;type=None,&nbsp;start=1)<br>
+&nbsp;<br>
+An&nbsp;enumeration.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="dbacademy.dbbuild.publish.publisher.html#PublishingMode">PublishingMode</a></dd>
+<dd><a href="enum.html#Enum">enum.Enum</a></dd>
+<dd><a href="builtins.html#object">builtins.object</a></dd>
+</dl>
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>automatic</strong> = &lt;PublishingMode.automatic: 'automatic'&gt;</dl>
+
+<dl><dt><strong>manual</strong> = &lt;PublishingMode.manual: 'manual'&gt;</dl>
+
+<dl><dt><strong>non_op</strong> = &lt;PublishingMode.non_op: 'non_op'&gt;</dl>
+
+<hr>
+Data descriptors inherited from <a href="enum.html#Enum">enum.Enum</a>:<br>
+<dl><dt><strong>name</strong></dt>
+<dd><tt>The&nbsp;name&nbsp;of&nbsp;the&nbsp;Enum&nbsp;member.</tt></dd>
+</dl>
+<dl><dt><strong>value</strong></dt>
+<dd><tt>The&nbsp;value&nbsp;of&nbsp;the&nbsp;Enum&nbsp;member.</tt></dd>
+</dl>
+<hr>
+Readonly properties inherited from <a href="enum.html#EnumMeta">enum.EnumMeta</a>:<br>
+<dl><dt><strong>__members__</strong></dt>
+<dd><tt>Returns&nbsp;a&nbsp;mapping&nbsp;of&nbsp;member&nbsp;name-&gt;value.<br>
+&nbsp;<br>
+This&nbsp;mapping&nbsp;lists&nbsp;all&nbsp;enum&nbsp;members,&nbsp;including&nbsp;aliases.&nbsp;Note&nbsp;that&nbsp;this<br>
+is&nbsp;a&nbsp;read-only&nbsp;view&nbsp;of&nbsp;the&nbsp;internal&nbsp;mapping.</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['Publisher', 'PublishingMode']</td></tr></table>
+</body></html>

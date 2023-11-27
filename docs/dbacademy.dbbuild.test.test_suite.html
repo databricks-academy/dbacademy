@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module dbacademy.dbbuild.test.test_suite</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="dbacademy.html"><font color="#ffffff">dbacademy</font></a>.<a href="dbacademy.dbbuild.html"><font color="#ffffff">dbbuild</font></a>.<a href="dbacademy.dbbuild.test.html"><font color="#ffffff">test</font></a>.test_suite</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:c%3A%5Cdvlp%5Cdbacademy%5Csrc%5Cdbacademy%5Cdbbuild%5Ctest%5Ctest_suite.py">c:\dvlp\dbacademy\src\dbacademy\dbbuild\test\test_suite.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="dbacademy.dbbuild.test.test_suite.html#TestSuite">TestSuite</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="TestSuite">class <strong>TestSuite</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt><a href="#TestSuite">TestSuite</a>(*,&nbsp;build_config:&nbsp;dbacademy.dbbuild.build_config_data.BuildConfigData,&nbsp;test_dir:&nbsp;str,&nbsp;test_type:&nbsp;Optional[Literal['interactive',&nbsp;'stock',&nbsp;'photon',&nbsp;'ml']],&nbsp;keep_success:&nbsp;bool&nbsp;=&nbsp;False)<br>
+&nbsp;<br>
+<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="TestSuite-__init__"><strong>__init__</strong></a>(self, *, build_config: dbacademy.dbbuild.build_config_data.BuildConfigData, test_dir: str, test_type: Optional[Literal['interactive', 'stock', 'photon', 'ml']], keep_success: bool = False)</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+
+<dl><dt><a name="TestSuite-cleanup"><strong>cleanup</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TestSuite-conclude_test"><strong>conclude_test</strong></a>(self, test, response) -&gt; bool</dt></dl>
+
+<dl><dt><a name="TestSuite-create_test_job"><strong>create_test_job</strong></a>(self, *, job_name: str, notebook_path: str, policy_id: str = None)</dt></dl>
+
+<dl><dt><a name="TestSuite-get_all_job_names"><strong>get_all_job_names</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TestSuite-log_run"><strong>log_run</strong></a>(self, test, response)</dt></dl>
+
+<dl><dt><a name="TestSuite-send_first_message"><strong>send_first_message</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="TestSuite-send_status_update"><strong>send_status_update</strong></a>(self, message_type, message)</dt></dl>
+
+<dl><dt><a name="TestSuite-test_all_asynchronously"><strong>test_all_asynchronously</strong></a>(self, test_round: int, service_principal: str = None, policy_id: str = None) -&gt; bool</dt></dl>
+
+<dl><dt><a name="TestSuite-test_all_synchronously"><strong>test_all_synchronously</strong></a>(self, test_round, fail_fast=True, service_principal: str = None, policy_id: str = None) -&gt; bool</dt></dl>
+
+<dl><dt><a name="TestSuite-to_results_evaluator"><strong>to_results_evaluator</strong></a>(self) -&gt; dbacademy.dbbuild.test.results_evaluator.ResultsEvaluator</dt></dl>
+
+<hr>
+Readonly properties defined here:<br>
+<dl><dt><strong>build_config</strong></dt>
+</dl>
+<dl><dt><strong>build_name</strong></dt>
+</dl>
+<dl><dt><strong>client</strong></dt>
+</dl>
+<dl><dt><strong>keep_success</strong></dt>
+</dl>
+<dl><dt><strong>name</strong></dt>
+</dl>
+<dl><dt><strong>notebooks</strong></dt>
+</dl>
+<dl><dt><strong>slack_first_message</strong></dt>
+</dl>
+<dl><dt><strong>slack_thread_ts</strong></dt>
+</dl>
+<dl><dt><strong>test_results</strong></dt>
+</dl>
+<dl><dt><strong>test_rounds</strong></dt>
+</dl>
+<dl><dt><strong>test_type</strong></dt>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__dict__</strong></dt>
+<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>__all__</strong> = ['TestSuite']</td></tr></table>
+</body></html>

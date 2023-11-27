@@ -39,7 +39,7 @@
 
 <dl><dt><a name="Commands-clusters_list_running"><strong>clusters_list_running</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Lists&nbsp;all&nbsp;running&nbsp;clusters,&nbsp;including&nbsp;their&nbsp;uptime.</tt></dd></dl>
 
-<dl><dt><a name="Commands-clusters_no_manage"><strong>clusters_no_manage</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApi)</dt></dl>
+<dl><dt><a name="Commands-clusters_no_manage"><strong>clusters_no_manage</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApiClient)</dt></dl>
 
 <dl><dt><a name="Commands-clusters_set_single_user"><strong>clusters_set_single_user</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt></dl>
 
@@ -77,21 +77,21 @@
 
 <dl><dt><a name="Commands-stop_all"><strong>stop_all</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Everything:&nbsp;Warehouses,&nbsp;Jobs,&nbsp;DLT,&nbsp;clusters,&nbsp;Warehouses.</tt></dd></dl>
 
-<dl><dt><a name="Commands-universal_setup"><strong>universal_setup</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApi, *, node_type_id: str = None, spark_version: str = None, datasets: List[str] = None, lab_id: str = None, description: str = None, courses: List[str] = None)</dt></dl>
+<dl><dt><a name="Commands-universal_setup"><strong>universal_setup</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApiClient, *, node_type_id: str = None, spark_version: str = None, datasets: List[str] = None, lab_id: str = None, description: str = None, courses: List[str] = None)</dt></dl>
 
 <dl><dt><a name="Commands-users_add_admins"><strong>users_add_admins</strong></a>(admins: List[str])</dt></dl>
 
 <dl><dt><a name="Commands-users_add_azure_principal"><strong>users_add_azure_principal</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Add&nbsp;Doug's&nbsp;Azure&nbsp;Service&nbsp;Principal</tt></dd></dl>
 
-<dl><dt><a name="Commands-users_allow_cluster_create"><strong>users_allow_cluster_create</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApi)</dt></dl>
+<dl><dt><a name="Commands-users_allow_cluster_create"><strong>users_allow_cluster_create</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApiClient)</dt></dl>
 
 <dl><dt><a name="Commands-users_count"><strong>users_count</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Returns&nbsp;a&nbsp;count&nbsp;of&nbsp;all&nbsp;users&nbsp;in&nbsp;the&nbsp;workspace.</tt></dd></dl>
 
 <dl><dt><a name="Commands-users_count_instructors"><strong>users_count_instructors</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt><dd><tt>Returns&nbsp;a&nbsp;count&nbsp;of&nbsp;the&nbsp;number&nbsp;of&nbsp;odl_instructor_*&nbsp;users.</tt></dd></dl>
 
-<dl><dt><a name="Commands-users_disallow_cluster_create"><strong>users_disallow_cluster_create</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApi)</dt></dl>
+<dl><dt><a name="Commands-users_disallow_cluster_create"><strong>users_disallow_cluster_create</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApiClient)</dt></dl>
 
-<dl><dt><a name="Commands-users_disallow_databricks_sql"><strong>users_disallow_databricks_sql</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApi)</dt></dl>
+<dl><dt><a name="Commands-users_disallow_databricks_sql"><strong>users_disallow_databricks_sql</strong></a>(ws: dbacademy.clients.dougrest.client.DatabricksApiClient)</dt></dl>
 
 <dl><dt><a name="Commands-warehouses_count"><strong>warehouses_count</strong></a>(ws: dbacademy.clients.dougrest.accounts.workspaces.Workspace)</dt></dl>
 
@@ -132,8 +132,8 @@ Data descriptors defined here:<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-find_workspace"><strong>find_workspace</strong></a>(workspaces: List[dbacademy.clients.dougrest.client.DatabricksApi], *, name: str = None, url: str = None) -&gt; dbacademy.clients.dougrest.accounts.workspaces.Workspace</dt></dl>
- <dl><dt><a name="-scan_workspaces"><strong>scan_workspaces</strong></a>(function: Callable[[dbacademy.clients.dougrest.accounts.workspaces.Workspace], Any], workspaces: List[dbacademy.clients.dougrest.client.DatabricksApi], *, url: str = None, name: str = None, ignore_connection_errors: bool = False)</dt></dl>
+<td width="100%"><dl><dt><a name="-find_workspace"><strong>find_workspace</strong></a>(workspaces: List[dbacademy.clients.dougrest.client.DatabricksApiClient], *, name: str = None, url: str = None) -&gt; dbacademy.clients.dougrest.accounts.workspaces.Workspace</dt></dl>
+ <dl><dt><a name="-scan_workspaces"><strong>scan_workspaces</strong></a>(function: Callable[[dbacademy.clients.dougrest.accounts.workspaces.Workspace], Any], workspaces: List[dbacademy.clients.dougrest.client.DatabricksApiClient], *, url: str = None, name: str = None, ignore_connection_errors: bool = False)</dt></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
