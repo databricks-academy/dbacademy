@@ -104,6 +104,9 @@ class CommonConfig:
 
         if instance_pool_id is not None:
             extra_params["instance_pool_id"]: validate(instance_pool_id=instance_pool_id).optional.str()
+            assert node_type_id is None, f"""The parameter "node_type_id" should be None when the parameter "instance_pool_id" is specified."""
+        else:
+            extra_params["node_type_id"] = validate(node_type_id=node_type_id).required.str()
 
         if policy_id is not None:
             extra_params["policy_id"] = validate(policy_id=policy_id).required.str()
@@ -117,12 +120,10 @@ class CommonConfig:
             custom_tags["ResourceClass"] = "SingleNode"
             spark_conf["spark.master"] = "local[*]"
             spark_conf["spark.databricks.cluster.profile"] = "singleNode"
-            assert driver_node_type_id is None, f"""driver_node_type_id should be None when num_workers is zero."""
+            assert driver_node_type_id is None, f"""The parameter "driver_node_type_id" should be None when "num_workers" is zero."""
         else:
             # More than one worker so define the driver_node_type_id and if necessary, default it to the node_type_id
             extra_params["driver_node_type_id"] = validate(driver_node_type_id=driver_node_type_id or node_type_id).required.str()
-
-        extra_params["node_type_id"] = validate(node_type_id=node_type_id).required.str()
 
         assert extra_params.get("custom_tags") is None, f"The parameter \"extra_params.custom_tags\" should not be specified directly, use \"custom_tags\" instead."
         assert extra_params.get("spark_conf") is None, f"The parameter \"extra_params.spark_conf\" should not be specified directly, use \"spark_conf\" instead."
