@@ -1,7 +1,7 @@
 __all__ = ["Commands", "scan_workspaces", "find_workspace"]
 
 from typing import Dict, Any, List, Callable, cast, Optional
-from dbacademy.clients.dougrest import DatabricksApi
+from dbacademy.clients.dougrest import DatabricksApiClient
 from dbacademy.clients.dougrest.accounts.workspaces import Workspace
 from dbacademy.clients.rest.common import DatabricksApiException
 
@@ -413,7 +413,7 @@ class Commands(object):
         return [{"cluster_name": c["cluster_name"], "cluster": c} for c in ws.clusters.list()]
 
     @staticmethod
-    def clusters_no_manage(ws: DatabricksApi):
+    def clusters_no_manage(ws: DatabricksApiClient):
         count = 0
         for cluster in ws.clusters.list():
             cluster_id = cluster["cluster_id"]
@@ -538,11 +538,11 @@ class Commands(object):
         return do_add_instructors
 
     @staticmethod
-    def users_allow_cluster_create(ws: DatabricksApi):
+    def users_allow_cluster_create(ws: DatabricksApiClient):
         return ws.scim.groups.users_allow_cluster_create(True, group_name="users")
 
     @staticmethod
-    def users_disallow_cluster_create(ws: DatabricksApi):
+    def users_disallow_cluster_create(ws: DatabricksApiClient):
         changed = False
         for u in ws.users.list():
             entitlements = {e["value"] for e in u.get("entitlements", [])}
@@ -558,7 +558,7 @@ class Commands(object):
         return changed
 
     @staticmethod
-    def users_disallow_databricks_sql(ws: DatabricksApi):
+    def users_disallow_databricks_sql(ws: DatabricksApiClient):
         changed = False
         for u in ws.users.list():
             entitlements = {e["value"] for e in u.get("entitlements", [])}
@@ -613,7 +613,7 @@ class Commands(object):
         return cloud_attributes
 
     @staticmethod
-    def universal_setup(ws: DatabricksApi, *, node_type_id: str = None, spark_version: str = None,
+    def universal_setup(ws: DatabricksApiClient, *, node_type_id: str = None, spark_version: str = None,
                         datasets: List[str] = None, lab_id: str = None, description: str = None,
                         courses: List[str] = None):
 
@@ -928,7 +928,10 @@ class Commands(object):
             all_purpose_policy = ws.clusters.policies.create_or_update("DBAcademy",
                                                                        all_purpose_policy)
             all_purpose_policy_id = all_purpose_policy.get("policy_id")
-            ws.permissions.clusters.policies.update(all_purpose_policy_id, "group_name", "users", "CAN_USE")
+            ws.permissions.clusters.policies.update(all_purpose_policy_id,
+                                                    what="group_name",
+                                                    value="users",
+                                                    permission_level="CAN_USE")
 
             jobs_policy: Dict[str, Any] = {
                 "cluster_type": {
@@ -939,7 +942,10 @@ class Commands(object):
             jobs_policy.update(cluster_policy)
             jobs_policy = ws.clusters.policies.create_or_update("DBAcademy Jobs", jobs_policy)
             jobs_policy_id = jobs_policy.get("policy_id")
-            ws.permissions.clusters.policies.update(jobs_policy_id, "group_name", "users", "CAN_USE")
+            ws.permissions.clusters.policies.update(jobs_policy_id,
+                                                    what="group_name",
+                                                    value="users",
+                                                    permission_level="CAN_USE")
             dlt_policy: Dict[str, Any] = {
                 "cluster_type": {
                     "type": "fixed",
@@ -957,7 +963,10 @@ class Commands(object):
             dlt_policy.update(tags_policy)
             dlt_policy = ws.clusters.policies.create_or_update("DBAcademy DLT", dlt_policy)
             dlt_policy_id = dlt_policy.get("policy_id")
-            ws.permissions.clusters.policies.update(dlt_policy_id, "group_name", "users", "CAN_USE")
+            ws.permissions.clusters.policies.update(dlt_policy_id,
+                                                    what="group_name",
+                                                    value="users",
+                                                    permission_level="CAN_USE")
         return do_policies_create
 
     @staticmethod
@@ -1021,7 +1030,7 @@ class Commands(object):
         return do_add_admins
 
 
-def find_workspace(workspaces: List[DatabricksApi], *, name: str = None, url: str = None) -> Workspace:
+def find_workspace(workspaces: List[DatabricksApiClient], *, name: str = None, url: str = None) -> Workspace:
     workspaces: List[Workspace] = cast(List[Workspace], workspaces)
     if name:
         return next(w for w in workspaces if w["workspace_name"] == name)
@@ -1031,7 +1040,7 @@ def find_workspace(workspaces: List[DatabricksApi], *, name: str = None, url: st
         raise Exception("getWorkspace: must provide workspace name or url")
 
 
-def scan_workspaces(function: Callable[[Workspace], Any], workspaces: List[DatabricksApi], *,
+def scan_workspaces(function: Callable[[Workspace], Any], workspaces: List[DatabricksApiClient], *,
                     url: str = None, name: str = None, ignore_connection_errors: bool = False):
     from requests.exceptions import ConnectionError, HTTPError
     from collections.abc import Mapping, Iterable

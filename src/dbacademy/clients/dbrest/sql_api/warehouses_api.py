@@ -297,7 +297,7 @@ class SqlWarehousesApi(ApiContainer):
 
         tags = dict() if tags is None else tags
 
-        for user in da_client.scim().users().to_users_list(users):
+        for user in da_client.scim.users.to_users_list(users):
             self.create_user_endpoint(user=user, 
                                       naming_template=naming_template, 
                                       naming_params=naming_params,
@@ -337,7 +337,7 @@ class SqlWarehousesApi(ApiContainer):
         
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
-        for endpoint in da_client.sql().warehouses().list():
+        for endpoint in da_client.sql.warehouses().list():
             if endpoint.get("name") == endpoint_name:
                 print(f"Skipping creation of the endpoint \"{endpoint_name}\" for the user \"{username}\":\n - The endpoint already exists\n")
                 return
@@ -357,9 +357,9 @@ class SqlWarehousesApi(ApiContainer):
 
         # Give the user CAN_MANAGE to their new endpoint
         endpoint_id = endpoint.get("id")
-        da_client.permissions().sql().warehouses().update_user(id_value=endpoint_id,
-                                                               username=username,
-                                                               permission_level="CAN_MANAGE")
+        da_client.permissions.sql.warehouses.update_user(id_value=endpoint_id,
+                                                         username=username,
+                                                         permission_level="CAN_MANAGE")
 
     def delete_user_endpoints(self,
                               naming_template: str,
@@ -368,7 +368,7 @@ class SqlWarehousesApi(ApiContainer):
         from dbacademy.clients.dbrest import from_client
         da_client = from_client(self.__client)
 
-        for user in da_client.scim().users().to_users_list(users):
+        for user in da_client.scim.users.to_users_list(users):
             self.delete_user_endpoint(user=user, naming_template=naming_template, naming_params=naming_params)
 
     def delete_user_endpoint(self,
@@ -382,7 +382,7 @@ class SqlWarehousesApi(ApiContainer):
         username = user.get("userName")
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
-        for endpoint in da_client.sql().warehouses().list():
+        for endpoint in da_client.sql.warehouses().list():
             if endpoint.get("name") == endpoint_name:
                 print(f"Deleting the endpoint \"{endpoint_name}\" for the user \"{username}\"")
                 self.delete_by_id(endpoint.get("id"))
@@ -398,7 +398,7 @@ class SqlWarehousesApi(ApiContainer):
         from dbacademy.clients.dbrest import from_client
         da_client = from_client(self.__client)
 
-        for user in da_client.scim().users().to_users_list(users):
+        for user in da_client.scim.users.to_users_list(users):
             self.start_user_endpoint(user=user, naming_template=naming_template, naming_params=naming_params)
 
     def start_user_endpoint(self,
@@ -412,7 +412,7 @@ class SqlWarehousesApi(ApiContainer):
         username = user.get("userName")
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
-        for endpoint in da_client.sql().warehouses().list():
+        for endpoint in da_client.sql.warehouses().list():
             if endpoint.get("name") == endpoint_name:
                 print(f"Starting the endpoint \"{endpoint_name}\" for the user \"{username}\"")
                 self.start(endpoint.get("id"))
@@ -427,7 +427,7 @@ class SqlWarehousesApi(ApiContainer):
         from dbacademy.clients.dbrest import from_client
         da_client = from_client(self.__client)
 
-        for user in da_client.scim().users().to_users_list(users):
+        for user in da_client.scim.users.to_users_list(users):
             self.stop_user_endpoint(user=user, naming_template=naming_template, naming_params=naming_params)
 
     def stop_user_endpoint(self,
@@ -441,7 +441,7 @@ class SqlWarehousesApi(ApiContainer):
         username = user.get("userName")
         endpoint_name = self.to_endpoint_name(user, naming_template, naming_params)
 
-        for endpoint in da_client.sql().warehouses().list():
+        for endpoint in da_client.sql.warehouses().list():
             if endpoint.get("name") == endpoint_name:
                 print(f"Stopping the endpoint \"{endpoint_name}\" for the user \"{username}\"")
                 self.stop(endpoint.get("id"))

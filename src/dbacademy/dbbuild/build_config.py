@@ -241,7 +241,7 @@ class BuildConfig(BuildConfigData):
         # Remove the existing notebooks so that we can recreate them.
         self.notebooks.clear()
 
-        entities = self.client.workspace().ls(self.source_dir, recursive=True)
+        entities = self.client.workspace.ls(self.source_dir, recursive=True)
 
         if entities is None:
             raise Exception(f"The specified source directory ({self.source_dir}) does not exist.")

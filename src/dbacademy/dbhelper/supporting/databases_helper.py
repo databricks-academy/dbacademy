@@ -246,7 +246,7 @@ class DatabasesHelper:
         job_name = f"""DBAcademy {notebook_name.split("/")[-1]}"""
         print(f"Starting job \"{job_name}\" to update catalog and schema specific permissions")
 
-        self.__client.jobs().delete_by_name(job_name, success_only=False)
+        self.__client.jobs.delete_by_name(job_name, skip_if_not_successful=False)
 
         notebook_path = f"{dbgems.get_notebook_dir()}/{notebook_name}"
 
@@ -286,18 +286,17 @@ class DatabasesHelper:
         new_cluster = params.get("tasks")[0].get("new_cluster")
         new_cluster["spark_version"] = spark_version
 
-        if self.__client.clusters().get_current_instance_pool_id() is not None:
-            new_cluster["instance_pool_id"] = self.__client.clusters().get_current_instance_pool_id()
+        if self.__client.clusters.get_current_instance_pool_id() is not None:
+            new_cluster["instance_pool_id"] = self.__client.clusters.get_current_instance_pool_id()
         else:
-            new_cluster["node_type_id"] = self.__client.clusters().get_current_node_type_id()
+            new_cluster["node_type_id"] = self.__client.clusters.get_current_node_type_id()
             if Cloud.current_cloud().is_aws:
                 aws_attributes: Dict[str, str] = {"availability": "ON_DEMAND"}
                 new_cluster["aws_attributes"] = aws_attributes
 
-        create_response = self.__client.jobs().create(params)
-        job_id = create_response.get("job_id")
+        job_id = self.__client.jobs.create_from_dict(params)
 
-        run_response = self.__client.jobs().run_now(job_id)
+        run_response = self.__client.jobs.run_now(job_id)
         run_id = run_response.get("run_id")
 
         print(f"| See {dbgems.get_workspace_url()}#job/{job_id}/run/{run_id}")

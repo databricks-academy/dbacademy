@@ -3,10 +3,10 @@ __all__ = ["dbrest_factory", "dougrest_factory"]
 from functools import cache
 from dbacademy.common import validate
 from typing import Dict, Generic, Type, TypeVar, Union, Optional
-from dbacademy.clients.dougrest import AccountsApi, DatabricksApi
+from dbacademy.clients.dougrest import AccountsApi, DatabricksApiClient
 from dbacademy.clients.dbrest import DBAcademyRestClient
 
-ApiType = TypeVar('ApiType', bound=Union[DatabricksApi, DBAcademyRestClient])
+ApiType = TypeVar('ApiType', bound=Union[DatabricksApiClient, DBAcademyRestClient])
 
 
 class ApiClientFactory(Generic[ApiType]):
@@ -77,8 +77,8 @@ class ApiClientFactory(Generic[ApiType]):
 
         hostname = ApiClientFactory.extract_hostname(hostname)
         endpoint = f"https://{hostname}"
-        if self.api_type == DatabricksApi:
-            return DatabricksApi(hostname, token=token)
+        if self.api_type == DatabricksApiClient:
+            return DatabricksApiClient(hostname, token=token)
         elif self.api_type == DBAcademyRestClient:
             return dbrest.from_token(token, endpoint)
         else:
@@ -89,8 +89,8 @@ class ApiClientFactory(Generic[ApiType]):
 
         hostname = ApiClientFactory.extract_hostname(hostname)
         endpoint = f"https://{hostname}"
-        if self.api_type == DatabricksApi:
-            return DatabricksApi(hostname=hostname, username=username, password=password)
+        if self.api_type == DatabricksApiClient:
+            return DatabricksApiClient(hostname=hostname, username=username, password=password)
         elif self.api_type == DBAcademyRestClient:
             return dbrest.from_username(endpoint=endpoint, username=username, password=password)
         else:
@@ -216,4 +216,4 @@ class ApiClientFactory(Generic[ApiType]):
 
 
 dbrest_factory = ApiClientFactory[DBAcademyRestClient](DBAcademyRestClient)
-dougrest_factory = ApiClientFactory[DatabricksApi](DatabricksApi)
+dougrest_factory = ApiClientFactory[DatabricksApiClient](DatabricksApiClient)

@@ -107,9 +107,9 @@ class ArtifactValidator:
         print(f"| Target:    {dbc_target_dir}")
         print(f"| Notebooks: {dbgems.get_workspace_url()}#workspace{dbc_target_dir}")
 
-        self.build_config.client.workspace.delete_path(dbc_target_dir)
+        self.build_config.client.workspace.delete_path(dbc_target_dir, recursive=True)
         self.build_config.client.workspace.mkdirs(dbc_target_dir)
-        self.build_config.client.workspace.import_dbc_files(dbc_target_dir, source_url=dbc_url)
+        self.build_config.client.workspace.import_dbc_files(path=dbc_target_dir, source_url=dbc_url, overwrite=True)
 
         return self.__validate_version_info(version=version, dbc_dir=dbc_target_dir)
 

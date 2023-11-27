@@ -31,7 +31,7 @@ class BuildUtils:
         for path in [p.get("path") for p in client.workspace.ls(target_dir) if p.get("path") not in keepers]:
             if verbose:
                 print(f"...{path}")
-            client.workspace().delete_path(path)
+            client.workspace.delete_path(path, recursive=True)
 
     # noinspection PyUnusedLocal
     @classmethod
@@ -71,11 +71,11 @@ class BuildUtils:
         print(f"{prefix}| Directory: {directory}")
         print(f"{prefix}| Repo URL:  {repo_url}")
 
-        status = client.workspace().get_status(directory)
+        status = client.workspace.get_status(directory)
 
         if status is not None:
             target_repo_id = status["object_id"]
-            client.repos().delete_by_id(target_repo_id)
+            client.repos.delete_by_id(target_repo_id)
 
         # Re-create the repo to progress in testing
         response = client.repos.create(path=directory, url=repo_url)
@@ -143,7 +143,7 @@ class BuildUtils:
 
         start = dbgems.clock_start()
         print(f"Indexing \"{repo_dir}\"", end="...")
-        notebooks = client.workspace().ls(repo_dir, recursive=True)
+        notebooks = client.workspace.ls(repo_dir, recursive=True)
         assert notebooks is not None, f"No notebooks found for the path {repo_dir}"
 
         results: Dict[str, Dict[str, str]] = {}

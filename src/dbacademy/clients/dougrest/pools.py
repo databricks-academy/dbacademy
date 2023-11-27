@@ -1,14 +1,16 @@
 from typing import Dict, List
 
-from dbacademy.clients.dougrest import DatabricksApi
-from dbacademy.clients.rest.common import HttpStatusCodes, Item, ItemId
+from dbacademy.clients.rest.common import HttpStatusCodes, Item, ItemId, ApiClient
 from dbacademy.clients.rest.crud import CRUD
 
 
 class Pools(CRUD):
-    def __init__(self, databricks: DatabricksApi):
+    def __init__(self, databricks: ApiClient):
         super().__init__(databricks, "/api/2.0/instance-pools", "instance_pool")
-        self.databricks = databricks
+
+        from dbacademy.common import validate
+        from dbacademy.clients.dougrest import DatabricksApiClient
+        self.databricks: DatabricksApiClient = validate(databricks=databricks).required.as_type(DatabricksApiClient)
 
     def _list(self, *, _expected: HttpStatusCodes = None) -> List[Item]:
         result = self.databricks.api("GET", f"{self.path}/list")

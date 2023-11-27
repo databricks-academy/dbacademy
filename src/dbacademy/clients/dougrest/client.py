@@ -1,11 +1,21 @@
-from __future__ import annotations
+__all__ = ["DatabricksApiClient"]
+
+from typing import List
 
 from dbacademy.clients.rest.common import *
+from dbacademy.clients.dougrest.clusters import Clusters
+from dbacademy.clients.dougrest.groups import Groups
+from dbacademy.clients.dougrest.jobs import Jobs
+from dbacademy.clients.dougrest.mlflow import MLFlow
+from dbacademy.clients.dougrest.pools import Pools
+from dbacademy.clients.dougrest.repos import Repos
+from dbacademy.clients.dougrest.scim import SCIM, Users
+from dbacademy.clients.dougrest.sql import Sql
+from dbacademy.clients.dougrest.workspace import Workspace
+from dbacademy.clients.dbrest.permissions_api import PermissionsApi
 
-__all__ = ["DatabricksApi", "DatabricksApiException"]
 
-
-class DatabricksApi(dict, ApiClient):
+class DatabricksApiClient(dict, ApiClient):
 
     default_machine_types = {
         "AWS": "i4.xlarge",
@@ -17,14 +27,14 @@ class DatabricksApi(dict, ApiClient):
         from dbacademy import dbgems
 
         if hostname:
-            url = f'https://{hostname}'
+            self.__url = f'https://{hostname}'
         else:
-            url = dbgems.get_notebooks_api_endpoint()
+            self.__url = dbgems.get_notebooks_api_endpoint()
 
         if not any((authorization_header, token, password)):
             token = dbgems.get_notebooks_api_token()
 
-        super(dict, self).__init__(url,
+        super(dict, self).__init__(self.__url,
                                    token=token,
                                    username=username,
                                    password=password,
@@ -36,48 +46,81 @@ class DatabricksApi(dict, ApiClient):
         self["deployment_name"] = deployment_name
 
         if hostname.endswith(".cloud.databricks.com"):
-            self.cloud = "AWS"
+            self.__cloud = "AWS"
         elif hostname.endswith(".gcp.databricks.com"):
-            self.cloud = "GCP"
+            self.__cloud = "GCP"
         elif hostname.endswith(".azuredatabricks.net"):
-            self.cloud = "Azure"
+            self.__cloud = "Azure"
         else:
             raise ValueError(f"Unknown cloud for hostname: {hostname}")
 
-        self.default_machine_type = DatabricksApi.default_machine_types[self.cloud]
-        self.default_preloaded_versions = ["11.3.x-cpu-ml-scala2.12", "11.3.x-cpu-scala2.12"]
-        self.default_spark_version = self.default_preloaded_versions[0]
+        self.__default_machine_type = self.default_machine_types[self.cloud]
+        self.__default_preloaded_versions = ["11.3.x-cpu-ml-scala2.12", "11.3.x-cpu-scala2.12"]
+        self.__default_spark_version = self.default_preloaded_versions[0]
 
-        from dbacademy.clients.dougrest.clusters import Clusters
-        self.clusters = Clusters(self)
+    @property
+    def cloud(self) -> str:
+        return self.__cloud
 
-        from dbacademy.clients.dougrest.groups import Groups
-        self.groups = Groups(self)
+    @property
+    def default_machine_type(self) -> str:
+        return self.__default_machine_type
 
-        from dbacademy.clients.dougrest.jobs import Jobs
-        self.jobs = Jobs(self)
+    @property
+    def default_preloaded_versions(self) -> List[str]:
+        return self.__default_preloaded_versions
 
-        from dbacademy.clients.dougrest.mlflow import MLFlow
-        self.mlflow = MLFlow(self)
+    @property
+    def default_spark_version(self) -> str:
+        return self.__default_spark_version
 
-        from dbacademy.clients.dougrest.pools import Pools
-        self.pools = Pools(self)
+    @property
+    def url(self) -> str:
+        return self.__url
 
-        from dbacademy.clients.dougrest.repos import Repos
-        self.repos = Repos(self)
+    @property
+    def clusters(self) -> Clusters:
+        return Clusters(self)
 
-        from dbacademy.clients.dougrest.scim import SCIM, Users
-        self.scim = SCIM(self)
-        self.users = Users(self)
+    @property
+    def groups(self) -> Groups:
+        return Groups(self)
 
-        from dbacademy.clients.dougrest.sql import Sql
-        self.sql = Sql(self)
+    @property
+    def jobs(self) -> Jobs:
+        return Jobs(self)
 
-        from dbacademy.clients.dougrest.workspace import Workspace
-        self.workspace = Workspace(self)
+    @property
+    def mlflow(self) -> MLFlow:
+        return MLFlow(self)
 
-        from dbacademy.clients.dbrest.permissions_api import PermissionsApi
+    @property
+    def pools(self) -> Pools:
+        return Pools(self)
+
+    @property
+    def repos(self) -> Repos:
+        return Repos(self)
+
+    @property
+    def scim(self) -> SCIM:
+        return SCIM(self)
+
+    @property
+    def users(self) -> Users:
+        return Users(self)
+
+    @property
+    def sql(self) -> Sql:
+        return Sql(self)
+
+    @property
+    def workspace(self) -> Workspace:
+        return Workspace(self)
+
+    @property
+    def permissions(self) -> PermissionsApi:
         from dbacademy.clients import dbrest
 
         dbrest_client = dbrest.from_client(client=self)
-        self.permissions = PermissionsApi(client=dbrest_client)
+        return PermissionsApi(client=dbrest_client)

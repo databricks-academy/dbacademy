@@ -252,7 +252,7 @@ class BuildConfigData:
         :return: a dictionary of the cluster's properties
         """
         if self.__current_cluster is None:
-            self.__current_cluster = self.client.clusters().get_current()
+            self.__current_cluster = self.client.clusters.get_current()
 
         return self.__current_cluster
 

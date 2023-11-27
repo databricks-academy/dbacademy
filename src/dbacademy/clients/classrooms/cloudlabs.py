@@ -9,7 +9,7 @@ import re
 import urllib.parse
 from html.parser import HTMLParser
 from multiprocessing.pool import ThreadPool
-from dbacademy.clients.dougrest import DatabricksApi
+from dbacademy.clients.dougrest import DatabricksApiClient
 
 
 # TODO remove unused parameter
@@ -122,7 +122,7 @@ def lookup_workspaces(lab):
         row = dict(zip(header, row))
         row["Workspace ID"] = row["Id"]
         del row["Id"]
-        row["API"] = DatabricksApi(hostname=row["Url"][8:], token=row["Token"], deployment_name=lab["Title"])
+        row["API"] = DatabricksApiClient(hostname=row["Url"][8:], token=row["Token"], deployment_name=lab["Title"])
         row["Long Title"] = lab["Long Title"]
         row["Cloud"] = lab["Cloud"]
         workspaces.append(row)

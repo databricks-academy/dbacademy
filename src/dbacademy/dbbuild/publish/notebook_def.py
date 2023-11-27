@@ -425,10 +425,10 @@ class NotebookDef(NotebookDefData):
 
         source_notebook_path = f"{source_dir}/{self.path}"
 
-        source_info = self.client.workspace().get_status(source_notebook_path)
+        source_info = self.client.workspace.get_status(source_notebook_path)
         language = source_info["language"].lower()
 
-        raw_source = self.client.workspace().export_notebook(source_notebook_path)
+        raw_source = self.client.workspace.export_notebook(source_notebook_path)
 
         cmd_delim = self.get_cmd_delim(language)
         commands = raw_source.split(cmd_delim)
@@ -606,10 +606,10 @@ For more current information, please see <a href="https://files.training.databri
         print(f".../{self.path}")
 
         source_notebook_path = f"{source_dir}/{self.path}"
-        source_info = self.client.workspace().get_status(source_notebook_path)
+        source_info = self.client.workspace.get_status(source_notebook_path)
         language = source_info["language"].lower()
 
-        raw_source = self.client.workspace().export_notebook(source_notebook_path)
+        raw_source = self.client.workspace.export_notebook(source_notebook_path)
 
         state = StateVariables()
         i18n_source = self.load_i18n_source(i18n_resources_dir)
@@ -867,10 +867,11 @@ For more current information, please see <a href="https://files.training.databri
         self.assert_no_errors(print_warnings)
 
         parent_dir = "/".join(target_path.split("/")[0:-1])
-        self.client.workspace().mkdirs(parent_dir)
-        self.client.workspace().import_notebook(language=language.upper(),
-                                                notebook_path=target_path,
-                                                content=final_source)
+        self.client.workspace.mkdirs(parent_dir)
+        self.client.workspace.import_notebook(language=language.upper(),
+                                              path=target_path,
+                                              content=final_source,
+                                              overwrite=True)
 
     def clean_todo_cell(self, source_language, command, i):
         new_command = ""

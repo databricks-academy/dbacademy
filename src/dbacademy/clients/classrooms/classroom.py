@@ -1,7 +1,7 @@
 __all__ = ["Classroom"]
 
 import re
-from dbacademy.clients.dougrest import DatabricksApi
+from dbacademy.clients.dougrest import DatabricksApiClient
 
 
 class Classroom(object):
@@ -13,7 +13,7 @@ class Classroom(object):
 
         >>> classroom=Classroom(num_students=50, class_number=1360)
         """
-        self.databricks = databricks_api or DatabricksApi(hostname=hostname, token=access_token)
+        self.databricks = databricks_api or DatabricksApiClient(hostname=hostname, token=access_token)
         self.num_students = num_students
         if not class_number and not username_pattern:
             raise Exception("Either the class_number or username_pattern must be specified.")
@@ -135,7 +135,7 @@ class Classroom(object):
             user_name = self.username_pattern.format(student_number=i)
             if user_name in existing_users:
                 continue
-            self.databricks.users.create(user_name, allow_cluster_create)
+            self.databricks.users.create(user_name, allow_cluster_create=allow_cluster_create)
             if i == 0:  # User 0 gets admin rights.
                 self.databricks.groups.add_member("admins", user_name=user_name)
 

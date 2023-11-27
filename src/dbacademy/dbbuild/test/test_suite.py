@@ -54,7 +54,7 @@ class TestSuite:
 
                 self.test_rounds.get(notebook.test_round).append(test_instance)
 
-                if self.client.workspace().get_status(test_instance.notebook_path) is None:
+                if self.client.workspace.get_status(test_instance.notebook_path) is None:
                     raise Exception(f"Notebook not found: {test_instance.notebook_path}")
 
         url = f"{dbgems.get_workspace_url()}#job/list/search/dbacademy.course:{self.build_name}"

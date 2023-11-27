@@ -186,11 +186,6 @@ class DBAcademyRestClient(ApiClient):
         return SecretsApi(self)
 
 
-# def none_reference() -> Optional[DBAcademyRestClient]:
-#     """Returns a None instance of DBAcademyRestClient, used to set an initial value to None while retaining the type information."""
-#     return None
-
-
 def __load(name: str, value: str, scope: str) -> str:
     import os
 

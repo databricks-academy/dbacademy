@@ -460,7 +460,10 @@ class WorkspaceSetup:
                     else:
                         local_file_path = "/download.dbc"
 
-                    trio.client.workspace.import_dbc_files(install_dir, download_url, local_file_path=local_file_path)
+                    trio.client.workspace.import_dbc_files(path=install_dir,
+                                                           source_url=download_url,
+                                                           local_file_path=local_file_path,
+                                                           overwrite=True)
                     print(f" - Installed.")
 
     @classmethod
@@ -481,7 +484,7 @@ class WorkspaceSetup:
                     install_dir = f"/Users/{username}/{trio.workspace_config.courseware_subdirectory}/{course}"
 
                 print(install_dir)
-                trio.client.workspace.delete_path(install_dir)
+                trio.client.workspace.delete_path(install_dir, recursive=True)
 
     @classmethod
     def __enable_features(cls, trio: WorkspaceTrio):

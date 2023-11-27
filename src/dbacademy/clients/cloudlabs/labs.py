@@ -2,7 +2,7 @@ __all__ = ["Lab", "Labs"]
 
 from typing import List, Dict, Any, Union, Iterable
 from dbacademy.clients.cloudlabs import Tenant
-from dbacademy.clients.dougrest import DatabricksApi
+from dbacademy.clients.dougrest import DatabricksApiClient
 from dbacademy.clients.dougrest.workspace import Workspace
 from dbacademy.clients.rest.common import ApiContainer, DatabricksApiException
 
@@ -83,6 +83,6 @@ class Labs(ApiContainer):
         for row in rows[1:]:
             assert len(row) == len(header)
             row = dict(zip(header, row))
-            workspace = DatabricksApi(hostname=row["Url"][8:], token=row["Token"], deployment_name=lab["Title"])
+            workspace = DatabricksApiClient(hostname=row["Url"][8:], token=row["Token"], deployment_name=lab["Title"])
             workspaces.append(workspace)
         return workspaces

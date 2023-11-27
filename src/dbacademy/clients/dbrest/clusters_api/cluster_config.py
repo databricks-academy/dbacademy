@@ -109,20 +109,14 @@ class CommonConfig:
             extra_params["single_user_name"] = validate(single_user_name=single_user_name).required.str()
             extra_params["data_security_mode"] = "SINGLE_USER"
 
+        extra_params["node_type_id"] = validate(node_type_id=node_type_id).required.str()
+        extra_params["driver_node_type_id"] = validate(driver_node_type_id=driver_node_type_id or node_type_id).required.str()
+
         if num_workers == 0:
             # Don't use "local[*, 4] because the node type might have more cores
             custom_tags["ResourceClass"] = "SingleNode"
             spark_conf["spark.master"] = "local[*]"
             spark_conf["spark.databricks.cluster.profile"] = "singleNode"
-
-            # The worker's node type must not be specified when num_workers = 0
-            assert node_type_id is None, f"""The parameter 'node_type_id' must be None when 'num_workers' == 0."""
-        else:
-            # The worker's node type is required when num_workers > 0
-            extra_params["node_type_id"] = validate(node_type_id=node_type_id).required.str()
-
-        # The driver's node type is always required
-        extra_params["driver_node_type_id"] = validate(driver_node_type_id=driver_node_type_id).required.str()
 
         assert extra_params.get("custom_tags") is None, f"The parameter \"extra_params.custom_tags\" should not be specified directly, use \"custom_tags\" instead."
         assert extra_params.get("spark_conf") is None, f"The parameter \"extra_params.spark_conf\" should not be specified directly, use \"spark_conf\" instead."
@@ -192,11 +186,11 @@ class ClusterConfig(CommonConfig):
                  cloud: Union[str, Cloud],
                  cluster_name: Optional[str],
                  spark_version: str,
+                 num_workers: int,
                  node_type_id: Optional[str] = None,
                  driver_node_type_id: Optional[str] = None,
                  instance_pool_id: Optional[str] = None,
                  policy_id: Optional[str] = None,
-                 num_workers: int = 0,
                  autotermination_minutes: int = 120,
                  single_user_name: Optional[str] = None,
                  availability: Optional[Union[str, Availability]] = None,
@@ -231,11 +225,11 @@ class JobClusterConfig(CommonConfig):
                  cloud: Union[str, Cloud],
                  # cluster_name: Optional[str],
                  spark_version: str,
+                 num_workers: int,
                  node_type_id: Optional[str] = None,
                  driver_node_type_id: Optional[str] = None,
                  instance_pool_id: Optional[str] = None,
                  policy_id: Optional[str] = None,
-                 num_workers: int = 0,
                  autotermination_minutes: int = 120,
                  single_user_name: Optional[str] = None,
                  availability: Optional[Union[str, Availability]] = None,

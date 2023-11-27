@@ -4,17 +4,40 @@ This was moved out of dbgems because dbgems has a dependency on pyspark.
 """
 from __future__ import annotations
 
-__all__ = ["deprecation_log_level", "deprecated", "overrides", "print_title", "print_warning", "CachedStaticProperty", "clean_string", "load_databricks_cfg", "Cloud", "validate", "ValidationError"]
+__all__ = ["deprecation_log_level", "deprecated", "overrides", "print_title", "print_warning", "CachedStaticProperty", "clean_string", "load_databricks_cfg", "Cloud", "validate", "ValidationError", "combine_var_args"]
 
-from typing import Callable
+from typing import Callable, Any, TypeVar, List, Iterable, Tuple, Dict
 from dbacademy.common.cloud import Cloud
 from dbacademy.common.validator import Validator, ValidationError
 
 deprecation_log_level = "error"
+ParamType = TypeVar("ParamType")
 
 
 def validate(**kwargs) -> Validator:
     return Validator(**kwargs)
+
+
+def combine_var_args(first: Any, others: Tuple) -> List[Any]:
+    values = list()
+
+    if isinstance(first, str):
+        # Process strings because they are iterable.
+        values.append(first)
+    elif isinstance(first, Dict):
+        # Processes all dictionaries as if they are keys only.
+        values.extend(first.keys())
+    elif isinstance(first, Iterable):
+        # Processes all iterables next.
+        values.extend(first)
+    else:
+        # All other values should be singletons.
+        values.append(first)
+
+    # Add all the "other" values
+    values.extend(others)
+
+    return values
 
 
 def print_title(title: str, divider: str = "-", length: int = 100) -> None:

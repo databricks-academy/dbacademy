@@ -1,5 +1,6 @@
 from typing import Dict, Any
 
+from dbacademy.clients.dbrest.cluster_policies_api import ClustersPolicyApi
 # from dbacademy.clients.dbrest.cluster_policies import ClustersPolicyApi
 from dbacademy.clients.rest.common import ApiContainer, IfExists, DatabricksApiException
 
@@ -236,3 +237,10 @@ class Clusters(ApiContainer):
                                    ]
         }
         return self.databricks.api("PATCH", f"/api/2.0/preview/permissions/clusters/{cluster_id}", data)
+
+    @property
+    def policies(self) -> ClustersPolicyApi:
+        from dbacademy.clients import dbrest
+
+        dbrest_client = dbrest.from_client(client=self.databricks)
+        return ClustersPolicyApi(client=dbrest_client)

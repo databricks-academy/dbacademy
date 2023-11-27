@@ -245,7 +245,7 @@ class Publisher:
                 print(f"              {path}")
 
         # Now that we backed up the version-info, we can delete everything.
-        target_status = self.build_config.client.workspace().get_status(self.target_dir)
+        target_status = self.build_config.client.workspace.get_status(self.target_dir)
         if target_status is not None:
             BuildUtils.print_if(verbose, "-" * 80)
             BuildUtils.clean_target_dir(self.build_config.client, self.target_dir, verbose)

@@ -72,19 +72,19 @@ class Translator:
                                            "Most notably, moving GUIDs from %md commands into the title.\n"
                                            "The results can be validated by comparing diffs while committing."))
 
-        source_files = [n.get("path") for n in self.build_config.client.workspace().ls(source_dir, True)]
+        source_files = [n.get("path") for n in self.build_config.client.workspace.ls(source_dir, recursive=True)]
 
         for source_notebook_path in source_files:
 
             print("=" * 100)
             print(f"Processing {source_notebook_path}")
 
-            source_info = self.build_config.client.workspace().get_status(source_notebook_path)
+            source_info = self.build_config.client.workspace.get_status(source_notebook_path)
             language = source_info.get("language")
             cmd_delim = NotebookDef.get_cmd_delim(language)
             cm = NotebookDef.get_comment_marker(language)
 
-            raw_source = self.build_config.client.workspace().export_notebook(source_notebook_path)
+            raw_source = self.build_config.client.workspace.export_notebook(source_notebook_path)
             raw_lines = raw_source.split("\n")
 
             assert raw_lines[0] == f"{cm} {dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}", f"""Expected line zero to be "{dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}"."""
@@ -152,9 +152,10 @@ class Translator:
             new_source = f"{cm} {dbb_constants.NOTEBOOKS.DATABRICKS_NOTEBOOK_SOURCE}\n"
             new_source += f"\n{cmd_delim}\n".join(new_commands)
 
-            self.build_config.client.workspace().import_notebook(language=language.upper(),
-                                                                 notebook_path=source_notebook_path,
-                                                                 content=new_source)
+            self.build_config.client.workspace.import_notebook(language=language.upper(),
+                                                               path=source_notebook_path,
+                                                               content=new_source,
+                                                               overwrite=True)
             print()
 
     def __select_i18n_language(self, source_repo: str):
@@ -162,7 +163,7 @@ class Translator:
 
         self.resources_folder = f"{source_repo}/Resources"
 
-        resources = self.build_config.client.workspace().ls(self.resources_folder) or list()
+        resources = self.build_config.client.workspace.ls(self.resources_folder) or list()
         language_options = [r.get("path").split("/")[-1] for r in resources]
         language_options = [p for p in language_options if not p.startswith("english-") and not p.startswith("_")]
         language_options.sort()
@@ -439,12 +440,12 @@ class Translator:
             source_notebook_path = f"{self.source_dir}/{file}"
             target_notebook_path = f"{self.target_dir}/{file}"
 
-            source_info = self.build_config.client.workspace().get_status(source_notebook_path)
+            source_info = self.build_config.client.workspace.get_status(source_notebook_path)
             language = source_info["language"].lower()
             cmd_delim = NotebookDef.get_cmd_delim(language)
             cm = NotebookDef.get_comment_marker(language)
 
-            raw_source = self.build_config.client.workspace().export_notebook(source_notebook_path)
+            raw_source = self.build_config.client.workspace.export_notebook(source_notebook_path)
             raw_lines = raw_source.split("\n")
             header = raw_lines.pop(0)
             source = "\n".join(raw_lines)
@@ -452,7 +453,7 @@ class Translator:
             if file.startswith("Includes/"):
                 # Write the original notebook to the target directory
                 self.build_config.client.workspace.import_notebook(language=language.upper(),
-                                                                   notebook_path=target_notebook_path,
+                                                                   path=target_notebook_path,
                                                                    content=raw_source,
                                                                    overwrite=True)
                 continue
@@ -495,7 +496,7 @@ class Translator:
 
             # Write the new notebook to the target directory
             self.build_config.client.workspace.import_notebook(language=language.upper(),
-                                                               notebook_path=target_notebook_path,
+                                                               path=target_notebook_path,
                                                                content=new_source,
                                                                overwrite=True)
         self.__generated_notebooks = True

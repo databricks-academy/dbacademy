@@ -1,37 +1,31 @@
 __all__ = ["WorkspaceConfigApi"]
+# Code Review: JDP on 11-26-2023
 
-from typing import Dict, Any
+from typing import Dict, Any, Union, List, Iterable
+from dbacademy.common import validate
 from dbacademy.clients.rest.common import ApiClient, ApiContainer
 
 
 class WorkspaceConfigApi(ApiContainer):
+
     def __init__(self, client: ApiClient):
         from dbacademy.common import validate
 
         self.__client = validate(client=client).required.as_type(ApiClient)
-        self.base_url = f"{self.__client.endpoint}/api/2.0/workspace-conf"
+        self.__base_url = f"{self.__client.endpoint}/api/2.0/workspace-conf"
 
-    def get_config(self, *property_names) -> Dict[str, Any]:
-        properties = list()
+    def get_config(self, property_names: Union[str, Iterable[str]], *and_property_names: str) -> Dict[str, Any]:
+        from dbacademy.common import combine_var_args
 
-        for property_name in property_names:
-            if type(property_name) == type({}.keys()):
-                properties.extend(list(property_name))
-            elif type(property_name) == list:
-                properties.extend(property_name)
-            else:
-                properties.append(str(property_name))
-
-        keys = ",".join(properties)
-        return self.__client.api("GET", self.base_url, keys=keys)
+        properties: List[str] = combine_var_args(property_names, and_property_names)
+        properties: List[str] = validate(properties=properties).required.list(str)
+        return self.__client.api("GET", self.__base_url, keys=",".join(properties))
 
     def patch_config(self, config: Dict[str, Any]) -> None:
 
-        params = dict()
-        for key, value in config.items():
-            if type(value) == bool:
-                value = str(value).lower()
-            params[key] = str(value)
+        params: Dict[str, str] = dict()
 
-        self.__client.api("PATCH", self.base_url, _expected=204, _data=params)
-        return None
+        for key, value in validate(config=config).required.dict(str).items():
+            params[key] = str(value).lower()
+
+        self.__client.api("PATCH", self.__base_url, _expected=204, _data=params)

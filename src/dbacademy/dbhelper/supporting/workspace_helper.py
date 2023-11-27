@@ -166,7 +166,7 @@ class WorkspaceHelper:
                     install_dir = f"/Users/{username}/{subdirectory}/{course}"
 
                 print(install_dir)
-                self.__client.workspace.delete_path(install_dir)
+                self.__client.workspace.delete_path(install_dir, recursive=True)
 
             print("-" * 80)
 
@@ -199,7 +199,9 @@ class WorkspaceHelper:
                     #     path = file.get("path")
                     #     print(f" - {path}")
                 else:
-                    self.__client.workspace.import_dbc_files(install_dir, download_url)
+                    self.__client.workspace.import_dbc_files(path=install_dir,
+                                                             source_url=download_url,
+                                                             overwrite=True)
                     print(f" - Installed.")
 
             print("-" * 80)
@@ -306,7 +308,7 @@ class WorkspaceHelper:
         lesson_config = validate(lesson_config=lesson_config).required.as_type(LessonConfig)
 
         if self._usernames is None:
-            users = self.__client.scim().users().list()
+            users = self.__client.scim.users.list()
             self._usernames = [r.get("userName") for r in users]
             self._usernames.sort()
 

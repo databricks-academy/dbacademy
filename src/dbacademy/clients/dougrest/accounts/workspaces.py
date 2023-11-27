@@ -1,10 +1,10 @@
 __all__ = ["Workspace", "Workspaces", "STATUS_FAILED", "STATUS_PROVISIONING", "STATUS_UNKNOWN"]
 
 from typing import Any, Type, Dict
-from dbacademy.clients.dougrest.client import DatabricksApi, DatabricksApiException
+from dbacademy.clients.dougrest.client import DatabricksApiClient
 from dbacademy.clients.dougrest.accounts import AccountsApi
 from dbacademy.common import overrides
-from dbacademy.clients.rest.common import HttpMethod, HttpReturnType, HttpStatusCodes, IfExists, IfNotExists
+from dbacademy.clients.rest.common import HttpMethod, HttpReturnType, HttpStatusCodes, IfExists, IfNotExists, DatabricksApiException
 from dbacademy.clients.dougrest.accounts.crud import AccountsCRUD
 
 STATUS_FAILED = "FAILED"
@@ -13,7 +13,7 @@ STATUS_UNKNOWN = "UNKNOWN"
 STATUS_PROVISIONING = "PROVISIONING"
 
 
-class Workspace(DatabricksApi):
+class Workspace(DatabricksApiClient):
 
     def __init__(self, data_dict, accounts_api: AccountsApi):
         hostname = data_dict.get("deployment_name")

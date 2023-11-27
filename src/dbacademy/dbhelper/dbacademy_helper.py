@@ -732,7 +732,7 @@ class DBAcademyHelper:
         :return: None
         """
 
-        self.client.jobs().delete_by_name(job_name, success_only=False)
+        self.client.jobs.delete_by_name(job_name, skip_if_not_successful=False)
 
         params = {
             "name": job_name,
@@ -771,17 +771,16 @@ class DBAcademyHelper:
             ],
         }
         cluster_params = params.get("tasks")[0].get("new_cluster")
-        cluster_params["spark_version"] = self.client.clusters().get_current_spark_version()
+        cluster_params["spark_version"] = self.client.clusters.get_current_spark_version()
 
-        if self.client.clusters().get_current_instance_pool_id() is not None:
-            cluster_params["instance_pool_id"] = self.client.clusters().get_current_instance_pool_id()
+        if self.client.clusters.get_current_instance_pool_id() is not None:
+            cluster_params["instance_pool_id"] = self.client.clusters.get_current_instance_pool_id()
         else:
-            cluster_params["node_type_id"] = self.client.clusters().get_current_node_type_id()
+            cluster_params["node_type_id"] = self.client.clusters.get_current_node_type_id()
 
-        create_response = self.client.jobs().create(params)
-        job_id = create_response.get("job_id")
+        job_id = self.client.jobs.create_from_dict(params)
 
-        run_response = self.client.jobs().run_now(job_id)
+        run_response = self.client.jobs.run_now(job_id)
         run_id = run_response.get("run_id")
 
         final_response = self.client.runs.wait_for(run_id)
@@ -789,7 +788,7 @@ class DBAcademyHelper:
         final_state = final_response.get("state").get("result_state")
         assert final_state == "SUCCESS", f"Expected the final state to be SUCCESS, found {final_state}"
 
-        self.client.jobs().delete_by_name(job_name, success_only=False)
+        self.client.jobs.delete_by_name(job_name, skip_if_not_successful=False)
 
         print()
         print("Update completed successfully.")
