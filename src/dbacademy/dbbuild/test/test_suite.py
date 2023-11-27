@@ -61,7 +61,7 @@ class TestSuite:
         print(f"Test Suite: {url}")
 
         # Delete all jobs, even those that were successful
-        self.client.jobs.delete_by_name(job_names=self.get_all_job_names(), success_only=False)
+        self.client.jobs.delete_by_name(job_names=self.get_all_job_names(), skip_if_not_successful=False)
         print()
 
     @property
@@ -124,7 +124,7 @@ class TestSuite:
             print(f"Skipping deletion of all jobs: TestSuite.keep_success == {self.keep_success}")
         else:
             # Delete all successful jobs, keeping those jobs that failed
-            self.client.jobs.delete_by_name(job_names=self.get_all_job_names(), success_only=True)
+            self.client.jobs.delete_by_name(job_names=self.get_all_job_names(), skip_if_not_successful=True)
 
     def create_test_job(self, *, job_name: str, notebook_path: str, policy_id: str = None):
         from dbacademy.clients.dbrest.jobs_api.job_config import JobConfig
@@ -157,7 +157,6 @@ class TestSuite:
                                           instance_pool_id=self.build_config.instance_pool_id,
                                           single_user_name=self.build_config.single_user_name,
                                           policy_id=policy_id,
-                                          autotermination_minutes=None,
                                           spark_env_vars={"WSFS_ENABLE_WRITE_SUPPORT": "true"})
 
         task_config.cluster_new(cluster_config)
@@ -211,7 +210,7 @@ class TestSuite:
                 host_name = dbgems.get_notebooks_api_endpoint() if dbgems.get_browser_host_name() is None else f"https://{dbgems.get_browser_host_name()}"
                 print(f"""/{test.notebook.path}\n - {host_name}?o={dbgems.get_workspace_id()}#job/{job_id}/run/{run_id}""")
 
-                response = self.client.runs().wait_for(run_id)
+                response = self.client.runs.wait_for(run_id)
                 passed = False if not self.conclude_test(test, response) else passed
 
         return passed
@@ -250,7 +249,7 @@ class TestSuite:
         for test in tests:
             self.send_status_update("info", f"Waiting for */{test.notebook.path}*")
 
-            response = self.client.runs().wait_for(test.run_id)
+            response = self.client.runs.wait_for(test.run_id)
             passed = False if not self.conclude_test(test, response) else passed
 
         return passed

@@ -64,8 +64,7 @@ class TestJobsClient(unittest.TestCase):
                                                  spark_version="11.3.x-scala2.12",
                                                  node_type_id="i3.xlarge",
                                                  num_workers=0,
-                                                 single_user_name="jacob.parr@databricks.com",
-                                                 autotermination_minutes=None))
+                                                 single_user_name="jacob.parr@databricks.com"))
 
         job_id = self.client.jobs.create_from_config(config)
         return self.client.jobs.get_by_id(job_id)

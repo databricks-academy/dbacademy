@@ -1,6 +1,7 @@
 __all__ = ["JobsApi"]
+# Code Review: JDP on 11-26-2023
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Union, List
 from dbacademy.common import validate
 from dbacademy.clients.rest.common import ApiClient, ApiContainer
 from dbacademy.clients.dbrest.jobs_api.job_config import JobConfig
@@ -23,204 +24,205 @@ class JobsApi(ApiContainer):
         response = self.__client.api("POST", f"{self.base_uri}/create", params)
         return response.get("job_id")
 
-    def run_now(self, job_id: str, notebook_params: Dict[str, Any] = None):
+    def run_now(self, job_id: Union[int, str], notebook_params: Optional[Dict[str, Any]] = None):
         payload = {
-            "job_id": job_id
+            "job_id": validate(job_id=job_id).required.as_type(int, str)
         }
         if notebook_params is not None:
-            payload["notebook_params"] = notebook_params
+            payload["notebook_params"] = validate(notebook_params=notebook_params).required.dict(str)
 
         return self.__client.api("POST", f"{self.__client.endpoint}/api/2.0/jobs/run-now", payload)
 
-    def get_by_id(self, job_id):
+    def get_by_id(self, job_id: Union[int, str]):
+        validate(job_id=job_id).required.as_type(int, str)
         return self.__client.api("GET", f"{self.__client.endpoint}/api/2.0/jobs/get?job_id={job_id}")
 
-    def get_by_name(self, name: str):
-        offset = 0  # Start with zero
-        limit = 25  # Default maximum
+    def get_by_name(self, job_name: str) -> Optional[Dict[str, Any]]:
+        jobs = self.list(job_name=validate(job_name=job_name).required.str())
+        if len(jobs) == 0:
+            return None
+        else:
+            assert len(jobs) == 1, f"""Expected only one job by the name "{job_name}", found {len(jobs)}."""
 
-        def search(jobs_list):
-            job_ids = [j.get("job_id") for j in jobs_list if name == j.get("settings").get("name")]
-            return (False, None) if len(job_ids) == 0 else (True, self.get_by_id(job_ids[0]))
+        return jobs[0]
 
-        target_url = f"{self.base_uri}/list?limit={limit}"
-        response = self.__client.api("GET", target_url)
-        jobs = response.get("jobs", list())
+    def __list(self, *, limit: int, expand_tasks: bool, job_name: Optional[str], page_token: Optional[str]) -> Dict[str, Any]:
+        limit = min(100, validate(limit=limit).required.int())
+        expand_tasks = validate(expand_tasks=expand_tasks).required.bool()
 
-        found, job = search(jobs)
-        if found:
-            return job
+        url = f"{self.base_uri}/list?limit={limit}&expand_tasks={expand_tasks}"
 
-        while response.get("has_more", False):
-            offset += limit
-            response = self.__client.api("GET", f"{target_url}&offset={offset}")
-            jobs = response.get("jobs", list())
+        if job_name is not None:
+            url += f"{url}&name={validate(job_name=job_name).required.str()}"
 
-            found, job = search(jobs)
-            if found:
-                return job
+        if page_token is not None:
+            url += f"{url}&page_token={validate(page_token=page_token).required.str()}"
 
-        return None
+        return self.__client.api("GET", url)
 
-    def list_n(self, offset: int = 0, limit: int = 25, expand_tasks: bool = False):
-        limit = min(25, limit)
-        offset = max(0, offset)
-
-        target_url = f"{self.base_uri}/list?offset={offset}&limit={limit}&expand_tasks={expand_tasks}"
-        response = self.__client.api("GET", target_url)
-        return response.get("jobs", list())
-
-    def list(self, expand_tasks: bool = False):
-        offset = 0  # Start with zero
-        limit = 100  # Our default maximum
-
-        target_url = f"{self.base_uri}/list?limit={limit}&expand_tasks={expand_tasks}"
-        response = self.__client.api("GET", target_url)
+    def list(self, *, limit: int = 100, expand_tasks: bool = False, job_name: Optional[str] = None) -> List[Dict[str, Any]]:
+        response = self.__list(limit=limit, expand_tasks=expand_tasks, job_name=job_name, page_token=None)
         all_jobs = response.get("jobs", list())
 
         while response.get("has_more", False):
-            offset += limit
             page_token = response.get('next_page_token')
-            response = self.__client.api("GET", f"{target_url}&page_token={page_token}")
+            response = self.__list(limit=limit, expand_tasks=expand_tasks, job_name=job_name, page_token=page_token)
             all_jobs.extend(response.get("jobs", list()))
 
         return all_jobs
 
-    def delete_by_id(self, job_id):
-        from dbacademy.clients.dbrest import from_client
-        da_client = from_client(self.__client)
+    def delete_by_id(self, job_id: Union[str, int], *, skip_if_not_successful: bool = False, delete_by_name: bool = False) -> None:
+        from dbacademy.clients import dbrest
 
-        runs = da_client.runs().list_by_job_id(job_id)
+        job_id = validate(job_id=job_id).required.as_type(int, str)
+        job = self.get_by_id(job_id)
+
+        m_prefix = " - " if delete_by_name else ""
+        o_prefix = "   " if delete_by_name else ""
+
+        if job is None:
+            self.__client.vprint(f"""{m_prefix}Deleting job #{job_id}.""")
+            self.__client.vprint(f"""{o_prefix} - Job not found.""")
+            return
+
+        delete_job = True
+        job_name = job.get("settings", dict()).get("name")
+        self.__client.vprint(f"""{m_prefix}Deleting job #{job_id}, "{job_name}".""")
+
+        da_client = dbrest.from_client(self.__client)
+        runs = da_client.runs.list_by_job_id(job_id)
+        self.__client.vprint(f"""{o_prefix} - Found {len(runs)} job runs.""")
+        self.__client.vprint(f"""{o_prefix} - deleting successful jobs only: {skip_if_not_successful}""")
+
         for run in runs:
+            delete_run = True
             run_id = run.get("run_id")
-            da_client.runs.delete_by_id(run_id)
+            result_state = run.get("state").get("result_state")
+            life_cycle_state = run.get("state").get("life_cycle_state")
 
-        self.__client.api("POST", f"{self.__client.endpoint}/api/2.0/jobs/delete", job_id=job_id)
+            if life_cycle_state != "TERMINATED":
+                delete_run = False
+                self.__client.vprint(f"""{o_prefix} - Run #{run_id} of {job_name}'s life cycle state was not "TERMINATED" but "{life_cycle_state}", this job must be deleted manually as it's still running.""")
 
-    def delete_by_name(self, job_names, success_only: bool) -> None:
-        from dbacademy.clients.dbrest import from_client
-        from dbacademy.clients.dbrest import DBAcademyRestClient
+            if validate(skip_if_not_successful=skip_if_not_successful).required.bool() and result_state != "SUCCESS":
+                delete_run = False
+                self.__client.vprint(f"""{o_prefix} - Run #{run_id} of {job_name}'s result state was not "SUCCESS" but "{result_state}", this job must be deleted manually.""")
 
-        da_client: DBAcademyRestClient = from_client(self.__client)
+            if delete_run:
+                da_client.runs.delete_by_id(run_id)
 
-        if type(job_names) == dict:
-            job_names = list(job_names.keys())
-        elif type(job_names) == list:
-            job_names = job_names
-        elif type(job_names) == str:
-            job_names = [job_names]
+            # Don't delete the job if we are not deleting the run.
+            delete_job = delete_job and delete_run
+
+        if delete_job:
+            self.__client.api("POST", f"{self.__client.endpoint}/api/2.0/jobs/delete", job_id=job_id)
+            self.__client.vprint(f"{o_prefix} - Deleted.")
         else:
-            raise TypeError(f"Unsupported type: {type(job_names)}")
+            self.__client.vprint(f"{o_prefix} - Not deleted.")
+
+    def delete_by_name(self, job_names: Union[list, dict, str], *, skip_if_not_successful: bool) -> None:
+        # Verify that job_names is one of these three types
+        validate(job_names=job_names).required.as_type(list, dict, str)
+
+        if isinstance(job_names, dict):
+            job_names: List[str] = list(job_names.keys())
+        elif isinstance(job_names, list):
+            job_names: List[str] = job_names
+        elif isinstance(job_names, str):
+            job_names: List[str] = [job_names]
+        else:
+            import inspect
+            raise NotImplementedError(f"{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented for job_names of type {type(job_names)}")
 
         # Get a list of all jobs
-        jobs = self.list()
+        all_jobs = list()
 
-        s = "s" if len(jobs) != 1 else ""
-        self.__client.vprint(f"Found {len(jobs)} job{s}.")
+        for job_name in validate(job_names=job_names).required.list(str):
+            all_jobs.extend(self.list(job_name=job_name))
 
-        assert type(success_only) == bool, f"Expected \"success_only\" to be of type \"bool\", found \"{success_only}\"."
-        self.__client.vprint(f"...deleting successful jobs only: {success_only}")
+        s = "s" if len(all_jobs) != 1 else ""
+        self.__client.vprint(f"Found {len(all_jobs)} job{s}.")
 
-        deleted = 0
+        for job in all_jobs:
+            job_id = job.get("job_id")
+            self.delete_by_id(job_id,
+                              skip_if_not_successful=skip_if_not_successful,
+                              delete_by_name=True)
 
-        for job_name in job_names:
-            for job in jobs:
-                if job_name == job.get("settings").get("name"):
-                    job_id = job.get("job_id")
-
-                    runs = da_client.runs().list_by_job_id(job_id)
-                    s = "s" if len(runs) != 1 else ""
-                    self.__client.vprint(f"Found {len(runs)} run{s} for job {job_id}")
-                    delete_job = True
-
-                    for run in runs:
-                        state = run.get("state")
-                        result_state = state.get("result_state", None)
-                        life_cycle_state = state.get("life_cycle_state", None)
-
-                        if success_only and life_cycle_state != "TERMINATED":
-                            delete_job = False
-                            self.__client.vprint(f""" - The job "{job_name}" was not "TERMINATED" but "{life_cycle_state}", this job must be deleted manually""")
-                        if success_only and result_state != "SUCCESS":
-                            delete_job = False
-                            self.__client.vprint(f""" - The job "{job_name}" was not "SUCCESS" but "{result_state}", this job must be deleted manually""")
-
-                    if delete_job:
-                        self.__client.vprint(f"...Deleting job #{job_id}, \"{job_name}\"")
-                        for run in runs:
-                            run_id = run.get("run_id")
-                            self.__client.vprint(f"""   - Deleting run #{run_id}""")
-                            da_client.runs().delete_by_id(run_id)
-
-                        self.delete_by_id(job_id)
-                        deleted += 1
-
-        self.__client.vprint(f"...deleted {deleted} jobs")
-        return None
+    @classmethod
+    def __pause_status_for(cls, schedule: Dict[str, Any], paused: bool):
+        return schedule.get("pause_status") if validate(paused=paused).optional.bool() is None else ("PAUSED" if paused else "UNPAUSED")
 
     def update_schedule(self, *,
-                        _job_id: Optional[str],
-                        _paused: Optional[bool],
-                        _quartz_cron_expression: Optional[str],
-                        _timezone_id: Optional[str]) -> Dict[str, Any]:
+                        job_id: Union[int, str],
+                        paused: Optional[bool],
+                        quartz_cron_expression: Optional[str],
+                        timezone_id: Optional[str]) -> Dict[str, Any]:
 
-        paused = None if _paused is None else ("PAUSED" if _paused else "UNPAUSED")
-
-        job = self.get_by_id(_job_id)
+        job = self.get_by_id(validate(job_id=job_id).required.as_type(int, str))
         settings = job.get("settings")
         schedule = settings.get("schedule")
 
         payload = {
-            "job_id": _job_id,
+            "job_id": job_id,
             "new_settings": {
                 "schedule": {
-                    "timezone_id": _timezone_id or schedule.get("timezone_id"),
-                    "quartz_cron_expression": _quartz_cron_expression or schedule.get("quartz_cron_expression"),
-                    "pause_status": paused or schedule.get("pause_status"),
+                    "timezone_id": timezone_id or schedule.get("timezone_id"),
+                    "quartz_cron_expression": quartz_cron_expression or schedule.get("quartz_cron_expression"),
+                    "pause_status": self.__pause_status_for(schedule, paused),
                 }
             }
         }
         self.__client.api("POST", f"{self.base_uri}/update", payload)
-        return self.get_by_id(_job_id)
+        return self.get_by_id(job_id)
 
-    def update_continuous(self, *, _job_id: str, _paused: bool) -> Dict[str, Any]:
+    def update_continuous(self, *,
+                          job_id: Union[int, str],
+                          paused: Optional[bool]) -> Dict[str, Any]:
+
+        job = self.get_by_id(validate(job_id=job_id).required.as_type(int, str))
+        settings = job.get("settings")
+        continuous = settings.get("continuous")
+
         payload = {
-            "job_id": _job_id,
+            "job_id": job_id,
             "new_settings": {
                 "continuous": {
-                    "pause_status": "PAUSED" if _paused else "UNPAUSED"
+                    "pause_status": self.__pause_status_for(continuous, paused)
                 }
             }
         }
         self.__client.api("POST", f"{self.base_uri}/update", payload)
-        return self.get_by_id(_job_id)
+        return self.get_by_id(job_id)
 
     def update_trigger(self, *,
-                       _job_id: str,
-                       _paused: Optional[bool],
-                       _url: Optional[str],
-                       _min_time_between_triggers_seconds: Optional[int],
-                       _wait_after_last_change_seconds: Optional[int]) -> Dict[str, Any]:
+                       job_id: Union[int, str],
+                       paused: Optional[bool],
+                       url: Optional[str],
+                       min_time_between_triggers_seconds: Optional[int],
+                       wait_after_last_change_seconds: Optional[int]) -> Dict[str, Any]:
 
-        paused = None if _paused is None else ("PAUSED" if _paused else "UNPAUSED")
-
-        job = self.get_by_id(_job_id)
+        job = self.get_by_id(validate(job_id=job_id).required.as_type(int, str))
         settings = job.get("settings")
         trigger = settings.get("trigger")
         file_arrival = trigger.get("file_arrival")
 
+        url = validate(url=url or file_arrival.get("url")).required.str()
+        min_time_between_triggers_seconds = validate(min_time_between_triggers_seconds=min_time_between_triggers_seconds or file_arrival.get("min_time_between_triggers_seconds")).required.str()
+        wait_after_last_change_seconds = validate(wait_after_last_change_seconds=wait_after_last_change_seconds or file_arrival.get("wait_after_last_change_seconds")).required.str()
+
         payload = {
-            "job_id": _job_id,
+            "job_id": job_id,
             "new_settings": {
                 "trigger": {
-                    "pause_status": paused or trigger.get("pause_status"),
+                    "pause_status": self.__pause_status_for(trigger, paused),
                     "file_arrival": {
-                        "url": _url or file_arrival.get("url"),
-                        "min_time_between_triggers_seconds": _min_time_between_triggers_seconds or file_arrival.get("min_time_between_triggers_seconds"),
-                        "wait_after_last_change_seconds": _wait_after_last_change_seconds or file_arrival.get("wait_after_last_change_seconds"),
+                        "url": url,
+                        "min_time_between_triggers_seconds": min_time_between_triggers_seconds,
+                        "wait_after_last_change_seconds": wait_after_last_change_seconds,
                     }
                 }
             }
         }
         self.__client.api("POST", f"{self.base_uri}/update", payload)
-        return self.get_by_id(_job_id)
+        return self.get_by_id(job_id)

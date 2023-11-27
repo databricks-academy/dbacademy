@@ -1,8 +1,9 @@
 __all__ = ["Availability", "ClusterConfig", "JobClusterConfig", "LibraryFactory"]
 
 from enum import Enum
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Union
 from dbacademy.common import validate
+from dbacademy.common import Cloud
 
 
 class Availability(Enum):
@@ -67,58 +68,61 @@ class LibraryFactory:
 
 
 class CommonConfig:
-    from dbacademy.common import Cloud
 
     def __init__(self, *,
-                 library_factory: Optional[LibraryFactory],
-                 cloud: Cloud,
+                 cloud: Union[str, Cloud],
                  cluster_name: Optional[str],
                  spark_version: str,
                  node_type_id: Optional[str],
-                 driver_node_type_id: str,
+                 driver_node_type_id: Optional[str],
                  instance_pool_id: Optional[str],
-                 policy_id: str,
+                 policy_id: Optional[str],
                  num_workers: int,
-                 autotermination_minutes: Optional[int],
-                 single_user_name: str,
-                 availability: Availability,
+                 autotermination_minutes: int,
+                 single_user_name: Optional[str],
+                 availability: Optional[Union[str, Availability]],
                  spark_conf: Optional[Dict[str, str]],
                  spark_env_vars: Optional[Dict[str, str]],
                  custom_tags: Optional[Dict[str, str]],
-                 extra_params: Dict[str, Any]):
-
-        self.__libraries = library_factory
+                 extra_params: Optional[Dict[str, Any]],
+                 libraries: Optional[List[Dict[str, Any]]]):
 
         self.__params = {
             "cluster_name": validate(cluster_name=cluster_name).optional.str(),
             "spark_version": validate(spark_version=spark_version).required.str(),
             "num_workers": validate(num_workers=num_workers).required.int(),
-            "node_type_id": validate(node_type_id=node_type_id).required.str(),
-            "instance_pool_id": validate(instance_pool_id=instance_pool_id).optional.str(),
-            "autotermination_minutes": validate(autotermination_minutes=autotermination_minutes).optional.int(),
+            "autotermination_minutes": validate(autotermination_minutes=autotermination_minutes).required.int(),
         }
 
-        extra_params = extra_params or dict()
-        spark_conf = spark_conf or dict()
-        spark_env_vars = spark_env_vars or dict()
-        custom_tags = custom_tags or dict()
+        extra_params = validate(extra_params=extra_params).optional.dict(str, auto_create=True)
+        spark_conf = validate(spark_conf=spark_conf).optional.dict(str, auto_create=True)
+        spark_env_vars = validate(spark_env_vars=spark_env_vars).optional.dict(str, auto_create=True)
+        custom_tags = validate(custom_tags=custom_tags).optional.dict(str, auto_create=True)
+
+        if instance_pool_id is not None:
+            extra_params["instance_pool_id"]: validate(instance_pool_id=instance_pool_id).optional.str()
 
         if policy_id is not None:
-            extra_params["policy_id"] = policy_id
+            extra_params["policy_id"] = validate(policy_id=policy_id).required.str()
 
         if single_user_name is not None:
-            extra_params["single_user_name"] = single_user_name
+            extra_params["single_user_name"] = validate(single_user_name=single_user_name).required.str()
             extra_params["data_security_mode"] = "SINGLE_USER"
-
-        if driver_node_type_id is not None:
-            extra_params["driver_node_type_id"] = driver_node_type_id
 
         if num_workers == 0:
             # Don't use "local[*, 4] because the node type might have more cores
-            spark_conf["spark.master"] = "local[*]"
             custom_tags["ResourceClass"] = "SingleNode"
-
+            spark_conf["spark.master"] = "local[*]"
             spark_conf["spark.databricks.cluster.profile"] = "singleNode"
+
+            # The worker's node type must not be specified when num_workers = 0
+            assert node_type_id is None, f"""The parameter 'node_type_id' must be None when 'num_workers' == 0."""
+        else:
+            # The worker's node type is required when num_workers > 0
+            extra_params["node_type_id"] = validate(node_type_id=node_type_id).required.str()
+
+        # The driver's node type is always required
+        extra_params["driver_node_type_id"] = validate(driver_node_type_id=driver_node_type_id).required.str()
 
         assert extra_params.get("custom_tags") is None, f"The parameter \"extra_params.custom_tags\" should not be specified directly, use \"custom_tags\" instead."
         assert extra_params.get("spark_conf") is None, f"The parameter \"extra_params.spark_conf\" should not be specified directly, use \"spark_conf\" instead."
@@ -131,6 +135,9 @@ class CommonConfig:
         if instance_pool_id is None and availability is None:
             # Default to on-demand if the instance profile was not defined
             availability = Availability.ON_DEMAND
+
+        cloud = validate(cloud=cloud).required.enum(Cloud, auto_convert=True)
+        availability = validate(availability=availability).optional.enum(Availability, auto_convert=True)
 
         if availability is not None:
             assert instance_pool_id is None, f"The parameter \"availability\" cannot be specified when \"instance_pool_id\" is specified."
@@ -162,13 +169,13 @@ class CommonConfig:
         if len(spark_env_vars) > 0:
             self.__params["spark_env_vars"] = spark_env_vars
 
-        if self.libraries:
-            extra_params["libraries"] = self.libraries.definitions
+        # libraries are validated in the constructor.
+        self.__libraries = LibraryFactory(libraries)
+        extra_params["libraries"] = self.library_factory.definitions
 
         # Process last just in case there is an exclusion bug...
         # This will result in replacing any previously defined parameters
-        for key, value in extra_params.items():
-            self.__params[key] = value
+        self.__params.update(extra_params)
 
     @property
     def library_factory(self) -> LibraryFactory:
@@ -178,34 +185,29 @@ class CommonConfig:
     def params(self) -> Dict[str, Any]:
         return self.__params
 
-    @property
-    def libraries(self) -> LibraryFactory:
-        return self.__libraries
-
 
 class ClusterConfig(CommonConfig):
-    from dbacademy.common import Cloud
 
     def __init__(self, *,
-                 cloud: Cloud,
+                 cloud: Union[str, Cloud],
                  cluster_name: Optional[str],
                  spark_version: str,
-                 node_type_id: Optional[str],
-                 driver_node_type_id: str = None,
-                 instance_pool_id: str = None,
-                 policy_id: str = None,
-                 num_workers: int,
-                 autotermination_minutes: Optional[int],
-                 single_user_name: str = None,
-                 availability: Availability = None,
+                 node_type_id: Optional[str] = None,
+                 driver_node_type_id: Optional[str] = None,
+                 instance_pool_id: Optional[str] = None,
+                 policy_id: Optional[str] = None,
+                 num_workers: int = 0,
+                 autotermination_minutes: int = 120,
+                 single_user_name: Optional[str] = None,
+                 availability: Optional[Union[str, Availability]] = None,
                  spark_conf: Optional[Dict[str, str]] = None,
                  spark_env_vars: Optional[Dict[str, str]] = None,
                  custom_tags: Optional[Dict[str, str]] = None,
-                 extra_params: Dict[str, Any] = None,
-                 libraries: List[Dict[str, Any]] = None):
+                 extra_params: Optional[Dict[str, Any]] = None,
+                 libraries: Optional[List[Dict[str, Any]]] = None):
 
-        super().__init__(library_factory=LibraryFactory(libraries),
-                         cloud=cloud,
+        # Parameters are validated in the call to CommonConfig
+        super().__init__(cloud=cloud,
                          cluster_name=cluster_name,
                          spark_version=spark_version,
                          node_type_id=node_type_id,
@@ -219,30 +221,32 @@ class ClusterConfig(CommonConfig):
                          spark_env_vars=spark_env_vars,
                          custom_tags=custom_tags,
                          availability=availability,
-                         extra_params=extra_params)
+                         extra_params=extra_params,
+                         libraries=libraries)
 
 
 class JobClusterConfig(CommonConfig):
-    from dbacademy.common import Cloud
 
     def __init__(self, *,
-                 cloud: Cloud,
+                 cloud: Union[str, Cloud],
+                 # cluster_name: Optional[str],
                  spark_version: str,
-                 node_type_id: Optional[str],
-                 driver_node_type_id: str = None,
-                 instance_pool_id: str = None,
-                 policy_id: str = None,
-                 num_workers: int,
-                 autotermination_minutes: Optional[int],
-                 single_user_name: str = None,
-                 availability: Availability = None,
+                 node_type_id: Optional[str] = None,
+                 driver_node_type_id: Optional[str] = None,
+                 instance_pool_id: Optional[str] = None,
+                 policy_id: Optional[str] = None,
+                 num_workers: int = 0,
+                 autotermination_minutes: int = 120,
+                 single_user_name: Optional[str] = None,
+                 availability: Optional[Union[str, Availability]] = None,
                  spark_conf: Optional[Dict[str, str]] = None,
                  spark_env_vars: Optional[Dict[str, str]] = None,
                  custom_tags: Optional[Dict[str, str]] = None,
-                 extra_params: Dict[str, Any] = None):
+                 extra_params: Optional[Dict[str, Any]] = None,
+                 libraries: Optional[List[Dict[str, Any]]] = None):
 
-        super().__init__(library_factory=None,
-                         cloud=cloud,
+        # Parameters are validated in the call to CommonConfig
+        super().__init__(cloud=cloud,
                          cluster_name=None,  # Not allowed when uses as a job
                          spark_version=spark_version,
                          node_type_id=node_type_id,
@@ -256,4 +260,5 @@ class JobClusterConfig(CommonConfig):
                          spark_env_vars=spark_env_vars,
                          custom_tags=custom_tags,
                          availability=availability,
-                         extra_params=extra_params)
+                         extra_params=extra_params,
+                         libraries=libraries)

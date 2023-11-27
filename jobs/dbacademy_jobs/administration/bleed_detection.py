@@ -170,21 +170,21 @@ class Watchdog:
 
             if schedule_failure is not None and _pause:
                 message += f"\n  | Paused schedule."
-                self.workspace_client.jobs.update_schedule(_job_id=job_id,
-                                                           _paused=True,
-                                                           _quartz_cron_expression=None,
-                                                           _timezone_id=None)
+                self.workspace_client.jobs.update_schedule(job_id=job_id,
+                                                           paused=True,
+                                                           quartz_cron_expression=None,
+                                                           timezone_id=None)
             if continuous_failure is not None and _pause:
                 message += f"\n  | Paused continuous."
-                self.workspace_client.jobs.update_continuous(_job_id=job_id, _paused=True)
+                self.workspace_client.jobs.update_continuous(job_id=job_id, paused=True)
 
             if trigger_paused is not None and _pause:
                 message += f"\n  | Paused trigger."
-                self.workspace_client.jobs.update_trigger(_job_id=job_id,
-                                                          _paused=True,
-                                                          _url=None,
-                                                          _min_time_between_triggers_seconds=None,
-                                                          _wait_after_last_change_seconds=None)
+                self.workspace_client.jobs.update_trigger(job_id=job_id,
+                                                          paused=True,
+                                                          url=None,
+                                                          min_time_between_triggers_seconds=None,
+                                                          wait_after_last_change_seconds=None)
 
             if failed:
                 self.__log_error(message, _scope="JOBS", _failures=failures)

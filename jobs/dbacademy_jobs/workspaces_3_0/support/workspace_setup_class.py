@@ -688,7 +688,7 @@ class WorkspaceSetup:
         try:
             # If the job exist delete it to address cases where the job is misconfigured
             # and leaving it would only result in re-running the misconfigured job.
-            trio.client.jobs.delete_by_name(dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP_JOB_NAME, success_only=False)
+            trio.client.jobs.delete_by_name(dbh_constants.WORKSPACE_HELPER.WORKSPACE_SETUP_JOB_NAME, skip_if_not_successful=False)
 
             # We deleted it or it never existed.
             job_id = self.__create_job(trio)

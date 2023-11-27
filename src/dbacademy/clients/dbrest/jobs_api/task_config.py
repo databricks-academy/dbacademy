@@ -1,4 +1,5 @@
 __all__ = ["TaskConfig", "NotebookSource"]
+# Code Review: JDP on 11-26-2023
 
 import inspect
 from enum import Enum
@@ -13,16 +14,17 @@ class NotebookSource(Enum):
 
 
 class TaskConfig:
+    # No defaults, those are done by the calling factory method in JobConfig
 
     def __init__(self, *,
-                 job_params: Dict[str, Any],
                  task_key: str,
-                 description: Optional[str] = None,
-                 max_retries: int = 0,
-                 min_retry_interval_millis: int = 0,
-                 retry_on_timeout: bool = False,
-                 timeout_seconds: Optional[int] = None,
-                 depends_on: Optional[List[str]] = None):
+                 description: Optional[str],
+                 max_retries: int,
+                 min_retry_interval_millis: int,
+                 retry_on_timeout: bool,
+                 timeout_seconds: Optional[int],
+                 job_params: Optional[Dict[str, Any]],
+                 depends_on: Optional[List[str]]):
 
         self.__params: Dict[str, Any] = dict()
         self.__task_configured: bool = False
@@ -30,7 +32,7 @@ class TaskConfig:
         self.__libraries = LibraryFactory(None)
         self.__params["libraries"] = self.__libraries.definitions
 
-        self.__job_params: Dict[str, Any] = validate(job_params=job_params).required.dict(str)
+        self.__job_params: Dict[str, Any] = validate(job_params=job_params).optional.dict(str, auto_create=True)
 
         self.params["task_key"] = validate(task_key=task_key).required.str()
         self.params["max_retries"] = validate(max_retries=max_retries).required.int()

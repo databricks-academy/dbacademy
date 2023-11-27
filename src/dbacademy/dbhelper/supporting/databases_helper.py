@@ -302,7 +302,7 @@ class DatabasesHelper:
 
         print(f"| See {dbgems.get_workspace_url()}#job/{job_id}/run/{run_id}")
 
-        final_response = self.__client.runs().wait_for(run_id)
+        final_response = self.__client.runs.wait_for(run_id)
 
         final_state = final_response.get("state").get("result_state")
         assert final_state == "SUCCESS", f"Expected the final state to be SUCCESS, found {final_state}"

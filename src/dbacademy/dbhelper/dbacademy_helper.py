@@ -784,7 +784,7 @@ class DBAcademyHelper:
         run_response = self.client.jobs().run_now(job_id)
         run_id = run_response.get("run_id")
 
-        final_response = self.client.runs().wait_for(run_id)
+        final_response = self.client.runs.wait_for(run_id)
 
         final_state = final_response.get("state").get("result_state")
         assert final_state == "SUCCESS", f"Expected the final state to be SUCCESS, found {final_state}"
