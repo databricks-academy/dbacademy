@@ -132,7 +132,7 @@ class WorkspaceApi(ApiContainer):
             "content": base64.b64encode(content).decode("utf-8"),
             "path": path,
             "overwrite": False,
-            "format": "DBC",
+            "format": ImportType.DBC.value,
         }
         return self.__client.api("POST", f"{self.__base_url}/import", payload)
 
@@ -147,7 +147,7 @@ class WorkspaceApi(ApiContainer):
         payload = {
             "content": base64.b64encode(content.encode("utf-8")).decode("utf-8"),
             "path": validate(path=path).required.str(),
-            "language": validate(language=language).required.enum(Language, auto_convert=True),
+            "language": validate(language=language).required.enum(Language, auto_convert=True).value,
             "overwrite": validate(overwrite=overwrite).required.bool(),
             "format": ImportType.SOURCE.value,
         }
