@@ -87,10 +87,6 @@ class CommonConfig:
                  extra_params: Optional[Dict[str, Any]],
                  libraries: Optional[List[Dict[str, Any]]]):
 
-        print("="*80)
-        print(f"instance_pool_id: {instance_pool_id}")
-        print("="*80)
-
         self.__params = {
             "cluster_name": validate(cluster_name=cluster_name).optional.str(),
             "spark_version": validate(spark_version=spark_version).required.str(),
@@ -107,11 +103,11 @@ class CommonConfig:
             self.__params["autotermination_minutes"] = validate(autotermination_minutes=autotermination_minutes).required.int()
 
         if instance_pool_id is not None:
-            print(f"instance_pool_id: {instance_pool_id} & node_type_id: {node_type_id}")
+            print(f"instance_pool_id #1a: " + instance_pool_id)
             extra_params["instance_pool_id"]: validate(instance_pool_id=instance_pool_id).required.str()
+            print(f"instance_pool_id #1b: " + extra_params.get("instance_pool_id"))
             assert node_type_id is None, f"""The parameter "node_type_id" should be None when the parameter "instance_pool_id" is specified."""
         else:
-            print(f"instance_pool_id: {instance_pool_id} & node_type_id: {node_type_id}")
             extra_params["node_type_id"] = validate(node_type_id=node_type_id).required.str()
 
         print("="*80)
