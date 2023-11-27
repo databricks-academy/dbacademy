@@ -2,7 +2,7 @@ __all__ = ["TaskConfig", "NotebookSource"]
 
 import inspect
 from enum import Enum
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Union
 from dbacademy.common import validate
 from dbacademy.clients.dbrest.clusters_api.cluster_config import LibraryFactory, JobClusterConfig
 
@@ -60,43 +60,45 @@ class TaskConfig:
     def libraries(self) -> LibraryFactory:
         return self.__libraries
 
-    def task_notebook(self, *, notebook_path: str, source: NotebookSource, base_parameters: Dict[str, str] = None) -> None:
+    def as_notebook(self, *, notebook_path: str, source: Union[str, NotebookSource], base_parameters: Optional[Dict[str, str]] = None) -> None:
         self.assert_task_not_configured()
 
-        if source == "GIT":
+        source = validate(source=source).required.enum(NotebookSource, auto_convert=True)
+
+        if source == NotebookSource.GIT:
             assert self.__job_params.get("git_source") is not None, f"The git source must be specified before defining a git notebook task"
 
         self.params["notebook_task"] = {
             "notebook_path": validate(notebook_path=notebook_path).required.str(),
-            "source": validate(source=source).required.enum(NotebookSource).value,
-            "base_parameters": base_parameters or dict()
+            "source": source.value,
+            "base_parameters": validate(base_parameters=base_parameters).optional.dict(str, str, auto_create=True)
         }
 
-    def task_jar(self) -> None:  # , main_class_name: str, parameters: List[str]) -> AbstractTaskConfig:
+    def as_jar(self) -> None:  # , main_class_name: str, parameters: List[str]) -> AbstractTaskConfig:
         self.assert_task_not_configured()
         raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 
-    def task_python(self) -> None:  # , python_file: str, parameters: List[str]) -> AbstractTaskConfig:
+    def as_python(self) -> None:  # , python_file: str, parameters: List[str]) -> AbstractTaskConfig:
         self.assert_task_not_configured()
         raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 
-    def task_submit(self) -> None:  # , parameters: List[str]) -> AbstractTaskConfig:
+    def as_submit(self) -> None:  # , parameters: List[str]) -> AbstractTaskConfig:
         self.assert_task_not_configured()
         raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 
-    def task_pipeline(self) -> None:  # , pipeline_id: str, full_refresh: bool = False) -> AbstractTaskConfig:
+    def as_pipeline(self) -> None:  # , pipeline_id: str, full_refresh: bool = False) -> AbstractTaskConfig:
         self.assert_task_not_configured()
         raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 
-    def task_wheel(self) -> None:  # , package_name: str, entry_point: str, parameters: List[str], named_parameters: List[str]) -> AbstractTaskConfig:
+    def as_wheel(self) -> None:  # , package_name: str, entry_point: str, parameters: List[str], named_parameters: List[str]) -> AbstractTaskConfig:
         self.assert_task_not_configured()
         raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 
-    def task_sql(self) -> None:  # , query_id: str, dashboard_id: str, alert_id: str, parameters: List[str], warehouse_id: str) -> AbstractTaskConfig:
+    def as_sql(self) -> None:  # , query_id: str, dashboard_id: str, alert_id: str, parameters: List[str], warehouse_id: str) -> AbstractTaskConfig:
         self.assert_task_not_configured()
         raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 
-    def task_dbt(self) -> None:  # , project_directory: str, commands: List[str], schema: str, warehouse_id: str, catalog: str, profiles_directory: str) -> AbstractTaskConfig:
+    def as_dbt(self) -> None:  # , project_directory: str, commands: List[str], schema: str, warehouse_id: str, catalog: str, profiles_directory: str) -> AbstractTaskConfig:
         self.assert_task_not_configured()
         raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 

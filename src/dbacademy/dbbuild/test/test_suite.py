@@ -128,6 +128,7 @@ class TestSuite:
 
     def create_test_job(self, *, job_name: str, notebook_path: str, policy_id: str = None):
         from dbacademy.clients.dbrest.jobs_api.job_config import JobConfig
+        from dbacademy.clients.dbrest.jobs_api.task_config import NotebookSource
         from dbacademy.clients.dbrest.clusters_api.cluster_config import JobClusterConfig
         from dbacademy.common import Cloud
 
@@ -139,10 +140,10 @@ class TestSuite:
                 "dbacademy.test-type": self.test_type
             })
         task_config = job_config.add_task(task_key="Smoke-Test", description="Executes a single notebook, hoping that the magic smoke doesn't escape")
-        task_config.task.notebook(notebook_path=notebook_path, source="WORKSPACE", base_parameters=self.build_config.job_arguments)
+        task_config.as_notebook(notebook_path=notebook_path, source=NotebookSource.WORKSPACE, base_parameters=self.build_config.job_arguments)
 
         for library in self.build_config.libraries:
-            task_config.task.libraries.from_dict(library)
+            task_config.libraries.from_dict(library)
 
         if policy_id is not None:
             policy = self.client.cluster_policies.get_by_id(policy_id)
@@ -159,7 +160,7 @@ class TestSuite:
                                           autotermination_minutes=None,
                                           spark_env_vars={"WSFS_ENABLE_WRITE_SUPPORT": "true"})
 
-        task_config.cluster.new(cluster_config)
+        task_config.cluster_new(cluster_config)
 
         job_id = self.client.jobs.create_from_config(job_config)
         return job_id
