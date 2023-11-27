@@ -53,10 +53,10 @@ class JobsApi(ApiContainer):
         url = f"{self.base_uri}/list?limit={limit}&expand_tasks={expand_tasks}"
 
         if job_name is not None:
-            url += f"{url}&name={validate(job_name=job_name).required.str()}"
+            url += f"&name={validate(job_name=job_name).required.str()}"
 
         if page_token is not None:
-            url += f"{url}&page_token={validate(page_token=page_token).required.str()}"
+            url += f"&page_token={validate(page_token=page_token).required.str()}"
 
         return self.__client.api("GET", url)
 
