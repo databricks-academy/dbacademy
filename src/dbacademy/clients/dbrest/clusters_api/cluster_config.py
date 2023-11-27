@@ -87,6 +87,10 @@ class CommonConfig:
                  extra_params: Optional[Dict[str, Any]],
                  libraries: Optional[List[Dict[str, Any]]]):
 
+        print("="*80)
+        print(f"instance_pool_id: {instance_pool_id}")
+        print("="*80)
+
         self.__params = {
             "cluster_name": validate(cluster_name=cluster_name).optional.str(),
             "spark_version": validate(spark_version=spark_version).required.str(),
@@ -103,10 +107,14 @@ class CommonConfig:
             self.__params["autotermination_minutes"] = validate(autotermination_minutes=autotermination_minutes).required.int()
 
         if instance_pool_id is not None:
+            print(f"instance_pool_id: {instance_pool_id} & node_type_id: {node_type_id}")
             extra_params["instance_pool_id"]: validate(instance_pool_id=instance_pool_id).required.str()
             assert node_type_id is None, f"""The parameter "node_type_id" should be None when the parameter "instance_pool_id" is specified."""
         else:
+            print(f"instance_pool_id: {instance_pool_id} & node_type_id: {node_type_id}")
             extra_params["node_type_id"] = validate(node_type_id=node_type_id).required.str()
+
+        print("="*80)
 
         if policy_id is not None:
             extra_params["policy_id"] = validate(policy_id=policy_id).required.str()
@@ -177,6 +185,14 @@ class CommonConfig:
         # Process last just in case there is an exclusion bug...
         # This will result in replacing any previously defined parameters
         self.__params.update(extra_params)
+
+        import json
+        print(f"| Extra Params")
+        print(json.dumps(extra_params, indent=4))
+        print(f"="*80)
+        print(f"| Self Params")
+        print(json.dumps(self.__params, indent=4))
+        print(f"="*80)
 
     @property
     def library_factory(self) -> LibraryFactory:

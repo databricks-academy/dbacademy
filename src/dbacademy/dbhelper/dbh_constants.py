@@ -16,7 +16,8 @@ class WorkspaceHelperConstants:
 
     @property
     def WORKSPACE_SETUP_JOB_NAME(self) -> str:
-        return f"DBAcademy's {self.UNIVERSAL_WORKSPACE_SETUP}"
+        # return f"DBAcademy's {self.UNIVERSAL_WORKSPACE_SETUP}"
+        return "DBAcademy Workspace-Setup"
 
     @property
     def PARAM_EVENT_ID(self) -> str:

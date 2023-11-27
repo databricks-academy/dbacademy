@@ -254,12 +254,6 @@ class BuildConfigData:
         if self.__current_cluster is None:
             self.__current_cluster = self.client.clusters.get_current()
 
-        import json
-        print("="*80)
-        print("| CURRENT CLUSTER |")
-        print(json.dumps(self.__current_cluster, indent=4))
-        print("="*80)
-
         return self.__current_cluster
 
     @property
@@ -271,11 +265,6 @@ class BuildConfigData:
         if self.__instance_pool_id is None:  # This may have not been specified upon instantiation
             self.__instance_pool_id = self.current_cluster.get("instance_pool_id")
             assert self.__instance_pool_id is not None, f"The current cluster is not configured to use an instance pool which is required for execution of smoke-tests."
-
-        print("="*80)
-        print("| instance_pool_id |")
-        print(self.__instance_pool_id)
-        print("="*80)
 
         return self.__instance_pool_id
 
