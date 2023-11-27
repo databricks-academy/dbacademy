@@ -1,159 +1,127 @@
-__all__ = ["TaskConfig"]
+__all__ = ["TaskConfig", "NotebookSource"]
 
-from typing import Dict, Any, List
+import inspect
+from enum import Enum
+from typing import Dict, Any, List, Optional
+from dbacademy.common import validate
+from dbacademy.clients.dbrest.clusters_api.cluster_config import LibraryFactory, JobClusterConfig
+
+
+class NotebookSource(Enum):
+    GIT = "GIT"
+    WORKSPACE = "WORKSPACE"
 
 
 class TaskConfig:
 
     def __init__(self, *,
                  job_params: Dict[str, Any],
-                 task_params: Dict[str, Any],
                  task_key: str,
-                 description: str = None,
+                 description: Optional[str] = None,
                  max_retries: int = 0,
                  min_retry_interval_millis: int = 0,
                  retry_on_timeout: bool = False,
-                 timeout_seconds: int = None,
-                 depends_on: List[str] = None):
+                 timeout_seconds: Optional[int] = None,
+                 depends_on: Optional[List[str]] = None):
 
-        task_config: TaskConfig = self
-        self.defined = []
+        self.__params: Dict[str, Any] = dict()
+        self.__task_configured: bool = False
 
-        self.job_params = job_params
-        self.params = task_params
+        self.__libraries = LibraryFactory(None)
+        self.__params["libraries"] = self.__libraries.definitions
 
-        self.params["task_key"] = task_key
-        self.params["max_retries"] = max_retries
-        self.params["min_retry_interval_millis"] = min_retry_interval_millis
-        self.params["retry_on_timeout"] = retry_on_timeout
-        self.params["depends_on"] = depends_on or list()
+        self.__job_params: Dict[str, Any] = validate(job_params=job_params).required.dict(str)
+
+        self.params["task_key"] = validate(task_key=task_key).required.str()
+        self.params["max_retries"] = validate(max_retries=max_retries).required.int()
+        self.params["min_retry_interval_millis"] = validate(min_retry_interval_millis=min_retry_interval_millis).required.int()
+        self.params["retry_on_timeout"] = validate(retry_on_timeout=retry_on_timeout).required.bool()
+        self.params["depends_on"] = validate(depends_on=depends_on).optional.list(str, auto_create=True)
 
         if description is not None:
-            self.params["description"] = description
+            self.params["description"] = validate(description=description).required.str()
 
         if timeout_seconds is not None:
-            self.params["timeout_seconds"] = timeout_seconds
+            self.params["timeout_seconds"] = validate(timeout_seconds=timeout_seconds).required.int()
 
-        class Cluster:
-            from dbacademy.clients.dbrest.clusters_api.cluster_config import JobClusterConfig
+    def assert_task_not_configured(self):
+        assert self.__task_configured is False, f"""The task "{self.task_key}" has already been defined."""
+        self.__task_configured = True
 
-            def __init__(self):
-                self.name = "cluster"
+    @property
+    def params(self) -> Dict[str, Any]:
+        return self.__params
 
-            def on_demand(self, existing_cluster_id: str) -> TaskConfig:
-                assert self.name not in task_config.defined, "The cluster has already been defined."
-                task_config.defined.append(self.name)
-                task_config.params["existing_cluster_id"] = existing_cluster_id
-                return task_config
+    @property
+    def task_key(self) -> str:
+        return self.params.get("task_key")
 
-            def job(self, job_cluster_key: str) -> TaskConfig:
-                assert self.name not in task_config.defined, "The cluster has already been defined."
-                task_config.defined.append(self.name)
-                task_config.params["job_cluster_key"] = job_cluster_key
-                return task_config
+    @property
+    def libraries(self) -> LibraryFactory:
+        return self.__libraries
 
-            def new(self, cluster_config: JobClusterConfig) -> TaskConfig:
-                from dbacademy.common import validate
-                from dbacademy.clients.dbrest.clusters_api.cluster_config import JobClusterConfig
+    def task_notebook(self, *, notebook_path: str, source: NotebookSource, base_parameters: Dict[str, str] = None) -> None:
+        self.assert_task_not_configured()
 
-                assert self.name not in task_config.defined, "The cluster has already been defined."
-                validate(cluster_config=cluster_config).as_type(JobClusterConfig)
+        if source == "GIT":
+            assert self.__job_params.get("git_source") is not None, f"The git source must be specified before defining a git notebook task"
 
-                task_config.defined.append(self.name)
-                task_config.params["new_cluster"] = cluster_config.params
-                return task_config
+        self.params["notebook_task"] = {
+            "notebook_path": validate(notebook_path=notebook_path).required.str(),
+            "source": validate(source=source).required.enum(NotebookSource).value,
+            "base_parameters": base_parameters or dict()
+        }
 
-        self.cluster = Cluster()
+    def task_jar(self) -> None:  # , main_class_name: str, parameters: List[str]) -> AbstractTaskConfig:
+        self.assert_task_not_configured()
+        raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 
-        class Task:
-            from dbacademy.clients.dbrest.clusters_api.cluster_config import LibraryFactory
+    def task_python(self) -> None:  # , python_file: str, parameters: List[str]) -> AbstractTaskConfig:
+        self.assert_task_not_configured()
+        raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 
-            def __init__(self):
-                from dbacademy.clients.dbrest.clusters_api.cluster_config import LibraryFactory
+    def task_submit(self) -> None:  # , parameters: List[str]) -> AbstractTaskConfig:
+        self.assert_task_not_configured()
+        raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 
-                self.name = "task"
-                self.__libraries = LibraryFactory(None)
-                task_config.params["libraries"] = self.__libraries.definitions
+    def task_pipeline(self) -> None:  # , pipeline_id: str, full_refresh: bool = False) -> AbstractTaskConfig:
+        self.assert_task_not_configured()
+        raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 
-            @property
-            def libraries(self) -> LibraryFactory:
-                return self.__libraries
+    def task_wheel(self) -> None:  # , package_name: str, entry_point: str, parameters: List[str], named_parameters: List[str]) -> AbstractTaskConfig:
+        self.assert_task_not_configured()
+        raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 
-            def notebook(self, notebook_path: str, source: str, base_parameters: Dict[str, str] = None) -> TaskConfig:
-                assert self.name not in task_config.defined, "The task has already been defined."
-                task_config.defined.append(self.name)
+    def task_sql(self) -> None:  # , query_id: str, dashboard_id: str, alert_id: str, parameters: List[str], warehouse_id: str) -> AbstractTaskConfig:
+        self.assert_task_not_configured()
+        raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 
-                sources = ["WORKSPACE", "GIT"]
-                assert source.upper() in sources, f"The source parameter must be one of {sources}, found \"{source}\""
+    def task_dbt(self) -> None:  # , project_directory: str, commands: List[str], schema: str, warehouse_id: str, catalog: str, profiles_directory: str) -> AbstractTaskConfig:
+        self.assert_task_not_configured()
+        raise NotImplementedError(f"""{self.__class__.__name__}.{inspect.stack()[0].function}(..) is not implemented""")
 
-                if source == "GIT":
-                    assert task_config.job_params["git_source"] is not None, f"The git source must be specified before defining a git notebook task"
-
-                task_config.params["notebook_task"] = {
-                    "notebook_path": notebook_path,
-                    "source": source,
-                    "base_parameters": base_parameters or dict()
-                }
-
-                return task_config
-
-            def jar(self) -> TaskConfig:  # , main_class_name: str, parameters: List[str]) -> TaskConfig:
-                assert self.name not in task_config.defined, "The task has already been defined."
-                task_config.defined.append(self.name)
-                assert 1/0, "Not yet implemented"
-                return task_config
-
-            def python(self) -> TaskConfig:  # , python_file: str, parameters: List[str]) -> TaskConfig:
-                assert self.name not in task_config.defined, "The task has already been defined."
-                task_config.defined.append(self.name)
-                assert 1/0, "Not yet implemented"
-                return task_config
-
-            def submit(self) -> TaskConfig:  # , parameters: List[str]) -> TaskConfig:
-                assert self.name not in task_config.defined, "The task has already been defined."
-                task_config.defined.append(self.name)
-                assert 1/0, "Not yet implemented"
-                return task_config
-
-            def pipeline(self) -> TaskConfig:  # , pipeline_id: str, full_refresh: bool = False) -> TaskConfig:
-                assert self.name not in task_config.defined, "The task has already been defined."
-                task_config.defined.append(self.name)
-                assert 1/0, "Not yet implemented"
-                return task_config
-
-            def wheel(self) -> TaskConfig:  # , package_name: str, entry_point: str, parameters: List[str], named_parameters: List[str]) -> TaskConfig:
-                assert self.name not in task_config.defined, "The task has already been defined."
-                task_config.defined.append(self.name)
-                assert 1/0, "Not yet implemented"
-                return task_config
-
-            def sql(self) -> TaskConfig:  # , query_id: str, dashboard_id: str, alert_id: str, parameters: List[str], warehouse_id: str) -> TaskConfig:
-                assert self.name not in task_config.defined, "The task has already been defined."
-                task_config.defined.append(self.name)
-                assert 1/0, "Not yet implemented"
-                return task_config
-
-            def dbt(self) -> TaskConfig:  # , project_directory: str, commands: List[str], schema: str, warehouse_id: str, catalog: str, profiles_directory: str) -> TaskConfig:
-                assert self.name not in task_config.defined, "The task has already been defined."
-                task_config.defined.append(self.name)
-                assert 1/0, "Not yet implemented"
-                return task_config
-
-        self.task = Task()
-
-    def add_email_notifications(self, *, on_start: List[str], on_success: List[str], on_failure: List[str], no_alert_for_skipped_runs: bool = False) -> "TaskConfig":
-        self.params["email_notifications"] = {
-            "on_start": on_start or list(),
-            "on_success": on_success or list(),
-            "on_failure": on_failure or list(),
-            "no_alert_for_skipped_runs": no_alert_for_skipped_runs
-        },
+        # noinspection PyUnreachableCode
         return self
 
-    def add_webhook_notifications(self, *, on_start: List[str], on_success: List[str], on_failure: List[str]) -> "TaskConfig":
-        self.params["email_notifications"] = {
-            "on_start": on_start or list(),
-            "on_success": on_success or list(),
-            "on_failure": on_failure or list(),
-        },
-        return self
+    def __cluster_reset(self):
+        if "existing_cluster_id" in self.params:
+            del self.params["existing_cluster_id"]
+
+        if "job_cluster_key" in self.params:
+            del self.params["job_cluster_key"]
+
+        if "new_cluster" in self.params:
+            del self.params["new_cluster"]
+
+    def cluster_on_demand(self, existing_cluster_id: str) -> None:
+        self.__cluster_reset()
+        self.params["existing_cluster_id"] = existing_cluster_id
+
+    def cluster_job(self, job_cluster_key: str) -> None:
+        self.__cluster_reset()
+        self.params["job_cluster_key"] = job_cluster_key
+
+    def cluster_new(self, cluster_config: JobClusterConfig) -> None:
+        self.__cluster_reset()
+        cluster_config = validate(cluster_config=cluster_config).as_type(JobClusterConfig)
+        self.params["new_cluster"] = cluster_config.params

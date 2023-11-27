@@ -1,19 +1,18 @@
 __all__ = ["TestJobsClient"]
 
 import unittest
+from dbacademy.clients import dbrest
+from dbacademy_test.clients.dbrest import DBACADEMY_UNIT_TESTS
+from dbacademy.clients.dbrest.jobs_api.task_config import NotebookSource
 
 
 class TestJobsClient(unittest.TestCase):
 
     def setUp(self) -> None:
-        from dbacademy.clients import dbrest
-        from dbacademy_test.clients.dbrest import DBACADEMY_UNIT_TESTS
-
         self.__client = dbrest.from_token(scope=DBACADEMY_UNIT_TESTS)
         self.tearDown()
 
     def tearDown(self) -> None:
-        pass
         jobs = self.client.jobs.list(expand_tasks=False)
         for job in jobs:
             job_id = job.get("job_id")
@@ -55,13 +54,13 @@ class TestJobsClient(unittest.TestCase):
         config.git_branch(provider="gitHub", url="https://github.com/databricks-academy/workspace-setup.git", branch="published")
 
         task_config = config.add_task(task_key="Workspace-Setup", description="Just a sample job", timeout_seconds=555)
-        task_config.task.notebook("Workspace-Setup", source="GIT", base_parameters={
+        task_config.task_notebook(notebook_path="Workspace-Setup", source=NotebookSource.GIT, base_parameters={
             dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_ID: "Testing 123",
             dbh_constants.WORKSPACE_HELPER.PARAM_EVENT_DESCRIPTION: "This is a test of the Emergency Broadcast System. This is only a test.",
             dbh_constants.WORKSPACE_HELPER.PARAM_POOLS_NODE_TYPE_ID: "i3.xlarge",
             dbh_constants.WORKSPACE_HELPER.PARAM_DEFAULT_SPARK_VERSION: "11.3.x-scala2.12"
         })
-        task_config.cluster.new(JobClusterConfig(cloud=Cloud.AWS,
+        task_config.cluster_new(JobClusterConfig(cloud=Cloud.AWS,
                                                  spark_version="11.3.x-scala2.12",
                                                  node_type_id="i3.xlarge",
                                                  num_workers=0,

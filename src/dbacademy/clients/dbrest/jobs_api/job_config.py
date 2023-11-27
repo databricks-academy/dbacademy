@@ -1,10 +1,11 @@
 __all__ = ["JobConfig"]
 
-from typing import Dict, List
+from typing import Dict, List, Optional, Any
+from dbacademy.common import validate
+from dbacademy.clients.dbrest.jobs_api.task_config import TaskConfig
 
 
 class JobConfig:
-    from dbacademy.clients.dbrest.jobs_api.task_config import TaskConfig
 
     def __init__(self, *,
                  job_name: str,
@@ -12,53 +13,71 @@ class JobConfig:
                  max_concurrent_runs: int = 1,
                  tags: Dict[str, str] = None):
 
+        self.__tasks: List[Dict[str, Any]] = list()
+
         self.params = {
-            "name": job_name,
-            "tags": tags or dict(),
-            "timeout_seconds": timeout_seconds,
-            "max_concurrent_runs": max_concurrent_runs,
+            "name": validate(job_name=job_name).required.str(),
+            "tags": validate(tags=tags).required.dict(str, str),
+            "timeout_seconds": validate(timeout_seconds=timeout_seconds).required.int(),
+            "max_concurrent_runs": validate(max_concurrent_runs=max_concurrent_runs).required.int(),
             "format": "MULTI_TASK",
-            "tasks": [],
+            "tasks": self.__tasks,
         }
 
     def git_branch(self, *, provider: str, url: str, branch: str):
         self.params["git_source"] = {
-            "git_provider": provider,
-            "git_url": url,
-            "git_branch": branch
+            "git_provider": validate(provider=provider).required.str(),
+            "git_url": validate(url=url).required.str(),
+            "git_branch": validate(branch=branch).required.str()
         }
 
     def git_tag(self, *, provider: str, url: str, tag: str):
         self.params["git_source"] = {
-            "git_provider": provider,
-            "git_url": url,
-            "git_tag": tag
+            "git_provider": validate(provider=provider).required.str(),
+            "git_url": validate(url=url).required.str(),
+            "git_tag": validate(tag=tag).required.str()
         }
 
     def git_commit(self, *, provider: str, url: str, commit: str):
         self.params["git_source"] = {
-            "git_provider": provider,
-            "git_url": url,
-            "git_commit": commit
+            "git_provider": validate(provider=provider).required.str(),
+            "git_url": validate(url=url).required.str(),
+            "git_commit": validate(commit=commit).required.str()
         }
 
-    def add_task(self, *, task_key: str, description: str = None, max_retries: int = 0, min_retry_interval_millis: int = 0, retry_on_timeout: bool = False, timeout_seconds: int = None, depends_on: List[str] = None) -> TaskConfig:
-        from dbacademy.clients.dbrest.jobs_api.task_config import TaskConfig
+    def add_task(self, *,
+                 task_key: str,
+                 description: Optional[str] = None,
+                 max_retries: int = 0,
+                 min_retry_interval_millis: int = 0,
+                 retry_on_timeout: bool = False,
+                 timeout_seconds: Optional[int] = None,
+                 depends_on: Optional[List[str]] = None) -> TaskConfig:
 
-        depends_on = depends_on or list()
+        # These are validated in the TaskConfig constructor
+        task_config = TaskConfig(job_params=self.params,
+                                 task_key=task_key,
+                                 description=description,
+                                 max_retries=max_retries,
+                                 min_retry_interval_millis=min_retry_interval_millis,
+                                 retry_on_timeout=retry_on_timeout,
+                                 timeout_seconds=timeout_seconds,
+                                 depends_on=depends_on)
 
-        if "tasks" not in self.params:
-            self.params["tasks"] = []
+        self.params["tasks"].append(task_config.params)
+        return task_config
 
-        task = dict()
-        self.params["tasks"].append(task)
+    def add_email_notifications(self, *, on_start: List[str], on_success: List[str], on_failure: List[str], no_alert_for_skipped_runs: bool = False) -> None:
+        self.params["email_notifications"] = {
+            "on_start": on_start or list(),
+            "on_success": on_success or list(),
+            "on_failure": on_failure or list(),
+            "no_alert_for_skipped_runs": no_alert_for_skipped_runs
+        }
 
-        return TaskConfig(job_params=self.params,
-                          task_params=task,
-                          task_key=task_key,
-                          description=description,
-                          max_retries=max_retries,
-                          min_retry_interval_millis=min_retry_interval_millis,
-                          retry_on_timeout=retry_on_timeout,
-                          timeout_seconds=timeout_seconds,
-                          depends_on=depends_on)
+    def add_webhook_notifications(self, *, on_start: List[str], on_success: List[str], on_failure: List[str]) -> None:
+        self.params["email_notifications"] = {
+            "on_start": on_start or list(),
+            "on_success": on_success or list(),
+            "on_failure": on_failure or list(),
+        }

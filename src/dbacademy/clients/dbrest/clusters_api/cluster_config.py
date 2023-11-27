@@ -2,6 +2,7 @@ __all__ = ["Availability", "ClusterConfig", "JobClusterConfig", "LibraryFactory"
 
 from enum import Enum
 from typing import Optional, Dict, Any, List
+from dbacademy.common import validate
 
 
 class Availability(Enum):
@@ -23,8 +24,9 @@ class Availability(Enum):
 
 
 class LibraryFactory:
-    def __init__(self, _libraries: Optional[List[Dict[str, Any]]]):
-        self.__definitions = _libraries if _libraries else list()
+    def __init__(self, libraries: Optional[List[Dict[str, Any]]]):
+        # self.__definitions = libraries if libraries else list()
+        self.__definitions: List[Dict[str, Any]] = validate(libraries=libraries).optional.list(dict, auto_create=True)
 
     @property
     def definitions(self) -> List[Dict[str, Any]]:
@@ -32,35 +34,35 @@ class LibraryFactory:
 
     def jar(self, location: str):
         self.definitions.append({
-            "jar": location
+            "jar": validate(location=location).required.str()
         })
 
     def egg(self, location: str):
         self.definitions.append({
-            "egg": location
+            "egg": validate(location=location).required.str()
         })
 
     def wheel(self, location: str):
         self.definitions.append({
-            "egg": location
+            "egg": validate(location=location).required.str()
         })
 
     def pypi(self, definition: Dict[str, Any]):
         self.definitions.append({
-            "pypi": definition
+            "pypi": validate(definition=definition).required.dict(str)
         })
 
     def maven(self, definition: Dict[str, Any]):
         self.definitions.append({
-            "maven": definition
+            "maven": validate(definition=definition).required.dict(str)
         })
 
     def cran(self, definition: Dict[str, Any]):
         self.definitions.append({
-            "cran": definition
+            "cran": validate(definition=definition).required.dict(str)
         })
 
-    def from_dict(self, library: Dict[str, Any]):
+    def from_dict(self, library: Dict[str, Any]) -> None:
         self.definitions.append(library)
 
 
@@ -74,7 +76,7 @@ class CommonConfig:
                  spark_version: str,
                  node_type_id: Optional[str],
                  driver_node_type_id: str,
-                 instance_pool_id: str,
+                 instance_pool_id: Optional[str],
                  policy_id: str,
                  num_workers: int,
                  autotermination_minutes: Optional[int],
@@ -88,12 +90,12 @@ class CommonConfig:
         self.__libraries = library_factory
 
         self.__params = {
-            "cluster_name": cluster_name,
-            "spark_version": spark_version,
-            "num_workers": num_workers,
-            "node_type_id": node_type_id,
-            "instance_pool_id": instance_pool_id,
-            "autotermination_minutes": autotermination_minutes,
+            "cluster_name": validate(cluster_name=cluster_name).optional.str(),
+            "spark_version": validate(spark_version=spark_version).required.str(),
+            "num_workers": validate(num_workers=num_workers).required.int(),
+            "node_type_id": validate(node_type_id=node_type_id).required.str(),
+            "instance_pool_id": validate(instance_pool_id=instance_pool_id).optional.str(),
+            "autotermination_minutes": validate(autotermination_minutes=autotermination_minutes).optional.int(),
         }
 
         extra_params = extra_params or dict()
