@@ -103,7 +103,7 @@ class CommonConfig:
             self.__params["autotermination_minutes"] = validate(autotermination_minutes=autotermination_minutes).required.int()
 
         if instance_pool_id is not None:
-            extra_params["instance_pool_id"]: validate(instance_pool_id=instance_pool_id).optional.str()
+            extra_params["instance_pool_id"]: validate(instance_pool_id=instance_pool_id).required.str()
             assert node_type_id is None, f"""The parameter "node_type_id" should be None when the parameter "instance_pool_id" is specified."""
         else:
             extra_params["node_type_id"] = validate(node_type_id=node_type_id).required.str()

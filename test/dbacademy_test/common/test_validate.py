@@ -411,6 +411,12 @@ class ValidateTests(unittest.TestCase):
         value = validate(value="aws").optional.enum(Cloud, auto_convert=True)
         self.assertEqual(Cloud.AWS, value)
 
+        value = validate(value=None).optional.enum(Cloud, auto_convert=True)
+        self.assertIsNone(value)
+
+        value = validate(value=None).optional.enum(Cloud, auto_convert=False)
+        self.assertIsNone(value)
+
         try:
             validate(value="asdf").optional.enum(Cloud, auto_convert=True)
             self.fail(EXPECTED_ASSERTION_ERROR)

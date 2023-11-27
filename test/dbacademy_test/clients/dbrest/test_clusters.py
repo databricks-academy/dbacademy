@@ -423,10 +423,21 @@ class TestClusters(unittest.TestCase):
             ClusterConfig(cloud=Cloud.AWS,
                           cluster_name="AWS Attributes Conflicting",
                           spark_version="11.3.x-scala2.12",
-                          node_type_id="i3.xlarge",
                           num_workers=0,
                           autotermination_minutes=10,
                           availability=Availability.SPOT,
+                          instance_pool_id="0123456789")
+        except AssertionError as e:
+            self.assertEqual(f"The parameter \"availability\" cannot be specified when \"instance_pool_id\" is specified.", str(e))
+
+    def test_create_with_instance_profile_and_node_type_id(self):
+
+        try:
+            ClusterConfig(cloud=Cloud.AWS,
+                          cluster_name="AWS Attributes Conflicting",
+                          spark_version="11.3.x-scala2.12",
+                          num_workers=0,
+                          autotermination_minutes=10,
                           instance_pool_id="0123456789")
         except AssertionError as e:
             self.assertEqual(f"The parameter \"availability\" cannot be specified when \"instance_pool_id\" is specified.", str(e))

@@ -102,7 +102,7 @@ class TypedValidator:
         message = f"""{E_INTERNAL} | Expected {self.__class__.__name__}.{inspect.stack()[0].function}(..)'s parameter 'auto_convert' to be of type bool, found {type(auto_convert)}."""
         do_validate(passed=isinstance(auto_convert, bool), message=message)
 
-        if auto_convert and not isinstance(self.parameter_value, enum_type):
+        if auto_convert and self.parameter_value is not None and not isinstance(self.parameter_value, enum_type):
             for value in enum_type:
                 if value == self.parameter_value:
                     self.parameter_value = value
