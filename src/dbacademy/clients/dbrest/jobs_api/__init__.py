@@ -21,6 +21,11 @@ class JobsApi(ApiContainer):
     def create_from_dict(self, params: Dict[str, Any]) -> str:
         params = validate(params=params).required.dict(str)
 
+        import json
+        print("="*80)
+        print(json.dumps(params, indent=4))
+        print("="*80)
+
         response = self.__client.api("POST", f"{self.base_uri}/create", params)
         return response.get("job_id")
 
