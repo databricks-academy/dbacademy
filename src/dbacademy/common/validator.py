@@ -336,8 +336,8 @@ class TypedValidator:
         message = f"""{E_INTERNAL} | Expected {self.__class__.__name__}.{inspect.stack()[0].function}(..)'s parameter 'min_length' to be of type int, found {type(min_length)}."""
         do_validate(passed=isinstance(min_length, int), message=message)
 
-        if min_length > 0:
-            # We cannot test the length if the value is not of type Sized.
+        if self.parameter_value is not None and min_length > 0:
+            # We cannot test the length if the value is not of type Sized, and we shouldn't test it if it is None.
             message = f"""{E_TYPE} |  Expected the parameter '{self.parameter_name}' to be of type Sized, found {type(self.parameter_value)}."""
             do_validate(passed=isinstance(self.parameter_value, Sized), message=message)
 

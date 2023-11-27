@@ -1,5 +1,7 @@
 __all__ = ["SqlApi"]
+# Code Review: JDP on 11-27-2023
 
+from dbacademy.common import validate
 from dbacademy.clients.rest.common import ApiContainer, ApiClient
 from dbacademy.clients.dbrest.sql_api.config_api import SqlConfigApi
 from dbacademy.clients.dbrest.sql_api.warehouses_api import SqlWarehousesApi
@@ -10,8 +12,6 @@ from dbacademy.clients.dbrest.sql_api.statements_api import StatementsApi
 class SqlApi(ApiContainer):
 
     def __init__(self, client: ApiClient):
-        from dbacademy.common import validate
-
         self.__client = validate(client=client).required.as_type(ApiClient)
 
     @property
@@ -29,7 +29,3 @@ class SqlApi(ApiContainer):
     @property
     def statements(self) -> StatementsApi:
         return StatementsApi(self.__client)
-
-    # @property
-    # def permissions(self) -> SqlPermissionsApi:
-    #     return SqlPermissionsApi(self.__client)

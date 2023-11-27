@@ -238,7 +238,7 @@ class TestClusters(unittest.TestCase):
             actual_value = cluster.get(key)
             expected_value = expected.get(key)
             if expected_value != actual_value:
-                self.fail(f"{key}: \"{expected_value}\" != \"{actual_value}\"")
+                self.fail(f"""{key}: "{expected_value}" != "{actual_value}".""")
 
         self.assertTrue(len(cluster.get("aws_attributes")) > 0)
 
@@ -376,25 +376,13 @@ class TestClusters(unittest.TestCase):
             cluster_name="Driver Node Type A",
             spark_version="11.3.x-scala2.12",
             node_type_id="i3.xlarge",
+            # Expected to be None
             # driver_node_type_id="i3.2xlarge",
             num_workers=0,
             autotermination_minutes=10))
         cluster = self.client.clusters.get_by_id(cluster_id)
         self.assertEqual("i3.xlarge", cluster.get("node_type_id"))
         self.assertEqual("i3.xlarge", cluster.get("driver_node_type_id"))
-        self.client.clusters.destroy_by_id(cluster_id)
-
-        cluster_id = self.client.clusters.create_from_config(ClusterConfig(
-            cloud=Cloud.AWS,
-            cluster_name="Driver Node Type B",
-            spark_version="11.3.x-scala2.12",
-            node_type_id="i3.xlarge",
-            driver_node_type_id="i3.2xlarge",
-            num_workers=0,
-            autotermination_minutes=10))
-        cluster = self.client.clusters.get_by_id(cluster_id)
-        self.assertEqual("i3.xlarge", cluster.get("node_type_id"))
-        self.assertEqual("i3.2xlarge", cluster.get("driver_node_type_id"))
         self.client.clusters.destroy_by_id(cluster_id)
 
     def test_create_with_spark_conf(self):

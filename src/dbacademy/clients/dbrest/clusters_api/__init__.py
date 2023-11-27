@@ -9,8 +9,6 @@ from dbacademy.clients.dbrest.clusters_api.cluster_config import ClusterConfig
 class ClustersApi(ApiContainer):
 
     def __init__(self, client: ApiClient):
-        from dbacademy.common import validate
-
         self.__client = validate(client=client).required.as_type(ApiClient)
         self.base_uri = f"{self.__client.endpoint}/api/2.0/clusters"
 
@@ -18,10 +16,6 @@ class ClustersApi(ApiContainer):
         return self.create_from_dict(config.params)
 
     def create_from_dict(self, params: Dict[str, Any]) -> str:
-        import json
-        print("-"*80)
-        print(json.dumps(params, indent=4))
-        print("-"*80)
         cluster = self.__client.api("POST", f"{self.base_uri}/create", _data=params)
         return cluster.get("cluster_id")
 

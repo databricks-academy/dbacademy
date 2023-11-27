@@ -1,14 +1,13 @@
 __all__ = ["AccountScimApi"]
 
-from dbacademy.clients.rest.common import ApiContainer
+from dbacademy.common import validate
+from dbacademy.clients.rest.common import ApiClient, ApiContainer
 from dbacademy.clients.dbrest.accounts_client.scim.users import AccountScimUsersApi
-from dbacademy.clients.rest.common import ApiClient
 
 
 class AccountScimApi(ApiContainer):
 
     def __init__(self, client: ApiClient, account_id: str):
-        from dbacademy.common import validate
 
         self.__client = validate(client=client).required.as_type(ApiClient)
         self.__account_id = account_id

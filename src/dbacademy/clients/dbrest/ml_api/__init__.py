@@ -1,5 +1,7 @@
 __all__ = ["MlApi"]
+# Code Review: JDP on 11-27-2023
 
+from dbacademy.common import validate
 from dbacademy.clients.rest.common import ApiClient, ApiContainer
 from dbacademy.clients.dbrest.ml_api.feature_store_api import FeatureStoreApi
 from dbacademy.clients.dbrest.ml_api.mlflow_endpoints_api import MLflowEndpointsApi
@@ -9,8 +11,6 @@ from dbacademy.clients.dbrest.ml_api.mlflow_model_versions_api import MLflowMode
 
 class MlApi(ApiContainer):
     def __init__(self, client: ApiClient):
-        from dbacademy.common import validate
-
         self.__client = validate(client=client).required.as_type(ApiClient)
 
     @property

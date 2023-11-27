@@ -1,5 +1,7 @@
 __all__ = ["PermissionsApi"]
+# Code Review: JDP on 11-27-2023
 
+from dbacademy.common import validate
 from dbacademy.clients.rest.common import ApiContainer, ApiClient
 from dbacademy.clients.dbrest.permissions_api.clusters_permissions_api import ClustersPermissionsApi
 from dbacademy.clients.dbrest.permissions_api.directories_permissions_api import DirectoriesPermissionsApi
@@ -14,8 +16,6 @@ from dbacademy.clients.dbrest.permissions_api.authorization_tokens_permissions_a
 class Authorization:
 
     def __init__(self, client: ApiClient):
-        from dbacademy.common import validate
-
         self.__client = validate(client=client).required.as_type(ApiClient)
 
     @property
@@ -26,8 +26,6 @@ class Authorization:
 class PermissionsApi(ApiContainer):
 
     def __init__(self, client: ApiClient):
-        from dbacademy.common import validate
-
         self.__client = validate(client=client).required.as_type(ApiClient)
 
     @property
