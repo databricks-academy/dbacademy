@@ -70,7 +70,9 @@ class AccountsClient(ApiClient):
                          throttle_seconds=throttle_seconds,
                          error_handler=error_handler)
 
-        self.__account_id = account_id
+        from dbacademy.common import validate
+
+        self.__account_id = validate(account_id=account_id).required.str()
 
     @property
     def account_id(self) -> str:
