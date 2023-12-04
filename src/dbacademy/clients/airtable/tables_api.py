@@ -1,6 +1,6 @@
 __all__ = ["TablesAPI"]
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Set
 from dbacademy.clients.rest.common import ApiClient
 from dbacademy.clients.airtable.at_utils import AirTableUtils
 from dbacademy.clients.rest.common import ApiContainer
@@ -25,7 +25,22 @@ class TablesAPI(ApiContainer):
     def table_id(self) -> str:
         return self.__table_id
 
-    def query(self, view_id: str = None, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True, records: List[Dict[str, Any]] = None, offset: str = None) -> List[Dict[str, Any]]:
+    def list_duplicates(self, id_column: str) -> Set[str]:
+        duplicates: Set[str] = set()
+        id_values: Set[str] = set()
+
+        records = self.query(sort_by=id_column, sort_asc=True)
+        for record in records:
+            fields = record.get("fields")
+            id_value = fields.get(id_column)
+            if id_value in id_values:
+                duplicates.add(id_value)
+            else:
+                id_values.add(id_value)
+
+        return duplicates
+
+    def query(self, *, view_id: str = None, filter_by_formula: str = None, sort_by: str = None, sort_asc: bool = True, records: List[Dict[str, Any]] = None, offset: str = None) -> List[Dict[str, Any]]:
         import requests
 
         records = records or list()
