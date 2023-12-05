@@ -36,7 +36,6 @@ def configure_workspace_setup(*,
                                         msa_access_connector_id=None)
 
     wct = WorkspaceConfig(max_participants=_max_participants,
-                          default_dbr="11.3.x-cpu-ml-scala2.12",
                           default_node_type_id="i3.xlarge",
                           credentials_name="default",
                           storage_configuration="us-west-2",                         # Not region, just named after the region.

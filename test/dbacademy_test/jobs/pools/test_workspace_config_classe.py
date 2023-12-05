@@ -38,7 +38,6 @@ class TestWorkspaceConfig(unittest.TestCase):
         expected_users = max_participants + 3  # script_account, analyst-1, analyst-2
         workspace = WorkspaceConfig(max_participants=max_participants,
                                     default_node_type_id="i3.xlarge",
-                                    default_dbr="11.3.x-scala2.12",
                                     credentials_name="default",
                                     storage_configuration="us-west-2",
                                     username_pattern="class+{student_number}@databricks.com",
@@ -47,7 +46,6 @@ class TestWorkspaceConfig(unittest.TestCase):
                                     workspace_name_pattern="classroom-{workspace_number}")
 
         self.assertEqual(expected_users, len(workspace.usernames))
-        self.assertEqual("11.3.x-scala2.12", workspace.default_dbr)
         self.assertEqual("i3.xlarge", workspace.default_node_type_id)
 
         self.assertIsNone(workspace.workspace_number)
@@ -96,7 +94,6 @@ class TestWorkspaceConfig(unittest.TestCase):
 
         workspace = WorkspaceConfig(max_participants=250,
                                     default_node_type_id="i3.xlarge",
-                                    default_dbr="11.3.x-scala2.12",
                                     credentials_name="default",
                                     storage_configuration="us-west-2",
                                     username_pattern="class+{student_number}@databricks.com",
@@ -112,93 +109,86 @@ class TestWorkspaceConfig(unittest.TestCase):
         ###################################################
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "username_pattern" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern=0, workspace_group=None, entitlements=dict(), workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, """The parameter "username_pattern" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern=0, workspace_group=None, entitlements=dict(), workspace_name_pattern="classroom-{workspace_number}"))
+        
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "username_pattern" must be a string value, found <class 'NoneType'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern=None, workspace_group=None, entitlements=dict(), workspace_name_pattern="classroom-{workspace_number}"))
-        test_assertion_error(self, """The parameter "username_pattern" must have a length > 0, found "".""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="", workspace_group=None, entitlements=dict(), workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, """The parameter "username_pattern" must be a string value, found <class 'NoneType'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern=None, workspace_group=None, entitlements=dict(), workspace_name_pattern="classroom-{workspace_number}"))
+        
+        test_assertion_error(self, """The parameter "username_pattern" must have a length > 0, found "".""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="", workspace_group=None, entitlements=dict(), workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_workspace_pattern(self):
         from dbacademy_test.jobs.pools import test_assertion_error
 
-        workspace = WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
+        workspace = WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
         self.assertEqual("classroom-{workspace_number}", workspace.workspace_name_pattern)
 
-        workspace = WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
+        workspace = WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
         self.assertEqual("classroom-{workspace_number}", workspace.workspace_name_pattern)
 
         ###################################################
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "workspace_name_pattern" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern=0))
+        test_assertion_error(self, """The parameter "workspace_name_pattern" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern=0))
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "workspace_name_pattern" must be a string value, found <class 'NoneType'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern=None))
-        test_assertion_error(self, """The parameter "workspace_name_pattern" must have a length > 0, found "".""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern=""))
+        test_assertion_error(self, """The parameter "workspace_name_pattern" must be a string value, found <class 'NoneType'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern=None))
+        test_assertion_error(self, """The parameter "workspace_name_pattern" must have a length > 0, found "".""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern=""))
 
-        test_assertion_error(self, """Expected the parameter "workspace_name_pattern" to contain "{workspace_number}", found "classroom-{whatever}".""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{whatever}"))
+        test_assertion_error(self, """Expected the parameter "workspace_name_pattern" to contain "{workspace_number}", found "classroom-{whatever}".""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{whatever}"))
 
     def test_create_workspace_config_workspace_number(self):
         from dbacademy_test.jobs.pools import test_assertion_error
 
-        workspace = WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
+        workspace = WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
         self.assertIsNone(workspace.workspace_number)
 
         ###################################################
 
-        workspace = WorkspaceConfig(workspace_number=99, max_participants=250, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
+        workspace = WorkspaceConfig(workspace_number=99, max_participants=250, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
         self.assertEqual(99, workspace.workspace_number)
 
         # noinspection PyTypeChecker
         test_assertion_error(self, """The parameter "workspace_number" must be an integral value, found <class 'str'>.""",
-                             lambda: WorkspaceConfig(workspace_number="0", max_participants=250, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+                             lambda: WorkspaceConfig(workspace_number="0", max_participants=250, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
 
         test_assertion_error(self, """The parameter "workspace_number" must be greater than zero, found "0".""",
-                             lambda: WorkspaceConfig(workspace_number=0, max_participants=250, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+                             lambda: WorkspaceConfig(workspace_number=0, max_participants=250, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_max_participants(self):
         from dbacademy_test.jobs.pools import test_assertion_error
         from dbacademy.common import validator
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, validator.E_TYPE, lambda: WorkspaceConfig(max_participants="0", default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, validator.E_TYPE, lambda: WorkspaceConfig(max_participants="0", default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
         # noinspection PyTypeChecker
-        test_assertion_error(self, validator.E_NOT_NONE, lambda: WorkspaceConfig(max_participants=None, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
-        test_assertion_error(self, validator.E_MIN_V, lambda: WorkspaceConfig(max_participants=0, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
-
-    def test_create_workspace_config_default_dbr(self):
-        from dbacademy_test.jobs.pools import test_assertion_error
-
-        # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "default_dbr" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", default_dbr=0, credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
-        # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "default_dbr" must be a string value, found <class 'NoneType'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", default_dbr=None, credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
-        test_assertion_error(self, """Invalid DBR format, found "abc".""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="i3.xlarge", default_dbr="abc", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, validator.E_NOT_NONE, lambda: WorkspaceConfig(max_participants=None, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, validator.E_MIN_V, lambda: WorkspaceConfig(max_participants=0, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_default_node_type_id(self):
         from dbacademy_test.jobs.pools import test_assertion_error
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "default_node_type_id" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id=0, default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, """The parameter "default_node_type_id" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id=0, credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "default_node_type_id" must be a string value, found <class 'NoneType'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id=None, default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
-        test_assertion_error(self, """Invalid node type, found "abc".""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="abc", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, """The parameter "default_node_type_id" must be a string value, found <class 'NoneType'>.""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id=None, credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, """Invalid node type, found "abc".""", lambda: WorkspaceConfig(max_participants=250, default_node_type_id="abc", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_credentials_name(self):
         from dbacademy_test.jobs.pools import test_assertion_error
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "credentials_name" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=150, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name=0, storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, """The parameter "credentials_name" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=150, default_node_type_id="i3.xlarge", credentials_name=0, storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "credentials_name" must be a string value, found <class 'NoneType'>.""", lambda: WorkspaceConfig(max_participants=150, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name=None, storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
-        test_assertion_error(self, """The parameter "credentials_name" must be specified, found "".""", lambda: WorkspaceConfig(max_participants=150, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, """The parameter "credentials_name" must be a string value, found <class 'NoneType'>.""", lambda: WorkspaceConfig(max_participants=150, default_node_type_id="i3.xlarge", credentials_name=None, storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, """The parameter "credentials_name" must be specified, found "".""", lambda: WorkspaceConfig(max_participants=150, default_node_type_id="i3.xlarge", credentials_name="", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
 
     def test_create_workspace_config_storage_config(self):
         from dbacademy_test.jobs.pools import test_assertion_error
 
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "storage_configuration" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=150, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration=0, username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, """The parameter "storage_configuration" must be a string value, found <class 'int'>.""", lambda: WorkspaceConfig(max_participants=150, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration=0, username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
         # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "storage_configuration" must be a string value, found <class 'NoneType'>.""", lambda: WorkspaceConfig(max_participants=150, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration=None, username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
-        test_assertion_error(self, """The parameter "storage_configuration" must be specified, found "".""", lambda: WorkspaceConfig(max_participants=150, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, """The parameter "storage_configuration" must be a string value, found <class 'NoneType'>.""", lambda: WorkspaceConfig(max_participants=150, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration=None, username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
+        test_assertion_error(self, """The parameter "storage_configuration" must be specified, found "".""", lambda: WorkspaceConfig(max_participants=150, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="", username_pattern="class+{student_number}@databricks.com", entitlements=dict(), workspace_group=None, workspace_name_pattern="classroom-{workspace_number}"))
 
 
 if __name__ == '__main__':

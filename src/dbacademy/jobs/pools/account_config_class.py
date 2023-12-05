@@ -37,7 +37,7 @@ class AccountConfig:
                  password: str,
                  uc_storage_config: UcStorageConfig,
                  workspace_config_template: WorkspaceConfig,
-                 ignored_workspaces: List[Union[int, str]] = None,
+                 ignored_workspaces: List[str] = None,
                  workspace_numbers: List[int]) -> None:
         """
         Creates the configuration for account-level settings.
@@ -57,8 +57,7 @@ class AccountConfig:
 
         self.__region = validate(region=region).optional.str(min_length=1)
 
-        ignored_workspaces: List[str] = combine_var_args(first=ignored_workspaces, others=None)
-        self.__ignored_workspaces = validate(ignored_workspaces=ignored_workspaces).required.list(str)
+        self.__ignored_workspaces = validate(ignored_workspaces=ignored_workspaces).optional.list(str, auto_create=True)
 
         self.__uc_storage_config = validate(uc_storage_config=uc_storage_config).required.as_type(UcStorageConfig)
         self.__workspace_config_template = validate(workspace_config_template=workspace_config_template).required.as_type(WorkspaceConfig)
@@ -75,7 +74,6 @@ class AccountConfig:
         workspace = WorkspaceConfig(workspace_number=workspace_number,
                                     max_participants=template.max_participants,
                                     default_node_type_id=template.default_node_type_id,
-                                    default_dbr=template.default_dbr,
                                     credentials_name=template.credentials_name,
                                     storage_configuration=template.storage_configuration,
                                     username_pattern=template.username_pattern,

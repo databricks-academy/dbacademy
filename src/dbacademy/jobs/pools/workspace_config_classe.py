@@ -7,7 +7,6 @@ class WorkspaceConfig:
     def __init__(self, *,
                  max_participants: int,
                  default_node_type_id: str,
-                 default_dbr: str,
                  username_pattern: str,
                  entitlements: Optional[Dict[str, bool]],
                  workspace_name_pattern: str,
@@ -22,7 +21,6 @@ class WorkspaceConfig:
 
         workspace_number = validate(workspace_number=workspace_number).optional.int(min_value=1000)
         default_node_type_id = validate(default_node_type_id=default_node_type_id).required.str(min_length=5)
-        default_dbr = validate(default_dbr=default_dbr).required.str(min_length=5)
 
         # TODO, Remove this feature as it should be handled by the Universal-Workspace-Setup
         self.__entitlements: Dict[str, bool] = validate(entitlements=entitlements).required.dict(str)
@@ -37,7 +35,6 @@ class WorkspaceConfig:
         self.__storage_configuration = validate(storage_configuration=storage_configuration).required.str(min_length=5)
 
         self.__default_node_type_id = default_node_type_id
-        self.__default_dbr = default_dbr
         self.__username_pattern = username_pattern
         self.__workspace_name_pattern = workspace_name_pattern
 
@@ -131,10 +128,6 @@ class WorkspaceConfig:
     @property
     def default_node_type_id(self):
         return self.__default_node_type_id
-
-    @property
-    def default_dbr(self) -> str:
-        return self.__default_dbr
 
     @property
     def credentials_name(self):

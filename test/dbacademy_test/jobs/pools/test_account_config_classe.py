@@ -19,7 +19,7 @@ class TestAccountConfig(unittest.TestCase):
             "workspace-access": True,
         }
 
-        self.workspace_config = WorkspaceConfig(max_participants=100, default_node_type_id="i3.xlarge", default_dbr="11.3.x-scala2.12", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=entitlements, workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
+        self.workspace_config = WorkspaceConfig(max_participants=100, default_node_type_id="i3.xlarge", credentials_name="default", storage_configuration="us-west-2", username_pattern="class+{student_number}@databricks.com", entitlements=entitlements, workspace_group=None, workspace_name_pattern="classroom-{workspace_number}")
 
     def test_from_env(self):
         env_id = "CURR"
@@ -74,7 +74,6 @@ class TestAccountConfig(unittest.TestCase):
 
         workspace_config = WorkspaceConfig(max_participants=100,
                                            default_node_type_id="i3.xlarge",
-                                           default_dbr="11.3.x-scala2.12",
                                            credentials_name="default",
                                            storage_configuration="us-west-2",
                                            username_pattern="class+{student_number}@databricks.com",
@@ -117,39 +116,42 @@ class TestAccountConfig(unittest.TestCase):
                                 ignored_workspaces=[])
         self.assertEqual(0, len(account.ignored_workspaces))
 
-        # One Int
-        account = AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=[1])
-        self.assertEqual(1, len(account.ignored_workspaces))
-        self.assertEqual("1", account.ignored_workspaces[0])
-
-        # Two ints
-        account = AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=[1, 2])
-        self.assertEqual(2, len(account.ignored_workspaces))
-        self.assertEqual("1", account.ignored_workspaces[0])
-        self.assertEqual("2", account.ignored_workspaces[1])
-
         # One String
-        account = AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=["apple"])
+        account = AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007],
+                                region="us-west-2",
+                                account_id="asdf",
+                                username="mickey.mouse@disney.com",
+                                password="whatever",
+                                uc_storage_config=self.uc_storage_config,
+                                workspace_config_template=self.workspace_config,
+                                ignored_workspaces=["apple"])
         self.assertEqual(1, len(account.ignored_workspaces))
         self.assertEqual("apple", account.ignored_workspaces[0])
 
         # Two Strings
-        account = AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=["apple", "banana"])
+        account = AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007],
+                                region="us-west-2",
+                                account_id="asdf",
+                                username="mickey.mouse@disney.com",
+                                password="whatever",
+                                uc_storage_config=self.uc_storage_config,
+                                workspace_config_template=self.workspace_config,
+                                ignored_workspaces=["apple", "banana"])
         self.assertEqual("apple", account.ignored_workspaces[0])
         self.assertEqual("banana", account.ignored_workspaces[1])
 
         # Ints & Strings
-        account = AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=[1, "apple"])
+        account = AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007],
+                                region="us-west-2",
+                                account_id="asdf",
+                                username="mickey.mouse@disney.com",
+                                password="whatever",
+                                uc_storage_config=self.uc_storage_config,
+                                workspace_config_template=self.workspace_config,
+                                ignored_workspaces=[1, "apple"])
         self.assertEqual(2, len(account.ignored_workspaces))
         self.assertEqual("1", account.ignored_workspaces[0])
         self.assertEqual("apple", account.ignored_workspaces[1])
-
-        try:
-            # noinspection PyTypeChecker
-            AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="asdf", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config, ignored_workspaces=1.0)
-            self.fail("Expected ValidationError")
-        except ValidationError as e:
-            self.assertEqual("""The parameter "ignored_workspaces" must be of type <class 'list'>, found <class 'float'>.""", e.message)
 
     def test_create_account_config_region(self):
         try:
