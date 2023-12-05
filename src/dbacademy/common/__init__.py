@@ -6,7 +6,7 @@ from __future__ import annotations
 
 __all__ = ["deprecation_log_level", "deprecated", "overrides", "print_title", "print_warning", "CachedStaticProperty", "clean_string", "load_databricks_cfg", "Cloud", "validate", "ValidationError", "combine_var_args"]
 
-from typing import Callable, Any, TypeVar, List, Iterable, Tuple, Dict
+from typing import Callable, Any, TypeVar, List, Iterable, Tuple, Dict, Optional
 from dbacademy.common.cloud import Cloud
 from dbacademy.common.validator import Validator, ValidationError
 
@@ -18,7 +18,7 @@ def validate(**kwargs) -> Validator:
     return Validator(**kwargs)
 
 
-def combine_var_args(first: Any, others: Tuple) -> List[Any]:
+def combine_var_args(*, first: Any, others: Optional[Tuple]) -> List[Any]:
     values = list()
 
     if isinstance(first, str):
@@ -30,12 +30,13 @@ def combine_var_args(first: Any, others: Tuple) -> List[Any]:
     elif isinstance(first, Iterable):
         # Processes all iterables next.
         values.extend(first)
-    else:
+    elif first is not None:
         # All other values should be singletons.
         values.append(first)
 
     # Add all the "other" values
-    values.extend(others)
+    if others is not None:
+        values.extend(others)
 
     return values
 

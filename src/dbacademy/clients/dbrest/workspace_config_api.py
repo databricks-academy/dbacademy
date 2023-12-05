@@ -17,7 +17,7 @@ class WorkspaceConfigApi(ApiContainer):
     def get_config(self, property_names: Union[str, Iterable[str]], *and_property_names: str) -> Dict[str, Any]:
         from dbacademy.common import combine_var_args
 
-        properties: List[str] = combine_var_args(property_names, and_property_names)
+        properties: List[str] = combine_var_args(first=property_names, others=and_property_names)
         properties: List[str] = validate(properties=properties).required.list(str)
         return self.__client.api("GET", self.__base_url, keys=",".join(properties))
 

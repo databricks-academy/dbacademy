@@ -1,13 +1,17 @@
 from typing import List, Optional, Callable, Dict, Any
 
+from dbacademy.clients.dougrest import AccountsApi
 from dbacademy.dbhelper import dbh_constants
 from dbacademy.clients import dbrest
 from dbacademy.clients.rest.common import DatabricksApiException
-from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
+from dbacademy.jobs.pools.workspace_config_classe import WorkspaceConfig
+
+TRAINING_OPERATIONS_BASE = "appNCMjJ2yMKUrTbo"
+ALL_WORKSPACES_TABLE = "tblF3cxlP8gcM9Rqr"
 
 
 class WorkspaceTrio:
-    from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
+    from dbacademy.jobs.pools.workspace_config_classe import WorkspaceConfig
     from dbacademy.clients.dougrest.accounts.workspaces import Workspace as WorkspaceAPI
     from dbacademy.clients.classrooms.classroom import Classroom
 
@@ -73,13 +77,13 @@ class WorkspaceTrio:
 
 class WorkspaceSetup:
     from dbacademy.clients.dougrest.accounts.workspaces import Workspace
-    from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
+    from dbacademy.jobs.pools.account_config_class import AccountConfig
 
-    def __init__(self, account_config: AccountConfig, run_workspace_setup: bool):
+    def __init__(self, account_config: AccountConfig, run_ws: bool, validate_ws: bool):
         from dbacademy.common import validate
         from dbacademy.clients.dougrest import AccountsApi
         from dbacademy.clients import airtable
-        from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
+        from dbacademy.jobs.pools.account_config_class import AccountConfig
 
         self.__errors: List[str] = list()
         self.__workspaces: List[WorkspaceTrio] = list()
@@ -90,16 +94,21 @@ class WorkspaceSetup:
                                           username=self.account_config.username,
                                           password=self.account_config.password)
         # self.__accounts_api.dns_retry = True
-        self.__run_workspace_setup = run_workspace_setup
+        self.__run_ws = run_ws
+        self.__validate_ws = validate_ws
 
         self.__air_table_records: List[Dict[str, Any]] = list()
 
-        self.airtable_client = airtable.from_environment(base_id="appNCMjJ2yMKUrTbo")
-        self.airtable_table = self.airtable_client.table("tblF3cxlP8gcM9Rqr")
+        self.airtable_client = airtable.from_environment(base_id=TRAINING_OPERATIONS_BASE)
+        self.airtable_table = self.airtable_client.table(ALL_WORKSPACES_TABLE)
 
     @property
-    def run_workspace_setup(self) -> bool:
-        return self.__run_workspace_setup
+    def run_ws(self) -> bool:
+        return self.__run_ws
+
+    @property
+    def validate_ws(self) -> bool:
+        return self.__validate_ws
 
     def log_error(self, msg):
         self.__errors.append(msg)
@@ -110,7 +119,7 @@ class WorkspaceSetup:
         return self.__errors
 
     @property
-    def accounts_api(self):
+    def accounts_api(self) -> AccountsApi:
         return self.__accounts_api
 
     @property
@@ -285,11 +294,13 @@ class WorkspaceSetup:
         naming_pattern = self.account_config.workspace_config_template.workspace_name_pattern
         not_using_classroom = not naming_pattern.startswith("classroom-")
 
-        if not self.run_workspace_setup or remove_metastore or remove_users or uninstall_courseware or not_using_classroom:
+        if not self.run_ws or not self.validate_ws or remove_metastore or remove_users or uninstall_courseware or not_using_classroom:
             print()
             print("-"*100)
-            if not self.run_workspace_setup:
+            if not self.run_ws:
                 print("WARNING: Not configured to run the Workspace-Setup job.")
+            if not self.validate_ws:
+                print("WARNING: Not configured to validate the Workspace-Setup job.")
             if remove_metastore:
                 print("WARNING: Not configured to run the Workspace-Setup job.")
             if remove_users:
@@ -369,31 +380,34 @@ class WorkspaceSetup:
         print(f"""Configuring features in each workspace.""")
         self.__for_each_workspace(self.__workspaces, self.__enable_features)
 
+        # #############################################################
+        # print("-"*100)
+        # if uninstall_courseware:
+        #     print(f"""Uninstalling courseware for all users in each workspace.""")
+        #     self.__for_each_workspace(self.__workspaces, self.__uninstall_courseware)
+        # else:
+        #     print("Skipping uninstall of courseware")
+        #
+        # #############################################################
+        # print("-"*100)
+        # print(f"""Installing courseware for all users in each workspace.""")
+        # self.__for_each_workspace(self.__workspaces, self.__install_courseware)
+
         #############################################################
         print("-"*100)
-        if uninstall_courseware:
-            print(f"""Uninstalling courseware for all users in each workspace.""")
-            self.__for_each_workspace(self.__workspaces, self.__uninstall_courseware)
+        if self.run_ws:
+            print(f"""Starting the Workspace-Setup job in each workspace.""")
+            self.__for_each_workspace(self.__workspaces, self.__run_workspace_setup_job)
         else:
-            print("Skipping uninstall of courseware")
+            print(f"""Skipping the Workspace-Setup job.""")
 
         #############################################################
         print("-"*100)
-        print(f"""Installing courseware for all users in each workspace.""")
-        self.__for_each_workspace(self.__workspaces, self.__install_courseware)
-
-        #############################################################
-        print("-"*100)
-        print(f"""Starting the Workspace-Setup job in each workspace.""")
-        self.__for_each_workspace(self.__workspaces, self.__run_workspace_setup_job)
-
-        #############################################################
-        print("-"*100)
-        if self.run_workspace_setup:
+        if self.validate_ws:
             print(f"""Validating select indicators in each workspace.""")
             self.__for_each_workspace(self.__workspaces, self.__validate_workspace_setup)
         else:
-            print("Skipping workspace validation, the Workspace-Setup job has not been run.")
+            print("Skipping workspace validation.")
 
         #############################################################
         print("-" * 100)
@@ -427,64 +441,64 @@ class WorkspaceSetup:
 
         self.__workspaces.append(WorkspaceTrio(workspace_config, workspace_api, classroom))
 
-    @classmethod
-    def __install_courseware(cls, trio: WorkspaceTrio):
-        import os
-        from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
+    # @classmethod
+    # def __install_courseware(cls, trio: WorkspaceTrio):
+    #     import os
+    #     from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
+    #
+    #     for course_def in trio.workspace_config.course_definitions:
+    #
+    #         for username in trio.workspace_config.usernames:
+    #             print(f"Installing the course {course_def} for {username}")
+    #
+    #             url, course, version, artifact, token = WorkspaceHelper.parse_course_args(course_def)
+    #             download_url = WorkspaceHelper.compose_courseware_url(url, course, version, artifact, trio.workspace_config.cds_api_token)
+    #
+    #             if trio.workspace_config.courseware_subdirectory is None:
+    #                 install_dir = f"/Users/{username}/{course}"
+    #             else:
+    #                 install_dir = f"/Users/{username}/{trio.workspace_config.courseware_subdirectory}/{course}"
+    #
+    #             print(f" - {install_dir}")
+    #
+    #             files = trio.client.workspace.ls(install_dir)
+    #             count = 0 if files is None else len(files)
+    #             if count > 0:
+    #                 print(f" - Skipping, course already exists.")
+    #             else:
+    #                 files = [f.lower() for f in os.listdir("/")]
+    #                 if "tmp" in files:
+    #                     local_file_path = "/tmp/download.dbc"
+    #                 elif "temp" in files:
+    #                     local_file_path = "/temp/download.dbc"
+    #                 else:
+    #                     local_file_path = "/download.dbc"
+    #
+    #                 trio.client.workspace.import_dbc_files(path=install_dir,
+    #                                                        source_url=download_url,
+    #                                                        local_file_path=local_file_path,
+    #                                                        overwrite=True)
+    #                 print(f" - Installed.")
 
-        for course_def in trio.workspace_config.course_definitions:
-
-            for username in trio.workspace_config.usernames:
-                print(f"Installing the course {course_def} for {username}")
-
-                url, course, version, artifact, token = WorkspaceHelper.parse_course_args(course_def)
-                download_url = WorkspaceHelper.compose_courseware_url(url, course, version, artifact, trio.workspace_config.cds_api_token)
-
-                if trio.workspace_config.courseware_subdirectory is None:
-                    install_dir = f"/Users/{username}/{course}"
-                else:
-                    install_dir = f"/Users/{username}/{trio.workspace_config.courseware_subdirectory}/{course}"
-
-                print(f" - {install_dir}")
-
-                files = trio.client.workspace.ls(install_dir)
-                count = 0 if files is None else len(files)
-                if count > 0:
-                    print(f" - Skipping, course already exists.")
-                else:
-                    files = [f.lower() for f in os.listdir("/")]
-                    if "tmp" in files:
-                        local_file_path = "/tmp/download.dbc"
-                    elif "temp" in files:
-                        local_file_path = "/temp/download.dbc"
-                    else:
-                        local_file_path = "/download.dbc"
-
-                    trio.client.workspace.import_dbc_files(path=install_dir,
-                                                           source_url=download_url,
-                                                           local_file_path=local_file_path,
-                                                           overwrite=True)
-                    print(f" - Installed.")
-
-    @classmethod
-    def __uninstall_courseware(cls, trio: WorkspaceTrio):
-        from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
-
-        usernames = [u.get("userName") for u in trio.client.scim.users.list()]
-
-        for username in usernames:
-            print(f"Uninstalling courses for {username}")
-
-            for course_def in trio.workspace_config.course_definitions:
-                url, course, version, artifact, token = WorkspaceHelper.parse_course_args(course_def)
-
-                if trio.workspace_config.courseware_subdirectory is None:
-                    install_dir = f"/Users/{username}/{course}"
-                else:
-                    install_dir = f"/Users/{username}/{trio.workspace_config.courseware_subdirectory}/{course}"
-
-                print(install_dir)
-                trio.client.workspace.delete_path(install_dir, recursive=True)
+    # @classmethod
+    # def __uninstall_courseware(cls, trio: WorkspaceTrio):
+    #     from dbacademy.dbhelper.supporting.workspace_helper import WorkspaceHelper
+    #
+    #     usernames = [u.get("userName") for u in trio.client.scim.users.list()]
+    #
+    #     for username in usernames:
+    #         print(f"Uninstalling courses for {username}")
+    #
+    #         for course_def in trio.workspace_config.course_definitions:
+    #             url, course, version, artifact, token = WorkspaceHelper.parse_course_args(course_def)
+    #
+    #             if trio.workspace_config.courseware_subdirectory is None:
+    #                 install_dir = f"/Users/{username}/{course}"
+    #             else:
+    #                 install_dir = f"/Users/{username}/{trio.workspace_config.courseware_subdirectory}/{course}"
+    #
+    #             print(install_dir)
+    #             trio.client.workspace.delete_path(install_dir, recursive=True)
 
     @classmethod
     def __enable_features(cls, trio: WorkspaceTrio):
@@ -696,7 +710,7 @@ class WorkspaceSetup:
             # We deleted it or it never existed.
             job_id = self.__create_job(trio)
 
-            if self.run_workspace_setup:
+            if self.run_ws:
                 run = trio.client.jobs.run_now(job_id)
                 run_id = run.get("run_id")
 

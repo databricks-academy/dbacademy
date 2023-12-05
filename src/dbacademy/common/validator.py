@@ -162,21 +162,13 @@ class TypedValidator:
     def str(self, *, min_length: int = 0) -> str:
         return self.__validate_collection(parameter_type=str, key_type=Any, element_type=str, min_length=min_length)
 
-    def tuple(self, element_types: Union[Type, List[Type]], *and_types: Type) -> tuple:
+    def tuple(self, element_types: Union[None, Type, List[Type]], *and_types: Type) -> tuple:
         self.__validate_value_type(parameter_name=self.parameter_name,
                                    parameter_value=self.parameter_value,
                                    parameter_types=[tuple])
+        from dbacademy.common import combine_var_args
 
-        # Start with an empty list.
-        all_element_types = list()
-        if isinstance(element_types, list):
-            # If we were handed a list, extend the all_elements.
-            all_element_types.extend(element_types)
-        else:
-            # Otherwise, assume it's a single type and append it.
-            all_element_types.append(element_types)
-        # Lastly, add all the other types from the variable length and_types.
-        all_element_types.extend(and_types)
+        all_element_types = combine_var_args(first=element_types, others=and_types)
 
         for i, element_type in enumerate(all_element_types):
             # Make sure each instances is actually a valid type.
@@ -228,7 +220,7 @@ class TypedValidator:
 
     def __validate_min_value(self, *, min_value: Optional[numbers.Number]) -> None:
 
-        if min_value is not None:
+        if self.parameter_value is not None and min_value is not None:
             # We need to verify that min_value is of type numbers.Number
             message = f"""{E_INTERNAL} | Expected {self.__class__.__name__}.{inspect.stack()[0].function}(..)'s parameter 'min_value' to be of type numbers.Number, found {type(min_value)}."""
             do_validate(passed=isinstance(min_value, numbers.Number), message=message)
@@ -242,7 +234,7 @@ class TypedValidator:
 
     def __validate_max_value(self, *, max_value: Optional[numbers.Number]) -> None:
 
-        if max_value is not None:
+        if self.parameter_value is not None and max_value is not None:
             # INTERNAL, We need to verify that max_value is of type numbers.Number
             message = f"""{E_INTERNAL} | Expected {self.__class__.__name__}.{inspect.stack()[0].function}(..)'s parameter 'max_value' to be of type numbers.Number, found {type(max_value)}."""
             do_validate(passed=isinstance(max_value, numbers.Number), message=message)

@@ -1,10 +1,11 @@
-import os
 from typing import List
-from dbacademy_jobs.workspaces_3_0.support.account_config_class import AccountConfig
-from dbacademy_jobs.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
-from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
-from dbacademy_jobs.workspaces_3_0.support.workspace_setup_class import WorkspaceSetup
-from dbacademy_jobs.workspaces_3_0.support import read_str, read_int, advertise
+
+from dbacademy.jobs.pools.account_config_class import AccountConfig
+from dbacademy.jobs.pools.uc_storage_config_class import UcStorageConfig
+from dbacademy.jobs.pools.workspace_config_classe import WorkspaceConfig
+from dbacademy.jobs.pools.workspace_setup_class import WorkspaceSetup, TRAINING_OPERATIONS_BASE, ALL_WORKSPACES_TABLE
+from dbacademy.jobs.pools import read_str, read_int, advertise
+from dbacademy.clients import airtable
 
 
 CONFIRMATIONS = ["y", "yes", "1", "t", "true"]
@@ -18,7 +19,8 @@ if env_code is None:
 
 
 def configure_workspace_setup(*,
-                              _run_workspace_setup: bool,
+                              _run_ws: bool,
+                              _validate_ws: bool,
                               _max_participants: int = 0,
                               _env_code: str,
                               _workspace_numbers: List[int],
@@ -34,14 +36,6 @@ def configure_workspace_setup(*,
                                         msa_access_connector_id=None)
 
     wct = WorkspaceConfig(max_participants=_max_participants,
-                          datasets=None,  # Appended to based on course_definitions; Only needs to be defined for DAWD v1
-                          course_definitions=[
-                              # "course=welcome",
-                              # "course=example-course&version=v1.1.8",
-                              # "course=template-course&version=v1.0.0&artifact=template-course.dbc",
-                              # "https://labs.training.databricks.com/api/v1/courses/download.dbc?course=ml-in-production"
-                          ],
-                          cds_api_token=os.environ.get("WORKSPACE_SETUP_CDS_API_TOKEN"),
                           default_dbr="11.3.x-cpu-ml-scala2.12",
                           default_node_type_id="i3.xlarge",
                           credentials_name="default",
@@ -71,7 +65,7 @@ def configure_workspace_setup(*,
                                      workspace_config_template=wct,
                                      ignored_workspaces=_ignored_workspaces)                                # Either the number or name (not domain) to skip
 
-    return wct, WorkspaceSetup(account, run_workspace_setup=_run_workspace_setup)
+    return wct, WorkspaceSetup(account, run_ws=_run_ws, validate_ws=_validate_ws)
 
 
 if env_code == "CURR":
@@ -83,7 +77,44 @@ else:
 
 max_participants = read_int("\nMax Participants per Workspace", max_participants_default)
 
-wsn_a = read_int("\nPlease enter the first workspace number to create", -1)
+airtable_client = airtable.from_environment(base_id=TRAINING_OPERATIONS_BASE)
+workspaces_table_api = airtable_client.table(ALL_WORKSPACES_TABLE)
+
+print("Checking for duplicates", end="... ")
+duplicates = workspaces_table_api.list_duplicates("AWS Workspace URL")
+duplicates.remove("https://training-classroom-326-6xu72.cloud.databricks.com")
+duplicates.remove("https://training-classroom-325-oovzv.cloud.databricks.com")
+duplicates.remove("https://training-classroom-327-cpnuw.cloud.databricks.com")
+duplicates.remove("https://training-classroom-676-znuqc.cloud.databricks.com")
+duplicates.remove("https://training-classroom-679-y5xt8.cloud.databricks.com")
+duplicates.remove("https://training-classroom-000-857q5.cloud.databricks.com")
+duplicates.remove("https://training-classroom-313-9vcdv.cloud.databricks.com")
+duplicates.remove("https://training-classroom-680-xt6rc.cloud.databricks.com")
+duplicates.remove("https://training-classroom-639-8eqi6.cloud.databricks.com")
+
+if len(duplicates) == 0:
+    print("None found.")
+else:
+    print(f"Found {len(duplicates)}.")
+    for duplicate in duplicates:
+        print(f" * {duplicate}")
+
+    print(f"\n\nExisting script.")
+    exit(-1)
+
+print("Looking up the next workspace number", end="... ")
+all_workspaces_records = workspaces_table_api.query()
+all_workspaces = [w.get("fields").get("AWS Workspace URL") for w in all_workspaces_records]
+
+last_workspace = 0
+for workspace in all_workspaces:
+    if workspace.startswith("https://training-classroom-"):
+        workspace_number: str = workspace.split("-")[2]
+        if workspace_number.isnumeric():
+            last_workspace = max(last_workspace, int(workspace_number))
+print(f"#{last_workspace+1}")
+
+wsn_a = read_int("\nPlease enter the first workspace number to create", last_workspace+1)
 if wsn_a < 0:
     print(f"""\n{"-" * 100}\nAborting script; no workspace number""")
     exit(1)
@@ -102,13 +133,20 @@ deleting_wsj = True
 
 ignored = []
 workspace_config_template, workspace_setup = configure_workspace_setup(_env_code=env_code,
-                                                                       _run_workspace_setup=True,
+                                                                       _run_ws=True,
+                                                                       _validate_ws=True,
                                                                        _ignored_workspaces=ignored,
                                                                        _max_participants=max_participants,
                                                                        _workspace_numbers=workspace_numbers)
 
+workspaces = workspace_setup.accounts_api.api("GET", f"/workspaces")
+
 print()
 print("-"*100)
+print(f"""Number of Used Workspaces:  {len(workspaces)}""")
+print(f"""Number currently available: {200-len(workspaces)}""")
+print(f"""Final number available:     {200-len(workspaces)-len(workspace_numbers)}""")
+print()
 print(f"""Env ID (PROSVC, CURR, etc): {env_code}""")
 print(f"""Max Users Per Workspace:    {max_participants}""")
 print(f"""Workspaces:                 {", ".join([str(n) for n in workspace_numbers])}""")
@@ -117,6 +155,9 @@ print()
 advertise("Courses", workspace_config_template.course_definitions, 6, 15)
 advertise("Datasets", workspace_config_template.datasets, 5, 15)
 advertise("Skipping", ignored, 5, 15)
+
+if len(workspaces) + len(workspace_numbers) >= 200:
+    print("\nAborting, not enough available workspaces.")
 
 if read_str("""Please confirm you wish to create these workspaces""", "no").lower() in CONFIRMATIONS:
 

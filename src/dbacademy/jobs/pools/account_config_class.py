@@ -1,11 +1,11 @@
 __all__ = ["AccountConfig"]
 
-from typing import List, Union, Optional, Any
+from typing import List, Union, Optional
 
 
 class AccountConfig:
-    from dbacademy_jobs.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
-    from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
+    from dbacademy.jobs.pools.uc_storage_config_class import UcStorageConfig
+    from dbacademy.jobs.pools.workspace_config_classe import WorkspaceConfig
 
     @staticmethod
     def from_env(*, account_id_env_name, account_password_env_name, account_username_env_name, region: str, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, workspace_numbers: Optional[List[int]], ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
@@ -43,10 +43,11 @@ class AccountConfig:
         Creates the configuration for account-level settings.
         """
         from dbacademy.common import validate
-        from dbacademy_jobs.workspaces_3_0.support.uc_storage_config_class import UcStorageConfig
-        from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
+        from dbacademy.common import combine_var_args
+        from dbacademy.jobs.pools.uc_storage_config_class import UcStorageConfig
+        from dbacademy.jobs.pools.workspace_config_classe import WorkspaceConfig
 
-        self.__account_id = validate(account_id=account_id).optional.str(min_length=1)
+        self.__account_id = validate(account_id=account_id).required.str(min_length=1)
         self.__password = validate(password=password).optional.str(min_length=1)
         self.__username = validate(username=username).optional.str(min_length=1)
 
@@ -56,7 +57,9 @@ class AccountConfig:
 
         self.__region = validate(region=region).optional.str(min_length=1)
 
-        self.__ignored_workspaces = validate(ignored_workspaces=ignored_workspaces).required.list(Any)
+        ignored_workspaces: List[str] = combine_var_args(first=ignored_workspaces, others=None)
+        self.__ignored_workspaces = validate(ignored_workspaces=ignored_workspaces).required.list(str)
+
         self.__uc_storage_config = validate(uc_storage_config=uc_storage_config).required.as_type(UcStorageConfig)
         self.__workspace_config_template = validate(workspace_config_template=workspace_config_template).required.as_type(WorkspaceConfig)
 
@@ -67,13 +70,10 @@ class AccountConfig:
                                          workspace_number=workspace_number)
 
     def create_workspace_config(self, *, template: WorkspaceConfig, workspace_number: int) -> WorkspaceConfig:
-        from dbacademy_jobs.workspaces_3_0.support.workspace_config_classe import WorkspaceConfig
+        from dbacademy.jobs.pools.workspace_config_classe import WorkspaceConfig
 
         workspace = WorkspaceConfig(workspace_number=workspace_number,
                                     max_participants=template.max_participants,
-                                    course_definitions=template.course_definitions,
-                                    cds_api_token=template.cds_api_token,
-                                    datasets=template.datasets,
                                     default_node_type_id=template.default_node_type_id,
                                     default_dbr=template.default_dbr,
                                     credentials_name=template.credentials_name,
