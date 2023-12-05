@@ -1,6 +1,7 @@
-from typing import List, Dict, Optional
-
 __all__ = ["WorkspaceConfig"]
+
+from typing import List, Dict, Optional
+from dbacademy.common import validate, assert_true
 
 
 class WorkspaceConfig:
@@ -15,9 +16,7 @@ class WorkspaceConfig:
                  workspace_number: int = None,
                  workspace_group: Optional[Dict[str, List]]) -> None:
 
-        from dbacademy.common import validate
-
-        self.__max_participants = validate(max_participants=max_participants).optional.int(min_value=0)
+        self.__max_participants = validate(max_participants=max_participants).required.int(min_value=1)
 
         workspace_number = validate(workspace_number=workspace_number).optional.int(min_value=1000)
         default_node_type_id = validate(default_node_type_id=default_node_type_id).required.str(min_length=5)
@@ -26,10 +25,10 @@ class WorkspaceConfig:
         self.__entitlements: Dict[str, bool] = validate(entitlements=entitlements).required.dict(str)
 
         username_pattern = validate(username_pattern=username_pattern).required.str(min_length=5)
-        assert "{student_number}" in username_pattern, f"""Expected the parameter "username_pattern" to contain "{{student_number}}", found "{username_pattern}"."""
+        assert_true("{student_number}" in username_pattern, f"""Expected the parameter "username_pattern" to contain "{{student_number}}", found "{username_pattern}".""")
 
         workspace_name_pattern = validate(workspace_name_pattern=workspace_name_pattern).required.str(min_length=5)
-        assert "{workspace_number}" in workspace_name_pattern, f"""Expected the parameter "workspace_name_pattern" to contain "{{workspace_number}}", found "{workspace_name_pattern}"."""
+        assert_true("{workspace_number}" in workspace_name_pattern, f"""Expected the parameter "workspace_name_pattern" to contain "{{workspace_number}}", found "{workspace_name_pattern}".""")
 
         self.__credentials_name = validate(credentials_name=credentials_name).required.str(min_length=5)
         self.__storage_configuration = validate(storage_configuration=storage_configuration).required.str(min_length=5)

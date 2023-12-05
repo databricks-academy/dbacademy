@@ -11,7 +11,7 @@ class TestAccountConfig(unittest.TestCase):
 
     @pytest.fixture(autouse=True)
     def setup_test(self):
-        self.uc_storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc", msa_access_connector_id=None)
+        self.uc_storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc")
 
         entitlements = {
             "allow-cluster-create": False,  # Removed to enforce policy
@@ -140,19 +140,6 @@ class TestAccountConfig(unittest.TestCase):
         self.assertEqual("apple", account.ignored_workspaces[0])
         self.assertEqual("banana", account.ignored_workspaces[1])
 
-        # Ints & Strings
-        account = AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007],
-                                region="us-west-2",
-                                account_id="asdf",
-                                username="mickey.mouse@disney.com",
-                                password="whatever",
-                                uc_storage_config=self.uc_storage_config,
-                                workspace_config_template=self.workspace_config,
-                                ignored_workspaces=[1, "apple"])
-        self.assertEqual(2, len(account.ignored_workspaces))
-        self.assertEqual("1", account.ignored_workspaces[0])
-        self.assertEqual("apple", account.ignored_workspaces[1])
-
     def test_create_account_config_region(self):
         try:
             # noinspection PyTypeChecker
@@ -166,7 +153,7 @@ class TestAccountConfig(unittest.TestCase):
             AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region=None, account_id="1234", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config)
             self.fail("Expected ValidationError")
         except ValidationError as e:
-            self.assertEqual("Error-Min-Len | The parameter 'region' must have a minimum length of 1, found 0.", e.message)
+            self.assertEqual("Error-Not-None | The parameter 'region' must be specified.", e.message)
 
         try:
             # noinspection PyTypeChecker
@@ -202,20 +189,20 @@ class TestAccountConfig(unittest.TestCase):
             AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="1234", username=0, password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config)
             self.fail("Expected ValidationError")
         except ValidationError as e:
-            self.assertEqual("""a""", e.message)
+            self.assertEqual("""Error-Type | Expected the parameter 'username' to be of type <class 'str'>, found <class 'int'>.""", e.message)
 
         try:
             # noinspection PyTypeChecker
             AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="1234", username=None, password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config)
             self.fail("Expected ValidationError")
         except ValidationError as e:
-            self.assertEqual("""b""", e.message)
+            self.assertEqual("""Error-Not-None | The parameter 'username' must be specified.""", e.message)
 
         try:
             AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="1234", username="", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config)
             self.fail("Expected ValidationError")
         except ValidationError as e:
-            self.assertEqual("""c""", e.message)
+            self.assertEqual("""Error-Min-Len | The parameter 'username' must have a minimum length of 1, found 0.""", e.message)
 
     def test_create_account_password(self):
         try:
@@ -223,32 +210,32 @@ class TestAccountConfig(unittest.TestCase):
             AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password=0, uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config)
             self.fail("Expected ValidationError")
         except ValidationError as e:
-            self.assertEqual("""x""", e.message)
+            self.assertEqual("""Error-Type | Expected the parameter 'password' to be of type <class 'str'>, found <class 'int'>.""", e.message)
 
         try:
             # noinspection PyTypeChecker
             AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password=None, uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config)
             self.fail("Expected ValidationError")
         except ValidationError as e:
-            self.assertEqual("""x""", e.message)
+            self.assertEqual("""Error-Not-None | The parameter 'password' must be specified.""", e.message)
 
         try:
             AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password="", uc_storage_config=self.uc_storage_config, workspace_config_template=self.workspace_config)
             self.fail("Expected ValidationError")
         except ValidationError as e:
-            self.assertEqual("""x""", e.message)
+            self.assertEqual("""Error-Min-Len | The parameter 'password' must have a minimum length of 1, found 0.""", e.message)
 
     def test_create_account_storage_config(self):
         try:
             AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=None, workspace_config_template=self.workspace_config)
         except ValidationError as e:
-            self.assertEqual("""x""", e.message)
+            self.assertEqual("""Error-Not-None | The parameter 'uc_storage_config' must be specified.""", e.message)
 
     def test_create_account_workspace_config(self):
         try:
             AccountConfig(workspace_numbers=[1001, 1002, 1003, 1004, 1005, 1006, 1007], region="us-west-2", account_id="1234", username="mickey.mouse@disney.com", password="whatever", uc_storage_config=self.uc_storage_config, workspace_config_template=None)
         except ValidationError as e:
-            self.assertEqual("""x""", e.message)
+            self.assertEqual("""Error-Not-None | The parameter 'workspace_config_template' must be specified.""", e.message)
 
 
 if __name__ == '__main__':

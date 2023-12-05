@@ -1,60 +1,128 @@
 import unittest
+
+from dbacademy.common import ValidationError
 from dbacademy.jobs.pools.uc_storage_config_class import UcStorageConfig
+
+
+if 'unittest.util' in __import__('sys').modules:
+    # Show full diff in self.assertMultiLineEqual.
+    # noinspection PyProtectedMember
+    __import__('sys').modules['unittest.util']._MAX_LENGTH = 999999999
 
 
 class TestUCStorageConfig(unittest.TestCase):
 
     def test_create(self):
-        storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc", msa_access_connector_id=None)
+        storage_config = UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc")
         self.assertIsNone(storage_config.meta_store_name)
-        self.assertEqual("def", storage_config.storage_root)
-        self.assertEqual("ghi", storage_config.storage_root_credential_id)
-        self.assertEqual("jkl", storage_config.region)
+        self.assertMultiLineEqual("def", storage_config.storage_root)
+        self.assertMultiLineEqual("ghi", storage_config.storage_root_credential_id)
+        self.assertMultiLineEqual("jkl", storage_config.region)
 
     # def test_create_meta_store_name(self):
-    #     from dbacademy_test.workspaces_3_0 import test_assertion_error
+    #     try:
+    #         UcStorageConfig(meta_store_name=0, storage_root="def", storage_root_credential_id="ghi", region="jkl")
+    #         self.fail("Expected ValidationError")
+    #     except ValidationError as e:
+    #         self.assertMultiLineEqual("x", e.message)
     #
-    #     # noinspection PyTypeChecker
-    #     test_assertion_error(self, """The parameter "meta_store_name" must be a string value, found <class 'int'>.""", lambda: UcStorageConfig(meta_store_name=0, storage_root="def", storage_root_credential_id="ghi", region="jkl"))
-    #     # noinspection PyTypeChecker
-    #     test_assertion_error(self, """The parameter "meta_store_name" must be a string value, found <class 'NoneType'>.""", lambda: UcStorageConfig(meta_store_name=None, storage_root="def", storage_root_credential_id="ghi", region="jkl"))
-    #     test_assertion_error(self, """The parameter "meta_store_name" must be specified, found "".""", lambda: UcStorageConfig(meta_store_name="", storage_root="def", storage_root_credential_id="ghi", region="jkl"))
+    #     try:
+    #         # noinspection PyTypeChecker
+    #         UcStorageConfig(meta_store_name=None, storage_root="def", storage_root_credential_id="ghi", region="jkl")
+    #         self.fail("Expected ValidationError")
+    #     except ValidationError as e:
+    #         self.assertMultiLineEqual("x", e.message)
+    #
+    #     try:
+    #         UcStorageConfig(meta_store_name="", storage_root="def", storage_root_credential_id="ghi", region="jkl")
+    #         self.fail("Expected ValidationError")
+    #     except ValidationError as e:
+    #         self.assertMultiLineEqual("x", e.message)
 
     def test_create_storage_root(self):
-        from dbacademy_test.jobs.pools import test_assertion_error
+        try:
+            # noinspection PyTypeChecker
+            UcStorageConfig(storage_root=0, storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc")
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertMultiLineEqual("Error-Type | Expected the parameter 'storage_root' to be of type <class 'str'>, found <class 'int'>.", e.message)
 
-        # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "storage_root" must be a string value, found <class 'int'>.""", lambda: UcStorageConfig(storage_root=0, storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc", msa_access_connector_id=None))
-        # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "storage_root" must be a string value, found <class 'NoneType'>.""", lambda: UcStorageConfig(storage_root=None, storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc", msa_access_connector_id=None))
-        test_assertion_error(self, """The parameter "storage_root" must be specified, found "".""", lambda: UcStorageConfig(storage_root="", storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc", msa_access_connector_id=None))
+        try:
+            # noinspection PyTypeChecker
+            UcStorageConfig(storage_root=None, storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc")
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertMultiLineEqual("Error-Not-None | The parameter 'storage_root' must be specified.", e.message)
+
+        try:
+            UcStorageConfig(storage_root="", storage_root_credential_id="ghi", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc")
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertMultiLineEqual("Error-Min-Len | The parameter 'storage_root' must have a minimum length of 1, found 0.", e.message)
 
     def test_create_storage_root_credential_id(self):
-        from dbacademy_test.jobs.pools import test_assertion_error
+        try:
+            # noinspection PyTypeChecker
+            UcStorageConfig(storage_root="def", storage_root_credential_id=0, region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc")
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertMultiLineEqual("Error-Type | Expected the parameter 'storage_root_credential_id' to be of type <class 'str'>, found <class 'int'>.", e.message)
 
-        # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "storage_root_credential_id" must be a string value, found <class 'int'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id=0, region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc", msa_access_connector_id=None))
-        # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "storage_root_credential_id" must be a string value, found <class 'NoneType'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id=None, region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc", msa_access_connector_id=None))
-        test_assertion_error(self, """The parameter "storage_root_credential_id" must be specified, found "".""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc", msa_access_connector_id=None))
+        try:
+            # noinspection PyTypeChecker
+            UcStorageConfig(storage_root="def", storage_root_credential_id=None, region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc")
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertMultiLineEqual("Error-Not-None | The parameter 'storage_root_credential_id' must be specified.", e.message)
+
+        try:
+            UcStorageConfig(storage_root="def", storage_root_credential_id="", region="jkl", meta_store_owner="instructors", aws_iam_role_arn="abc")
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertMultiLineEqual("Error-Min-Len | The parameter 'storage_root_credential_id' must have a minimum length of 1, found 0.", e.message)
 
     def test_create_region(self):
-        from dbacademy_test.jobs.pools import test_assertion_error
 
-        # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "region" must be a string value, found <class 'int'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region=0, meta_store_owner="instructors", aws_iam_role_arn="abc", msa_access_connector_id=None))
-        # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "region" must be a string value, found <class 'NoneType'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region=None, meta_store_owner="instructors", aws_iam_role_arn="abc", msa_access_connector_id=None))
-        test_assertion_error(self, """The parameter "region" must be specified, found "".""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="", meta_store_owner="instructors", aws_iam_role_arn="abc", msa_access_connector_id=None))
+        try:
+            # noinspection PyTypeChecker
+            UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region=0, meta_store_owner="instructors", aws_iam_role_arn="abc")
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertMultiLineEqual("Error-Type | Expected the parameter 'region' to be of type <class 'str'>, found <class 'int'>.", e.message)
+
+        try:
+            # noinspection PyTypeChecker
+            UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region=None, meta_store_owner="instructors", aws_iam_role_arn="abc")
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertMultiLineEqual("Error-Not-None | The parameter 'region' must be specified.", e.message)
+
+        try:
+            UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="", meta_store_owner="instructors", aws_iam_role_arn="abc")
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertMultiLineEqual("Error-Min-Len | The parameter 'region' must have a minimum length of 1, found 0.", e.message)
 
     def test_create_owner(self):
-        from dbacademy_test.jobs.pools import test_assertion_error
+        try:
+            # noinspection PyTypeChecker
+            UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner=0, aws_iam_role_arn="abc")
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertMultiLineEqual("Error-Type | Expected the parameter 'meta_store_owner' to be of type <class 'str'>, found <class 'int'>.", e.message)
 
-        # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "meta_store_owner" must be a string value, found <class 'int'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner=0, aws_iam_role_arn="abc", msa_access_connector_id=None))
-        # noinspection PyTypeChecker
-        test_assertion_error(self, """The parameter "meta_store_owner" must be a string value, found <class 'NoneType'>.""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner=None, aws_iam_role_arn="abc", msa_access_connector_id=None))
-        test_assertion_error(self, """The parameter "meta_store_owner" must be specified, found "".""", lambda: UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner="", aws_iam_role_arn="abc", msa_access_connector_id=None))
+        try:
+            # noinspection PyTypeChecker
+            UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner=None, aws_iam_role_arn="abc")
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertMultiLineEqual("Error-Not-None | The parameter 'meta_store_owner' must be specified.", e.message)
+
+        try:
+            UcStorageConfig(storage_root="def", storage_root_credential_id="ghi", region="jkl", meta_store_owner="", aws_iam_role_arn="abc")
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertMultiLineEqual("Error-Min-Len | The parameter 'meta_store_owner' must have a minimum length of 1, found 0.", e.message)
 
 
 if __name__ == '__main__':

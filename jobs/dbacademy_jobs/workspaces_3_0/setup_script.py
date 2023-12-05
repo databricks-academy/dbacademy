@@ -32,8 +32,7 @@ def configure_workspace_setup(*,
                                         storage_root_credential_id="be2549d1-3f5b-40db-900d-1b0fcdb419ee",  # ARN
                                         region="us-west-2",
                                         meta_store_owner="instructors",
-                                        aws_iam_role_arn="arn:aws:iam::981174701421:role/Unity-Catalog-Role",
-                                        msa_access_connector_id=None)
+                                        aws_iam_role_arn="arn:aws:iam::981174701421:role/Unity-Catalog-Role")
 
     wct = WorkspaceConfig(max_participants=_max_participants,
                           default_node_type_id="i3.xlarge",

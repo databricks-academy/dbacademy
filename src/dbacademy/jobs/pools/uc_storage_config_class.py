@@ -1,5 +1,3 @@
-from typing import Optional
-
 __all__ = ["UcStorageConfig"]
 
 
@@ -9,18 +7,16 @@ class UcStorageConfig:
                  storage_root_credential_id: str,
                  region: str,
                  meta_store_owner: str,
-                 aws_iam_role_arn: Optional[str],
-                 msa_access_connector_id: Optional[str]):
+                 aws_iam_role_arn: str):
         from dbacademy.common import validate
 
         self.__meta_store_name = None
-        self.__storage_root = validate(storage_root=storage_root).optional.str(min_length=1)
-        self.__storage_root_credential_id = validate(storage_root_credential_id=storage_root_credential_id).optional.str(min_length=1)
-        self.__region = validate(region=region).optional.str(min_length=1)
+        self.__storage_root = validate(storage_root=storage_root).required.str(min_length=1)
+        self.__storage_root_credential_id = validate(storage_root_credential_id=storage_root_credential_id).required.str(min_length=1)
+        self.__region = validate(region=region).required.str(min_length=1)
 
-        self.__meta_store_owner = validate(meta_store_owner=meta_store_owner).optional.str(min_length=1)
-        self.__aws_iam_role_arn = validate(aws_iam_role_arn=aws_iam_role_arn).optional.str(min_length=1)
-        self.__msa_access_connector_id = validate(msa_access_connector_id=msa_access_connector_id).optional.str(min_length=1)
+        self.__meta_store_owner = validate(meta_store_owner=meta_store_owner).required.str(min_length=1)
+        self.__aws_iam_role_arn = validate(aws_iam_role_arn=aws_iam_role_arn).required.str(min_length=1)
 
     @property
     def meta_store_name(self):
@@ -45,7 +41,3 @@ class UcStorageConfig:
     @property
     def aws_iam_role_arn(self) -> str:
         return self.__aws_iam_role_arn
-
-    @property
-    def msa_access_connector_id(self) -> str:
-        return self.__msa_access_connector_id

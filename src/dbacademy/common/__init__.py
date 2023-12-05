@@ -4,7 +4,7 @@ This was moved out of dbgems because dbgems has a dependency on pyspark.
 """
 from __future__ import annotations
 
-__all__ = ["deprecation_log_level", "deprecated", "overrides", "print_title", "print_warning", "CachedStaticProperty", "clean_string", "load_databricks_cfg", "Cloud", "validate", "ValidationError", "combine_var_args"]
+__all__ = ["deprecation_log_level", "deprecated", "overrides", "print_title", "print_warning", "CachedStaticProperty", "clean_string", "load_databricks_cfg", "Cloud", "validate", "assert_true", "ValidationError", "combine_var_args"]
 
 from typing import Callable, Any, TypeVar, List, Iterable, Tuple, Dict, Optional
 from dbacademy.common.cloud import Cloud
@@ -15,7 +15,28 @@ ParamType = TypeVar("ParamType")
 
 
 def validate(**kwargs) -> Validator:
+    """
+    Creates an instance of a property validator where the one and only one parameter is expected to be the name of the
+    parameter, and it's value. For example the function example(color: str) would include the call validate(color=color)
+    followed by additional assertions such as optional or required and from there, that it's a string, integer, list, etc.
+    :param kwargs: the dynamically specified name of the property to validate and it's value.
+    :return: an instance of the Validator for the one property.
+    """
     return Validator(**kwargs)
+
+
+def assert_true(condition: bool, message: str) -> None:
+    """
+    Used as an alternative to Python's built in assert functionality to aid in UnitTesting. The main difference is that
+    this function will raise a ValidationError as opposed to an AssertionError which happens to be the same type raised
+    by pytest making it very difficult to write unit tests around assertions/validations.
+
+    :param condition: the condition under test
+    :param message: the error message
+    :return: None
+    """
+    if not condition:
+        raise ValidationError(message=message)
 
 
 def combine_var_args(*, first: Any, others: Optional[Tuple]) -> List[Any]:
