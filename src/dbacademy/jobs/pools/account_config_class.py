@@ -1,6 +1,7 @@
 __all__ = ["AccountConfig"]
 
 from typing import List, Union, Optional
+from dbacademy.common import validate
 
 
 class AccountConfig:
@@ -8,7 +9,7 @@ class AccountConfig:
     from dbacademy.jobs.pools.workspace_config_classe import WorkspaceConfig
 
     @staticmethod
-    def from_env(*, account_id_env_name, account_password_env_name, account_username_env_name, region: str, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, workspace_numbers: Optional[List[int]], ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
+    def from_env(*, account_id_env_name, account_password_env_name, account_username_env_name, region: str, uc_storage_config: UcStorageConfig, workspace_config_template: WorkspaceConfig, workspace_numbers: List[int], ignored_workspaces: List[Union[int, str]] = None) -> "AccountConfig":
         import os
         print()
 
@@ -37,12 +38,11 @@ class AccountConfig:
                  password: str,
                  uc_storage_config: UcStorageConfig,
                  workspace_config_template: WorkspaceConfig,
-                 ignored_workspaces: List[str] = None,
+                 ignored_workspaces: Optional[List[str]] = None,
                  workspace_numbers: List[int]) -> None:
         """
         Creates the configuration for account-level settings.
         """
-        from dbacademy.common import validate
         from dbacademy.jobs.pools.uc_storage_config_class import UcStorageConfig
         from dbacademy.jobs.pools.workspace_config_classe import WorkspaceConfig
 
@@ -60,8 +60,9 @@ class AccountConfig:
         self.__workspace_config_template = validate(workspace_config_template=workspace_config_template).required.as_type(WorkspaceConfig)
 
         self.__workspaces = list()
+        self.__workspace_numbers = validate(workspace_numbers=workspace_numbers).required.list(int)
 
-        for workspace_number in workspace_numbers:
+        for workspace_number in self.workspace_numbers:
             self.create_workspace_config(template=workspace_config_template,
                                          workspace_number=workspace_number)
 
@@ -88,6 +89,10 @@ class AccountConfig:
             self.__workspaces.append(workspace)
 
         return workspace
+
+    @property
+    def workspace_numbers(self) -> List[int]:
+        return self.__workspace_numbers
 
     @property
     def ignored_workspaces(self) -> List[Union[int, str]]:
