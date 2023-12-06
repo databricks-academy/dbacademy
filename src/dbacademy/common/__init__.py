@@ -19,7 +19,7 @@ def validate(**kwargs) -> Validator:
     Creates an instance of a property validator where the one and only one parameter is expected to be the name of the
     parameter, and it's value. For example the function example(color: str) would include the call validate(color=color)
     followed by additional assertions such as optional or required and from there, that it's a string, integer, list, etc.
-    :param kwargs: the dynamically specified name of the property to validate and it's value.
+    :param kwargs: the dynamically specified name of the property to validate, and it's value.
     :return: an instance of the Validator for the one property.
     """
     return Validator(**kwargs)
