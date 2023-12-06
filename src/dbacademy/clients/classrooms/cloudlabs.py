@@ -120,12 +120,14 @@ def lookup_workspaces(lab):
     for row in rows[1:]:
         assert len(row) == len(header)
         row = dict(zip(header, row))
-        row["Workspace ID"] = row["Id"]
+        row["Workspace ID"] = row.get("Id")
         del row["Id"]
+
         row["API"] = DatabricksApiClient(hostname=row["Url"][8:], token=row["Token"], deployment_name=lab["Title"])
-        row["Long Title"] = lab["Long Title"]
-        row["Cloud"] = lab["Cloud"]
+        row["Long Title"] = lab.get("Long Title")
+        row["Cloud"] = lab.get("Cloud")
         workspaces.append(row)
+
     lab["Workspaces"] = workspaces
     return lab
 
