@@ -347,7 +347,7 @@ class Publisher:
             common.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_dir\" is the same as the default value.\nConsider removing the parameter.")
         target_dir = target_dir or new_target_dir
 
-        prefix = "https://github.com/databricks-academy"
+        prefix = "https://github.com/databricks-learning"
         new_target_repo_url = f"{prefix}/{self.build_config.build_name}.git" if not self.build_config.i18n else f"{prefix}/{self.build_config.build_name}-{self.common_language}.git"
         if target_repo_url == new_target_repo_url:
             common.print_warning(title="DEPRECATION WARNING", message=f"The value of the parameter \"target_repo_url\" is the same as the default value.\nConsider removing the parameter.")
@@ -612,7 +612,7 @@ class Publisher:
             repo_name = self.build_config.source_repo.split("/")[-1]
             results = BuildUtils.validate_no_changes_in_repo(client=self.build_config.client,
                                                              build_name=self.build_config.build_name,
-                                                             repo_url=f"https://github.com/databricks-academy/{repo_name}",
+                                                             repo_url=f"https://github.com/databricks-learning/{repo_name}",
                                                              directory=self.build_config.source_repo)
             self.__changes_in_source_repo = len(results)
             self.assert_no_changes_in_source_repo()
