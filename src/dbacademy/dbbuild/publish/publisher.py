@@ -1,5 +1,7 @@
 __all__ = ["Publisher", "PublishingMode"]
 
+# test
+
 from typing import List, Optional, Iterable, Union
 from enum import Enum
 from dbacademy.common import validate
